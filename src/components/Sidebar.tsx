@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import { X, LayoutDashboard, Users, Dumbbell, Utensils, Pill, FileText, Info, User } from "lucide-react";
 
 interface SidebarProps {
@@ -33,14 +34,15 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
       <nav className="mt-8 space-y-2">
         {menuItems.map((item) => (
-          <a
+          <Link
             key={item.href}
-            href={item.href}
+            to={item.href}
             className="flex items-center space-x-2 space-x-reverse rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+            onClick={onClose}
           >
             <item.icon className="h-4 w-4 ml-2" />
             <span>{item.label}</span>
-          </a>
+          </Link>
         ))}
       </nav>
     </div>
