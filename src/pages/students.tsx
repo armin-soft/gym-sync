@@ -12,6 +12,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { StudentDialog } from "@/components/StudentDialog";
 
 interface Student {
   id: number;
@@ -44,6 +45,8 @@ const mockStudents: Student[] = [
 const Students = () => {
   const { toast } = useToast();
   const [students, setStudents] = useState<Student[]>(mockStudents);
+  const [selectedStudent, setSelectedStudent] = useState<Student | undefined>();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleDelete = (id: number) => {
     setStudents(students.filter((student) => student.id !== id));
@@ -51,6 +54,42 @@ const Students = () => {
       title: "شاگرد با موفقیت حذف شد",
       description: "اطلاعات شاگرد مورد نظر از سیستم حذف شد.",
     });
+  };
+
+  const handleEdit = (student: Student) => {
+    setSelectedStudent(student);
+    setIsDialogOpen(true);
+  };
+
+  const handleAdd = () => {
+    setSelectedStudent(undefined);
+    setIsDialogOpen(true);
+  };
+
+  const handleSave = (data: Omit<Student, "id">) => {
+    if (selectedStudent) {
+      // ویرایش شاگرد موجود
+      setStudents(
+        students.map((s) =>
+          s.id === selectedStudent.id ? { ...data, id: s.id } : s
+        )
+      );
+      toast({
+        title: "اطلاعات شاگرد ویرایش شد",
+        description: "تغییرات با موفقیت ذخیره شد.",
+      });
+    } else {
+      // افزودن شاگرد جدید
+      const newStudent = {
+        ...data,
+        id: Math.max(...students.map((s) => s.id)) + 1,
+      };
+      setStudents([...students, newStudent]);
+      toast({
+        title: "شاگرد جدید اضافه شد",
+        description: "اطلاعات شاگرد جدید با موفقیت ثبت شد.",
+      });
+    }
   };
 
   return (
@@ -62,7 +101,7 @@ const Students = () => {
             در این بخش می‌توانید شاگردان خود را مدیریت کنید
           </p>
         </div>
-        <Button>
+        <Button onClick={handleAdd}>
           <Plus className="ml-2 h-4 w-4" /> افزودن شاگرد
         </Button>
       </div>
@@ -87,7 +126,7 @@ const Students = () => {
                     <img
                       src={student.image}
                       alt={student.name}
-                      className="w-10 h-10 rounded-full"
+                      className="w-10 h-10 rounded-full object-cover"
                     />
                   </TableCell>
                   <TableCell>{student.name}</TableCell>
@@ -96,7 +135,11 @@ const Students = () => {
                   <TableCell>{student.weight}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="icon">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleEdit(student)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
@@ -114,6 +157,13 @@ const Students = () => {
           </Table>
         </div>
       </Card>
+
+      <StudentDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSave={handleSave}
+        student={selectedStudent}
+      />
     </div>
   );
 };
