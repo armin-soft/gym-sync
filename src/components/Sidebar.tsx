@@ -1,5 +1,5 @@
 
-import { X, LayoutDashboard, Users, Dumbbell, Utensils, Pills, FileText, Info, User } from "lucide-react";
+import { X, LayoutDashboard, Users, Dumbbell, Utensils, Pill, FileText, Info, User } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { icon: Users, label: "شاگردان", href: "/students" },
     { icon: Dumbbell, label: "حرکات تمرینی", href: "/exercises" },
     { icon: Utensils, label: "برنامه غذایی", href: "/diet" },
-    { icon: Pills, label: "مکمل‌ها", href: "/supplements" },
+    { icon: Pill, label: "مکمل‌ها", href: "/supplements" },
     { icon: FileText, label: "گزارشات", href: "/reports" },
     { icon: Info, label: "درباره ما", href: "/about" },
   ];

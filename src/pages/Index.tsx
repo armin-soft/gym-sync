@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Users, Dumbbell, Utensils, Pills } from "lucide-react";
+import { Users, Dumbbell, Utensils, Pill } from "lucide-react";
 
 const Index = () => {
   const stats = [
@@ -28,7 +28,7 @@ const Index = () => {
     {
       title: "مکمل‌ها",
       value: "۱۶",
-      icon: Pills,
+      icon: Pill,
       change: "+۵٪",
       trend: "up",
     },
