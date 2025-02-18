@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, SaveIcon } from "lucide-react";
@@ -12,11 +13,19 @@ import * as z from "zod";
 
 const trainerFormSchema = z.object({
   name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
-  bio: z.string().min(10, "بیوگرافی باید حداقل ۱۰ کاراکتر باشد"),
-  phone: z.string().min(11, "شماره موبایل باید ۱۱ رقم باشد"),
+  bio: z.string()
+    .min(10, "بیوگرافی باید حداقل ۱۰ کاراکتر باشد")
+    .max(500, "بیوگرافی نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد"),
+  phone: z.string()
+    .min(11, "شماره موبایل باید ۱۱ رقم باشد")
+    .regex(/^09\d{9}$/, "شماره موبایل باید با ۰۹ شروع شود"),
   email: z.string().email("ایمیل نامعتبر است"),
-  password: z.string().min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد"),
-  price: z.string().min(1, "مبلغ نمی‌تواند خالی باشد"),
+  password: z.string()
+    .min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "رمز عبور باید شامل حروف بزرگ، کوچک و اعداد باشد"),
+  price: z.string()
+    .min(1, "مبلغ نمی‌تواند خالی باشد")
+    .regex(/^\d+$/, "لطفاً مبلغ را به صورت عدد وارد کنید"),
 });
 
 const TrainerProfile = () => {
@@ -25,11 +34,11 @@ const TrainerProfile = () => {
     resolver: zodResolver(trainerFormSchema),
     defaultValues: {
       name: "محمد عباسی",
-      bio: "مربی با ۵ سال سابقه در زمینه بدنسازی و تناسب اندام",
+      bio: "مربی با ۵ سال سابقه در زمینه بدنسازی و تناسب اندام. تخصص در برنامه‌ریزی تمرینی و رژیم غذایی متناسب با اهداف مختلف.",
       phone: "09123456789",
       email: "mohammad@example.com",
       password: "",
-      price: "۲۰۰,۰۰۰",
+      price: "200000",
     },
   });
 
@@ -38,6 +47,7 @@ const TrainerProfile = () => {
     toast({
       title: "اطلاعات با موفقیت ذخیره شد",
       description: "تغییرات شما با موفقیت اعمال شد.",
+      duration: 3000,
     });
   };
 
@@ -53,11 +63,11 @@ const TrainerProfile = () => {
       <Card className="p-6">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex flex-col items-center space-y-4">
-            <Avatar className="w-32 h-32">
-              <AvatarImage src="/placeholder.svg" />
-              <AvatarFallback>MA</AvatarFallback>
+            <Avatar className="w-32 h-32 border-2 border-primary/10">
+              <AvatarImage src="/placeholder.svg" className="object-cover" />
+              <AvatarFallback className="text-2xl">MA</AvatarFallback>
             </Avatar>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="w-full">
               <Camera className="ml-2 h-4 w-4" />
               تغییر تصویر
             </Button>
@@ -87,8 +97,15 @@ const TrainerProfile = () => {
                     <FormItem>
                       <FormLabel>بیوگرافی</FormLabel>
                       <FormControl>
-                        <Input placeholder="درباره خود بنویسید" {...field} />
+                        <Textarea 
+                          placeholder="درباره خود بنویسید" 
+                          className="resize-none h-32"
+                          {...field} 
+                        />
                       </FormControl>
+                      <FormDescription>
+                        حداکثر ۵۰۰ کاراکتر
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -102,7 +119,12 @@ const TrainerProfile = () => {
                       <FormItem>
                         <FormLabel>شماره موبایل</FormLabel>
                         <FormControl>
-                          <Input placeholder="09123456789" {...field} />
+                          <Input 
+                            placeholder="09123456789" 
+                            dir="ltr"
+                            className="text-left"
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -116,7 +138,12 @@ const TrainerProfile = () => {
                       <FormItem>
                         <FormLabel>ایمیل</FormLabel>
                         <FormControl>
-                          <Input placeholder="example@domain.com" {...field} />
+                          <Input 
+                            placeholder="example@domain.com" 
+                            dir="ltr"
+                            className="text-left"
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -130,10 +157,16 @@ const TrainerProfile = () => {
                       <FormItem>
                         <FormLabel>رمز عبور</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
+                          <Input 
+                            type="password" 
+                            placeholder="••••••••" 
+                            dir="ltr"
+                            className="text-left"
+                            {...field} 
+                          />
                         </FormControl>
                         <FormDescription>
-                          حداقل ۸ کاراکتر شامل حروف و اعداد
+                          حداقل ۸ کاراکتر شامل حروف بزرگ، کوچک و اعداد
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -147,7 +180,12 @@ const TrainerProfile = () => {
                       <FormItem>
                         <FormLabel>مبلغ برنامه تمرینی (تومان)</FormLabel>
                         <FormControl>
-                          <Input placeholder="200,000" {...field} />
+                          <Input 
+                            placeholder="200000" 
+                            dir="ltr"
+                            className="text-left"
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
