@@ -143,7 +143,14 @@ const Exercises = () => {
       setExercises(
         exercises.map((exercise) =>
           exercise.id === editingExercise.id
-            ? { ...exercise, ...data }
+            ? { 
+                id: exercise.id,
+                name: data.name,
+                category: data.category,
+                sets: data.sets,
+                reps: data.reps,
+                description: data.description
+              }
             : exercise
         )
       );
@@ -152,9 +159,13 @@ const Exercises = () => {
         description: "حرکت مورد نظر با موفقیت ویرایش شد.",
       });
     } else {
-      const newExercise = {
+      const newExercise: Exercise = {
         id: exercises.length + 1,
-        ...data,
+        name: data.name,
+        category: data.category,
+        sets: data.sets,
+        reps: data.reps,
+        description: data.description
       };
       setExercises([...exercises, newExercise]);
       toast({
