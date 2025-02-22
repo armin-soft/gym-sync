@@ -10,9 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
-import { Edit, Plus, Trash2 } from "lucide-react";
+import { Edit, Plus, Trash2, Search, Filter } from "lucide-react";
 import { useState } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 interface Student {
   id: number;
@@ -21,6 +23,9 @@ interface Student {
   height: string;
   weight: string;
   image: string;
+  status: "active" | "inactive";
+  lastSession: string;
+  progress: number;
 }
 
 const mockStudents: Student[] = [
@@ -31,6 +36,9 @@ const mockStudents: Student[] = [
     height: "۱۷۵",
     weight: "۷۵",
     image: "/placeholder.svg",
+    status: "active",
+    lastSession: "۱۴۰۲/۱۲/۲۴",
+    progress: 85,
   },
   {
     id: 2,
@@ -39,6 +47,20 @@ const mockStudents: Student[] = [
     height: "۱۸۰",
     weight: "۸۲",
     image: "/placeholder.svg",
+    status: "inactive",
+    lastSession: "۱۴۰۲/۱۲/۲۰",
+    progress: 65,
+  },
+  {
+    id: 3,
+    name: "مهدی اکبری",
+    phone: "09187654321",
+    height: "۱۷۸",
+    weight: "۷۸",
+    image: "/placeholder.svg",
+    status: "active",
+    lastSession: "۱۴۰۲/۱۲/۲۵",
+    progress: 92,
   },
 ];
 
@@ -47,6 +69,7 @@ const Students = () => {
   const [students, setStudents] = useState<Student[]>(mockStudents);
   const [selectedStudent, setSelectedStudent] = useState<Student | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleDelete = (id: number) => {
     setStudents(students.filter((student) => student.id !== id));
@@ -66,12 +89,11 @@ const Students = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSave = (data: Omit<Student, "id">) => {
+  const handleSave = (data: Omit<Student, "id" | "status" | "lastSession" | "progress">) => {
     if (selectedStudent) {
-      // ویرایش شاگرد موجود
       setStudents(
         students.map((s) =>
-          s.id === selectedStudent.id ? { ...data, id: s.id } : s
+          s.id === selectedStudent.id ? { ...selectedStudent, ...data } : s
         )
       );
       toast({
@@ -79,10 +101,12 @@ const Students = () => {
         description: "تغییرات با موفقیت ذخیره شد.",
       });
     } else {
-      // افزودن شاگرد جدید
-      const newStudent = {
+      const newStudent: Student = {
         ...data,
         id: Math.max(...students.map((s) => s.id)) + 1,
+        status: "active",
+        lastSession: "۱۴۰۲/۱۲/۲۵",
+        progress: 0,
       };
       setStudents([...students, newStudent]);
       toast({
@@ -90,61 +114,109 @@ const Students = () => {
         description: "اطلاعات شاگرد جدید با موفقیت ثبت شد.",
       });
     }
+    setIsDialogOpen(false);
   };
 
+  const filteredStudents = students.filter((student) =>
+    student.name.includes(searchQuery) || student.phone.includes(searchQuery)
+  );
+
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <div className="flex justify-between items-center">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight">شاگردان</h2>
-          <p className="text-muted-foreground">
-            در این بخش می‌توانید شاگردان خود را مدیریت کنید
-          </p>
+    <div className="container mx-auto py-6 space-y-8 animate-fadeIn">
+      <div className="flex flex-col space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">شاگردان</h2>
+            <p className="text-muted-foreground mt-2">
+              در این بخش می‌توانید شاگردان خود را مدیریت کنید
+            </p>
+          </div>
+          <Button onClick={handleAdd} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+            <Plus className="ml-2 h-4 w-4" />
+            افزودن شاگرد
+          </Button>
         </div>
-        <Button onClick={handleAdd}>
-          <Plus className="ml-2 h-4 w-4" /> افزودن شاگرد
-        </Button>
+
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="جستجو بر اساس نام یا شماره موبایل..."
+              className="pr-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Button variant="outline" className="gap-2">
+            <Filter className="h-4 w-4" />
+            فیلترها
+          </Button>
+        </div>
       </div>
 
-      <Card>
+      <Card className="overflow-hidden">
         <div className="relative w-full overflow-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>تصویر</TableHead>
+                <TableHead className="w-14">تصویر</TableHead>
                 <TableHead>نام و نام خانوادگی</TableHead>
                 <TableHead>شماره موبایل</TableHead>
                 <TableHead>قد (سانتی‌متر)</TableHead>
                 <TableHead>وزن (کیلوگرم)</TableHead>
-                <TableHead>عملیات</TableHead>
+                <TableHead>وضعیت</TableHead>
+                <TableHead>آخرین جلسه</TableHead>
+                <TableHead>پیشرفت</TableHead>
+                <TableHead className="text-left">عملیات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {students.map((student) => (
-                <TableRow key={student.id}>
+              {filteredStudents.map((student) => (
+                <TableRow key={student.id} className="hover:bg-muted/50 transition-colors">
                   <TableCell>
                     <img
                       src={student.image}
                       alt={student.name}
-                      className="w-10 h-10 rounded-full object-cover"
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/10"
                     />
                   </TableCell>
-                  <TableCell>{student.name}</TableCell>
+                  <TableCell className="font-medium">{student.name}</TableCell>
                   <TableCell className="font-mono">{student.phone}</TableCell>
                   <TableCell>{student.height}</TableCell>
                   <TableCell>{student.weight}</TableCell>
+                  <TableCell>
+                    <Badge variant={student.status === "active" ? "default" : "secondary"}>
+                      {student.status === "active" ? "فعال" : "غیرفعال"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{student.lastSession}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
+                        <div 
+                          className="h-full bg-primary transition-all" 
+                          style={{ width: `${student.progress}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        {student.progress}%
+                      </span>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
                         variant="outline"
                         size="icon"
+                        className="hover:bg-primary/10 hover:text-primary"
                         onClick={() => handleEdit(student)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
-                        variant="destructive"
+                        variant="outline"
                         size="icon"
+                        className="hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => handleDelete(student.id)}
                       >
                         <Trash2 className="h-4 w-4" />
