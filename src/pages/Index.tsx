@@ -1,24 +1,52 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Dumbbell, Utensils, Trophy, TrendingUp, CalendarRange, Pill, Activity } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Activity, 
+  Users, 
+  Dumbbell, 
+  Utensils, 
+  Trophy,
+  TrendingUp, 
+  CalendarRange, 
+  Pill, 
+  Clock,
+  Scale,
+  Target,
+  Crown
+} from "lucide-react";
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 const exerciseData = [
-  { name: "شنبه", تمرینات: 4 },
-  { name: "یکشنبه", تمرینات: 6 },
-  { name: "دوشنبه", تمرینات: 5 },
-  { name: "سه‌شنبه", تمرینات: 8 },
-  { name: "چهارشنبه", تمرینات: 7 },
-  { name: "پنج‌شنبه", تمرینات: 9 },
-  { name: "جمعه", تمرینات: 3 },
+  { name: "شنبه", تمرینات: 4, پیشرفت: 80 },
+  { name: "یکشنبه", تمرینات: 6, پیشرفت: 82 },
+  { name: "دوشنبه", تمرینات: 5, پیشرفت: 85 },
+  { name: "سه‌شنبه", تمرینات: 8, پیشرفت: 87 },
+  { name: "چهارشنبه", تمرینات: 7, پیشرفت: 90 },
+  { name: "پنج‌شنبه", تمرینات: 9, پیشرفت: 92 },
+  { name: "جمعه", تمرینات: 3, پیشرفت: 95 },
 ];
 
-const progressData = [
-  { name: "هفته ۱", پیشرفت: 65 },
-  { name: "هفته ۲", پیشرفت: 70 },
-  { name: "هفته ۳", پیشرفت: 75 },
-  { name: "هفته ۴", پیشرفت: 82 },
+const achievements = [
+  {
+    title: "شاگرد برتر",
+    description: "علی محمدی با ۲۵٪ پیشرفت",
+    icon: Crown,
+    color: "text-yellow-500",
+  },
+  {
+    title: "بیشترین تمرین",
+    description: "۴۲ جلسه در این ماه",
+    icon: Target,
+    color: "text-blue-500",
+  },
+  {
+    title: "کاهش وزن",
+    description: "میانگین ۵ کیلو در ماه",
+    icon: Scale,
+    color: "text-green-500",
+  },
 ];
 
 const Index = () => {
@@ -30,6 +58,7 @@ const Index = () => {
       change: "+۲۰٪",
       trend: "up",
       description: "نسبت به ماه گذشته",
+      color: "bg-blue-500/10 text-blue-500",
     },
     {
       title: "جلسات تمرینی",
@@ -38,6 +67,7 @@ const Index = () => {
       change: "+۱۵٪",
       trend: "up",
       description: "در این هفته",
+      color: "bg-green-500/10 text-green-500",
     },
     {
       title: "برنامه‌های غذایی",
@@ -46,6 +76,7 @@ const Index = () => {
       change: "+۱۰٪",
       trend: "up",
       description: "برنامه فعال",
+      color: "bg-orange-500/10 text-orange-500",
     },
     {
       title: "میانگین پیشرفت",
@@ -54,24 +85,63 @@ const Index = () => {
       change: "+۵٪",
       trend: "up",
       description: "در این ماه",
+      color: "bg-purple-500/10 text-purple-500",
     },
   ];
 
   const quickActions = [
-    { name: "افزودن شاگرد", icon: Users, href: "/students", color: "bg-blue-500" },
-    { name: "ثبت تمرین", icon: Dumbbell, href: "/exercises", color: "bg-green-500" },
-    { name: "برنامه غذایی", icon: Utensils, href: "/diet", color: "bg-orange-500" },
-    { name: "مکمل‌ها", icon: Pill, href: "/supplements", color: "bg-purple-500" },
+    { 
+      name: "افزودن شاگرد", 
+      description: "ثبت‌نام شاگرد جدید",
+      icon: Users, 
+      href: "/students", 
+      color: "bg-gradient-to-br from-blue-500 to-blue-600" 
+    },
+    { 
+      name: "ثبت تمرین", 
+      description: "برنامه تمرینی جدید",
+      icon: Dumbbell, 
+      href: "/exercises", 
+      color: "bg-gradient-to-br from-green-500 to-green-600" 
+    },
+    { 
+      name: "برنامه غذایی", 
+      description: "تنظیم رژیم غذایی",
+      icon: Utensils, 
+      href: "/diet", 
+      color: "bg-gradient-to-br from-orange-500 to-orange-600" 
+    },
+    { 
+      name: "مکمل‌ها", 
+      description: "مدیریت مکمل‌ها",
+      icon: Pill, 
+      href: "/supplements", 
+      color: "bg-gradient-to-br from-purple-500 to-purple-600" 
+    },
   ];
 
   return (
-    <div className="container mx-auto py-6 space-y-8 animate-fadeIn">
+    <div className="container mx-auto py-8 space-y-8 animate-fadeIn">
       {/* Header */}
       <div className="flex flex-col space-y-4">
-        <h1 className="text-3xl font-bold tracking-tight">داشبورد</h1>
-        <p className="text-muted-foreground">
-          خوش آمدید! در این بخش می‌توانید خلاصه‌ای از وضعیت باشگاه را مشاهده کنید
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">سلام 👋</h1>
+            <p className="text-muted-foreground mt-2">
+              به داشبورد مدیریت باشگاه خوش آمدید
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="font-medium">
+              <Clock className="w-3 h-3 ml-1" />
+              ۱۴۰۲/۱۲/۲۵
+            </Badge>
+            <Badge variant="secondary" className="font-medium">
+              <Activity className="w-3 h-3 ml-1" />
+              فعال
+            </Badge>
+          </div>
+        </div>
       </div>
 
       {/* Quick Actions */}
@@ -79,14 +149,19 @@ const Index = () => {
         {quickActions.map((action) => (
           <Button
             key={action.name}
-            variant="outline"
-            className="h-24 flex-col gap-2 hover:bg-muted/50 transition-colors"
+            variant="ghost"
+            className="h-32 flex flex-col items-center justify-center gap-4 hover:bg-muted/50 transition-all hover:scale-105"
             onClick={() => window.location.href = action.href}
           >
-            <div className={`${action.color} p-2 rounded-lg text-white`}>
-              <action.icon className="h-5 w-5" />
+            <div className={`${action.color} p-3 rounded-xl text-white shadow-lg`}>
+              <action.icon className="h-6 w-6" />
             </div>
-            <span>{action.name}</span>
+            <div className="text-center">
+              <div className="font-semibold">{action.name}</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {action.description}
+              </div>
+            </div>
           </Button>
         ))}
       </div>
@@ -94,15 +169,19 @@ const Index = () => {
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.title} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card key={stat.title} className="hover:shadow-lg transition-all hover:-translate-y-1">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 {stat.title}
               </CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
+              <div className={`rounded-full p-2 ${stat.color}`}>
+                <stat.icon className="w-4 h-4" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-2xl font-bold">
+                {stat.value}
+              </div>
               <div className="flex items-center text-xs mt-1">
                 <span className={stat.trend === "up" ? "text-green-500" : "text-red-500"}>
                   {stat.change}
@@ -110,6 +189,27 @@ const Index = () => {
                 <span className="text-muted-foreground mr-1">
                   {stat.description}
                 </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Achievements */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {achievements.map((achievement) => (
+          <Card key={achievement.title} className="hover:shadow-lg transition-all">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className={`rounded-full p-3 bg-muted ${achievement.color}`}>
+                  <achievement.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">{achievement.title}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {achievement.description}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -128,14 +228,14 @@ const Index = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[200px]">
+            <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={exerciseData}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
+                  <XAxis dataKey="name" fontSize={12} />
+                  <YAxis fontSize={12} />
                   <Bar
                     dataKey="تمرینات"
-                    fill="#4f46e5"
+                    fill="hsl(var(--primary))"
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
@@ -154,16 +254,17 @@ const Index = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[200px]">
+            <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={progressData}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
+                <LineChart data={exerciseData}>
+                  <XAxis dataKey="name" fontSize={12} />
+                  <YAxis fontSize={12} />
                   <Line
                     type="monotone"
                     dataKey="پیشرفت"
-                    stroke="#22c55e"
+                    stroke="hsl(var(--primary))"
                     strokeWidth={2}
+                    dot={{ strokeWidth: 2, r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
