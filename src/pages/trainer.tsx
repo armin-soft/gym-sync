@@ -36,28 +36,33 @@ const TrainerProfile = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
-  const [savedAvatarUrl, setSavedAvatarUrl] = useState<string>("/placeholder.svg");
 
   const form = useForm<TrainerFormData>({
     resolver: zodResolver(trainerFormSchema),
     defaultValues: {
-      name: "محمد عباسی",
-      bio: "مربی با ۵ سال سابقه در زمینه بدنسازی و تناسب اندام. تخصص در برنامه‌ریزی تمرینی و رژیم غذایی متناسب با اهداف مختلف.",
-      phone: "09123456789",
-      email: "mohammad@example.com",
+      name: "",
+      bio: "",
+      phone: "",
+      email: "",
       password: "",
-      price: "200000",
+      price: "",
     },
   });
 
-  // بازیابی تصویر ذخیره شده در هنگام بارگذاری کامپوننت
+  // بازیابی داده‌های ذخیره شده در هنگام بارگذاری کامپوننت
   useEffect(() => {
-    const savedImage = localStorage.getItem('trainerAvatar');
-    if (savedImage) {
-      setAvatarUrl(savedImage);
-      setSavedAvatarUrl(savedImage);
+    const savedTrainer = localStorage.getItem('trainerData');
+    const savedAvatar = localStorage.getItem('trainerAvatar');
+    
+    if (savedTrainer) {
+      const data = JSON.parse(savedTrainer);
+      form.reset(data);
     }
-  }, []);
+    
+    if (savedAvatar) {
+      setAvatarUrl(savedAvatar);
+    }
+  }, [form]);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
@@ -66,11 +71,19 @@ const TrainerProfile = () => {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: "خطا",
+          description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const newAvatarUrl = e.target?.result as string;
         setAvatarUrl(newAvatarUrl);
-        setSavedAvatarUrl(newAvatarUrl);
         localStorage.setItem('trainerAvatar', newAvatarUrl);
       };
       reader.readAsDataURL(file);
@@ -78,10 +91,7 @@ const TrainerProfile = () => {
   };
 
   const onSubmit = (data: TrainerFormData) => {
-    console.log({
-      ...data,
-      avatar: savedAvatarUrl
-    });
+    localStorage.setItem('trainerData', JSON.stringify(data));
     toast({
       title: "اطلاعات با موفقیت ذخیره شد",
       description: "تغییرات شما با موفقیت اعمال شد.",

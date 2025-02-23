@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { Edit, Plus, Trash2, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { Input } from "@/components/ui/input";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -32,8 +32,18 @@ const Students = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // خواندن داده‌ها از localStorage در هنگام بارگذاری کامپوننت
+  useEffect(() => {
+    const savedStudents = localStorage.getItem('students');
+    if (savedStudents) {
+      setStudents(JSON.parse(savedStudents));
+    }
+  }, []);
+
   const handleDelete = (id: number) => {
-    setStudents(students.filter((student) => student.id !== id));
+    const updatedStudents = students.filter((student) => student.id !== id);
+    setStudents(updatedStudents);
+    localStorage.setItem('students', JSON.stringify(updatedStudents));
     toast({
       title: "شاگرد با موفقیت حذف شد",
       description: "اطلاعات شاگرد مورد نظر از سیستم حذف شد.",
@@ -51,11 +61,11 @@ const Students = () => {
   };
 
   const handleSave = (data: Omit<Student, "id">) => {
+    let updatedStudents: Student[];
+    
     if (selectedStudent) {
-      setStudents(
-        students.map((s) =>
-          s.id === selectedStudent.id ? { ...selectedStudent, ...data } : s
-        )
+      updatedStudents = students.map((s) =>
+        s.id === selectedStudent.id ? { ...selectedStudent, ...data } : s
       );
       toast({
         title: "اطلاعات شاگرد ویرایش شد",
@@ -66,12 +76,15 @@ const Students = () => {
         ...data,
         id: Math.max(...students.map((s) => s.id), 0) + 1,
       };
-      setStudents([...students, newStudent]);
+      updatedStudents = [...students, newStudent];
       toast({
         title: "شاگرد جدید اضافه شد",
         description: "اطلاعات شاگرد جدید با موفقیت ثبت شد.",
       });
     }
+    
+    setStudents(updatedStudents);
+    localStorage.setItem('students', JSON.stringify(updatedStudents));
     setIsDialogOpen(false);
   };
 
