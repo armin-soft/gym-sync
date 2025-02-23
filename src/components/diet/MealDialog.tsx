@@ -30,6 +30,8 @@ const mealFormSchema = z.object({
   description: z.string(),
 });
 
+type MealFormData = z.infer<typeof mealFormSchema>;
+
 interface MealDialogProps {
   open: boolean;
   onClose: () => void;
@@ -43,20 +45,20 @@ export const MealDialog = ({
   onSave,
   meal,
 }: MealDialogProps) => {
-  const form = useForm<z.infer<typeof mealFormSchema>>({
+  const form = useForm<MealFormData>({
     resolver: zodResolver(mealFormSchema),
-    defaultValues: meal || {
-      name: "",
-      time: "",
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-      description: "",
+    defaultValues: {
+      name: meal?.name ?? "",
+      time: meal?.time ?? "",
+      calories: meal?.calories ?? 0,
+      protein: meal?.protein ?? 0,
+      carbs: meal?.carbs ?? 0,
+      fat: meal?.fat ?? 0,
+      description: meal?.description ?? "",
     },
   });
 
-  const onSubmit = (data: z.infer<typeof mealFormSchema>) => {
+  const onSubmit = (data: MealFormData) => {
     onSave(data);
     form.reset();
   };
