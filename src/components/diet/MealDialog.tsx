@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -20,17 +19,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { Meal } from "./MealList";
 
+// اطمینان از اجباری بودن همه فیلدهای ضروری
 const mealFormSchema = z.object({
-  name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد"),
+  name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد").min(1, "نام غذا الزامی است"),
   time: z.string().min(1, "زمان وعده غذایی الزامی است"),
-  calories: z.number().min(0, "میزان کالری نمی‌تواند منفی باشد"),
-  protein: z.number().min(0, "میزان پروتئین نمی‌تواند منفی باشد"),
-  carbs: z.number().min(0, "میزان کربوهیدرات نمی‌تواند منفی باشد"),
-  fat: z.number().min(0, "میزان چربی نمی‌تواند منفی باشد"),
+  calories: z.number().nonnegative("میزان کالری نمی‌تواند منفی باشد"),
+  protein: z.number().nonnegative("میزان پروتئین نمی‌تواند منفی باشد"),
+  carbs: z.number().nonnegative("میزان کربوهیدرات نمی‌تواند منفی باشد"),
+  fat: z.number().nonnegative("میزان چربی نمی‌تواند منفی باشد"),
   description: z.string(),
-});
+}).required();
 
-type MealFormData = z.infer<typeof mealFormSchema>;
+// استفاده از Zod برای تعریف تایپ
+type MealFormData = Required<z.infer<typeof mealFormSchema>>;
 
 interface MealDialogProps {
   open: boolean;
@@ -61,6 +62,7 @@ export const MealDialog = ({
   const onSubmit = (data: MealFormData) => {
     onSave(data);
     form.reset();
+    onClose();
   };
 
   return (
