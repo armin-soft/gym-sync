@@ -6,8 +6,10 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, SaveIcon } from "lucide-react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -28,9 +30,14 @@ const trainerFormSchema = z.object({
     .regex(/^\d+$/, "لطفاً مبلغ را به صورت عدد وارد کنید"),
 });
 
+type TrainerFormData = z.infer<typeof trainerFormSchema>;
+
 const TrainerProfile = () => {
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof trainerFormSchema>>({
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
+
+  const form = useForm<TrainerFormData>({
     resolver: zodResolver(trainerFormSchema),
     defaultValues: {
       name: "محمد عباسی",
@@ -42,7 +49,22 @@ const TrainerProfile = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof trainerFormSchema>) => {
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarUrl(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const onSubmit = (data: TrainerFormData) => {
     console.log(data);
     toast({
       title: "اطلاعات با موفقیت ذخیره شد",
@@ -63,11 +85,21 @@ const TrainerProfile = () => {
       <Card className="p-6">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex flex-col items-center space-y-4">
-            <Avatar className="w-32 h-32 border-2 border-primary/10">
-              <AvatarImage src="/placeholder.svg" className="object-cover" />
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+            <Avatar 
+              className="w-32 h-32 cursor-pointer border-2 border-primary/10 hover:border-primary/30 transition-colors"
+              onClick={handleImageClick}
+            >
+              <AvatarImage src={avatarUrl} className="object-cover" />
               <AvatarFallback className="text-2xl">MA</AvatarFallback>
             </Avatar>
-            <Button variant="outline" size="sm" className="w-full">
+            <Button variant="outline" size="sm" className="w-full" onClick={handleImageClick}>
               <Camera className="ml-2 h-4 w-4" />
               تغییر تصویر
             </Button>
@@ -184,9 +216,16 @@ const TrainerProfile = () => {
                             placeholder="200000" 
                             dir="ltr"
                             className="text-left"
-                            {...field} 
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, "");
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
+                        <FormDescription>
+                          {field.value && `معادل ${toPersianNumbers(Number(field.value).toLocaleString())} تومان`}
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
