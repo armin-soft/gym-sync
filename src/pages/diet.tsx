@@ -211,7 +211,7 @@ const Diet = () => {
       )}
 
       <MealDialog
-        isOpen={isDialogOpen}
+        open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         onSave={handleSave}
         meal={selectedMeal}

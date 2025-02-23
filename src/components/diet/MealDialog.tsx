@@ -14,62 +14,59 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import type { Meal } from "./MealList";
 
 const mealFormSchema = z.object({
   name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد"),
-  type: z.string().min(1, "انتخاب نوع وعده غذایی الزامی است"),
-  calories: z.string().min(1, "میزان کالری نمی‌تواند خالی باشد"),
-  protein: z.string().min(1, "میزان پروتئین نمی‌تواند خالی باشد"),
-  carbs: z.string().min(1, "میزان کربوهیدرات نمی‌تواند خالی باشد"),
-  fat: z.string().min(1, "میزان چربی نمی‌تواند خالی باشد"),
+  time: z.string().min(1, "زمان وعده غذایی الزامی است"),
+  calories: z.number().min(0, "میزان کالری نمی‌تواند منفی باشد"),
+  protein: z.number().min(0, "میزان پروتئین نمی‌تواند منفی باشد"),
+  carbs: z.number().min(0, "میزان کربوهیدرات نمی‌تواند منفی باشد"),
+  fat: z.number().min(0, "میزان چربی نمی‌تواند منفی باشد"),
+  description: z.string(),
 });
-
-export const mealTypes = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام"];
 
 interface MealDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (data: z.infer<typeof mealFormSchema>) => void;
-  defaultValues?: z.infer<typeof mealFormSchema>;
-  mode: "add" | "edit";
+  onClose: () => void;
+  onSave: (data: Omit<Meal, "id" | "image">) => void;
+  meal?: Meal;
 }
 
 export const MealDialog = ({
   open,
-  onOpenChange,
-  onSubmit,
-  defaultValues,
-  mode,
+  onClose,
+  onSave,
+  meal,
 }: MealDialogProps) => {
   const form = useForm<z.infer<typeof mealFormSchema>>({
     resolver: zodResolver(mealFormSchema),
-    defaultValues: defaultValues || {
+    defaultValues: meal || {
       name: "",
-      type: "",
-      calories: "",
-      protein: "",
-      carbs: "",
-      fat: "",
+      time: "",
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+      description: "",
     },
   });
 
+  const onSubmit = (data: z.infer<typeof mealFormSchema>) => {
+    onSave(data);
+    form.reset();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === "edit" ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
+            {meal ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -90,24 +87,13 @@ export const MealDialog = ({
 
             <FormField
               control={form.control}
-              name="type"
+              name="time"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>نوع وعده</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="نوع وعده را انتخاب کنید" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {mealTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>زمان وعده</FormLabel>
+                  <FormControl>
+                    <Input placeholder="مثال: ۸:۰۰" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -121,7 +107,12 @@ export const MealDialog = ({
                   <FormItem>
                     <FormLabel>کالری</FormLabel>
                     <FormControl>
-                      <Input placeholder="مثال: ۳۰۰" {...field} />
+                      <Input 
+                        type="number" 
+                        placeholder="مثال: ۳۰۰" 
+                        {...field}
+                        onChange={e => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -135,7 +126,12 @@ export const MealDialog = ({
                   <FormItem>
                     <FormLabel>پروتئین (گرم)</FormLabel>
                     <FormControl>
-                      <Input placeholder="مثال: ۲۵" {...field} />
+                      <Input 
+                        type="number" 
+                        placeholder="مثال: ۲۵"
+                        {...field}
+                        onChange={e => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -151,7 +147,12 @@ export const MealDialog = ({
                   <FormItem>
                     <FormLabel>کربوهیدرات (گرم)</FormLabel>
                     <FormControl>
-                      <Input placeholder="مثال: ۵۰" {...field} />
+                      <Input 
+                        type="number" 
+                        placeholder="مثال: ۵۰"
+                        {...field}
+                        onChange={e => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -165,7 +166,12 @@ export const MealDialog = ({
                   <FormItem>
                     <FormLabel>چربی (گرم)</FormLabel>
                     <FormControl>
-                      <Input placeholder="مثال: ۱۵" {...field} />
+                      <Input 
+                        type="number" 
+                        placeholder="مثال: ۱۵"
+                        {...field}
+                        onChange={e => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -173,16 +179,30 @@ export const MealDialog = ({
               />
             </div>
 
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>توضیحات</FormLabel>
+                  <FormControl>
+                    <Input placeholder="توضیحات وعده غذایی را وارد کنید" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="flex justify-end gap-2">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={onClose}
               >
                 انصراف
               </Button>
               <Button type="submit">
-                {mode === "edit" ? "ویرایش" : "افزودن"}
+                {meal ? "ویرایش" : "افزودن"}
               </Button>
             </div>
           </form>

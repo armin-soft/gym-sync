@@ -14,11 +14,13 @@ import { Edit, Trash2 } from "lucide-react";
 export interface Meal {
   id: number;
   name: string;
-  type: string;
-  calories: string;
-  protein: string;
-  carbs: string;
-  fat: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  description: string;
+  image?: string;
+  time: string;
 }
 
 interface MealListProps {
@@ -35,7 +37,7 @@ export const MealList = ({ meals, onEdit, onDelete }: MealListProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>نام غذا</TableHead>
-              <TableHead>نوع وعده</TableHead>
+              <TableHead>زمان</TableHead>
               <TableHead>کالری</TableHead>
               <TableHead>پروتئین</TableHead>
               <TableHead>کربوهیدرات</TableHead>
@@ -47,7 +49,7 @@ export const MealList = ({ meals, onEdit, onDelete }: MealListProps) => {
             {meals.map((meal) => (
               <TableRow key={meal.id}>
                 <TableCell>{meal.name}</TableCell>
-                <TableCell>{meal.type}</TableCell>
+                <TableCell>{meal.time}</TableCell>
                 <TableCell>{meal.calories}</TableCell>
                 <TableCell>{meal.protein}</TableCell>
                 <TableCell>{meal.carbs}</TableCell>
