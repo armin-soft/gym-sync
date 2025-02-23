@@ -10,11 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
-import { Edit, Plus, Trash2, Search, Filter } from "lucide-react";
+import { Edit, Plus, Trash2, Search } from "lucide-react";
 import { useState } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface Student {
   id: number;
@@ -23,50 +23,11 @@ interface Student {
   height: string;
   weight: string;
   image: string;
-  status: "active" | "inactive";
-  lastSession: string;
-  progress: number;
 }
-
-const mockStudents: Student[] = [
-  {
-    id: 1,
-    name: "علی محمدی",
-    phone: "09123456789",
-    height: "۱۷۵",
-    weight: "۷۵",
-    image: "/placeholder.svg",
-    status: "active",
-    lastSession: "۱۴۰۲/۱۲/۲۴",
-    progress: 85,
-  },
-  {
-    id: 2,
-    name: "رضا کریمی",
-    phone: "09198765432",
-    height: "۱۸۰",
-    weight: "۸۲",
-    image: "/placeholder.svg",
-    status: "inactive",
-    lastSession: "۱۴۰۲/۱۲/۲۰",
-    progress: 65,
-  },
-  {
-    id: 3,
-    name: "مهدی اکبری",
-    phone: "09187654321",
-    height: "۱۷۸",
-    weight: "۷۸",
-    image: "/placeholder.svg",
-    status: "active",
-    lastSession: "۱۴۰۲/۱۲/۲۵",
-    progress: 92,
-  },
-];
 
 const Students = () => {
   const { toast } = useToast();
-  const [students, setStudents] = useState<Student[]>(mockStudents);
+  const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,7 +50,7 @@ const Students = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSave = (data: Omit<Student, "id" | "status" | "lastSession" | "progress">) => {
+  const handleSave = (data: Omit<Student, "id">) => {
     if (selectedStudent) {
       setStudents(
         students.map((s) =>
@@ -103,10 +64,7 @@ const Students = () => {
     } else {
       const newStudent: Student = {
         ...data,
-        id: Math.max(...students.map((s) => s.id)) + 1,
-        status: "active",
-        lastSession: "۱۴۰۲/۱۲/۲۵",
-        progress: 0,
+        id: Math.max(...students.map((s) => s.id), 0) + 1,
       };
       setStudents([...students, newStudent]);
       toast({
@@ -122,7 +80,7 @@ const Students = () => {
   );
 
   return (
-    <div className="container mx-auto py-6 space-y-8 animate-fadeIn">
+    <div className="container mx-auto py-6 space-y-8">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -147,10 +105,6 @@ const Students = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" className="gap-2">
-            <Filter className="h-4 w-4" />
-            فیلترها
-          </Button>
         </div>
       </div>
 
@@ -164,67 +118,53 @@ const Students = () => {
                 <TableHead>شماره موبایل</TableHead>
                 <TableHead>قد (سانتی‌متر)</TableHead>
                 <TableHead>وزن (کیلوگرم)</TableHead>
-                <TableHead>وضعیت</TableHead>
-                <TableHead>آخرین جلسه</TableHead>
-                <TableHead>پیشرفت</TableHead>
                 <TableHead className="text-left">عملیات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredStudents.map((student) => (
-                <TableRow key={student.id} className="hover:bg-muted/50 transition-colors">
-                  <TableCell>
-                    <img
-                      src={student.image}
-                      alt={student.name}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/10"
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">{student.name}</TableCell>
-                  <TableCell className="font-mono">{student.phone}</TableCell>
-                  <TableCell>{student.height}</TableCell>
-                  <TableCell>{student.weight}</TableCell>
-                  <TableCell>
-                    <Badge variant={student.status === "active" ? "default" : "secondary"}>
-                      {student.status === "active" ? "فعال" : "غیرفعال"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{student.lastSession}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
-                        <div 
-                          className="h-full bg-primary transition-all" 
-                          style={{ width: `${student.progress}%` }}
-                        />
-                      </div>
-                      <span className="text-sm text-muted-foreground">
-                        {student.progress}%
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="hover:bg-primary/10 hover:text-primary"
-                        onClick={() => handleEdit(student)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => handleDelete(student.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+              {filteredStudents.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    هیچ شاگردی وجود ندارد
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                filteredStudents.map((student) => (
+                  <TableRow key={student.id} className="hover:bg-muted/50 transition-colors">
+                    <TableCell>
+                      <img
+                        src={student.image}
+                        alt={student.name}
+                        className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/10"
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">{student.name}</TableCell>
+                    <TableCell dir="ltr" className="font-mono">{toPersianNumbers(student.phone)}</TableCell>
+                    <TableCell>{toPersianNumbers(student.height)}</TableCell>
+                    <TableCell>{toPersianNumbers(student.weight)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="hover:bg-primary/10 hover:text-primary"
+                          onClick={() => handleEdit(student)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="hover:bg-destructive/10 hover:text-destructive"
+                          onClick={() => handleDelete(student.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

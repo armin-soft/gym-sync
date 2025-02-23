@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Camera } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface StudentDialogProps {
   isOpen: boolean;
@@ -36,6 +38,8 @@ export const StudentDialog = ({
   onSave,
   student,
 }: StudentDialogProps) => {
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<StudentFormData>({
     name: student?.name || "",
     phone: student?.phone || "",
@@ -44,10 +48,51 @@ export const StudentDialog = ({
     image: student?.image || "/placeholder.svg",
   });
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: "خطا",
+          description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData({ ...formData, image: e.target?.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.name || !formData.phone || !formData.height || !formData.weight) {
+      toast({
+        title: "خطا",
+        description: "لطفاً تمام فیلدها را پر کنید",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.phone.match(/^09\d{9}$/)) {
+      toast({
+        title: "خطا",
+        description: "شماره موبایل معتبر نیست",
+        variant: "destructive",
+      });
+      return;
+    }
+
     onSave(formData);
-    onClose();
   };
 
   return (
@@ -64,16 +109,24 @@ export const StudentDialog = ({
               <img
                 src={formData.image}
                 alt="تصویر پروفایل"
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-24 h-24 rounded-full object-cover ring-2 ring-primary/10"
               />
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
                 className="absolute bottom-0 right-0"
+                onClick={handleImageClick}
               >
                 <Camera className="h-4 w-4" />
               </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
             </div>
           </div>
 
@@ -94,11 +147,14 @@ export const StudentDialog = ({
               <Label htmlFor="phone">شماره موبایل</Label>
               <Input
                 id="phone"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-                placeholder="شماره موبایل را وارد کنید"
+                dir="ltr"
+                className="text-left"
+                value={toPersianNumbers(formData.phone)}
+                onChange={(e) => {
+                  const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                  setFormData({ ...formData, phone: persianValue });
+                }}
+                placeholder="۰۹۱۲۳۴۵۶۷۸۹"
               />
             </div>
 
@@ -107,11 +163,14 @@ export const StudentDialog = ({
                 <Label htmlFor="height">قد (سانتی‌متر)</Label>
                 <Input
                   id="height"
-                  value={formData.height}
-                  onChange={(e) =>
-                    setFormData({ ...formData, height: e.target.value })
-                  }
-                  placeholder="قد را وارد کنید"
+                  dir="ltr"
+                  className="text-left"
+                  value={toPersianNumbers(formData.height)}
+                  onChange={(e) => {
+                    const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                    setFormData({ ...formData, height: persianValue });
+                  }}
+                  placeholder="۱۷۵"
                 />
               </div>
 
@@ -119,11 +178,14 @@ export const StudentDialog = ({
                 <Label htmlFor="weight">وزن (کیلوگرم)</Label>
                 <Input
                   id="weight"
-                  value={formData.weight}
-                  onChange={(e) =>
-                    setFormData({ ...formData, weight: e.target.value })
-                  }
-                  placeholder="وزن را وارد کنید"
+                  dir="ltr"
+                  className="text-left"
+                  value={toPersianNumbers(formData.weight)}
+                  onChange={(e) => {
+                    const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                    setFormData({ ...formData, weight: persianValue });
+                  }}
+                  placeholder="۷۵"
                 />
               </div>
             </div>
