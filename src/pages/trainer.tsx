@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, SaveIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -36,6 +36,7 @@ const TrainerProfile = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
+  const [savedAvatarUrl, setSavedAvatarUrl] = useState<string>("/placeholder.svg");
 
   const form = useForm<TrainerFormData>({
     resolver: zodResolver(trainerFormSchema),
@@ -49,6 +50,15 @@ const TrainerProfile = () => {
     },
   });
 
+  // بازیابی تصویر ذخیره شده در هنگام بارگذاری کامپوننت
+  useEffect(() => {
+    const savedImage = localStorage.getItem('trainerAvatar');
+    if (savedImage) {
+      setAvatarUrl(savedImage);
+      setSavedAvatarUrl(savedImage);
+    }
+  }, []);
+
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
@@ -58,14 +68,20 @@ const TrainerProfile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setAvatarUrl(e.target?.result as string);
+        const newAvatarUrl = e.target?.result as string;
+        setAvatarUrl(newAvatarUrl);
+        setSavedAvatarUrl(newAvatarUrl);
+        localStorage.setItem('trainerAvatar', newAvatarUrl);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const onSubmit = (data: TrainerFormData) => {
-    console.log(data);
+    console.log({
+      ...data,
+      avatar: savedAvatarUrl
+    });
     toast({
       title: "اطلاعات با موفقیت ذخیره شد",
       description: "تغییرات شما با موفقیت اعمال شد.",
@@ -152,10 +168,15 @@ const TrainerProfile = () => {
                         <FormLabel>شماره موبایل</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="09123456789" 
+                            placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
                             dir="ltr"
                             className="text-left"
-                            {...field} 
+                            {...field}
+                            value={toPersianNumbers(field.value)}
+                            onChange={(e) => {
+                              const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                              field.onChange(persianValue);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -213,13 +234,15 @@ const TrainerProfile = () => {
                         <FormLabel>مبلغ برنامه تمرینی (تومان)</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="200000" 
+                            placeholder="۲۰۰,۰۰۰" 
                             dir="ltr"
                             className="text-left"
                             {...field}
+                            value={toPersianNumbers(Number(field.value).toLocaleString())}
                             onChange={(e) => {
-                              const value = e.target.value.replace(/\D/g, "");
-                              field.onChange(value);
+                              const value = e.target.value.replace(/[^۰-۹]/g, "");
+                              const englishValue = value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                              field.onChange(englishValue);
                             }}
                           />
                         </FormControl>
