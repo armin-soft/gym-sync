@@ -45,17 +45,17 @@ const sidebarItems: SidebarItem[] = [
     icon: Users,
   },
   {
-    title: "تمرینات",
+    title: "حرکات تمرینی",
     href: "/Exercise-Movements",
     icon: Dumbbell,
   },
   {
-    title: "برنامه غذایی",
+    title: "برنامه های غذایی",
     href: "/Diet-Plan",
     icon: UtensilsCrossed,
   },
   {
-    title: "مکمل‌ها",
+    title: "مکمل و ویتامین",
     href: "/Supplements-Vitamins",
     icon: Pill,
   },
@@ -88,7 +88,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <Menu className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">مدیریت فیکس</p>
+                  <p className="text-xs text-muted-foreground">مدیریت برنامه تمرینی فیکس</p>
                 </div>
               </div>
             </div>
@@ -137,7 +137,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <Dumbbell className="h-5 w-5 text-primary" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">مدیریت فیکس</span>
+                <span className="text-sm font-medium">مدیریت برنامه تمرینی فیکس</span>
                 <span className="text-xs text-muted-foreground">نسخه ۱.۰.۰</span>
               </div>
             </div>
