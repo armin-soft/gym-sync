@@ -5,7 +5,7 @@ import {
   Activity, 
   Users, 
   Dumbbell, 
-  Utensils, 
+  UtensilsCrossed, 
   Pill, 
   Clock,
   Scale,
@@ -120,7 +120,7 @@ const Index = () => {
     { 
       name: "برنامه غذایی", 
       description: "تنظیم رژیم غذایی",
-      icon: Utensils, 
+      icon: UtensilsCrossed, 
       href: "/diet", 
       gradient: "from-orange-500 via-orange-600 to-orange-700"
     },
@@ -273,7 +273,7 @@ const Index = () => {
         <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">برنامه‌های غذایی</CardTitle>
-            <Utensils className="w-4 h-4 text-muted-foreground" />
+            <UtensilsCrossed className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="mt-4 flex items-center gap-2">
