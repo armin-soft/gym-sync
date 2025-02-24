@@ -8,23 +8,28 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ExerciseType } from "@/types/exercise";
 
 interface CategoryDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  exerciseTypes: ExerciseType[];
   selectedType: ExerciseType;
   formData: { name: string };
   onFormDataChange: (data: { name: string }) => void;
+  onTypeChange: (type: ExerciseType) => void;
   onSave: () => void;
 }
 
 export function CategoryDialog({
   isOpen,
   onOpenChange,
+  exerciseTypes,
   selectedType,
   formData,
   onFormDataChange,
+  onTypeChange,
   onSave,
 }: CategoryDialogProps) {
   return (
@@ -32,10 +37,28 @@ export function CategoryDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
-            افزودن دسته‌بندی جدید به {selectedType}
+            افزودن دسته‌بندی جدید
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
+          <div className="space-y-2">
+            <Label className="text-base">نوع حرکت</Label>
+            <Select 
+              value={selectedType} 
+              onValueChange={onTypeChange}
+            >
+              <SelectTrigger className="h-11 text-base focus-visible:ring-blue-400">
+                <SelectValue placeholder="نوع حرکت را انتخاب کنید" />
+              </SelectTrigger>
+              <SelectContent>
+                {exerciseTypes.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-2">
             <Label className="text-base">نام دسته‌بندی</Label>
             <Input

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -83,6 +84,14 @@ const Exercises = () => {
   };
 
   const handleAddCategory = () => {
+    if (exerciseTypes.length === 0) {
+      toast({
+        title: "خطا",
+        description: "ابتدا باید یک نوع حرکت ایجاد کنید",
+        variant: "destructive"
+      });
+      return;
+    }
     setIsCategoryDialogOpen(true);
     setCategoryFormData({ name: "" });
   };
@@ -90,9 +99,19 @@ const Exercises = () => {
   const handleEditCategory = (category: ExerciseCategory) => {
     setIsCategoryDialogOpen(true);
     setCategoryFormData({ name: category.name });
+    setSelectedType(category.type);
   };
 
   const handleSaveCategory = () => {
+    if (!selectedType) {
+      toast({
+        title: "خطا",
+        description: "لطفاً نوع حرکت را انتخاب کنید",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!categoryFormData.name) {
       toast({
         title: "خطا",
@@ -399,9 +418,11 @@ const Exercises = () => {
       <CategoryDialog 
         isOpen={isCategoryDialogOpen}
         onOpenChange={setIsCategoryDialogOpen}
+        exerciseTypes={exerciseTypes}
         selectedType={selectedType}
         formData={categoryFormData}
         onFormDataChange={setCategoryFormData}
+        onTypeChange={setSelectedType}
         onSave={handleSaveCategory}
       />
 
