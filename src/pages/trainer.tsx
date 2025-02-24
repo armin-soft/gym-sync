@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, SaveIcon } from "lucide-react";
@@ -36,6 +36,7 @@ const TrainerProfile = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
+  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<TrainerFormData>({
     resolver: zodResolver(trainerFormSchema),
@@ -49,6 +50,16 @@ const TrainerProfile = () => {
     },
   });
 
+  // محاسبه درصد تکمیل پروفایل
+  const calculateProfileCompletion = (data: Partial<TrainerFormData>): number => {
+    const fields = ['name', 'bio', 'phone', 'email', 'password', 'price'] as const;
+    const hasAvatar = avatarUrl !== "/placeholder.svg";
+    const completedFields = fields.filter(field => Boolean(data[field])).length;
+    return Math.round(((completedFields + (hasAvatar ? 1 : 0)) / (fields.length + 1)) * 100);
+  };
+
+  const [completionPercentage, setCompletionPercentage] = useState(0);
+
   useEffect(() => {
     const savedTrainer = localStorage.getItem('trainerData');
     const savedAvatar = localStorage.getItem('trainerAvatar');
@@ -56,6 +67,7 @@ const TrainerProfile = () => {
     if (savedTrainer) {
       const data = JSON.parse(savedTrainer);
       form.reset(data);
+      setCompletionPercentage(calculateProfileCompletion(data));
     }
     
     if (savedAvatar) {
@@ -64,10 +76,12 @@ const TrainerProfile = () => {
   }, [form]);
 
   const handleImageClick = () => {
-    fileInputRef.current?.click();
+    if (!isUploading) {
+      fileInputRef.current?.click();
+    }
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
@@ -79,24 +93,63 @@ const TrainerProfile = () => {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newAvatarUrl = e.target?.result as string;
-        setAvatarUrl(newAvatarUrl);
-        localStorage.setItem('trainerAvatar', newAvatarUrl);
-      };
-      reader.readAsDataURL(file);
+      try {
+        setIsUploading(true);
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+          const newAvatarUrl = e.target?.result as string;
+          setAvatarUrl(newAvatarUrl);
+          localStorage.setItem('trainerAvatar', newAvatarUrl);
+          
+          // به‌روزرسانی درصد تکمیل پروفایل
+          const currentData = form.getValues();
+          setCompletionPercentage(calculateProfileCompletion({
+            ...currentData,
+          }));
+          
+          toast({
+            title: "تصویر با موفقیت آپلود شد",
+            description: "تصویر پروفایل شما به‌روزرسانی شد.",
+          });
+        };
+
+        reader.onerror = () => {
+          throw new Error("خطا در خواندن فایل");
+        };
+
+        reader.readAsDataURL(file);
+      } catch (error) {
+        toast({
+          title: "خطا در آپلود تصویر",
+          description: "لطفاً مجدداً تلاش کنید.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
   const onSubmit = (data: TrainerFormData) => {
     localStorage.setItem('trainerData', JSON.stringify(data));
+    // به‌روزرسانی درصد تکمیل پروفایل
+    setCompletionPercentage(calculateProfileCompletion(data));
+    
     toast({
       title: "اطلاعات با موفقیت ذخیره شد",
       description: "تغییرات شما با موفقیت اعمال شد.",
       duration: 3000,
     });
   };
+
+  // بررسی تغییرات فرم برای به‌روزرسانی درصد تکمیل پروفایل
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      setCompletionPercentage(calculateProfileCompletion(value));
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return (
     <div className="container mx-auto py-6 space-y-8">
@@ -118,27 +171,41 @@ const TrainerProfile = () => {
               className="hidden"
               accept="image/*"
               onChange={handleImageChange}
+              disabled={isUploading}
             />
             <div className="relative group">
               <Avatar 
-                className="h-32 w-32 border-4 border-background cursor-pointer transition-all duration-300 ease-out 
-                         group-hover:border-primary/20 group-hover:shadow-2xl group-hover:scale-105"
+                className={cn(
+                  "h-32 w-32 border-4 border-background transition-all duration-300 ease-out",
+                  "group-hover:border-primary/20 group-hover:shadow-2xl group-hover:scale-105",
+                  isUploading ? "opacity-50 cursor-wait" : "cursor-pointer"
+                )}
                 onClick={handleImageClick}
               >
                 <AvatarImage src={avatarUrl} className="object-cover" />
-                <AvatarFallback className="text-4xl bg-primary/5">MA</AvatarFallback>
+                <AvatarFallback className="text-4xl bg-primary/5">
+                  {form.getValues("name")?.slice(0, 2).toUpperCase() || "MA"}
+                </AvatarFallback>
               </Avatar>
-              <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 
-                          transition-all duration-300 ease-out group-hover:opacity-100">
+              <div className={cn(
+                "absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 transition-all duration-300 ease-out",
+                "group-hover:opacity-100",
+                isUploading && "opacity-100"
+              )}>
                 <Camera className="h-8 w-8 text-white" />
               </div>
             </div>
           </div>
           <div className="absolute bottom-4 right-44 left-6">
             <div className="h-1 w-full bg-primary/10 rounded-full overflow-hidden">
-              <div className="h-full w-[85%] bg-gradient-to-r from-primary to-primary/60 rounded-full" />
+              <div 
+                className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full transition-all duration-700 ease-out"
+                style={{ width: `${completionPercentage}%` }}
+              />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">تکمیل پروفایل: ۸۵٪</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              تکمیل پروفایل: {toPersianNumbers(completionPercentage)}٪
+            </p>
           </div>
         </div>
 
