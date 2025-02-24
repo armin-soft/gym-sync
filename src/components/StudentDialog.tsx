@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Camera } from "lucide-react";
+import { Camera, UserRound, Phone, Ruler, Weight, Save, X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 
 interface StudentDialogProps {
@@ -48,7 +48,6 @@ export const StudentDialog = ({
     image: student?.image || "/placeholder.svg",
   });
 
-  // اضافه کردن useEffect برای بروزرسانی فرم وقتی student تغییر می‌کند
   useEffect(() => {
     if (student) {
       setFormData({
@@ -120,7 +119,8 @@ export const StudentDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <UserRound className="h-5 w-5 text-muted-foreground" />
             {student ? "ویرایش شاگرد" : "افزودن شاگرد جدید"}
           </DialogTitle>
         </DialogHeader>
@@ -153,7 +153,10 @@ export const StudentDialog = ({
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">نام و نام خانوادگی</Label>
+              <Label htmlFor="name" className="flex items-center gap-2">
+                <UserRound className="h-4 w-4 text-muted-foreground" />
+                نام و نام خانوادگی
+              </Label>
               <Input
                 id="name"
                 value={formData.name}
@@ -165,7 +168,10 @@ export const StudentDialog = ({
             </div>
 
             <div>
-              <Label htmlFor="phone">شماره موبایل</Label>
+              <Label htmlFor="phone" className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                شماره موبایل
+              </Label>
               <Input
                 id="phone"
                 dir="ltr"
@@ -181,7 +187,10 @@ export const StudentDialog = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="height">قد (سانتی‌متر)</Label>
+                <Label htmlFor="height" className="flex items-center gap-2">
+                  <Ruler className="h-4 w-4 text-muted-foreground" />
+                  قد (سانتی‌متر)
+                </Label>
                 <Input
                   id="height"
                   dir="ltr"
@@ -196,7 +205,10 @@ export const StudentDialog = ({
               </div>
 
               <div>
-                <Label htmlFor="weight">وزن (کیلوگرم)</Label>
+                <Label htmlFor="weight" className="flex items-center gap-2">
+                  <Weight className="h-4 w-4 text-muted-foreground" />
+                  وزن (کیلوگرم)
+                </Label>
                 <Input
                   id="weight"
                   dir="ltr"
@@ -213,10 +225,14 @@ export const StudentDialog = ({
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} className="gap-2">
+              <X className="h-4 w-4" />
               انصراف
             </Button>
-            <Button type="submit">ذخیره</Button>
+            <Button type="submit" className="gap-2">
+              <Save className="h-4 w-4" />
+              ذخیره
+            </Button>
           </div>
         </form>
       </DialogContent>
