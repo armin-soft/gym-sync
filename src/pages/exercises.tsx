@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -100,8 +101,8 @@ const Exercises = () => {
     });
   };
 
-  const handleDeleteCategory = (categoryId: number) => {
-    if (exercises.some(ex => ex.categoryId === categoryId)) {
+  const handleDeleteCategory = (category: ExerciseCategory) => {
+    if (exercises.some(ex => ex.categoryId === category.id)) {
       toast({
         title: "خطا",
         description: "ابتدا باید تمام حرکات این دسته‌بندی را حذف کنید",
@@ -110,7 +111,7 @@ const Exercises = () => {
       return;
     }
 
-    const updatedCategories = categories.filter(c => c.id !== categoryId);
+    const updatedCategories = categories.filter(c => c.id !== category.id);
     setCategories(updatedCategories);
     localStorage.setItem("categories", JSON.stringify(updatedCategories));
 
@@ -120,6 +121,7 @@ const Exercises = () => {
     });
   };
 
+  // Exercise handlers
   const handleAddExercise = () => {
     if (filteredCategories.length === 0) {
       toast({
