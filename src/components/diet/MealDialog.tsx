@@ -21,6 +21,9 @@ import * as z from "zod";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// تعریف تایپ فرم
+type MealFormData = z.infer<typeof mealFormSchema>;
+
 const mealFormSchema = z.object({
   name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد"),
   type: z.string().min(1, "نوع وعده غذایی الزامی است"),
@@ -45,7 +48,7 @@ export const MealDialog = ({
   mealTypes,
   weekDays,
 }: MealDialogProps) => {
-  const form = useForm<MealFormSchema>({
+  const form = useForm<MealFormData>({
     resolver: zodResolver(mealFormSchema),
     defaultValues: {
       name: meal?.name || "",
@@ -55,7 +58,7 @@ export const MealDialog = ({
     },
   });
 
-  const onSubmit = (data: MealFormSchema) => {
+  const onSubmit = (data: MealFormData) => {
     onSave({
       name: data.name,
       type: data.type as MealType,
