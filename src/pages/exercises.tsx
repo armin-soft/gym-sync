@@ -14,6 +14,7 @@ import {
 } from "@/types/exercise";
 import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { CategoryDialog } from "@/components/exercises/CategoryDialog";
+import { ExerciseTable } from "@/components/exercises/ExerciseTable";
 
 const Exercises = () => {
   const { toast } = useToast();
@@ -25,6 +26,7 @@ const Exercises = () => {
   const [categoryFormData, setCategoryFormData] = useState({ name: "" });
   const [exerciseFormData, setExerciseFormData] = useState({ name: "", categoryId: 0 });
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
+  const [isAscending, setIsAscending] = useState(true);
 
   useEffect(() => {
     // Load data from localStorage
@@ -48,9 +50,21 @@ const Exercises = () => {
 
   // Filter categories and exercises based on selected type
   const filteredCategories = categories.filter(cat => cat.type === selectedType);
-  const filteredExercises = exercises.filter(ex => 
-    filteredCategories.some(cat => cat.id === ex.categoryId)
-  );
+  
+  // Sort and filter exercises
+  const filteredExercises = exercises
+    .filter(ex => filteredCategories.some(cat => cat.id === ex.categoryId))
+    .sort((a, b) => {
+      if (isAscending) {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+
+  const handleSort = () => {
+    setIsAscending(!isAscending);
+  };
 
   // Category handlers
   const handleAddCategory = () => {
@@ -263,47 +277,15 @@ const Exercises = () => {
             </Button>
           </div>
           <Card className="p-4">
-            {filteredExercises.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                هیچ حرکتی وجود ندارد
-              </p>
-            ) : (
-              <ul className="space-y-2">
-                {filteredExercises.map(exercise => {
-                  const category = categories.find(c => c.id === exercise.categoryId);
-                  return (
-                    <li 
-                      key={exercise.id}
-                      className="flex items-center justify-between p-3 rounded-lg border group hover:bg-muted/50"
-                    >
-                      <div className="space-y-1">
-                        <span className="block">{exercise.name}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {category?.name}
-                        </span>
-                      </div>
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditExercise(exercise)}
-                        >
-                          ویرایش
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                          onClick={() => handleDeleteExercise(exercise.id)}
-                        >
-                          حذف
-                        </Button>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+            <div className="overflow-x-auto">
+              <ExerciseTable 
+                exercises={filteredExercises}
+                categories={categories}
+                onSort={handleSort}
+                onEdit={handleEditExercise}
+                onDelete={handleDeleteExercise}
+              />
+            </div>
           </Card>
         </div>
       </div>
