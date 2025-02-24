@@ -69,52 +69,23 @@ const TrainerProfile = () => {
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
   useEffect(() => {
-    const savedTrainer = localStorage.getItem('trainerData');
     const savedAvatar = localStorage.getItem('trainerAvatar');
-    
-    if (savedTrainer) {
-      const data = JSON.parse(savedTrainer);
-      form.reset(data);
-      setCompletionPercentage(calculateProfileCompletion(data));
-    }
-    
     if (savedAvatar) {
       setAvatarUrl(savedAvatar);
     }
-  }, [form]);
+  }, []);
 
-  const handleImageClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const triggerImageUpload = () => {
     if (!isUploading && fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  const handleImageDelete = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setAvatarUrl("/placeholder.svg");
-    localStorage.removeItem('trainerAvatar');
-    const currentData = form.getValues();
-    setCompletionPercentage(calculateProfileCompletion(currentData));
-    
-    toast({
-      description: "تصویر پروفایل با موفقیت حذف شد.",
-    });
-  };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log("Selected file:", file); // Debug log
+    
+    if (!file) return;
 
-    if (!file) {
-      console.log("No file selected"); // Debug log
-      return;
-    }
-
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
         title: "خطا",
@@ -124,7 +95,6 @@ const TrainerProfile = () => {
       return;
     }
 
-    // Validate file size (2MB)
     if (file.size > 2 * 1024 * 1024) {
       toast({
         title: "خطا",
@@ -135,59 +105,39 @@ const TrainerProfile = () => {
     }
 
     setIsUploading(true);
+
     const reader = new FileReader();
-    
-    reader.onload = (e) => {
-      console.log("FileReader onload triggered"); // Debug log
-      const result = e.target?.result;
-      if (result && typeof result === 'string') {
-        console.log("Setting new avatar URL"); // Debug log
-        setAvatarUrl(result);
-        localStorage.setItem('trainerAvatar', result);
-        
-        const currentData = form.getValues();
-        setCompletionPercentage(calculateProfileCompletion(currentData));
-        
-        toast({
-          description: "تصویر پروفایل با موفقیت به‌روزرسانی شد.",
-        });
-      }
-    };
-
-    reader.onerror = (error) => {
-      console.error('Error reading file:', error); // Debug log
+    reader.onload = () => {
+      const result = reader.result as string;
+      setAvatarUrl(result);
+      localStorage.setItem('trainerAvatar', result);
+      
       toast({
-        title: "خطا",
-        description: "مشکلی در خواندن فایل پیش آمد. لطفاً مجدداً تلاش کنید.",
-        variant: "destructive",
+        description: "تصویر پروفایل با موفقیت به‌روزرسانی شد",
       });
-    };
 
-    try {
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error('Error initiating file read:', error); // Debug log
-      toast({
-        title: "خطا",
-        description: "مشکلی در آپلود تصویر پیش آمد. لطفاً مجدداً تلاش کنید.",
-        variant: "destructive",
-      });
-    } finally {
       setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
+    };
+
+    reader.onerror = () => {
+      toast({
+        title: "خطا",
+        description: "مشکلی در آپلود تصویر پیش آمد",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+    };
+
+    reader.readAsDataURL(file);
   };
 
-  const onSubmit = (data: TrainerFormData) => {
-    localStorage.setItem('trainerData', JSON.stringify(data));
-    setCompletionPercentage(calculateProfileCompletion(data));
+  const handleDeleteImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAvatarUrl("/placeholder.svg");
+    localStorage.removeItem('trainerAvatar');
     
     toast({
-      title: "اطلاعات با موفقیت ذخیره شد",
-      description: "تغییرات شما با موفقیت اعمال شد.",
-      duration: 3000,
+      description: "تصویر پروفایل با موفقیت حذف شد",
     });
   };
 
@@ -221,21 +171,27 @@ const TrainerProfile = () => {
         <div className="grid lg:grid-cols-[300px_1fr] gap-6">
           <div className="space-y-6">
             <Card className="relative overflow-hidden p-6 backdrop-blur-xl bg-white/50 border-primary/10">
-              <div className="relative group mx-auto w-48 h-48">
+              <div className="relative mx-auto w-48 h-48 group">
                 <input
-                  type="file"
                   ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
                   className="hidden"
-                  accept="image/png,image/jpeg,image/jpg,image/gif"
-                  onChange={handleImageChange}
+                  onChange={handleImageUpload}
+                  onClick={(e) => e.stopPropagation()}
                 />
-                <div 
+
+                <Button
                   className={cn(
-                    "w-48 h-48 rounded-2xl ring-4 ring-background shadow-2xl transition-all duration-500",
-                    "group-hover:ring-primary/20 group-hover:shadow-primary/20 group-hover:scale-[1.02]",
-                    isUploading ? "opacity-50 cursor-wait" : "cursor-pointer"
+                    "w-48 h-48 p-0 relative rounded-2xl overflow-hidden",
+                    "ring-4 ring-background shadow-2xl transition-all duration-500",
+                    "hover:ring-primary/20 hover:shadow-primary/20 hover:scale-[1.02]",
+                    "disabled:opacity-50",
+                    isUploading ? "cursor-wait" : "cursor-pointer"
                   )}
-                  onClick={handleImageClick}
+                  variant="ghost"
+                  disabled={isUploading}
+                  onClick={triggerImageUpload}
                 >
                   <Avatar className="w-full h-full">
                     <AvatarImage src={avatarUrl} alt="Profile" className="object-cover" />
@@ -243,30 +199,30 @@ const TrainerProfile = () => {
                       {form.getValues("name")?.slice(0, 2).toUpperCase() || "ـــ"}
                     </AvatarFallback>
                   </Avatar>
-                </div>
 
-                <div className={cn(
-                  "absolute inset-0 flex items-center justify-center rounded-2xl",
-                  "bg-gradient-to-t from-black/60 to-transparent",
-                  "opacity-0 group-hover:opacity-100 transition-all duration-300"
-                )}>
-                  {isUploading ? (
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent" />
-                      <span className="text-white text-sm">در حال آپلود...</span>
-                    </div>
-                  ) : (
-                    <Camera className="h-10 w-10 text-white drop-shadow-lg transform -translate-y-4 group-hover:translate-y-0 transition-all duration-300" />
-                  )}
-                </div>
+                  <div className={cn(
+                    "absolute inset-0 flex items-center justify-center",
+                    "bg-gradient-to-t from-black/60 to-transparent",
+                    "opacity-0 group-hover:opacity-100 transition-all duration-300"
+                  )}>
+                    {isUploading ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent" />
+                        <span className="text-white text-sm">در حال آپلود...</span>
+                      </div>
+                    ) : (
+                      <Camera className="h-10 w-10 text-white drop-shadow-lg" />
+                    )}
+                  </div>
+                </Button>
 
                 {avatarUrl !== "/placeholder.svg" && !isUploading && (
                   <Button
                     variant="destructive"
                     size="icon"
                     className="absolute -top-2 -right-2 rounded-full opacity-0 group-hover:opacity-100 
-                             transition-all duration-300 hover:scale-110 shadow-lg z-10"
-                    onClick={handleImageDelete}
+                             transition-all duration-300 hover:scale-110 shadow-lg z-20"
+                    onClick={handleDeleteImage}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
