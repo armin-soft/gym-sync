@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, CreditCard, KeyRound, Mail, Phone, User } from "lucide-react";
+import { Camera, CreditCard, KeyRound, Mail, Phone, Save, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -51,7 +50,6 @@ const TrainerProfile = () => {
     },
   });
 
-  // محاسبه درصد تکمیل پروفایل
   const calculateProfileCompletion = (data: Partial<TrainerFormData>): number => {
     const fields = ['name', 'bio', 'phone', 'email', 'password', 'price'] as const;
     const hasAvatar = avatarUrl !== "/placeholder.svg";
@@ -103,7 +101,6 @@ const TrainerProfile = () => {
           setAvatarUrl(newAvatarUrl);
           localStorage.setItem('trainerAvatar', newAvatarUrl);
           
-          // به‌روزرسانی درصد تکمیل پروفایل
           const currentData = form.getValues();
           setCompletionPercentage(calculateProfileCompletion({
             ...currentData,
@@ -134,7 +131,6 @@ const TrainerProfile = () => {
 
   const onSubmit = (data: TrainerFormData) => {
     localStorage.setItem('trainerData', JSON.stringify(data));
-    // به‌روزرسانی درصد تکمیل پروفایل
     setCompletionPercentage(calculateProfileCompletion(data));
     
     toast({
@@ -144,7 +140,6 @@ const TrainerProfile = () => {
     });
   };
 
-  // بررسی تغییرات فرم برای به‌روزرسانی درصد تکمیل پروفایل
   useEffect(() => {
     const subscription = form.watch((value) => {
       setCompletionPercentage(calculateProfileCompletion(value));
@@ -350,7 +345,7 @@ const TrainerProfile = () => {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <CreditCard className="h-4 w-4" />
-                        مبلغ برنامه تمرینی (تومان)
+                        مبل�� برنامه تمرینی (تومان)
                       </FormLabel>
                       <FormControl>
                         <Input 
@@ -382,7 +377,7 @@ const TrainerProfile = () => {
                 className="w-full md:w-auto bg-gradient-to-r from-primary/90 to-primary/80 hover:to-primary
                          transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
               >
-                <SaveIcon className="ml-2 h-4 w-4" />
+                <Save className="ml-2 h-4 w-4" />
                 ذخیره تغییرات
               </Button>
             </form>
