@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Camera } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface StudentDialogProps {
   isOpen: boolean;
@@ -47,6 +47,27 @@ export const StudentDialog = ({
     weight: student?.weight || "",
     image: student?.image || "/placeholder.svg",
   });
+
+  // اضافه کردن useEffect برای بروزرسانی فرم وقتی student تغییر می‌کند
+  useEffect(() => {
+    if (student) {
+      setFormData({
+        name: student.name,
+        phone: student.phone,
+        height: student.height,
+        weight: student.weight,
+        image: student.image,
+      });
+    } else {
+      setFormData({
+        name: "",
+        phone: "",
+        height: "",
+        weight: "",
+        image: "/placeholder.svg",
+      });
+    }
+  }, [student]);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
