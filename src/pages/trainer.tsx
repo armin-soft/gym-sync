@@ -101,16 +101,16 @@ const TrainerProfile = () => {
   return (
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-2 duration-1000">
           پروفایل مربی
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground animate-in fade-in slide-in-from-bottom-3 duration-1000 delay-150">
           اطلاعات پروفایل خود را مدیریت کنید
         </p>
       </div>
 
-      <Card className="overflow-hidden border-2">
-        <div className="relative h-32 bg-gradient-to-r from-primary/20 to-primary/5">
+      <Card className="overflow-hidden border-2 border-primary/10 shadow-lg shadow-primary/5 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
+        <div className="relative h-40 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent">
           <div className="absolute -bottom-16 right-6">
             <input
               type="file"
@@ -121,16 +121,24 @@ const TrainerProfile = () => {
             />
             <div className="relative group">
               <Avatar 
-                className="h-32 w-32 border-4 border-background cursor-pointer transition-all group-hover:border-primary/20 group-hover:shadow-xl"
+                className="h-32 w-32 border-4 border-background cursor-pointer transition-all duration-300 ease-out 
+                         group-hover:border-primary/20 group-hover:shadow-2xl group-hover:scale-105"
                 onClick={handleImageClick}
               >
                 <AvatarImage src={avatarUrl} className="object-cover" />
-                <AvatarFallback className="text-4xl">MA</AvatarFallback>
+                <AvatarFallback className="text-4xl bg-primary/5">MA</AvatarFallback>
               </Avatar>
-              <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 
+                          transition-all duration-300 ease-out group-hover:opacity-100">
                 <Camera className="h-8 w-8 text-white" />
               </div>
             </div>
+          </div>
+          <div className="absolute bottom-4 right-44 left-6">
+            <div className="h-1 w-full bg-primary/10 rounded-full overflow-hidden">
+              <div className="h-full w-[85%] bg-gradient-to-r from-primary to-primary/60 rounded-full" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">تکمیل پروفایل: ۸۵٪</p>
           </div>
         </div>
 
@@ -146,7 +154,8 @@ const TrainerProfile = () => {
                     <FormControl>
                       <Input 
                         placeholder="نام خود را وارد کنید"
-                        className="transition-all border-primary/20 focus-visible:border-primary/40"
+                        className="transition-all duration-300 border-primary/20 focus-visible:border-primary/40
+                                 hover:border-primary/30 focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...field} 
                       />
                     </FormControl>
@@ -164,7 +173,9 @@ const TrainerProfile = () => {
                     <FormControl>
                       <Textarea 
                         placeholder="درباره خود بنویسید" 
-                        className="resize-none h-32 transition-all border-primary/20 focus-visible:border-primary/40"
+                        className="resize-none h-32 transition-all duration-300 border-primary/20 
+                                 focus-visible:border-primary/40 hover:border-primary/30
+                                 focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...field} 
                       />
                     </FormControl>
@@ -181,13 +192,15 @@ const TrainerProfile = () => {
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="group">
                       <FormLabel>شماره موبایل</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
                           dir="ltr"
-                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
+                          className="text-left transition-all duration-300 border-primary/20 
+                                   focus-visible:border-primary/40 hover:border-primary/30
+                                   focus-visible:ring-2 focus-visible:ring-primary/20"
                           {...field}
                           value={toPersianNumbers(field.value)}
                           onChange={(e) => {
@@ -211,7 +224,9 @@ const TrainerProfile = () => {
                         <Input 
                           placeholder="example@domain.com" 
                           dir="ltr"
-                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
+                          className="text-left transition-all duration-300 border-primary/20 
+                                   focus-visible:border-primary/40 hover:border-primary/30
+                                   focus-visible:ring-2 focus-visible:ring-primary/20"
                           {...field} 
                         />
                       </FormControl>
@@ -231,7 +246,9 @@ const TrainerProfile = () => {
                           type="password" 
                           placeholder="••••••••" 
                           dir="ltr"
-                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
+                          className="text-left transition-all duration-300 border-primary/20 
+                                   focus-visible:border-primary/40 hover:border-primary/30
+                                   focus-visible:ring-2 focus-visible:ring-primary/20"
                           {...field} 
                         />
                       </FormControl>
@@ -253,7 +270,9 @@ const TrainerProfile = () => {
                         <Input 
                           placeholder="۲۰۰,۰۰۰" 
                           dir="ltr"
-                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
+                          className="text-left transition-all duration-300 border-primary/20 
+                                   focus-visible:border-primary/40 hover:border-primary/30
+                                   focus-visible:ring-2 focus-visible:ring-primary/20"
                           value={field.value ? toPersianNumbers(field.value) : ""}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -272,7 +291,11 @@ const TrainerProfile = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full md:w-auto bg-gradient-to-r from-primary to-primary/80 hover:to-primary">
+              <Button 
+                type="submit" 
+                className="w-full md:w-auto bg-gradient-to-r from-primary/90 to-primary/80 hover:to-primary
+                         transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
                 <SaveIcon className="ml-2 h-4 w-4" />
                 ذخیره تغییرات
               </Button>
