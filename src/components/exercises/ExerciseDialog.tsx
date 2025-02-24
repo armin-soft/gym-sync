@@ -8,14 +8,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Exercise } from "@/types/exercise";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 
 interface ExerciseDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   selectedExercise?: Exercise;
-  formData: { name: string; category: Exercise["category"] };
-  onFormDataChange: (data: { name: string; category: Exercise["category"] }) => void;
+  categories: ExerciseCategory[];
+  formData: { name: string; categoryId: number };
+  onFormDataChange: (data: { name: string; categoryId: number }) => void;
   onSave: () => void;
 }
 
@@ -23,6 +24,7 @@ export function ExerciseDialog({
   isOpen,
   onOpenChange,
   selectedExercise,
+  categories,
   formData,
   onFormDataChange,
   onSave,
@@ -37,14 +39,17 @@ export function ExerciseDialog({
         </DialogHeader>
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label className="text-base">نوع حرکت</Label>
+            <Label className="text-base">دسته‌بندی</Label>
             <select
               className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
-              value={formData.category}
-              onChange={(e) => onFormDataChange({ ...formData, category: e.target.value as Exercise["category"] })}
+              value={formData.categoryId}
+              onChange={(e) => onFormDataChange({ ...formData, categoryId: Number(e.target.value) })}
             >
-              <option value="دلتوئید خلفی">دلتوئید خلفی</option>
-              <option value="دلتوئید جلویی">دلتوئید جلویی</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="space-y-2">

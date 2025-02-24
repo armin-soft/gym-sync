@@ -1,17 +1,28 @@
 
-export type ExerciseCategory = "دلتوئید خلفی" | "دلتوئید جلویی";
+// انواع حرکت‌های اصلی
+export type ExerciseType = "سرشانه" | "پا" | "زیر بغل" | "سیم کش";
 
+// دسته‌بندی‌های هر نوع حرکت
+export interface ExerciseCategory {
+  id: number;
+  name: string;
+  type: ExerciseType;
+}
+
+// حرکت‌های تمرینی
 export interface Exercise {
   id: number;
   name: string;
-  category: ExerciseCategory;
+  categoryId: number;
 }
 
-// فقط دسته‌بندی‌های اصلی، بدون حرکات پیش‌فرض
-export const defaultExercises: Exercise[] = [];
-
-// دسته‌بندی‌های پیش‌فرض
-export const defaultCategories: ExerciseCategory[] = [
-  "دلتوئید خلفی",
-  "دلتوئید جلویی"
+// مقادیر پیش‌فرض
+export const defaultExerciseTypes: ExerciseType[] = [
+  "سرشانه",
+  "پا",
+  "زیر بغل",
+  "سیم کش"
 ];
+
+export const defaultCategories: ExerciseCategory[] = [];
+export const defaultExercises: Exercise[] = [];

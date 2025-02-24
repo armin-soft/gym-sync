@@ -8,12 +8,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ExerciseCategory } from "@/types/exercise";
+import { ExerciseType } from "@/types/exercise";
 
 interface CategoryDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedCategory?: ExerciseCategory;
+  selectedType: ExerciseType;
   formData: { name: string };
   onFormDataChange: (data: { name: string }) => void;
   onSave: () => void;
@@ -22,7 +22,7 @@ interface CategoryDialogProps {
 export function CategoryDialog({
   isOpen,
   onOpenChange,
-  selectedCategory,
+  selectedType,
   formData,
   onFormDataChange,
   onSave,
@@ -32,7 +32,7 @@ export function CategoryDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
-            {selectedCategory ? "ویرایش دسته‌بندی" : "افزودن دسته‌بندی جدید"}
+            افزودن دسته‌بندی جدید به {selectedType}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">

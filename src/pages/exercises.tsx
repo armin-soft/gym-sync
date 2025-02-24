@@ -4,141 +4,67 @@ import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
-import { Exercise, ExerciseCategory, defaultExercises, defaultCategories } from "@/types/exercise";
+import { 
+  Exercise, 
+  ExerciseCategory, 
+  ExerciseType,
+  defaultExercises, 
+  defaultCategories,
+  defaultExerciseTypes
+} from "@/types/exercise";
 import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
-import { ExerciseTable } from "@/components/exercises/ExerciseTable";
 import { CategoryDialog } from "@/components/exercises/CategoryDialog";
-import { CategoryTable } from "@/components/exercises/CategoryTable";
 
 const Exercises = () => {
   const { toast } = useToast();
+  const [selectedType, setSelectedType] = useState<ExerciseType>("سرشانه");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [categories, setCategories] = useState<ExerciseCategory[]>([]);
-  const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
-  const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | undefined>();
-  const [exerciseFormData, setExerciseFormData] = useState({ name: "", category: "دلتوئید خلفی" as ExerciseCategory });
+  const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
   const [categoryFormData, setCategoryFormData] = useState({ name: "" });
+  const [exerciseFormData, setExerciseFormData] = useState({ name: "", categoryId: 0 });
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
 
   useEffect(() => {
-    // Load exercises
-    const savedExercises = localStorage.getItem("exercises");
-    if (savedExercises) {
-      setExercises(JSON.parse(savedExercises));
-    } else {
-      setExercises(defaultExercises);
-      localStorage.setItem("exercises", JSON.stringify(defaultExercises));
-    }
-
-    // Load categories
+    // Load data from localStorage
     const savedCategories = localStorage.getItem("categories");
+    const savedExercises = localStorage.getItem("exercises");
+
     if (savedCategories) {
       setCategories(JSON.parse(savedCategories));
     } else {
       setCategories(defaultCategories);
       localStorage.setItem("categories", JSON.stringify(defaultCategories));
     }
+
+    if (savedExercises) {
+      setExercises(JSON.parse(savedExercises));
+    } else {
+      setExercises(defaultExercises);
+      localStorage.setItem("exercises", JSON.stringify(defaultExercises));
+    }
   }, []);
 
-  // Exercise handlers
-  const handleAddExercise = () => {
-    setSelectedExercise(undefined);
-    setExerciseFormData({ name: "", category: categories[0] || "دلتوئید خلفی" });
-    setIsExerciseDialogOpen(true);
-  };
-
-  const handleEditExercise = (exercise: Exercise) => {
-    setSelectedExercise(exercise);
-    setExerciseFormData({ name: exercise.name, category: exercise.category });
-    setIsExerciseDialogOpen(true);
-  };
-
-  const handleDeleteExercise = (id: number) => {
-    const updatedExercises = exercises.filter((exercise) => exercise.id !== id);
-    setExercises(updatedExercises);
-    localStorage.setItem("exercises", JSON.stringify(updatedExercises));
-    toast({
-      title: "حرکت با موفقیت حذف شد",
-      description: "حرکت مورد نظر از لیست حذف شد.",
-    });
-  };
-
-  const handleSaveExercise = () => {
-    if (!exerciseFormData.name.trim()) {
-      toast({
-        title: "خطا",
-        description: "لطفاً نام حرکت را وارد کنید",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    let updatedExercises: Exercise[];
-    
-    if (selectedExercise) {
-      updatedExercises = exercises.map((exercise) =>
-        exercise.id === selectedExercise.id
-          ? { ...exercise, ...exerciseFormData }
-          : exercise
-      );
-      toast({
-        title: "حرکت ویرایش شد",
-        description: "تغییرات با موفقیت ذخیره شد.",
-      });
-    } else {
-      const newExercise = {
-        ...exerciseFormData,
-        id: Math.max(...exercises.map((e) => e.id), 0) + 1,
-      };
-      updatedExercises = [...exercises, newExercise];
-      toast({
-        title: "حرکت جدید اضافه شد",
-        description: "حرکت جدید با موفقیت به لیست اضافه شد.",
-      });
-    }
-
-    setExercises(updatedExercises);
-    localStorage.setItem("exercises", JSON.stringify(updatedExercises));
-    setIsExerciseDialogOpen(false);
-  };
+  // Filter categories and exercises based on selected type
+  const filteredCategories = categories.filter(cat => cat.type === selectedType);
+  const filteredExercises = exercises.filter(ex => 
+    filteredCategories.some(cat => cat.id === ex.categoryId)
+  );
 
   // Category handlers
   const handleAddCategory = () => {
-    setSelectedCategory(undefined);
-    setCategoryFormData({ name: "" });
     setIsCategoryDialogOpen(true);
+    setCategoryFormData({ name: "" });
   };
 
   const handleEditCategory = (category: ExerciseCategory) => {
-    setSelectedCategory(category);
-    setCategoryFormData({ name: category });
     setIsCategoryDialogOpen(true);
-  };
-
-  const handleDeleteCategory = (category: ExerciseCategory) => {
-    // Check if category is being used by any exercise
-    const isUsed = exercises.some((exercise) => exercise.category === category);
-    if (isUsed) {
-      toast({
-        title: "خطا",
-        description: "این دسته‌بندی در حال استفاده است و نمی‌تواند حذف شود.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const updatedCategories = categories.filter((c) => c !== category);
-    setCategories(updatedCategories);
-    localStorage.setItem("categories", JSON.stringify(updatedCategories));
-    toast({
-      title: "دسته‌بندی با موفقیت حذف شد",
-      description: "دسته‌بندی مورد نظر از لیست حذف شد.",
-    });
+    setCategoryFormData({ name: category.name });
   };
 
   const handleSaveCategory = () => {
-    if (!categoryFormData.name.trim()) {
+    if (!categoryFormData.name) {
       toast({
         title: "خطا",
         description: "لطفاً نام دسته‌بندی را وارد کنید",
@@ -147,127 +73,255 @@ const Exercises = () => {
       return;
     }
 
-    let updatedCategories: ExerciseCategory[];
-    const newCategory = categoryFormData.name as ExerciseCategory;
-    
-    if (selectedCategory) {
-      // Update exercises with old category
-      const updatedExercises = exercises.map((exercise) =>
-        exercise.category === selectedCategory
-          ? { ...exercise, category: newCategory }
-          : exercise
-      );
-      setExercises(updatedExercises);
-      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+    const newCategory: ExerciseCategory = {
+      id: Math.max(...categories.map(c => c.id), 0) + 1,
+      name: categoryFormData.name,
+      type: selectedType
+    };
 
-      // Update category
-      updatedCategories = categories.map((c) =>
-        c === selectedCategory ? newCategory : c
-      );
-      toast({
-        title: "دسته‌بندی ویرایش شد",
-        description: "تغییرات با موفقیت ذخیره شد.",
-      });
-    } else {
-      if (categories.includes(newCategory)) {
-        toast({
-          title: "خطا",
-          description: "این دسته‌بندی قبلاً اضافه شده است.",
-          variant: "destructive",
-        });
-        return;
-      }
-      updatedCategories = [...categories, newCategory];
-      toast({
-        title: "دسته‌بندی جدید اضافه شد",
-        description: "دسته‌بندی جدید با موفقیت به لیست اضافه شد.",
-      });
-    }
-
+    const updatedCategories = [...categories, newCategory];
     setCategories(updatedCategories);
     localStorage.setItem("categories", JSON.stringify(updatedCategories));
     setIsCategoryDialogOpen(false);
+
+    toast({
+      title: "موفقیت",
+      description: "دسته‌بندی جدید با موفقیت اضافه شد"
+    });
+  };
+
+  const handleDeleteCategory = (categoryId: number) => {
+    // Check if category has exercises
+    if (exercises.some(ex => ex.categoryId === categoryId)) {
+      toast({
+        title: "خطا",
+        description: "ابتدا باید تمام حرکات این دسته‌بندی را حذف کنید",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const updatedCategories = categories.filter(c => c.id !== categoryId);
+    setCategories(updatedCategories);
+    localStorage.setItem("categories", JSON.stringify(updatedCategories));
+
+    toast({
+      title: "موفقیت",
+      description: "دسته‌بندی با موفقیت حذف شد"
+    });
+  };
+
+  // Exercise handlers
+  const handleAddExercise = () => {
+    if (filteredCategories.length === 0) {
+      toast({
+        title: "خطا",
+        description: "ابتدا باید یک دسته‌بندی ایجاد کنید",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsExerciseDialogOpen(true);
+    setSelectedExercise(undefined);
+    setExerciseFormData({ name: "", categoryId: filteredCategories[0].id });
+  };
+
+  const handleEditExercise = (exercise: Exercise) => {
+    setIsExerciseDialogOpen(true);
+    setSelectedExercise(exercise);
+    setExerciseFormData({
+      name: exercise.name,
+      categoryId: exercise.categoryId
+    });
+  };
+
+  const handleSaveExercise = () => {
+    if (!exerciseFormData.name) {
+      toast({
+        title: "خطا",
+        description: "لطفاً نام حرکت را وارد کنید",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    let updatedExercises: Exercise[];
+
+    if (selectedExercise) {
+      updatedExercises = exercises.map(ex =>
+        ex.id === selectedExercise.id
+          ? { ...ex, ...exerciseFormData }
+          : ex
+      );
+    } else {
+      const newExercise: Exercise = {
+        id: Math.max(...exercises.map(ex => ex.id), 0) + 1,
+        ...exerciseFormData
+      };
+      updatedExercises = [...exercises, newExercise];
+    }
+
+    setExercises(updatedExercises);
+    localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+    setIsExerciseDialogOpen(false);
+
+    toast({
+      title: "موفقیت",
+      description: selectedExercise
+        ? "حرکت با موفقیت ویرایش شد"
+        : "حرکت جدید با موفقیت اضافه شد"
+    });
+  };
+
+  const handleDeleteExercise = (exerciseId: number) => {
+    const updatedExercises = exercises.filter(ex => ex.id !== exerciseId);
+    setExercises(updatedExercises);
+    localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+
+    toast({
+      title: "موفقیت",
+      description: "حرکت با موفقیت حذف شد"
+    });
   };
 
   return (
     <div className="container mx-auto py-10 space-y-8">
-      <div className="flex flex-col space-y-8">
-        {/* Categories Section */}
-        <div className="flex flex-col space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
-                دسته‌بندی‌های سرشانه
-              </h2>
-              <p className="text-muted-foreground">
-                مدیریت دسته‌بندی‌های تمرینی بخش سرشانه
-              </p>
-            </div>
-            <Button 
-              onClick={handleAddCategory} 
-              className="bg-gradient-to-r from-purple-600 to-purple-400 hover:from-purple-700 hover:to-purple-500 transition-all duration-300 shadow-lg hover:shadow-purple-200/50"
-            >
-              <Plus className="ml-2 h-5 w-5 animate-pulse" />
-              افزودن دسته‌بندی جدید
+      {/* Exercise Type Selection */}
+      <div className="flex gap-2 overflow-x-auto pb-4">
+        {defaultExerciseTypes.map(type => (
+          <Button
+            key={type}
+            onClick={() => setSelectedType(type)}
+            variant={selectedType === type ? "default" : "outline"}
+            className={`min-w-max ${
+              selectedType === type 
+                ? "bg-gradient-to-r from-blue-600 to-blue-400" 
+                : ""
+            }`}
+          >
+            {type}
+          </Button>
+        ))}
+      </div>
+
+      {/* Categories and Exercises */}
+      <div className="grid gap-8 md:grid-cols-2">
+        {/* Categories */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">دسته‌بندی‌های {selectedType}</h3>
+            <Button onClick={handleAddCategory} size="sm">
+              <Plus className="w-4 h-4 ml-1" />
+              افزودن دسته‌بندی
             </Button>
           </div>
-
-          <Card className="overflow-hidden border-t-4 border-t-purple-500 shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="overflow-x-auto">
-              <CategoryTable 
-                categories={categories}
-                onEdit={handleEditCategory}
-                onDelete={handleDeleteCategory}
-              />
-            </div>
+          <Card className="p-4">
+            {filteredCategories.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                هیچ دسته‌بندی‌ای وجود ندارد
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {filteredCategories.map(category => (
+                  <li 
+                    key={category.id}
+                    className="flex items-center justify-between p-3 rounded-lg border group hover:bg-muted/50"
+                  >
+                    <span>{category.name}</span>
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditCategory(category)}
+                      >
+                        ویرایش
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => handleDeleteCategory(category.id)}
+                      >
+                        حذف
+                      </Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </Card>
         </div>
 
-        {/* Exercises Section */}
-        <div className="flex flex-col space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-                حرکات سرشانه
-              </h2>
-              <p className="text-muted-foreground">
-                مدیریت حرکات تمرینی بخش سرشانه
-              </p>
-            </div>
-            <Button 
-              onClick={handleAddExercise} 
-              className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all duration-300 shadow-lg hover:shadow-blue-200/50"
-            >
-              <Plus className="ml-2 h-5 w-5 animate-pulse" />
-              افزودن حرکت جدید
+        {/* Exercises */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">حرکات {selectedType}</h3>
+            <Button onClick={handleAddExercise} size="sm">
+              <Plus className="w-4 h-4 ml-1" />
+              افزودن حرکت
             </Button>
           </div>
-
-          <Card className="overflow-hidden border-t-4 border-t-blue-500 shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="overflow-x-auto">
-              <ExerciseTable 
-                exercises={exercises}
-                onEdit={handleEditExercise}
-                onDelete={handleDeleteExercise}
-              />
-            </div>
+          <Card className="p-4">
+            {filteredExercises.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                هیچ حرکتی وجود ندارد
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {filteredExercises.map(exercise => {
+                  const category = categories.find(c => c.id === exercise.categoryId);
+                  return (
+                    <li 
+                      key={exercise.id}
+                      className="flex items-center justify-between p-3 rounded-lg border group hover:bg-muted/50"
+                    >
+                      <div className="space-y-1">
+                        <span className="block">{exercise.name}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {category?.name}
+                        </span>
+                      </div>
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditExercise(exercise)}
+                        >
+                          ویرایش
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                          onClick={() => handleDeleteExercise(exercise.id)}
+                        >
+                          حذف
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+            )}
           </Card>
         </div>
       </div>
 
+      {/* Dialogs */}
       <CategoryDialog 
         isOpen={isCategoryDialogOpen}
         onOpenChange={setIsCategoryDialogOpen}
-        selectedCategory={selectedCategory}
+        selectedType={selectedType}
         formData={categoryFormData}
         onFormDataChange={setCategoryFormData}
         onSave={handleSaveCategory}
       />
 
-      <ExerciseDialog 
+      <ExerciseDialog
         isOpen={isExerciseDialogOpen}
         onOpenChange={setIsExerciseDialogOpen}
         selectedExercise={selectedExercise}
+        categories={filteredCategories}
         formData={exerciseFormData}
         onFormDataChange={setExerciseFormData}
         onSave={handleSaveExercise}
