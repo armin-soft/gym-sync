@@ -10,7 +10,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
-import { Edit, GraduationCap, ListFilter, MoreHorizontal, Plus, Search, Trash2, UserRound } from "lucide-react";
+import { 
+  Ruler, 
+  Weight, 
+  Phone, 
+  Edit, 
+  GraduationCap, 
+  ListFilter, 
+  MoreHorizontal, 
+  Plus, 
+  Search, 
+  Trash2, 
+  UserRound,
+  Scale,
+  CalendarDays,
+  ClipboardList,
+  AppWindow,
+  Power
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { Input } from "@/components/ui/input";
@@ -136,7 +153,7 @@ const Students = () => {
               <div className="relative p-4">
                 <Search className="absolute right-7 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="جستجو در شاگردان..."
+                  placeholder="جستجو بر اساس نام یا شماره موبایل..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-4 pr-10 bg-transparent border-none focus-visible:ring-1 focus-visible:ring-primary/20"
@@ -151,11 +168,23 @@ const Students = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>همه شاگردان</DropdownMenuItem>
-                <DropdownMenuItem>شاگردان فعال</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <UserRound className="h-4 w-4 ml-2" />
+                  همه شاگردان
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <CalendarDays className="h-4 w-4 ml-2" />
+                  شاگردان فعال
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>مرتب‌سازی بر اساس نام</DropdownMenuItem>
-                <DropdownMenuItem>مرتب‌سازی بر اساس تاریخ</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Scale className="h-4 w-4 ml-2" />
+                  مرتب‌سازی بر اساس نام
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <CalendarDays className="h-4 w-4 ml-2" />
+                  مرتب‌سازی بر اساس تاریخ
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -167,11 +196,33 @@ const Students = () => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-primary/5 hover:bg-primary/5">
-                  <TableHead className="w-14 text-center">تصویر</TableHead>
-                  <TableHead>نام و نام خانوادگی</TableHead>
-                  <TableHead>شماره موبایل</TableHead>
-                  <TableHead>قد (سانتی‌متر)</TableHead>
-                  <TableHead>وزن (کیلوگرم)</TableHead>
+                  <TableHead className="w-14 text-center">
+                    <UserRound className="h-4 w-4 mx-auto text-muted-foreground" />
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <UserRound className="h-4 w-4 text-muted-foreground" />
+                      نام و نام خانوادگی
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      شماره موبایل
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <Ruler className="h-4 w-4 text-muted-foreground" />
+                      قد (سانتی‌متر)
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <Weight className="h-4 w-4 text-muted-foreground" />
+                      وزن (کیلوگرم)
+                    </div>
+                  </TableHead>
                   <TableHead className="text-left">عملیات</TableHead>
                 </TableRow>
               </TableHeader>
@@ -253,11 +304,21 @@ const Students = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>نمایش جزئیات</DropdownMenuItem>
-                              <DropdownMenuItem>برنامه تمرینی</DropdownMenuItem>
-                              <DropdownMenuItem>برنامه غذایی</DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <AppWindow className="h-4 w-4 ml-2" />
+                                نمایش جزئیات
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <ClipboardList className="h-4 w-4 ml-2" />
+                                برنامه تمرینی
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Scale className="h-4 w-4 ml-2" />
+                                برنامه غذایی
+                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-destructive">
+                                <Power className="h-4 w-4 ml-2" />
                                 غیرفعال‌سازی
                               </DropdownMenuItem>
                             </DropdownMenuContent>
