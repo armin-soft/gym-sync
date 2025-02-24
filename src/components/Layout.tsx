@@ -1,8 +1,9 @@
 
 import { useState, Suspense } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu } from "lucide-react";
+import { Menu, Weight } from "lucide-react";
 import { Spinner } from "./ui/spinner";
+import { cn } from "@/lib/utils";
 
 const LoadingFallback = () => (
   <div className="flex h-[50vh] items-center justify-center">
@@ -29,7 +30,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <h1 className="mr-4 text-lg font-semibold">باشگاه بدنسازی فیکس</h1>
+            <div className="flex items-center gap-2">
+              <Weight className={cn(
+                "h-6 w-6",
+                "text-primary animate-pulse"
+              )} />
+              <h1 className="text-lg font-semibold">مدیریت برنامه فیکس</h1>
+            </div>
           </div>
         </header>
         
