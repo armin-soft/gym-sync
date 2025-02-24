@@ -148,6 +148,23 @@ const TrainerProfile = () => {
     return () => subscription.unsubscribe();
   }, [form]);
 
+  const onSubmit = async (data: TrainerFormData) => {
+    try {
+      console.log('Form submitted with:', data);
+      
+      toast({
+        description: "اطلاعات با موفقیت ذخیره شد.",
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast({
+        title: "خطا",
+        description: "مشکلی در ذخیره اطلاعات پیش آمد. لطفاً مجدداً تلاش کنید.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-primary/5 via-background to-primary/10">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
