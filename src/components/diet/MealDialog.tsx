@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -17,12 +18,13 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import type { Meal } from "./MealList";
+import type { Meal, MealType, WeekDay } from "@/types/meal";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// اطمینان از اجباری بودن همه فیلدهای ضروری
 const mealFormSchema = z.object({
-  name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد").min(1, "نام غذا الزامی است"),
-  time: z.string().min(1, "زمان وعده غذایی الزامی است"),
+  name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد"),
+  type: z.string().min(1, "نوع وعده غذایی الزامی است"),
+  day: z.string().min(1, "روز هفته الزامی است"),
   calories: z.number().nonnegative("میزان کالری نمی‌تواند منفی باشد"),
   protein: z.number().nonnegative("میزان پروتئین نمی‌تواند منفی باشد"),
   carbs: z.number().nonnegative("میزان کربوهیدرات نمی‌تواند منفی باشد"),
@@ -30,14 +32,15 @@ const mealFormSchema = z.object({
   description: z.string(),
 }).required();
 
-// استفاده از Zod برای تعریف تایپ
-type MealFormData = Required<z.infer<typeof mealFormSchema>>;
+type MealFormData = z.infer<typeof mealFormSchema>;
 
 interface MealDialogProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: Omit<Meal, "id" | "image">) => void;
+  onSave: (data: Omit<Meal, "id">) => void;
   meal?: Meal;
+  mealTypes: MealType[];
+  weekDays: WeekDay[];
 }
 
 export const MealDialog = ({
@@ -45,12 +48,15 @@ export const MealDialog = ({
   onClose,
   onSave,
   meal,
+  mealTypes,
+  weekDays,
 }: MealDialogProps) => {
   const form = useForm<MealFormData>({
     resolver: zodResolver(mealFormSchema),
     defaultValues: {
       name: meal?.name ?? "",
-      time: meal?.time ?? "",
+      type: meal?.type ?? "",
+      day: meal?.day ?? "",
       calories: meal?.calories ?? 0,
       protein: meal?.protein ?? 0,
       carbs: meal?.carbs ?? 0,
@@ -89,19 +95,57 @@ export const MealDialog = ({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="time"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>زمان وعده</FormLabel>
-                  <FormControl>
-                    <Input placeholder="مثال: ۸:۰۰" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>نوع وعده</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="نوع وعده را انتخاب کنید" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {mealTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="day"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>روز هفته</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="روز هفته را انتخاب کنید" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {weekDays.map((day) => (
+                          <SelectItem key={day} value={day}>
+                            {day}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
