@@ -83,13 +83,16 @@ const TrainerProfile = () => {
     }
   }, [form]);
 
-  const handleImageClick = () => {
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!isUploading && fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
   const handleImageDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setAvatarUrl("/placeholder.svg");
     localStorage.removeItem('trainerAvatar');
@@ -101,59 +104,78 @@ const TrainerProfile = () => {
     });
   };
 
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
     const file = event.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: "خطا",
-          description: "لطفاً یک فایل تصویری انتخاب کنید",
-          variant: "destructive",
-        });
-        return;
-      }
+    console.log("Selected file:", file); // Debug log
 
-      if (file.size > 2 * 1024 * 1024) {
-        toast({
-          title: "خطا",
-          description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
-          variant: "destructive",
-        });
-        return;
-      }
+    if (!file) {
+      console.log("No file selected"); // Debug log
+      return;
+    }
 
-      try {
-        setIsUploading(true);
-        const reader = new FileReader();
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "خطا",
+        description: "لطفاً یک فایل تصویری انتخاب کنید",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "خطا",
+        description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      console.log("FileReader onload triggered"); // Debug log
+      const result = e.target?.result;
+      if (result && typeof result === 'string') {
+        console.log("Setting new avatar URL"); // Debug log
+        setAvatarUrl(result);
+        localStorage.setItem('trainerAvatar', result);
         
-        reader.onload = (e) => {
-          const newAvatarUrl = e.target?.result as string;
-          if (newAvatarUrl) {
-            setAvatarUrl(newAvatarUrl);
-            localStorage.setItem('trainerAvatar', newAvatarUrl);
-            
-            const currentData = form.getValues();
-            setCompletionPercentage(calculateProfileCompletion(currentData));
-            
-            toast({
-              description: "تصویر پروفایل با موفقیت به‌روزرسانی شد.",
-            });
-          }
-        };
-
-        reader.readAsDataURL(file);
-      } catch (error) {
-        console.error('Error uploading image:', error);
+        const currentData = form.getValues();
+        setCompletionPercentage(calculateProfileCompletion(currentData));
+        
         toast({
-          title: "خطا",
-          description: "مشکلی در آپلود تصویر پیش آمد. لطفاً مجدداً تلاش کنید.",
-          variant: "destructive",
+          description: "تصویر پروفایل با موفقیت به‌روزرسانی شد.",
         });
-      } finally {
-        setIsUploading(false);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
+      }
+    };
+
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error); // Debug log
+      toast({
+        title: "خطا",
+        description: "مشکلی در خواندن فایل پیش آمد. لطفاً مجدداً تلاش کنید.",
+        variant: "destructive",
+      });
+    };
+
+    try {
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error initiating file read:', error); // Debug log
+      toast({
+        title: "خطا",
+        description: "مشکلی در آپلود تصویر پیش آمد. لطفاً مجدداً تلاش کنید.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
     }
   };
@@ -206,9 +228,8 @@ const TrainerProfile = () => {
                   className="hidden"
                   accept="image/png,image/jpeg,image/jpg,image/gif"
                   onChange={handleImageChange}
-                  disabled={isUploading}
                 />
-                <Avatar 
+                <div 
                   className={cn(
                     "w-48 h-48 rounded-2xl ring-4 ring-background shadow-2xl transition-all duration-500",
                     "group-hover:ring-primary/20 group-hover:shadow-primary/20 group-hover:scale-[1.02]",
@@ -216,11 +237,13 @@ const TrainerProfile = () => {
                   )}
                   onClick={handleImageClick}
                 >
-                  <AvatarImage src={avatarUrl} className="object-cover" />
-                  <AvatarFallback className="text-6xl bg-primary/5">
-                    {form.getValues("name")?.slice(0, 2).toUpperCase() || "MA"}
-                  </AvatarFallback>
-                </Avatar>
+                  <Avatar className="w-full h-full">
+                    <AvatarImage src={avatarUrl} alt="Profile" className="object-cover" />
+                    <AvatarFallback className="text-6xl bg-primary/5">
+                      {form.getValues("name")?.slice(0, 2).toUpperCase() || "ـــ"}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
 
                 <div className={cn(
                   "absolute inset-0 flex items-center justify-center rounded-2xl",
@@ -242,7 +265,7 @@ const TrainerProfile = () => {
                     variant="destructive"
                     size="icon"
                     className="absolute -top-2 -right-2 rounded-full opacity-0 group-hover:opacity-100 
-                             transition-all duration-300 hover:scale-110 shadow-lg"
+                             transition-all duration-300 hover:scale-110 shadow-lg z-10"
                     onClick={handleImageDelete}
                   >
                     <Trash2 className="h-4 w-4" />
