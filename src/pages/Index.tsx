@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -103,9 +104,29 @@ const Index = () => {
       });
     };
 
+    // اولین اجرای محاسبات
     calculateStats();
-    const interval = setInterval(calculateStats, 300000);
-    return () => clearInterval(interval);
+
+    // ایجاد یک MutationObserver برای نظارت بر تغییرات localStorage
+    const observer = new MutationObserver(() => {
+      calculateStats();
+    });
+
+    // نظارت بر تغییرات localStorage
+    const storageHandler = () => {
+      calculateStats();
+    };
+
+    window.addEventListener('storage', storageHandler);
+
+    // اضافه کردن یک interval کوتاه برای اطمینان از به‌روزرسانی در صورت تغییر مستقیم localStorage
+    const quickInterval = setInterval(calculateStats, 1000);
+
+    return () => {
+      window.removeEventListener('storage', storageHandler);
+      observer.disconnect();
+      clearInterval(quickInterval);
+    };
   }, []);
 
   const quickActions = [
