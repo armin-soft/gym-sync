@@ -1,0 +1,67 @@
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ExerciseCategory } from "@/types/exercise";
+
+interface CategoryDialogProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  selectedCategory?: ExerciseCategory;
+  formData: { name: string };
+  onFormDataChange: (data: { name: string }) => void;
+  onSave: () => void;
+}
+
+export function CategoryDialog({
+  isOpen,
+  onOpenChange,
+  selectedCategory,
+  formData,
+  onFormDataChange,
+  onSave,
+}: CategoryDialogProps) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold text-center">
+            {selectedCategory ? "ویرایش دسته‌بندی" : "افزودن دسته‌بندی جدید"}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6 py-4">
+          <div className="space-y-2">
+            <Label className="text-base">نام دسته‌بندی</Label>
+            <Input
+              value={formData.name}
+              onChange={(e) => onFormDataChange({ name: e.target.value })}
+              placeholder="نام دسته‌بندی را وارد کنید"
+              className="h-11 text-base focus-visible:ring-blue-400"
+            />
+          </div>
+        </div>
+        <div className="flex justify-end gap-3 mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            className="hover:bg-muted/50 transition-colors"
+          >
+            انصراف
+          </Button>
+          <Button 
+            onClick={onSave}
+            className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
+          >
+            ذخیره
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
