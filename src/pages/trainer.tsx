@@ -8,23 +8,31 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, CreditCard, KeyRound, Mail, Phone, Save, User } from "lucide-react";
+import { Camera, CreditCard, Eye, EyeOff, KeyRound, Mail, Phone, Save, Trash2, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+const persianCharRegex = /^[\u0600-\u06FF\s]+$/;
+const persianNumberRegex = /^[۰-۹]+$/;
+const iranianPhoneRegex = /^09[0-9]{9}$/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 const trainerFormSchema = z.object({
-  name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
+  name: z.string()
+    .min(2, "نام باید حداقل ۲ کاراکتر باشد")
+    .regex(persianCharRegex, "فقط حروف فارسی مجاز است"),
   bio: z.string()
     .min(10, "بیوگرافی باید حداقل ۱۰ کاراکتر باشد")
-    .max(500, "بیوگرافی نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد"),
+    .max(500, "بیوگرافی نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد")
+    .regex(persianCharRegex, "فقط حروف فارسی مجاز است"),
   phone: z.string()
-    .min(11, "شماره موبایل باید ۱۱ رقم باشد")
-    .regex(/^09\d{9}$/, "شماره موبایل باید با ۰۹ شروع شود"),
-  email: z.string().email("ایمیل نامعتبر است"),
+    .regex(iranianPhoneRegex, "شماره موبایل معتبر نیست. مثال: ۰۹۱۲۳۴۵۶۷۸۹"),
+  email: z.string()
+    .regex(emailRegex, "ایمیل معتبر نیست"),
   password: z.string()
-    .min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "رمز عبور باید شامل حروف بزرگ، کوچک و اعداد باشد"),
+    .min(8, "گذرواژه باید حداقل ۸ کاراکتر باشد")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "گذرواژه باید شامل حروف بزرگ، کوچک و اعداد باشد"),
   price: z.string()
     .min(1, "مبلغ نمی‌تواند خالی باشد")
     .regex(/^\d+$/, "لطفاً مبلغ را به صورت عدد وارد کنید"),
@@ -37,6 +45,7 @@ const TrainerProfile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
   const [isUploading, setIsUploading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<TrainerFormData>({
     resolver: zodResolver(trainerFormSchema),
@@ -80,6 +89,17 @@ const TrainerProfile = () => {
     }
   };
 
+  const handleImageDelete = () => {
+    setAvatarUrl("/placeholder.svg");
+    localStorage.removeItem('trainerAvatar');
+    const currentData = form.getValues();
+    setCompletionPercentage(calculateProfileCompletion(currentData));
+    
+    toast({
+      description: "تصویر پروفایل با موفقیت حذف شد.",
+    });
+  };
+
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -108,8 +128,7 @@ const TrainerProfile = () => {
             }));
             
             toast({
-              title: "موفقیت‌آمیز",
-              description: "تصویر پروفایل شما به‌روزرسانی شد.",
+              description: "تصویر پروفایل با موفقیت به‌روزرسانی شد.",
             });
           }
         };
@@ -189,6 +208,16 @@ const TrainerProfile = () => {
                 <Camera className="h-8 w-8 text-white" />
               </div>
             </div>
+            {avatarUrl !== "/placeholder.svg" && (
+              <Button
+                variant="destructive"
+                size="icon"
+                className="absolute -left-4 top-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={handleImageDelete}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
           </div>
           <div className="absolute bottom-4 right-44 left-6">
             <div className="h-1 w-full bg-primary/10 rounded-full overflow-hidden">
@@ -246,9 +275,6 @@ const TrainerProfile = () => {
                         {...field} 
                       />
                     </FormControl>
-                    <FormDescription className="text-xs">
-                      حداکثر ۵۰۰ کاراکتر
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -315,18 +341,33 @@ const TrainerProfile = () => {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <KeyRound className="h-4 w-4" />
-                        رمز عبور
+                        گذرواژه
                       </FormLabel>
                       <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="••••••••" 
-                          dir="ltr"
-                          className="text-left transition-all duration-300 border-primary/20 
-                                   focus-visible:border-primary/40 hover:border-primary/30
-                                   focus-visible:ring-2 focus-visible:ring-primary/20"
-                          {...field} 
-                        />
+                        <div className="relative">
+                          <Input 
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••" 
+                            dir="ltr"
+                            className="text-left transition-all duration-300 border-primary/20 
+                                     focus-visible:border-primary/40 hover:border-primary/30
+                                     focus-visible:ring-2 focus-visible:ring-primary/20 pr-10"
+                            {...field} 
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute left-0 top-0 h-full px-3 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4 text-muted-foreground/70" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-muted-foreground/70" />
+                            )}
+                          </Button>
+                        </div>
                       </FormControl>
                       <FormDescription className="text-xs">
                         حداقل ۸ کاراکتر شامل حروف بزرگ، کوچک و اعداد
