@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { CategoryDialog } from "@/components/exercises/CategoryDialog";
 import { ExerciseTable } from "@/components/exercises/ExerciseTable";
 import { CategoryTable } from "@/components/exercises/CategoryTable";
+import { TypeList } from "@/components/exercises/TypeList";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -299,69 +299,41 @@ const Exercises = () => {
   };
 
   return (
-    <div className="container mx-auto py-10 space-y-8">
-      <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">انواع حرکت</h3>
-          <Button onClick={handleAddType} size="sm">
-            <Plus className="w-4 h-4 ml-1" />
-            افزودن نوع حرکت
-          </Button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {exerciseTypes.map(type => (
-            <div key={type} className="flex items-center gap-2 group">
-              <Button
-                onClick={() => setSelectedType(type)}
-                variant={selectedType === type ? "default" : "outline"}
-                className={`min-w-max ${
-                  selectedType === type 
-                    ? "bg-gradient-to-r from-blue-600 to-blue-400" 
-                    : ""
-                }`}
-              >
-                {type}
-              </Button>
-              <div className="hidden group-hover:flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEditType(type);
-                  }}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteType(type);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+    <div className="container mx-auto py-8 px-4 space-y-8 max-w-7xl">
+      <TypeList 
+        types={exerciseTypes}
+        selectedType={selectedType}
+        onTypeSelect={setSelectedType}
+        onAddType={() => {
+          setIsTypeDialogOpen(true);
+          setNewTypeName("");
+          setEditingType(null);
+        }}
+        onEditType={(type) => {
+          setIsTypeDialogOpen(true);
+          setNewTypeName(type);
+          setEditingType(type);
+        }}
+        onDeleteType={handleDeleteType}
+      />
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">دسته‌بندی‌های {selectedType}</h3>
-            <Button onClick={handleAddCategory} size="sm">
-              <Plus className="w-4 h-4 ml-1" />
-              افزودن دسته‌بندی
-            </Button>
-          </div>
-          <Card className="p-4">
-            <div className="overflow-x-auto">
+          <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-purple-900">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                دسته‌بندی‌های {selectedType}
+              </h3>
+              <Button 
+                onClick={handleAddCategory} 
+                size="sm"
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <Plus className="w-4 h-4 ml-1" />
+                افزودن دسته‌بندی
+              </Button>
+            </div>
+            <div className="overflow-x-auto rounded-lg border bg-white dark:bg-gray-800">
               <CategoryTable 
                 categories={filteredCategories}
                 onEdit={handleEditCategory}
@@ -372,15 +344,21 @@ const Exercises = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">حرکات {selectedType}</h3>
-            <Button onClick={handleAddExercise} size="sm">
-              <Plus className="w-4 h-4 ml-1" />
-              افزودن حرکت
-            </Button>
-          </div>
-          <Card className="p-4">
-            <div className="overflow-x-auto">
+          <Card className="p-6 bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-gray-900 dark:to-emerald-900">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                حرکات {selectedType}
+              </h3>
+              <Button 
+                onClick={handleAddExercise} 
+                size="sm"
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Plus className="w-4 h-4 ml-1" />
+                افزودن حرکت
+              </Button>
+            </div>
+            <div className="overflow-x-auto rounded-lg border bg-white dark:bg-gray-800">
               <ExerciseTable 
                 exercises={filteredExercises}
                 categories={categories}
