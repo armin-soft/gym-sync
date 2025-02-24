@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -15,7 +16,9 @@ import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { CategoryDialog } from "@/components/exercises/CategoryDialog";
 import { ExerciseTable } from "@/components/exercises/ExerciseTable";
 import { CategoryTable } from "@/components/exercises/CategoryTable";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, Label, Input } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const Exercises = () => {
   const { toast } = useToast();
