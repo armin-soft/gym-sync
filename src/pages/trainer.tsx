@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -90,7 +89,8 @@ const TrainerProfile = () => {
     }
   };
 
-  const handleImageDelete = () => {
+  const handleImageDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setAvatarUrl("/placeholder.svg");
     localStorage.removeItem('trainerAvatar');
     const currentData = form.getValues();
@@ -104,6 +104,15 @@ const TrainerProfile = () => {
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "خطا",
+          description: "لطفاً یک فایل تصویری انتخاب کنید",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (file.size > 2 * 1024 * 1024) {
         toast({
           title: "خطا",
@@ -124,9 +133,7 @@ const TrainerProfile = () => {
             localStorage.setItem('trainerAvatar', newAvatarUrl);
             
             const currentData = form.getValues();
-            setCompletionPercentage(calculateProfileCompletion({
-              ...currentData,
-            }));
+            setCompletionPercentage(calculateProfileCompletion(currentData));
             
             toast({
               description: "تصویر پروفایل با موفقیت به‌روزرسانی شد.",
@@ -136,6 +143,7 @@ const TrainerProfile = () => {
 
         reader.readAsDataURL(file);
       } catch (error) {
+        console.error('Error uploading image:', error);
         toast({
           title: "خطا",
           description: "مشکلی در آپلود تصویر پیش آمد. لطفاً مجدداً تلاش کنید.",
@@ -143,6 +151,9 @@ const TrainerProfile = () => {
         });
       } finally {
         setIsUploading(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       }
     }
   };
@@ -167,14 +178,12 @@ const TrainerProfile = () => {
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-primary/5 via-background to-primary/10">
-      {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-1/4 w-[700px] h-[700px] bg-primary/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto py-8 relative z-10">
-        {/* Header */}
         <div className="relative flex flex-col items-start gap-4 mb-8 p-6 rounded-lg 
                       bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg border border-white/10
                       animate-in fade-in slide-in-from-top duration-1000">
@@ -188,7 +197,6 @@ const TrainerProfile = () => {
         </div>
 
         <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-          {/* Profile Card */}
           <div className="space-y-6">
             <Card className="relative overflow-hidden p-6 backdrop-blur-xl bg-white/50 border-primary/10">
               <div className="relative group mx-auto w-48 h-48">
@@ -196,7 +204,7 @@ const TrainerProfile = () => {
                   type="file"
                   ref={fileInputRef}
                   className="hidden"
-                  accept="image/*"
+                  accept="image/png,image/jpeg,image/jpg,image/gif"
                   onChange={handleImageChange}
                   disabled={isUploading}
                 />
@@ -214,17 +222,22 @@ const TrainerProfile = () => {
                   </AvatarFallback>
                 </Avatar>
 
-                {/* Camera Overlay */}
                 <div className={cn(
                   "absolute inset-0 flex items-center justify-center rounded-2xl",
                   "bg-gradient-to-t from-black/60 to-transparent",
                   "opacity-0 group-hover:opacity-100 transition-all duration-300"
                 )}>
-                  <Camera className="h-10 w-10 text-white drop-shadow-lg transform -translate-y-4 group-hover:translate-y-0 transition-all duration-300" />
+                  {isUploading ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent" />
+                      <span className="text-white text-sm">در حال آپلود...</span>
+                    </div>
+                  ) : (
+                    <Camera className="h-10 w-10 text-white drop-shadow-lg transform -translate-y-4 group-hover:translate-y-0 transition-all duration-300" />
+                  )}
                 </div>
 
-                {/* Delete Button */}
-                {avatarUrl !== "/placeholder.svg" && (
+                {avatarUrl !== "/placeholder.svg" && !isUploading && (
                   <Button
                     variant="destructive"
                     size="icon"
@@ -237,7 +250,6 @@ const TrainerProfile = () => {
                 )}
               </div>
 
-              {/* Profile Completion */}
               <div className="mt-8 space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-foreground/70">تکمیل پروفایل</span>
@@ -252,7 +264,6 @@ const TrainerProfile = () => {
               </div>
             </Card>
 
-            {/* Quick Info */}
             <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 space-y-4">
               <h3 className="text-lg font-semibold">راهنمای تکمیل پروفایل</h3>
               <ul className="space-y-3 text-sm text-muted-foreground">
@@ -276,11 +287,9 @@ const TrainerProfile = () => {
             </Card>
           </div>
 
-          {/* Form Content */}
           <Card className="backdrop-blur-xl bg-white/50 border-primary/10">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-6">
-                {/* Personal Information */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2">
                     <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
@@ -337,7 +346,6 @@ const TrainerProfile = () => {
                   </div>
                 </div>
 
-                {/* Contact Information */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2">
                     <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
@@ -402,7 +410,6 @@ const TrainerProfile = () => {
                   </div>
                 </div>
 
-                {/* Security & Business */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2">
                     <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
@@ -490,7 +497,6 @@ const TrainerProfile = () => {
                   </div>
                 </div>
 
-                {/* Submit Button */}
                 <Button 
                   type="submit" 
                   className="w-full md:w-auto bg-gradient-to-r from-primary/90 to-primary/80 hover:to-primary
