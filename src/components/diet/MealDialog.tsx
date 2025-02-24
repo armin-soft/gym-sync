@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useEffect } from "react";
 
 // تعریف تایپ فرم
 type MealFormData = z.infer<typeof mealFormSchema>;
@@ -57,6 +58,25 @@ export const MealDialog = ({
       description: meal?.description || "",
     },
   });
+
+  // هنگام باز شدن دیالوگ، فرم را با مقادیر موجود پر می‌کنیم
+  useEffect(() => {
+    if (meal && open) {
+      form.reset({
+        name: meal.name,
+        type: meal.type,
+        day: meal.day,
+        description: meal.description,
+      });
+    } else if (!meal && open) {
+      form.reset({
+        name: "",
+        type: "",
+        day: "",
+        description: "",
+      });
+    }
+  }, [meal, open, form]);
 
   const onSubmit = (data: MealFormData) => {
     onSave({
@@ -177,3 +197,4 @@ export const MealDialog = ({
     </Dialog>
   );
 };
+

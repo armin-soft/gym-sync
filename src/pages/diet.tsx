@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MealDialog } from "@/components/diet/MealDialog";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,19 @@ const Diet = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
+
+  // خواندن داده‌ها از localStorage در هنگام بارگذاری کامپوننت
+  useEffect(() => {
+    const savedMeals = localStorage.getItem('meals');
+    if (savedMeals) {
+      setMeals(JSON.parse(savedMeals));
+    }
+  }, []);
+
+  // ذخیره داده‌ها در localStorage هر زمان که meals تغییر می‌کند
+  useEffect(() => {
+    localStorage.setItem('meals', JSON.stringify(meals));
+  }, [meals]);
 
   const handleDelete = (id: number) => {
     setMeals(meals.filter((meal) => meal.id !== id));
