@@ -50,10 +50,10 @@ export const MealDialog = ({
   const form = useForm<MealFormData>({
     resolver: zodResolver(mealFormSchema),
     defaultValues: {
-      name: meal?.name ?? "",
-      type: meal?.type ?? "",
-      day: meal?.day ?? "",
-      description: meal?.description ?? "",
+      name: meal?.name || "",
+      type: meal?.type || "",
+      day: meal?.day || "",
+      description: meal?.description || "",
     },
   });
 
