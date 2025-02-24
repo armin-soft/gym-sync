@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -14,8 +14,11 @@ import {
   LineChart,
   HelpCircle,
   X,
-  Weight,
+  ChevronRight,
+  Menu
 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { useEffect, useState } from "react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -27,6 +30,7 @@ interface SidebarItem {
   href: string;
   icon: React.ElementType;
   description?: string;
+  badge?: string;
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -82,64 +86,99 @@ const sidebarItems: SidebarItem[] = [
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  if (!mounted) return null;
   
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="p-0 w-80">
-        <div className="border-b">
-          <div className="flex h-16 items-center px-4">
-            <Weight className="ml-2 h-6 w-6 text-primary animate-pulse" />
-            <div className="text-lg font-bold">مدیریت برنامه فیکس</div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="mr-auto h-8 w-8"
-              onClick={onClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+      <SheetContent 
+        side="right" 
+        className="w-[85vw] sm:w-[400px] p-0 border-l bg-card/80 backdrop-blur-xl"
+      >
+        <div className="flex h-full flex-col">
+          <SheetHeader className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                  <Menu className="h-4 w-4 text-primary" />
+                </div>
+                <SheetTitle>منوی اصلی</SheetTitle>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full hover:bg-accent"
+                onClick={onClose}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <Separator className="my-4" />
+          </SheetHeader>
+          
+          <ScrollArea className="flex-1 overflow-hidden">
+            <div className="space-y-2 p-2">
+              {sidebarItems.map((item, index) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={onClose}
+                  className={cn(
+                    "group flex items-center gap-3 rounded-lg border border-transparent p-3 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+                    location.pathname === item.href && "border-border bg-accent/50 text-accent-foreground",
+                    "animate-in fade-in-50 slide-in-from-right",
+                    { "delay-150": index > 0 }
+                  )}
+                >
+                  <div className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg border transition-colors",
+                    location.pathname === item.href 
+                      ? "border-primary/50 bg-primary text-primary-foreground"
+                      : "border-transparent bg-accent/50 text-muted-foreground group-hover:border-border group-hover:text-accent-foreground"
+                  )}>
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  
+                  <div className="flex flex-1 flex-col">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium leading-none">
+                        {item.title}
+                      </span>
+                      <ChevronRight className={cn(
+                        "h-4 w-4 text-muted-foreground/50 transition-transform",
+                        location.pathname === item.href && "rotate-90"
+                      )} />
+                    </div>
+                    {item.description && (
+                      <span className="mt-1 line-clamp-1 text-xs text-muted-foreground">
+                        {item.description}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </ScrollArea>
+          
+          <div className="border-t bg-card/80 p-4 backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                  <Dumbbell className="h-4 w-4 text-primary-foreground" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">مدیریت فیکس</span>
+                  <span className="text-xs text-muted-foreground">نسخه ۱.۰.۰</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <ScrollArea className="h-[calc(100vh-4rem)] pb-10">
-          <div className="space-y-1 p-4">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  "group relative flex items-center rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-accent transition-all duration-200",
-                  location.pathname === item.href 
-                    ? "bg-accent text-accent-foreground" 
-                    : "text-muted-foreground hover:text-primary",
-                  "animate-in fade-in-50 slide-in-from-right-8"
-                )}
-              >
-                <div className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-200",
-                  location.pathname === item.href 
-                    ? "bg-primary text-primary-foreground"
-                    : "border bg-background"
-                )}>
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div className="flex-1 mr-3">
-                  <div className="text-sm font-semibold leading-none tracking-tight">
-                    {item.title}
-                  </div>
-                  {item.description && (
-                    <div className="mt-1 text-xs font-normal text-muted-foreground line-clamp-1">
-                      {item.description}
-                    </div>
-                  )}
-                </div>
-                {location.pathname === item.href && (
-                  <div className="absolute right-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-lg bg-primary" />
-                )}
-              </Link>
-            ))}
-          </div>
-        </ScrollArea>
       </SheetContent>
     </Sheet>
   );
