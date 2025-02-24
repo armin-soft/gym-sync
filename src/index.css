@@ -52,7 +52,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border text-base;
   }
   
   html {
@@ -62,6 +62,30 @@
   
   body {
     @apply bg-background text-foreground antialiased;
+  }
+
+  h1 {
+    @apply text-2xl;
+  }
+
+  h2 {
+    @apply text-xl;
+  }
+
+  h3 {
+    @apply text-lg;
+  }
+
+  h4, h5, h6 {
+    @apply text-base;
+  }
+
+  .text-3xl {
+    @apply text-2xl;
+  }
+
+  .text-4xl {
+    @apply text-3xl;
   }
 
   /* Persian numbers and RTL text */
@@ -75,6 +99,7 @@
   input, textarea, select {
     direction: rtl;
     text-align: right;
+    @apply text-sm;
   }
 
   /* استثنا برای ورودی‌های لاتین */
@@ -87,6 +112,7 @@
   /* تنظیمات مخصوص جداول */
   table {
     direction: rtl;
+    @apply text-sm;
   }
 
   /* تنظیمات مخصوص تایپوگرافی */
@@ -98,6 +124,11 @@
   /* تنظیمات مخصوص المان‌های flexbox */
   .flex {
     direction: rtl;
+  }
+
+  /* تنظیمات دکمه‌ها */
+  button {
+    @apply text-sm;
   }
 }
 
