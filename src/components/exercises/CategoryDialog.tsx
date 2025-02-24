@@ -25,7 +25,7 @@ interface CategoryDialogProps {
 export function CategoryDialog({
   isOpen,
   onOpenChange,
-  exerciseTypes,
+  exerciseTypes = [],
   selectedType,
   formData,
   onFormDataChange,
