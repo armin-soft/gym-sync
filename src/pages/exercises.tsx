@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
@@ -16,22 +15,39 @@ import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { CategoryDialog } from "@/components/exercises/CategoryDialog";
 import { ExerciseTable } from "@/components/exercises/ExerciseTable";
 import { CategoryTable } from "@/components/exercises/CategoryTable";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, Label, Input } from "@/components/ui/dialog";
 
 const Exercises = () => {
   const { toast } = useToast();
+  const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
   const [selectedType, setSelectedType] = useState<ExerciseType>("سرشانه");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [categories, setCategories] = useState<ExerciseCategory[]>([]);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
+  const [isTypeDialogOpen, setIsTypeDialogOpen] = useState(false);
+  const [newTypeName, setNewTypeName] = useState("");
+  const [editingType, setEditingType] = useState<string | null>(null);
   const [categoryFormData, setCategoryFormData] = useState({ name: "" });
   const [exerciseFormData, setExerciseFormData] = useState({ name: "", categoryId: 0 });
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
   const [isAscending, setIsAscending] = useState(true);
 
   useEffect(() => {
+    const savedTypes = localStorage.getItem("exerciseTypes");
     const savedCategories = localStorage.getItem("categories");
     const savedExercises = localStorage.getItem("exercises");
+
+    if (savedTypes) {
+      const types = JSON.parse(savedTypes);
+      setExerciseTypes(types);
+      if (types.length > 0) {
+        setSelectedType(types[0]);
+      }
+    } else {
+      setExerciseTypes(defaultExerciseTypes);
+      localStorage.setItem("exerciseTypes", JSON.stringify(defaultExerciseTypes));
+    }
 
     if (savedCategories) {
       setCategories(JSON.parse(savedCategories));
@@ -121,7 +137,91 @@ const Exercises = () => {
     });
   };
 
-  // Exercise handlers
+  const handleAddType = () => {
+    setIsTypeDialogOpen(true);
+    setNewTypeName("");
+    setEditingType(null);
+  };
+
+  const handleEditType = (type: string) => {
+    setIsTypeDialogOpen(true);
+    setNewTypeName(type);
+    setEditingType(type);
+  };
+
+  const handleSaveType = () => {
+    if (!newTypeName.trim()) {
+      toast({
+        title: "خطا",
+        description: "لطفاً نام نوع حرکت را وارد کنید",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    let updatedTypes: string[];
+    if (editingType) {
+      updatedTypes = exerciseTypes.map(type => 
+        type === editingType ? newTypeName : type
+      );
+      
+      const updatedCategories = categories.map(cat =>
+        cat.type === editingType ? { ...cat, type: newTypeName } : cat
+      );
+      setCategories(updatedCategories);
+      localStorage.setItem("categories", JSON.stringify(updatedCategories));
+      
+      if (selectedType === editingType) {
+        setSelectedType(newTypeName);
+      }
+    } else {
+      if (exerciseTypes.includes(newTypeName)) {
+        toast({
+          title: "خطا",
+          description: "این نوع حرکت قبلاً اضافه شده است",
+          variant: "destructive"
+        });
+        return;
+      }
+      updatedTypes = [...exerciseTypes, newTypeName];
+    }
+
+    setExerciseTypes(updatedTypes);
+    localStorage.setItem("exerciseTypes", JSON.stringify(updatedTypes));
+    setIsTypeDialogOpen(false);
+    
+    toast({
+      title: "موفقیت",
+      description: editingType 
+        ? "نوع حرکت با موفقیت ویرایش شد"
+        : "نوع حرکت جدید با موفقیت اضافه شد"
+    });
+  };
+
+  const handleDeleteType = (type: string) => {
+    if (categories.some(cat => cat.type === type)) {
+      toast({
+        title: "خطا",
+        description: "ابتدا باید تمام دسته‌بندی‌های این نوع حرکت را حذف کنید",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const updatedTypes = exerciseTypes.filter(t => t !== type);
+    setExerciseTypes(updatedTypes);
+    localStorage.setItem("exerciseTypes", JSON.stringify(updatedTypes));
+
+    if (selectedType === type && updatedTypes.length > 0) {
+      setSelectedType(updatedTypes[0]);
+    }
+
+    toast({
+      title: "موفقیت",
+      description: "نوع حرکت با موفقیت حذف شد"
+    });
+  };
+
   const handleAddExercise = () => {
     if (filteredCategories.length === 0) {
       toast({
@@ -197,22 +297,56 @@ const Exercises = () => {
 
   return (
     <div className="container mx-auto py-10 space-y-8">
-      <div className="flex gap-2 overflow-x-auto pb-4">
-        {defaultExerciseTypes.map(type => (
-          <Button
-            key={type}
-            onClick={() => setSelectedType(type)}
-            variant={selectedType === type ? "default" : "outline"}
-            className={`min-w-max ${
-              selectedType === type 
-                ? "bg-gradient-to-r from-blue-600 to-blue-400" 
-                : ""
-            }`}
-          >
-            {type}
+      <Card className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">انواع حرکت</h3>
+          <Button onClick={handleAddType} size="sm">
+            <Plus className="w-4 h-4 ml-1" />
+            افزودن نوع حرکت
           </Button>
-        ))}
-      </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {exerciseTypes.map(type => (
+            <div key={type} className="flex items-center gap-2 group">
+              <Button
+                onClick={() => setSelectedType(type)}
+                variant={selectedType === type ? "default" : "outline"}
+                className={`min-w-max ${
+                  selectedType === type 
+                    ? "bg-gradient-to-r from-blue-600 to-blue-400" 
+                    : ""
+                }`}
+              >
+                {type}
+              </Button>
+              <div className="hidden group-hover:flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditType(type);
+                  }}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteType(type);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-4">
@@ -274,6 +408,42 @@ const Exercises = () => {
         onFormDataChange={setExerciseFormData}
         onSave={handleSaveExercise}
       />
+
+      <Dialog open={isTypeDialogOpen} onOpenChange={setIsTypeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-center">
+              {editingType ? "ویرایش نوع حرکت" : "افزودن نوع حرکت جدید"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label className="text-base">نام نوع حرکت</Label>
+              <Input
+                value={newTypeName}
+                onChange={(e) => setNewTypeName(e.target.value)}
+                placeholder="نام نوع حرکت را وارد کنید"
+                className="h-11 text-base focus-visible:ring-blue-400"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 mt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsTypeDialogOpen(false)}
+              className="hover:bg-muted/50 transition-colors"
+            >
+              انصراف
+            </Button>
+            <Button 
+              onClick={handleSaveType}
+              className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
+            >
+              ذخیره
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

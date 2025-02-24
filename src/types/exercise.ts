@@ -1,6 +1,6 @@
 
 // انواع حرکت‌های اصلی
-export type ExerciseType = "سرشانه" | "پا" | "زیر بغل" | "سیم کش";
+export type ExerciseType = string;
 
 // دسته‌بندی‌های هر نوع حرکت
 export interface ExerciseCategory {
