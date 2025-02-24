@@ -1,7 +1,17 @@
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
+import { Spinner } from "./ui/spinner";
+
+const LoadingFallback = () => (
+  <div className="flex h-[50vh] items-center justify-center">
+    <div className="text-center space-y-4">
+      <Spinner size="lg" className="mx-auto" />
+      <p className="text-muted-foreground animate-pulse">در حال بارگذاری...</p>
+    </div>
+  </div>
+);
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,7 +35,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         
         <main className="flex-1">
           <div className="container py-6">
-            {children}
+            <Suspense fallback={<LoadingFallback />}>
+              {children}
+            </Suspense>
           </div>
         </main>
       </div>
