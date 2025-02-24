@@ -46,12 +46,6 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground">{meal.description}</p>
-                    <div className="flex items-center gap-4 text-sm">
-                      <span>کالری: {meal.calories}</span>
-                      <span>پروتئین: {meal.protein}g</span>
-                      <span>کربوهیدرات: {meal.carbs}g</span>
-                      <span>چربی: {meal.fat}g</span>
-                    </div>
                   </Card>
                 ))}
               </div>

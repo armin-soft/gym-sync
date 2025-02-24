@@ -25,10 +25,6 @@ const mealFormSchema = z.object({
   name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد"),
   type: z.string().min(1, "نوع وعده غذایی الزامی است"),
   day: z.string().min(1, "روز هفته الزامی است"),
-  calories: z.number().nonnegative("میزان کالری نمی‌تواند منفی باشد"),
-  protein: z.number().nonnegative("میزان پروتئین نمی‌تواند منفی باشد"),
-  carbs: z.number().nonnegative("میزان کربوهیدرات نمی‌تواند منفی باشد"),
-  fat: z.number().nonnegative("میزان چربی نمی‌تواند منفی باشد"),
   description: z.string(),
 }).required();
 
@@ -57,10 +53,6 @@ export const MealDialog = ({
       name: meal?.name ?? "",
       type: meal?.type ?? "",
       day: meal?.day ?? "",
-      calories: meal?.calories ?? 0,
-      protein: meal?.protein ?? 0,
-      carbs: meal?.carbs ?? 0,
-      fat: meal?.fat ?? 0,
       description: meal?.description ?? "",
     },
   });
@@ -141,86 +133,6 @@ export const MealDialog = ({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="calories"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>کالری</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="مثال: ۳۰۰" 
-                        {...field}
-                        onChange={e => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="protein"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>پروتئین (گرم)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="مثال: ۲۵"
-                        {...field}
-                        onChange={e => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="carbs"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>کربوهیدرات (گرم)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="مثال: ۵۰"
-                        {...field}
-                        onChange={e => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="fat"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>چربی (گرم)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="مثال: ۱۵"
-                        {...field}
-                        onChange={e => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
