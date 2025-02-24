@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,19 +6,15 @@ import {
   Users, 
   Dumbbell, 
   Utensils, 
-  Trophy,
-  TrendingUp, 
-  CalendarRange, 
   Pill, 
   Clock,
   Scale,
   Target,
   Crown,
   Plus,
-  ChevronLeft,
+  TrendingUp,
   TrendingDown
 } from "lucide-react";
-import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useEffect, useState } from "react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -33,11 +28,8 @@ interface DashboardStats {
   sessionGrowth: number;
   mealGrowth: number;
   supplementGrowth: number;
-  exerciseData: Array<{
-    name: string;
-    تمرینات: number;
-    پیشرفت: number;
-  }>;
+  maxCapacity: number;
+  maxSessionsPerMonth: number;
 }
 
 const Index = () => {
@@ -51,7 +43,8 @@ const Index = () => {
     sessionGrowth: 0,
     mealGrowth: 0,
     supplementGrowth: 0,
-    exerciseData: []
+    maxCapacity: 50,
+    maxSessionsPerMonth: 120
   });
 
   useEffect(() => {
@@ -68,17 +61,6 @@ const Index = () => {
         return acc + (student.progress || 0);
       }, 0);
       const averageProgress = students.length ? Math.round(totalProgress / students.length) : 0;
-
-      const weekDays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
-      const exerciseData = weekDays.map(day => {
-        const dayStudents = students.filter((s: any) => s.trainingDays?.includes(day));
-        return {
-          name: day,
-          تمرینات: dayStudents.length,
-          پیشرفت: dayStudents.reduce((acc: number, s: any) => acc + (s.progress || 0), 0) / 
-                  (dayStudents.length || 1)
-        };
-      });
 
       const prevStudents = JSON.parse(localStorage.getItem('prevMonthStudents') || '[]');
       const prevMeals = JSON.parse(localStorage.getItem('prevMonthMeals') || '[]');
@@ -100,31 +82,22 @@ const Index = () => {
         sessionGrowth: calculateGrowth(totalSessions, prevSessions),
         mealGrowth: calculateGrowth(meals.length, prevMeals.length),
         supplementGrowth: calculateGrowth(supplements.length, prevSupplements.length),
-        exerciseData
+        maxCapacity: 50,
+        maxSessionsPerMonth: 120
       });
     };
 
-    // اولین اجرای محاسبات
     calculateStats();
 
-    // ایجاد یک MutationObserver برای نظارت بر تغییرات localStorage
-    const observer = new MutationObserver(() => {
-      calculateStats();
-    });
-
-    // نظارت بر تغییرات localStorage
     const storageHandler = () => {
       calculateStats();
     };
 
     window.addEventListener('storage', storageHandler);
-
-    // اضافه کردن یک interval کوتاه برای اطمینان از به‌روزرسانی در صورت تغییر مستقیم localStorage
     const quickInterval = setInterval(calculateStats, 1000);
 
     return () => {
       window.removeEventListener('storage', storageHandler);
-      observer.disconnect();
       clearInterval(quickInterval);
     };
   }, []);
@@ -173,14 +146,14 @@ const Index = () => {
       description: `${toPersianNumbers(stats.totalSessions)} جلسه در این ماه`,
       icon: Target,
       gradient: "from-blue-500 to-blue-600",
-      progress: (stats.totalSessions / (stats.totalStudents * 16)) * 100
+      progress: Math.min((stats.totalSessions / stats.maxSessionsPerMonth) * 100, 100)
     },
     {
       title: "برنامه‌های فعال",
       description: `${toPersianNumbers(stats.totalMeals)} برنامه غذایی`,
       icon: Scale,
       gradient: "from-green-500 to-green-600",
-      progress: (stats.totalMeals / stats.totalStudents) * 100
+      progress: Math.min((stats.totalMeals / stats.totalStudents) * 100, 100)
     },
   ];
 
@@ -267,7 +240,7 @@ const Index = () => {
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
               <div 
                 className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
-                style={{ width: `${Math.min((stats.totalStudents / 50) * 100, 100)}%` }}
+                style={{ width: `${Math.min((stats.totalStudents / stats.maxCapacity) * 100, 100)}%` }}
               />
             </div>
           </CardContent>
@@ -291,7 +264,7 @@ const Index = () => {
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
               <div 
                 className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
-                style={{ width: `${Math.min((stats.totalSessions / (stats.totalStudents * 16)) * 100, 100)}%` }}
+                style={{ width: `${Math.min((stats.totalSessions / stats.maxSessionsPerMonth) * 100, 100)}%` }}
               />
             </div>
           </CardContent>
@@ -370,68 +343,6 @@ const Index = () => {
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="overflow-hidden group">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium flex items-center gap-2">
-                <Activity className="h-5 w-5 text-primary" />
-                تمرینات روزانه
-              </CardTitle>
-              <Button variant="ghost" size="icon" className="hover:bg-primary/10">
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[240px] transition-transform duration-300 group-hover:scale-[1.02]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.exerciseData}>
-                  <XAxis dataKey="name" fontSize={12} />
-                  <YAxis fontSize={12} />
-                  <Bar
-                    dataKey="تمرینات"
-                    fill="hsl(var(--primary))"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden group">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                روند پیشرفت
-              </CardTitle>
-              <Button variant="ghost" size="icon" className="hover:bg-primary/10">
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[240px] transition-transform duration-300 group-hover:scale-[1.02]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={stats.exerciseData}>
-                  <XAxis dataKey="name" fontSize={12} />
-                  <YAxis fontSize={12} />
-                  <Line
-                    type="monotone"
-                    dataKey="پیشرفت"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                    dot={{ strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
