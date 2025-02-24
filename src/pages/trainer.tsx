@@ -166,315 +166,345 @@ const TrainerProfile = () => {
   }, [form]);
 
   return (
-    <div className="container relative mx-auto py-6 space-y-8">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 -z-10" />
-      
-      {/* Header */}
-      <div className="flex flex-col space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent
-                     animate-in fade-in slide-in-from-bottom-2 duration-1000">
-          پروفایل مربی
-        </h1>
-        <p className="text-lg text-muted-foreground/80 animate-in fade-in slide-in-from-bottom-3 duration-1000 delay-150">
-          اطلاعات پروفایل خود را به‌روزرسانی کنید و حرفه‌ای‌تر به نظر برسید
-        </p>
+    <div className="relative min-h-screen w-full bg-gradient-to-br from-primary/5 via-background to-primary/10">
+      {/* Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/4 w-[700px] h-[700px] bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      {/* Main Card */}
-      <Card className="relative overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/5
-                    animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300
-                    backdrop-blur-sm bg-white/50">
-        {/* Header with Avatar */}
-        <div className="relative h-48 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent overflow-hidden">
-          {/* Decorative Elements */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-          </div>
-
-          {/* Avatar Section */}
-          <div className="absolute -bottom-16 right-8 group">
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageChange}
-              disabled={isUploading}
-            />
-            <div className="relative">
-              <Avatar 
-                className={cn(
-                  "h-32 w-32 ring-4 ring-background shadow-2xl transition-all duration-500 ease-out",
-                  "group-hover:ring-primary/20 group-hover:shadow-primary/20 group-hover:scale-105",
-                  isUploading ? "opacity-50 cursor-wait" : "cursor-pointer hover:shadow-xl"
-                )}
-                onClick={handleImageClick}
-              >
-                <AvatarImage src={avatarUrl} className="object-cover" />
-                <AvatarFallback className="text-4xl bg-primary/5">
-                  {form.getValues("name")?.slice(0, 2).toUpperCase() || "MA"}
-                </AvatarFallback>
-              </Avatar>
-              
-              {/* Camera Overlay */}
-              <div className={cn(
-                "absolute inset-0 flex items-center justify-center bg-black/60 rounded-full",
-                "opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out",
-                isUploading && "opacity-100"
-              )}>
-                <Camera className={cn(
-                  "h-8 w-8 text-white transform transition-transform duration-300",
-                  "group-hover:scale-110"
-                )} />
-              </div>
-
-              {/* Delete Button */}
-              {avatarUrl !== "/placeholder.svg" && (
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="absolute -left-4 top-0 rounded-full opacity-0 group-hover:opacity-100 
-                           transition-all duration-300 hover:scale-110 shadow-lg"
-                  onClick={handleImageDelete}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-
-            {/* Profile Completion */}
-            <div className="absolute bottom-4 right-44 left-8 animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-500">
-              <div className="h-2 w-full bg-primary/5 rounded-full overflow-hidden backdrop-blur-sm">
-                <div 
-                  className="h-full bg-gradient-to-r from-primary/80 to-primary/60 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-              <p className="text-sm text-muted-foreground/80 mt-2 font-medium">
-                تکمیل پروفایل: {toPersianNumbers(completionPercentage)}٪
-              </p>
-            </div>
-          </div>
+      <div className="container mx-auto py-8 relative z-10">
+        {/* Header */}
+        <div className="relative flex flex-col items-start gap-4 mb-8 p-6 rounded-lg 
+                      bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg border border-white/10
+                      animate-in fade-in slide-in-from-top duration-1000">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground/90 to-foreground/60 bg-clip-text text-transparent">
+            پروفایل مربی
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            مشخصات و اطلاعات خود را به‌روزرسانی کنید
+          </p>
+          <div className="h-1.5 w-32 bg-gradient-to-r from-primary/80 to-primary/40 rounded-full" />
         </div>
 
-        {/* Form Content */}
-        <div className="p-8 pt-24">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {/* Personal Information */}
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-foreground/80">اطلاعات شخصی</h2>
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2 text-foreground/70">
-                          <User className="h-4 w-4" />
-                          نام و نام خانوادگی
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="نام خود را وارد کنید"
-                            className="transition-all duration-300 border-primary/10 focus-visible:border-primary/30
-                                     hover:border-primary/20 focus-visible:ring-2 focus-visible:ring-primary/20
-                                     bg-white/50 backdrop-blur-sm"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+        <div className="grid lg:grid-cols-[300px_1fr] gap-6">
+          {/* Profile Card */}
+          <div className="space-y-6">
+            <Card className="relative overflow-hidden p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+              <div className="relative group mx-auto w-48 h-48">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={isUploading}
+                />
+                <Avatar 
+                  className={cn(
+                    "w-48 h-48 rounded-2xl ring-4 ring-background shadow-2xl transition-all duration-500",
+                    "group-hover:ring-primary/20 group-hover:shadow-primary/20 group-hover:scale-[1.02]",
+                    isUploading ? "opacity-50 cursor-wait" : "cursor-pointer"
+                  )}
+                  onClick={handleImageClick}
+                >
+                  <AvatarImage src={avatarUrl} className="object-cover" />
+                  <AvatarFallback className="text-6xl bg-primary/5">
+                    {form.getValues("name")?.slice(0, 2).toUpperCase() || "MA"}
+                  </AvatarFallback>
+                </Avatar>
 
-                  <FormField
-                    control={form.control}
-                    name="bio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2 text-foreground/70">
-                          <User className="h-4 w-4" />
-                          بیوگرافی
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="درباره خود بنویسید" 
-                            className="resize-none h-32 transition-all duration-300 border-primary/10 
-                                     focus-visible:border-primary/30 hover:border-primary/20
-                                     focus-visible:ring-2 focus-visible:ring-primary/20
-                                     bg-white/50 backdrop-blur-sm"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                {/* Camera Overlay */}
+                <div className={cn(
+                  "absolute inset-0 flex items-center justify-center rounded-2xl",
+                  "bg-gradient-to-t from-black/60 to-transparent",
+                  "opacity-0 group-hover:opacity-100 transition-all duration-300"
+                )}>
+                  <Camera className="h-10 w-10 text-white drop-shadow-lg transform -translate-y-4 group-hover:translate-y-0 transition-all duration-300" />
+                </div>
+
+                {/* Delete Button */}
+                {avatarUrl !== "/placeholder.svg" && (
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute -top-2 -right-2 rounded-full opacity-0 group-hover:opacity-100 
+                             transition-all duration-300 hover:scale-110 shadow-lg"
+                    onClick={handleImageDelete}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              {/* Profile Completion */}
+              <div className="mt-8 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-foreground/70">تکمیل پروفایل</span>
+                  <span className="text-sm font-bold">{toPersianNumbers(completionPercentage)}٪</span>
+                </div>
+                <div className="h-2 w-full bg-primary/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-primary/80 to-primary/60 rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${completionPercentage}%` }}
                   />
                 </div>
               </div>
+            </Card>
 
-              {/* Contact Information */}
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-foreground/80">اطلاعات تماس</h2>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2 text-foreground/70">
-                          <Phone className="h-4 w-4" />
-                          شماره موبایل
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
-                            dir="ltr"
-                            className="text-left transition-all duration-300 border-primary/10 
-                                     focus-visible:border-primary/30 hover:border-primary/20
-                                     focus-visible:ring-2 focus-visible:ring-primary/20
-                                     bg-white/50 backdrop-blur-sm"
-                            {...field}
-                            value={toPersianNumbers(field.value)}
-                            onChange={(e) => {
-                              const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                              field.onChange(persianValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            {/* Quick Info */}
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 space-y-4">
+              <h3 className="text-lg font-semibold">راهنمای تکمیل پروفایل</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary/60" />
+                  تصویر پروفایل خود را آپلود کنید
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary/60" />
+                  اطلاعات تماس را کامل وارد کنید
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary/60" />
+                  بیوگرافی خود را بنویسید
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary/60" />
+                  مبلغ برنامه تمرینی را مشخص کنید
+                </li>
+              </ul>
+            </Card>
+          </div>
 
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2 text-foreground/70">
-                          <Mail className="h-4 w-4" />
-                          ایمیل
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="example@domain.com" 
-                            dir="ltr"
-                            className="text-left transition-all duration-300 border-primary/10 
-                                     focus-visible:border-primary/30 hover:border-primary/20
-                                     focus-visible:ring-2 focus-visible:ring-primary/20
-                                     bg-white/50 backdrop-blur-sm"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Security & Business */}
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-foreground/80">امنیت و کسب‌وکار</h2>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2 text-foreground/70">
-                          <KeyRound className="h-4 w-4" />
-                          گذرواژه
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative">
+          {/* Form Content */}
+          <Card className="backdrop-blur-xl bg-white/50 border-primary/10">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-6">
+                {/* Personal Information */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
+                    <h2 className="text-xl font-semibold">اطلاعات شخصی</h2>
+                  </div>
+                  
+                  <div className="grid gap-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2 text-foreground/70">
+                            <User className="h-4 w-4" />
+                            نام و نام خانوادگی
+                          </FormLabel>
+                          <FormControl>
                             <Input 
-                              type={showPassword ? "text" : "password"}
-                              placeholder="••••••••" 
+                              placeholder="نام خود را وارد کنید"
+                              className="transition-all duration-300 border-primary/10 focus-visible:border-primary/30
+                                       hover:border-primary/20 focus-visible:ring-2 focus-visible:ring-primary/20
+                                       bg-white/50"
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="bio"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2 text-foreground/70">
+                            <User className="h-4 w-4" />
+                            بیوگرافی
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="درباره خود بنویسید" 
+                              className="resize-none h-32 transition-all duration-300 border-primary/10 
+                                       focus-visible:border-primary/30 hover:border-primary/20
+                                       focus-visible:ring-2 focus-visible:ring-primary/20
+                                       bg-white/50"
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
+                    <h2 className="text-xl font-semibold">اطلاعات تماس</h2>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2 text-foreground/70">
+                            <Phone className="h-4 w-4" />
+                            شماره موبایل
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
                               dir="ltr"
                               className="text-left transition-all duration-300 border-primary/10 
                                        focus-visible:border-primary/30 hover:border-primary/20
-                                       focus-visible:ring-2 focus-visible:ring-primary/20 pr-10
-                                       bg-white/50 backdrop-blur-sm"
+                                       focus-visible:ring-2 focus-visible:ring-primary/20
+                                       bg-white/50"
+                              {...field}
+                              value={toPersianNumbers(field.value)}
+                              onChange={(e) => {
+                                const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                                field.onChange(persianValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2 text-foreground/70">
+                            <Mail className="h-4 w-4" />
+                            ایمیل
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="example@domain.com" 
+                              dir="ltr"
+                              className="text-left transition-all duration-300 border-primary/10 
+                                       focus-visible:border-primary/30 hover:border-primary/20
+                                       focus-visible:ring-2 focus-visible:ring-primary/20
+                                       bg-white/50"
                               {...field} 
                             />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute left-0 top-0 h-full px-3 hover:bg-transparent"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <EyeOff className="h-4 w-4 text-muted-foreground/70" />
-                              ) : (
-                                <Eye className="h-4 w-4 text-muted-foreground/70" />
-                              )}
-                            </Button>
-                          </div>
-                        </FormControl>
-                        <FormDescription className="text-xs">
-                          حداقل ۸ کاراکتر شامل حروف بزرگ، کوچک و اعداد
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2 text-foreground/70">
-                          <CreditCard className="h-4 w-4" />
-                          مبلغ برنامه تمرینی (تومان)
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="۲۰۰,۰۰۰" 
-                            dir="ltr"
-                            className="text-left transition-all duration-300 border-primary/10 
-                                     focus-visible:border-primary/30 hover:border-primary/20
-                                     focus-visible:ring-2 focus-visible:ring-primary/20
-                                     bg-white/50 backdrop-blur-sm"
-                            value={field.value ? toPersianNumbers(field.value) : ""}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              const numericValue = value.replace(/[^0-9۰-۹]/g, "");
-                              const englishValue = numericValue.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                              field.onChange(englishValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormDescription className="text-xs">
-                          {field.value && `معادل ${toPersianNumbers(Number(field.value).toLocaleString())} تومان`}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Submit Button */}
-              <Button 
-                type="submit" 
-                className="w-full md:w-auto bg-gradient-to-r from-primary/90 to-primary/80 hover:to-primary
-                         transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
-                         shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
-              >
-                <Save className="ml-2 h-4 w-4" />
-                ذخیره تغییرات
-              </Button>
-            </form>
-          </Form>
+                {/* Security & Business */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
+                    <h2 className="text-xl font-semibold">امنیت و کسب‌وکار</h2>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2 text-foreground/70">
+                            <KeyRound className="h-4 w-4" />
+                            گذرواژه
+                          </FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Input 
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••" 
+                                dir="ltr"
+                                className="text-left transition-all duration-300 border-primary/10 
+                                         focus-visible:border-primary/30 hover:border-primary/20
+                                         focus-visible:ring-2 focus-visible:ring-primary/20 pr-10
+                                         bg-white/50"
+                                {...field} 
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute left-0 top-0 h-full px-3 hover:bg-transparent"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? (
+                                  <EyeOff className="h-4 w-4 text-muted-foreground/70" />
+                                ) : (
+                                  <Eye className="h-4 w-4 text-muted-foreground/70" />
+                                )}
+                              </Button>
+                            </div>
+                          </FormControl>
+                          <FormDescription className="text-xs">
+                            حداقل ۸ کاراکتر شامل حروف بزرگ، کوچک و اعداد
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2 text-foreground/70">
+                            <CreditCard className="h-4 w-4" />
+                            مبلغ برنامه تمرینی (تومان)
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="۲۰۰,۰۰۰" 
+                              dir="ltr"
+                              className="text-left transition-all duration-300 border-primary/10 
+                                       focus-visible:border-primary/30 hover:border-primary/20
+                                       focus-visible:ring-2 focus-visible:ring-primary/20
+                                       bg-white/50"
+                              value={field.value ? toPersianNumbers(field.value) : ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                const numericValue = value.replace(/[^0-9۰-۹]/g, "");
+                                const englishValue = numericValue.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                                field.onChange(englishValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormDescription className="text-xs">
+                            {field.value && `معادل ${toPersianNumbers(Number(field.value).toLocaleString())} تومان`}
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <Button 
+                  type="submit" 
+                  className="w-full md:w-auto bg-gradient-to-r from-primary/90 to-primary/80 hover:to-primary
+                           transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
+                           shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+                >
+                  <Save className="ml-2 h-4 w-4" />
+                  ذخیره تغییرات
+                </Button>
+              </form>
+            </Form>
+          </Card>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
