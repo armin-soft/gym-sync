@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -125,28 +126,28 @@ const Index = () => {
       name: "افزودن شاگرد", 
       description: "ثبت‌نام شاگرد جدید",
       icon: Users, 
-      href: "/students", 
+      href: "/Students", 
       gradient: "from-blue-500 via-blue-600 to-blue-700"
     },
     { 
       name: "ثبت تمرین", 
       description: "برنامه تمرینی جدید",
       icon: Dumbbell, 
-      href: "/exercises", 
+      href: "/Exercise-Movements", 
       gradient: "from-green-500 via-green-600 to-green-700"
     },
     { 
       name: "برنامه غذایی", 
       description: "تنظیم رژیم غذایی",
       icon: UtensilsCrossed, 
-      href: "/diet", 
+      href: "/Diet-Plan", 
       gradient: "from-orange-500 via-orange-600 to-orange-700"
     },
     { 
       name: "مکمل‌ها", 
       description: "مدیریت مکمل‌ها",
       icon: Pill, 
-      href: "/supplements", 
+      href: "/Supplements-Vitamins", 
       gradient: "from-purple-500 via-purple-600 to-purple-700"
     },
   ];
@@ -223,7 +224,7 @@ const Index = () => {
             className="group relative h-32 overflow-hidden rounded-xl border bg-card p-0 hover:border-primary/50"
             onClick={() => window.location.href = action.href}
           >
-            <div className="absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-10" />
+            <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 transition-opacity duration-500 group-hover:opacity-10`} />
             <div className="relative flex h-full flex-col items-center justify-center gap-4 transition-transform duration-300 group-hover:scale-105">
               <div className={`rounded-xl bg-gradient-to-br ${action.gradient} p-3 text-white shadow-lg transition-all duration-300 group-hover:shadow-xl`}>
                 <action.icon className="h-6 w-6" />
