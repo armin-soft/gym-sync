@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +15,8 @@ import {
   Target,
   Crown,
   Plus,
-  ChevronLeft
+  ChevronLeft,
+  TrendingDown
 } from "lucide-react";
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useEffect, useState } from "react";
@@ -28,6 +28,10 @@ interface DashboardStats {
   totalMeals: number;
   totalSupplements: number;
   studentsProgress: number;
+  studentGrowth: number;
+  sessionGrowth: number;
+  mealGrowth: number;
+  supplementGrowth: number;
   exerciseData: Array<{
     name: string;
     تمرینات: number;
@@ -42,40 +46,66 @@ const Index = () => {
     totalMeals: 0,
     totalSupplements: 0,
     studentsProgress: 0,
+    studentGrowth: 0,
+    sessionGrowth: 0,
+    mealGrowth: 0,
+    supplementGrowth: 0,
     exerciseData: []
   });
 
   useEffect(() => {
-    // خواندن اطلاعات از localStorage
-    const loadStats = () => {
-      // دریافت اطلاعات شاگردان
+    const calculateStats = () => {
       const students = JSON.parse(localStorage.getItem('students') || '[]');
-      
-      // دریافت برنامه‌های غذایی
       const meals = JSON.parse(localStorage.getItem('meals') || '[]');
-      
-      // دریافت مکمل‌ها
       const supplements = JSON.parse(localStorage.getItem('supplements') || '[]');
 
-      // محاسبه داده‌های نمودار تمرینات هفتگی
+      const totalSessions = students.reduce((acc: number, student: any) => {
+        return acc + (student.sessionsPerWeek || 3) * 4;
+      }, 0);
+
+      const totalProgress = students.reduce((acc: number, student: any) => {
+        return acc + (student.progress || 0);
+      }, 0);
+      const averageProgress = students.length ? Math.round(totalProgress / students.length) : 0;
+
       const weekDays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
-      const exerciseData = weekDays.map(day => ({
-        name: day,
-        تمرینات: Math.floor(Math.random() * (students.length * 2)) + students.length,
-        پیشرفت: Math.floor(Math.random() * 20) + 80
-      }));
+      const exerciseData = weekDays.map(day => {
+        const dayStudents = students.filter((s: any) => s.trainingDays?.includes(day));
+        return {
+          name: day,
+          تمرینات: dayStudents.length,
+          پیشرفت: dayStudents.reduce((acc: number, s: any) => acc + (s.progress || 0), 0) / 
+                  (dayStudents.length || 1)
+        };
+      });
+
+      const prevStudents = JSON.parse(localStorage.getItem('prevMonthStudents') || '[]');
+      const prevMeals = JSON.parse(localStorage.getItem('prevMonthMeals') || '[]');
+      const prevSupplements = JSON.parse(localStorage.getItem('prevMonthSupplements') || '[]');
+      const prevSessions = prevStudents.length * 12;
+
+      const calculateGrowth = (current: number, previous: number) => {
+        if (!previous) return 0;
+        return Math.round(((current - previous) / previous) * 100);
+      };
 
       setStats({
         totalStudents: students.length,
-        totalSessions: students.length * 3, // میانگین 3 جلسه برای هر شاگرد
+        totalSessions,
         totalMeals: meals.length,
         totalSupplements: supplements.length,
-        studentsProgress: 85,
+        studentsProgress: averageProgress,
+        studentGrowth: calculateGrowth(students.length, prevStudents.length),
+        sessionGrowth: calculateGrowth(totalSessions, prevSessions),
+        mealGrowth: calculateGrowth(meals.length, prevMeals.length),
+        supplementGrowth: calculateGrowth(supplements.length, prevSupplements.length),
         exerciseData
       });
     };
 
-    loadStats();
+    calculateStats();
+    const interval = setInterval(calculateStats, 300000);
+    return () => clearInterval(interval);
   }, []);
 
   const quickActions = [
@@ -111,28 +141,40 @@ const Index = () => {
 
   const achievements = [
     {
-      title: "شاگرد برتر",
-      description: stats.totalStudents > 0 ? `${toPersianNumbers(stats.studentsProgress)}٪ پیشرفت` : "در انتظار ثبت شاگرد",
+      title: "میانگین پیشرفت",
+      description: `${toPersianNumbers(stats.studentsProgress)}٪ پیشرفت کلی`,
       icon: Crown,
       gradient: "from-yellow-500 to-yellow-600",
+      progress: stats.studentsProgress
     },
     {
       title: "جلسات تمرینی",
       description: `${toPersianNumbers(stats.totalSessions)} جلسه در این ماه`,
       icon: Target,
       gradient: "from-blue-500 to-blue-600",
+      progress: (stats.totalSessions / (stats.totalStudents * 16)) * 100
     },
     {
       title: "برنامه‌های فعال",
       description: `${toPersianNumbers(stats.totalMeals)} برنامه غذایی`,
       icon: Scale,
       gradient: "from-green-500 to-green-600",
+      progress: (stats.totalMeals / stats.totalStudents) * 100
     },
   ];
 
+  const renderGrowthBadge = (growth: number) => (
+    <Badge 
+      variant="secondary" 
+      className={`rounded-lg ${growth >= 0 ? 'text-green-600' : 'text-red-600'}`}
+    >
+      {growth >= 0 ? <TrendingUp className="w-3 h-3 ml-1" /> : <TrendingDown className="w-3 h-3 ml-1" />}
+      {toPersianNumbers(Math.abs(growth))}٪
+    </Badge>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      {/* Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 p-8 text-primary-foreground">
         <div className="absolute inset-0 bg-grid-white/10" />
         <div className="relative">
@@ -161,7 +203,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-4">
         {quickActions.map((action) => (
           <Button
@@ -186,7 +227,6 @@ const Index = () => {
         ))}
       </div>
 
-      {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -198,16 +238,16 @@ const Index = () => {
               <div className="text-2xl font-bold text-primary">
                 {toPersianNumbers(stats.totalStudents)}
               </div>
-              <Badge variant="secondary" className="rounded-lg">
-                <TrendingUp className="w-3 h-3 ml-1" />
-                ۱۵٪+
-              </Badge>
+              {renderGrowthBadge(stats.studentGrowth)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               شاگرد فعال در سیستم
             </div>
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
-              <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
+                style={{ width: `${Math.min((stats.totalStudents / 50) * 100, 100)}%` }}
+              />
             </div>
           </CardContent>
         </Card>
@@ -222,16 +262,16 @@ const Index = () => {
               <div className="text-2xl font-bold text-primary">
                 {toPersianNumbers(stats.totalSessions)}
               </div>
-              <Badge variant="secondary" className="rounded-lg">
-                <TrendingUp className="w-3 h-3 ml-1" />
-                ۸٪+
-              </Badge>
+              {renderGrowthBadge(stats.sessionGrowth)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               جلسه در این ماه
             </div>
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
-              <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
+                style={{ width: `${Math.min((stats.totalSessions / (stats.totalStudents * 16)) * 100, 100)}%` }}
+              />
             </div>
           </CardContent>
         </Card>
@@ -246,16 +286,16 @@ const Index = () => {
               <div className="text-2xl font-bold text-primary">
                 {toPersianNumbers(stats.totalMeals)}
               </div>
-              <Badge variant="secondary" className="rounded-lg">
-                <TrendingUp className="w-3 h-3 ml-1" />
-                ۱۲٪+
-              </Badge>
+              {renderGrowthBadge(stats.mealGrowth)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               برنامه فعال
             </div>
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
-              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
+                style={{ width: `${Math.min((stats.totalMeals / stats.totalStudents) * 100, 100)}%` }}
+              />
             </div>
           </CardContent>
         </Card>
@@ -270,22 +310,21 @@ const Index = () => {
               <div className="text-2xl font-bold text-primary">
                 {toPersianNumbers(stats.totalSupplements)}
               </div>
-              <Badge variant="secondary" className="rounded-lg">
-                <TrendingUp className="w-3 h-3 ml-1" />
-                ۲۰٪+
-              </Badge>
+              {renderGrowthBadge(stats.supplementGrowth)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               مکمل فعال
             </div>
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
-              <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
+                style={{ width: `${Math.min((stats.totalSupplements / stats.totalStudents) * 100, 100)}%` }}
+              />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Achievements */}
       <div className="grid gap-4 md:grid-cols-3">
         {achievements.map((achievement) => (
           <Card key={achievement.title} className="group overflow-hidden">
@@ -302,14 +341,16 @@ const Index = () => {
                 </div>
               </div>
               <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                <div className="h-full w-2/3 animate-pulse rounded-full bg-gradient-to-r from-primary to-primary/60" />
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300"
+                  style={{ width: `${Math.min(achievement.progress, 100)}%` }}
+                />
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Charts */}
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="overflow-hidden group">
           <CardHeader>
