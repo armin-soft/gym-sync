@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -48,7 +49,6 @@ const TrainerProfile = () => {
     },
   });
 
-  // بازیابی داده‌های ذخیره شده در هنگام بارگذاری کامپوننت
   useEffect(() => {
     const savedTrainer = localStorage.getItem('trainerData');
     const savedAvatar = localStorage.getItem('trainerAvatar');
@@ -100,16 +100,18 @@ const TrainerProfile = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-8">
-      <div className="flex flex-col space-y-4">
-        <h1 className="text-3xl font-bold tracking-tight">پروفایل مربی</h1>
+      <div className="flex flex-col space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          پروفایل مربی
+        </h1>
         <p className="text-muted-foreground">
           اطلاعات پروفایل خود را مدیریت کنید
         </p>
       </div>
 
-      <Card className="p-6">
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="flex flex-col items-center space-y-4">
+      <Card className="overflow-hidden border-2">
+        <div className="relative h-32 bg-gradient-to-r from-primary/20 to-primary/5">
+          <div className="absolute -bottom-16 right-6">
             <input
               type="file"
               ref={fileInputRef}
@@ -117,30 +119,82 @@ const TrainerProfile = () => {
               accept="image/*"
               onChange={handleImageChange}
             />
-            <Avatar 
-              className="w-32 h-32 cursor-pointer border-2 border-primary/10 hover:border-primary/30 transition-colors"
-              onClick={handleImageClick}
-            >
-              <AvatarImage src={avatarUrl} className="object-cover" />
-              <AvatarFallback className="text-2xl">MA</AvatarFallback>
-            </Avatar>
-            <Button variant="outline" size="sm" className="w-full" onClick={handleImageClick}>
-              <Camera className="ml-2 h-4 w-4" />
-              تغییر تصویر
-            </Button>
+            <div className="relative group">
+              <Avatar 
+                className="h-32 w-32 border-4 border-background cursor-pointer transition-all group-hover:border-primary/20 group-hover:shadow-xl"
+                onClick={handleImageClick}
+              >
+                <AvatarImage src={avatarUrl} className="object-cover" />
+                <AvatarFallback className="text-4xl">MA</AvatarFallback>
+              </Avatar>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera className="h-8 w-8 text-white" />
+              </div>
+            </div>
           </div>
+        </div>
 
-          <div className="flex-1">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="p-6 pt-20">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>نام و نام خانوادگی</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="نام خود را وارد کنید"
+                        className="transition-all border-primary/20 focus-visible:border-primary/40"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>بیوگرافی</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="درباره خود بنویسید" 
+                        className="resize-none h-32 transition-all border-primary/20 focus-visible:border-primary/40"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      حداکثر ۵۰۰ کاراکتر
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>نام و نام خانوادگی</FormLabel>
+                      <FormLabel>شماره موبایل</FormLabel>
                       <FormControl>
-                        <Input placeholder="نام خود را وارد کنید" {...field} />
+                        <Input 
+                          placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
+                          dir="ltr"
+                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
+                          {...field}
+                          value={toPersianNumbers(field.value)}
+                          onChange={(e) => {
+                            const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                            field.onChange(persianValue);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -149,128 +203,81 @@ const TrainerProfile = () => {
 
                 <FormField
                   control={form.control}
-                  name="bio"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>بیوگرافی</FormLabel>
+                      <FormLabel>ایمیل</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="درباره خود بنویسید" 
-                          className="resize-none h-32"
+                        <Input 
+                          placeholder="example@domain.com" 
+                          dir="ltr"
+                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
                           {...field} 
                         />
                       </FormControl>
-                      <FormDescription>
-                        حداکثر ۵۰۰ کاراکتر
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>رمز عبور</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="password" 
+                          placeholder="••••••••" 
+                          dir="ltr"
+                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        حداقل ۸ کاراکتر شامل حروف بزرگ، کوچک و اعداد
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div className="grid gap-6 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>شماره موبایل</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
-                            dir="ltr"
-                            className="text-left"
-                            {...field}
-                            value={toPersianNumbers(field.value)}
-                            onChange={(e) => {
-                              const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                              field.onChange(persianValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>مبلغ برنامه تمرینی (تومان)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="۲۰۰,۰۰۰" 
+                          dir="ltr"
+                          className="text-left transition-all border-primary/20 focus-visible:border-primary/40"
+                          value={field.value ? toPersianNumbers(field.value) : ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            const numericValue = value.replace(/[^0-9۰-۹]/g, "");
+                            const englishValue = numericValue.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                            field.onChange(englishValue);
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        {field.value && `معادل ${toPersianNumbers(Number(field.value).toLocaleString())} تومان`}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>ایمیل</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="example@domain.com" 
-                            dir="ltr"
-                            className="text-left"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>رمز عبور</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="password" 
-                            placeholder="••••••••" 
-                            dir="ltr"
-                            className="text-left"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          حداقل ۸ کاراکتر شامل حروف بزرگ، کوچک و اعداد
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>مبلغ برنامه تمرینی (تومان)</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="۲۰۰,۰۰۰" 
-                            dir="ltr"
-                            className="text-left"
-                            value={field.value ? toPersianNumbers(field.value) : ""}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              const numericValue = value.replace(/[^0-9۰-۹]/g, "");
-                              const englishValue = numericValue.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                              field.onChange(englishValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          {field.value && `معادل ${toPersianNumbers(Number(field.value).toLocaleString())} تومان`}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <Button type="submit" className="w-full md:w-auto">
-                  <SaveIcon className="ml-2 h-4 w-4" />
-                  ذخیره تغییرات
-                </Button>
-              </form>
-            </Form>
-          </div>
+              <Button type="submit" className="w-full md:w-auto bg-gradient-to-r from-primary to-primary/80 hover:to-primary">
+                <SaveIcon className="ml-2 h-4 w-4" />
+                ذخیره تغییرات
+              </Button>
+            </form>
+          </Form>
         </div>
       </Card>
     </div>
