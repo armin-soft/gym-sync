@@ -17,12 +17,6 @@ export interface Exercise {
 }
 
 // مقادیر پیش‌فرض
-export const defaultExerciseTypes: ExerciseType[] = [
-  "سرشانه",
-  "پا",
-  "زیر بغل",
-  "سیم کش"
-];
-
+export const defaultExerciseTypes: ExerciseType[] = [];
 export const defaultCategories: ExerciseCategory[] = [];
 export const defaultExercises: Exercise[] = [];
