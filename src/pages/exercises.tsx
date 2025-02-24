@@ -172,82 +172,103 @@ const Exercises = () => {
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <div className="flex flex-col space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">حرکات سرشانه</h2>
-            <p className="text-muted-foreground mt-2">
+    <div className="container mx-auto py-10 space-y-8">
+      <div className="flex flex-col space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+              حرکات سرشانه
+            </h2>
+            <p className="text-muted-foreground">
               مدیریت حرکات تمرینی بخش سرشانه
             </p>
           </div>
-          <Button onClick={handleAdd} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
-            <Plus className="ml-2 h-4 w-4" />
-            افزودن حرکت
+          <Button 
+            onClick={handleAdd} 
+            className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all duration-300 shadow-lg hover:shadow-blue-200/50"
+          >
+            <Plus className="ml-2 h-5 w-5 animate-pulse" />
+            افزودن حرکت جدید
           </Button>
         </div>
 
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>نوع حرکت</TableHead>
-                <TableHead>نام حرکت</TableHead>
-                <TableHead className="w-28">عملیات</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {exercises.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                    هیچ حرکتی ثبت نشده است
-                  </TableCell>
+        <Card className="overflow-hidden border-t-4 border-t-blue-500 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-base font-bold">نوع حرکت</TableHead>
+                  <TableHead className="text-base font-bold">نام حرکت</TableHead>
+                  <TableHead className="text-base font-bold w-28">عملیات</TableHead>
                 </TableRow>
-              ) : (
-                exercises.map((exercise) => (
-                  <TableRow key={exercise.id}>
-                    <TableCell className="font-medium">{exercise.category}</TableCell>
-                    <TableCell>{exercise.name}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleEdit(exercise)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
-                          onClick={() => handleDelete(exercise.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+              </TableHeader>
+              <TableBody>
+                {exercises.length === 0 ? (
+                  <TableRow>
+                    <TableCell 
+                      colSpan={3} 
+                      className="text-center py-10 text-muted-foreground animate-fade-in"
+                    >
+                      هیچ حرکتی ثبت نشده است
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  exercises.map((exercise) => (
+                    <TableRow 
+                      key={exercise.id}
+                      className="group hover:bg-muted/50 transition-colors duration-200"
+                    >
+                      <TableCell className="font-medium">
+                        <span className={`px-3 py-1 rounded-full text-sm ${
+                          exercise.category === "دلتوئید خلفی" 
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-purple-100 text-purple-700"
+                        }`}>
+                          {exercise.category}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-base">{exercise.name}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                            onClick={() => handleEdit(exercise)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-red-50 hover:text-red-600 transition-colors"
+                            onClick={() => handleDelete(exercise.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </Card>
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-xl font-bold text-center">
               {selectedExercise ? "ویرایش حرکت" : "افزودن حرکت جدید"}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
             <div className="space-y-2">
-              <Label>نوع حرکت</Label>
+              <Label className="text-base">نوع حرکت</Label>
               <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value as Exercise["category"] })}
               >
@@ -256,19 +277,29 @@ const Exercises = () => {
               </select>
             </div>
             <div className="space-y-2">
-              <Label>نام حرکت</Label>
+              <Label className="text-base">نام حرکت</Label>
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="نام حرکت را وارد کنید"
+                className="h-11 text-base focus-visible:ring-blue-400"
               />
             </div>
           </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+          <div className="flex justify-end gap-3 mt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDialogOpen(false)}
+              className="hover:bg-muted/50 transition-colors"
+            >
               انصراف
             </Button>
-            <Button onClick={handleSave}>ذخیره</Button>
+            <Button 
+              onClick={handleSave}
+              className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
+            >
+              ذخیره
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
