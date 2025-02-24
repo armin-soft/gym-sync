@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { 
   Plus, 
@@ -328,7 +327,7 @@ const Exercises = () => {
   return (
     <div className="container mx-auto py-10 space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">مدیریت تمرینات</h2>
+        <h2 className="text-3xl font-bold tracking-tight">مدیریت حرکات تمرینی</h2>
         <Button onClick={handleAddType} variant="outline" size="sm">
           <Plus className="w-4 h-4 ml-2" />
           افزودن نوع حرکت
@@ -399,11 +398,11 @@ const Exercises = () => {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <ChevronDown className="w-5 h-5 text-blue-500" />
-                {selectedType ? `دسته‌بندی‌های ${selectedType}` : 'دسته‌بندی‌ها'}
+                {selectedType ? `دسته بندی های ${selectedType}` : 'دسته بندی ها'}
               </h3>
               <Button onClick={handleAddCategory} size="sm" variant="outline" className="hover:bg-blue-50">
                 <Plus className="w-4 h-4 ml-2" />
-                افزودن دسته‌بندی
+                افزودن دسته بندی
               </Button>
             </div>
             <div className="overflow-x-auto">

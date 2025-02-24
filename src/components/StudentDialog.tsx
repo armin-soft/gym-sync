@@ -189,7 +189,7 @@ export const StudentDialog = ({
               <div>
                 <Label htmlFor="height" className="flex items-center gap-2">
                   <Ruler className="h-4 w-4 text-muted-foreground" />
-                  قد (سانتی‌متر)
+                  قد (سانتی متر)
                 </Label>
                 <Input
                   id="height"

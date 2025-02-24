@@ -91,9 +91,9 @@ const Diet = () => {
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">برنامه غذایی</h2>
+            <h2 className="text-3xl font-bold tracking-tight">برنامه های غذایی</h2>
             <p className="text-muted-foreground mt-2">
-              در این بخش می‌توانید وعده‌های غذایی را مدیریت کنید
+              در این بخش می‌توانید وعده های غذایی را مدیریت کنید
             </p>
           </div>
           <Button onClick={handleAdd} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
@@ -107,7 +107,7 @@ const Diet = () => {
           <div className="relative flex-1">
             <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="جستجو در وعده‌های غذایی..."
+              placeholder="جستجو در وعده های غذایی..."
               className="pr-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

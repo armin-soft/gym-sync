@@ -35,7 +35,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 "h-6 w-6",
                 "text-primary animate-pulse"
               )} />
-              <h1 className="text-lg font-semibold">مدیریت برنامه فیکس</h1>
+              <h1 className="text-lg font-semibold">مدیریت برنامه تمرینی فیکس</h1>
             </div>
           </div>
         </header>
@@ -50,4 +50,4 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       </div>
     </div>
   );
-};
+}

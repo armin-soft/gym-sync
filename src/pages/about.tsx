@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Phone, Mail, Dumbbell, Clock, ListChecks, Globe, MonitorSmartphone, Bot, Database, PenTool, Brain, MessageCircle, BrainCircuit } from "lucide-react";
 
@@ -7,31 +6,31 @@ const About = () => {
     {
       icon: Users,
       title: "مدیریت شاگردان",
-      description: "ثبت و مدیریت اطلاعات شاگردان، پیگیری پیشرفت و ثبت اندازه‌گیری‌ها",
+      description: "ثبت و مدیریت اطلاعات شاگردان، پیگیری پیشرفت و ثبت اندازه گیری ها",
     },
     {
       icon: Dumbbell,
-      title: "برنامه‌های تمرینی",
-      description: "ایجاد و مدیریت برنامه‌های تمرینی اختصاصی برای هر شاگرد",
+      title: "برنامه های تمرینی",
+      description: "ایجاد و مدیریت برنامه های تمرینی اختصاصی برای هر شاگرد",
     },
     {
       icon: Clock,
       title: "مدیریت زمان",
-      description: "برنامه‌ریزی جلسات تمرینی و پیگیری حضور و غیاب",
+      description: "برنامه ریزی جلسات تمرینی و پیگیری حضور و غیاب",
     },
     {
       icon: ListChecks,
       title: "برنامه غذایی",
-      description: "تنظیم رژیم غذایی و برنامه مکمل‌های ورزشی",
+      description: "تنظیم رژیم غذایی و برنامه مکمل و ویتامین ورزشی",
     }
   ];
 
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold">سیستم مدیریت برنامه تمرینی</h1>
+        <h1 className="text-4xl font-bold">سیستم مدیریت برنامه تمرینی فیکس</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          نرم‌افزار جامع مدیریت باشگاه و برنامه‌های تمرینی، طراحی شده برای مربیان و مدیران باشگاه‌های ورزشی
+          نرم افزار جامع مدیریت باشگاه و برنامه های تمرینی، طراحی شده برای مربیان و مدیران باشگاه های ورزشی
         </p>
       </div>
 
@@ -51,7 +50,7 @@ const About = () => {
 
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>قابلیت‌های سیستم</CardTitle>
+          <CardTitle>قابلیت های سیستم</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -60,15 +59,15 @@ const About = () => {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>ثبت اطلاعات کامل شاگردان</li>
                 <li>پیگیری پیشرفت و تغییرات بدنی</li>
-                <li>مدیریت پرداخت‌ها و شهریه</li>
-                <li>گزارش‌گیری از عملکرد</li>
+                <li>مدیریت پرداخت ها و شهریه</li>
+                <li>گزارش گیری از عملکرد</li>
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="font-semibold">برنامه‌های تمرینی</h3>
+              <h3 className="font-semibold">برنامه های تمرینی</h3>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                <li>طراحی برنامه‌های تمرینی اختصاصی</li>
-                <li>ثبت حرکات و تمرینات</li>
+                <li>طراحی برنامه های تمرینی اختصاصی</li>
+                <li>ثبت حرکات تمرینی</li>
                 <li>تنظیم ست و تکرار</li>
                 <li>پیگیری پیشرفت تمرینات</li>
               </ul>
@@ -78,7 +77,7 @@ const About = () => {
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>تنظیم برنامه غذایی روزانه</li>
                 <li>محاسبه کالری و ماکروها</li>
-                <li>تجویز مکمل‌های ورزشی</li>
+                <li>تجویز مکمل و ویتامین ورزشی</li>
                 <li>پیگیری وضعیت تغذیه</li>
               </ul>
             </div>
@@ -86,9 +85,9 @@ const About = () => {
               <h3 className="font-semibold">گزارشات و آمار</h3>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                 <li>گزارش عملکرد شاگردان</li>
-                <li>نمودارهای پیشرفت</li>
+                <li>نمودار های پیشرفت</li>
                 <li>آمار حضور و غیاب</li>
-                <li>گزارش‌های مالی</li>
+                <li>گزارش های مالی</li>
               </ul>
             </div>
           </div>
