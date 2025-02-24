@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, SaveIcon } from "lucide-react";
+import { Camera, CreditCard, KeyRound, Mail, Phone, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -218,7 +218,10 @@ const TrainerProfile = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>نام و نام خانوادگی</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      نام و نام خانوادگی
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="نام خود را وارد کنید"
@@ -237,7 +240,10 @@ const TrainerProfile = () => {
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>بیوگرافی</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      بیوگرافی
+                    </FormLabel>
                     <FormControl>
                       <Textarea 
                         placeholder="درباره خود بنویسید" 
@@ -260,8 +266,11 @@ const TrainerProfile = () => {
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
-                    <FormItem className="group">
-                      <FormLabel>شماره موبایل</FormLabel>
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        شماره موبایل
+                      </FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
@@ -287,7 +296,10 @@ const TrainerProfile = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ایمیل</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        ایمیل
+                      </FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="example@domain.com" 
@@ -308,7 +320,10 @@ const TrainerProfile = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>رمز عبور</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        <KeyRound className="h-4 w-4" />
+                        رمز عبور
+                      </FormLabel>
                       <FormControl>
                         <Input 
                           type="password" 
@@ -333,7 +348,10 @@ const TrainerProfile = () => {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>مبلغ برنامه تمرینی (تومان)</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4" />
+                        مبلغ برنامه تمرینی (تومان)
+                      </FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="۲۰۰,۰۰۰" 
