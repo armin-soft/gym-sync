@@ -20,3 +20,4 @@ export interface Exercise {
 export const defaultExerciseTypes: ExerciseType[] = [];
 export const defaultCategories: ExerciseCategory[] = [];
 export const defaultExercises: Exercise[] = [];
+
