@@ -30,6 +30,8 @@ interface DashboardStats {
   supplementGrowth: number;
   maxCapacity: number;
   maxSessionsPerMonth: number;
+  mealCompletionRate: number;
+  supplementCompletionRate: number;
 }
 
 const Index = () => {
@@ -44,7 +46,9 @@ const Index = () => {
     mealGrowth: 0,
     supplementGrowth: 0,
     maxCapacity: 50,
-    maxSessionsPerMonth: 120
+    maxSessionsPerMonth: 120,
+    mealCompletionRate: 0,
+    supplementCompletionRate: 0
   });
 
   useEffect(() => {
@@ -52,6 +56,18 @@ const Index = () => {
       const students = JSON.parse(localStorage.getItem('students') || '[]');
       const meals = JSON.parse(localStorage.getItem('meals') || '[]');
       const supplements = JSON.parse(localStorage.getItem('supplements') || '[]');
+
+      // محاسبه نرخ تکمیل برنامه‌های غذایی
+      const studentsWithMeals = students.filter((student: any) => 
+        meals.some((meal: any) => meal.studentId === student.id)
+      ).length;
+      const mealCompletionRate = students.length ? (studentsWithMeals / students.length) * 100 : 0;
+
+      // محاسبه نرخ تکمیل مکمل‌ها
+      const studentsWithSupplements = students.filter((student: any) => 
+        supplements.some((supplement: any) => supplement.studentId === student.id)
+      ).length;
+      const supplementCompletionRate = students.length ? (studentsWithSupplements / students.length) * 100 : 0;
 
       const totalSessions = students.reduce((acc: number, student: any) => {
         return acc + (student.sessionsPerWeek || 3) * 4;
@@ -83,7 +99,9 @@ const Index = () => {
         mealGrowth: calculateGrowth(meals.length, prevMeals.length),
         supplementGrowth: calculateGrowth(supplements.length, prevSupplements.length),
         maxCapacity: 50,
-        maxSessionsPerMonth: 120
+        maxSessionsPerMonth: 120,
+        mealCompletionRate,
+        supplementCompletionRate
       });
     };
 
@@ -149,11 +167,11 @@ const Index = () => {
       progress: Math.min((stats.totalSessions / stats.maxSessionsPerMonth) * 100, 100)
     },
     {
-      title: "برنامه‌های فعال",
-      description: `${toPersianNumbers(stats.totalMeals)} برنامه غذایی`,
+      title: "برنامه‌های غذایی",
+      description: `${toPersianNumbers(Math.round(stats.mealCompletionRate))}٪ تکمیل شده`,
       icon: Scale,
       gradient: "from-green-500 to-green-600",
-      progress: Math.min((stats.totalMeals / stats.totalStudents) * 100, 100)
+      progress: stats.mealCompletionRate
     },
   ];
 
@@ -283,12 +301,12 @@ const Index = () => {
               {renderGrowthBadge(stats.mealGrowth)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
-              برنامه فعال
+              {toPersianNumbers(Math.round(stats.mealCompletionRate))}٪ شاگردان دارای برنامه غذایی
             </div>
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
               <div 
                 className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
-                style={{ width: `${Math.min((stats.totalMeals / stats.totalStudents) * 100, 100)}%` }}
+                style={{ width: `${stats.mealCompletionRate}%` }}
               />
             </div>
           </CardContent>
@@ -307,12 +325,12 @@ const Index = () => {
               {renderGrowthBadge(stats.supplementGrowth)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
-              مکمل فعال
+              {toPersianNumbers(Math.round(stats.supplementCompletionRate))}٪ شاگردان دارای مکمل
             </div>
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
               <div 
                 className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full"
-                style={{ width: `${Math.min((stats.totalSupplements / stats.totalStudents) * 100, 100)}%` }}
+                style={{ width: `${stats.supplementCompletionRate}%` }}
               />
             </div>
           </CardContent>
