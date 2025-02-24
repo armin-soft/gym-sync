@@ -1,53 +1,37 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Layout } from "./components/Layout";
-import Index from "./pages/Index";
-import TrainerProfile from "./pages/trainer";
-import Students from "./pages/students";
-import Exercises from "./pages/exercises";
-import Diet from "./pages/diet";
-import Supplements from "./pages/supplements";
-import Reports from "./pages/reports";
-import About from "./pages/about";
-import NotFound from "./pages/NotFound";
+import { Toaster } from "@/components/ui/toaster";
+import { Layout } from "@/components/Layout";
+import Index from "@/pages/Index";
+import NotFound from "@/pages/NotFound";
+import TrainerProfile from "@/pages/trainer";
+import Students from "@/pages/students";
+import ExerciseMovements from "@/pages/exercises";
+import DietPlan from "@/pages/diet";
+import SupplementsVitamins from "@/pages/supplements";
+import Reports from "@/pages/reports";
+import About from "@/pages/about";
+import "./App.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+function App() {
+  return (
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/Coach-Profile" element={<TrainerProfile />} />
+          <Route path="/Students" element={<Students />} />
+          <Route path="/Exercise-Movements" element={<ExerciseMovements />} />
+          <Route path="/Diet-Plan" element={<DietPlan />} />
+          <Route path="/Supplements-Vitamins" element={<SupplementsVitamins />} />
+          <Route path="/Reports" element={<Reports />} />
+          <Route path="/About" element={<About />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
       <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/trainer" element={<TrainerProfile />} />
-            <Route path="/students" element={<Students />} />
-            <Route path="/exercises" element={<Exercises />} />
-            <Route path="/diet" element={<Diet />} />
-            <Route path="/supplements" element={<Supplements />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/about" element={<About />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </BrowserRouter>
+  );
+}
 
 export default App;
