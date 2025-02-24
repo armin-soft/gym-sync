@@ -64,11 +64,40 @@
     @apply bg-background text-foreground antialiased;
   }
 
-  /* Persian numbers */
+  /* Persian numbers and RTL text */
   .persian-numbers {
     -moz-font-feature-settings: "ss01";
     -webkit-font-feature-settings: "ss01";
     font-feature-settings: "ss01";
+  }
+
+  /* تنظیمات RTL برای همه المان‌های فرم */
+  input, textarea, select {
+    direction: rtl;
+    text-align: right;
+  }
+
+  /* استثنا برای ورودی‌های لاتین */
+  input[type="email"],
+  input[dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* تنظیمات مخصوص جداول */
+  table {
+    direction: rtl;
+  }
+
+  /* تنظیمات مخصوص تایپوگرافی */
+  h1, h2, h3, h4, h5, h6, p {
+    direction: rtl;
+    text-align: right;
+  }
+
+  /* تنظیمات مخصوص المان‌های flexbox */
+  .flex {
+    direction: rtl;
   }
 }
 
