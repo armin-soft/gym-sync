@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -23,7 +22,7 @@ import { Input } from "@/components/ui/input";
 const Exercises = () => {
   const { toast } = useToast();
   const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
-  const [selectedType, setSelectedType] = useState<ExerciseType>("سرشانه");
+  const [selectedType, setSelectedType] = useState<ExerciseType>("");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [categories, setCategories] = useState<ExerciseCategory[]>([]);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
@@ -354,7 +353,9 @@ const Exercises = () => {
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">دسته‌بندی‌های {selectedType}</h3>
+            <h3 className="text-lg font-semibold">
+              {selectedType ? `دسته‌بندی‌های ${selectedType}` : 'دسته‌بندی‌ها'}
+            </h3>
             <Button onClick={handleAddCategory} size="sm">
               <Plus className="w-4 h-4 ml-1" />
               افزودن دسته‌بندی
@@ -373,7 +374,9 @@ const Exercises = () => {
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">حرکات {selectedType}</h3>
+            <h3 className="text-lg font-semibold">
+              {selectedType ? `حرکات ${selectedType}` : 'حرکات'}
+            </h3>
             <Button onClick={handleAddExercise} size="sm">
               <Plus className="w-4 h-4 ml-1" />
               افزودن حرکت
