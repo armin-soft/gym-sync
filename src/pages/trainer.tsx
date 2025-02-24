@@ -75,8 +75,8 @@ const TrainerProfile = () => {
   }, [form]);
 
   const handleImageClick = () => {
-    if (!isUploading) {
-      fileInputRef.current?.click();
+    if (!isUploading && fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -98,29 +98,27 @@ const TrainerProfile = () => {
         
         reader.onload = (e) => {
           const newAvatarUrl = e.target?.result as string;
-          setAvatarUrl(newAvatarUrl);
-          localStorage.setItem('trainerAvatar', newAvatarUrl);
-          
-          const currentData = form.getValues();
-          setCompletionPercentage(calculateProfileCompletion({
-            ...currentData,
-          }));
-          
-          toast({
-            title: "تصویر با موفقیت آپلود شد",
-            description: "تصویر پروفایل شما به‌روزرسانی شد.",
-          });
-        };
-
-        reader.onerror = () => {
-          throw new Error("خطا در خواندن فایل");
+          if (newAvatarUrl) {
+            setAvatarUrl(newAvatarUrl);
+            localStorage.setItem('trainerAvatar', newAvatarUrl);
+            
+            const currentData = form.getValues();
+            setCompletionPercentage(calculateProfileCompletion({
+              ...currentData,
+            }));
+            
+            toast({
+              title: "موفقیت‌آمیز",
+              description: "تصویر پروفایل شما به‌روزرسانی شد.",
+            });
+          }
         };
 
         reader.readAsDataURL(file);
       } catch (error) {
         toast({
-          title: "خطا در آپلود تصویر",
-          description: "لطفاً مجدداً تلاش کنید.",
+          title: "خطا",
+          description: "مشکلی در آپلود تصویر پیش آمد. لطفاً مجدداً تلاش کنید.",
           variant: "destructive",
         });
       } finally {
@@ -345,7 +343,7 @@ const TrainerProfile = () => {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <CreditCard className="h-4 w-4" />
-                        مبل�� برنامه تمرینی (تومان)
+                        مبلغ برنامه تمرینی (تومان)
                       </FormLabel>
                       <FormControl>
                         <Input 
