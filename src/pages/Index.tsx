@@ -84,28 +84,28 @@ const Index = () => {
       description: "ثبت‌نام شاگرد جدید",
       icon: Users, 
       href: "/students", 
-      color: "bg-gradient-to-br from-blue-500 to-blue-600" 
+      gradient: "from-blue-500 via-blue-600 to-blue-700"
     },
     { 
       name: "ثبت تمرین", 
       description: "برنامه تمرینی جدید",
       icon: Dumbbell, 
       href: "/exercises", 
-      color: "bg-gradient-to-br from-green-500 to-green-600" 
+      gradient: "from-green-500 via-green-600 to-green-700"
     },
     { 
       name: "برنامه غذایی", 
       description: "تنظیم رژیم غذایی",
       icon: Utensils, 
       href: "/diet", 
-      color: "bg-gradient-to-br from-orange-500 to-orange-600" 
+      gradient: "from-orange-500 via-orange-600 to-orange-700"
     },
     { 
       name: "مکمل‌ها", 
       description: "مدیریت مکمل‌ها",
       icon: Pill, 
       href: "/supplements", 
-      color: "bg-gradient-to-br from-purple-500 to-purple-600" 
+      gradient: "from-purple-500 via-purple-600 to-purple-700"
     },
   ];
 
@@ -114,44 +114,49 @@ const Index = () => {
       title: "شاگرد برتر",
       description: stats.totalStudents > 0 ? `${toPersianNumbers(stats.studentsProgress)}٪ پیشرفت` : "در انتظار ثبت شاگرد",
       icon: Crown,
-      color: "text-yellow-500",
+      gradient: "from-yellow-500 to-yellow-600",
     },
     {
-      title: "تعداد جلسات",
+      title: "جلسات تمرینی",
       description: `${toPersianNumbers(stats.totalSessions)} جلسه در این ماه`,
       icon: Target,
-      color: "text-blue-500",
+      gradient: "from-blue-500 to-blue-600",
     },
     {
       title: "برنامه‌های فعال",
       description: `${toPersianNumbers(stats.totalMeals)} برنامه غذایی`,
       icon: Scale,
-      color: "text-green-500",
+      gradient: "from-green-500 to-green-600",
     },
   ];
 
   return (
-    <div className="container mx-auto space-y-8 animate-in fade-in-50">
+    <div className="container mx-auto px-4 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              داشبورد مدیریت
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              خلاصه وضعیت سیستم مدیریت برنامه تمرینی
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="font-medium">
-              <Clock className="w-3 h-3 ml-1" />
-              امروز
-            </Badge>
-            <Badge variant="secondary" className="font-medium">
-              <Activity className="w-3 h-3 ml-1" />
-              {stats.totalStudents > 0 ? 'فعال' : 'در انتظار'}
-            </Badge>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 p-8 text-primary-foreground">
+        <div className="absolute inset-0 bg-grid-white/10" />
+        <div className="relative">
+          <div className="flex flex-col space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">
+                  داشبورد مدیریت
+                </h1>
+                <p className="mt-2 text-primary-foreground/80">
+                  خلاصه وضعیت سیستم مدیریت برنامه تمرینی
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="border-primary-foreground/20 text-primary-foreground">
+                  <Clock className="w-3 h-3 ml-1" />
+                  امروز
+                </Badge>
+                <Badge variant="outline" className="border-primary-foreground/20 text-primary-foreground">
+                  <Activity className="w-3 h-3 ml-1" />
+                  {stats.totalStudents > 0 ? 'فعال' : 'در انتظار'}
+                </Badge>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -162,16 +167,19 @@ const Index = () => {
           <Button
             key={action.name}
             variant="ghost"
-            className="h-32 flex flex-col items-center justify-center gap-4 hover:bg-muted/50 transition-all duration-300 hover:scale-105 group"
+            className="group relative h-32 overflow-hidden rounded-xl border bg-card p-0 hover:border-primary/50"
             onClick={() => window.location.href = action.href}
           >
-            <div className={`${action.color} p-3 rounded-xl text-white shadow-lg group-hover:shadow-2xl transition-all duration-300`}>
-              <action.icon className="h-6 w-6" />
-            </div>
-            <div className="text-center">
-              <div className="font-semibold">{action.name}</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {action.description}
+            <div className="absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-10" />
+            <div className="relative flex h-full flex-col items-center justify-center gap-4 transition-transform duration-300 group-hover:scale-105">
+              <div className={`rounded-xl bg-gradient-to-br ${action.gradient} p-3 text-white shadow-lg transition-all duration-300 group-hover:shadow-xl`}>
+                <action.icon className="h-6 w-6" />
+              </div>
+              <div className="text-center">
+                <div className="font-semibold">{action.name}</div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {action.description}
+                </div>
               </div>
             </div>
           </Button>
@@ -180,62 +188,98 @@ const Index = () => {
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:shadow-lg transition-all duration-300">
+        <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">تعداد شاگردان</CardTitle>
             <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              {toPersianNumbers(stats.totalStudents)}
+            <div className="mt-4 flex items-center gap-2">
+              <div className="text-2xl font-bold text-primary">
+                {toPersianNumbers(stats.totalStudents)}
+              </div>
+              <Badge variant="secondary" className="rounded-lg">
+                <TrendingUp className="w-3 h-3 ml-1" />
+                ۱۵٪+
+              </Badge>
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               شاگرد فعال در سیستم
             </div>
+            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
+              <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300">
+        <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">جلسات تمرینی</CardTitle>
             <Dumbbell className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              {toPersianNumbers(stats.totalSessions)}
+            <div className="mt-4 flex items-center gap-2">
+              <div className="text-2xl font-bold text-primary">
+                {toPersianNumbers(stats.totalSessions)}
+              </div>
+              <Badge variant="secondary" className="rounded-lg">
+                <TrendingUp className="w-3 h-3 ml-1" />
+                ۸٪+
+              </Badge>
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               جلسه در این ماه
             </div>
+            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
+              <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300">
+        <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">برنامه‌های غذایی</CardTitle>
             <Utensils className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              {toPersianNumbers(stats.totalMeals)}
+            <div className="mt-4 flex items-center gap-2">
+              <div className="text-2xl font-bold text-primary">
+                {toPersianNumbers(stats.totalMeals)}
+              </div>
+              <Badge variant="secondary" className="rounded-lg">
+                <TrendingUp className="w-3 h-3 ml-1" />
+                ۱۲٪+
+              </Badge>
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               برنامه فعال
             </div>
+            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
+              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300">
+        <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">مکمل‌های تجویز شده</CardTitle>
             <Pill className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              {toPersianNumbers(stats.totalSupplements)}
+            <div className="mt-4 flex items-center gap-2">
+              <div className="text-2xl font-bold text-primary">
+                {toPersianNumbers(stats.totalSupplements)}
+              </div>
+              <Badge variant="secondary" className="rounded-lg">
+                <TrendingUp className="w-3 h-3 ml-1" />
+                ۲۰٪+
+              </Badge>
             </div>
             <div className="text-xs text-muted-foreground mt-1">
               مکمل فعال
+            </div>
+            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
+              <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 group-hover:w-full" />
             </div>
           </CardContent>
         </Card>
@@ -244,18 +288,21 @@ const Index = () => {
       {/* Achievements */}
       <div className="grid gap-4 md:grid-cols-3">
         {achievements.map((achievement) => (
-          <Card key={achievement.title} className="hover:shadow-lg transition-all duration-300 group">
-            <CardContent className="pt-6">
+          <Card key={achievement.title} className="group overflow-hidden">
+            <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className={`rounded-full p-3 bg-muted ${achievement.color} group-hover:scale-110 transition-transform duration-300`}>
-                  <achievement.icon className="w-5 h-5" />
+                <div className={`rounded-xl bg-gradient-to-br ${achievement.gradient} p-3 text-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl`}>
+                  <achievement.icon className="h-5 w-5" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="font-semibold">{achievement.title}</h3>
                   <p className="text-sm text-muted-foreground">
                     {achievement.description}
                   </p>
                 </div>
+              </div>
+              <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div className="h-full w-2/3 animate-pulse rounded-full bg-gradient-to-r from-primary to-primary/60" />
               </div>
             </CardContent>
           </Card>
@@ -264,20 +311,20 @@ const Index = () => {
 
       {/* Charts */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="hover:shadow-lg transition-all duration-300">
+        <Card className="overflow-hidden group">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-medium flex items-center gap-2">
                 <Activity className="h-5 w-5 text-primary" />
                 تمرینات روزانه
               </CardTitle>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/10">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[240px]">
+            <div className="h-[240px] transition-transform duration-300 group-hover:scale-[1.02]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.exerciseData}>
                   <XAxis dataKey="name" fontSize={12} />
@@ -293,20 +340,20 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300">
+        <Card className="overflow-hidden group">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-medium flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-primary" />
                 روند پیشرفت
               </CardTitle>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/10">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[240px]">
+            <div className="h-[240px] transition-transform duration-300 group-hover:scale-[1.02]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={stats.exerciseData}>
                   <XAxis dataKey="name" fontSize={12} />
