@@ -10,8 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SupplementDialog, categories } from "@/components/supplements/SupplementDialog";
-import { SupplementList, Supplement } from "@/components/supplements/SupplementList";
+import { SupplementDialog } from "@/components/supplements/SupplementDialog";
+import { SupplementList } from "@/components/supplements/SupplementList";
+import { CategoryDialog } from "@/components/supplements/CategoryDialog";
+import type { Supplement, SupplementCategory } from "@/types/supplement";
 
 const initialSupplements: Supplement[] = [
   {
@@ -32,18 +34,27 @@ const initialSupplements: Supplement[] = [
   },
 ];
 
+const initialCategories: SupplementCategory[] = [
+  { id: 1, name: "عضله‌ساز" },
+  { id: 2, name: "چربی‌سوز" },
+  { id: 3, name: "افزایش انرژی" },
+];
+
 const Supplements = () => {
   const { toast } = useToast();
   const [supplements, setSupplements] = useState<Supplement[]>(initialSupplements);
+  const [categories, setCategories] = useState<SupplementCategory[]>(initialCategories);
   const [selectedCategory, setSelectedCategory] = useState<string>("عضله‌ساز");
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
+  const [editingCategory, setEditingCategory] = useState<SupplementCategory | null>(null);
 
   const filteredSupplements = supplements.filter(
     (supplement) => supplement.category === selectedCategory
   );
 
-  const handleDelete = (id: number) => {
+  const handleDeleteSupplement = (id: number) => {
     setSupplements(supplements.filter((supplement) => supplement.id !== id));
     toast({
       title: "حذف مکمل",
@@ -51,17 +62,17 @@ const Supplements = () => {
     });
   };
 
-  const handleEdit = (supplement: Supplement) => {
+  const handleEditSupplement = (supplement: Supplement) => {
     setEditingSupplement(supplement);
-    setDialogOpen(true);
+    setSupplementDialogOpen(true);
   };
 
-  const handleAdd = () => {
+  const handleAddSupplement = () => {
     setEditingSupplement(null);
-    setDialogOpen(true);
+    setSupplementDialogOpen(true);
   };
 
-  const handleSubmit = (data: Omit<Supplement, "id">) => {
+  const handleSubmitSupplement = (data: Omit<Supplement, "id">) => {
     if (editingSupplement) {
       setSupplements(
         supplements.map((supplement) =>
@@ -77,7 +88,7 @@ const Supplements = () => {
     } else {
       const newSupplement: Supplement = {
         ...data,
-        id: supplements.length + 1,
+        id: Math.max(0, ...supplements.map((s) => s.id)) + 1,
       };
       setSupplements([...supplements, newSupplement]);
       toast({
@@ -85,7 +96,69 @@ const Supplements = () => {
         description: "مکمل جدید با موفقیت اضافه شد.",
       });
     }
-    setDialogOpen(false);
+    setSupplementDialogOpen(false);
+  };
+
+  const handleEditCategory = (category: SupplementCategory) => {
+    setEditingCategory(category);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleAddCategory = () => {
+    setEditingCategory(null);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleDeleteCategory = (categoryId: number) => {
+    const category = categories.find((c) => c.id === categoryId);
+    if (category && supplements.some((s) => s.category === category.name)) {
+      toast({
+        title: "خطا در حذف دسته‌بندی",
+        description: "این دسته‌بندی دارای مکمل است و نمی‌توان آن را حذف کرد.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setCategories(categories.filter((c) => c.id !== categoryId));
+    toast({
+      title: "حذف دسته‌بندی",
+      description: "دسته‌بندی مورد نظر با موفقیت حذف شد.",
+    });
+  };
+
+  const handleSubmitCategory = (name: string) => {
+    if (editingCategory) {
+      setCategories(
+        categories.map((category) =>
+          category.id === editingCategory.id
+            ? { ...category, name }
+            : category
+        )
+      );
+      // به‌روزرسانی نام دسته‌بندی در مکمل‌ها
+      setSupplements(
+        supplements.map((supplement) =>
+          supplement.category === editingCategory.name
+            ? { ...supplement, category: name }
+            : supplement
+        )
+      );
+      toast({
+        title: "ویرایش دسته‌بندی",
+        description: "دسته‌بندی مورد نظر با موفقیت ویرایش شد.",
+      });
+    } else {
+      const newCategory: SupplementCategory = {
+        id: Math.max(0, ...categories.map((c) => c.id)) + 1,
+        name,
+      };
+      setCategories([...categories, newCategory]);
+      toast({
+        title: "افزودن دسته‌بندی",
+        description: "دسته‌بندی جدید با موفقیت اضافه شد.",
+      });
+    }
+    setCategoryDialogOpen(false);
   };
 
   return (
@@ -97,9 +170,14 @@ const Supplements = () => {
             در این بخش می‌توانید مکمل‌های ورزشی را مدیریت کنید
           </p>
         </div>
-        <Button onClick={handleAdd}>
-          <Plus className="ml-2 h-4 w-4" /> افزودن مکمل
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleAddCategory}>
+            <Plus className="ml-2 h-4 w-4" /> افزودن دسته‌بندی
+          </Button>
+          <Button onClick={handleAddSupplement}>
+            <Plus className="ml-2 h-4 w-4" /> افزودن مکمل
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center justify-between mb-6">
@@ -110,26 +188,72 @@ const Supplements = () => {
           </SelectTrigger>
           <SelectContent>
             {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
+              <SelectItem key={category.id} value={category.name}>
+                {category.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      <SupplementList 
-        supplements={filteredSupplements} 
-        onEdit={handleEdit} 
-        onDelete={handleDelete} 
-      />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <SupplementList 
+            supplements={filteredSupplements} 
+            onEdit={handleEditSupplement} 
+            onDelete={handleDeleteSupplement} 
+          />
+        </div>
+        <div>
+          <div className="bg-card rounded-lg border p-6">
+            <h3 className="text-lg font-semibold mb-4">مدیریت دسته‌بندی‌ها</h3>
+            <div className="space-y-2">
+              {categories.map((category) => (
+                <div
+                  key={category.id}
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
+                >
+                  <span>{category.name}</span>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEditCategory(category)}
+                      className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteCategory(category.id)}
+                      className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       <SupplementDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onSubmit={handleSubmit}
+        open={supplementDialogOpen}
+        onOpenChange={setSupplementDialogOpen}
+        onSubmit={handleSubmitSupplement}
         defaultValues={editingSupplement || undefined}
         mode={editingSupplement ? "edit" : "add"}
+        categories={categories}
+      />
+
+      <CategoryDialog
+        open={categoryDialogOpen}
+        onOpenChange={setCategoryDialogOpen}
+        onSubmit={handleSubmitCategory}
+        defaultValue={editingCategory?.name}
+        mode={editingCategory ? "edit" : "add"}
       />
     </div>
   );

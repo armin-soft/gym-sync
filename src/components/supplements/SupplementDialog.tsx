@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import type { SupplementCategory } from "@/types/supplement";
 
 const supplementFormSchema = z.object({
   name: z.string().min(2, "نام مکمل باید حداقل ۲ کاراکتر باشد"),
@@ -34,18 +35,13 @@ const supplementFormSchema = z.object({
   description: z.string().min(5, "توضیحات باید حداقل ۵ کاراکتر باشد"),
 });
 
-export const categories = [
-  "عضله‌ساز",
-  "چربی‌سوز",
-  "افزایش انرژی"
-];
-
 interface SupplementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: z.infer<typeof supplementFormSchema>) => void;
   defaultValues?: z.infer<typeof supplementFormSchema>;
   mode: "add" | "edit";
+  categories: SupplementCategory[];
 }
 
 export const SupplementDialog = ({
@@ -54,6 +50,7 @@ export const SupplementDialog = ({
   onSubmit,
   defaultValues,
   mode,
+  categories,
 }: SupplementDialogProps) => {
   const form = useForm<z.infer<typeof supplementFormSchema>>({
     resolver: zodResolver(supplementFormSchema),
@@ -104,8 +101,8 @@ export const SupplementDialog = ({
                     </FormControl>
                     <SelectContent>
                       {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
+                        <SelectItem key={category.id} value={category.name}>
+                          {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
