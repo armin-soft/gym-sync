@@ -300,7 +300,8 @@ const Exercises = () => {
                         </Button>
                       </div>
                     </li>
-                  ))}
+                  );
+                })}
               </ul>
             )}
           </Card>
