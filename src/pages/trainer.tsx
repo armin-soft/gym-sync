@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -247,11 +246,11 @@ const TrainerProfile = () => {
                             placeholder="۲۰۰,۰۰۰" 
                             dir="ltr"
                             className="text-left"
-                            {...field}
-                            value={toPersianNumbers(Number(field.value).toLocaleString())}
+                            value={field.value ? toPersianNumbers(field.value) : ""}
                             onChange={(e) => {
-                              const value = e.target.value.replace(/[^۰-۹]/g, "");
-                              const englishValue = value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                              const value = e.target.value;
+                              const numericValue = value.replace(/[^0-9۰-۹]/g, "");
+                              const englishValue = numericValue.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
                               field.onChange(englishValue);
                             }}
                           />
