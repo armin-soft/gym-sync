@@ -14,7 +14,9 @@ import {
   Clock,
   Scale,
   Target,
-  Crown
+  Crown,
+  Plus,
+  ChevronLeft
 } from "lucide-react";
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useEffect, useState } from "react";
@@ -129,12 +131,14 @@ const Index = () => {
   ];
 
   return (
-    <div className="container mx-auto py-8 space-y-8 animate-fadeIn">
+    <div className="container mx-auto space-y-8 animate-in fade-in-50">
       {/* Header */}
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">داشبورد مدیریت</h1>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              داشبورد مدیریت
+            </h1>
             <p className="text-muted-foreground mt-2">
               خلاصه وضعیت سیستم مدیریت برنامه تمرینی
             </p>
@@ -158,10 +162,10 @@ const Index = () => {
           <Button
             key={action.name}
             variant="ghost"
-            className="h-32 flex flex-col items-center justify-center gap-4 hover:bg-muted/50 transition-all hover:scale-105"
+            className="h-32 flex flex-col items-center justify-center gap-4 hover:bg-muted/50 transition-all duration-300 hover:scale-105 group"
             onClick={() => window.location.href = action.href}
           >
-            <div className={`${action.color} p-3 rounded-xl text-white shadow-lg`}>
+            <div className={`${action.color} p-3 rounded-xl text-white shadow-lg group-hover:shadow-2xl transition-all duration-300`}>
               <action.icon className="h-6 w-6" />
             </div>
             <div className="text-center">
@@ -174,54 +178,62 @@ const Index = () => {
         ))}
       </div>
 
-      {/* Stats */}
+      {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">تعداد شاگردان</CardTitle>
             <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{toPersianNumbers(stats.totalStudents)}</div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {toPersianNumbers(stats.totalStudents)}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">
               شاگرد فعال در سیستم
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">جلسات تمرینی</CardTitle>
             <Dumbbell className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{toPersianNumbers(stats.totalSessions)}</div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {toPersianNumbers(stats.totalSessions)}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">
               جلسه در این ماه
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">برنامه‌های غذایی</CardTitle>
             <Utensils className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{toPersianNumbers(stats.totalMeals)}</div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {toPersianNumbers(stats.totalMeals)}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">
               برنامه فعال
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">مکمل‌های تجویز شده</CardTitle>
             <Pill className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{toPersianNumbers(stats.totalSupplements)}</div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {toPersianNumbers(stats.totalSupplements)}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">
               مکمل فعال
             </div>
@@ -232,10 +244,10 @@ const Index = () => {
       {/* Achievements */}
       <div className="grid gap-4 md:grid-cols-3">
         {achievements.map((achievement) => (
-          <Card key={achievement.title} className="hover:shadow-lg transition-all">
+          <Card key={achievement.title} className="hover:shadow-lg transition-all duration-300 group">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className={`rounded-full p-3 bg-muted ${achievement.color}`}>
+                <div className={`rounded-full p-3 bg-muted ${achievement.color} group-hover:scale-110 transition-transform duration-300`}>
                   <achievement.icon className="w-5 h-5" />
                 </div>
                 <div>
@@ -252,13 +264,16 @@ const Index = () => {
 
       {/* Charts */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium">
+              <CardTitle className="text-lg font-medium flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
                 تمرینات روزانه
               </CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              <Button variant="ghost" size="icon">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -278,13 +293,16 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium">
+              <CardTitle className="text-lg font-medium flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
                 روند پیشرفت
               </CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <Button variant="ghost" size="icon">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
