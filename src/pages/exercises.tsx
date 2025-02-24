@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -15,6 +14,7 @@ import {
 import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { CategoryDialog } from "@/components/exercises/CategoryDialog";
 import { ExerciseTable } from "@/components/exercises/ExerciseTable";
+import { CategoryTable } from "@/components/exercises/CategoryTable";
 
 const Exercises = () => {
   const { toast } = useToast();
@@ -29,7 +29,6 @@ const Exercises = () => {
   const [isAscending, setIsAscending] = useState(true);
 
   useEffect(() => {
-    // Load data from localStorage
     const savedCategories = localStorage.getItem("categories");
     const savedExercises = localStorage.getItem("exercises");
 
@@ -48,10 +47,8 @@ const Exercises = () => {
     }
   }, []);
 
-  // Filter categories and exercises based on selected type
   const filteredCategories = categories.filter(cat => cat.type === selectedType);
-  
-  // Sort and filter exercises
+
   const filteredExercises = exercises
     .filter(ex => filteredCategories.some(cat => cat.id === ex.categoryId))
     .sort((a, b) => {
@@ -66,7 +63,6 @@ const Exercises = () => {
     setIsAscending(!isAscending);
   };
 
-  // Category handlers
   const handleAddCategory = () => {
     setIsCategoryDialogOpen(true);
     setCategoryFormData({ name: "" });
@@ -105,7 +101,6 @@ const Exercises = () => {
   };
 
   const handleDeleteCategory = (categoryId: number) => {
-    // Check if category has exercises
     if (exercises.some(ex => ex.categoryId === categoryId)) {
       toast({
         title: "خطا",
@@ -125,7 +120,6 @@ const Exercises = () => {
     });
   };
 
-  // Exercise handlers
   const handleAddExercise = () => {
     if (filteredCategories.length === 0) {
       toast({
@@ -201,7 +195,6 @@ const Exercises = () => {
 
   return (
     <div className="container mx-auto py-10 space-y-8">
-      {/* Exercise Type Selection */}
       <div className="flex gap-2 overflow-x-auto pb-4">
         {defaultExerciseTypes.map(type => (
           <Button
@@ -219,9 +212,7 @@ const Exercises = () => {
         ))}
       </div>
 
-      {/* Categories and Exercises */}
       <div className="grid gap-8 md:grid-cols-2">
-        {/* Categories */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">دسته‌بندی‌های {selectedType}</h3>
@@ -231,43 +222,16 @@ const Exercises = () => {
             </Button>
           </div>
           <Card className="p-4">
-            {filteredCategories.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                هیچ دسته‌بندی‌ای وجود ندارد
-              </p>
-            ) : (
-              <ul className="space-y-2">
-                {filteredCategories.map(category => (
-                  <li 
-                    key={category.id}
-                    className="flex items-center justify-between p-3 rounded-lg border group hover:bg-muted/50"
-                  >
-                    <span>{category.name}</span>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditCategory(category)}
-                      >
-                        ویرایش
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                        onClick={() => handleDeleteCategory(category.id)}
-                      >
-                        حذف
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="overflow-x-auto">
+              <CategoryTable 
+                categories={filteredCategories}
+                onEdit={handleEditCategory}
+                onDelete={handleDeleteCategory}
+              />
+            </div>
           </Card>
         </div>
 
-        {/* Exercises */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">حرکات {selectedType}</h3>
@@ -290,7 +254,6 @@ const Exercises = () => {
         </div>
       </div>
 
-      {/* Dialogs */}
       <CategoryDialog 
         isOpen={isCategoryDialogOpen}
         onOpenChange={setIsCategoryDialogOpen}

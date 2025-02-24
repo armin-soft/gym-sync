@@ -39,16 +39,16 @@ export function CategoryTable({ categories, onEdit, onDelete }: CategoryTablePro
         ) : (
           categories.map((category) => (
             <TableRow 
-              key={category}
+              key={category.id}
               className="group hover:bg-muted/50 transition-colors duration-200"
             >
               <TableCell className="font-medium">
                 <span className={`px-3 py-1 rounded-full text-sm ${
-                  category === "دلتوئید خلفی" 
+                  category.name === "دلتوئید خلفی" 
                     ? "bg-blue-100 text-blue-700"
                     : "bg-purple-100 text-purple-700"
                 }`}>
-                  {category}
+                  {category.name}
                 </span>
               </TableCell>
               <TableCell>
