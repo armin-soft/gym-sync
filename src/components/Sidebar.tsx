@@ -88,7 +88,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <Menu className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="font-semibold">منوی اصلی</h2>
                   <p className="text-xs text-muted-foreground">مدیریت فیکس</p>
                 </div>
               </div>
