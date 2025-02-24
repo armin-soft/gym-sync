@@ -1,6 +1,14 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Dumbbell, 
+  ChevronDown,
+  Grip,
+  ArrowUpDown
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
@@ -19,6 +27,7 @@ import { CategoryTable } from "@/components/exercises/CategoryTable";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 const Exercises = () => {
   const { toast } = useToast();
@@ -318,33 +327,43 @@ const Exercises = () => {
 
   return (
     <div className="container mx-auto py-10 space-y-8">
-      <Card className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">انواع حرکت</h3>
-          <Button onClick={handleAddType} size="sm">
-            <Plus className="w-4 h-4 ml-1" />
-            افزودن نوع حرکت
-          </Button>
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">مدیریت تمرینات</h2>
+        <Button onClick={handleAddType} variant="outline" size="sm">
+          <Plus className="w-4 h-4 ml-2" />
+          افزودن نوع حرکت
+        </Button>
+      </div>
+
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <Grip className="w-5 h-5 text-blue-500" />
+            انواع حرکت
+          </h3>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {exerciseTypes.map(type => (
-            <div key={type} className="flex items-center gap-2 group">
+            <div key={type} className="flex items-center gap-2 group relative">
               <Button
                 onClick={() => setSelectedType(type)}
                 variant={selectedType === type ? "default" : "outline"}
-                className={`min-w-max ${
-                  selectedType === type 
-                    ? "bg-gradient-to-r from-blue-600 to-blue-400" 
-                    : ""
-                }`}
+                className={cn(
+                  "min-w-max transition-all duration-300",
+                  selectedType === type && "bg-gradient-to-r from-blue-600 to-blue-400 shadow-lg shadow-blue-500/30"
+                )}
               >
+                <Dumbbell className={cn(
+                  "w-4 h-4 ml-2 transition-all",
+                  selectedType === type ? "text-white" : "text-blue-500"
+                )} />
                 {type}
               </Button>
-              <div className="hidden group-hover:flex gap-1">
+              <div className="hidden group-hover:flex gap-1 absolute -right-20">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
+                  className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleEditType(type);
@@ -355,7 +374,7 @@ const Exercises = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+                  className="h-8 w-8 hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteType(type);
@@ -366,21 +385,27 @@ const Exercises = () => {
               </div>
             </div>
           ))}
+          {exerciseTypes.length === 0 && (
+            <div className="text-muted-foreground text-sm py-8 text-center w-full">
+              هیچ نوع حرکتی تعریف نشده است. برای شروع یک نوع حرکت اضافه کنید.
+            </div>
+          )}
         </div>
       </Card>
 
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">
-              {selectedType ? `دسته‌بندی‌های ${selectedType}` : 'دسته‌بندی‌ها'}
-            </h3>
-            <Button onClick={handleAddCategory} size="sm">
-              <Plus className="w-4 h-4 ml-1" />
-              افزودن دسته‌بندی
-            </Button>
-          </div>
-          <Card className="p-4">
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <ChevronDown className="w-5 h-5 text-blue-500" />
+                {selectedType ? `دسته‌بندی‌های ${selectedType}` : 'دسته‌بندی‌ها'}
+              </h3>
+              <Button onClick={handleAddCategory} size="sm" variant="outline" className="hover:bg-blue-50">
+                <Plus className="w-4 h-4 ml-2" />
+                افزودن دسته‌بندی
+              </Button>
+            </div>
             <div className="overflow-x-auto">
               <CategoryTable 
                 categories={filteredCategories}
@@ -392,16 +417,27 @@ const Exercises = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">
-              {selectedType ? `حرکات ${selectedType}` : 'حرکات'}
-            </h3>
-            <Button onClick={handleAddExercise} size="sm">
-              <Plus className="w-4 h-4 ml-1" />
-              افزودن حرکت
-            </Button>
-          </div>
-          <Card className="p-4">
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Dumbbell className="w-5 h-5 text-blue-500" />
+                {selectedType ? `حرکات ${selectedType}` : 'حرکات'}
+              </h3>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={handleSort}
+                  className="hover:bg-blue-50"
+                >
+                  <ArrowUpDown className="h-4 w-4 text-blue-500" />
+                </Button>
+                <Button onClick={handleAddExercise} size="sm" variant="outline" className="hover:bg-blue-50">
+                  <Plus className="w-4 h-4 ml-2" />
+                  افزودن حرکت
+                </Button>
+              </div>
+            </div>
             <div className="overflow-x-auto">
               <ExerciseTable 
                 exercises={filteredExercises}
