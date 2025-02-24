@@ -17,25 +17,25 @@ const initialSupplements: Supplement[] = [
   {
     id: 1,
     name: "کراتین مونوهیدرات",
-    category: "پروتئین و آمینو",
+    category: "عضله‌ساز",
     dosage: "۵ گرم",
     timing: "بعد از تمرین",
     description: "برای افزایش قدرت و حجم عضلانی",
   },
   {
     id: 2,
-    name: "مولتی ویتامین",
-    category: "ویتامین‌ها",
-    dosage: "۱ عدد",
-    timing: "با صبحانه",
-    description: "تامین ویتامین‌های ضروری بدن",
+    name: "ال کارنیتین",
+    category: "چربی‌سوز",
+    dosage: "۲ گرم",
+    timing: "قبل از تمرین",
+    description: "کمک به چربی سوزی و افزایش انرژی",
   },
 ];
 
 const Supplements = () => {
   const { toast } = useToast();
   const [supplements, setSupplements] = useState<Supplement[]>(initialSupplements);
-  const [selectedCategory, setSelectedCategory] = useState<string>("پروتئین و آمینو");
+  const [selectedCategory, setSelectedCategory] = useState<string>("عضله‌ساز");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
 

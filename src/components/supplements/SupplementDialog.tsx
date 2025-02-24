@@ -35,11 +35,9 @@ const supplementFormSchema = z.object({
 });
 
 export const categories = [
-  "پروتئین و آمینو",
-  "ویتامین‌ها",
-  "مواد معدنی",
-  "چربی سوز",
-  "انرژی‌زا",
+  "عضله‌ساز",
+  "چربی‌سوز",
+  "افزایش انرژی"
 ];
 
 interface SupplementDialogProps {
