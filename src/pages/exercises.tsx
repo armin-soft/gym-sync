@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { 
   Plus, 
@@ -28,6 +27,7 @@ import { ExerciseTable } from "@/components/exercises/ExerciseTable";
 import { CategoryTable } from "@/components/exercises/CategoryTable";
 import { ExerciseTypes } from "@/components/exercises/ExerciseTypes";
 import { TypeDialog } from "@/components/exercises/TypeDialog";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 const ExercisesPage = () => {
   const { toast } = useToast();
@@ -45,7 +45,6 @@ const ExercisesPage = () => {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
   const [isAscending, setIsAscending] = useState(true);
 
-  // بارگذاری اولیه داده‌ها از localStorage
   useEffect(() => {
     const loadData = () => {
       try {
@@ -77,7 +76,6 @@ const ExercisesPage = () => {
     loadData();
   }, []);
 
-  // ذخیره تغییرات در localStorage
   useEffect(() => {
     try {
       localStorage.setItem("exerciseTypes", JSON.stringify(exerciseTypes));
@@ -194,7 +192,6 @@ const ExercisesPage = () => {
 
   const handleExerciseSave = async (formData: { name: string; categoryId: number }) => {
     if (selectedExercise) {
-      // ویرایش حرکت موجود
       const updatedExercises = exercises.map(ex =>
         ex.id === selectedExercise.id ? { ...ex, ...formData } : ex
       );
@@ -206,7 +203,6 @@ const ExercisesPage = () => {
         description: "حرکت با موفقیت ویرایش شد"
       });
     } else {
-      // افزودن حرکت جدید
       const newExercise: Exercise = {
         id: Math.max(0, ...exercises.map(ex => ex.id)) + 1,
         ...formData
@@ -234,11 +230,10 @@ const ExercisesPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto py-10 space-y-8">
-        {/* Header Section */}
-        <div className="flex flex-col gap-4">
+      <div className="container mx-auto py-10 space-y-12">
+        <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
+            <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 مدیریت حرکات تمرینی
               </h2>
@@ -248,44 +243,44 @@ const ExercisesPage = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="p-4 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900">
-              <div className="flex items-center gap-3">
-                <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-lg">
-                  <Tag className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center gap-4">
+                <div className="bg-indigo-100 dark:bg-indigo-900 p-4 rounded-xl">
+                  <Tag className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">انواع حرکات</p>
-                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                    {exerciseTypes.length}
+                <div className="space-y-1">
+                  <p className="text-base font-medium text-muted-foreground">انواع حرکات</p>
+                  <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                    {toPersianNumbers(exerciseTypes.length)}
                   </p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-4 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900">
-              <div className="flex items-center gap-3">
-                <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
-                  <FolderTree className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            <Card className="p-6 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center gap-4">
+                <div className="bg-purple-100 dark:bg-purple-900 p-4 rounded-xl">
+                  <FolderTree className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">دسته‌بندی‌ها</p>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    {categories.length}
+                <div className="space-y-1">
+                  <p className="text-base font-medium text-muted-foreground">دسته‌بندی‌ها</p>
+                  <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                    {toPersianNumbers(categories.length)}
                   </p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-4 bg-gradient-to-br from-pink-50 to-white dark:from-pink-950 dark:to-gray-900 border-pink-100 dark:border-pink-900">
-              <div className="flex items-center gap-3">
-                <div className="bg-pink-100 dark:bg-pink-900 p-3 rounded-lg">
-                  <Activity className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+            <Card className="p-6 bg-gradient-to-br from-pink-50 to-white dark:from-pink-950 dark:to-gray-900 border-pink-100 dark:border-pink-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center gap-4">
+                <div className="bg-pink-100 dark:bg-pink-900 p-4 rounded-xl">
+                  <Activity className="w-8 h-8 text-pink-600 dark:text-pink-400" />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">حرکات</p>
-                  <p className="text-2xl font-bold text-pink-600 dark:text-pink-400">
-                    {exercises.length}
+                <div className="space-y-1">
+                  <p className="text-base font-medium text-muted-foreground">حرکات</p>
+                  <p className="text-3xl font-bold text-pink-600 dark:text-pink-400">
+                    {toPersianNumbers(exercises.length)}
                   </p>
                 </div>
               </div>
@@ -293,23 +288,19 @@ const ExercisesPage = () => {
           </div>
         </div>
 
-        {/* Exercise Types Section */}
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
-          <div className="p-6">
-            <ExerciseTypes
-              types={exerciseTypes}
-              selectedType={selectedType}
-              onSelectType={setSelectedType}
-              onAddType={handleAddType}
-              onEditType={handleEditType}
-              onDeleteType={handleDeleteType}
-            />
-          </div>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-8">
+          <ExerciseTypes
+            types={exerciseTypes}
+            selectedType={selectedType}
+            onSelectType={setSelectedType}
+            onAddType={handleAddType}
+            onEditType={handleEditType}
+            onDeleteType={handleDeleteType}
+          />
         </div>
 
-        {/* Categories and Exercises Grid */}
-        <div className="grid gap-8 md:grid-cols-2">
-          <div className="space-y-6">
+        <div className="grid gap-12 md:grid-cols-2">
+          <div className="space-y-8">
             <CategoryTable 
               categories={filteredCategories}
               onAdd={() => {
@@ -346,7 +337,7 @@ const ExercisesPage = () => {
             />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-8">
             <ExerciseTable 
               exercises={filteredExercises}
               categories={categories}
@@ -378,7 +369,6 @@ const ExercisesPage = () => {
           </div>
         </div>
 
-        {/* Dialogs */}
         <TypeDialog
           isOpen={isTypeDialogOpen}
           onOpenChange={setIsTypeDialogOpen}
