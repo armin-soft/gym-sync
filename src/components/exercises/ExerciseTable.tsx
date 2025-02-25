@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseTableProps {
@@ -51,6 +51,15 @@ export function ExerciseTable({
       setSelectedExercises(prev => prev.filter(id => id !== exerciseId));
     }
   };
+
+  // وقتی لیست حرکت‌ها تغییر می‌کند، انتخاب‌ها را ریست می‌کنیم
+  useEffect(() => {
+    setSelectedExercises([]);
+  }, [exercises]);
+
+  // محاسبه وضعیت چک‌باکس اصلی
+  const allSelected = exercises.length > 0 && selectedExercises.length === exercises.length;
+  const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
 
   return (
     <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
@@ -100,8 +109,9 @@ export function ExerciseTable({
               <TableRow className="bg-gradient-to-r from-indigo-50 to-transparent hover:bg-indigo-50/50">
                 <TableHead className="w-[40px] text-center">
                   <Checkbox 
-                    checked={exercises.length > 0 && selectedExercises.length === exercises.length}
+                    checked={allSelected}
                     onCheckedChange={handleSelectAll}
+                    className={isIndeterminate ? "data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600" : ""}
                   />
                 </TableHead>
                 <TableHead className="font-bold text-indigo-800">ردیف</TableHead>
@@ -135,6 +145,7 @@ export function ExerciseTable({
                         <Checkbox 
                           checked={selectedExercises.includes(exercise.id)}
                           onCheckedChange={(checked) => handleSelectExercise(exercise.id, checked as boolean)}
+                          className="data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
                         />
                       </TableCell>
                       <TableCell className="font-medium text-muted-foreground">
