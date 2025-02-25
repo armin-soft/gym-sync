@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -7,99 +7,89 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, CreditCard, Eye, EyeOff, KeyRound, Mail, Phone, Save, Trash2, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 
-const persianCharRegex = /^[\u0600-\u06FF\s]+$/;
-const persianNumberRegex = /^[۰-۹]+$/;
-const iranianPhoneRegex = /^09[0-9]{9}$/;
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+interface TrainerProfile {
+  name: string;
+  bio: string;
+  phone: string;
+  email: string;
+  password: string;
+  price: string;
+  image: string;
+}
 
-const trainerFormSchema = z.object({
-  name: z.string()
-    .min(2, "نام باید حداقل ۲ کاراکتر باشد")
-    .regex(persianCharRegex, "فقط حروف فارسی مجاز است"),
-  bio: z.string()
-    .min(10, "بیوگرافی باید حداقل ۱۰ کاراکتر باشد")
-    .max(500, "بیوگرافی نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد")
-    .regex(persianCharRegex, "فقط حروف فارسی مجاز است"),
-  phone: z.string()
-    .regex(iranianPhoneRegex, "شماره موبایل معتبر نیست. مثال: ۰۹۱۲۳۴۵۶۷۸۹"),
-  email: z.string()
-    .regex(emailRegex, "ایمیل معتبر نیست"),
-  password: z.string()
-    .min(8, "گذرواژه باید حداقل ۸ کاراکتر باشد")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "گذرواژه باید شامل حروف بزرگ، کوچک و اعداد باشد"),
-  price: z.string()
-    .min(1, "مبلغ نمی‌تواند خالی باشد")
-    .regex(/^\d+$/, "لطفاً مبلغ را به صورت عدد وارد کنید"),
-});
-
-type TrainerFormData = z.infer<typeof trainerFormSchema>;
+const defaultProfile: TrainerProfile = {
+  name: "علی محمدی",
+  bio: "مربی با ۵ سال سابقه در زمینه بدنسازی و تناسب اندام",
+  phone: "09123456789",
+  email: "ali@example.com",
+  password: "",
+  price: "200000",
+  image: "/placeholder.svg"
+};
 
 const TrainerProfile = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
+  const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
   const [isUploading, setIsUploading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<TrainerFormData>({
-    resolver: zodResolver(trainerFormSchema),
-    defaultValues: {
-      name: "",
-      bio: "",
-      phone: "",
-      email: "",
-      password: "",
-      price: "",
-    },
-  });
-
-  const calculateProfileCompletion = (data: Partial<TrainerFormData>): number => {
-    const fields = ['name', 'bio', 'phone', 'email', 'password', 'price'] as const;
-    const hasAvatar = avatarUrl !== "/placeholder.svg";
-    const completedFields = fields.filter(field => Boolean(data[field])).length;
-    return Math.round(((completedFields + (hasAvatar ? 1 : 0)) / (fields.length + 1)) * 100);
-  };
-
-  const [completionPercentage, setCompletionPercentage] = useState(0);
-
+  // بارگذاری اطلاعات از localStorage در هنگام اول
   useEffect(() => {
-    const savedAvatar = localStorage.getItem('trainerAvatar');
-    if (savedAvatar) {
-      setAvatarUrl(savedAvatar);
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        setProfile(JSON.parse(savedProfile));
+      } catch (error) {
+        console.error('Error loading profile from localStorage:', error);
+        toast({
+          variant: "destructive",
+          title: "خطا در بارگذاری اطلاعات",
+          description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
+        });
+      }
     }
   }, []);
 
-  const triggerImageUpload = () => {
-    if (!isUploading && fileInputRef.current) {
-      fileInputRef.current.click();
+  const handleSave = () => {
+    try {
+      localStorage.setItem('trainerProfile', JSON.stringify(profile));
+      toast({
+        variant: "success",
+        title: "ذخیره موفق",
+        description: "اطلاعات پروفایل با موفقیت ذخیره شد"
+      });
+    } catch (error) {
+      console.error('Error saving profile to localStorage:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره اطلاعات",
+        description: "مشکلی در ذخیره اطلاعات پیش آمده است"
+      });
     }
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
       toast({
+        variant: "destructive",
         title: "خطا",
         description: "لطفاً یک فایل تصویری انتخاب کنید",
-        variant: "destructive",
       });
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
       toast({
+        variant: "destructive",
         title: "خطا",
         description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
-        variant: "destructive",
       });
       return;
     }
@@ -109,80 +99,53 @@ const TrainerProfile = () => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
-      setAvatarUrl(result);
-      localStorage.setItem('trainerAvatar', result);
-      
-      toast({
-        description: "تصویر پروفایل با موفقیت به‌روزرسانی شد",
-      });
-
+      setProfile(prev => ({ ...prev, image: result }));
+      localStorage.setItem('trainerProfile', JSON.stringify({ ...profile, image: result }));
       setIsUploading(false);
+      toast({
+        variant: "success",
+        description: "تصویر پروفایل با موفقیت بروزرسانی شد",
+      });
     };
 
     reader.onerror = () => {
+      setIsUploading(false);
       toast({
+        variant: "destructive",
         title: "خطا",
         description: "مشکلی در آپلود تصویر پیش آمد",
-        variant: "destructive",
       });
-      setIsUploading(false);
     };
 
     reader.readAsDataURL(file);
   };
 
-  const handleDeleteImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setAvatarUrl("/placeholder.svg");
-    localStorage.removeItem('trainerAvatar');
-    
-    toast({
-      description: "تصویر پروفایل با موفقیت حذف شد",
-    });
-  };
-
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-      setCompletionPercentage(calculateProfileCompletion(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [form]);
-
-  const onSubmit = async (data: TrainerFormData) => {
-    try {
-      console.log('Form submitted with:', data);
-      
-      toast({
-        description: "اطلاعات با موفقیت ذخیره شد.",
-      });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      toast({
-        title: "خطا",
-        description: "مشکلی در ذخیره اطلاعات پیش آمد. لطفاً مجدداً تلاش کنید.",
-        variant: "destructive",
-      });
-    }
+  const handleUpdate = (key: keyof TrainerProfile, value: string) => {
+    setProfile(prev => ({ ...prev, [key]: value }));
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-primary/5 via-background to-primary/10">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 w-[700px] h-[700px] bg-primary/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container mx-auto py-8 relative z-10">
-        <div className="relative flex flex-col items-start gap-4 mb-8 p-6 rounded-lg 
-                      bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg border border-white/10
-                      animate-in fade-in slide-in-from-top duration-1000">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground/90 to-foreground/60 bg-clip-text text-transparent">
-            پروفایل مربی
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            مشخصات و اطلاعات خود را به‌روزرسانی کنید
-          </p>
-          <div className="h-1.5 w-32 bg-gradient-to-r from-primary/80 to-primary/40 rounded-full" />
+    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
+      
+      <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
+        <div className="flex flex-col space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+                <User className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
+                  پروفایل مربی
+                </h2>
+                <p className="text-muted-foreground">
+                  اطلاعات پروفایل خود را مدیریت کنید
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-[300px_1fr] gap-6">
@@ -197,7 +160,6 @@ const TrainerProfile = () => {
                   onChange={handleImageUpload}
                   onClick={(e) => e.stopPropagation()}
                 />
-
                 <Button
                   className={cn(
                     "w-48 h-48 p-0 relative rounded-2xl overflow-hidden",
@@ -208,302 +170,119 @@ const TrainerProfile = () => {
                   )}
                   variant="ghost"
                   disabled={isUploading}
-                  onClick={triggerImageUpload}
+                  onClick={() => fileInputRef.current?.click()}
                 >
-                  <Avatar className="w-full h-full">
-                    <AvatarImage src={avatarUrl} alt="Profile" className="object-cover" />
-                    <AvatarFallback className="text-6xl bg-primary/5">
-                      {form.getValues("name")?.slice(0, 2).toUpperCase() || "ـــ"}
-                    </AvatarFallback>
-                  </Avatar>
-
+                  <img 
+                    src={profile.image} 
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
                   <div className={cn(
                     "absolute inset-0 flex items-center justify-center",
                     "bg-gradient-to-t from-black/60 to-transparent",
                     "opacity-0 group-hover:opacity-100 transition-all duration-300"
                   )}>
-                    {isUploading ? (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent" />
-                        <span className="text-white text-sm">در حال آپلود...</span>
-                      </div>
-                    ) : (
-                      <Camera className="h-10 w-10 text-white drop-shadow-lg" />
-                    )}
+                    <Camera className="h-10 w-10 text-white drop-shadow-lg" />
                   </div>
                 </Button>
-
-                {avatarUrl !== "/placeholder.svg" && !isUploading && (
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    className="absolute -top-2 -right-2 rounded-full opacity-0 group-hover:opacity-100 
-                             transition-all duration-300 hover:scale-110 shadow-lg z-20"
-                    onClick={handleDeleteImage}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
               </div>
-
-              <div className="mt-8 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-foreground/70">تکمیل پروفایل</span>
-                  <span className="text-sm font-bold">{toPersianNumbers(completionPercentage)}٪</span>
-                </div>
-                <div className="h-2 w-full bg-primary/5 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-primary/80 to-primary/60 rounded-full transition-all duration-700 ease-out"
-                    style={{ width: `${completionPercentage}%` }}
-                  />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 space-y-4">
-              <h3 className="text-lg font-semibold">راهنمای تکمیل پروفایل</h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-primary/60" />
-                  تصویر پروفایل خود را آپلود کنید
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-primary/60" />
-                  اطلاعات تماس را کامل وارد کنید
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-primary/60" />
-                  بیوگرافی خود را بنویسید
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-primary/60" />
-                  مبلغ برنامه تمرینی را مشخص کنید
-                </li>
-              </ul>
             </Card>
           </div>
 
           <Card className="backdrop-blur-xl bg-white/50 border-primary/10">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-6">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
-                    <h2 className="text-xl font-semibold">اطلاعات شخصی</h2>
-                  </div>
-                  
-                  <div className="grid gap-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-foreground/70">
-                            <User className="h-4 w-4" />
-                            نام و نام خانوادگی
-                          </FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="نام خود را وارد کنید"
-                              className="transition-all duration-300 border-primary/10 focus-visible:border-primary/30
-                                       hover:border-primary/20 focus-visible:ring-2 focus-visible:ring-primary/20
-                                       bg-white/50"
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+            <div className="p-6 space-y-6">
+              <div>
+                <Label>نام و نام خانوادگی</Label>
+                <Input
+                  value={profile.name}
+                  onChange={(e) => handleUpdate('name', e.target.value)}
+                  placeholder="نام خود را وارد کنید"
+                />
+              </div>
 
-                    <FormField
-                      control={form.control}
-                      name="bio"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-foreground/70">
-                            <User className="h-4 w-4" />
-                            بیوگرافی
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder="درباره خود بنویسید" 
-                              className="resize-none h-32 transition-all duration-300 border-primary/10 
-                                       focus-visible:border-primary/30 hover:border-primary/20
-                                       focus-visible:ring-2 focus-visible:ring-primary/20
-                                       bg-white/50"
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+              <div>
+                <Label>بیوگرافی</Label>
+                <Textarea
+                  value={profile.bio}
+                  onChange={(e) => handleUpdate('bio', e.target.value)}
+                  placeholder="درباره خود بنویسید"
+                  className="resize-none h-32"
+                />
+              </div>
+
+              <div>
+                <Label>شماره موبایل</Label>
+                <Input
+                  value={toPersianNumbers(profile.phone)}
+                  onChange={(e) => {
+                    const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                    handleUpdate('phone', persianValue);
+                  }}
+                  placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                  dir="ltr"
+                  className="text-left"
+                />
+              </div>
+
+              <div>
+                <Label>ایمیل</Label>
+                <Input
+                  type="email"
+                  value={profile.email}
+                  onChange={(e) => handleUpdate('email', e.target.value)}
+                  placeholder="example@domain.com"
+                  dir="ltr"
+                  className="text-left"
+                />
+              </div>
+
+              <div>
+                <Label>رمز عبور</Label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={profile.password}
+                    onChange={(e) => handleUpdate('password', e.target.value)}
+                    placeholder="رمز عبور خود را وارد کنید"
+                    className="pr-4 pl-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="absolute left-0 top-0 h-full px-3 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground/70" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground/70" />
+                    )}
+                  </Button>
                 </div>
+              </div>
 
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
-                    <h2 className="text-xl font-semibold">اطلاعات تماس</h2>
-                  </div>
+              <div>
+                <Label>هزینه هر جلسه (تومان)</Label>
+                <Input
+                  value={toPersianNumbers(profile.price)}
+                  onChange={(e) => {
+                    const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                    handleUpdate('price', persianValue);
+                  }}
+                  placeholder="۲۰۰,۰۰۰"
+                  dir="ltr"
+                  className="text-left"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  {profile.price && `معادل ${toPersianNumbers(Number(profile.price).toLocaleString())} تومان`}
+                </p>
+              </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-foreground/70">
-                            <Phone className="h-4 w-4" />
-                            شماره موبایل
-                          </FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
-                              dir="ltr"
-                              className="text-left transition-all duration-300 border-primary/10 
-                                       focus-visible:border-primary/30 hover:border-primary/20
-                                       focus-visible:ring-2 focus-visible:ring-primary/20
-                                       bg-white/50"
-                              {...field}
-                              value={toPersianNumbers(field.value)}
-                              onChange={(e) => {
-                                const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                                field.onChange(persianValue);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-foreground/70">
-                            <Mail className="h-4 w-4" />
-                            ایمیل
-                          </FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="example@domain.com" 
-                              dir="ltr"
-                              className="text-left transition-all duration-300 border-primary/10 
-                                       focus-visible:border-primary/30 hover:border-primary/20
-                                       focus-visible:ring-2 focus-visible:ring-primary/20
-                                       bg-white/50"
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary/80 to-primary/40" />
-                    <h2 className="text-xl font-semibold">امنیت و کسب‌وکار</h2>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-foreground/70">
-                            <KeyRound className="h-4 w-4" />
-                            گذرواژه
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input 
-                                type={showPassword ? "text" : "password"}
-                                placeholder="••••••••" 
-                                dir="ltr"
-                                className="text-left transition-all duration-300 border-primary/10 
-                                         focus-visible:border-primary/30 hover:border-primary/20
-                                         focus-visible:ring-2 focus-visible:ring-primary/20 pr-10
-                                         bg-white/50"
-                                {...field} 
-                              />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="absolute left-0 top-0 h-full px-3 hover:bg-transparent"
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
-                                {showPassword ? (
-                                  <EyeOff className="h-4 w-4 text-muted-foreground/70" />
-                                ) : (
-                                  <Eye className="h-4 w-4 text-muted-foreground/70" />
-                                )}
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormDescription className="text-xs">
-                            حداقل ۸ کاراکتر شامل حروف بزرگ، کوچک و اعداد
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="price"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-foreground/70">
-                            <CreditCard className="h-4 w-4" />
-                            مبلغ برنامه تمرینی (تومان)
-                          </FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="۲۰۰,۰۰۰" 
-                              dir="ltr"
-                              className="text-left transition-all duration-300 border-primary/10 
-                                       focus-visible:border-primary/30 hover:border-primary/20
-                                       focus-visible:ring-2 focus-visible:ring-primary/20
-                                       bg-white/50"
-                              value={field.value ? toPersianNumbers(field.value) : ""}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                const numericValue = value.replace(/[^0-9۰-۹]/g, "");
-                                const englishValue = numericValue.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                                field.onChange(englishValue);
-                              }}
-                            />
-                          </FormControl>
-                          <FormDescription className="text-xs">
-                            {field.value && `معادل ${toPersianNumbers(Number(field.value).toLocaleString())} تومان`}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full md:w-auto bg-gradient-to-r from-primary/90 to-primary/80 hover:to-primary
-                           transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
-                           shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
-                >
-                  <Save className="ml-2 h-4 w-4" />
-                  ذخیره تغییرات
-                </Button>
-              </form>
-            </Form>
+              <Button onClick={handleSave} className="w-full">
+                <Save className="ml-2 h-4 w-4" />
+                ذخیره تغییرات
+              </Button>
+            </div>
           </Card>
         </div>
       </div>
