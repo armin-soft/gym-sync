@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Dumbbell, Edit, Grip, Trash2 } from "lucide-react";
+import { Dumbbell, Edit, Grip, Plus, Trash2 } from "lucide-react";
 import { ExerciseType } from "@/types/exercise";
 
 interface ExerciseTypesProps {
