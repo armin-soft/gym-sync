@@ -22,12 +22,12 @@ interface TrainerProfile {
 }
 
 const defaultProfile: TrainerProfile = {
-  name: "علی محمدی",
-  bio: "مربی با ۵ سال سابقه در زمینه بدنسازی و تناسب اندام",
-  phone: "09123456789",
-  email: "ali@example.com",
+  name: "",
+  bio: "",
+  phone: "",
+  email: "",
   password: "",
-  price: "200000",
+  price: "",
   image: "/placeholder.svg"
 };
 
@@ -291,3 +291,4 @@ const TrainerProfile = () => {
 };
 
 export default TrainerProfile;
+
