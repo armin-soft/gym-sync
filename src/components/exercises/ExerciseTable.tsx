@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowUpDown, Edit, Plus, Trash2, Activity, Dumbbell } from "lucide-react";
@@ -79,14 +80,13 @@ export function ExerciseTable({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => {
-                  onDelete(selectedExercises);
-                  setSelectedExercises([]);
-                }}
+                onClick={handleDeleteSelected}
                 className="gap-1"
               >
                 <Trash2 className="w-4 h-4" />
-                حذف {selectedExercises.length > 1 ? `${toPersianNumbers(selectedExercises.length)} حرکت` : "حرکت"}
+                حذف {selectedExercises.length > 1 
+                  ? `${toPersianNumbers(selectedExercises.length)} حرکت` 
+                  : "حرکت منتخب"}
               </Button>
             )}
             <Button 
