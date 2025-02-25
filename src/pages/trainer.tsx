@@ -1,14 +1,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Camera, CreditCard, Eye, EyeOff, KeyRound, Mail, Phone, Save, Trash2, User } from "lucide-react";
+import { Camera, Eye, EyeOff, Save } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface TrainerProfile {
@@ -31,14 +30,22 @@ const defaultProfile: TrainerProfile = {
   image: "/placeholder.svg"
 };
 
+// Validation functions
+const isValidPersianName = (name: string) => /^[\u0600-\u06FF\s]+$/.test(name);
+const isValidIranianMobile = (phone: string) => /^(09|\u06F0\u06F9)[\u06F0-\u06F9]{9}$/.test(phone);
+const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidPassword = (password: string) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
+const isValidPrice = (price: string) => /^[\u06F0-\u06F9]+$/.test(price);
+
 const TrainerProfile = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
   const [isUploading, setIsUploading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
 
-  // بارگذاری اطلاعات از localStorage در هنگام اول
+  // Load saved profile from localStorage
   useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
@@ -55,7 +62,43 @@ const TrainerProfile = () => {
     }
   }, []);
 
+  const validateForm = () => {
+    const newErrors: Partial<Record<keyof TrainerProfile, string>> = {};
+
+    if (!isValidPersianName(profile.name)) {
+      newErrors.name = "لطفاً نام را به فارسی وارد کنید";
+    }
+
+    if (!isValidIranianMobile(profile.phone)) {
+      newErrors.phone = "شماره موبایل معتبر نیست";
+    }
+
+    if (!isValidEmail(profile.email)) {
+      newErrors.email = "ایمیل معتبر نیست";
+    }
+
+    if (!isValidPassword(profile.password)) {
+      newErrors.password = "گذرواژه باید شامل حروف انگلیسی و اعداد باشد (حداقل ۸ کاراکتر)";
+    }
+
+    if (profile.price && !isValidPrice(profile.price)) {
+      newErrors.price = "لطفاً فقط اعداد وارد کنید";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = () => {
+    if (!validateForm()) {
+      toast({
+        variant: "destructive",
+        title: "خطا در اطلاعات",
+        description: "لطفاً خطاهای فرم را برطرف کنید"
+      });
+      return;
+    }
+
     try {
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
       toast({
@@ -100,7 +143,6 @@ const TrainerProfile = () => {
     reader.onload = () => {
       const result = reader.result as string;
       setProfile(prev => ({ ...prev, image: result }));
-      localStorage.setItem('trainerProfile', JSON.stringify({ ...profile, image: result }));
       setIsUploading(false);
       toast({
         title: "آپلود موفق",
@@ -122,6 +164,10 @@ const TrainerProfile = () => {
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
     setProfile(prev => ({ ...prev, [key]: value }));
+    // Clear error when user starts typing
+    if (errors[key]) {
+      setErrors(prev => ({ ...prev, [key]: '' }));
+    }
   };
 
   return (
@@ -131,19 +177,17 @@ const TrainerProfile = () => {
       
       <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
         <div className="flex flex-col space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
-                <User className="h-6 w-6" />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
-                  پروفایل مربی
-                </h2>
-                <p className="text-muted-foreground">
-                  اطلاعات پروفایل خود را مدیریت کنید
-                </p>
-              </div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+              <Camera className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
+                پروفایل مربی
+              </h2>
+              <p className="text-muted-foreground">
+                اطلاعات پروفایل خود را مدیریت کنید
+              </p>
             </div>
           </div>
         </div>
@@ -174,7 +218,7 @@ const TrainerProfile = () => {
                 >
                   <img 
                     src={profile.image} 
-                    alt={profile.name}
+                    alt={profile.name || "تصویر پروفایل"}
                     className="w-full h-full object-cover"
                   />
                   <div className={cn(
@@ -196,8 +240,10 @@ const TrainerProfile = () => {
                 <Input
                   value={profile.name}
                   onChange={(e) => handleUpdate('name', e.target.value)}
-                  placeholder="نام خود را وارد کنید"
+                  placeholder="نام خود را به فارسی وارد کنید"
+                  className={errors.name ? "border-red-500" : ""}
                 />
+                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
               </div>
 
               <div>
@@ -220,8 +266,9 @@ const TrainerProfile = () => {
                   }}
                   placeholder="۰۹۱۲۳۴۵۶۷۸۹"
                   dir="ltr"
-                  className="text-left"
+                  className={cn("text-left", errors.phone ? "border-red-500" : "")}
                 />
+                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
               </div>
 
               <div>
@@ -232,19 +279,20 @@ const TrainerProfile = () => {
                   onChange={(e) => handleUpdate('email', e.target.value)}
                   placeholder="example@domain.com"
                   dir="ltr"
-                  className="text-left"
+                  className={cn("text-left", errors.email ? "border-red-500" : "")}
                 />
+                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
               </div>
 
               <div>
-                <Label>رمز عبور</Label>
+                <Label>گذرواژه</Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
                     value={profile.password}
                     onChange={(e) => handleUpdate('password', e.target.value)}
-                    placeholder="رمز عبور خود را وارد کنید"
-                    className="pr-4 pl-10"
+                    placeholder="حداقل ۸ کاراکتر شامل حروف انگلیسی و اعداد"
+                    className={cn("pr-4 pl-10", errors.password ? "border-red-500" : "")}
                   />
                   <Button
                     type="button"
@@ -259,6 +307,7 @@ const TrainerProfile = () => {
                     )}
                   </Button>
                 </div>
+                {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
               </div>
 
               <div>
@@ -271,8 +320,9 @@ const TrainerProfile = () => {
                   }}
                   placeholder="۲۰۰,۰۰۰"
                   dir="ltr"
-                  className="text-left"
+                  className={cn("text-left", errors.price ? "border-red-500" : "")}
                 />
+                {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
                 <p className="text-sm text-muted-foreground mt-1">
                   {profile.price && `معادل ${toPersianNumbers(Number(profile.price).toLocaleString())} تومان`}
                 </p>
@@ -291,4 +341,3 @@ const TrainerProfile = () => {
 };
 
 export default TrainerProfile;
-
