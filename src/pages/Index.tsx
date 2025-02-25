@@ -58,13 +58,13 @@ const Index = () => {
       const meals = JSON.parse(localStorage.getItem('meals') || '[]');
       const supplements = JSON.parse(localStorage.getItem('supplements') || '[]');
 
-      // محاسبه نرخ تکمیل برنامه‌های غذایی
+      // محاسبه نرخ تکمیل برنامه های غذایی
       const studentsWithMeals = students.filter((student: any) => 
         meals.some((meal: any) => meal.studentId === student.id)
       ).length;
       const mealCompletionRate = students.length ? (studentsWithMeals / students.length) * 100 : 0;
 
-      // محاسبه نرخ تکمیل مکمل‌ها
+      // محاسبه نرخ تکمیل مکمل و ویتامین
       const studentsWithSupplements = students.filter((student: any) => 
         supplements.some((supplement: any) => supplement.studentId === student.id)
       ).length;
@@ -124,28 +124,28 @@ const Index = () => {
   const quickActions = [
     { 
       name: "افزودن شاگرد", 
-      description: "ثبت‌نام شاگرد جدید",
+      description: "ثبت نام شاگرد جدید",
       icon: Users, 
       href: "/Students", 
       gradient: "from-blue-500 via-blue-600 to-blue-700"
     },
     { 
-      name: "ثبت تمرین", 
+      name: "ثبت حرکت تمرینی", 
       description: "برنامه تمرینی جدید",
       icon: Dumbbell, 
       href: "/Exercise-Movements", 
       gradient: "from-green-500 via-green-600 to-green-700"
     },
     { 
-      name: "برنامه غذایی", 
+      name: "برنامه های غذایی", 
       description: "تنظیم رژیم غذایی",
       icon: UtensilsCrossed, 
       href: "/Diet-Plan", 
       gradient: "from-orange-500 via-orange-600 to-orange-700"
     },
     { 
-      name: "مکمل‌ها", 
-      description: "مدیریت مکمل‌ها",
+      name: "مکمل و ویتامین", 
+      description: "مدیریت مکمل ها",
       icon: Pill, 
       href: "/Supplements-Vitamins", 
       gradient: "from-purple-500 via-purple-600 to-purple-700"
@@ -168,7 +168,7 @@ const Index = () => {
       progress: Math.min((stats.totalSessions / stats.maxSessionsPerMonth) * 100, 100)
     },
     {
-      title: "برنامه‌های غذایی",
+      title: "برنامه های غذایی",
       description: `${toPersianNumbers(Math.round(stats.mealCompletionRate))}٪ تکمیل شده`,
       icon: Scale,
       gradient: "from-green-500 to-green-600",
@@ -291,7 +291,7 @@ const Index = () => {
 
         <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">برنامه‌های غذایی</CardTitle>
+            <CardTitle className="text-sm font-medium">برنامه های غذایی</CardTitle>
             <UtensilsCrossed className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -315,7 +315,7 @@ const Index = () => {
 
         <Card className="group overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">مکمل‌های تجویز شده</CardTitle>
+            <CardTitle className="text-sm font-medium">مکمل و ویتامین تجویز شده</CardTitle>
             <Pill className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -326,7 +326,7 @@ const Index = () => {
               {renderGrowthBadge(stats.supplementGrowth)}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
-              {toPersianNumbers(Math.round(stats.supplementCompletionRate))}٪ شاگردان دارای مکمل
+              {toPersianNumbers(Math.round(stats.supplementCompletionRate))}٪ شاگردان دارای مکمل و ویتامین
             </div>
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-primary/10">
               <div 
