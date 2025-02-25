@@ -6,6 +6,7 @@ import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Achievements } from "@/components/dashboard/Achievements";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { Button } from "@/components/ui/button";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 const Index = () => {
   const stats = useDashboardStats();
@@ -52,28 +53,28 @@ const Index = () => {
                 <User2 className="h-5 w-5 text-primary-foreground/80" />
                 <div>
                   <p className="text-sm text-primary-foreground/80">تعداد شاگردان</p>
-                  <p className="text-lg font-semibold">{stats.totalStudents}</p>
+                  <p className="text-lg font-semibold">{toPersianNumbers(stats.totalStudents)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-xl bg-primary-foreground/10 px-4 py-3">
                 <Dumbbell className="h-5 w-5 text-primary-foreground/80" />
                 <div>
                   <p className="text-sm text-primary-foreground/80">جلسات تمرینی</p>
-                  <p className="text-lg font-semibold">{stats.totalSessions}</p>
+                  <p className="text-lg font-semibold">{toPersianNumbers(stats.totalSessions)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-xl bg-primary-foreground/10 px-4 py-3">
                 <UtensilsCrossed className="h-5 w-5 text-primary-foreground/80" />
                 <div>
                   <p className="text-sm text-primary-foreground/80">برنامه های غذایی</p>
-                  <p className="text-lg font-semibold">{stats.totalMeals}</p>
+                  <p className="text-lg font-semibold">{toPersianNumbers(stats.totalMeals)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-xl bg-primary-foreground/10 px-4 py-3">
                 <Pill className="h-5 w-5 text-primary-foreground/80" />
                 <div>
                   <p className="text-sm text-primary-foreground/80">مکمل های تجویز شده</p>
-                  <p className="text-lg font-semibold">{stats.totalSupplements}</p>
+                  <p className="text-lg font-semibold">{toPersianNumbers(stats.totalSupplements)}</p>
                 </div>
               </div>
             </div>
@@ -100,3 +101,4 @@ const Index = () => {
 };
 
 export default Index;
+
