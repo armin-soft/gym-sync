@@ -52,6 +52,13 @@ export function ExerciseTable({
     }
   };
 
+  const handleDeleteSelected = () => {
+    if (selectedExercises.length > 0) {
+      onDelete(selectedExercises);
+      setSelectedExercises([]);
+    }
+  };
+
   // وقتی لیست حرکت‌ها تغییر می‌کند، انتخاب‌ها را ریست می‌کنیم
   useEffect(() => {
     setSelectedExercises([]);
@@ -74,14 +81,13 @@ export function ExerciseTable({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => {
-                  onDelete(selectedExercises);
-                  setSelectedExercises([]);
-                }}
+                onClick={handleDeleteSelected}
                 className="gap-1"
               >
                 <Trash2 className="w-4 h-4" />
-                حذف {selectedExercises.length > 1 ? `${toPersianNumbers(selectedExercises.length)} حرکت` : "حرکت"}
+                حذف {selectedExercises.length > 1 
+                  ? `${toPersianNumbers(selectedExercises.length)} حرکت` 
+                  : "حرکت منتخب"}
               </Button>
             )}
             <Button 
@@ -139,7 +145,10 @@ export function ExerciseTable({
                   return (
                     <TableRow 
                       key={exercise.id}
-                      className="group hover:bg-indigo-50/50 transition-all duration-200"
+                      className={cn(
+                        "group hover:bg-indigo-50/50 transition-all duration-200",
+                        selectedExercises.includes(exercise.id) && "bg-indigo-50"
+                      )}
                     >
                       <TableCell>
                         <Checkbox 
