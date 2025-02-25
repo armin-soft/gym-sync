@@ -166,11 +166,11 @@ const ExercisesPage = () => {
     setIsAscending(!isAscending);
   };
 
-  const handleExerciseSave = async () => {
+  const handleExerciseSave = async (formData: { name: string; categoryId: number }) => {
     if (selectedExercise) {
       setExercises(exercises.map(ex =>
         ex.id === selectedExercise.id
-          ? { ...ex, ...exerciseFormData }
+          ? { ...ex, ...formData }
           : ex
       ));
       toast({
@@ -180,7 +180,7 @@ const ExercisesPage = () => {
     } else {
       const newExercise: Exercise = {
         id: Math.max(...exercises.map(ex => ex.id), 0) + 1,
-        ...exerciseFormData
+        ...formData
       };
       setExercises(prev => [...prev, newExercise]);
       toast({

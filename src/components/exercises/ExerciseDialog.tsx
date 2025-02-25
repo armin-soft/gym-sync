@@ -21,7 +21,7 @@ interface ExerciseDialogProps {
   categories: ExerciseCategory[];
   formData: { name: string; categoryId: number };
   onFormDataChange: (data: { name: string; categoryId: number }) => void;
-  onSave: () => Promise<void>;
+  onSave: (data: { name: string; categoryId: number }) => Promise<void>;
 }
 
 export function ExerciseDialog({
@@ -38,14 +38,13 @@ export function ExerciseDialog({
   const [activeTab, setActiveTab] = useState("single");
   const [isSaving, setIsSaving] = useState(false);
 
-  // هنگام باز شدن دیالوگ برای ویرایش، مقادیر را تنظیم می‌کنیم
   useEffect(() => {
     if (selectedExercise) {
       onFormDataChange({
         name: selectedExercise.name,
         categoryId: selectedExercise.categoryId
       });
-      setActiveTab("single"); // در حالت ویرایش همیشه تب تکی فعال باشد
+      setActiveTab("single");
     } else {
       if (!isOpen) {
         setGroupText("");
@@ -70,7 +69,7 @@ export function ExerciseDialog({
           });
           return;
         }
-        await onSave();
+        await onSave(formData);
         onOpenChange(false);
       } else {
         const exercises = groupText.split('\n').filter(line => line.trim());
@@ -81,31 +80,25 @@ export function ExerciseDialog({
             title: "خطا",
             description: "لطفاً حداقل یک حرکت را وارد کنید"
           });
-          setIsSaving(false);
           return;
         }
 
         let hasError = false;
-        for (const exerciseName of exercises) {
-          const name = exerciseName.trim();
-          if (!name) continue;
+        for (const name of exercises) {
+          const trimmedName = name.trim();
+          if (!trimmedName) continue;
           
-          // ابتدا نام حرکت را در formData تنظیم می‌کنیم
-          onFormDataChange({
-            ...formData,
-            name: name
-          });
-
           try {
-            // صبر می‌کنیم تا تغییرات formData اعمال شود
-            await new Promise(resolve => setTimeout(resolve, 0));
-            await onSave();
+            await onSave({
+              name: trimmedName,
+              categoryId: formData.categoryId
+            });
           } catch (error) {
             hasError = true;
             toast({
               variant: "destructive",
               title: "خطا",
-              description: `خطا در ذخیره حرکت "${name}"`
+              description: `خطا در ذخیره حرکت "${trimmedName}"`
             });
             break;
           }
@@ -116,7 +109,7 @@ export function ExerciseDialog({
           setGroupText("");
           toast({
             title: "موفقیت",
-            description: "حرکت‌ها با موفقیت اضافه شدند"
+            description: `${exercises.length} حرکت با موفقیت اضافه شدند`
           });
         }
       }
@@ -137,7 +130,7 @@ export function ExerciseDialog({
           </DialogHeader>
           <div className="space-y-6 py-4">
             <div className="space-y-2">
-              <Label className="text-base">دسته‌بندی</Label>
+              <Label className="text-base">دسته‌بندی تمرین</Label>
               <select
                 className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
                 value={formData.categoryId}
@@ -192,7 +185,7 @@ export function ExerciseDialog({
         </DialogHeader>
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label className="text-base">دسته‌بندی</Label>
+            <Label className="text-base">دسته‌بندی تمرین</Label>
             <select
               className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
               value={formData.categoryId}
@@ -233,11 +226,12 @@ export function ExerciseDialog({
                 value={groupText}
                 placeholder="هر حرکت را در یک خط وارد کنید
 مثال:
-بک فلای
-بک فلای تک
-بک فلای متناوب"
+نشر از جلو دمبل
+پرس سرشانه هالتر
+نشر از جانب"
                 className="min-h-[150px] focus-visible:ring-blue-400"
                 onChange={(e) => setGroupText(e.target.value)}
+                dir="rtl"
               />
             </TabsContent>
           </Tabs>
