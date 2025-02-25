@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { TrainerProfile } from "@/types/trainer";
 import { isValidEmail, isValidIranianMobile, isValidPassword, isValidPersianName, isValidPrice } from "@/utils/validation";
-import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Tag, Check } from "lucide-react";
+import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Tag, Check, Save } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface ProfileFormProps {
@@ -17,9 +17,9 @@ interface ProfileFormProps {
   onUpdate: (key: keyof TrainerProfile, value: string) => void;
   onSave: () => void;
   errors: Partial<Record<keyof TrainerProfile, string>>;
-  setErrors: (errors: Partial<Record<keyof TrainerProfile, string>>) => void;
+  setErrors: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, string>>>>;
   validFields: Partial<Record<keyof TrainerProfile, boolean>>;
-  setValidFields: (validFields: Partial<Record<keyof TrainerProfile, boolean>>) => void;
+  setValidFields: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, boolean>>>>;
 }
 
 export const ProfileForm = ({ 
@@ -72,8 +72,8 @@ export const ProfileForm = ({
         isValid = true;
     }
 
-    setValidFields(prev => ({ ...prev, [key]: isValid }));
-    setErrors(prev => ({ ...prev, [key]: error }));
+    setValidFields((prev) => ({ ...prev, [key]: isValid }));
+    setErrors((prev) => ({ ...prev, [key]: error }));
   };
 
   // Validate initial values
@@ -177,6 +177,12 @@ export const ProfileForm = ({
     </div>
   );
 
+  const formatPrice = (price: string) => {
+    if (!price) return '';
+    const numericPrice = parseInt(price.replace(/[^0-9]/g, ''));
+    return isNaN(numericPrice) ? '' : numericPrice.toLocaleString();
+  };
+
   return (
     <Card className="backdrop-blur-xl bg-white/50 border-primary/10">
       <div className="p-6 space-y-6">
@@ -228,14 +234,16 @@ export const ProfileForm = ({
 
         {profile.price && (
           <p className="text-sm text-muted-foreground mt-1">
-            معادل {toPersianNumbers(Number(profile.price).toLocaleString())} تومان
+            معادل {toPersianNumbers(formatPrice(profile.price))} تومان
           </p>
         )}
 
         <Button onClick={handleSave} className="w-full">
+          <Save className="ml-2 h-4 w-4" />
           ذخیره تغییرات
         </Button>
       </div>
     </Card>
   );
 };
+
