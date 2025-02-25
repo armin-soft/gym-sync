@@ -35,38 +35,52 @@ const ExercisesPage = () => {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
   const [isAscending, setIsAscending] = useState(true);
 
+  // بارگذاری اولیه داده‌ها از localStorage
   useEffect(() => {
-    const savedTypes = localStorage.getItem("exerciseTypes");
-    const savedCategories = localStorage.getItem("exerciseCategories");
-    const savedExercises = localStorage.getItem("exercises");
+    const loadData = () => {
+      try {
+        const savedTypes = localStorage.getItem("exerciseTypes");
+        const savedCategories = localStorage.getItem("exerciseCategories");
+        const savedExercises = localStorage.getItem("exercises");
 
-    if (savedTypes) {
-      const types = JSON.parse(savedTypes);
-      setExerciseTypes(types);
-      if (types.length > 0) {
-        setSelectedType(types[0]);
+        const types = savedTypes ? JSON.parse(savedTypes) : defaultExerciseTypes;
+        const cats = savedCategories ? JSON.parse(savedCategories) : defaultCategories;
+        const exs = savedExercises ? JSON.parse(savedExercises) : defaultExercises;
+
+        setExerciseTypes(types);
+        setCategories(cats);
+        setExercises(exs);
+
+        if (types.length > 0) {
+          setSelectedType(types[0]);
+        }
+      } catch (error) {
+        console.error("Error loading data from localStorage:", error);
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "خطا در بارگذاری اطلاعات"
+        });
       }
-    } else {
-      setExerciseTypes(defaultExerciseTypes);
-    }
+    };
 
-    if (savedCategories) {
-      setCategories(JSON.parse(savedCategories));
-    } else {
-      setCategories(defaultCategories);
-    }
-
-    if (savedExercises) {
-      setExercises(JSON.parse(savedExercises));
-    } else {
-      setExercises(defaultExercises);
-    }
+    loadData();
   }, []);
 
+  // ذخیره تغییرات در localStorage
   useEffect(() => {
-    localStorage.setItem("exerciseTypes", JSON.stringify(exerciseTypes));
-    localStorage.setItem("exerciseCategories", JSON.stringify(categories));
-    localStorage.setItem("exercises", JSON.stringify(exercises));
+    try {
+      localStorage.setItem("exerciseTypes", JSON.stringify(exerciseTypes));
+      localStorage.setItem("exerciseCategories", JSON.stringify(categories));
+      localStorage.setItem("exercises", JSON.stringify(exercises));
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در ذخیره‌سازی اطلاعات"
+      });
+    }
   }, [exerciseTypes, categories, exercises]);
 
   const handleAddType = () => {
@@ -170,21 +184,26 @@ const ExercisesPage = () => {
 
   const handleExerciseSave = async (formData: { name: string; categoryId: number }) => {
     if (selectedExercise) {
-      setExercises(exercises.map(ex =>
-        ex.id === selectedExercise.id
-          ? { ...ex, ...formData }
-          : ex
-      ));
+      // ویرایش حرکت موجود
+      const updatedExercises = exercises.map(ex =>
+        ex.id === selectedExercise.id ? { ...ex, ...formData } : ex
+      );
+      setExercises(updatedExercises);
+      setIsExerciseDialogOpen(false);
+      
       toast({
         title: "موفقیت",
         description: "حرکت با موفقیت ویرایش شد"
       });
     } else {
+      // افزودن حرکت جدید
       const newExercise: Exercise = {
-        id: Math.max(...exercises.map(ex => ex.id), 0) + 1,
+        id: Math.max(0, ...exercises.map(ex => ex.id)) + 1,
         ...formData
       };
       setExercises(prev => [...prev, newExercise]);
+      setIsExerciseDialogOpen(false);
+      
       toast({
         title: "موفقیت",
         description: "حرکت جدید با موفقیت اضافه شد"
@@ -193,8 +212,8 @@ const ExercisesPage = () => {
     return Promise.resolve();
   };
 
-  const handleDeleteSelected = (selectedIds: number[]) => {
-    setExercises(exercises.filter(ex => !selectedIds.includes(ex.id)));
+  const handleDeleteExercises = (selectedIds: number[]) => {
+    setExercises(prevExercises => prevExercises.filter(ex => !selectedIds.includes(ex.id)));
     toast({
       title: "موفقیت",
       description: selectedIds.length > 1 
@@ -230,6 +249,7 @@ const ExercisesPage = () => {
               });
               return;
             }
+            setCategoryFormData({ name: "" });
             setIsCategoryDialogOpen(true);
           }}
           onEdit={(category) => {
@@ -245,7 +265,7 @@ const ExercisesPage = () => {
               });
               return;
             }
-            setCategories(categories.filter(c => c.id !== category.id));
+            setCategories(prevCategories => prevCategories.filter(c => c.id !== category.id));
             toast({
               title: "موفقیت",
               description: "دسته‌بندی با موفقیت حذف شد"
@@ -277,7 +297,7 @@ const ExercisesPage = () => {
             });
             setIsExerciseDialogOpen(true);
           }}
-          onDelete={handleDeleteSelected}
+          onDelete={handleDeleteExercises}
           onSort={handleSort}
           isAscending={isAscending}
         />
@@ -311,13 +331,15 @@ const ExercisesPage = () => {
           }
 
           const newCategory: ExerciseCategory = {
-            id: Math.max(...categories.map(c => c.id), 0) + 1,
+            id: Math.max(0, ...categories.map(c => c.id)) + 1,
             name: categoryFormData.name,
             type: selectedType
           };
 
-          setCategories([...categories, newCategory]);
+          setCategories(prevCategories => [...prevCategories, newCategory]);
           setIsCategoryDialogOpen(false);
+          setCategoryFormData({ name: "" });
+          
           toast({
             title: "موفقیت",
             description: "دسته‌بندی جدید با موفقیت اضافه شد"
