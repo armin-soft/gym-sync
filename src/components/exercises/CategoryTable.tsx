@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, ChevronDown } from "lucide-react";
+import { Edit, Trash2, ChevronDown, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,17 +13,30 @@ import { ExerciseCategory } from "@/types/exercise";
 
 interface CategoryTableProps {
   categories: ExerciseCategory[];
+  onAdd: () => void;
   onEdit: (category: ExerciseCategory) => void;
   onDelete: (category: ExerciseCategory) => void;
 }
 
-export function CategoryTable({ categories, onEdit, onDelete }: CategoryTableProps) {
+export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryTableProps) {
   return (
     <Table>
       <TableHeader>
         <TableRow className="bg-muted/50 hover:bg-muted/50">
           <TableHead className="font-bold">نام دسته‌بندی</TableHead>
-          <TableHead className="w-[100px] text-center font-bold">عملیات</TableHead>
+          <TableHead className="w-[100px] text-center font-bold">
+            <div className="flex items-center justify-between">
+              <span>عملیات</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
+                onClick={onAdd}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
