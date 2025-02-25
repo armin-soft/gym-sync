@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { TrainerProfile } from "@/types/trainer";
 import { isValidEmail, isValidIranianMobile, isValidPassword, isValidPersianName, isValidPrice } from "@/utils/validation";
-import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Tag } from "lucide-react";
-import { useState } from "react";
+import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Tag, Check } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -18,55 +18,109 @@ interface ProfileFormProps {
   onSave: () => void;
   errors: Partial<Record<keyof TrainerProfile, string>>;
   setErrors: (errors: Partial<Record<keyof TrainerProfile, string>>) => void;
+  validFields: Partial<Record<keyof TrainerProfile, boolean>>;
+  setValidFields: (validFields: Partial<Record<keyof TrainerProfile, boolean>>) => void;
 }
 
-export const ProfileForm = ({ profile, onUpdate, onSave, errors, setErrors }: ProfileFormProps) => {
+export const ProfileForm = ({ 
+  profile, 
+  onUpdate, 
+  onSave, 
+  errors, 
+  setErrors,
+  validFields,
+  setValidFields 
+}: ProfileFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
-  const validateForm = () => {
-    const newErrors: Partial<Record<keyof TrainerProfile, string>> = {};
+  const validateField = (key: keyof TrainerProfile, value: string) => {
+    let isValid = false;
+    let error = '';
 
-    if (!profile.name) {
-      newErrors.name = "نام و نام خانوادگی اجباری است";
-    } else if (!isValidPersianName(profile.name)) {
-      newErrors.name = "لطفاً نام را به فارسی وارد کنید";
+    switch (key) {
+      case 'name':
+        isValid = isValidPersianName(value);
+        error = !value ? "نام و نام خانوادگی اجباری است" : 
+                !isValid ? "لطفاً نام را به فارسی وارد کنید" : '';
+        break;
+      case 'bio':
+        isValid = !!value;
+        error = !isValid ? "بیوگرافی اجباری است" : '';
+        break;
+      case 'phone':
+        isValid = isValidIranianMobile(value);
+        error = !value ? "شماره موبایل اجباری است" :
+                !isValid ? "شماره موبایل معتبر نیست" : '';
+        break;
+      case 'email':
+        isValid = isValidEmail(value);
+        error = !value ? "ایمیل اجباری است" :
+                !isValid ? "ایمیل معتبر نیست" : '';
+        break;
+      case 'password':
+        isValid = isValidPassword(value);
+        error = !value ? "گذرواژه اجباری است" :
+                !isValid ? "گذرواژه باید شامل حروف انگلیسی و اعداد باشد (حداقل ۸ کاراکتر)" : '';
+        break;
+      case 'price':
+        isValid = isValidPrice(value);
+        error = !value ? "هزینه جلسه اجباری است" :
+                !isValid ? "لطفاً فقط اعداد وارد کنید" : '';
+        break;
+      default:
+        isValid = true;
     }
 
-    if (!profile.bio) {
-      newErrors.bio = "بیوگرافی اجباری است";
+    setValidFields(prev => ({ ...prev, [key]: isValid }));
+    setErrors(prev => ({ ...prev, [key]: error }));
+  };
+
+  // Validate initial values
+  useEffect(() => {
+    Object.entries(profile).forEach(([key, value]) => {
+      if (key !== 'image' && value) {
+        validateField(key as keyof TrainerProfile, value);
+      }
+    });
+  }, []);
+
+  const handleInputChange = (key: keyof TrainerProfile, value: string) => {
+    // Filter input for name field - only allow Persian characters
+    if (key === 'name') {
+      const persianOnly = value.replace(/[^[\u0600-\u06FF\s]]/g, '');
+      onUpdate(key, persianOnly);
+      validateField(key, persianOnly);
+      return;
     }
 
-    if (!profile.phone) {
-      newErrors.phone = "شماره موبایل اجباری است";
-    } else if (!isValidIranianMobile(profile.phone)) {
-      newErrors.phone = "شماره موبایل معتبر نیست";
+    // Filter input for phone and price fields - only allow numbers
+    if (key === 'phone' || key === 'price') {
+      let numbersOnly = value.replace(/[^0-9۰-۹]/g, '');
+      if (key === 'phone' && !numbersOnly.startsWith('09') && !numbersOnly.startsWith('۰۹')) {
+        numbersOnly = '09' + numbersOnly.slice(2);
+      }
+      onUpdate(key, numbersOnly);
+      validateField(key, numbersOnly);
+      return;
     }
 
-    if (!profile.email) {
-      newErrors.email = "ایمیل اجباری است";
-    } else if (!isValidEmail(profile.email)) {
-      newErrors.email = "ایمیل معتبر نیست";
-    }
-
-    if (!profile.password) {
-      newErrors.password = "گذرواژه اجباری است";
-    } else if (!isValidPassword(profile.password)) {
-      newErrors.password = "گذرواژه باید شامل حروف انگلیسی و اعداد باشد (حداقل ۸ کاراکتر)";
-    }
-
-    if (!profile.price) {
-      newErrors.price = "هزینه جلسه اجباری است";
-    } else if (!isValidPrice(profile.price)) {
-      newErrors.price = "لطفاً فقط اعداد وارد کنید";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    onUpdate(key, value);
+    validateField(key, value);
   };
 
   const handleSave = () => {
-    if (!validateForm()) {
+    let hasErrors = false;
+    Object.entries(profile).forEach(([key, value]) => {
+      if (key !== 'image') {
+        validateField(key as keyof TrainerProfile, value);
+        if (!value || errors[key as keyof TrainerProfile]) {
+          hasErrors = true;
+        }
+      }
+    });
+
+    if (hasErrors) {
       toast({
         variant: "destructive",
         title: "خطا در اطلاعات",
@@ -77,121 +131,106 @@ export const ProfileForm = ({ profile, onUpdate, onSave, errors, setErrors }: Pr
     onSave();
   };
 
+  const renderInput = (
+    key: keyof Omit<TrainerProfile, 'image' | 'bio'>,
+    label: string,
+    icon: React.ReactNode,
+    type: string = 'text',
+    placeholder: string
+  ) => (
+    <div>
+      <Label>{label}</Label>
+      <div className="relative">
+        {icon}
+        <Input
+          type={key === 'password' ? (showPassword ? 'text' : 'password') : type}
+          value={key === 'phone' || key === 'price' ? toPersianNumbers(profile[key]) : profile[key]}
+          onChange={(e) => handleInputChange(key, e.target.value)}
+          placeholder={placeholder}
+          dir={['email', 'phone', 'price'].includes(key) ? "ltr" : undefined}
+          className={cn(
+            "pr-10 pl-10",
+            errors[key] ? "border-red-500" : validFields[key] ? "border-green-500" : "",
+            ['email', 'phone', 'price'].includes(key) ? "text-left" : ""
+          )}
+          required
+        />
+        {key === 'password' && (
+          <Button
+            type="button"
+            variant="ghost"
+            className="absolute left-0 top-0 h-full px-3 hover:bg-transparent"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4 text-muted-foreground/70" />
+            ) : (
+              <Eye className="h-4 w-4 text-muted-foreground/70" />
+            )}
+          </Button>
+        )}
+        {validFields[key] && (
+          <Check className="absolute left-3 top-3 h-4 w-4 text-green-500" />
+        )}
+      </div>
+      {errors[key] && <p className="mt-1 text-sm text-red-500">{errors[key]}</p>}
+    </div>
+  );
+
   return (
     <Card className="backdrop-blur-xl bg-white/50 border-primary/10">
       <div className="p-6 space-y-6">
-        <div>
-          <Label>نام و نام خانوادگی</Label>
-          <div className="relative">
-            <UserRound className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
-            <Input
-              value={profile.name}
-              onChange={(e) => onUpdate('name', e.target.value)}
-              placeholder="نام خود را به فارسی وارد کنید"
-              className={cn("pr-10", errors.name ? "border-red-500" : "")}
-              required
-            />
-          </div>
-          {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
-        </div>
+        {renderInput('name', 'نام و نام خانوادگی', 
+          <UserRound className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'text',
+          'نام خود را به فارسی وارد کنید'
+        )}
 
         <div>
           <Label>بیوگرافی</Label>
           <Textarea
             value={profile.bio}
-            onChange={(e) => onUpdate('bio', e.target.value)}
+            onChange={(e) => handleInputChange('bio', e.target.value)}
             placeholder="درباره خود بنویسید"
-            className={cn("resize-none h-32", errors.bio ? "border-red-500" : "")}
+            className={cn(
+              "resize-none h-32",
+              errors.bio ? "border-red-500" : validFields.bio ? "border-green-500" : ""
+            )}
             required
           />
           {errors.bio && <p className="mt-1 text-sm text-red-500">{errors.bio}</p>}
+          {validFields.bio && <Check className="h-4 w-4 text-green-500 mt-1" />}
         </div>
 
-        <div>
-          <Label>شماره موبایل</Label>
-          <div className="relative">
-            <Phone className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
-            <Input
-              value={toPersianNumbers(profile.phone)}
-              onChange={(e) => {
-                const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                onUpdate('phone', persianValue);
-              }}
-              placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-              dir="ltr"
-              className={cn("text-left pr-10", errors.phone ? "border-red-500" : "")}
-              required
-            />
-          </div>
-          {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
-        </div>
+        {renderInput('phone', 'شماره موبایل',
+          <Phone className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'text',
+          '۰۹۱۲۳۴۵۶۷۸۹'
+        )}
 
-        <div>
-          <Label>ایمیل</Label>
-          <div className="relative">
-            <Mail className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
-            <Input
-              type="email"
-              value={profile.email}
-              onChange={(e) => onUpdate('email', e.target.value)}
-              placeholder="example@domain.com"
-              dir="ltr"
-              className={cn("text-left pr-10", errors.email ? "border-red-500" : "")}
-              required
-            />
-          </div>
-          {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
-        </div>
+        {renderInput('email', 'ایمیل',
+          <Mail className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'email',
+          'example@domain.com'
+        )}
 
-        <div>
-          <Label>گذرواژه</Label>
-          <div className="relative">
-            <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
-            <Input
-              type={showPassword ? "text" : "password"}
-              value={profile.password}
-              onChange={(e) => onUpdate('password', e.target.value)}
-              placeholder="حداقل ۸ کاراکتر شامل حروف انگلیسی و اعداد"
-              className={cn("pr-10 pl-10", errors.password ? "border-red-500" : "")}
-              required
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              className="absolute left-0 top-0 h-full px-3 hover:bg-transparent"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4 text-muted-foreground/70" />
-              ) : (
-                <Eye className="h-4 w-4 text-muted-foreground/70" />
-              )}
-            </Button>
-          </div>
-          {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
-        </div>
+        {renderInput('password', 'گذرواژه',
+          <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'password',
+          'حداقل ۸ کاراکتر شامل حروف انگلیسی و اعداد'
+        )}
 
-        <div>
-          <Label>هزینه هر جلسه (تومان)</Label>
-          <div className="relative">
-            <Tag className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
-            <Input
-              value={toPersianNumbers(profile.price)}
-              onChange={(e) => {
-                const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                onUpdate('price', persianValue);
-              }}
-              placeholder="۲۰۰,۰۰۰"
-              dir="ltr"
-              className={cn("text-left pr-10", errors.price ? "border-red-500" : "")}
-              required
-            />
-          </div>
-          {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
+        {renderInput('price', 'هزینه هر جلسه (تومان)',
+          <Tag className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'text',
+          '۲۰۰,۰۰۰'
+        )}
+
+        {profile.price && (
           <p className="text-sm text-muted-foreground mt-1">
-            {profile.price && `معادل ${toPersianNumbers(Number(profile.price).toLocaleString())} تومان`}
+            معادل {toPersianNumbers(Number(profile.price).toLocaleString())} تومان
           </p>
-        </div>
+        )}
 
         <Button onClick={handleSave} className="w-full">
           ذخیره تغییرات

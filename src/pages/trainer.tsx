@@ -2,7 +2,8 @@
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { TrainerProfile, defaultProfile } from "@/types/trainer";
+import type { TrainerProfile } from "@/types/trainer";
+import { defaultProfile } from "@/types/trainer";
 import { ProfileImage } from "@/components/trainer/ProfileImage";
 import { ProfileForm } from "@/components/trainer/ProfileForm";
 
@@ -10,6 +11,7 @@ const TrainerProfile = () => {
   const { toast } = useToast();
   const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
+  const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
 
   // Load saved profile from localStorage
   useEffect(() => {
@@ -89,6 +91,8 @@ const TrainerProfile = () => {
             onSave={handleSave}
             errors={errors}
             setErrors={setErrors}
+            validFields={validFields}
+            setValidFields={setValidFields}
           />
         </div>
       </div>
