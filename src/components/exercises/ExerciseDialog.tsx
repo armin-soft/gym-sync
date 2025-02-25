@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseDialogProps {
@@ -37,6 +37,22 @@ export function ExerciseDialog({
   const [groupText, setGroupText] = useState("");
   const [activeTab, setActiveTab] = useState("single");
   const [isSaving, setIsSaving] = useState(false);
+
+  // هنگام باز شدن دیالوگ برای ویرایش، مقادیر را تنظیم می‌کنیم
+  useEffect(() => {
+    if (selectedExercise) {
+      onFormDataChange({
+        name: selectedExercise.name,
+        categoryId: selectedExercise.categoryId
+      });
+      setGroupText(selectedExercise.name);
+    } else {
+      if (!isOpen) {
+        setGroupText("");
+        onFormDataChange({ name: "", categoryId: categories[0]?.id || 0 });
+      }
+    }
+  }, [isOpen, selectedExercise]);
 
   const handleSave = async () => {
     if (isSaving) return;
@@ -67,13 +83,22 @@ export function ExerciseDialog({
           return;
         }
 
-        // Save exercises sequentially
-        for (const exerciseName of exercises) {
+        if (selectedExercise) {
+          // در حالت ویرایش، فقط اولین خط را به عنوان نام جدید استفاده می‌کنیم
           onFormDataChange({
-            name: exerciseName.trim(),
+            name: exercises[0].trim(),
             categoryId: formData.categoryId
           });
           await onSave();
+        } else {
+          // در حالت افزودن، همه خط‌ها را به عنوان حرکت‌های جدید اضافه می‌کنیم
+          for (const exerciseName of exercises) {
+            onFormDataChange({
+              name: exerciseName.trim(),
+              categoryId: formData.categoryId
+            });
+            await onSave();
+          }
         }
 
         onOpenChange(false);
@@ -108,7 +133,11 @@ export function ExerciseDialog({
             </select>
           </div>
           
-          <Tabs defaultValue="single" className="w-full" onValueChange={setActiveTab}>
+          <Tabs 
+            defaultValue={selectedExercise ? "single" : "single"} 
+            className="w-full" 
+            onValueChange={setActiveTab}
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="single">تکی</TabsTrigger>
               <TabsTrigger value="group">گروهی</TabsTrigger>
@@ -125,14 +154,15 @@ export function ExerciseDialog({
             </TabsContent>
             
             <TabsContent value="group" className="space-y-2">
-              <Label className="text-base">نام حرکت‌ها (هر حرکت در یک خط)</Label>
+              <Label className="text-base">
+                {selectedExercise ? "نام جدید حرکت" : "نام حرکت‌ها (هر حرکت در یک خط)"}
+              </Label>
               <Textarea
                 value={groupText}
-                placeholder="هر حرکت را در یک خط وارد کنید
-مثال:
-بک فلای
-بک فلای تک
-بک فلای متناوب"
+                placeholder={selectedExercise 
+                  ? "نام جدید حرکت را وارد کنید" 
+                  : "هر حرکت را در یک خط وارد کنید\nمثال:\nبک فلای\nبک فلای تک\nبک فلای متناوب"
+                }
                 className="min-h-[150px] focus-visible:ring-blue-400"
                 onChange={(e) => setGroupText(e.target.value)}
               />
