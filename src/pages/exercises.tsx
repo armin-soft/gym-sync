@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowUpDown } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -114,6 +115,7 @@ const ExercisesPage = () => {
         return;
       }
       updatedTypes = [...exerciseTypes, newTypeName];
+      setSelectedType(newTypeName);
     }
 
     setExerciseTypes(updatedTypes);
@@ -219,7 +221,17 @@ const ExercisesPage = () => {
       <div className="grid gap-8 md:grid-cols-2">
         <CategoryTable 
           categories={filteredCategories}
-          onAdd={() => setIsCategoryDialogOpen(true)}
+          onAdd={() => {
+            if (exerciseTypes.length === 0) {
+              toast({
+                variant: "destructive",
+                title: "خطا",
+                description: "ابتدا باید یک نوع حرکت ایجاد کنید"
+              });
+              return;
+            }
+            setIsCategoryDialogOpen(true);
+          }}
           onEdit={(category) => {
             setCategoryFormData({ name: category.name });
             setIsCategoryDialogOpen(true);
