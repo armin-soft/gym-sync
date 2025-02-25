@@ -42,20 +42,24 @@ export function ExerciseDialog({
 
     // Save each exercise separately
     exercises.forEach((exerciseName, index) => {
-      if (index === 0) return; // Skip first one as it's already saved through formData
-      
-      const newExercise = {
-        name: exerciseName.trim(),
-        categoryId: formData.categoryId
-      };
-      
-      // Create a new exercise for each additional line
-      if (exerciseName.trim()) {
-        const fakeEvent = { preventDefault: () => {} };
+      if (index === 0) {
+        // For the first exercise, update formData and call onSave
+        onFormDataChange({ ...formData, name: exerciseName.trim() });
         onSave();
-        onFormDataChange(newExercise);
+      } else {
+        // For subsequent exercises, create a new exercise
+        onFormDataChange({ 
+          name: exerciseName.trim(),
+          categoryId: formData.categoryId 
+        });
+        onSave();
       }
     });
+
+    // Close the dialog after all exercises are saved
+    if (exercises.length > 0) {
+      onOpenChange(false);
+    }
   };
 
   return (
