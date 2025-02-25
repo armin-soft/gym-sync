@@ -45,7 +45,6 @@ export function ExerciseDialog({
         name: selectedExercise.name,
         categoryId: selectedExercise.categoryId
       });
-      setGroupText(selectedExercise.name);
     } else {
       if (!isOpen) {
         setGroupText("");
@@ -83,22 +82,14 @@ export function ExerciseDialog({
           return;
         }
 
-        if (selectedExercise) {
-          // در حالت ویرایش، فقط اولین خط را به عنوان نام جدید استفاده می‌کنیم
+        // در حالت گروهی، همه خط‌ها را به عنوان حرکت‌های جدید اضافه می‌کنیم
+        for (const exerciseName of exercises) {
+          const name = exerciseName.trim();
           onFormDataChange({
-            name: exercises[0].trim(),
+            name,
             categoryId: formData.categoryId
           });
           await onSave();
-        } else {
-          // در حالت افزودن، همه خط‌ها را به عنوان حرکت‌های جدید اضافه می‌کنیم
-          for (const exerciseName of exercises) {
-            onFormDataChange({
-              name: exerciseName.trim(),
-              categoryId: formData.categoryId
-            });
-            await onSave();
-          }
         }
 
         onOpenChange(false);
@@ -134,13 +125,14 @@ export function ExerciseDialog({
           </div>
           
           <Tabs 
-            defaultValue={selectedExercise ? "single" : "single"} 
+            defaultValue="single" 
             className="w-full" 
             onValueChange={setActiveTab}
+            value={selectedExercise ? "single" : activeTab}
           >
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="single">تکی</TabsTrigger>
-              <TabsTrigger value="group">گروهی</TabsTrigger>
+              <TabsTrigger value="single" disabled={!!selectedExercise}>تکی</TabsTrigger>
+              <TabsTrigger value="group" disabled={!!selectedExercise}>گروهی</TabsTrigger>
             </TabsList>
             
             <TabsContent value="single" className="space-y-2">
@@ -154,15 +146,14 @@ export function ExerciseDialog({
             </TabsContent>
             
             <TabsContent value="group" className="space-y-2">
-              <Label className="text-base">
-                {selectedExercise ? "نام جدید حرکت" : "نام حرکت‌ها (هر حرکت در یک خط)"}
-              </Label>
+              <Label className="text-base">نام حرکت‌ها (هر حرکت در یک خط)</Label>
               <Textarea
                 value={groupText}
-                placeholder={selectedExercise 
-                  ? "نام جدید حرکت را وارد کنید" 
-                  : "هر حرکت را در یک خط وارد کنید\nمثال:\nبک فلای\nبک فلای تک\nبک فلای متناوب"
-                }
+                placeholder="هر حرکت را در یک خط وارد کنید
+مثال:
+بک فلای
+بک فلای تک
+بک فلای متناوب"
                 className="min-h-[150px] focus-visible:ring-blue-400"
                 onChange={(e) => setGroupText(e.target.value)}
               />
