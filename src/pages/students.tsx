@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Ruler, 
   Weight, 
@@ -50,27 +50,42 @@ interface Student {
   image: string;
 }
 
-const Students = () => {
+const StudentsPage = () => {
   const { toast } = useToast();
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Load data from localStorage on component mount
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
     if (savedStudents) {
-      setStudents(JSON.parse(savedStudents));
+      try {
+        setStudents(JSON.parse(savedStudents));
+      } catch (error) {
+        console.error('Error loading students from localStorage:', error);
+        toast({
+          variant: "destructive",
+          title: "خطا در بارگذاری اطلاعات",
+          description: "مشکلی در بارگذاری اطلاعات شاگردان پیش آمده است"
+        });
+      }
     }
   }, []);
+
+  // Save to localStorage whenever students data changes
+  useEffect(() => {
+    localStorage.setItem('students', JSON.stringify(students));
+  }, [students]);
 
   const handleDelete = (id: number) => {
     const updatedStudents = students.filter((student) => student.id !== id);
     setStudents(updatedStudents);
-    localStorage.setItem('students', JSON.stringify(updatedStudents));
+    
     toast({
-      title: "شاگرد با موفقیت حذف شد",
-      description: "اطلاعات شاگرد مورد نظر از سیستم حذف شد.",
+      title: "حذف موفق",
+      description: "شاگرد مورد نظر با موفقیت حذف شد",
     });
   };
 
@@ -92,7 +107,8 @@ const Students = () => {
         s.id === selectedStudent.id ? { ...selectedStudent, ...data } : s
       );
       toast({
-        description: "اطلاعات شاگرد با موفقیت ویرایش شد",
+        title: "ویرایش موفق",
+        description: "اطلاعات شاگرد با موفقیت ویرایش شد"
       });
     } else {
       const newStudent: Student = {
@@ -101,12 +117,12 @@ const Students = () => {
       };
       updatedStudents = [...students, newStudent];
       toast({
-        description: "شاگرد جدید با موفقیت اضافه شد",
+        title: "افزودن موفق",
+        description: "شاگرد جدید با موفقیت اضافه شد"
       });
     }
     
     setStudents(updatedStudents);
-    localStorage.setItem('students', JSON.stringify(updatedStudents));
     setIsDialogOpen(false);
   };
 
@@ -344,4 +360,4 @@ const Students = () => {
   );
 };
 
-export default Students;
+export default StudentsPage;

@@ -9,7 +9,7 @@ import {
   ArrowUpDown
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { 
   Exercise, 
@@ -28,7 +28,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-const Exercises = () => {
+const ExercisesPage = () => {
   const { toast } = useToast();
   const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
   const [selectedType, setSelectedType] = useState<ExerciseType>("");
@@ -46,7 +46,7 @@ const Exercises = () => {
 
   useEffect(() => {
     const savedTypes = localStorage.getItem("exerciseTypes");
-    const savedCategories = localStorage.getItem("categories");
+    const savedCategories = localStorage.getItem("exerciseCategories");
     const savedExercises = localStorage.getItem("exercises");
 
     if (savedTypes) {
@@ -57,23 +57,26 @@ const Exercises = () => {
       }
     } else {
       setExerciseTypes(defaultExerciseTypes);
-      localStorage.setItem("exerciseTypes", JSON.stringify(defaultExerciseTypes));
     }
 
     if (savedCategories) {
       setCategories(JSON.parse(savedCategories));
     } else {
       setCategories(defaultCategories);
-      localStorage.setItem("categories", JSON.stringify(defaultCategories));
     }
 
     if (savedExercises) {
       setExercises(JSON.parse(savedExercises));
     } else {
       setExercises(defaultExercises);
-      localStorage.setItem("exercises", JSON.stringify(defaultExercises));
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("exerciseTypes", JSON.stringify(exerciseTypes));
+    localStorage.setItem("exerciseCategories", JSON.stringify(categories));
+    localStorage.setItem("exercises", JSON.stringify(exercises));
+  }, [exerciseTypes, categories, exercises]);
 
   const filteredCategories = categories.filter(cat => cat.type === selectedType);
 
@@ -510,4 +513,4 @@ const Exercises = () => {
   );
 };
 
-export default Exercises;
+export default ExercisesPage;

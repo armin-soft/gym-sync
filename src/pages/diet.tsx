@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -12,7 +13,7 @@ import { DayMeals } from "@/components/diet/DayMeals";
 const weekDays: WeekDay[] = ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج شنبه", "جمعه"];
 const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام"];
 
-const Diet = () => {
+const DietPage = () => {
   const { toast } = useToast();
   const [meals, setMeals] = useState<Meal[]>([]);
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>();
@@ -20,24 +21,34 @@ const Diet = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
 
-  // خواندن داده‌ها از localStorage در هنگام بارگذاری کامپوننت
+  // Load data from localStorage on component mount
   useEffect(() => {
     const savedMeals = localStorage.getItem('meals');
     if (savedMeals) {
-      setMeals(JSON.parse(savedMeals));
+      try {
+        setMeals(JSON.parse(savedMeals));
+      } catch (error) {
+        console.error('Error loading meals from localStorage:', error);
+        toast({
+          variant: "destructive",
+          title: "خطا در بارگذاری اطلاعات",
+          description: "مشکلی در بارگذاری برنامه غذایی پیش آمده است"
+        });
+      }
     }
   }, []);
 
-  // ذخیره داده‌ها در localStorage هر زمان که meals تغییر می‌کند
+  // Save to localStorage whenever meals data changes
   useEffect(() => {
     localStorage.setItem('meals', JSON.stringify(meals));
   }, [meals]);
 
   const handleDelete = (id: number) => {
-    setMeals(meals.filter((meal) => meal.id !== id));
+    const updatedMeals = meals.filter((meal) => meal.id !== id);
+    setMeals(updatedMeals);
     toast({
-      title: "وعده غذایی حذف شد",
-      description: "وعده غذایی مورد نظر با موفقیت حذف شد.",
+      title: "حذف موفق",
+      description: "وعده غذایی با موفقیت حذف شد",
     });
   };
 
@@ -59,8 +70,8 @@ const Diet = () => {
         )
       );
       toast({
-        title: "وعده غذایی ویرایش شد",
-        description: "تغییرات با موفقیت ذخیره شد.",
+        title: "ویرایش موفق",
+        description: "وعده غذایی با موفقیت ویرایش شد",
       });
     } else {
       const newMeal = {
@@ -69,8 +80,8 @@ const Diet = () => {
       };
       setMeals([...meals, newMeal]);
       toast({
-        title: "وعده غذایی جدید",
-        description: "وعده غذایی جدید با موفقیت اضافه شد.",
+        title: "افزودن موفق",
+        description: "وعده غذایی جدید با موفقیت اضافه شد",
       });
     }
     setIsDialogOpen(false);
@@ -150,4 +161,4 @@ const Diet = () => {
   );
 };
 
-export default Diet;
+export default DietPage;

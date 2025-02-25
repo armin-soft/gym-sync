@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2 } from "lucide-react";
@@ -14,7 +14,7 @@ import { SupplementList } from "@/components/supplements/SupplementList";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
 
-const initialSupplements: Supplement[] = [
+const defaultSupplements: Supplement[] = [
   {
     id: 1,
     name: "کراتین مونوهیدرات",
@@ -33,21 +33,58 @@ const initialSupplements: Supplement[] = [
   },
 ];
 
-const initialCategories: SupplementCategory[] = [
+const defaultCategories: SupplementCategory[] = [
   { id: 1, name: "عضله ساز" },
   { id: 2, name: "چربی سوز" },
   { id: 3, name: "افزایش انرژی" },
 ];
 
-const Supplements = () => {
+const SupplementsPage = () => {
   const { toast } = useToast();
-  const [supplements, setSupplements] = useState<Supplement[]>(initialSupplements);
-  const [categories, setCategories] = useState<SupplementCategory[]>(initialCategories);
+  const [supplements, setSupplements] = useState<Supplement[]>([]);
+  const [categories, setCategories] = useState<SupplementCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("عضله ساز");
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
   const [editingCategory, setEditingCategory] = useState<SupplementCategory | null>(null);
+
+  useEffect(() => {
+    const savedSupplements = localStorage.getItem('supplements');
+    const savedCategories = localStorage.getItem('supplementCategories');
+
+    if (savedSupplements) {
+      try {
+        setSupplements(JSON.parse(savedSupplements));
+      } catch (error) {
+        console.error('Error loading supplements from localStorage:', error);
+        setSupplements(defaultSupplements);
+        toast({
+          variant: "destructive",
+          title: "خطا در بارگذاری اطلاعات",
+          description: "مشکلی در بارگذاری مکمل‌ها پیش آمده است"
+        });
+      }
+    } else {
+      setSupplements(defaultSupplements);
+    }
+
+    if (savedCategories) {
+      try {
+        setCategories(JSON.parse(savedCategories));
+      } catch (error) {
+        console.error('Error loading categories from localStorage:', error);
+        setCategories(defaultCategories);
+      }
+    } else {
+      setCategories(defaultCategories);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('supplements', JSON.stringify(supplements));
+    localStorage.setItem('supplementCategories', JSON.stringify(categories));
+  }, [supplements, categories]);
 
   const filteredSupplements = supplements.filter(
     (supplement) => supplement.category === selectedCategory
@@ -134,7 +171,6 @@ const Supplements = () => {
             : category
         )
       );
-      // به‌روزرسانی نام دسته‌بندی در مکمل‌ها
       setSupplements(
         supplements.map((supplement) =>
           supplement.category === editingCategory.name
@@ -258,4 +294,4 @@ const Supplements = () => {
   );
 };
 
-export default Supplements;
+export default SupplementsPage;
