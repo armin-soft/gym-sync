@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface ExerciseDialogProps {
   isOpen: boolean;
@@ -35,18 +35,11 @@ export function ExerciseDialog({
   const [groupText, setGroupText] = useState("");
   const [activeTab, setActiveTab] = useState("single");
 
-  // Update formData.name when switching tabs or when groupText changes
-  useEffect(() => {
-    if (activeTab === "group") {
-      const firstExercise = groupText.split('\n').find(line => line.trim());
-      if (firstExercise) {
-        onFormDataChange({ ...formData, name: firstExercise.trim() });
-      }
-    }
-  }, [activeTab, groupText]);
-
   const handleSave = () => {
     if (activeTab === "single") {
+      if (!formData.name.trim()) {
+        return; // Don't save if name is empty
+      }
       onSave();
     } else {
       // Handle group save
@@ -54,22 +47,32 @@ export function ExerciseDialog({
       
       if (exercises.length === 0) return;
 
-      // Save each exercise with a small delay
-      exercises.forEach((exerciseName, index) => {
-        setTimeout(() => {
-          onFormDataChange({
-            name: exerciseName.trim(),
-            categoryId: formData.categoryId
-          });
-          onSave();
-          
-          // Close dialog after last exercise is saved
-          if (index === exercises.length - 1) {
-            onOpenChange(false);
-            setGroupText(""); // Reset group text after saving
-          }
-        }, index * 100);
-      });
+      // Process each exercise one by one
+      let index = 0;
+      
+      const processNextExercise = () => {
+        const exerciseName = exercises[index].trim();
+        
+        onFormDataChange({
+          name: exerciseName,
+          categoryId: formData.categoryId
+        });
+        
+        onSave();
+        
+        index++;
+        
+        if (index < exercises.length) {
+          setTimeout(processNextExercise, 300); // Wait 300ms before processing next exercise
+        } else {
+          // All exercises have been saved
+          onOpenChange(false);
+          setGroupText("");
+        }
+      };
+      
+      // Start processing exercises
+      processNextExercise();
     }
   };
 
