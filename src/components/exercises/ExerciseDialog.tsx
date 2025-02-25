@@ -81,6 +81,7 @@ export function ExerciseDialog({
             title: "خطا",
             description: "لطفاً حداقل یک حرکت را وارد کنید"
           });
+          setIsSaving(false);
           return;
         }
 
@@ -89,12 +90,15 @@ export function ExerciseDialog({
           const name = exerciseName.trim();
           if (!name) continue;
           
-          await onFormDataChange({
-            name,
-            categoryId: formData.categoryId
+          // ابتدا نام حرکت را در formData تنظیم می‌کنیم
+          onFormDataChange({
+            ...formData,
+            name: name
           });
 
           try {
+            // صبر می‌کنیم تا تغییرات formData اعمال شود
+            await new Promise(resolve => setTimeout(resolve, 0));
             await onSave();
           } catch (error) {
             hasError = true;
