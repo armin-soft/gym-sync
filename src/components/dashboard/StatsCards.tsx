@@ -8,7 +8,7 @@ import type { DashboardStats } from "@/types/dashboard";
 const renderGrowthBadge = (growth: number) => (
   <Badge 
     variant="secondary" 
-    className={`rounded-lg ${growth >= 0 ? 'text-green-600' : 'text-red-600'}`}
+    className={`rounded-lg ${growth >= 0 ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'}`}
   >
     {growth >= 0 ? <TrendingUp className="w-3 h-3 ml-1" /> : <TrendingDown className="w-3 h-3 ml-1" />}
     {toPersianNumbers(Math.abs(growth))}٪
@@ -116,4 +116,3 @@ export const StatsCards = ({ stats }: { stats: DashboardStats }) => {
     </div>
   );
 };
-

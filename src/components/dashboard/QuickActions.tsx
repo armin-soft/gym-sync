@@ -40,7 +40,7 @@ export const QuickActions = () => {
         <Button
           key={action.name}
           variant="ghost"
-          className="group relative h-32 overflow-hidden rounded-xl border bg-card p-0 hover:border-primary/50"
+          className="group relative h-32 overflow-hidden rounded-xl border bg-card p-0 hover:border-primary/50 hover:shadow-lg transition-all duration-300"
           onClick={() => window.location.href = action.href}
         >
           <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 transition-opacity duration-500 group-hover:opacity-10`} />
@@ -60,4 +60,3 @@ export const QuickActions = () => {
     </div>
   );
 };
-
