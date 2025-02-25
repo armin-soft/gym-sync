@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowUpDown, Edit, Plus, Trash2, Activity, Dumbbell } from "lucide-react";
@@ -14,6 +13,7 @@ import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { cn } from "@/lib/utils";
 
 interface ExerciseTableProps {
   exercises: Exercise[];
@@ -59,12 +59,10 @@ export function ExerciseTable({
     }
   };
 
-  // وقتی لیست حرکت‌ها تغییر می‌کند، انتخاب‌ها را ریست می‌کنیم
   useEffect(() => {
     setSelectedExercises([]);
   }, [exercises]);
 
-  // محاسبه وضعیت چک‌باکس اصلی
   const allSelected = exercises.length > 0 && selectedExercises.length === exercises.length;
   const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
 
@@ -81,13 +79,14 @@ export function ExerciseTable({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={handleDeleteSelected}
+                onClick={() => {
+                  onDelete(selectedExercises);
+                  setSelectedExercises([]);
+                }}
                 className="gap-1"
               >
                 <Trash2 className="w-4 h-4" />
-                حذف {selectedExercises.length > 1 
-                  ? `${toPersianNumbers(selectedExercises.length)} حرکت` 
-                  : "حرکت منتخب"}
+                حذف {selectedExercises.length > 1 ? `${toPersianNumbers(selectedExercises.length)} حرکت` : "حرکت"}
               </Button>
             )}
             <Button 
