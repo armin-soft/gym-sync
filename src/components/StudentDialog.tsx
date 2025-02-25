@@ -47,6 +47,7 @@ export const StudentDialog = ({
     weight: student?.weight || "",
     image: student?.image || "/placeholder.svg",
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof StudentFormData, string>>>({});
 
   useEffect(() => {
     if (student) {
@@ -92,21 +93,45 @@ export const StudentDialog = ({
     }
   };
 
+  const validateField = (key: keyof StudentFormData, value: string) => {
+    let error = "";
+    switch (key) {
+      case "name":
+        if (!value) error = "نام و نام خانوادگی الزامی است";
+        break;
+      case "phone":
+        if (!value) error = "شماره موبایل الزامی است";
+        else if (!/^09\d{9}$/.test(value)) error = "شماره موبایل معتبر نیست";
+        break;
+      case "height":
+        if (!value) error = "قد الزامی است";
+        else if (!/^\d+$/.test(value)) error = "قد باید عدد باشد";
+        break;
+      case "weight":
+        if (!value) error = "وزن الزامی است";
+        else if (!/^\d+$/.test(value)) error = "وزن باید عدد باشد";
+        break;
+    }
+    setErrors(prev => ({ ...prev, [key]: error }));
+    return !error;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.height || !formData.weight) {
-      toast({
-        title: "خطا",
-        description: "لطفاً تمام فیلدها را پر کنید",
-        variant: "destructive",
-      });
-      return;
-    }
+    
+    let isValid = true;
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key !== "image") {
+        if (!validateField(key as keyof Omit<StudentFormData, "image">, value)) {
+          isValid = false;
+        }
+      }
+    });
 
-    if (!formData.phone.match(/^09\d{9}$/)) {
+    if (!isValid) {
       toast({
         title: "خطا",
-        description: "شماره موبایل معتبر نیست",
+        description: "لطفاً همه فیلدها را به درستی پر کنید",
         variant: "destructive",
       });
       return;
@@ -120,23 +145,39 @@ export const StudentDialog = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <UserRound className="h-5 w-5 text-muted-foreground" />
-            {student ? "ویرایش شاگرد" : "افزودن شاگرد جدید"}
+            {student ? (
+              <>
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <UserRound className="h-4 w-4 text-blue-600" />
+                </div>
+                <span>ویرایش شاگرد</span>
+              </>
+            ) : (
+              <>
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                  <UserRound className="h-4 w-4 text-green-600" />
+                </div>
+                <span>افزودن شاگرد جدید</span>
+              </>
+            )}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="flex justify-center">
-            <div className="relative">
-              <img
-                src={formData.image}
-                alt="تصویر پروفایل"
-                className="w-24 h-24 rounded-full object-cover ring-2 ring-primary/10"
-              />
+            <div className="relative group">
+              <div className="relative">
+                <img
+                  src={formData.image}
+                  alt="تصویر پروفایل"
+                  className="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-xl transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
               <Button
                 type="button"
-                variant="outline"
                 size="icon"
-                className="absolute bottom-0 right-0"
+                variant="secondary"
+                className="absolute bottom-0 right-0 h-8 w-8 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 onClick={handleImageClick}
               >
                 <Camera className="h-4 w-4" />
@@ -153,83 +194,96 @@ export const StudentDialog = ({
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name" className="flex items-center gap-2">
+              <Label className="flex items-center gap-2">
                 <UserRound className="h-4 w-4 text-muted-foreground" />
                 نام و نام خانوادگی
               </Label>
               <Input
-                id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  validateField("name", e.target.value);
+                }}
+                className={errors.name ? "border-red-500" : ""}
                 placeholder="نام و نام خانوادگی را وارد کنید"
               />
+              {errors.name && (
+                <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="phone" className="flex items-center gap-2">
+              <Label className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-muted-foreground" />
                 شماره موبایل
               </Label>
               <Input
-                id="phone"
                 dir="ltr"
-                className="text-left"
+                className={`text-left ${errors.phone ? "border-red-500" : ""}`}
                 value={toPersianNumbers(formData.phone)}
                 onChange={(e) => {
-                  const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                  setFormData({ ...formData, phone: persianValue });
+                  const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                  setFormData({ ...formData, phone: value });
+                  validateField("phone", value);
                 }}
                 placeholder="۰۹۱۲۳۴۵۶۷۸۹"
               />
+              {errors.phone && (
+                <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="height" className="flex items-center gap-2">
+                <Label className="flex items-center gap-2">
                   <Ruler className="h-4 w-4 text-muted-foreground" />
                   قد (سانتی متر)
                 </Label>
                 <Input
-                  id="height"
                   dir="ltr"
-                  className="text-left"
+                  className={`text-left ${errors.height ? "border-red-500" : ""}`}
                   value={toPersianNumbers(formData.height)}
                   onChange={(e) => {
-                    const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    setFormData({ ...formData, height: persianValue });
+                    const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                    setFormData({ ...formData, height: value });
+                    validateField("height", value);
                   }}
                   placeholder="۱۷۵"
                 />
+                {errors.height && (
+                  <p className="text-sm text-red-500 mt-1">{errors.height}</p>
+                )}
               </div>
 
               <div>
-                <Label htmlFor="weight" className="flex items-center gap-2">
+                <Label className="flex items-center gap-2">
                   <Weight className="h-4 w-4 text-muted-foreground" />
                   وزن (کیلوگرم)
                 </Label>
                 <Input
-                  id="weight"
                   dir="ltr"
-                  className="text-left"
+                  className={`text-left ${errors.weight ? "border-red-500" : ""}`}
                   value={toPersianNumbers(formData.weight)}
                   onChange={(e) => {
-                    const persianValue = e.target.value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    setFormData({ ...formData, weight: persianValue });
+                    const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                    setFormData({ ...formData, weight: value });
+                    validateField("weight", value);
                   }}
                   placeholder="۷۵"
                 />
+                {errors.weight && (
+                  <p className="text-sm text-red-500 mt-1">{errors.weight}</p>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="gap-2">
               <X className="h-4 w-4" />
               انصراف
             </Button>
-            <Button type="submit" className="gap-2">
+            <Button type="submit" className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
               <Save className="h-4 w-4" />
               ذخیره
             </Button>

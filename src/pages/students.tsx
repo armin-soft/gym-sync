@@ -26,7 +26,10 @@ import {
   CalendarDays,
   ClipboardList,
   AppWindow,
-  Power
+  Power,
+  Trophy,
+  LineChart,
+  Bell
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
@@ -57,7 +60,6 @@ const StudentsPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Load data from localStorage on component mount
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
     if (savedStudents) {
@@ -74,7 +76,6 @@ const StudentsPage = () => {
     }
   }, []);
 
-  // Save to localStorage whenever students data changes
   useEffect(() => {
     localStorage.setItem('students', JSON.stringify(students));
   }, [students]);
@@ -153,14 +154,87 @@ const StudentsPage = () => {
                 </p>
               </div>
             </div>
-            <Button
-              onClick={handleAdd}
-              size="lg"
-              className="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
-            >
-              <Plus className="ml-2 h-5 w-5" />
-              افزودن شاگرد جدید
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="icon" className="relative">
+                <Bell className="h-4 w-4" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-2xs flex items-center justify-center">
+                  ۳
+                </span>
+              </Button>
+              <Button
+                onClick={handleAdd}
+                size="lg"
+                className="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
+              >
+                <Plus className="ml-2 h-5 w-5" />
+                افزودن شاگرد جدید
+              </Button>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
+                  <UserRound className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">کل شاگردان</p>
+                  <p className="text-2xl font-bold">{toPersianNumbers(students.length)}</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
+                  <Trophy className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">شاگردان فعال</p>
+                  <p className="text-2xl font-bold">{toPersianNumbers(students.length)}</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center">
+                  <Scale className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">میانگین وزن</p>
+                  <p className="text-2xl font-bold">
+                    {toPersianNumbers(
+                      Math.round(
+                        students.reduce((acc, student) => acc + Number(student.weight), 0) / 
+                        (students.length || 1)
+                      )
+                    )}
+                  </p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center">
+                  <LineChart className="h-6 w-6 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">میانگین قد</p>
+                  <p className="text-2xl font-bold">
+                    {toPersianNumbers(
+                      Math.round(
+                        students.reduce((acc, student) => acc + Number(student.height), 0) / 
+                        (students.length || 1)
+                      )
+                    )}
+                  </p>
+                </div>
+              </div>
+            </Card>
           </div>
 
           {/* Search and Filter Section */}
@@ -345,19 +419,4 @@ const StudentsPage = () => {
                   ))
                 )}
               </TableBody>
-            </Table>
-          </ScrollArea>
-        </Card>
-
-        <StudentDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          onSave={handleSave}
-          student={selectedStudent}
-        />
-      </div>
-    </div>
-  );
-};
-
-export default StudentsPage;
+            </Table
