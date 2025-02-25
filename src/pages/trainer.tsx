@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -58,7 +59,6 @@ const TrainerProfile = () => {
     try {
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
       toast({
-        variant: "success",
         title: "ذخیره موفق",
         description: "اطلاعات پروفایل با موفقیت ذخیره شد"
       });
@@ -103,7 +103,7 @@ const TrainerProfile = () => {
       localStorage.setItem('trainerProfile', JSON.stringify({ ...profile, image: result }));
       setIsUploading(false);
       toast({
-        variant: "success",
+        title: "آپلود موفق",
         description: "تصویر پروفایل با موفقیت بروزرسانی شد",
       });
     };
