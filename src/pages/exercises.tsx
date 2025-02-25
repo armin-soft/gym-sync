@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowUpDown } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -168,15 +167,6 @@ const ExercisesPage = () => {
   };
 
   const handleExerciseSave = async () => {
-    if (!exerciseFormData.name) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "لطفاً نام حرکت را وارد کنید"
-      });
-      return Promise.reject();
-    }
-
     if (selectedExercise) {
       setExercises(exercises.map(ex =>
         ex.id === selectedExercise.id

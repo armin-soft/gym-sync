@@ -12,6 +12,7 @@ import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseDialogProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ interface ExerciseDialogProps {
   categories: ExerciseCategory[];
   formData: { name: string; categoryId: number };
   onFormDataChange: (data: { name: string; categoryId: number }) => void;
-  onSave: () => Promise<void>; // Changed to Promise<void>
+  onSave: () => Promise<void>;
 }
 
 export function ExerciseDialog({
@@ -32,6 +33,7 @@ export function ExerciseDialog({
   onFormDataChange,
   onSave,
 }: ExerciseDialogProps) {
+  const { toast } = useToast();
   const [groupText, setGroupText] = useState("");
   const [activeTab, setActiveTab] = useState("single");
   const [isSaving, setIsSaving] = useState(false);
@@ -44,6 +46,11 @@ export function ExerciseDialog({
     try {
       if (activeTab === "single") {
         if (!formData.name.trim()) {
+          toast({
+            variant: "destructive",
+            title: "خطا",
+            description: "لطفاً نام حرکت را وارد کنید"
+          });
           return;
         }
         await onSave();
@@ -51,9 +58,16 @@ export function ExerciseDialog({
       } else {
         const exercises = groupText.split('\n').filter(line => line.trim());
         
-        if (exercises.length === 0) return;
+        if (exercises.length === 0) {
+          toast({
+            variant: "destructive",
+            title: "خطا",
+            description: "لطفاً حداقل یک حرکت را وارد کنید"
+          });
+          return;
+        }
 
-        // Save exercises sequentially without timeouts
+        // Save exercises sequentially
         for (const exerciseName of exercises) {
           onFormDataChange({
             name: exerciseName.trim(),
