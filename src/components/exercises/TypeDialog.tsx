@@ -26,16 +26,16 @@ export const TypeDialog = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
-            {isEditing ? "ویرایش نوع حرکت" : "افزودن نوع حرکت جدید"}
+            {isEditing ? "ویرایش نوع تمرین" : "افزودن نوع تمرین جدید"}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label className="text-base">نام نوع حرکت</Label>
+            <Label className="text-base">نام نوع تمرین</Label>
             <Input
               value={typeName}
               onChange={(e) => onTypeNameChange(e.target.value)}
-              placeholder="نام نوع حرکت را وارد کنید"
+              placeholder="نام نوع تمرین را وارد کنید"
               className="h-11 text-base focus-visible:ring-blue-400"
             />
           </div>

@@ -13,6 +13,7 @@ import {
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseTableProps {
   exercises: Exercise[];
@@ -57,7 +58,7 @@ export function ExerciseTable({
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Dumbbell className="w-5 h-5 text-indigo-500" />
-            حرکات
+            حرکات تمرینی
           </h3>
           <div className="flex items-center gap-2">
             {selectedExercises.length > 0 && (
@@ -71,7 +72,7 @@ export function ExerciseTable({
                 className="gap-1"
               >
                 <Trash2 className="w-4 h-4" />
-                حذف {selectedExercises.length > 1 ? `${selectedExercises.length} حرکت` : "حرکت"}
+                حذف {selectedExercises.length > 1 ? `${toPersianNumbers(selectedExercises.length)} حرکت` : "حرکت"}
               </Button>
             )}
             <Button 
@@ -103,6 +104,7 @@ export function ExerciseTable({
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
+                <TableHead className="font-bold text-indigo-800">ردیف</TableHead>
                 <TableHead className="font-bold text-indigo-800">نام حرکت</TableHead>
                 <TableHead className="font-bold text-indigo-800">دسته‌بندی</TableHead>
                 <TableHead className="w-[100px] text-center font-bold text-indigo-800">عملیات</TableHead>
@@ -112,7 +114,7 @@ export function ExerciseTable({
               {exercises.length === 0 ? (
                 <TableRow>
                   <TableCell 
-                    colSpan={4} 
+                    colSpan={5} 
                     className="text-center h-32 text-muted-foreground animate-fade-in"
                   >
                     <div className="flex flex-col items-center gap-2">
@@ -122,7 +124,7 @@ export function ExerciseTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                exercises.map((exercise) => {
+                exercises.map((exercise, index) => {
                   const category = categories.find(c => c.id === exercise.categoryId);
                   return (
                     <TableRow 
@@ -134,6 +136,9 @@ export function ExerciseTable({
                           checked={selectedExercises.includes(exercise.id)}
                           onCheckedChange={(checked) => handleSelectExercise(exercise.id, checked as boolean)}
                         />
+                      </TableCell>
+                      <TableCell className="font-medium text-muted-foreground">
+                        {toPersianNumbers(index + 1)}
                       </TableCell>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">

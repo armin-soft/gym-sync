@@ -28,7 +28,7 @@ export const ExerciseTypes = ({
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Grip className="w-5 h-5 text-purple-500" />
-            انواع حرکت
+            انواع تمرینات
           </h3>
           <Button 
             onClick={onAddType} 
@@ -36,7 +36,7 @@ export const ExerciseTypes = ({
             className="bg-gradient-to-r from-purple-600 to-purple-400 hover:from-purple-700 hover:to-purple-500 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105"
           >
             <Plus className="w-4 h-4 ml-2" />
-            افزودن نوع حرکت
+            افزودن نوع تمرین
           </Button>
         </div>
         <div className="flex flex-wrap gap-3">
