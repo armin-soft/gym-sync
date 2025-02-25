@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 interface ExerciseDialogProps {
   isOpen: boolean;
@@ -31,39 +32,33 @@ export function ExerciseDialog({
   onFormDataChange,
   onSave,
 }: ExerciseDialogProps) {
-  const handleGroupInput = (value: string) => {
-    // Split by newlines and filter out empty lines
-    const exercises = value.split('\n').filter(line => line.trim());
-    
-    // If there are exercises, set the first one as the current name
-    if (exercises.length > 0) {
-      onFormDataChange({ ...formData, name: exercises[0] });
-    }
+  const [groupText, setGroupText] = useState("");
+  const [activeTab, setActiveTab] = useState("single");
 
-    // Save each exercise separately
-    exercises.forEach((exerciseName, index) => {
-      if (index === 0) {
-        // For the first exercise, update formData and call onSave
-        onFormDataChange({ ...formData, name: exerciseName.trim() });
-        onSave();
-      } else {
-        // For subsequent exercises, create a new exercise
-        const newExercise = { 
-          name: exerciseName.trim(),
-          categoryId: formData.categoryId 
-        };
+  const handleSave = () => {
+    if (activeTab === "single") {
+      onSave();
+    } else {
+      // Handle group save
+      const exercises = groupText.split('\n').filter(line => line.trim());
+      
+      if (exercises.length === 0) return;
+
+      // Save each exercise with a small delay
+      exercises.forEach((exerciseName, index) => {
         setTimeout(() => {
-          onFormDataChange(newExercise);
+          onFormDataChange({
+            name: exerciseName.trim(),
+            categoryId: formData.categoryId
+          });
           onSave();
-        }, index * 100); // Add a small delay between saves
-      }
-    });
-
-    // Close the dialog after all exercises are saved
-    if (exercises.length > 0) {
-      setTimeout(() => {
-        onOpenChange(false);
-      }, exercises.length * 100);
+          
+          // Close dialog after last exercise is saved
+          if (index === exercises.length - 1) {
+            onOpenChange(false);
+          }
+        }, index * 100);
+      });
     }
   };
 
@@ -91,7 +86,7 @@ export function ExerciseDialog({
             </select>
           </div>
           
-          <Tabs defaultValue="single" className="w-full">
+          <Tabs defaultValue="single" className="w-full" onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="single">تکی</TabsTrigger>
               <TabsTrigger value="group">گروهی</TabsTrigger>
@@ -110,13 +105,14 @@ export function ExerciseDialog({
             <TabsContent value="group" className="space-y-2">
               <Label className="text-base">نام حرکت‌ها (هر حرکت در یک خط)</Label>
               <Textarea
+                value={groupText}
                 placeholder="هر حرکت را در یک خط وارد کنید
 مثال:
 بک فلای
 بک فلای تک
 بک فلای متناوب"
                 className="min-h-[150px] focus-visible:ring-blue-400"
-                onChange={(e) => handleGroupInput(e.target.value)}
+                onChange={(e) => setGroupText(e.target.value)}
               />
             </TabsContent>
           </Tabs>
@@ -130,7 +126,7 @@ export function ExerciseDialog({
             انصراف
           </Button>
           <Button 
-            onClick={onSave}
+            onClick={handleSave}
             className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
           >
             ذخیره
