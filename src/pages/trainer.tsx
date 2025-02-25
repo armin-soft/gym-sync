@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,7 @@ import {
   Mail, 
   Phone, 
   Instagram,
-  Telegram,
+  MessageCircle,
   User
 } from "lucide-react";
 import { useState } from "react";
@@ -198,7 +197,7 @@ const Trainer = () => {
 
                   <div>
                     <Label className="flex items-center gap-2">
-                      <Telegram className="w-4 h-4" />
+                      <MessageCircle className="w-4 h-4" />
                       تلگرام
                     </Label>
                     <Input
