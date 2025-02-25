@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Camera, Eye, EyeOff, Save } from "lucide-react";
+import { Camera, Eye, EyeOff, Save, UserRound, Phone, Mail, Lock, Tag } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface TrainerProfile {
@@ -65,23 +65,37 @@ const TrainerProfile = () => {
   const validateForm = () => {
     const newErrors: Partial<Record<keyof TrainerProfile, string>> = {};
 
-    if (!isValidPersianName(profile.name)) {
+    if (!profile.name) {
+      newErrors.name = "نام و نام خانوادگی اجباری است";
+    } else if (!isValidPersianName(profile.name)) {
       newErrors.name = "لطفاً نام را به فارسی وارد کنید";
     }
 
-    if (!isValidIranianMobile(profile.phone)) {
+    if (!profile.bio) {
+      newErrors.bio = "بیوگرافی اجباری است";
+    }
+
+    if (!profile.phone) {
+      newErrors.phone = "شماره موبایل اجباری است";
+    } else if (!isValidIranianMobile(profile.phone)) {
       newErrors.phone = "شماره موبایل معتبر نیست";
     }
 
-    if (!isValidEmail(profile.email)) {
+    if (!profile.email) {
+      newErrors.email = "ایمیل اجباری است";
+    } else if (!isValidEmail(profile.email)) {
       newErrors.email = "ایمیل معتبر نیست";
     }
 
-    if (!isValidPassword(profile.password)) {
+    if (!profile.password) {
+      newErrors.password = "گذرواژه اجباری است";
+    } else if (!isValidPassword(profile.password)) {
       newErrors.password = "گذرواژه باید شامل حروف انگلیسی و اعداد باشد (حداقل ۸ کاراکتر)";
     }
 
-    if (profile.price && !isValidPrice(profile.price)) {
+    if (!profile.price) {
+      newErrors.price = "هزینه جلسه اجباری است";
+    } else if (!isValidPrice(profile.price)) {
       newErrors.price = "لطفاً فقط اعداد وارد کنید";
     }
 
@@ -203,6 +217,7 @@ const TrainerProfile = () => {
                   className="hidden"
                   onChange={handleImageUpload}
                   onClick={(e) => e.stopPropagation()}
+                  required
                 />
                 <Button
                   className={cn(
@@ -237,12 +252,16 @@ const TrainerProfile = () => {
             <div className="p-6 space-y-6">
               <div>
                 <Label>نام و نام خانوادگی</Label>
-                <Input
-                  value={profile.name}
-                  onChange={(e) => handleUpdate('name', e.target.value)}
-                  placeholder="نام خود را به فارسی وارد کنید"
-                  className={errors.name ? "border-red-500" : ""}
-                />
+                <div className="relative">
+                  <UserRound className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
+                  <Input
+                    value={profile.name}
+                    onChange={(e) => handleUpdate('name', e.target.value)}
+                    placeholder="نام خود را به فارسی وارد کنید"
+                    className={cn("pr-10", errors.name ? "border-red-500" : "")}
+                    required
+                  />
+                </div>
                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
               </div>
 
@@ -252,47 +271,59 @@ const TrainerProfile = () => {
                   value={profile.bio}
                   onChange={(e) => handleUpdate('bio', e.target.value)}
                   placeholder="درباره خود بنویسید"
-                  className="resize-none h-32"
+                  className={cn("resize-none h-32", errors.bio ? "border-red-500" : "")}
+                  required
                 />
+                {errors.bio && <p className="mt-1 text-sm text-red-500">{errors.bio}</p>}
               </div>
 
               <div>
                 <Label>شماره موبایل</Label>
-                <Input
-                  value={toPersianNumbers(profile.phone)}
-                  onChange={(e) => {
-                    const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    handleUpdate('phone', persianValue);
-                  }}
-                  placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                  dir="ltr"
-                  className={cn("text-left", errors.phone ? "border-red-500" : "")}
-                />
+                <div className="relative">
+                  <Phone className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
+                  <Input
+                    value={toPersianNumbers(profile.phone)}
+                    onChange={(e) => {
+                      const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                      handleUpdate('phone', persianValue);
+                    }}
+                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                    dir="ltr"
+                    className={cn("text-left pr-10", errors.phone ? "border-red-500" : "")}
+                    required
+                  />
+                </div>
                 {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
               </div>
 
               <div>
                 <Label>ایمیل</Label>
-                <Input
-                  type="email"
-                  value={profile.email}
-                  onChange={(e) => handleUpdate('email', e.target.value)}
-                  placeholder="example@domain.com"
-                  dir="ltr"
-                  className={cn("text-left", errors.email ? "border-red-500" : "")}
-                />
+                <div className="relative">
+                  <Mail className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
+                  <Input
+                    type="email"
+                    value={profile.email}
+                    onChange={(e) => handleUpdate('email', e.target.value)}
+                    placeholder="example@domain.com"
+                    dir="ltr"
+                    className={cn("text-left pr-10", errors.email ? "border-red-500" : "")}
+                    required
+                  />
+                </div>
                 {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
               </div>
 
               <div>
                 <Label>گذرواژه</Label>
                 <div className="relative">
+                  <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
                   <Input
                     type={showPassword ? "text" : "password"}
                     value={profile.password}
                     onChange={(e) => handleUpdate('password', e.target.value)}
                     placeholder="حداقل ۸ کاراکتر شامل حروف انگلیسی و اعداد"
-                    className={cn("pr-4 pl-10", errors.password ? "border-red-500" : "")}
+                    className={cn("pr-10 pl-10", errors.password ? "border-red-500" : "")}
+                    required
                   />
                   <Button
                     type="button"
@@ -312,16 +343,20 @@ const TrainerProfile = () => {
 
               <div>
                 <Label>هزینه هر جلسه (تومان)</Label>
-                <Input
-                  value={toPersianNumbers(profile.price)}
-                  onChange={(e) => {
-                    const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    handleUpdate('price', persianValue);
-                  }}
-                  placeholder="۲۰۰,۰۰۰"
-                  dir="ltr"
-                  className={cn("text-left", errors.price ? "border-red-500" : "")}
-                />
+                <div className="relative">
+                  <Tag className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />
+                  <Input
+                    value={toPersianNumbers(profile.price)}
+                    onChange={(e) => {
+                      const persianValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                      handleUpdate('price', persianValue);
+                    }}
+                    placeholder="۲۰۰,۰۰۰"
+                    dir="ltr"
+                    className={cn("text-left pr-10", errors.price ? "border-red-500" : "")}
+                    required
+                  />
+                </div>
                 {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
                 <p className="text-sm text-muted-foreground mt-1">
                   {profile.price && `معادل ${toPersianNumbers(Number(profile.price).toLocaleString())} تومان`}
@@ -341,3 +376,4 @@ const TrainerProfile = () => {
 };
 
 export default TrainerProfile;
+
