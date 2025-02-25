@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -419,4 +418,19 @@ const StudentsPage = () => {
                   ))
                 )}
               </TableBody>
-            </Table
+            </Table>
+          </ScrollArea>
+        </Card>
+
+        <StudentDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onSave={handleSave}
+          student={selectedStudent}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default StudentsPage;
