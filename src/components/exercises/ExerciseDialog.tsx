@@ -48,17 +48,22 @@ export function ExerciseDialog({
         onSave();
       } else {
         // For subsequent exercises, create a new exercise
-        onFormDataChange({ 
+        const newExercise = { 
           name: exerciseName.trim(),
           categoryId: formData.categoryId 
-        });
-        onSave();
+        };
+        setTimeout(() => {
+          onFormDataChange(newExercise);
+          onSave();
+        }, index * 100); // Add a small delay between saves
       }
     });
 
     // Close the dialog after all exercises are saved
     if (exercises.length > 0) {
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, exercises.length * 100);
     }
   };
 
@@ -107,9 +112,9 @@ export function ExerciseDialog({
               <Textarea
                 placeholder="هر حرکت را در یک خط وارد کنید
 مثال:
-نشر از جلو سیم کش
-نشر از جلو سیم کش مچ برعکس
-نشر از جلو سیم کش طنابی"
+بک فلای
+بک فلای تک
+بک فلای متناوب"
                 className="min-h-[150px] focus-visible:ring-blue-400"
                 onChange={(e) => handleGroupInput(e.target.value)}
               />
