@@ -179,7 +179,9 @@ export const ProfileForm = ({
 
   const formatPrice = (price: string) => {
     if (!price) return '';
-    const numericPrice = parseInt(price.replace(/[^0-9]/g, ''));
+    // تبدیل اعداد فارسی به انگلیسی قبل از پردازش
+    const englishNumbers = price.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+    const numericPrice = parseInt(englishNumbers.replace(/[^0-9]/g, ''));
     return isNaN(numericPrice) ? '' : numericPrice.toLocaleString();
   };
 
@@ -246,4 +248,3 @@ export const ProfileForm = ({
     </Card>
   );
 };
-
