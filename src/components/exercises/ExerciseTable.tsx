@@ -11,13 +11,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 interface ExerciseTableProps {
   exercises: Exercise[];
   categories: ExerciseCategory[];
   onAdd: () => void;
   onEdit: (exercise: Exercise) => void;
-  onDelete: (exerciseId: number) => void;
+  onDelete: (exerciseIds: number[]) => void;
   onSort: () => void;
   isAscending: boolean;
 }
@@ -31,6 +33,24 @@ export function ExerciseTable({
   onSort,
   isAscending
 }: ExerciseTableProps) {
+  const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedExercises(exercises.map(ex => ex.id));
+    } else {
+      setSelectedExercises([]);
+    }
+  };
+
+  const handleSelectExercise = (exerciseId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedExercises(prev => [...prev, exerciseId]);
+    } else {
+      setSelectedExercises(prev => prev.filter(id => id !== exerciseId));
+    }
+  };
+
   return (
     <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
       <div className="p-6">
@@ -40,6 +60,20 @@ export function ExerciseTable({
             حرکات
           </h3>
           <div className="flex items-center gap-2">
+            {selectedExercises.length > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  onDelete(selectedExercises);
+                  setSelectedExercises([]);
+                }}
+                className="gap-1"
+              >
+                <Trash2 className="w-4 h-4" />
+                حذف {selectedExercises.length > 1 ? `${selectedExercises.length} حرکت` : "حرکت"}
+              </Button>
+            )}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -63,6 +97,12 @@ export function ExerciseTable({
           <Table>
             <TableHeader>
               <TableRow className="bg-gradient-to-r from-indigo-50 to-transparent hover:bg-indigo-50/50">
+                <TableHead className="w-[40px] text-center">
+                  <Checkbox 
+                    checked={exercises.length > 0 && selectedExercises.length === exercises.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
                 <TableHead className="font-bold text-indigo-800">نام حرکت</TableHead>
                 <TableHead className="font-bold text-indigo-800">دسته‌بندی</TableHead>
                 <TableHead className="w-[100px] text-center font-bold text-indigo-800">عملیات</TableHead>
@@ -72,7 +112,7 @@ export function ExerciseTable({
               {exercises.length === 0 ? (
                 <TableRow>
                   <TableCell 
-                    colSpan={3} 
+                    colSpan={4} 
                     className="text-center h-32 text-muted-foreground animate-fade-in"
                   >
                     <div className="flex flex-col items-center gap-2">
@@ -89,6 +129,12 @@ export function ExerciseTable({
                       key={exercise.id}
                       className="group hover:bg-indigo-50/50 transition-all duration-200"
                     >
+                      <TableCell>
+                        <Checkbox 
+                          checked={selectedExercises.includes(exercise.id)}
+                          onCheckedChange={(checked) => handleSelectExercise(exercise.id, checked as boolean)}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <Activity className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform duration-300" />
@@ -103,7 +149,7 @@ export function ExerciseTable({
                         </span>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                        <div className="flex items-center justify-center gap-2">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -116,7 +162,7 @@ export function ExerciseTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 hover:bg-red-100 hover:text-red-600 transition-colors"
-                            onClick={() => onDelete(exercise.id)}
+                            onClick={() => onDelete([exercise.id])}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

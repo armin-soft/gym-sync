@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowUpDown } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -167,12 +168,47 @@ const ExercisesPage = () => {
   };
 
   const handleExerciseSave = async () => {
-    const newExercise: Exercise = {
-      id: Math.max(...exercises.map(ex => ex.id), 0) + 1,
-      ...exerciseFormData
-    };
-    setExercises(prev => [...prev, newExercise]);
+    if (!exerciseFormData.name) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "لطفاً نام حرکت را وارد کنید"
+      });
+      return Promise.reject();
+    }
+
+    if (selectedExercise) {
+      setExercises(exercises.map(ex =>
+        ex.id === selectedExercise.id
+          ? { ...ex, ...exerciseFormData }
+          : ex
+      ));
+      toast({
+        title: "موفقیت",
+        description: "حرکت با موفقیت ویرایش شد"
+      });
+    } else {
+      const newExercise: Exercise = {
+        id: Math.max(...exercises.map(ex => ex.id), 0) + 1,
+        ...exerciseFormData
+      };
+      setExercises(prev => [...prev, newExercise]);
+      toast({
+        title: "موفقیت",
+        description: "حرکت جدید با موفقیت اضافه شد"
+      });
+    }
     return Promise.resolve();
+  };
+
+  const handleDeleteSelected = (selectedIds: number[]) => {
+    setExercises(exercises.filter(ex => !selectedIds.includes(ex.id)));
+    toast({
+      title: "موفقیت",
+      description: selectedIds.length > 1 
+        ? "حرکت‌های انتخاب شده با موفقیت حذف شدند" 
+        : "حرکت با موفقیت حذف شد"
+    });
   };
 
   return (
@@ -239,13 +275,7 @@ const ExercisesPage = () => {
             });
             setIsExerciseDialogOpen(true);
           }}
-          onDelete={(exerciseId) => {
-            setExercises(exercises.filter(ex => ex.id !== exerciseId));
-            toast({
-              title: "موفقیت",
-              description: "حرکت با موفقیت حذف شد"
-            });
-          }}
+          onDelete={handleDeleteSelected}
           onSort={handleSort}
           isAscending={isAscending}
         />
