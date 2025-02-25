@@ -153,13 +153,7 @@ const StudentsPage = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" className="relative">
-                <Bell className="h-4 w-4" />
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-2xs flex items-center justify-center">
-                  ۳
-                </span>
-              </Button>
+            <div>
               <Button
                 onClick={handleAdd}
                 size="lg"
