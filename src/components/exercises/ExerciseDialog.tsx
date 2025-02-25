@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ExerciseDialogProps {
   isOpen: boolean;
@@ -35,6 +35,16 @@ export function ExerciseDialog({
   const [groupText, setGroupText] = useState("");
   const [activeTab, setActiveTab] = useState("single");
 
+  // Update formData.name when switching tabs or when groupText changes
+  useEffect(() => {
+    if (activeTab === "group") {
+      const firstExercise = groupText.split('\n').find(line => line.trim());
+      if (firstExercise) {
+        onFormDataChange({ ...formData, name: firstExercise.trim() });
+      }
+    }
+  }, [activeTab, groupText]);
+
   const handleSave = () => {
     if (activeTab === "single") {
       onSave();
@@ -56,6 +66,7 @@ export function ExerciseDialog({
           // Close dialog after last exercise is saved
           if (index === exercises.length - 1) {
             onOpenChange(false);
+            setGroupText(""); // Reset group text after saving
           }
         }, index * 100);
       });
