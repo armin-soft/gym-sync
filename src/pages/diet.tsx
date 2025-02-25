@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -93,7 +92,7 @@ const Diet = () => {
           <div>
             <h2 className="text-3xl font-bold tracking-tight">برنامه های غذایی</h2>
             <p className="text-muted-foreground mt-2">
-              در این بخش می‌توانید وعده های غذایی را مدیریت کنید
+              در این بخش می توانید وعده های غذایی را مدیریت کنید
             </p>
           </div>
           <Button onClick={handleAdd} className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">

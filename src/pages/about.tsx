@@ -96,39 +96,39 @@ const About = () => {
 
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>توسعه‌دهنده نرم‌افزار</CardTitle>
+          <CardTitle>توسعه دهنده نرم افزار</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-8">
             <div>
-              <h3 className="font-semibold text-xl mb-4">تخصص‌ها و خدمات</h3>
+              <h3 className="font-semibold text-xl mb-4">تخصص ها و خدمات</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="flex items-start gap-3">
                   <MonitorSmartphone className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
                   <div>
-                    <h4 className="font-medium">توسعه نرم‌افزارهای رایانه و موبایل</h4>
+                    <h4 className="font-medium">توسعه نرم افزارهای رایانه و موبایل</h4>
                     <p className="text-sm text-muted-foreground">ویندوز، مک، لینوکس، اندروید، iOS</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Bot className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
                   <div>
-                    <h4 className="font-medium">توسعه ربات‌ها و هوش مصنوعی</h4>
-                    <p className="text-sm text-muted-foreground">اسکریپت‌ها و ربات‌های تلگرام</p>
+                    <h4 className="font-medium">توسعه ربات ها و هوش مصنوعی</h4>
+                    <p className="text-sm text-muted-foreground">اسکریپت ها و ربات های تلگرام</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Database className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
                   <div>
-                    <h4 className="font-medium">طراحی وب‌سرویس‌های اینترنتی</h4>
-                    <p className="text-sm text-muted-foreground">سرویس نرم‌افزار و اپلیکیشن، دیتابیس و درگاه رابط</p>
+                    <h4 className="font-medium">طراحی وب سرویس های اینترنتی</h4>
+                    <p className="text-sm text-muted-foreground">سرویس نرم افزار و اپلیکیشن، دیتابیس و درگاه رابط</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <PenTool className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
                   <div>
-                    <h4 className="font-medium">طراحی وب‌سایت</h4>
-                    <p className="text-sm text-muted-foreground">پنل سایت‌های دینامیک و استاتیک</p>
+                    <h4 className="font-medium">طراحی وب سایت</h4>
+                    <p className="text-sm text-muted-foreground">پنل سایت های دینامیک و استاتیک</p>
                   </div>
                 </div>
               </div>
@@ -139,13 +139,13 @@ const About = () => {
               <div className="flex items-start gap-3">
                 <BrainCircuit className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
                 <p className="text-muted-foreground">
-                  آرمین سافت با دیدگاهی خلاقانه و با تکیه بر دانش فنی خود، هر ایده‌ای را که در ذهن داشته باشید، طراحی و پیاده‌سازی می‌کند. او با تعهد به نوآوری و پیشرفت، در تلاش است تا با ارائه خدمات با کیفیت و حرفه‌ای، نیازهای مشتریان خود را به بهترین شکل ممکن برآورده سازد.
+                  آرمین سافت با دیدگاهی خلاقانه و با تکیه بر دانش فنی خود، هر ایده ای را که در ذهن داشته باشید، طراحی و پیاده سازی می کند. او با تعهد به نوآوری و پیشرفت، در تلاش است تا با ارائه خدمات با کیفیت و حرفه ای، نیازهای مشتریان خود را به بهترین شکل ممکن برآورده سازد.
                 </p>
               </div>
             </div>
 
             <div>
-              <h3 className="font-semibold text-xl mb-4">راه‌های ارتباطی</h3>
+              <h3 className="font-semibold text-xl mb-4">راه های ارتباطی</h3>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="flex items-center gap-2">
                   <MessageCircle className="w-5 h-5 text-primary" />
@@ -165,7 +165,7 @@ const About = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Globe className="w-5 h-5 text-primary" />
-                  <a href="https://armin-soft.ir" className="text-primary hover:underline">وب‌سایت رسمی</a>
+                  <a href="https://armin-soft.ir" className="text-primary hover:underline">وب سایت رسمی</a>
                 </div>
               </div>
             </div>

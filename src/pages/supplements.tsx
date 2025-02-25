@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -19,7 +18,7 @@ const initialSupplements: Supplement[] = [
   {
     id: 1,
     name: "کراتین مونوهیدرات",
-    category: "عضله‌ساز",
+    category: "عضله ساز",
     dosage: "۵ گرم",
     timing: "بعد از تمرین",
     description: "برای افزایش قدرت و حجم عضلانی",
@@ -27,7 +26,7 @@ const initialSupplements: Supplement[] = [
   {
     id: 2,
     name: "ال کارنیتین",
-    category: "چربی‌سوز",
+    category: "چربی سوز",
     dosage: "۲ گرم",
     timing: "قبل از تمرین",
     description: "کمک به چربی سوزی و افزایش انرژی",
@@ -35,8 +34,8 @@ const initialSupplements: Supplement[] = [
 ];
 
 const initialCategories: SupplementCategory[] = [
-  { id: 1, name: "عضله‌ساز" },
-  { id: 2, name: "چربی‌سوز" },
+  { id: 1, name: "عضله ساز" },
+  { id: 2, name: "چربی سوز" },
   { id: 3, name: "افزایش انرژی" },
 ];
 
@@ -44,7 +43,7 @@ const Supplements = () => {
   const { toast } = useToast();
   const [supplements, setSupplements] = useState<Supplement[]>(initialSupplements);
   const [categories, setCategories] = useState<SupplementCategory[]>(initialCategories);
-  const [selectedCategory, setSelectedCategory] = useState<string>("عضله‌ساز");
+  const [selectedCategory, setSelectedCategory] = useState<string>("عضله ساز");
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
@@ -113,16 +112,16 @@ const Supplements = () => {
     const category = categories.find((c) => c.id === categoryId);
     if (category && supplements.some((s) => s.category === category.name)) {
       toast({
-        title: "خطا در حذف دسته‌بندی",
-        description: "این دسته‌بندی دارای مکمل است و نمی‌توان آن را حذف کرد.",
+        title: "خطا در حذف دسته بندی",
+        description: "این دسته بندی دارای مکمل است و نمی توان آن را حذف کرد.",
         variant: "destructive",
       });
       return;
     }
     setCategories(categories.filter((c) => c.id !== categoryId));
     toast({
-      title: "حذف دسته‌بندی",
-      description: "دسته‌بندی مورد نظر با موفقیت حذف شد.",
+      title: "حذف دسته بندی",
+      description: "دسته بندی مورد نظر با موفقیت حذف شد.",
     });
   };
 
@@ -144,8 +143,8 @@ const Supplements = () => {
         )
       );
       toast({
-        title: "ویرایش دسته‌بندی",
-        description: "دسته‌بندی مورد نظر با موفقیت ویرایش شد.",
+        title: "ویرایش دسته بندی",
+        description: "دسته بندی مورد نظر با موفقیت ویرایش شد.",
       });
     } else {
       const newCategory: SupplementCategory = {
@@ -154,8 +153,8 @@ const Supplements = () => {
       };
       setCategories([...categories, newCategory]);
       toast({
-        title: "افزودن دسته‌بندی",
-        description: "دسته‌بندی جدید با موفقیت اضافه شد.",
+        title: "افزودن دسته بندی",
+        description: "دسته بندی جدید با موفقیت اضافه شد.",
       });
     }
     setCategoryDialogOpen(false);
@@ -165,14 +164,14 @@ const Supplements = () => {
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex justify-between items-center">
         <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight">مکمل‌های ورزشی</h2>
+          <h2 className="text-3xl font-bold tracking-tight">مکمل های ورزشی</h2>
           <p className="text-muted-foreground">
-            در این بخش می‌توانید مکمل‌های ورزشی را مدیریت کنید
+            در این بخش می توانید مکمل های ورزشی را مدیریت کنید
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleAddCategory}>
-            <Plus className="ml-2 h-4 w-4" /> افزودن دسته‌بندی
+            <Plus className="ml-2 h-4 w-4" /> افزودن دسته بندی
           </Button>
           <Button onClick={handleAddSupplement}>
             <Plus className="ml-2 h-4 w-4" /> افزودن مکمل
@@ -181,10 +180,10 @@ const Supplements = () => {
       </div>
 
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold">فیلتر بر اساس دسته‌بندی</h3>
+        <h3 className="text-lg font-semibold">فیلتر بر اساس دسته بندی</h3>
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="انتخاب دسته‌بندی" />
+            <SelectValue placeholder="انتخاب دسته بندی" />
           </SelectTrigger>
           <SelectContent>
             {categories.map((category) => (
@@ -206,7 +205,7 @@ const Supplements = () => {
         </div>
         <div>
           <div className="bg-card rounded-lg border p-6">
-            <h3 className="text-lg font-semibold mb-4">مدیریت دسته‌بندی‌ها</h3>
+            <h3 className="text-lg font-semibold mb-4">مدیریت دسته بندی ها</h3>
             <div className="space-y-2">
               {categories.map((category) => (
                 <div
