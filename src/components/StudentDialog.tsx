@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -111,6 +110,9 @@ export const StudentDialog = ({
         if (!value) error = "وزن الزامی است";
         else if (!/^\d+$/.test(value)) error = "وزن باید عدد باشد";
         break;
+      case "image":
+        if (value === "/placeholder.svg") error = "آپلود تصویر پروفایل الزامی است";
+        break;
     }
     setErrors(prev => ({ ...prev, [key]: error }));
     return !error;
@@ -120,11 +122,10 @@ export const StudentDialog = ({
     e.preventDefault();
     
     let isValid = true;
+    
     Object.entries(formData).forEach(([key, value]) => {
-      if (key !== "image") {
-        if (!validateField(key as keyof Omit<StudentFormData, "image">, value)) {
-          isValid = false;
-        }
+      if (!validateField(key as keyof StudentFormData, value)) {
+        isValid = false;
       }
     });
 
@@ -169,7 +170,11 @@ export const StudentDialog = ({
                 <img
                   src={formData.image}
                   alt="تصویر پروفایل"
-                  className="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-xl transition-transform duration-300 group-hover:scale-105"
+                  className={`w-24 h-24 rounded-full object-cover ring-4 ${
+                    errors.image 
+                      ? "ring-red-200 border-red-500" 
+                      : "ring-white"
+                  } shadow-xl transition-transform duration-300 group-hover:scale-105`}
                 />
                 <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
@@ -191,6 +196,9 @@ export const StudentDialog = ({
               />
             </div>
           </div>
+          {errors.image && (
+            <p className="text-sm text-red-500 text-center">{errors.image}</p>
+          )}
 
           <div className="space-y-4">
             <div>
