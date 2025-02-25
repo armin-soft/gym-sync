@@ -41,7 +41,7 @@ export const ExerciseTypes = ({
         </div>
         <div className="flex flex-wrap gap-3">
           {types.map(type => (
-            <div key={type} className="flex items-center gap-2 group relative">
+            <div key={type} className="relative flex items-center">
               <Button
                 onClick={() => onSelectType(type)}
                 variant={selectedType === type ? "default" : "outline"}
@@ -53,35 +53,35 @@ export const ExerciseTypes = ({
                 )}
               >
                 <Dumbbell className={cn(
-                  "w-4 h-4 ml-2 transition-all group-hover:rotate-12",
+                  "w-4 h-4 ml-2",
                   selectedType === type ? "text-white" : "text-purple-500"
                 )} />
                 {type}
+                <div className="flex items-center gap-1 mr-2 pr-2 border-r border-white/20">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 hover:bg-purple-50 hover:text-purple-600 transition-all duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditType(type);
+                    }}
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteType(type);
+                    }}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
               </Button>
-              <div className="hidden group-hover:flex gap-1 absolute -right-20 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-1 animate-fade-in">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600 transition-all duration-200"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditType(type);
-                  }}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteType(type);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
             </div>
           ))}
           {types.length === 0 && (
