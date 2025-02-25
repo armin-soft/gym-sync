@@ -1,6 +1,16 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, ArrowUpDown } from "lucide-react";
+import { 
+  Plus, 
+  ArrowUpDown, 
+  Dumbbell, 
+  Grip, 
+  LayoutGrid,
+  Activity, 
+  GripHorizontal,
+  Tag,
+  FolderTree
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
@@ -223,139 +233,206 @@ const ExercisesPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-10 space-y-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">مدیریت حرکات تمرینی</h2>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto py-10 space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                مدیریت حرکات تمرینی
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                مدیریت انواع، دسته‌بندی‌ها و حرکات تمرینی
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="p-4 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900">
+              <div className="flex items-center gap-3">
+                <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-lg">
+                  <Tag className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">انواع حرکات</p>
+                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                    {exerciseTypes.length}
+                  </p>
+                </div>
+              </div>
+            </Card>
 
-      <ExerciseTypes
-        types={exerciseTypes}
-        selectedType={selectedType}
-        onSelectType={setSelectedType}
-        onAddType={handleAddType}
-        onEditType={handleEditType}
-        onDeleteType={handleDeleteType}
-      />
+            <Card className="p-4 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900">
+              <div className="flex items-center gap-3">
+                <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+                  <FolderTree className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">دسته‌بندی‌ها</p>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {categories.length}
+                  </p>
+                </div>
+              </div>
+            </Card>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <CategoryTable 
-          categories={filteredCategories}
-          onAdd={() => {
-            if (exerciseTypes.length === 0) {
+            <Card className="p-4 bg-gradient-to-br from-pink-50 to-white dark:from-pink-950 dark:to-gray-900 border-pink-100 dark:border-pink-900">
+              <div className="flex items-center gap-3">
+                <div className="bg-pink-100 dark:bg-pink-900 p-3 rounded-lg">
+                  <Activity className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">حرکات</p>
+                  <p className="text-2xl font-bold text-pink-600 dark:text-pink-400">
+                    {exercises.length}
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Exercise Types Section */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+          <div className="p-6">
+            <ExerciseTypes
+              types={exerciseTypes}
+              selectedType={selectedType}
+              onSelectType={setSelectedType}
+              onAddType={handleAddType}
+              onEditType={handleEditType}
+              onDeleteType={handleDeleteType}
+            />
+          </div>
+        </div>
+
+        {/* Categories and Exercises Grid */}
+        <div className="grid gap-8 md:grid-cols-2">
+          <div className="space-y-6">
+            <CategoryTable 
+              categories={filteredCategories}
+              onAdd={() => {
+                if (exerciseTypes.length === 0) {
+                  toast({
+                    variant: "destructive",
+                    title: "خطا",
+                    description: "ابتدا باید یک نوع حرکت ایجاد کنید"
+                  });
+                  return;
+                }
+                setCategoryFormData({ name: "" });
+                setIsCategoryDialogOpen(true);
+              }}
+              onEdit={(category) => {
+                setCategoryFormData({ name: category.name });
+                setIsCategoryDialogOpen(true);
+              }}
+              onDelete={(category) => {
+                if (exercises.some(ex => ex.categoryId === category.id)) {
+                  toast({
+                    variant: "destructive",
+                    title: "خطا",
+                    description: "ابتدا باید تمام حرکات این دسته‌بندی را حذف کنید"
+                  });
+                  return;
+                }
+                setCategories(prevCategories => prevCategories.filter(c => c.id !== category.id));
+                toast({
+                  title: "موفقیت",
+                  description: "دسته‌بندی با موفقیت حذف شد"
+                });
+              }}
+            />
+          </div>
+
+          <div className="space-y-6">
+            <ExerciseTable 
+              exercises={filteredExercises}
+              categories={categories}
+              onAdd={() => {
+                if (filteredCategories.length === 0) {
+                  toast({
+                    variant: "destructive",
+                    title: "خطا",
+                    description: "ابتدا باید یک دسته‌بندی ایجاد کنید"
+                  });
+                  return;
+                }
+                setSelectedExercise(undefined);
+                setExerciseFormData({ name: "", categoryId: filteredCategories[0].id });
+                setIsExerciseDialogOpen(true);
+              }}
+              onEdit={(exercise) => {
+                setSelectedExercise(exercise);
+                setExerciseFormData({
+                  name: exercise.name,
+                  categoryId: exercise.categoryId
+                });
+                setIsExerciseDialogOpen(true);
+              }}
+              onDelete={handleDeleteExercises}
+              onSort={handleSort}
+              isAscending={isAscending}
+            />
+          </div>
+        </div>
+
+        {/* Dialogs */}
+        <TypeDialog
+          isOpen={isTypeDialogOpen}
+          onOpenChange={setIsTypeDialogOpen}
+          typeName={newTypeName}
+          onTypeNameChange={setNewTypeName}
+          onSave={handleSaveType}
+          isEditing={!!editingType}
+        />
+
+        <CategoryDialog 
+          isOpen={isCategoryDialogOpen}
+          onOpenChange={setIsCategoryDialogOpen}
+          exerciseTypes={exerciseTypes}
+          selectedType={selectedType}
+          formData={categoryFormData}
+          onFormDataChange={setCategoryFormData}
+          onTypeChange={setSelectedType}
+          onSave={() => {
+            if (!categoryFormData.name) {
               toast({
                 variant: "destructive",
                 title: "خطا",
-                description: "ابتدا باید یک نوع حرکت ایجاد کنید"
+                description: "لطفاً نام دسته‌بندی را وارد کنید"
               });
               return;
             }
+
+            const newCategory: ExerciseCategory = {
+              id: Math.max(0, ...categories.map(c => c.id)) + 1,
+              name: categoryFormData.name,
+              type: selectedType
+            };
+
+            setCategories(prevCategories => [...prevCategories, newCategory]);
+            setIsCategoryDialogOpen(false);
             setCategoryFormData({ name: "" });
-            setIsCategoryDialogOpen(true);
-          }}
-          onEdit={(category) => {
-            setCategoryFormData({ name: category.name });
-            setIsCategoryDialogOpen(true);
-          }}
-          onDelete={(category) => {
-            if (exercises.some(ex => ex.categoryId === category.id)) {
-              toast({
-                variant: "destructive",
-                title: "خطا",
-                description: "ابتدا باید تمام حرکات این دسته‌بندی را حذف کنید"
-              });
-              return;
-            }
-            setCategories(prevCategories => prevCategories.filter(c => c.id !== category.id));
+            
             toast({
               title: "موفقیت",
-              description: "دسته‌بندی با موفقیت حذف شد"
+              description: "دسته‌بندی جدید با موفقیت اضافه شد"
             });
           }}
         />
 
-        <ExerciseTable 
-          exercises={filteredExercises}
-          categories={categories}
-          onAdd={() => {
-            if (filteredCategories.length === 0) {
-              toast({
-                variant: "destructive",
-                title: "خطا",
-                description: "ابتدا باید یک دسته‌بندی ایجاد کنید"
-              });
-              return;
-            }
-            setSelectedExercise(undefined);
-            setExerciseFormData({ name: "", categoryId: filteredCategories[0].id });
-            setIsExerciseDialogOpen(true);
-          }}
-          onEdit={(exercise) => {
-            setSelectedExercise(exercise);
-            setExerciseFormData({
-              name: exercise.name,
-              categoryId: exercise.categoryId
-            });
-            setIsExerciseDialogOpen(true);
-          }}
-          onDelete={handleDeleteExercises}
-          onSort={handleSort}
-          isAscending={isAscending}
+        <ExerciseDialog
+          isOpen={isExerciseDialogOpen}
+          onOpenChange={setIsExerciseDialogOpen}
+          selectedExercise={selectedExercise}
+          categories={filteredCategories}
+          formData={exerciseFormData}
+          onFormDataChange={setExerciseFormData}
+          onSave={handleExerciseSave}
         />
       </div>
-
-      <TypeDialog
-        isOpen={isTypeDialogOpen}
-        onOpenChange={setIsTypeDialogOpen}
-        typeName={newTypeName}
-        onTypeNameChange={setNewTypeName}
-        onSave={handleSaveType}
-        isEditing={!!editingType}
-      />
-
-      <CategoryDialog 
-        isOpen={isCategoryDialogOpen}
-        onOpenChange={setIsCategoryDialogOpen}
-        exerciseTypes={exerciseTypes}
-        selectedType={selectedType}
-        formData={categoryFormData}
-        onFormDataChange={setCategoryFormData}
-        onTypeChange={setSelectedType}
-        onSave={() => {
-          if (!categoryFormData.name) {
-            toast({
-              variant: "destructive",
-              title: "خطا",
-              description: "لطفاً نام دسته‌بندی را وارد کنید"
-            });
-            return;
-          }
-
-          const newCategory: ExerciseCategory = {
-            id: Math.max(0, ...categories.map(c => c.id)) + 1,
-            name: categoryFormData.name,
-            type: selectedType
-          };
-
-          setCategories(prevCategories => [...prevCategories, newCategory]);
-          setIsCategoryDialogOpen(false);
-          setCategoryFormData({ name: "" });
-          
-          toast({
-            title: "موفقیت",
-            description: "دسته‌بندی جدید با موفقیت اضافه شد"
-          });
-        }}
-      />
-
-      <ExerciseDialog
-        isOpen={isExerciseDialogOpen}
-        onOpenChange={setIsExerciseDialogOpen}
-        selectedExercise={selectedExercise}
-        categories={filteredCategories}
-        formData={exerciseFormData}
-        onFormDataChange={setExerciseFormData}
-        onSave={handleExerciseSave}
-      />
     </div>
   );
 };
