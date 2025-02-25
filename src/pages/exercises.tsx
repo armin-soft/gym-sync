@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowUpDown } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -167,6 +166,15 @@ const ExercisesPage = () => {
     setIsAscending(!isAscending);
   };
 
+  const handleExerciseSave = async () => {
+    const newExercise: Exercise = {
+      id: Math.max(...exercises.map(ex => ex.id), 0) + 1,
+      ...exerciseFormData
+    };
+    setExercises(prev => [...prev, newExercise]);
+    return Promise.resolve();
+  };
+
   return (
     <div className="container mx-auto py-10 space-y-8">
       <div className="flex items-center justify-between">
@@ -292,39 +300,7 @@ const ExercisesPage = () => {
         categories={filteredCategories}
         formData={exerciseFormData}
         onFormDataChange={setExerciseFormData}
-        onSave={() => {
-          if (!exerciseFormData.name) {
-            toast({
-              variant: "destructive",
-              title: "خطا",
-              description: "لطفاً نام حرکت را وارد کنید"
-            });
-            return;
-          }
-
-          if (selectedExercise) {
-            setExercises(exercises.map(ex =>
-              ex.id === selectedExercise.id
-                ? { ...ex, ...exerciseFormData }
-                : ex
-            ));
-            toast({
-              title: "موفقیت",
-              description: "حرکت با موفقیت ویرایش شد"
-            });
-          } else {
-            const newExercise: Exercise = {
-              id: Math.max(...exercises.map(ex => ex.id), 0) + 1,
-              ...exerciseFormData
-            };
-            setExercises([...exercises, newExercise]);
-            toast({
-              title: "موفقیت",
-              description: "حرکت جدید با موفقیت اضافه شد"
-            });
-          }
-          setIsExerciseDialogOpen(false);
-        }}
+        onSave={handleExerciseSave}
       />
     </div>
   );

@@ -20,7 +20,7 @@ interface ExerciseDialogProps {
   categories: ExerciseCategory[];
   formData: { name: string; categoryId: number };
   onFormDataChange: (data: { name: string; categoryId: number }) => void;
-  onSave: () => void;
+  onSave: () => Promise<void>; // Changed to Promise<void>
 }
 
 export function ExerciseDialog({
@@ -34,45 +34,39 @@ export function ExerciseDialog({
 }: ExerciseDialogProps) {
   const [groupText, setGroupText] = useState("");
   const [activeTab, setActiveTab] = useState("single");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    if (activeTab === "single") {
-      if (!formData.name.trim()) {
-        return; // Don't save if name is empty
-      }
-      onSave();
-    } else {
-      // Handle group save
-      const exercises = groupText.split('\n').filter(line => line.trim());
-      
-      if (exercises.length === 0) return;
-
-      // Process each exercise one by one
-      let index = 0;
-      
-      const processNextExercise = () => {
-        const exerciseName = exercises[index].trim();
-        
-        onFormDataChange({
-          name: exerciseName,
-          categoryId: formData.categoryId
-        });
-        
-        onSave();
-        
-        index++;
-        
-        if (index < exercises.length) {
-          setTimeout(processNextExercise, 300); // Wait 300ms before processing next exercise
-        } else {
-          // All exercises have been saved
-          onOpenChange(false);
-          setGroupText("");
+  const handleSave = async () => {
+    if (isSaving) return;
+    
+    setIsSaving(true);
+    
+    try {
+      if (activeTab === "single") {
+        if (!formData.name.trim()) {
+          return;
         }
-      };
-      
-      // Start processing exercises
-      processNextExercise();
+        await onSave();
+        onOpenChange(false);
+      } else {
+        const exercises = groupText.split('\n').filter(line => line.trim());
+        
+        if (exercises.length === 0) return;
+
+        // Save exercises sequentially without timeouts
+        for (const exerciseName of exercises) {
+          onFormDataChange({
+            name: exerciseName.trim(),
+            categoryId: formData.categoryId
+          });
+          await onSave();
+        }
+
+        onOpenChange(false);
+        setGroupText("");
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -141,9 +135,10 @@ export function ExerciseDialog({
           </Button>
           <Button 
             onClick={handleSave}
+            disabled={isSaving}
             className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
           >
-            ذخیره
+            {isSaving ? "در حال ذخیره..." : "ذخیره"}
           </Button>
         </div>
       </DialogContent>
