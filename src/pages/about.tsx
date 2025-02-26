@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { 
   Users, Dumbbell, Clock, ListChecks, 
   UtensilsCrossed, LineChart, Pill, User2,
-  ArrowLeft, ArrowRight, InfoIcon, Sparkles
+  ArrowRight, InfoIcon, Sparkles
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -86,7 +86,7 @@ const About = () => {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 space-y-12">
+    <div className="container mx-auto py-12 px-4 space-y-12 text-right" dir="rtl">
       {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -152,7 +152,7 @@ const About = () => {
                           >
                             <a href={feature.route} className="flex items-center gap-2">
                               مشاهده بخش
-                              <ArrowLeft className="w-4 h-4" />
+                              <ArrowRight className="w-4 h-4" />
                             </a>
                           </Button>
                         </div>
@@ -264,36 +264,6 @@ const About = () => {
             </Card>
           </TabsContent>
         </Tabs>
-      </motion.div>
-
-      {/* CTA Section */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="py-8"
-      >
-        <Card className="overflow-hidden border-0 bg-gradient-to-r from-primary to-blue-600 text-white">
-          <CardContent className="p-8 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="space-y-4 text-center md:text-right">
-              <h2 className="text-2xl font-bold">آماده شروع کار با سیستم هستید؟</h2>
-              <p>از طریق صفحه اصلی یا منوی کناری می‌توانید به بخش‌های مختلف دسترسی داشته باشید.</p>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <Button 
-                asChild
-                size="lg" 
-                variant="secondary" 
-                className="gap-2 bg-white text-primary hover:bg-white/90"
-              >
-                <a href="/">
-                  <InfoIcon className="w-4 h-4" />
-                  مشاهده داشبورد
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </motion.div>
     </div>
   );
