@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft } from "lucide-react";
+import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MealDialog } from "@/components/diet/MealDialog";
 import { Input } from "@/components/ui/input";
@@ -17,37 +17,39 @@ const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "نا
 
 const DietPage = () => {
   const { toast } = useToast();
-  const [meals, setMeals] = useState<Meal[]>([]);
+  const [meals, setMeals] = useState<Meal[]>(() => {
+    // خواندن اطلاعات از localStorage در زمان مقداردهی اولیه
+    try {
+      const savedMeals = localStorage.getItem('meals');
+      return savedMeals ? JSON.parse(savedMeals) : [];
+    } catch (error) {
+      console.error('Error loading meals:', error);
+      return [];
+    }
+  });
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const savedMeals = localStorage.getItem('meals');
-    if (savedMeals) {
-      try {
-        setMeals(JSON.parse(savedMeals));
-      } catch (error) {
-        console.error('Error loading meals:', error);
-        toast({
-          variant: "destructive",
-          title: "خطا در بارگذاری اطلاعات",
-          description: "مشکلی در بارگذاری برنامه غذایی پیش آمده است"
-        });
-      }
+  
+  // ذخیره تغییرات در localStorage به صورت مستقیم
+  const saveMeals = (newMeals: Meal[]) => {
+    try {
+      localStorage.setItem('meals', JSON.stringify(newMeals));
+      setMeals(newMeals);
+    } catch (error) {
+      console.error('Error saving meals:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره برنامه غذایی پیش آمده است"
+      });
     }
-    setTimeout(() => setIsLoading(false), 500);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('meals', JSON.stringify(meals));
-  }, [meals]);
+  };
 
   const handleDelete = (id: number) => {
     const updatedMeals = meals.filter((meal) => meal.id !== id);
-    setMeals(updatedMeals);
+    saveMeals(updatedMeals);
     toast({
       title: "حذف موفق",
       description: "وعده غذایی با موفقیت حذف شد",
@@ -66,8 +68,9 @@ const DietPage = () => {
   };
 
   const handleSave = (data: Omit<Meal, "id">) => {
+    let newMeals: Meal[];
     if (selectedMeal) {
-      setMeals(meals.map((m) => m.id === selectedMeal.id ? { ...data, id: m.id } : m));
+      newMeals = meals.map((m) => m.id === selectedMeal.id ? { ...data, id: m.id } : m);
       toast({
         title: "ویرایش موفق",
         description: "وعده غذایی با موفقیت ویرایش شد",
@@ -78,13 +81,14 @@ const DietPage = () => {
         ...data,
         id: Math.max(0, ...meals.map((m) => m.id)) + 1,
       };
-      setMeals([...meals, newMeal]);
+      newMeals = [...meals, newMeal];
       toast({
         title: "افزودن موفق",
         description: "وعده غذایی جدید با موفقیت اضافه شد",
         className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
       });
     }
+    saveMeals(newMeals);
     setIsDialogOpen(false);
   };
 
@@ -95,22 +99,6 @@ const DietPage = () => {
   );
 
   const dayMeals = filteredMeals.filter(meal => meal.day === selectedDay);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 w-48 bg-muted rounded"></div>
-          <div className="h-8 w-96 bg-muted rounded"></div>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="h-32 bg-muted rounded col-span-1"></div>
-            <div className="h-32 bg-muted rounded col-span-1"></div>
-            <div className="h-32 bg-muted rounded col-span-1"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
@@ -169,7 +157,7 @@ const DietPage = () => {
           <ScrollArea className="h-[calc(100vh-14rem)]">
             <div className="p-6">
               <Tabs defaultValue="شنبه" value={selectedDay} onValueChange={(value) => setSelectedDay(value as WeekDay)} className="w-full">
-                <div className="bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
+                <div className="bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 pb-4">
                   <TabsList className="w-full flex justify-between gap-1 bg-muted/30 p-1 rounded-2xl">
                     {weekDays.map((day, index) => (
                       <TabsTrigger 
