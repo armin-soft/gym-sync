@@ -128,7 +128,7 @@ const Index = () => {
                   <UtensilsCrossed className="h-5 w-5 text-amber-300" />
                 </div>
                 <div>
-                  <p className="text-sm text-white/80">برنامه های غذایی</p>
+                  <p className="text-sm text-white/80">برنامه‌های غذایی</p>
                   <p className="text-lg font-semibold">{toPersianNumbers(stats.totalMeals)}</p>
                 </div>
               </div>
@@ -144,7 +144,7 @@ const Index = () => {
             </div>
 
             {/* دکمه‌های اصلی */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 justify-center">
               {[
                 { title: "مدیریت شاگردان", icon: User2, href: '/Students', color: "from-blue-600 to-blue-400" },
                 { title: "مدیریت تمرین‌ها", icon: Dumbbell, href: '/Exercise-Movements', color: "from-emerald-600 to-emerald-400" },
@@ -161,8 +161,8 @@ const Index = () => {
                   <Link to={item.href}>
                     <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r ${item.color} transition-opacity`} />
                     <span className="relative flex items-center gap-2">
-                      {item.title}
                       <item.icon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      {item.title}
                     </span>
                   </Link>
                 </Button>
