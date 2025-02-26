@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import {
   Users,
@@ -25,20 +24,20 @@ const AboutPage = () => {
       color: "bg-blue-500/10 text-blue-500"
     },
     {
-      title: "برنامه‌های تمرینی",
-      description: "طراحی برنامه‌های تمرینی اختصاصی با جزئیات حرکات و ست‌ها",
+      title: "برنامه های تمرینی",
+      description: "طراحی برنامه های تمرینی اختصاصی با جزئیات حرکات و ست ها",
       icon: Dumbbell,
       color: "bg-emerald-500/10 text-emerald-500"
     },
     {
-      title: "برنامه‌های غذایی",
-      description: "تنظیم برنامه‌های غذایی هفتگی با وعده‌های مشخص و جزئیات کامل",
+      title: "برنامه های غذایی",
+      description: "تنظیم برنامه های غذایی هفتگی با وعده های مشخص و جزئیات کامل",
       icon: UtensilsCrossed,
       color: "bg-amber-500/10 text-amber-500"
     },
     {
-      title: "مدیریت مکمل‌ها",
-      description: "ثبت و پیگیری مکمل‌های تجویز شده برای هر شاگرد",
+      title: "مدیریت مکمل ها",
+      description: "ثبت و پیگیری مکمل های تجویز شده برای هر شاگرد",
       icon: Pill,
       color: "bg-purple-500/10 text-purple-500"
     }
@@ -52,8 +51,8 @@ const AboutPage = () => {
       color: "bg-pink-500/10 text-pink-500"
     },
     {
-      title: "زمانبندی جلسات",
-      description: "مدیریت زمان جلسات تمرینی و برنامه‌ریزی هفتگی",
+      title: "زمان بندی جلسات",
+      description: "مدیریت زمان جلسات تمرینی و برنامه ریزی هفتگی",
       icon: Calendar,
       color: "bg-indigo-500/10 text-indigo-500"
     },
@@ -64,20 +63,20 @@ const AboutPage = () => {
       color: "bg-cyan-500/10 text-cyan-500"
     },
     {
-      title: "نمودارهای پیشرفت",
-      description: "نمایش نمودارهای پیشرفت و تحلیل عملکرد شاگردان",
+      title: "نمودار های پیشرفت",
+      description: "نمایش نمودار های پیشرفت و تحلیل عملکرد شاگردان",
       icon: BarChart,
       color: "bg-rose-500/10 text-rose-500"
     },
     {
       title: "تنظیمات پیشرفته",
-      description: "امکان شخصی‌سازی و تنظیم پارامترهای مختلف سیستم",
+      description: "امکان شخصی سازی و تنظیم پارامتر های مختلف سیستم",
       icon: Settings,
       color: "bg-slate-500/10 text-slate-500"
     },
     {
-      title: "ثبت‌نام آسان",
-      description: "فرآیند ساده و سریع برای ثبت‌نام شاگردان جدید",
+      title: "ثبت نام آسان",
+      description: "فرآیند ساده و سریع برای ثبت نام شاگردان جدید",
       icon: UserPlus,
       color: "bg-teal-500/10 text-teal-500"
     },
@@ -89,7 +88,7 @@ const AboutPage = () => {
     },
     {
       title: "پایش عملکرد",
-      description: "بررسی و پایش مستمر عملکرد و فعالیت‌های شاگردان",
+      description: "بررسی و پایش مستمر عملکرد و فعالیت های شاگردان",
       icon: Activity,
       color: "bg-green-500/10 text-green-500"
     }
@@ -119,7 +118,7 @@ const AboutPage = () => {
           </span>
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          سیستم مدیریت باشگاه با امکانات پیشرفته و کاربردی برای مدیریت بهتر شاگردان و برنامه‌های تمرینی
+          سیستم مدیریت باشگاه با امکانات پیشرفته و کاربردی برای مدیریت بهتر شاگردان و برنامه های تمرینی
         </p>
       </div>
 
