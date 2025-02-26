@@ -40,8 +40,8 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: typeIndex * 0.05 }}
           >
-            <Card className="overflow-hidden group">
-              <div className="p-4 bg-gradient-to-l from-background via-background to-muted/20">
+            <Card className="overflow-hidden bg-gradient-to-br from-background to-muted/5 hover:shadow-lg transition-all duration-300">
+              <div className="p-4">
                 <h3 className="text-base font-medium mb-3 flex items-center gap-2 text-foreground/80">
                   {getMealTypeIcon(type)}
                   {type}
@@ -58,17 +58,17 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                           delay: index * 0.03 + typeIndex * 0.05
                         }}
                       >
-                        <Card className="overflow-hidden group/card">
+                        <Card className="overflow-hidden group hover:shadow-md transition-all duration-300">
                           <div className="p-3 bg-gradient-to-br from-background via-background to-muted/10 space-y-1.5">
                             <div className="flex items-center justify-between gap-2">
-                              <h4 className="text-sm font-medium text-foreground/90 group-hover/card:text-primary transition-colors duration-300 truncate">
+                              <h4 className="text-sm font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300 truncate">
                                 {meal.name}
                               </h4>
-                              <div className="flex gap-1 shrink-0">
+                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-7 w-7 hover:bg-primary/10 hover:text-primary transition-colors duration-300"
+                                  className="h-7 w-7 hover:bg-primary/10 hover:text-primary"
                                   onClick={() => onEdit(meal)}
                                 >
                                   <Edit className="h-3.5 w-3.5" />
@@ -76,14 +76,16 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-7 w-7 hover:bg-red-500/10 hover:text-red-500 transition-colors duration-300"
+                                  className="h-7 w-7 hover:bg-red-500/10 hover:text-red-500"
                                   onClick={() => onDelete(meal.id)}
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
                               </div>
                             </div>
-                            <p className="text-xs text-muted-foreground line-clamp-2">{meal.description}</p>
+                            <p className="text-xs text-muted-foreground line-clamp-2">
+                              {meal.description}
+                            </p>
                           </div>
                         </Card>
                       </motion.div>
@@ -93,7 +95,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                   <motion.p 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-xs text-muted-foreground flex items-center gap-2"
+                    className="text-xs text-muted-foreground flex items-center gap-2 bg-muted/50 p-3 rounded-lg"
                   >
                     <UtensilsCrossed className="w-3.5 h-3.5" />
                     هیچ وعده غذایی برای {type} ثبت نشده است
