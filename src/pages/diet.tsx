@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Calendar, UtensilsCrossed } from "lucide-react";
+import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MealDialog } from "@/components/diet/MealDialog";
@@ -113,7 +113,7 @@ const DietPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pb-8">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -126,15 +126,15 @@ const DietPage = () => {
             transition={{ delay: 0.2 }}
             className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
           >
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold tracking-tight">
+            <div className="space-y-1.5">
+              <h2 className="text-3xl font-bold tracking-tight flex items-center gap-3">
                 <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                  برنامه‌های غذایی
+                  برنامه‌های غذایی هفتگی
                 </span>
               </h2>
-              <p className="text-muted-foreground flex items-center gap-2">
+              <p className="text-muted-foreground/80 flex items-center gap-2 text-sm">
                 <UtensilsCrossed className="w-4 h-4" />
-                مدیریت وعده‌های غذایی هفتگی
+                برنامه‌ریزی و مدیریت وعده‌های غذایی در طول هفته
               </p>
             </div>
             <Button 
@@ -169,36 +169,45 @@ const DietPage = () => {
           <ScrollArea className="h-[calc(100vh-14rem)]">
             <div className="p-6">
               <Tabs defaultValue="شنبه" value={selectedDay} onValueChange={(value) => setSelectedDay(value as WeekDay)} className="w-full">
-                <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 pb-4">
-                  <TabsList className="inline-flex h-auto p-1 text-muted-foreground w-full justify-end overflow-x-auto gap-2">
-                    {weekDays.map((day) => (
+                <div className="bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
+                  <TabsList className="w-full flex justify-between gap-1 bg-muted/30 p-1 rounded-2xl">
+                    {weekDays.map((day, index) => (
                       <TabsTrigger 
                         key={day} 
-                        value={day} 
-                        className="px-6 py-2.5 rounded-full data-[state=active]:bg-primary/90 data-[state=active]:text-primary-foreground transition-all duration-300 gap-2
-                          hover:bg-primary/10 data-[state=active]:shadow-md data-[state=active]:shadow-primary/20"
+                        value={day}
+                        className="flex-1 px-4 py-3 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground 
+                          transition-all duration-300 gap-2 hover:bg-primary/10 data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20
+                          data-[state=active]:scale-105 relative overflow-hidden group"
                       >
-                        <Calendar className="w-4 h-4" />
-                        {day}
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="relative flex flex-col items-center gap-1.5">
+                          <Calendar className="w-4 h-4" />
+                          <span className="text-sm font-medium">{day}</span>
+                          {index < weekDays.length - 1 && (
+                            <ArrowLeft className="w-4 h-4 absolute -left-6 top-1/2 -translate-y-1/2 text-muted-foreground/30" />
+                          )}
+                        </div>
                       </TabsTrigger>
                     ))}
                   </TabsList>
                 </div>
 
-                {weekDays.map((day) => (
-                  <TabsContent 
-                    key={day} 
-                    value={day} 
-                    className="mt-6 focus-visible:outline-none focus-visible:ring-0"
-                  >
-                    <DayMeals
-                      meals={dayMeals}
-                      mealTypes={mealTypes}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                    />
-                  </TabsContent>
-                ))}
+                <div className="mt-6">
+                  {weekDays.map((day) => (
+                    <TabsContent 
+                      key={day} 
+                      value={day} 
+                      className="focus-visible:outline-none focus-visible:ring-0 space-y-6"
+                    >
+                      <DayMeals
+                        meals={dayMeals}
+                        mealTypes={mealTypes}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                      />
+                    </TabsContent>
+                  ))}
+                </div>
               </Tabs>
             </div>
           </ScrollArea>
