@@ -23,7 +23,7 @@ export const SupplementList = ({
   onEdit,
   onDelete,
 }: SupplementListProps) => {
-  if (supplements.length === 0) {
+  if (!supplements || supplements.length === 0) {
     return (
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -33,16 +33,16 @@ export const SupplementList = ({
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-blue-50 flex items-center justify-center mx-auto mb-4">
           <Info className="h-8 w-8 text-purple-500" />
         </div>
-        <h3 className="text-lg font-medium mb-2">هیچ مکملی یافت نشد</h3>
+        <h3 className="text-lg font-medium mb-2">هیچ موردی یافت نشد</h3>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          در این دسته‌بندی هنوز هیچ مکملی ثبت نشده است. برای شروع، روی دکمه "افزودن مکمل" کلیک کنید.
+          در این دسته‌بندی هنوز هیچ موردی ثبت نشده است. برای شروع، روی دکمه "افزودن" کلیک کنید.
         </p>
       </motion.div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       <AnimatePresence mode="popLayout">
         {supplements.map((supplement) => (
           <motion.div
@@ -54,8 +54,8 @@ export const SupplementList = ({
             transition={{ duration: 0.2 }}
           >
             <Card className="group overflow-hidden hover:shadow-xl transition-all duration-500 border-purple-100/50 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50/30">
-              <div className="relative p-6">
-                <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+              <div className="relative p-4">
+                <div className="absolute top-2 left-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -63,13 +63,13 @@ export const SupplementList = ({
                           variant="ghost"
                           size="icon"
                           onClick={() => onEdit(supplement)}
-                          className="h-8 w-8 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                          className="h-7 w-7 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>ویرایش مکمل</p>
+                        <p>ویرایش</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -81,40 +81,42 @@ export const SupplementList = ({
                           variant="ghost"
                           size="icon"
                           onClick={() => onDelete(supplement.id)}
-                          className="h-8 w-8 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
+                          className="h-7 w-7 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>حذف مکمل</p>
+                        <p>حذف</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
 
-                <div className="mb-6">
-                  <h4 className="text-lg font-bold mb-2 group-hover:text-purple-600 transition-colors">
+                <div className="mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-1 text-xs rounded-lg bg-purple-50 text-purple-600 font-medium">
+                      {supplement.category}
+                    </span>
+                  </div>
+                  <h4 className="text-base font-bold mt-2 group-hover:text-purple-600 transition-colors line-clamp-1">
                     {supplement.name}
                   </h4>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-sm">
-                    {supplement.category}
-                  </span>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2 text-gray-600">
-                    <Weight className="h-4 w-4 text-purple-500" />
-                    <span className="text-sm">مقدار مصرف: {toPersianNumbers(supplement.dosage)}</span>
+                    <Weight className="h-4 w-4 text-purple-500 shrink-0" />
+                    <span className="line-clamp-1">مقدار مصرف: {toPersianNumbers(supplement.dosage)}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
-                    <Clock className="h-4 w-4 text-purple-500" />
-                    <span className="text-sm">زمان مصرف: {supplement.timing}</span>
+                    <Clock className="h-4 w-4 text-purple-500 shrink-0" />
+                    <span className="line-clamp-1">زمان مصرف: {supplement.timing}</span>
                   </div>
                   {supplement.description && (
                     <div className="flex items-start gap-2 text-gray-600">
-                      <FileText className="h-4 w-4 text-purple-500 mt-1" />
-                      <span className="text-sm">{supplement.description}</span>
+                      <FileText className="h-4 w-4 text-purple-500 shrink-0 mt-1" />
+                      <span className="line-clamp-2 text-xs">{supplement.description}</span>
                     </div>
                   )}
                 </div>

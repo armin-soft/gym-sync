@@ -252,7 +252,7 @@ const SupplementsPage = () => {
                         onClick={handleAddSupplement}
                         className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
                       >
-                        <Plus className="ml-2 h-4 w-4" />
+                        <Plus className="h-4 w-4 ml-2" />
                         افزودن مکمل جدید
                       </Button>
                     </div>
@@ -293,7 +293,7 @@ const SupplementsPage = () => {
                         onClick={handleAddSupplement}
                         className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-blue-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
                       >
-                        <Plus className="ml-2 h-4 w-4" />
+                        <Plus className="h-4 w-4 ml-2" />
                         افزودن ویتامین جدید
                       </Button>
                     </div>
