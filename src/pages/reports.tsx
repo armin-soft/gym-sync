@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import {
@@ -23,8 +22,7 @@ import {
   Wallet,
   Calendar,
   BarChart as ChartBarIcon,
-  PieChart as ChartPieIcon,
-  Download
+  PieChart as ChartPieIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -42,24 +40,21 @@ const Reports = () => {
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {
-    // خواندن داده‌های واقعی از localStorage
     const loadData = () => {
-      // خواندن تعداد شاگردان
       const students = JSON.parse(localStorage.getItem('students') || '[]');
       
-      // ساخت داده‌های ماهانه بر اساس اطلاعات واقعی
       const currentData: MonthlyData = {
         name: "ماه جاری",
         شاگردان: students.length,
-        درآمد: students.length * 200000, // درآمد تخمینی برای هر شاگرد
-        جلسات: students.length * 4, // تخمین 4 جلسه در ماه برای هر شاگرد
-        تمرین: students.length, // فرض می‌کنیم هر شاگرد یک برنامه تمرینی دارد
-        مکمل: Math.floor(students.length * 0.5), // فرض می‌کنیم 50٪ شاگردان مکمل مصرف می‌کنند
+        درآمد: students.length * 200000,
+        جلسات: students.length * 4,
+        تمرین: students.length,
+        مکمل: Math.floor(students.length * 0.5),
       };
 
       const previousData: MonthlyData = {
         name: "ماه قبل",
-        شاگردان: Math.floor(students.length * 0.8), // فرض 20٪ رشد
+        شاگردان: Math.floor(students.length * 0.8),
         درآمد: Math.floor(students.length * 0.8) * 200000,
         جلسات: Math.floor(students.length * 0.8) * 4,
         تمرین: Math.floor(students.length * 0.8),
@@ -138,17 +133,11 @@ const Reports = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight">گزارشات و آمار</h2>
-          <p className="text-muted-foreground">
-            در این بخش می‌توانید آمار و گزارشات باشگاه را مشاهده کنید
-          </p>
-        </div>
-        <Button className="self-start md:self-center bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600">
-          <Download className="w-4 h-4 ml-2" />
-          دانلود گزارش
-        </Button>
+      <div className="space-y-1">
+        <h2 className="text-3xl font-bold tracking-tight">گزارشات و آمار</h2>
+        <p className="text-muted-foreground">
+          در این بخش می‌توانید آمار و گزارشات باشگاه را مشاهده کنید
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
