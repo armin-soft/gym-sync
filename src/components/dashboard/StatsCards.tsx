@@ -8,7 +8,7 @@ import type { DashboardStats } from "@/types/dashboard";
 const renderGrowthBadge = (growth: number) => (
   <Badge 
     variant="secondary" 
-    className={\`rounded-lg \${growth >= 0 ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'}\`}
+    className={`rounded-lg ${growth >= 0 ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'}`}
   >
     {growth >= 0 ? <TrendingUp className="w-3 h-3 ml-1" /> : <TrendingDown className="w-3 h-3 ml-1" />}
     {toPersianNumbers(Math.abs(growth))}٪
@@ -36,7 +36,7 @@ export const StatsCards = ({ stats }: { stats: DashboardStats }) => {
           <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-blue-100">
             <div 
               className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-300 group-hover:w-full"
-              style={{ width: \`\${Math.min((stats.totalStudents / stats.maxCapacity) * 100, 100)}%\` }}
+              style={{ width: `${Math.min((stats.totalStudents / stats.maxCapacity) * 100, 100)}%` }}
             />
           </div>
         </CardContent>
@@ -60,7 +60,7 @@ export const StatsCards = ({ stats }: { stats: DashboardStats }) => {
           <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-purple-100">
             <div 
               className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-300 group-hover:w-full"
-              style={{ width: \`\${Math.min((stats.totalSessions / stats.maxSessionsPerMonth) * 100, 100)}%\` }}
+              style={{ width: `${Math.min((stats.totalSessions / stats.maxSessionsPerMonth) * 100, 100)}%` }}
             />
           </div>
         </CardContent>
@@ -84,7 +84,7 @@ export const StatsCards = ({ stats }: { stats: DashboardStats }) => {
           <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-green-100">
             <div 
               className="h-full rounded-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-300 group-hover:w-full"
-              style={{ width: \`\${stats.mealCompletionRate}%\` }}
+              style={{ width: `${stats.mealCompletionRate}%` }}
             />
           </div>
         </CardContent>
@@ -108,7 +108,7 @@ export const StatsCards = ({ stats }: { stats: DashboardStats }) => {
           <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-orange-100">
             <div 
               className="h-full rounded-full bg-gradient-to-r from-orange-600 to-orange-400 transition-all duration-300 group-hover:w-full"
-              style={{ width: \`\${stats.supplementCompletionRate}%\` }}
+              style={{ width: `${stats.supplementCompletionRate}%` }}
             />
           </div>
         </CardContent>

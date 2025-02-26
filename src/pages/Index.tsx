@@ -51,9 +51,9 @@ const Index = () => {
                 </Badge>
                 <Badge 
                   variant="outline" 
-                  className={\`border-white/20 text-white \${
+                  className={`border-white/20 text-white ${
                     stats.totalStudents > 0 ? 'bg-green-500/20' : 'bg-yellow-500/20'
-                  }\`}
+                  }`}
                 >
                   <Activity className="w-3 h-3 ml-1" />
                   {stats.totalStudents > 0 ? 'فعال' : 'در انتظار'}
