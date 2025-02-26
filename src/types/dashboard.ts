@@ -14,4 +14,3 @@ export interface DashboardStats {
   mealCompletionRate: number;
   supplementCompletionRate: number;
 }
-

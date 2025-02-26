@@ -1,6 +1,18 @@
 
 import { Badge } from "@/components/ui/badge";
-import { Activity, Clock, User2, Dumbbell, UtensilsCrossed, Pill, ArrowUpRight } from "lucide-react";
+import { 
+  Activity, 
+  Clock, 
+  User2, 
+  Dumbbell, 
+  UtensilsCrossed, 
+  Pill, 
+  ArrowUpRight,
+  Users,
+  Calendar,
+  ChartBar,
+  ScrollText
+} from "lucide-react";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Achievements } from "@/components/dashboard/Achievements";
@@ -28,7 +40,7 @@ const Index = () => {
                   </Badge>
                 </div>
                 <p className="mt-2 text-primary-foreground/80">
-                  خلاصه وضعیت سیستم مدیریت برنامه تمرینی
+                  داشبورد مدیریت برنامه تمرینی
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -50,14 +62,14 @@ const Index = () => {
 
             <div className="mt-4 grid gap-4 md:grid-cols-4">
               <div className="flex items-center gap-3 rounded-xl bg-primary-foreground/10 px-4 py-3">
-                <User2 className="h-5 w-5 text-primary-foreground/80" />
+                <Users className="h-5 w-5 text-primary-foreground/80" />
                 <div>
                   <p className="text-sm text-primary-foreground/80">تعداد شاگردان</p>
                   <p className="text-lg font-semibold">{toPersianNumbers(stats.totalStudents)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-xl bg-primary-foreground/10 px-4 py-3">
-                <Dumbbell className="h-5 w-5 text-primary-foreground/80" />
+                <Calendar className="h-5 w-5 text-primary-foreground/80" />
                 <div>
                   <p className="text-sm text-primary-foreground/80">جلسات تمرینی</p>
                   <p className="text-lg font-semibold">{toPersianNumbers(stats.totalSessions)}</p>
@@ -79,14 +91,46 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 flex flex-wrap gap-2">
               <Button 
                 variant="secondary" 
                 className="group text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20"
-                onClick={() => window.location.href = '/Students'}
+                onClick={() => window.location.href = '/students'}
               >
-                مشاهده لیست شاگردان
-                <ArrowUpRight className="w-4 h-4 mr-2 transition-transform group-hover:translate-x-1" />
+                مدیریت شاگردان
+                <User2 className="w-4 h-4 mr-2 transition-transform group-hover:translate-x-1" />
+              </Button>
+              <Button 
+                variant="secondary" 
+                className="group text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20"
+                onClick={() => window.location.href = '/exercises'}
+              >
+                مدیریت تمرین‌ها
+                <Dumbbell className="w-4 h-4 mr-2 transition-transform group-hover:translate-x-1" />
+              </Button>
+              <Button 
+                variant="secondary" 
+                className="group text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20"
+                onClick={() => window.location.href = '/diet'}
+              >
+                برنامه‌های غذایی
+                <UtensilsCrossed className="w-4 h-4 mr-2 transition-transform group-hover:translate-x-1" />
+              </Button>
+              <Button 
+                variant="secondary" 
+                className="group text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20"
+                onClick={() => window.location.href = '/supplements'}
+              >
+                مکمل‌ها
+                <Pill className="w-4 h-4 mr-2 transition-transform group-hover:translate-x-1" />
+              </Button>
+              <Button 
+                variant="secondary" 
+                className="group text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20"
+                onClick={() => window.location.href = '/reports'}
+              >
+                گزارشات
+                <ChartBar className="w-4 h-4 mr-2 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
           </div>
@@ -101,4 +145,3 @@ const Index = () => {
 };
 
 export default Index;
-

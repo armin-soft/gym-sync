@@ -22,28 +22,28 @@ export const useDashboardStats = () => {
 
   useEffect(() => {
     const calculateStats = () => {
+      // دریافت اطلاعات از localStorage
       const cachedStudents = localStorage.getItem('students');
       const cachedMeals = localStorage.getItem('meals');
       const cachedSupplements = localStorage.getItem('supplements');
       const cachedExercises = localStorage.getItem('exercises');
       const cachedTrainerProfile = localStorage.getItem('trainerProfile');
 
-      // Parse all data at once to improve performance
+      // پردازش داده‌ها
       const students = cachedStudents ? JSON.parse(cachedStudents) : [];
       const meals = cachedMeals ? JSON.parse(cachedMeals) : [];
       const supplements = cachedSupplements ? JSON.parse(cachedSupplements) : [];
       const exercises = cachedExercises ? JSON.parse(cachedExercises) : [];
       const trainerProfile = cachedTrainerProfile ? JSON.parse(cachedTrainerProfile) : {};
       
-      // Optimize calculations by doing them in a single pass where possible
+      // محاسبه آمار در یک پیمایش
       let totalSessions = 0;
       let totalProgress = 0;
       let studentsWithMeals = 0;
       let studentsWithSupplements = 0;
 
-      // Single pass through students array
       students.forEach((student: any) => {
-        totalSessions += (student.sessionsPerWeek || 3) * 4;
+        totalSessions += (student.sessionsPerWeek || 3) * 4; // جلسات ماهانه
         totalProgress += (student.progress || 0);
         
         if (meals.some((meal: any) => meal.studentId === student.id)) {
@@ -58,12 +58,12 @@ export const useDashboardStats = () => {
       const mealCompletionRate = students.length ? (studentsWithMeals / students.length) * 100 : 0;
       const supplementCompletionRate = students.length ? (studentsWithSupplements / students.length) * 100 : 0;
 
-      // Calculate monthly income
+      // محاسبه درآمد ماهانه
       const pricePerSession = trainerProfile.price || "0";
       const monthlyIncome = isValidPrice(pricePerSession) ? 
         totalSessions * parseInt(pricePerSession.replace(/[^0-9]/g, '')) : 0;
 
-      // Calculate growth rates
+      // محاسبه نرخ رشد
       const prevStudents = JSON.parse(localStorage.getItem('prevMonthStudents') || '[]');
       const prevMeals = JSON.parse(localStorage.getItem('prevMonthMeals') || '[]');
       const prevSupplements = JSON.parse(localStorage.getItem('prevMonthSupplements') || '[]');
@@ -93,12 +93,13 @@ export const useDashboardStats = () => {
 
     calculateStats();
 
+    // آپدیت خودکار آمار
     const storageHandler = () => {
       requestAnimationFrame(calculateStats);
     };
 
     window.addEventListener('storage', storageHandler);
-    const updateInterval = setInterval(calculateStats, 2000); // Reduced frequency
+    const updateInterval = setInterval(calculateStats, 2000);
 
     return () => {
       window.removeEventListener('storage', storageHandler);
