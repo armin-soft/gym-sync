@@ -53,7 +53,7 @@ const Index = () => {
                         خوش آمدید 👋
                       </h1>
                       <Badge variant="secondary" className="bg-white/10 text-white border-0 backdrop-blur-sm">
-                        {trainerProfile.name || "مربی حرفه‌ای"}
+                        {trainerProfile.name || "مربی حرفه ای"}
                       </Badge>
                     </div>
                     <p className="mt-2 text-white/80 text-sm">
@@ -103,7 +103,7 @@ const Index = () => {
               </div>
             </div>
 
-            {/* کارت‌های آمار سریع */}
+            {/* کارت های آمار سریع */}
             <div className="grid gap-4 md:grid-cols-4">
               <div className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
                 <div className="p-2 rounded-lg bg-blue-500/20">
@@ -128,7 +128,7 @@ const Index = () => {
                   <UtensilsCrossed className="h-5 w-5 text-amber-300" />
                 </div>
                 <div>
-                  <p className="text-sm text-white/80">برنامه‌های غذایی</p>
+                  <p className="text-sm text-white/80">برنامه های غذایی</p>
                   <p className="text-lg font-semibold">{toPersianNumbers(stats.totalMeals)}</p>
                 </div>
               </div>
@@ -143,13 +143,13 @@ const Index = () => {
               </div>
             </div>
 
-            {/* دکمه‌های اصلی */}
+            {/* دکمه های اصلی */}
             <div className="flex flex-wrap gap-2 justify-center">
               {[
                 { title: "مدیریت شاگردان", icon: User2, href: '/Students', color: "from-blue-600 to-blue-400" },
-                { title: "مدیریت تمرین‌ها", icon: Dumbbell, href: '/Exercise-Movements', color: "from-emerald-600 to-emerald-400" },
-                { title: "برنامه‌های غذایی", icon: UtensilsCrossed, href: '/Diet-Plan', color: "from-amber-600 to-amber-400" },
-                { title: "مکمل‌ها", icon: Pill, href: '/Supplements-Vitamins', color: "from-purple-600 to-purple-400" },
+                { title: "مدیریت تمرین ها", icon: Dumbbell, href: '/Exercise-Movements', color: "from-emerald-600 to-emerald-400" },
+                { title: "برنامه های غذایی", icon: UtensilsCrossed, href: '/Diet-Plan', color: "from-amber-600 to-amber-400" },
+                { title: "مکمل ها", icon: Pill, href: '/Supplements-Vitamins', color: "from-purple-600 to-purple-400" },
                 { title: "گزارشات", icon: ChartBar, href: '/Reports', color: "from-pink-600 to-pink-400" }
               ].map((item) => (
                 <Button 
