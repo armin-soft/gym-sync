@@ -1,5 +1,6 @@
 
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import { 
   Activity, 
   Clock,
@@ -31,15 +32,12 @@ const Index = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      {/* هدر اصلی با طراحی جدید */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-8 text-white">
         <div className="absolute inset-0 bg-[url(/pattern.svg)] opacity-10" />
-        {/* افکت شیشه‌ای بالای صفحه */}
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-white/10 via-white/30 to-white/10" />
         
         <div className="relative">
           <div className="flex flex-col space-y-6">
-            {/* هدر و نشان‌ها */}
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -148,23 +146,25 @@ const Index = () => {
             {/* دکمه‌های اصلی */}
             <div className="flex flex-wrap gap-2">
               {[
-                { title: "مدیریت شاگردان", icon: User2, href: '/students', color: "from-blue-600 to-blue-400" },
-                { title: "مدیریت تمرین‌ها", icon: Dumbbell, href: '/exercises', color: "from-emerald-600 to-emerald-400" },
-                { title: "برنامه‌های غذایی", icon: UtensilsCrossed, href: '/diet', color: "from-amber-600 to-amber-400" },
-                { title: "مکمل‌ها", icon: Pill, href: '/supplements', color: "from-purple-600 to-purple-400" },
-                { title: "گزارشات", icon: ChartBar, href: '/reports', color: "from-pink-600 to-pink-400" }
+                { title: "مدیریت شاگردان", icon: User2, href: '/Students', color: "from-blue-600 to-blue-400" },
+                { title: "مدیریت تمرین‌ها", icon: Dumbbell, href: '/Exercise-Movements', color: "from-emerald-600 to-emerald-400" },
+                { title: "برنامه‌های غذایی", icon: UtensilsCrossed, href: '/Diet-Plan', color: "from-amber-600 to-amber-400" },
+                { title: "مکمل‌ها", icon: Pill, href: '/Supplements-Vitamins', color: "from-purple-600 to-purple-400" },
+                { title: "گزارشات", icon: ChartBar, href: '/Reports', color: "from-pink-600 to-pink-400" }
               ].map((item) => (
                 <Button 
                   key={item.href}
                   variant="secondary" 
                   className="group relative overflow-hidden text-white bg-white/5 hover:bg-white/10 backdrop-blur-sm border-white/10"
-                  onClick={() => window.location.href = item.href}
+                  asChild
                 >
-                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r ${item.color} transition-opacity`} />
-                  <span className="relative flex items-center gap-2">
-                    {item.title}
-                    <item.icon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </span>
+                  <Link to={item.href}>
+                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r ${item.color} transition-opacity`} />
+                    <span className="relative flex items-center gap-2">
+                      {item.title}
+                      <item.icon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Link>
                 </Button>
               ))}
             </div>
