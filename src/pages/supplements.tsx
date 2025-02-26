@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -39,8 +40,8 @@ const SupplementsPage = () => {
     setSupplements(supplements.filter((s) => s.category !== category.name));
     
     toast({
-      title: "حذف دسته‌بندی",
-      description: "دسته‌بندی مورد نظر با موفقیت حذف شد",
+      title: "حذف دسته بندی",
+      description: "دسته بندی مورد نظر با موفقیت حذف شد",
     });
   };
 
@@ -105,7 +106,7 @@ const SupplementsPage = () => {
     if (relevantCategories.length === 0) {
       toast({
         title: `خطا در افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
-        description: "لطفاً ابتدا یک دسته‌بندی ایجاد کنید",
+        description: "لطفاً ابتدا یک دسته بندی ایجاد کنید",
         variant: "destructive",
       });
       return;
@@ -197,10 +198,10 @@ const SupplementsPage = () => {
             </div>
             <div>
               <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                مکمل‌ها و ویتامین‌ها
+                مکمل ها و ویتامین ها
               </h2>
               <p className="text-muted-foreground mt-2">
-                در این بخش می‌توانید مکمل‌های ورزشی و ویتامین‌های خود را مدیریت کنید
+                در این بخش می توانید مکمل های ورزشی و ویتامین های خود را مدیریت کنید
               </p>
             </div>
           </div>
@@ -214,11 +215,11 @@ const SupplementsPage = () => {
         <TabsList className="grid w-full grid-cols-2 h-12">
           <TabsTrigger value="supplement" className="data-[state=active]:bg-purple-50 data-[state=active]:text-purple-600">
             <FlaskConical className="w-5 h-5 ml-2" />
-            مکمل‌ها
+            مکمل ها
           </TabsTrigger>
           <TabsTrigger value="vitamin" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600">
             <Pill className="w-5 h-5 ml-2" />
-            ویتامین‌ها
+            ویتامین ها
           </TabsTrigger>
         </TabsList>
 
@@ -253,7 +254,7 @@ const SupplementsPage = () => {
                           <FlaskConical className="w-6 h-6 text-purple-600" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-gray-800">مکمل‌ها</h3>
+                          <h3 className="text-xl font-bold text-gray-800">مکمل ها</h3>
                           <p className="text-sm text-gray-500">
                             تعداد کل: {toPersianNumbers(supplements.filter(s => s.type === 'supplement').length)}
                           </p>
@@ -294,7 +295,7 @@ const SupplementsPage = () => {
                           <Pill className="w-6 h-6 text-blue-600" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-gray-800">ویتامین‌ها</h3>
+                          <h3 className="text-xl font-bold text-gray-800">ویتامین ها</h3>
                           <p className="text-sm text-gray-500">
                             تعداد کل: {toPersianNumbers(supplements.filter(s => s.type === 'vitamin').length)}
                           </p>
