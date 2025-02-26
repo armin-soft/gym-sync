@@ -11,18 +11,23 @@ import {
   Users,
   Calendar,
   ChartBar,
-  Bell,
   Sun
 } from "lucide-react";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Achievements } from "@/components/dashboard/Achievements";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
+import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Button } from "@/components/ui/button";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Index = () => {
   const stats = useDashboardStats();
+  const currentTime = useCurrentTime();
+  
+  // بازیابی اطلاعات مربی از localStorage
+  const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
@@ -38,19 +43,19 @@ const Index = () => {
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div className="absolute -inset-1 rounded-full bg-white/20 blur-sm animate-pulse" />
-                    <div className="relative bg-gradient-to-br from-yellow-400 to-orange-500 p-2 rounded-full">
+                  <Avatar className="h-12 w-12 border-2 border-white/20">
+                    <AvatarImage src={trainerProfile.image} alt="تصویر پروفایل" />
+                    <AvatarFallback>
                       <Crown className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <div className="flex items-center gap-3">
                       <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
                         خوش آمدید 👋
                       </h1>
                       <Badge variant="secondary" className="bg-white/10 text-white border-0 backdrop-blur-sm">
-                        مربی حرفه‌ای
+                        {trainerProfile.name || "مربی حرفه‌ای"}
                       </Badge>
                     </div>
                     <p className="mt-2 text-white/80 text-sm">
@@ -61,11 +66,11 @@ const Index = () => {
                 <div className="flex flex-wrap gap-3">
                   <Badge variant="outline" className="border-white/10 bg-white/5 text-white backdrop-blur-sm px-3 py-1">
                     <Sun className="w-3.5 h-3.5 ml-1.5 text-yellow-400" />
-                    {new Date().toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    {currentTime.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                   </Badge>
                   <Badge variant="outline" className="border-white/10 bg-white/5 text-white backdrop-blur-sm px-3 py-1">
                     <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
-                    {new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}
+                    {currentTime.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </Badge>
                   <Badge 
                     variant="outline" 
@@ -79,29 +84,21 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* نوتیفیکیشن و اطلاعات سریع */}
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" className="relative w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm">
-                  <Bell className="w-5 h-5 text-white" />
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center">
-                    {toPersianNumbers(3)}
-                  </span>
-                </Button>
-                <div className="hidden lg:block p-3 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 px-3 border-l border-white/20">
-                      <Users className="w-4 h-4 text-blue-300" />
-                      <div className="flex flex-col">
-                        <span className="text-xs text-white/60">شاگردان فعال</span>
-                        <span className="text-sm font-semibold">{toPersianNumbers(stats.totalStudents)}</span>
-                      </div>
+              {/* اطلاعات سریع */}
+              <div className="hidden lg:block p-3 rounded-xl bg-white/10 backdrop-blur-sm">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 px-3 border-l border-white/20">
+                    <Users className="w-4 h-4 text-blue-300" />
+                    <div className="flex flex-col">
+                      <span className="text-xs text-white/60">شاگردان فعال</span>
+                      <span className="text-sm font-semibold">{toPersianNumbers(stats.totalStudents)}</span>
                     </div>
-                    <div className="flex items-center gap-2 px-3">
-                      <Calendar className="w-4 h-4 text-emerald-300" />
-                      <div className="flex flex-col">
-                        <span className="text-xs text-white/60">جلسات امروز</span>
-                        <span className="text-sm font-semibold">{toPersianNumbers(stats.totalSessions)}</span>
-                      </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-3">
+                    <Calendar className="w-4 h-4 text-emerald-300" />
+                    <div className="flex flex-col">
+                      <span className="text-xs text-white/60">جلسات امروز</span>
+                      <span className="text-sm font-semibold">{toPersianNumbers(stats.totalSessions)}</span>
                     </div>
                   </div>
                 </div>
