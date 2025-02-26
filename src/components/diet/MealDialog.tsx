@@ -21,8 +21,8 @@ import * as z from "zod";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect } from "react";
+import { UtensilsCrossed, Type, Clock, CalendarDays, FileText, Save, X } from "lucide-react";
 
-// تعریف تایپ فرم
 type MealFormData = z.infer<typeof mealFormSchema>;
 
 const mealFormSchema = z.object({
@@ -59,7 +59,6 @@ export const MealDialog = ({
     },
   });
 
-  // هنگام باز شدن دیالوگ، فرم را با مقادیر موجود پر می‌کنیم
   useEffect(() => {
     if (meal && open) {
       form.reset({
@@ -91,103 +90,132 @@ export const MealDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="sm:max-w-[500px] p-0">
+        <DialogHeader className="p-6 pb-4 bg-gradient-to-b from-muted/50 to-transparent">
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            <UtensilsCrossed className="w-5 h-5 text-primary" />
             {meal ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>نام غذا</FormLabel>
-                  <FormControl>
-                    <Input placeholder="نام غذا را وارد کنید" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <div className="p-6 pt-2 space-y-5">
               <FormField
                 control={form.control}
-                name="type"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>نوع وعده</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="نوع وعده را انتخاب کنید" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {mealTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel className="flex items-center gap-2">
+                      <Type className="w-4 h-4 text-muted-foreground" />
+                      نام غذا
+                    </FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="نام غذا را وارد کنید" 
+                        className="bg-muted/50 focus:bg-background transition-colors duration-300"
+                        {...field} 
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        نوع وعده
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-muted/50 focus:bg-background transition-colors duration-300">
+                            <SelectValue placeholder="نوع وعده را انتخاب کنید" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {mealTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="day"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                        روز هفته
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-muted/50 focus:bg-background transition-colors duration-300">
+                            <SelectValue placeholder="روز هفته را انتخاب کنید" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {weekDays.map((day) => (
+                            <SelectItem key={day} value={day}>
+                              {day}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
-                name="day"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>روز هفته</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="روز هفته را انتخاب کنید" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {weekDays.map((day) => (
-                          <SelectItem key={day} value={day}>
-                            {day}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-muted-foreground" />
+                      توضیحات
+                    </FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="توضیحات وعده غذایی را وارد کنید" 
+                        className="bg-muted/50 focus:bg-background transition-colors duration-300"
+                        {...field} 
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>توضیحات</FormLabel>
-                  <FormControl>
-                    <Input placeholder="توضیحات وعده غذایی را وارد کنید" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end gap-2">
+            <div className="p-4 bg-gradient-to-t from-muted/50 via-muted/30 to-transparent flex items-center justify-end gap-2">
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 onClick={onClose}
+                className="gap-2 hover:bg-red-500/10 hover:text-red-500"
               >
+                <X className="w-4 h-4" />
                 انصراف
               </Button>
-              <Button type="submit">
+              <Button 
+                type="submit"
+                className="gap-2 bg-gradient-to-l from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300"
+              >
+                <Save className="w-4 h-4" />
                 {meal ? "ویرایش" : "افزودن"}
               </Button>
             </div>
@@ -197,4 +225,3 @@ export const MealDialog = ({
     </Dialog>
   );
 };
-
