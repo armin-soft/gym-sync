@@ -32,14 +32,19 @@ const SupplementsPage = () => {
         const savedCategories = localStorage.getItem('supplementCategories');
 
         if (savedSupplements) {
-          setSupplements(JSON.parse(savedSupplements));
+          const parsedSupplements = JSON.parse(savedSupplements);
+          setSupplements(parsedSupplements);
         }
 
         if (savedCategories) {
-          const loadedCategories = JSON.parse(savedCategories);
-          setCategories(loadedCategories);
-          if (loadedCategories.length > 0) {
-            setSelectedCategory(loadedCategories[0].name);
+          const parsedCategories = JSON.parse(savedCategories);
+          setCategories(parsedCategories);
+          
+          const relevantCategories = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
+          if (relevantCategories.length > 0) {
+            setSelectedCategory(relevantCategories[0].name);
+          } else {
+            setSelectedCategory("");
           }
         }
       } catch (error) {
@@ -55,28 +60,16 @@ const SupplementsPage = () => {
     };
 
     loadData();
-  }, []);
+  }, [activeTab]);
 
   useEffect(() => {
     localStorage.setItem('supplements', JSON.stringify(supplements));
     localStorage.setItem('supplementCategories', JSON.stringify(categories));
   }, [supplements, categories]);
 
-  const handleDeleteSupplement = (id: number) => {
-    setSupplements(supplements.filter((supplement) => supplement.id !== id));
-    toast({
-      title: `حذف ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
-      description: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} مورد نظر با موفقیت حذف شد`,
-    });
-  };
-
-  const handleEditSupplement = (supplement: Supplement) => {
-    setEditingSupplement(supplement);
-    setSupplementDialogOpen(true);
-  };
-
   const handleAddSupplement = () => {
-    if (categories.filter(c => c.type === activeTab).length === 0) {
+    const relevantCategories = categories.filter(c => c.type === activeTab);
+    if (relevantCategories.length === 0) {
       toast({
         title: `خطا در افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
         description: "لطفاً ابتدا یک دسته‌بندی ایجاد کنید",
@@ -116,48 +109,22 @@ const SupplementsPage = () => {
     setSupplementDialogOpen(false);
   };
 
-  const handleAddCategory = () => {
-    setEditingCategory(null);
-    setCategoryDialogOpen(true);
-  };
-
-  const handleEditCategory = (category: SupplementCategory) => {
-    setEditingCategory(category);
-    setCategoryDialogOpen(true);
-  };
-
-  const handleDeleteCategory = (category: SupplementCategory) => {
-    if (supplements.some((s) => s.category === category.name)) {
-      toast({
-        title: "خطا در حذف دسته بندی",
-        description: "این دسته بندی دارای مکمل است و نمی توان آن را حذف کرد",
-        variant: "destructive",
-      });
-      return;
-    }
-    setCategories(categories.filter((c) => c.id !== category.id));
-    toast({
-      title: "حذف دسته بندی",
-      description: "دسته بندی مورد نظر با موفقیت حذف شد",
-    });
-  };
-
   const handleSubmitCategory = (name: string) => {
     if (editingCategory) {
-      setCategories(
-        categories.map((category) =>
-          category.id === editingCategory.id
-            ? { ...category, name }
-            : category
-        )
+      const updatedCategories = categories.map((category) =>
+        category.id === editingCategory.id
+          ? { ...category, name }
+          : category
       );
-      setSupplements(
-        supplements.map((supplement) =>
-          supplement.category === editingCategory.name
-            ? { ...supplement, category: name }
-            : supplement
-        )
+      setCategories(updatedCategories);
+      
+      const updatedSupplements = supplements.map((supplement) =>
+        supplement.category === editingCategory.name
+          ? { ...supplement, category: name }
+          : supplement
       );
+      setSupplements(updatedSupplements);
+
       toast({
         title: "ویرایش دسته بندی",
         description: "دسته بندی مورد نظر با موفقیت ویرایش شد",
@@ -177,6 +144,14 @@ const SupplementsPage = () => {
     }
     setCategoryDialogOpen(false);
   };
+
+  const filteredSupplements = supplements.filter((s) => {
+    const typeMatch = s.type === activeTab;
+    const categoryMatch = !selectedCategory || s.category === selectedCategory;
+    return typeMatch && categoryMatch;
+  });
+
+  const relevantCategories = categories.filter(c => c.type === activeTab);
 
   return (
     <div className="container mx-auto py-8 space-y-8 max-w-7xl">
@@ -199,7 +174,10 @@ const SupplementsPage = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="supplement" className="space-y-6" onValueChange={(value) => setActiveTab(value as 'supplement' | 'vitamin')}>
+      <Tabs defaultValue="supplement" className="space-y-6" onValueChange={(value) => {
+        setActiveTab(value as 'supplement' | 'vitamin');
+        setSelectedCategory("");
+      }}>
         <TabsList className="grid w-full grid-cols-2 h-12">
           <TabsTrigger value="supplement" className="data-[state=active]:bg-purple-50 data-[state=active]:text-purple-600">
             <FlaskConical className="w-5 h-5 ml-2" />
@@ -229,12 +207,12 @@ const SupplementsPage = () => {
             >
               <TabsContent value="supplement" className="space-y-6">
                 <CategoryTable 
-                  categories={categories.filter(c => c.type === 'supplement')}
+                  categories={relevantCategories}
                   onAdd={handleAddCategory}
                   onEdit={handleEditCategory}
                   onDelete={handleDeleteCategory}
                 />
-                {categories.filter(c => c.type === 'supplement').length > 0 && (
+                {relevantCategories.length > 0 && (
                   <div className="bg-white rounded-3xl border shadow-lg p-8 space-y-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -259,7 +237,7 @@ const SupplementsPage = () => {
 
                     <ScrollArea className="h-[600px] pr-4">
                       <SupplementList 
-                        supplements={supplements.filter(s => s.type === 'supplement' && (!selectedCategory || s.category === selectedCategory))}
+                        supplements={filteredSupplements}
                         onEdit={handleEditSupplement}
                         onDelete={handleDeleteSupplement}
                       />
@@ -270,12 +248,12 @@ const SupplementsPage = () => {
 
               <TabsContent value="vitamin" className="space-y-6">
                 <CategoryTable 
-                  categories={categories.filter(c => c.type === 'vitamin')}
+                  categories={relevantCategories}
                   onAdd={handleAddCategory}
                   onEdit={handleEditCategory}
                   onDelete={handleDeleteCategory}
                 />
-                {categories.filter(c => c.type === 'vitamin').length > 0 && (
+                {relevantCategories.length > 0 && (
                   <div className="bg-white rounded-3xl border shadow-lg p-8 space-y-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -300,7 +278,7 @@ const SupplementsPage = () => {
 
                     <ScrollArea className="h-[600px] pr-4">
                       <SupplementList 
-                        supplements={supplements.filter(s => s.type === 'vitamin' && (!selectedCategory || s.category === selectedCategory))}
+                        supplements={filteredSupplements}
                         onEdit={handleEditSupplement}
                         onDelete={handleDeleteSupplement}
                       />
