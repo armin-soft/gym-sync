@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -116,12 +117,12 @@ const DietPage = () => {
             <div className="space-y-1.5">
               <h2 className="text-3xl font-bold tracking-tight flex items-center gap-3">
                 <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                  برنامه های غذایی هفتگی
+                  برنامه‌های غذایی هفتگی
                 </span>
               </h2>
               <p className="text-muted-foreground/80 flex items-center gap-2 text-sm">
                 <UtensilsCrossed className="w-4 h-4" />
-                برنامه ریزی و مدیریت وعده های غذایی در طول هفته
+                برنامه‌ریزی و مدیریت وعده‌های غذایی در طول هفته
               </p>
             </div>
             <Button 
@@ -143,7 +144,7 @@ const DietPage = () => {
             <div className="relative flex-1">
               <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground/70 transition-colors group-hover:text-primary" />
               <Input
-                placeholder="جستجو در وعده های غذایی..."
+                placeholder="جستجو در وعده‌های غذایی..."
                 className="pr-10 h-11 text-base focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
