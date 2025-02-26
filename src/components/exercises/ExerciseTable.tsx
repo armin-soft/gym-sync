@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowUpDown, Edit, Plus, Trash2, Activity, Dumbbell } from "lucide-react";
@@ -86,25 +85,19 @@ export function ExerciseTable({
 
   const getDeleteConfirmationText = () => {
     if (exercisesToDelete.length === 1) {
-      const exerciseId = exercisesToDelete[0];
-      const exercise = exercises.find(ex => ex.id === exerciseId);
+      const exercise = exercises.find(ex => ex.id === exercisesToDelete[0]);
       if (!exercise) return "آیا از حذف این حرکت اطمینان دارید؟";
       return `آیا از حذف حرکت «${exercise.name}» اطمینان دارید؟`;
     }
 
-    const selectedExerciseNames = exercisesToDelete
-      .map(id => exercises.find(ex => ex.id === id)?.name)
-      .filter(Boolean)
-      .slice(0, 3);
-
-    const remainingCount = exercisesToDelete.length - selectedExerciseNames.length;
+    const selectedExercises = exercisesToDelete
+      .map(id => exercises.find(ex => ex.id === id))
+      .filter(Boolean);
     
-    let message = `آیا از حذف این ${toPersianNumbers(exercisesToDelete.length)} حرکت اطمینان دارید؟\n`;
-    message += selectedExerciseNames.map(name => `• ${name}`).join('\n');
-    
-    if (remainingCount > 0) {
-      message += `\nو ${toPersianNumbers(remainingCount)} حرکت دیگر`;
-    }
+    let message = `آیا از حذف ${toPersianNumbers(selectedExercises.length)} حرکت زیر اطمینان دارید؟\n\n`;
+    message += selectedExercises
+      .map((exercise, index) => `${toPersianNumbers(index + 1)}. ${exercise?.name}`)
+      .join('\n');
 
     return message;
   };
@@ -122,7 +115,7 @@ export function ExerciseTable({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => confirmDelete(selectedExercises)}
+                onClick={() => confirmDelete([...selectedExercises])}
                 className="gap-1"
               >
                 <Trash2 className="w-4 h-4" />
@@ -251,6 +244,8 @@ export function ExerciseTable({
             <AlertDialogTitle>تأیید حذف</AlertDialogTitle>
             <AlertDialogDescription className="whitespace-pre-line">
               {getDeleteConfirmationText()}
+              {'\n\n'}
+              این عملیات قابل بازگشت نیست.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row-reverse space-x-2 space-x-reverse">
