@@ -1,14 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Filter, FlaskConical } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { SupplementDialog } from "@/components/supplements/SupplementDialog";
 import { SupplementList } from "@/components/supplements/SupplementList";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
@@ -20,11 +14,11 @@ const SupplementsPage = () => {
   const { toast } = useToast();
   const [supplements, setSupplements] = useState<Supplement[]>([]);
   const [categories, setCategories] = useState<SupplementCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
   const [editingCategory, setEditingCategory] = useState<SupplementCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   useEffect(() => {
     const loadData = async () => {
@@ -114,19 +108,18 @@ const SupplementsPage = () => {
     setSupplementDialogOpen(false);
   };
 
-  const handleEditCategory = (category: SupplementCategory) => {
-    setEditingCategory(category);
-    setCategoryDialogOpen(true);
-  };
-
   const handleAddCategory = () => {
     setEditingCategory(null);
     setCategoryDialogOpen(true);
   };
 
-  const handleDeleteCategory = (categoryId: number) => {
-    const category = categories.find((c) => c.id === categoryId);
-    if (category && supplements.some((s) => s.category === category.name)) {
+  const handleEditCategory = (category: SupplementCategory) => {
+    setEditingCategory(category);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleDeleteCategory = (category: SupplementCategory) => {
+    if (supplements.some((s) => s.category === category.name)) {
       toast({
         title: "خطا در حذف دسته بندی",
         description: "این دسته بندی دارای مکمل است و نمی توان آن را حذف کرد.",
@@ -134,7 +127,7 @@ const SupplementsPage = () => {
       });
       return;
     }
-    setCategories(categories.filter((c) => c.id !== categoryId));
+    setCategories(categories.filter((c) => c.id !== category.id));
     toast({
       title: "حذف دسته بندی",
       description: "دسته بندی مورد نظر با موفقیت حذف شد.",
@@ -167,9 +160,7 @@ const SupplementsPage = () => {
         name,
       };
       setCategories([...categories, newCategory]);
-      if (categories.length === 0) {
-        setSelectedCategory(name);
-      }
+      setSelectedCategory(name);
       toast({
         title: "افزودن دسته بندی",
         description: "دسته بندی جدید با موفقیت اضافه شد.",
@@ -183,25 +174,16 @@ const SupplementsPage = () => {
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-purple-500/5 to-purple-500/5 rounded-3xl" />
         <div className="relative bg-white/50 backdrop-blur-sm rounded-3xl border shadow-sm p-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <FlaskConical className="h-8 w-8 text-purple-500" />
-                <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent">
-                  مکمل‌های ورزشی
-                </h2>
-              </div>
-              <p className="text-muted-foreground max-w-md">
+          <div className="flex items-center gap-2">
+            <FlaskConical className="h-8 w-8 text-purple-500" />
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent">
+                مکمل‌های ورزشی
+              </h2>
+              <p className="text-muted-foreground mt-2">
                 در این بخش می‌توانید مکمل‌های ورزشی و ویتامین‌های خود را مدیریت کنید
               </p>
             </div>
-            <Button 
-              onClick={handleAddSupplement}
-              className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-all"
-            >
-              <Plus className="ml-2 h-4 w-4" />
-              افزودن مکمل
-            </Button>
           </div>
         </div>
       </div>
@@ -209,50 +191,43 @@ const SupplementsPage = () => {
       <div className="space-y-6">
         <CategoryTable 
           categories={categories}
-          onAdd={() => setCategoryDialogOpen(true)}
-          onEdit={(category) => {
-            setEditingCategory(category);
-            setCategoryDialogOpen(true);
-          }}
+          onAdd={handleAddCategory}
+          onEdit={handleEditCategory}
           onDelete={handleDeleteCategory}
         />
 
-        <div className="bg-gradient-to-r from-purple-500/5 to-purple-500/5 backdrop-blur-sm rounded-3xl border p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-purple-500" />
-              <h3 className="text-lg font-semibold">فیلتر بر اساس دسته‌بندی</h3>
+        {categories.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-3xl border shadow-sm p-8 space-y-6"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-purple-100 rounded-xl">
+                  <FlaskConical className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">مدیریت مکمل‌ها</h3>
+                  <p className="text-sm text-gray-500 mt-1">افزودن و ویرایش مکمل‌های ورزشی</p>
+                </div>
+              </div>
+              <Button 
+                onClick={handleAddSupplement}
+                className="bg-gradient-to-r from-purple-600 to-purple-400 hover:from-purple-700 hover:to-purple-500 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
+              >
+                <Plus className="ml-2 h-4 w-4" />
+                افزودن مکمل
+              </Button>
             </div>
-            {categories.length > 0 ? (
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-[200px] border-purple-200 hover:border-purple-300 transition-colors">
-                  <SelectValue placeholder="انتخاب دسته‌بندی" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem 
-                      key={category.id} 
-                      value={category.name}
-                      className="focus:bg-purple-50"
-                    >
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                هنوز دسته‌بندی‌ای ایجاد نشده است
-              </p>
-            )}
-          </div>
 
-          <SupplementList 
-            supplements={supplements.filter(s => s.category === selectedCategory)}
-            onEdit={handleEditSupplement}
-            onDelete={handleDeleteSupplement}
-          />
-        </div>
+            <SupplementList 
+              supplements={supplements.filter(s => !selectedCategory || s.category === selectedCategory)}
+              onEdit={handleEditSupplement}
+              onDelete={handleDeleteSupplement}
+            />
+          </motion.div>
+        )}
       </div>
 
       <SupplementDialog
