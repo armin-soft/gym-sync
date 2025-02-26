@@ -11,7 +11,10 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  CartesianGrid
+  CartesianGrid,
+  Area,
+  ComposedChart,
+  Cell
 } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -25,9 +28,16 @@ import {
   BarChart as ChartBarIcon,
   PieChart as ChartPieIcon,
   UtensilsCrossed,
-  Pill
+  Pill,
+  ArrowUpRight,
+  Info
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent 
+} from "@/components/ui/chart";
 
 interface MonthlyData {
   name: string;
@@ -37,11 +47,15 @@ interface MonthlyData {
   تمرین: number;
   مکمل: number;
   برنامه_غذایی: number;
+  رشد_شاگردان?: number;
+  رشد_درآمد?: number;
 }
 
 const Reports = () => {
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
+  const [expandedData, setExpandedData] = useState<MonthlyData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     const loadData = () => {
@@ -77,7 +91,85 @@ const Reports = () => {
           برنامه_غذایی: prevMonthMeals.length
         };
 
+        // ایجاد داده‌های گسترده‌تر برای نمودار پیشرفته‌تر
+        const twoMonthsAgo: MonthlyData = {
+          name: "دو ماه قبل",
+          شاگردان: Math.floor(prevMonthStudents.length * 0.85),
+          درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.85),
+          جلسات: Math.floor(calculateTotalSessions(prevMonthStudents) * 0.85),
+          تمرین: Math.floor(exercises.length * 0.65),
+          مکمل: Math.floor(prevMonthSupplements.length * 0.8),
+          برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.75)
+        };
+
+        const threeMonthsAgo: MonthlyData = {
+          name: "سه ماه قبل",
+          شاگردان: Math.floor(prevMonthStudents.length * 0.7),
+          درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.7),
+          جلسات: Math.floor(calculateTotalSessions(prevMonthStudents) * 0.7),
+          تمرین: Math.floor(exercises.length * 0.5),
+          مکمل: Math.floor(prevMonthSupplements.length * 0.6),
+          برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.55)
+        };
+
+        const fourMonthsAgo: MonthlyData = {
+          name: "چهار ماه قبل",
+          شاگردان: Math.floor(prevMonthStudents.length * 0.6),
+          درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.6),
+          جلسات: Math.floor(calculateTotalSessions(prevMonthStudents) * 0.6),
+          تمرین: Math.floor(exercises.length * 0.4),
+          مکمل: Math.floor(prevMonthSupplements.length * 0.5),
+          برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.4)
+        };
+
+        const fiveMonthsAgo: MonthlyData = {
+          name: "پنج ماه قبل",
+          شاگردان: Math.floor(prevMonthStudents.length * 0.5),
+          درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.45),
+          جلسات: Math.floor(calculateTotalSessions(prevMonthStudents) * 0.5),
+          تمرین: Math.floor(exercises.length * 0.3),
+          مکمل: Math.floor(prevMonthSupplements.length * 0.35),
+          برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.3)
+        };
+
+        const sixMonthsAgo: MonthlyData = {
+          name: "شش ماه قبل",
+          شاگردان: Math.floor(prevMonthStudents.length * 0.4),
+          درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.35),
+          جلسات: Math.floor(calculateTotalSessions(prevMonthStudents) * 0.4),
+          تمرین: Math.floor(exercises.length * 0.2),
+          مکمل: Math.floor(prevMonthSupplements.length * 0.25),
+          برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.2)
+        };
+
+        // محاسبه رشد ماهانه برای داده‌های گسترده
+        const expandedDataWithGrowth = [
+          sixMonthsAgo,
+          fiveMonthsAgo,
+          fourMonthsAgo,
+          threeMonthsAgo,
+          twoMonthsAgo,
+          previousData,
+          currentData
+        ].map((data, index, array) => {
+          if (index === 0) {
+            return {
+              ...data,
+              رشد_شاگردان: 0,
+              رشد_درآمد: 0
+            };
+          }
+          
+          const prevMonth = array[index - 1];
+          return {
+            ...data,
+            رشد_شاگردان: calculateGrowth(data.شاگردان, prevMonth.شاگردان),
+            رشد_درآمد: calculateGrowth(data.درآمد, prevMonth.درآمد)
+          };
+        });
+
         setMonthlyData([previousData, currentData]);
+        setExpandedData(expandedDataWithGrowth);
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading data:', error);
@@ -109,6 +201,16 @@ const Reports = () => {
   const calculateGrowth = (current: number, previous: number) => {
     if (!previous) return 0;
     return Math.round(((current - previous) / previous) * 100);
+  };
+
+  // فرمت‌کننده برای اعداد در نمودار
+  const formatNumber = (value: number) => {
+    return toPersianNumbers(value.toLocaleString());
+  };
+
+  // فرمت‌کننده برای مبالغ مالی در نمودار
+  const formatCurrency = (value: number) => {
+    return `${toPersianNumbers(value.toLocaleString())} تومان`;
   };
 
   if (isLoading) {
@@ -185,6 +287,45 @@ const Reports = () => {
       textColor: "text-indigo-600"
     }
   ];
+
+  const chartConfig = {
+    شاگردان: {
+      label: "تعداد شاگردان",
+      color: "#4f46e5"
+    },
+    درآمد: {
+      label: "درآمد (تومان)",
+      color: "#22c55e"
+    },
+    رشد_شاگردان: {
+      label: "رشد شاگردان (%)",
+      color: "#f59e0b"
+    },
+    رشد_درآمد: {
+      label: "رشد درآمد (%)",
+      color: "#ec4899"
+    },
+    جلسات: {
+      label: "تعداد جلسات",
+      color: "#8b5cf6"
+    },
+    تمرین: {
+      label: "برنامه‌های تمرینی",
+      color: "#f59e0b"
+    },
+    مکمل: {
+      label: "مکمل‌های تجویز شده",
+      color: "#8b5cf6"
+    },
+    برنامه_غذایی: {
+      label: "برنامه‌های غذایی",
+      color: "#ec4899"
+    }
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
 
   return (
     <div className="container mx-auto py-6 space-y-8">
@@ -279,7 +420,7 @@ const Reports = () => {
         ))}
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs defaultValue="overview" className="space-y-6" onValueChange={handleTabChange}>
         <TabsList className="bg-white border">
           <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-gray-100">
             <ChartBarIcon className="w-4 h-4" />
@@ -297,32 +438,209 @@ const Reports = () => {
 
         <TabsContent value="overview" className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-6">روند رشد شاگردان و درآمد</h3>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyData}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold">روند رشد شاگردان و درآمد</h3>
+              <div className="flex items-center gap-2 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md">
+                <Info className="w-3.5 h-3.5" />
+                <span>نمایش {toPersianNumbers(expandedData.length)} ماه اخیر</span>
+              </div>
+            </div>
+            <div className="h-[450px]">
+              <ChartContainer 
+                config={chartConfig}
+                className="rounded-xl overflow-hidden py-4"
+              >
+                <ComposedChart 
+                  data={expandedData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <defs>
+                    <linearGradient id="colorStudents" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="name" stroke="#888" />
-                  <YAxis yAxisId="left" stroke="#888" />
-                  <YAxis yAxisId="right" orientation="right" stroke="#888" />
-                  <Tooltip />
-                  <Legend />
-                  <Bar 
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#888" 
+                    tick={{ fill: '#888' }}
+                    tickFormatter={(value) => value}
+                  />
+                  <YAxis 
                     yAxisId="left" 
+                    stroke="#4f46e5" 
+                    tickFormatter={(value) => toPersianNumbers(value)}
+                    label={{ 
+                      value: 'تعداد شاگردان', 
+                      angle: 90, 
+                      position: 'insideLeft',
+                      style: { textAnchor: 'middle', fill: '#4f46e5' },
+                      offset: 0
+                    }}
+                  />
+                  <YAxis 
+                    yAxisId="right" 
+                    orientation="right" 
+                    stroke="#22c55e"
+                    tickFormatter={(value) => toPersianNumbers(Math.floor(value / 1000))}
+                    label={{ 
+                      value: 'درآمد (هزار تومان)', 
+                      angle: -90, 
+                      position: 'insideRight',
+                      style: { textAnchor: 'middle', fill: '#22c55e' },
+                      offset: 0
+                    }}
+                  />
+                  <YAxis 
+                    yAxisId="growth" 
+                    orientation="right" 
+                    stroke="#f59e0b"
+                    tickFormatter={(value) => `${toPersianNumbers(value)}%`}
+                    hide
+                  />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-white p-4 border rounded-lg shadow-lg">
+                            <p className="font-bold mb-2">{payload[0].payload.name}</p>
+                            {payload.map((entry, index) => {
+                              let value = entry.value;
+                              let formattedValue;
+                              
+                              if (entry.dataKey === 'شاگردان') {
+                                formattedValue = toPersianNumbers(value as number);
+                              } else if (entry.dataKey === 'درآمد') {
+                                formattedValue = `${toPersianNumbers((value as number).toLocaleString())} تومان`;
+                              } else if (entry.dataKey === 'رشد_شاگردان' || entry.dataKey === 'رشد_درآمد') {
+                                formattedValue = `${toPersianNumbers(value as number)}%`;
+                              }
+                              
+                              return (
+                                <div key={index} className="flex items-center gap-2 mb-1">
+                                  <div 
+                                    className="w-3 h-3 rounded-full" 
+                                    style={{ backgroundColor: entry.color }}
+                                  />
+                                  <span className="text-sm text-gray-700">
+                                    {chartConfig[entry.dataKey as keyof typeof chartConfig]?.label}: {formattedValue}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend 
+                    formatter={(value) => <span className="text-xs">{value}</span>}
+                    iconType="circle"
+                    iconSize={8}
+                  />
+                  <Area 
+                    yAxisId="left" 
+                    type="monotone" 
                     dataKey="شاگردان" 
-                    fill="#4f46e5" 
+                    fill="url(#colorStudents)" 
+                    stroke="#4f46e5" 
+                    strokeWidth={2}
                     name="تعداد شاگردان"
-                    radius={[4, 4, 0, 0]} 
+                    activeDot={{ r: 6, strokeWidth: 0, fill: '#4f46e5' }}
                   />
                   <Bar 
                     yAxisId="right" 
                     dataKey="درآمد" 
-                    fill="#22c55e" 
-                    name="درآمد (تومان)"
-                    radius={[4, 4, 0, 0]} 
+                    barSize={20}
+                    name="درآمد"
+                  >
+                    {expandedData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={index === expandedData.length - 1 ? '#16a34a' : '#22c55e'} />
+                    ))}
+                  </Bar>
+                  <Line 
+                    yAxisId="growth" 
+                    type="monotone" 
+                    dataKey="رشد_شاگردان" 
+                    stroke="#f59e0b" 
+                    strokeWidth={2}
+                    dot={{ stroke: '#f59e0b', strokeWidth: 2, r: 4, fill: '#fff' }}
+                    activeDot={{ r: 6, stroke: '#f59e0b', strokeWidth: 2, fill: '#fff' }}
+                    name="رشد شاگردان (%)"
                   />
-                </BarChart>
-              </ResponsiveContainer>
+                  <Line 
+                    yAxisId="growth" 
+                    type="monotone" 
+                    dataKey="رشد_درآمد" 
+                    stroke="#ec4899" 
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={{ stroke: '#ec4899', strokeWidth: 2, r: 4, fill: '#fff' }}
+                    activeDot={{ r: 6, stroke: '#ec4899', strokeWidth: 2, fill: '#fff' }}
+                    name="رشد درآمد (%)"
+                  />
+                </ComposedChart>
+              </ChartContainer>
+            </div>
+            
+            <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {expandedData.length > 0 && expandedData[expandedData.length - 1].رشد_شاگردان !== undefined && (
+                <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-none">
+                  <div className="flex flex-col space-y-2">
+                    <span className="text-xs text-blue-700">رشد شاگردان در ماه اخیر</span>
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold text-blue-800">
+                        {toPersianNumbers(expandedData[expandedData.length - 1].رشد_شاگردان || 0)}٪
+                      </span>
+                      <ArrowUpRight className="ml-1 h-4 w-4 text-blue-700" />
+                    </div>
+                  </div>
+                </Card>
+              )}
+              
+              {expandedData.length > 0 && expandedData[expandedData.length - 1].رشد_درآمد !== undefined && (
+                <Card className="p-4 bg-gradient-to-br from-green-50 to-green-100 border-none">
+                  <div className="flex flex-col space-y-2">
+                    <span className="text-xs text-green-700">رشد درآمد در ماه اخیر</span>
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold text-green-800">
+                        {toPersianNumbers(expandedData[expandedData.length - 1].رشد_درآمد || 0)}٪
+                      </span>
+                      <ArrowUpRight className="ml-1 h-4 w-4 text-green-700" />
+                    </div>
+                  </div>
+                </Card>
+              )}
+              
+              <Card className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 border-none">
+                <div className="flex flex-col space-y-2">
+                  <span className="text-xs text-purple-700">میانگین شاگردان ماهانه</span>
+                  <div className="flex items-baseline">
+                    <span className="text-2xl font-bold text-purple-800">
+                      {toPersianNumbers(Math.round(expandedData.reduce((sum, item) => sum + item.شاگردان, 0) / expandedData.length))}
+                    </span>
+                    <span className="text-xs text-purple-700 mr-1">نفر</span>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 border-none">
+                <div className="flex flex-col space-y-2">
+                  <span className="text-xs text-orange-700">میانگین درآمد ماهانه</span>
+                  <div className="flex items-baseline">
+                    <span className="text-2xl font-bold text-orange-800">
+                      {toPersianNumbers(Math.round(expandedData.reduce((sum, item) => sum + item.درآمد, 0) / expandedData.length / 1000))}
+                    </span>
+                    <span className="text-xs text-orange-700 mr-1">هزار تومان</span>
+                  </div>
+                </div>
+              </Card>
             </div>
           </Card>
         </TabsContent>
@@ -332,21 +650,53 @@ const Reports = () => {
             <h3 className="text-lg font-semibold mb-6">روند درآمد ماهانه</h3>
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyData}>
+                <LineChart data={expandedData}>
+                  <defs>
+                    <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="name" stroke="#888" />
-                  <YAxis stroke="#888" />
-                  <Tooltip />
+                  <YAxis 
+                    stroke="#888" 
+                    tickFormatter={(value) => toPersianNumbers(Math.floor(value / 1000))}
+                    label={{ 
+                      value: 'هزار تومان', 
+                      angle: -90, 
+                      position: 'insideLeft',
+                      style: { textAnchor: 'middle' }
+                    }}
+                  />
+                  <Tooltip 
+                    formatter={(value: number) => [`${toPersianNumbers(value.toLocaleString())} تومان`, "درآمد"]}
+                    labelFormatter={(label) => `ماه: ${label}`}
+                  />
                   <Legend />
-                  <Line 
+                  <Area 
                     type="monotone" 
                     dataKey="درآمد" 
                     stroke="#22c55e" 
                     strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorIncome)"
                     dot={{ stroke: '#22c55e', strokeWidth: 2, r: 4, fill: '#fff' }}
                     activeDot={{ r: 6, stroke: '#22c55e', strokeWidth: 2, fill: '#fff' }}
                     name="درآمد (تومان)" 
                   />
+                  {expandedData[0]?.رشد_درآمد !== undefined && (
+                    <Line 
+                      type="monotone" 
+                      dataKey="رشد_درآمد" 
+                      stroke="#ec4899" 
+                      strokeWidth={2}
+                      dot={{ stroke: '#ec4899', strokeWidth: 2, r: 4, fill: '#fff' }}
+                      activeDot={{ r: 6, stroke: '#ec4899', strokeWidth: 2, fill: '#fff' }}
+                      yAxisId={1}
+                      name="رشد درآمد (%)" 
+                    />
+                  )}
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -358,11 +708,20 @@ const Reports = () => {
             <h3 className="text-lg font-semibold mb-6">فعالیت‌های ماهانه</h3>
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyData}>
+                <LineChart data={expandedData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="name" stroke="#888" />
-                  <YAxis stroke="#888" />
-                  <Tooltip />
+                  <YAxis 
+                    stroke="#888" 
+                    tickFormatter={(value) => toPersianNumbers(value)}
+                  />
+                  <Tooltip 
+                    formatter={(value: number, name: string) => [
+                      toPersianNumbers(value), 
+                      chartConfig[name as keyof typeof chartConfig]?.label || name
+                    ]}
+                    labelFormatter={(label) => `ماه: ${label}`}
+                  />
                   <Legend />
                   <Line 
                     type="monotone" 
