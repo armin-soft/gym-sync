@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseDialogProps {
   isOpen: boolean;
@@ -72,7 +72,10 @@ export function ExerciseDialog({
         await onSave(formData);
         onOpenChange(false);
       } else {
-        const exercises = groupText.split('\n').filter(line => line.trim());
+        const exercises = groupText
+          .split('\n')
+          .map(line => line.trim())
+          .filter(Boolean);
         
         if (exercises.length === 0) {
           toast({
@@ -83,34 +86,43 @@ export function ExerciseDialog({
           return;
         }
 
-        let hasError = false;
+        let successCount = 0;
+        let failCount = 0;
+
+        // ذخیره حرکات به صورت سریالی
         for (const name of exercises) {
-          const trimmedName = name.trim();
-          if (!trimmedName) continue;
-          
           try {
             await onSave({
-              name: trimmedName,
+              name: name,
               categoryId: formData.categoryId
             });
+            successCount++;
           } catch (error) {
-            hasError = true;
+            failCount++;
             toast({
               variant: "destructive",
               title: "خطا",
-              description: `خطا در ذخیره حرکت "${trimmedName}"`
+              description: `خطا در ذخیره حرکت "${name}"`
             });
-            break;
           }
         }
 
-        if (!hasError) {
+        if (successCount > 0) {
           onOpenChange(false);
           setGroupText("");
-          toast({
-            title: "موفقیت",
-            description: `${exercises.length} حرکت با موفقیت اضافه شدند`
-          });
+          
+          if (failCount === 0) {
+            toast({
+              title: "موفقیت",
+              description: `${toPersianNumbers(successCount)} حرکت با موفقیت اضافه شدند`
+            });
+          } else {
+            toast({
+              variant: "default",
+              title: "هشدار",
+              description: `${toPersianNumbers(successCount)} حرکت با موفقیت و ${toPersianNumbers(failCount)} حرکت با خطا مواجه شدند`
+            });
+          }
         }
       }
     } finally {
