@@ -60,15 +60,13 @@ export function ExerciseDialog({
       if (e.key === "Enter" && isOpen) {
         if (activeTab === "single" && formData.name.trim()) {
           handleSave();
-        } else if (activeTab === "group" && groupText.trim()) {
-          handleSave();
         }
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, activeTab, formData.name, groupText]);
+  }, [isOpen, activeTab, formData.name]);
 
   const handleSave = async () => {
     if (isSaving) return;
@@ -103,11 +101,9 @@ export function ExerciseDialog({
 
         setIsSaving(true);
         
-        // اضافه کردن با تأخیر برای اطمینان از تولید timestamp های متفاوت
         for (let i = 0; i < exercises.length; i++) {
           const exercise = exercises[i];
           try {
-            // تأخیر 1 میلی‌ثانیه بین هر درخواست برای اطمینان از یکتا بودن timestamp
             await new Promise(resolve => setTimeout(resolve, 1));
             await onSave({
               name: exercise,
@@ -250,6 +246,11 @@ export function ExerciseDialog({
                 className="min-h-[150px] focus-visible:ring-blue-400"
                 onChange={(e) => setGroupText(e.target.value)}
                 dir="rtl"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.ctrlKey) {
+                    e.preventDefault();
+                  }
+                }}
               />
               {isSaving && (
                 <div className="text-sm text-gray-600">
