@@ -28,7 +28,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { SupplementCategory } from "@/types/supplement";
-import { FlaskConical, Pill } from "lucide-react";
+import { 
+  FlaskConical, 
+  Pill, 
+  ListTodo,
+  Clock, 
+  AlignLeft,
+  Save,
+  X
+} from "lucide-react";
 
 const supplementFormSchema = z.object({
   name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
@@ -69,10 +77,18 @@ export const SupplementDialog = ({
   });
 
   useEffect(() => {
-    if (defaultValues) {
+    if (mode === "add") {
+      form.reset({
+        name: "",
+        category: "",
+        dosage: "",
+        timing: "",
+        description: "",
+      });
+    } else if (defaultValues) {
       form.reset(defaultValues);
     }
-  }, [defaultValues, form]);
+  }, [defaultValues, form, mode]);
 
   const placeholders = {
     supplement: {
@@ -89,43 +105,22 @@ export const SupplementDialog = ({
     }
   };
 
-  const titles = {
-    supplement: {
-      add: "افزودن مکمل جدید",
-      edit: "ویرایش مکمل",
-      icon: <FlaskConical className="h-5 w-5 text-purple-500" />,
-      labels: {
-        name: "نام مکمل",
-        category: "دسته‌بندی مکمل",
-        dosage: "مقدار مصرف",
-        timing: "زمان مصرف",
-        description: "توضیحات مکمل",
-      }
-    },
-    vitamin: {
-      add: "افزودن ویتامین جدید",
-      edit: "ویرایش ویتامین",
-      icon: <Pill className="h-5 w-5 text-blue-500" />,
-      labels: {
-        name: "نام ویتامین",
-        category: "دسته‌بندی ویتامین",
-        dosage: "دوز مصرف",
-        timing: "زمان مصرف",
-        description: "توضیحات و فواید",
-      }
-    }
-  };
-
-  const currentLabels = titles[type].labels;
   const currentPlaceholders = placeholders[type];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {titles[type].icon}
-            {mode === "edit" ? titles[type].edit : titles[type].add}
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            {type === 'supplement' ? (
+              <FlaskConical className="h-5 w-5 text-purple-500" />
+            ) : (
+              <Pill className="h-5 w-5 text-blue-500" />
+            )}
+            {mode === "edit" ? 
+              `ویرایش ${type === 'supplement' ? 'مکمل' : 'ویتامین'}` : 
+              `افزودن ${type === 'supplement' ? 'مکمل' : 'ویتامین'} جدید`
+            }
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -135,7 +130,13 @@ export const SupplementDialog = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{currentLabels.name}</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    {type === 'supplement' ? 
+                      <FlaskConical className="h-4 w-4 text-purple-500" /> : 
+                      <Pill className="h-4 w-4 text-blue-500" />
+                    }
+                    نام {type === 'supplement' ? 'مکمل' : 'ویتامین'}
+                  </FormLabel>
                   <FormControl>
                     <Input 
                       placeholder={currentPlaceholders.name}
@@ -153,11 +154,14 @@ export const SupplementDialog = ({
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{currentLabels.category}</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    <ListTodo className="h-4 w-4 text-purple-500" />
+                    دسته‌بندی
+                  </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="border-purple-200 focus:ring-purple-500">
-                        <SelectValue placeholder={`${currentLabels.category} را انتخاب کنید`} />
+                        <SelectValue placeholder="دسته‌بندی را انتخاب کنید" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -183,7 +187,10 @@ export const SupplementDialog = ({
                 name="dosage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{currentLabels.dosage}</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-purple-500" />
+                      مقدار مصرف
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder={currentPlaceholders.dosage}
@@ -201,7 +208,10 @@ export const SupplementDialog = ({
                 name="timing"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{currentLabels.timing}</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-purple-500" />
+                      زمان مصرف
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder={currentPlaceholders.timing}
@@ -220,7 +230,10 @@ export const SupplementDialog = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{currentLabels.description}</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    <AlignLeft className="h-4 w-4 text-purple-500" />
+                    توضیحات
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder={currentPlaceholders.description}
@@ -238,18 +251,20 @@ export const SupplementDialog = ({
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                className="hover:border-purple-200 hover:bg-purple-50"
+                className="gap-2 hover:border-purple-200 hover:bg-purple-50"
               >
+                <X className="h-4 w-4" />
                 انصراف
               </Button>
               <Button 
                 type="submit"
-                className={`bg-gradient-to-r ${
+                className={`gap-2 bg-gradient-to-r ${
                   type === 'supplement' 
                     ? 'from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600' 
                     : 'from-blue-600 to-purple-500 hover:from-blue-700 hover:to-purple-600'
                 }`}
               >
+                <Save className="h-4 w-4" />
                 {mode === "edit" ? "ویرایش" : "افزودن"}
               </Button>
             </div>
