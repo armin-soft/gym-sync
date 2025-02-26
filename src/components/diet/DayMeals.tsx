@@ -5,6 +5,7 @@ import { Edit, Trash2, Coffee, Cookie, UtensilsCrossed, Apple, Moon } from "luci
 import type { Meal, MealType } from "@/types/meal";
 import { motion } from "framer-motion";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface DayMealsProps {
   meals: Meal[];
@@ -92,7 +93,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                   {type}
                 </h3>
                 <div className="mr-2 px-2.5 py-0.5 rounded-full bg-background/50 text-xs font-medium">
-                  {typeMeals.length} مورد
+                  {toPersianNumbers(typeMeals.length)} مورد
                 </div>
               </div>
             </div>
