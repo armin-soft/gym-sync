@@ -88,22 +88,24 @@ export function ExerciseDialog({
         }
 
         setIsSaving(true);
-        setCurrentSaveIndex(0);
         
-        // ذخیره حرکات یکی یکی
+        // اضافه کردن با تأخیر برای اطمینان از تولید timestamp های متفاوت
         for (let i = 0; i < exercises.length; i++) {
-          setCurrentSaveIndex(i);
+          const exercise = exercises[i];
           try {
+            // تأخیر 1 میلی‌ثانیه بین هر درخواست برای اطمینان از یکتا بودن timestamp
+            await new Promise(resolve => setTimeout(resolve, 1));
             await onSave({
-              name: exercises[i],
+              name: exercise,
               categoryId: formData.categoryId
             });
           } catch (error) {
             toast({
               variant: "destructive",
               title: "خطا",
-              description: `خطا در ذخیره حرکت "${exercises[i]}"`
+              description: `خطا در ذخیره حرکت "${exercise}"`
             });
+            setIsSaving(false);
             return;
           }
         }
@@ -118,7 +120,6 @@ export function ExerciseDialog({
       }
     } finally {
       setIsSaving(false);
-      setCurrentSaveIndex(0);
     }
   };
 

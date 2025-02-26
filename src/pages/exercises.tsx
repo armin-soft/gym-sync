@@ -191,31 +191,42 @@ const ExercisesPage = () => {
   };
 
   const handleExerciseSave = async (formData: { name: string; categoryId: number }) => {
-    if (selectedExercise) {
-      const updatedExercises = exercises.map(ex =>
-        ex.id === selectedExercise.id ? { ...ex, ...formData } : ex
-      );
-      setExercises(updatedExercises);
-      setIsExerciseDialogOpen(false);
-      
+    try {
+      if (selectedExercise) {
+        const updatedExercises = exercises.map(ex =>
+          ex.id === selectedExercise.id ? { ...ex, ...formData } : ex
+        );
+        setExercises(updatedExercises);
+        setIsExerciseDialogOpen(false);
+        
+        toast({
+          title: "موفقیت",
+          description: "حرکت با موفقیت ویرایش شد"
+        });
+      } else {
+        const timestamp = Date.now();
+        const newExercise: Exercise = {
+          id: timestamp,
+          ...formData
+        };
+        setExercises(prev => [...prev, newExercise]);
+        setIsExerciseDialogOpen(false);
+        
+        toast({
+          title: "موفقیت",
+          description: "حرکت جدید با موفقیت اضافه شد"
+        });
+      }
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error saving exercise:', error);
       toast({
-        title: "موفقیت",
-        description: "حرکت با موفقیت ویرایش شد"
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در ذخیره‌سازی حرکت"
       });
-    } else {
-      const newExercise: Exercise = {
-        id: Math.max(0, ...exercises.map(ex => ex.id)) + 1,
-        ...formData
-      };
-      setExercises(prev => [...prev, newExercise]);
-      setIsExerciseDialogOpen(false);
-      
-      toast({
-        title: "موفقیت",
-        description: "حرکت جدید با موفقیت اضافه شد"
-      });
+      return Promise.reject(error);
     }
-    return Promise.resolve();
   };
 
   const handleDeleteExercises = (selectedIds: number[]) => {
