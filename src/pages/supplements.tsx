@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -14,36 +15,11 @@ import { SupplementList } from "@/components/supplements/SupplementList";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
 
-const defaultSupplements: Supplement[] = [
-  {
-    id: 1,
-    name: "کراتین مونوهیدرات",
-    category: "عضله ساز",
-    dosage: "۵ گرم",
-    timing: "بعد از تمرین",
-    description: "برای افزایش قدرت و حجم عضلانی",
-  },
-  {
-    id: 2,
-    name: "ال کارنیتین",
-    category: "چربی سوز",
-    dosage: "۲ گرم",
-    timing: "قبل از تمرین",
-    description: "کمک به چربی سوزی و افزایش انرژی",
-  },
-];
-
-const defaultCategories: SupplementCategory[] = [
-  { id: 1, name: "عضله ساز" },
-  { id: 2, name: "چربی سوز" },
-  { id: 3, name: "افزایش انرژی" },
-];
-
 const SupplementsPage = () => {
   const { toast } = useToast();
   const [supplements, setSupplements] = useState<Supplement[]>([]);
   const [categories, setCategories] = useState<SupplementCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("عضله ساز");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
@@ -58,26 +34,26 @@ const SupplementsPage = () => {
         setSupplements(JSON.parse(savedSupplements));
       } catch (error) {
         console.error('Error loading supplements from localStorage:', error);
-        setSupplements(defaultSupplements);
+        setSupplements([]);
         toast({
           variant: "destructive",
           title: "خطا در بارگذاری اطلاعات",
           description: "مشکلی در بارگذاری مکمل‌ها پیش آمده است"
         });
       }
-    } else {
-      setSupplements(defaultSupplements);
     }
 
     if (savedCategories) {
       try {
-        setCategories(JSON.parse(savedCategories));
+        const loadedCategories = JSON.parse(savedCategories);
+        setCategories(loadedCategories);
+        if (loadedCategories.length > 0) {
+          setSelectedCategory(loadedCategories[0].name);
+        }
       } catch (error) {
         console.error('Error loading categories from localStorage:', error);
-        setCategories(defaultCategories);
+        setCategories([]);
       }
-    } else {
-      setCategories(defaultCategories);
     }
   }, []);
 
@@ -104,6 +80,14 @@ const SupplementsPage = () => {
   };
 
   const handleAddSupplement = () => {
+    if (categories.length === 0) {
+      toast({
+        title: "خطا در افزودن مکمل",
+        description: "لطفاً ابتدا یک دسته‌بندی ایجاد کنید.",
+        variant: "destructive",
+      });
+      return;
+    }
     setEditingSupplement(null);
     setSupplementDialogOpen(true);
   };
@@ -188,6 +172,9 @@ const SupplementsPage = () => {
         name,
       };
       setCategories([...categories, newCategory]);
+      if (categories.length === 0) {
+        setSelectedCategory(name);
+      }
       toast({
         title: "افزودن دسته بندی",
         description: "دسته بندی جدید با موفقیت اضافه شد.",
@@ -217,18 +204,22 @@ const SupplementsPage = () => {
 
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold">فیلتر بر اساس دسته بندی</h3>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="انتخاب دسته بندی" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.name}>
-                {category.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {categories.length > 0 ? (
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="انتخاب دسته بندی" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.name}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <p className="text-sm text-muted-foreground">هنوز دسته‌بندی‌ای ایجاد نشده است</p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -243,32 +234,38 @@ const SupplementsPage = () => {
           <div className="bg-card rounded-lg border p-6">
             <h3 className="text-lg font-semibold mb-4">مدیریت دسته بندی ها</h3>
             <div className="space-y-2">
-              {categories.map((category) => (
-                <div
-                  key={category.id}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
-                >
-                  <span>{category.name}</span>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditCategory(category)}
-                      className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteCategory(category.id)}
-                      className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
+                  >
+                    <span>{category.name}</span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditCategory(category)}
+                        className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteCategory(category.id)}
+                        className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  هنوز هیچ دسته‌بندی‌ای ایجاد نشده است
+                </p>
+              )}
             </div>
           </div>
         </div>
