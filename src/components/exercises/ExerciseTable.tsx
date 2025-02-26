@@ -77,6 +77,7 @@ export function ExerciseTable({
     setSelectedExercises([]);
   };
 
+  // Reset selected exercises when exercises list changes
   useEffect(() => {
     setSelectedExercises([]);
   }, [exercises]);
@@ -86,8 +87,9 @@ export function ExerciseTable({
 
   const getDeleteConfirmationText = (count: number) => {
     if (count === 1) {
-      const exercise = exercises.find(ex => ex.id === exercisesToDelete[0]);
-      return `آیا از حذف حرکت «${exercise?.name}» اطمینان دارید؟`;
+      const exerciseToDelete = exercises.find(ex => ex.id === exercisesToDelete[0]);
+      if (!exerciseToDelete) return "آیا از حذف این حرکت اطمینان دارید؟";
+      return `آیا از حذف حرکت «${exerciseToDelete.name}» اطمینان دارید؟`;
     }
     return `آیا از حذف ${toPersianNumbers(count)} حرکت انتخاب شده اطمینان دارید؟`;
   };
