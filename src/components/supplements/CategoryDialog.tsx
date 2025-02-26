@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -45,6 +44,12 @@ export const CategoryDialog = ({
       name: defaultValue || "",
     },
   });
+
+  useEffect(() => {
+    if (defaultValue) {
+      form.reset({ name: defaultValue });
+    }
+  }, [defaultValue, form]);
 
   const handleSubmit = (data: z.infer<typeof categoryFormSchema>) => {
     onSubmit(data.name);

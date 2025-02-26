@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -66,6 +65,12 @@ export const SupplementDialog = ({
       description: "",
     },
   });
+
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues, form]);
 
   const placeholders = {
     supplement: {

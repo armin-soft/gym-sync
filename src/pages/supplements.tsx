@@ -203,7 +203,7 @@ const SupplementsPage = () => {
         <TabsList className="grid w-full grid-cols-2 h-12">
           <TabsTrigger value="supplement" className="data-[state=active]:bg-purple-50 data-[state=active]:text-purple-600">
             <FlaskConical className="w-5 h-5 ml-2" />
-            مکمل‌های ورزشی
+            مکمل‌ها
           </TabsTrigger>
           <TabsTrigger value="vitamin" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600">
             <Pill className="w-5 h-5 ml-2" />
@@ -253,7 +253,7 @@ const SupplementsPage = () => {
                         className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
                       >
                         <Plus className="h-4 w-4 ml-2" />
-                        افزودن مکمل جدید
+                        افزودن مکمل
                       </Button>
                     </div>
 
@@ -294,7 +294,7 @@ const SupplementsPage = () => {
                         className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-blue-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
                       >
                         <Plus className="h-4 w-4 ml-2" />
-                        افزودن ویتامین جدید
+                        افزودن ویتامین
                       </Button>
                     </div>
 

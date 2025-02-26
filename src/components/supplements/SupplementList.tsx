@@ -23,7 +23,7 @@ export const SupplementList = ({
   onEdit,
   onDelete,
 }: SupplementListProps) => {
-  if (!supplements || supplements.length === 0) {
+  if (supplements.length === 0) {
     return (
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
