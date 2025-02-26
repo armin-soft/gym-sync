@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Edit, Trash2, Info } from "lucide-react";
+import { Edit, Trash2, Info, Clock, Weight, FileText } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Supplement } from "@/types/supplement";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface SupplementListProps {
   supplements: Supplement[];
@@ -24,20 +25,24 @@ export const SupplementList = ({
 }: SupplementListProps) => {
   if (supplements.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center py-12"
+      >
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-blue-50 flex items-center justify-center mx-auto mb-4">
           <Info className="h-8 w-8 text-purple-500" />
         </div>
         <h3 className="text-lg font-medium mb-2">هیچ مکملی یافت نشد</h3>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
           در این دسته‌بندی هنوز هیچ مکملی ثبت نشده است. برای شروع، روی دکمه "افزودن مکمل" کلیک کنید.
         </p>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <AnimatePresence mode="popLayout">
         {supplements.map((supplement) => (
           <motion.div
@@ -48,9 +53,9 @@ export const SupplementList = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="group overflow-hidden hover:shadow-md transition-all duration-300 border-purple-100 hover:border-purple-200">
-              <div className="relative p-5">
-                <div className="absolute top-3 left-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Card className="group overflow-hidden hover:shadow-xl transition-all duration-500 border-purple-100/50 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50/30">
+              <div className="relative p-6">
+                <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -58,7 +63,7 @@ export const SupplementList = ({
                           variant="ghost"
                           size="icon"
                           onClick={() => onEdit(supplement)}
-                          className="h-8 w-8 hover:bg-purple-50 hover:text-purple-600"
+                          className="h-8 w-8 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -76,7 +81,7 @@ export const SupplementList = ({
                           variant="ghost"
                           size="icon"
                           onClick={() => onDelete(supplement.id)}
-                          className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+                          className="h-8 w-8 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -88,36 +93,28 @@ export const SupplementList = ({
                   </TooltipProvider>
                 </div>
 
-                <div className="mb-4">
-                  <h4 className="text-lg font-semibold mb-1 group-hover:text-purple-600 transition-colors">
+                <div className="mb-6">
+                  <h4 className="text-lg font-bold mb-2 group-hover:text-purple-600 transition-colors">
                     {supplement.name}
                   </h4>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="px-2 py-1 rounded-md bg-purple-50 text-purple-600 font-medium">
-                      {supplement.category}
-                    </span>
-                  </div>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-sm">
+                    {supplement.category}
+                  </span>
                 </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-sm font-medium mb-1">مقدار مصرف:</div>
-                    <p className="text-sm text-muted-foreground">
-                      {supplement.dosage}
-                    </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Weight className="h-4 w-4 text-purple-500" />
+                    <span className="text-sm">مقدار مصرف: {toPersianNumbers(supplement.dosage)}</span>
                   </div>
-                  <div>
-                    <div className="text-sm font-medium mb-1">زمان مصرف:</div>
-                    <p className="text-sm text-muted-foreground">
-                      {supplement.timing}
-                    </p>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Clock className="h-4 w-4 text-purple-500" />
+                    <span className="text-sm">زمان مصرف: {supplement.timing}</span>
                   </div>
                   {supplement.description && (
-                    <div>
-                      <div className="text-sm font-medium mb-1">توضیحات:</div>
-                      <p className="text-sm text-muted-foreground">
-                        {supplement.description}
-                      </p>
+                    <div className="flex items-start gap-2 text-gray-600">
+                      <FileText className="h-4 w-4 text-purple-500 mt-1" />
+                      <span className="text-sm">{supplement.description}</span>
                     </div>
                   )}
                 </div>
