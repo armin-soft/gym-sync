@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Coffee, Cookie, UtensilsCrossed, Apple, Moon } from "lucide-react";
 import type { Meal, MealType } from "@/types/meal";
 import { motion } from "framer-motion";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface DayMealsProps {
   meals: Meal[];
@@ -15,39 +16,39 @@ interface DayMealsProps {
 const getMealTypeIcon = (type: MealType) => {
   switch (type) {
     case "صبحانه":
-      return <Coffee className="w-4 h-4 text-amber-500" />;
+      return <Coffee className="w-5 h-5 text-amber-500" />;
     case "میان وعده صبح":
-      return <Cookie className="w-4 h-4 text-orange-500" />;
+      return <Cookie className="w-5 h-5 text-orange-500" />;
     case "ناهار":
-      return <UtensilsCrossed className="w-4 h-4 text-green-500" />;
+      return <UtensilsCrossed className="w-5 h-5 text-green-500" />;
     case "میان وعده عصر":
-      return <Apple className="w-4 h-4 text-red-500" />;
+      return <Apple className="w-5 h-5 text-red-500" />;
     case "شام":
-      return <Moon className="w-4 h-4 text-blue-500" />;
+      return <Moon className="w-5 h-5 text-blue-500" />;
   }
 };
 
-const getMealTypeGradient = (type: MealType) => {
+const getMealTypeBorder = (type: MealType) => {
   switch (type) {
     case "صبحانه":
-      return "from-amber-500/10 to-orange-500/5";
+      return "border-amber-500/20 hover:border-amber-500/30";
     case "میان وعده صبح":
-      return "from-orange-500/10 to-red-500/5";
+      return "border-orange-500/20 hover:border-orange-500/30";
     case "ناهار":
-      return "from-green-500/10 to-emerald-500/5";
+      return "border-green-500/20 hover:border-green-500/30";
     case "میان وعده عصر":
-      return "from-red-500/10 to-pink-500/5";
+      return "border-red-500/20 hover:border-red-500/30";
     case "شام":
-      return "from-blue-500/10 to-indigo-500/5";
+      return "border-blue-500/20 hover:border-blue-500/30";
   }
 };
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {mealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter((meal) => meal.type === type);
-        const gradient = getMealTypeGradient(type);
+        const borderColor = getMealTypeBorder(type);
         
         return (
           <motion.div
@@ -55,72 +56,81 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: typeIndex * 0.05 }}
+            className="relative"
           >
-            <Card className={`overflow-hidden bg-gradient-to-br ${gradient} hover:shadow-lg transition-all duration-500 border-muted`}>
-              <div className="p-4">
-                <h3 className="text-base font-medium mb-4 flex items-center gap-2 text-foreground/90">
-                  {getMealTypeIcon(type)}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-xl">
+                {getMealTypeIcon(type)}
+                <h3 className="text-base font-medium text-foreground/90">
                   {type}
                 </h3>
+              </div>
+              <div className="h-px flex-1 bg-gradient-to-r from-muted to-transparent" />
+            </div>
+
+            <ScrollArea className="w-full">
+              <div className="flex gap-4 pb-4">
                 {typeMeals.length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {typeMeals.map((meal, index) => (
-                      <motion.div
-                        key={meal.id}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{
-                          duration: 0.15,
-                          delay: index * 0.03 + typeIndex * 0.05
-                        }}
-                      >
-                        <Card className="overflow-hidden group hover:shadow-md transition-all duration-300 border-muted/50">
-                          <div className="p-3 bg-gradient-to-br from-background via-background/95 to-background/90 space-y-2">
-                            <div className="flex items-center justify-between gap-2">
-                              <h4 className="text-sm font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300 truncate">
-                                {meal.name}
-                              </h4>
-                              <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7 hover:bg-primary/10 hover:text-primary rounded-lg"
-                                  onClick={() => onEdit(meal)}
-                                >
-                                  <Edit className="h-3.5 w-3.5" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7 hover:bg-red-500/10 hover:text-red-500 rounded-lg"
-                                  onClick={() => onDelete(meal.id)}
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              </div>
+                  typeMeals.map((meal, index) => (
+                    <motion.div
+                      key={meal.id}
+                      initial={{ opacity: 0, scale: 0.9, x: -20 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      transition={{
+                        duration: 0.2,
+                        delay: index * 0.05,
+                      }}
+                      className="min-w-[280px] max-w-[280px]"
+                    >
+                      <Card className={`group relative h-full border-2 ${borderColor} transition-all duration-300 hover:shadow-lg hover:shadow-muted/20`}>
+                        <div className="p-4 h-full flex flex-col">
+                          <div className="flex items-start justify-between gap-3 mb-2">
+                            <h4 className="text-base font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300">
+                              {meal.name}
+                            </h4>
+                            <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-primary/10 hover:text-primary rounded-lg"
+                                onClick={() => onEdit(meal)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-red-500/10 hover:text-red-500 rounded-lg"
+                                onClick={() => onDelete(meal.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
-                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                              {meal.description}
-                            </p>
                           </div>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {meal.description}
+                          </p>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))
                 ) : (
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="bg-gradient-to-r from-muted/80 to-muted/40 rounded-xl p-4"
+                    className="w-full"
                   >
-                    <p className="text-sm text-muted-foreground flex items-center gap-2 justify-center">
-                      <UtensilsCrossed className="w-4 h-4" />
-                      هیچ وعده غذایی برای {type} ثبت نشده است
-                    </p>
+                    <Card className="p-6 border-dashed border-2 border-muted">
+                      <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                        <UtensilsCrossed className="w-4 h-4" />
+                        هیچ وعده غذایی برای {type} ثبت نشده است
+                      </p>
+                    </Card>
                   </motion.div>
                 )}
               </div>
-            </Card>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
           </motion.div>
         );
       })}
