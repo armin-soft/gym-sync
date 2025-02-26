@@ -22,7 +22,7 @@ import * as z from "zod";
 import { Beaker } from "lucide-react";
 
 const categoryFormSchema = z.object({
-  name: z.string().min(2, "نام دسته‌بندی باید حداقل ۲ کاراکتر باشد"),
+  name: z.string().min(2, "نام دسته بندی باید حداقل ۲ کاراکتر باشد"),
 });
 
 interface CategoryDialogProps {
@@ -64,7 +64,7 @@ export const CategoryDialog = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Beaker className="h-5 w-5 text-purple-500" />
-            {mode === "edit" ? "ویرایش دسته‌بندی" : "افزودن دسته‌بندی جدید"}
+            {mode === "edit" ? "ویرایش دسته بندی" : "افزودن دسته بندی جدید"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -74,10 +74,10 @@ export const CategoryDialog = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>نام دسته‌بندی</FormLabel>
+                  <FormLabel>نام دسته بندی</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="نام دسته‌بندی را وارد کنید"
+                      placeholder="نام دسته بندی را وارد کنید"
                       className="border-purple-200 focus-visible:ring-purple-500"
                       {...field}
                     />

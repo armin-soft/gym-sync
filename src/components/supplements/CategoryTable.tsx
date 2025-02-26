@@ -22,8 +22,8 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
               <AlignHorizontalJustifyStart className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-800">دسته‌بندی‌ها</h3>
-              <p className="text-sm text-gray-500 mt-1">مدیریت دسته‌بندی مکمل‌ها و ویتامین‌ها</p>
+              <h3 className="text-xl font-bold text-gray-800">دسته بندی ها</h3>
+              <p className="text-sm text-gray-500 mt-1">مدیریت دسته بندی مکمل ها و ویتامین ها</p>
             </div>
           </div>
           <Button 
@@ -32,7 +32,7 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
             size="sm"
           >
             <Plus className="w-5 h-5 ml-2" />
-            افزودن دسته‌بندی
+            افزودن دسته بندی
           </Button>
         </div>
 
@@ -46,8 +46,8 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
               <div className="p-4 bg-gradient-to-br from-purple-100 to-blue-50 rounded-full mb-4">
                 <Beaker className="w-8 h-8 text-purple-500" />
               </div>
-              <p className="text-purple-600 font-medium">هیچ دسته‌بندی ثبت نشده است</p>
-              <p className="text-purple-400 text-sm mt-1">برای شروع، یک دسته‌بندی جدید اضافه کنید</p>
+              <p className="text-purple-600 font-medium">هیچ دسته بندی ثبت نشده است</p>
+              <p className="text-purple-400 text-sm mt-1">برای شروع، یک دسته بندی جدید اضافه کنید</p>
             </motion.div>
           ) : (
             <AnimatePresence mode="popLayout">

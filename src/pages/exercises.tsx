@@ -87,7 +87,7 @@ const ExercisesPage = () => {
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "خطا در ذخیره‌سازی اطلاعات"
+        description: "خطا در ذخیره سازی اطلاعات"
       });
     }
   }, [exerciseTypes, categories, exercises]);
@@ -157,7 +157,7 @@ const ExercisesPage = () => {
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "ابتدا باید تمام دسته‌بندی‌های این نوع حرکت را حذف کنید"
+        description: "ابتدا باید تمام دسته بندی های این نوع حرکت را حذف کنید"
       });
       return;
     }
@@ -225,7 +225,7 @@ const ExercisesPage = () => {
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "خطا در ذخیره‌سازی حرکت"
+        description: "خطا در ذخیره سازی حرکت"
       });
       return Promise.reject(error);
     }
@@ -236,7 +236,7 @@ const ExercisesPage = () => {
     toast({
       title: "موفقیت",
       description: selectedIds.length > 1 
-        ? "حرکت‌های انتخاب شده با موفقیت حذف شدند" 
+        ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
         : "حرکت با موفقیت حذف شد"
     });
   };
@@ -251,7 +251,7 @@ const ExercisesPage = () => {
                 مدیریت حرکات تمرینی
               </h2>
               <p className="text-muted-foreground text-sm">
-                مدیریت انواع، دسته‌بندی‌ها و حرکات تمرینی
+                مدیریت انواع، دسته بندی ها و حرکات تمرینی
               </p>
             </div>
           </div>
@@ -277,7 +277,7 @@ const ExercisesPage = () => {
                   <FolderTree className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-base font-medium text-muted-foreground">دسته‌بندی‌ها</p>
+                  <p className="text-base font-medium text-muted-foreground">دسته بندی ها</p>
                   <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                     {toPersianNumbers(categories.length)}
                   </p>
@@ -337,14 +337,14 @@ const ExercisesPage = () => {
                   toast({
                     variant: "destructive",
                     title: "خطا",
-                    description: "ابتدا باید تمام حرکات این دسته‌بندی را حذف کنید"
+                    description: "ابتدا باید تمام حرکات این دسته بندی را حذف کنید"
                   });
                   return;
                 }
                 setCategories(prevCategories => prevCategories.filter(c => c.id !== category.id));
                 toast({
                   title: "موفقیت",
-                  description: "دسته‌بندی با موفقیت حذف شد"
+                  description: "دسته بندی با موفقیت حذف شد"
                 });
               }}
             />
@@ -358,7 +358,7 @@ const ExercisesPage = () => {
                     toast({
                       variant: "destructive",
                       title: "خطا",
-                      description: "ابتدا باید یک دسته‌بندی ایجاد کنید"
+                      description: "ابتدا باید یک دسته بندی ایجاد کنید"
                     });
                     return;
                   }
@@ -404,7 +404,7 @@ const ExercisesPage = () => {
               toast({
                 variant: "destructive",
                 title: "خطا",
-                description: "لطفاً نام دسته‌بندی را وارد کنید"
+                description: "لطفاً نام دسته بندی را وارد کنید"
               });
               return;
             }
@@ -421,7 +421,7 @@ const ExercisesPage = () => {
             
             toast({
               title: "موفقیت",
-              description: "دسته‌بندی جدید با موفقیت اضافه شد"
+              description: "دسته بندی جدید با موفقیت اضافه شد"
             });
           }}
         />

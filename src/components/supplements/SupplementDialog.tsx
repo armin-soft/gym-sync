@@ -40,9 +40,9 @@ import {
 
 const supplementFormSchema = z.object({
   name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
-  category: z.string().min(1, "انتخاب دسته‌بندی الزامی است"),
-  dosage: z.string().min(1, "مقدار مصرف نمی‌تواند خالی باشد"),
-  timing: z.string().min(1, "زمان مصرف نمی‌تواند خالی باشد"),
+  category: z.string().min(1, "انتخاب دسته بندی الزامی است"),
+  dosage: z.string().min(1, "مقدار مصرف نمی تواند خالی باشد"),
+  timing: z.string().min(1, "زمان مصرف نمی تواند خالی باشد"),
   description: z.string().min(5, "توضیحات باید حداقل ۵ کاراکتر باشد"),
 });
 
@@ -101,7 +101,7 @@ export const SupplementDialog = ({
       name: "نام ویتامین را وارد کنید (مثال: ویتامین D3)",
       dosage: "مقدار مصرف را وارد کنید (مثال: ۱۰۰۰ واحد)",
       timing: "زمان مصرف را وارد کنید (مثال: صبح با صبحانه)",
-      description: "توضیحات ویتامین را وارد کنید (مثال: برای تقویت سیستم ایمنی و سلامت استخوان‌ها)",
+      description: "توضیحات ویتامین را وارد کنید (مثال: برای تقویت سیستم ایمنی و سلامت استخوان ها)",
     }
   };
 
@@ -156,12 +156,12 @@ export const SupplementDialog = ({
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
                     <ListTodo className="h-4 w-4 text-purple-500" />
-                    دسته‌بندی
+                    دسته بندی
                   </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="border-purple-200 focus:ring-purple-500">
-                        <SelectValue placeholder="دسته‌بندی را انتخاب کنید" />
+                        <SelectValue placeholder="دسته بندی را انتخاب کنید" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

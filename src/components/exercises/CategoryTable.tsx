@@ -29,8 +29,8 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
               <FolderTree className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-800">دسته‌بندی تمرین</h3>
-              <p className="text-sm text-gray-500 mt-1">مدیریت دسته‌بندی‌های تمرینی</p>
+              <h3 className="text-xl font-bold text-gray-800">دسته بندی تمرین</h3>
+              <p className="text-sm text-gray-500 mt-1">مدیریت دسته بندی های تمرینی</p>
             </div>
           </div>
           <Button 
@@ -39,7 +39,7 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
             size="sm"
           >
             <Plus className="w-5 h-5 ml-2" />
-            افزودن دسته‌بندی
+            افزودن دسته بندی
           </Button>
         </div>
 
@@ -49,8 +49,8 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
               <div className="p-4 bg-blue-100 rounded-full mb-4">
                 <FolderTree className="w-8 h-8 text-blue-400" />
               </div>
-              <p className="text-blue-600 font-medium">هیچ دسته‌بندی ثبت نشده است</p>
-              <p className="text-blue-400 text-sm mt-1">برای شروع، یک دسته‌بندی جدید اضافه کنید</p>
+              <p className="text-blue-600 font-medium">هیچ دسته بندی ثبت نشده است</p>
+              <p className="text-blue-400 text-sm mt-1">برای شروع، یک دسته بندی جدید اضافه کنید</p>
             </div>
           ) : (
             categories.map((category) => (

@@ -48,7 +48,7 @@ export function CategoryDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
-            افزودن دسته‌بندی جدید
+            افزودن دسته بندی جدید
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
@@ -68,11 +68,11 @@ export function CategoryDialog({
           </div>
           
           <div className="space-y-2">
-            <Label className="text-base">نام دسته‌بندی</Label>
+            <Label className="text-base">نام دسته بندی</Label>
             <Input
               value={formData.name}
               onChange={(e) => onFormDataChange({ ...formData, name: e.target.value })}
-              placeholder="نام دسته‌بندی را وارد کنید"
+              placeholder="نام دسته بندی را وارد کنید"
               className="h-11 text-base focus-visible:ring-blue-400"
               autoFocus
             />
