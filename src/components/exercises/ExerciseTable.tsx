@@ -58,11 +58,11 @@ export function ExerciseTable({
   };
 
   const handleSelectExercise = (exerciseId: number, checked: boolean) => {
-    if (checked) {
-      setSelectedExercises(prev => [...prev, exerciseId]);
-    } else {
-      setSelectedExercises(prev => prev.filter(id => id !== exerciseId));
-    }
+    setSelectedExercises(prev => 
+      checked 
+        ? [...prev, exerciseId]
+        : prev.filter(id => id !== exerciseId)
+    );
   };
 
   const confirmDelete = (ids: number[]) => {
@@ -77,7 +77,6 @@ export function ExerciseTable({
     setSelectedExercises([]);
   };
 
-  // Reset selected exercises when exercises list changes
   useEffect(() => {
     setSelectedExercises([]);
   }, [exercises]);
@@ -85,13 +84,29 @@ export function ExerciseTable({
   const allSelected = exercises.length > 0 && selectedExercises.length === exercises.length;
   const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
 
-  const getDeleteConfirmationText = (count: number) => {
-    if (count === 1) {
-      const exerciseToDelete = exercises.find(ex => ex.id === exercisesToDelete[0]);
-      if (!exerciseToDelete) return "آیا از حذف این حرکت اطمینان دارید؟";
-      return `آیا از حذف حرکت «${exerciseToDelete.name}» اطمینان دارید؟`;
+  const getDeleteConfirmationText = () => {
+    if (exercisesToDelete.length === 1) {
+      const exerciseId = exercisesToDelete[0];
+      const exercise = exercises.find(ex => ex.id === exerciseId);
+      if (!exercise) return "آیا از حذف این حرکت اطمینان دارید؟";
+      return `آیا از حذف حرکت «${exercise.name}» اطمینان دارید؟`;
     }
-    return `آیا از حذف ${toPersianNumbers(count)} حرکت انتخاب شده اطمینان دارید؟`;
+
+    const selectedExerciseNames = exercisesToDelete
+      .map(id => exercises.find(ex => ex.id === id)?.name)
+      .filter(Boolean)
+      .slice(0, 3);
+
+    const remainingCount = exercisesToDelete.length - selectedExerciseNames.length;
+    
+    let message = `آیا از حذف این ${toPersianNumbers(exercisesToDelete.length)} حرکت اطمینان دارید؟\n`;
+    message += selectedExerciseNames.map(name => `• ${name}`).join('\n');
+    
+    if (remainingCount > 0) {
+      message += `\nو ${toPersianNumbers(remainingCount)} حرکت دیگر`;
+    }
+
+    return message;
   };
 
   return (
@@ -234,10 +249,8 @@ export function ExerciseTable({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>تأیید حذف</AlertDialogTitle>
-            <AlertDialogDescription>
-              {getDeleteConfirmationText(exercisesToDelete.length)}
-              <br />
-              این عملیات قابل بازگشت نیست.
+            <AlertDialogDescription className="whitespace-pre-line">
+              {getDeleteConfirmationText()}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row-reverse space-x-2 space-x-reverse">
