@@ -24,6 +24,39 @@ const SupplementsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
 
+  const handleAddCategory = () => {
+    setEditingCategory(null);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleEditCategory = (category: SupplementCategory) => {
+    setEditingCategory(category);
+    setCategoryDialogOpen(true);
+  };
+
+  const handleDeleteCategory = (category: SupplementCategory) => {
+    setCategories(categories.filter((c) => c.id !== category.id));
+    setSupplements(supplements.filter((s) => s.category !== category.name));
+    
+    toast({
+      title: "حذف دسته‌بندی",
+      description: "دسته‌بندی مورد نظر با موفقیت حذف شد",
+    });
+  };
+
+  const handleEditSupplement = (supplement: Supplement) => {
+    setEditingSupplement(supplement);
+    setSupplementDialogOpen(true);
+  };
+
+  const handleDeleteSupplement = (id: number) => {
+    setSupplements(supplements.filter((s) => s.id !== id));
+    toast({
+      title: `حذف ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+      description: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} مورد نظر با موفقیت حذف شد`,
+    });
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
