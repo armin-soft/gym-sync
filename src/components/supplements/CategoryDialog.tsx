@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Beaker } from "lucide-react";
 
 const categoryFormSchema = z.object({
   name: z.string().min(2, "نام دسته‌بندی باید حداقل ۲ کاراکتر باشد"),
@@ -52,9 +53,10 @@ export const CategoryDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <Beaker className="h-5 w-5 text-purple-500" />
             {mode === "edit" ? "ویرایش دسته‌بندی" : "افزودن دسته‌بندی جدید"}
           </DialogTitle>
         </DialogHeader>
@@ -67,7 +69,11 @@ export const CategoryDialog = ({
                 <FormItem>
                   <FormLabel>نام دسته‌بندی</FormLabel>
                   <FormControl>
-                    <Input placeholder="نام دسته‌بندی را وارد کنید" {...field} />
+                    <Input 
+                      placeholder="نام دسته‌بندی را وارد کنید"
+                      className="border-purple-200 focus-visible:ring-purple-500"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -79,10 +85,14 @@ export const CategoryDialog = ({
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="hover:border-purple-200 hover:bg-purple-50"
               >
                 انصراف
               </Button>
-              <Button type="submit">
+              <Button 
+                type="submit"
+                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+              >
                 {mode === "edit" ? "ویرایش" : "افزودن"}
               </Button>
             </div>
