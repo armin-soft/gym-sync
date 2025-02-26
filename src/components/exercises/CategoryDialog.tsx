@@ -8,30 +8,41 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExerciseType } from "@/types/exercise";
+import { useEffect } from "react";
 
 interface CategoryDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  exerciseTypes: ExerciseType[];
-  selectedType: ExerciseType;
+  exerciseTypes: string[];
+  selectedType: string;
   formData: { name: string };
   onFormDataChange: (data: { name: string }) => void;
-  onTypeChange: (type: ExerciseType) => void;
+  onTypeChange: (type: string) => void;
   onSave: () => void;
 }
 
 export function CategoryDialog({
   isOpen,
   onOpenChange,
-  exerciseTypes = [],
+  exerciseTypes,
   selectedType,
   formData,
   onFormDataChange,
   onTypeChange,
-  onSave,
+  onSave
 }: CategoryDialogProps) {
+  // اضافه کردن قابلیت Enter
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && isOpen && formData.name.trim()) {
+        onSave();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, formData.name, onSave]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -43,29 +54,27 @@ export function CategoryDialog({
         <div className="space-y-6 py-4">
           <div className="space-y-2">
             <Label className="text-base">نوع حرکت</Label>
-            <Select 
-              value={selectedType} 
-              onValueChange={onTypeChange}
+            <select
+              className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
+              value={selectedType}
+              onChange={(e) => onTypeChange(e.target.value)}
             >
-              <SelectTrigger className="h-11 text-base focus-visible:ring-blue-400">
-                <SelectValue placeholder="نوع حرکت را انتخاب کنید" />
-              </SelectTrigger>
-              <SelectContent>
-                {exerciseTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {exerciseTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           </div>
+          
           <div className="space-y-2">
             <Label className="text-base">نام دسته‌بندی</Label>
             <Input
               value={formData.name}
-              onChange={(e) => onFormDataChange({ name: e.target.value })}
+              onChange={(e) => onFormDataChange({ ...formData, name: e.target.value })}
               placeholder="نام دسته‌بندی را وارد کنید"
               className="h-11 text-base focus-visible:ring-blue-400"
+              autoFocus
             />
           </div>
         </div>
@@ -79,6 +88,7 @@ export function CategoryDialog({
           </Button>
           <Button 
             onClick={onSave}
+            disabled={!formData.name.trim()}
             className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
           >
             ذخیره

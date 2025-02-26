@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,6 +54,21 @@ export function ExerciseDialog({
       }
     }
   }, [isOpen, selectedExercise]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && isOpen) {
+        if (activeTab === "single" && formData.name.trim()) {
+          handleSave();
+        } else if (activeTab === "group" && groupText.trim()) {
+          handleSave();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, activeTab, formData.name, groupText]);
 
   const handleSave = async () => {
     if (isSaving) return;
@@ -123,7 +137,6 @@ export function ExerciseDialog({
     }
   };
 
-  // اگر در حالت ویرایش هستیم، فقط تب تکی نمایش داده شود
   if (selectedExercise) {
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
