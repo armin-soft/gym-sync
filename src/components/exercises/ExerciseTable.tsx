@@ -15,6 +15,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ExerciseTableProps {
   exercises: Exercise[];
@@ -36,6 +46,8 @@ export function ExerciseTable({
   isAscending
 }: ExerciseTableProps) {
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [exercisesToDelete, setExercisesToDelete] = useState<number[]>([]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -53,11 +65,16 @@ export function ExerciseTable({
     }
   };
 
-  const handleDeleteSelected = () => {
-    if (selectedExercises.length > 0) {
-      onDelete(selectedExercises);
-      setSelectedExercises([]);
-    }
+  const confirmDelete = (ids: number[]) => {
+    setExercisesToDelete(ids);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    onDelete(exercisesToDelete);
+    setIsDeleteDialogOpen(false);
+    setExercisesToDelete([]);
+    setSelectedExercises([]);
   };
 
   useEffect(() => {
@@ -66,6 +83,14 @@ export function ExerciseTable({
 
   const allSelected = exercises.length > 0 && selectedExercises.length === exercises.length;
   const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
+
+  const getDeleteConfirmationText = (count: number) => {
+    if (count === 1) {
+      const exercise = exercises.find(ex => ex.id === exercisesToDelete[0]);
+      return `آیا از حذف حرکت «${exercise?.name}» اطمینان دارید؟`;
+    }
+    return `آیا از حذف ${toPersianNumbers(count)} حرکت انتخاب شده اطمینان دارید؟`;
+  };
 
   return (
     <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
@@ -80,7 +105,7 @@ export function ExerciseTable({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={handleDeleteSelected}
+                onClick={() => confirmDelete(selectedExercises)}
                 className="gap-1"
               >
                 <Trash2 className="w-4 h-4" />
@@ -116,7 +141,9 @@ export function ExerciseTable({
                   <Checkbox 
                     checked={allSelected}
                     onCheckedChange={handleSelectAll}
-                    className={isIndeterminate ? "data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600" : ""}
+                    className={cn(
+                      isIndeterminate && "data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                    )}
                   />
                 </TableHead>
                 <TableHead className="font-bold text-indigo-800">ردیف</TableHead>
@@ -186,7 +213,7 @@ export function ExerciseTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 hover:bg-red-100 hover:text-red-600 transition-colors"
-                            onClick={() => onDelete([exercise.id])}
+                            onClick={() => confirmDelete([exercise.id])}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -200,6 +227,28 @@ export function ExerciseTable({
           </Table>
         </div>
       </div>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأیید حذف</AlertDialogTitle>
+            <AlertDialogDescription>
+              {getDeleteConfirmationText(exercisesToDelete.length)}
+              <br />
+              این عملیات قابل بازگشت نیست.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row-reverse space-x-2 space-x-reverse">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              حذف
+            </AlertDialogAction>
+            <AlertDialogCancel className="hover:bg-gray-100">انصراف</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
