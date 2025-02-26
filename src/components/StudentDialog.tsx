@@ -1,9 +1,11 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -162,6 +164,9 @@ export const StudentDialog = ({
               </>
             )}
           </DialogTitle>
+          <DialogDescription>
+            اطلاعات شاگرد را وارد کنید
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="flex justify-center">

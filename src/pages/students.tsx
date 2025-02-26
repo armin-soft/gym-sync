@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -262,11 +263,11 @@ const StudentsPage = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Scale className="h-4 w-4 ml-2" />
-                  مرتب‌سازی بر اساس نام
+                  مرتب سازی بر اساس نام
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <CalendarDays className="h-4 w-4 ml-2" />
-                  مرتب‌سازی بر اساس تاریخ
+                  مرتب سازی بر اساس تاریخ
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -297,7 +298,7 @@ const StudentsPage = () => {
                   <TableHead>
                     <div className="flex items-center gap-2">
                       <Ruler className="h-4 w-4 text-muted-foreground" />
-                      قد (سانتی‌متر)
+                      قد (سانتی متر)
                     </div>
                   </TableHead>
                   <TableHead>
@@ -402,7 +403,7 @@ const StudentsPage = () => {
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-destructive">
                                 <Power className="h-4 w-4 ml-2" />
-                                غیرفعال‌سازی
+                                غیرفعال سازی
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
