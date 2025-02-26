@@ -16,14 +16,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import {
-  ArrowTrendingUp,
-  ArrowTrendingDown,
+  TrendingUp,
+  TrendingDown,
   Users,
   Dumbbell,
   Wallet,
   Calendar,
-  ChartBarIcon,
-  ChartPieIcon,
+  BarChart as ChartBarIcon,
+  PieChart as ChartPieIcon,
   Download
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -168,9 +168,9 @@ const Reports = () => {
                   stat.growth >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                 }`}>
                   {stat.growth >= 0 ? (
-                    <ArrowTrendingUp className="w-3 h-3" />
+                    <TrendingUp className="w-3 h-3" />
                   ) : (
-                    <ArrowTrendingDown className="w-3 h-3" />
+                    <TrendingDown className="w-3 h-3" />
                   )}
                   {toPersianNumbers(Math.abs(stat.growth))}٪
                 </div>
