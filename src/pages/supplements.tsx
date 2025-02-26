@@ -320,6 +320,7 @@ const SupplementsPage = () => {
         defaultValues={editingSupplement || undefined}
         mode={editingSupplement ? "edit" : "add"}
         categories={categories.filter(c => c.type === activeTab)}
+        type={activeTab}
       />
 
       <CategoryDialog

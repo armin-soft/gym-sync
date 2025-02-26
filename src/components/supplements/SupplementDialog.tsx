@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -26,10 +27,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { SupplementCategory } from "@/types/supplement";
-import { FlaskConical } from "lucide-react";
+import { FlaskConical, Pill } from "lucide-react";
 
 const supplementFormSchema = z.object({
-  name: z.string().min(2, "نام مکمل باید حداقل ۲ کاراکتر باشد"),
+  name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
   category: z.string().min(1, "انتخاب دسته‌بندی الزامی است"),
   dosage: z.string().min(1, "مقدار مصرف نمی‌تواند خالی باشد"),
   timing: z.string().min(1, "زمان مصرف نمی‌تواند خالی باشد"),
@@ -43,6 +44,7 @@ interface SupplementDialogProps {
   defaultValues?: z.infer<typeof supplementFormSchema>;
   mode: "add" | "edit";
   categories: SupplementCategory[];
+  type: 'supplement' | 'vitamin';
 }
 
 export const SupplementDialog = ({
@@ -52,6 +54,7 @@ export const SupplementDialog = ({
   defaultValues,
   mode,
   categories,
+  type,
 }: SupplementDialogProps) => {
   const form = useForm<z.infer<typeof supplementFormSchema>>({
     resolver: zodResolver(supplementFormSchema),
@@ -64,13 +67,58 @@ export const SupplementDialog = ({
     },
   });
 
+  const placeholders = {
+    supplement: {
+      name: "نام مکمل را وارد کنید (مثال: کراتین مونوهیدرات)",
+      dosage: "مقدار مصرف را وارد کنید (مثال: ۵ گرم)",
+      timing: "زمان مصرف را وارد کنید (مثال: قبل و بعد از تمرین)",
+      description: "توضیحات مکمل را وارد کنید (مثال: برای افزایش قدرت و حجم عضلات)",
+    },
+    vitamin: {
+      name: "نام ویتامین را وارد کنید (مثال: ویتامین D3)",
+      dosage: "مقدار مصرف را وارد کنید (مثال: ۱۰۰۰ واحد)",
+      timing: "زمان مصرف را وارد کنید (مثال: صبح با صبحانه)",
+      description: "توضیحات ویتامین را وارد کنید (مثال: برای تقویت سیستم ایمنی و سلامت استخوان‌ها)",
+    }
+  };
+
+  const titles = {
+    supplement: {
+      add: "افزودن مکمل جدید",
+      edit: "ویرایش مکمل",
+      icon: <FlaskConical className="h-5 w-5 text-purple-500" />,
+      labels: {
+        name: "نام مکمل",
+        category: "دسته‌بندی مکمل",
+        dosage: "مقدار مصرف",
+        timing: "زمان مصرف",
+        description: "توضیحات مکمل",
+      }
+    },
+    vitamin: {
+      add: "افزودن ویتامین جدید",
+      edit: "ویرایش ویتامین",
+      icon: <Pill className="h-5 w-5 text-blue-500" />,
+      labels: {
+        name: "نام ویتامین",
+        category: "دسته‌بندی ویتامین",
+        dosage: "دوز مصرف",
+        timing: "زمان مصرف",
+        description: "توضیحات و فواید",
+      }
+    }
+  };
+
+  const currentLabels = titles[type].labels;
+  const currentPlaceholders = placeholders[type];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <FlaskConical className="h-5 w-5 text-purple-500" />
-            {mode === "edit" ? "ویرایش مکمل" : "افزودن مکمل جدید"}
+            {titles[type].icon}
+            {mode === "edit" ? titles[type].edit : titles[type].add}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -80,10 +128,10 @@ export const SupplementDialog = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>نام مکمل</FormLabel>
+                  <FormLabel>{currentLabels.name}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="نام مکمل را وارد کنید"
+                      placeholder={currentPlaceholders.name}
                       className="border-purple-200 focus-visible:ring-purple-500"
                       {...field}
                     />
@@ -98,11 +146,11 @@ export const SupplementDialog = ({
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>دسته‌بندی</FormLabel>
+                  <FormLabel>{currentLabels.category}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="border-purple-200 focus:ring-purple-500">
-                        <SelectValue placeholder="دسته‌بندی را انتخاب کنید" />
+                        <SelectValue placeholder={`${currentLabels.category} را انتخاب کنید`} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -128,10 +176,10 @@ export const SupplementDialog = ({
                 name="dosage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>مقدار مصرف</FormLabel>
+                    <FormLabel>{currentLabels.dosage}</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="مثال: ۵ گرم"
+                        placeholder={currentPlaceholders.dosage}
                         className="border-purple-200 focus-visible:ring-purple-500"
                         {...field}
                       />
@@ -146,10 +194,10 @@ export const SupplementDialog = ({
                 name="timing"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>زمان مصرف</FormLabel>
+                    <FormLabel>{currentLabels.timing}</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="مثال: بعد از تمرین"
+                        placeholder={currentPlaceholders.timing}
                         className="border-purple-200 focus-visible:ring-purple-500"
                         {...field}
                       />
@@ -165,11 +213,11 @@ export const SupplementDialog = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>توضیحات</FormLabel>
+                  <FormLabel>{currentLabels.description}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="توضیحات مکمل را وارد کنید"
-                      className="border-purple-200 focus-visible:ring-purple-500"
+                    <Textarea
+                      placeholder={currentPlaceholders.description}
+                      className="min-h-[100px] border-purple-200 focus-visible:ring-purple-500 resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -189,7 +237,11 @@ export const SupplementDialog = ({
               </Button>
               <Button 
                 type="submit"
-                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+                className={`bg-gradient-to-r ${
+                  type === 'supplement' 
+                    ? 'from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600' 
+                    : 'from-blue-600 to-purple-500 hover:from-blue-700 hover:to-purple-600'
+                }`}
               >
                 {mode === "edit" ? "ویرایش" : "افزودن"}
               </Button>
