@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,6 +38,7 @@ export function ExerciseDialog({
   const [groupText, setGroupText] = useState("");
   const [activeTab, setActiveTab] = useState("single");
   const [isSaving, setIsSaving] = useState(false);
+  const [currentSaveIndex, setCurrentSaveIndex] = useState(0);
 
   useEffect(() => {
     if (selectedExercise) {
@@ -57,8 +59,6 @@ export function ExerciseDialog({
   const handleSave = async () => {
     if (isSaving) return;
     
-    setIsSaving(true);
-    
     try {
       if (activeTab === "single") {
         if (!formData.name.trim()) {
@@ -69,6 +69,7 @@ export function ExerciseDialog({
           });
           return;
         }
+        setIsSaving(true);
         await onSave(formData);
         onOpenChange(false);
       } else {
@@ -86,47 +87,38 @@ export function ExerciseDialog({
           return;
         }
 
-        let successCount = 0;
-        let failCount = 0;
-
-        // ذخیره حرکات به صورت سریالی
-        for (const name of exercises) {
+        setIsSaving(true);
+        setCurrentSaveIndex(0);
+        
+        // ذخیره حرکات یکی یکی
+        for (let i = 0; i < exercises.length; i++) {
+          setCurrentSaveIndex(i);
           try {
             await onSave({
-              name: name,
+              name: exercises[i],
               categoryId: formData.categoryId
             });
-            successCount++;
           } catch (error) {
-            failCount++;
             toast({
               variant: "destructive",
               title: "خطا",
-              description: `خطا در ذخیره حرکت "${name}"`
+              description: `خطا در ذخیره حرکت "${exercises[i]}"`
             });
+            return;
           }
         }
 
-        if (successCount > 0) {
-          onOpenChange(false);
-          setGroupText("");
-          
-          if (failCount === 0) {
-            toast({
-              title: "موفقیت",
-              description: `${toPersianNumbers(successCount)} حرکت با موفقیت اضافه شدند`
-            });
-          } else {
-            toast({
-              variant: "default",
-              title: "هشدار",
-              description: `${toPersianNumbers(successCount)} حرکت با موفقیت و ${toPersianNumbers(failCount)} حرکت با خطا مواجه شدند`
-            });
-          }
-        }
+        toast({
+          title: "موفقیت",
+          description: `${toPersianNumbers(exercises.length)} حرکت با موفقیت اضافه شد`
+        });
+
+        onOpenChange(false);
+        setGroupText("");
       }
     } finally {
       setIsSaving(false);
+      setCurrentSaveIndex(0);
     }
   };
 
@@ -219,7 +211,7 @@ export function ExerciseDialog({
           >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="single">تکی</TabsTrigger>
-              <TabsTrigger value="group">گروهی</TabsTrigger>
+              <TabsTrigger value="group">چند حرکت</TabsTrigger>
             </TabsList>
             
             <TabsContent value="single" className="space-y-2">
@@ -245,6 +237,11 @@ export function ExerciseDialog({
                 onChange={(e) => setGroupText(e.target.value)}
                 dir="rtl"
               />
+              {isSaving && (
+                <div className="text-sm text-gray-600">
+                  در حال ذخیره حرکت {toPersianNumbers(currentSaveIndex + 1)}...
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
