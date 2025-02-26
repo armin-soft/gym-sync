@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowUpDown, Edit, Plus, Trash2, Activity, Dumbbell } from "lucide-react";
@@ -83,25 +84,6 @@ export function ExerciseTable({
   const allSelected = exercises.length > 0 && selectedExercises.length === exercises.length;
   const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
 
-  const getDeleteConfirmationText = () => {
-    if (exercisesToDelete.length === 1) {
-      const exercise = exercises.find(ex => ex.id === exercisesToDelete[0]);
-      if (!exercise) return "آیا از حذف این حرکت اطمینان دارید؟";
-      return `آیا از حذف حرکت «${exercise.name}» اطمینان دارید؟`;
-    }
-
-    const selectedExercises = exercisesToDelete
-      .map(id => exercises.find(ex => ex.id === id))
-      .filter(Boolean);
-    
-    let message = `آیا از حذف ${toPersianNumbers(selectedExercises.length)} حرکت زیر اطمینان دارید؟\n\n`;
-    message += selectedExercises
-      .map((exercise, index) => `${toPersianNumbers(index + 1)}. ${exercise?.name}`)
-      .join('\n');
-
-    return message;
-  };
-
   return (
     <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
       <div className="p-6">
@@ -115,7 +97,7 @@ export function ExerciseTable({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => confirmDelete([...selectedExercises])}
+                onClick={() => confirmDelete(selectedExercises)}
                 className="gap-1"
               >
                 <Trash2 className="w-4 h-4" />
@@ -178,9 +160,10 @@ export function ExerciseTable({
               ) : (
                 exercises.map((exercise, index) => {
                   const category = categories.find(c => c.id === exercise.categoryId);
+                  const key = `${exercise.id}-${exercise.name}-${index}`;
                   return (
                     <TableRow 
-                      key={exercise.id}
+                      key={key}
                       className={cn(
                         "group hover:bg-indigo-50/50 transition-all duration-200",
                         selectedExercises.includes(exercise.id) && "bg-indigo-50"
@@ -243,7 +226,18 @@ export function ExerciseTable({
           <AlertDialogHeader>
             <AlertDialogTitle>تأیید حذف</AlertDialogTitle>
             <AlertDialogDescription className="whitespace-pre-line">
-              {getDeleteConfirmationText()}
+              {exercisesToDelete.length === 1 ? (
+                `آیا از حذف حرکت «${exercises.find(ex => ex.id === exercisesToDelete[0])?.name}» اطمینان دارید؟`
+              ) : (
+                `آیا از حذف ${toPersianNumbers(exercisesToDelete.length)} حرکت زیر اطمینان دارید؟\n\n${
+                  exercisesToDelete
+                    .map((id, index) => {
+                      const exercise = exercises.find(ex => ex.id === id);
+                      return `${toPersianNumbers(index + 1)}. ${exercise?.name}`;
+                    })
+                    .join('\n')
+                }`
+              )}
               {'\n\n'}
               این عملیات قابل بازگشت نیست.
             </AlertDialogDescription>
