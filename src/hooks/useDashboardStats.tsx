@@ -22,27 +22,46 @@ export const useDashboardStats = () => {
 
   useEffect(() => {
     const calculateStats = () => {
-      const students = JSON.parse(localStorage.getItem('students') || '[]');
-      const meals = JSON.parse(localStorage.getItem('meals') || '[]');
-      const supplements = JSON.parse(localStorage.getItem('supplements') || '[]');
-      const exercises = JSON.parse(localStorage.getItem('exercises') || '[]');
-      const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{}');
-      
-      // Calculate actual sessions based on active students and their session frequency
-      const totalSessions = students.reduce((acc: number, student: any) => {
-        return acc + (student.sessionsPerWeek || 3) * 4;
-      }, 0);
+      const cachedStudents = localStorage.getItem('students');
+      const cachedMeals = localStorage.getItem('meals');
+      const cachedSupplements = localStorage.getItem('supplements');
+      const cachedExercises = localStorage.getItem('exercises');
+      const cachedTrainerProfile = localStorage.getItem('trainerProfile');
 
-      // Calculate income from trainer's price per session
+      // Parse all data at once to improve performance
+      const students = cachedStudents ? JSON.parse(cachedStudents) : [];
+      const meals = cachedMeals ? JSON.parse(cachedMeals) : [];
+      const supplements = cachedSupplements ? JSON.parse(cachedSupplements) : [];
+      const exercises = cachedExercises ? JSON.parse(cachedExercises) : [];
+      const trainerProfile = cachedTrainerProfile ? JSON.parse(cachedTrainerProfile) : {};
+      
+      // Optimize calculations by doing them in a single pass where possible
+      let totalSessions = 0;
+      let totalProgress = 0;
+      let studentsWithMeals = 0;
+      let studentsWithSupplements = 0;
+
+      // Single pass through students array
+      students.forEach((student: any) => {
+        totalSessions += (student.sessionsPerWeek || 3) * 4;
+        totalProgress += (student.progress || 0);
+        
+        if (meals.some((meal: any) => meal.studentId === student.id)) {
+          studentsWithMeals++;
+        }
+        if (supplements.some((supplement: any) => supplement.studentId === student.id)) {
+          studentsWithSupplements++;
+        }
+      });
+
+      const averageProgress = students.length ? Math.round(totalProgress / students.length) : 0;
+      const mealCompletionRate = students.length ? (studentsWithMeals / students.length) * 100 : 0;
+      const supplementCompletionRate = students.length ? (studentsWithSupplements / students.length) * 100 : 0;
+
+      // Calculate monthly income
       const pricePerSession = trainerProfile.price || "0";
       const monthlyIncome = isValidPrice(pricePerSession) ? 
         totalSessions * parseInt(pricePerSession.replace(/[^0-9]/g, '')) : 0;
-
-      // Calculate student progress
-      const totalProgress = students.reduce((acc: number, student: any) => {
-        return acc + (student.progress || 0);
-      }, 0);
-      const averageProgress = students.length ? Math.round(totalProgress / students.length) : 0;
 
       // Calculate growth rates
       const prevStudents = JSON.parse(localStorage.getItem('prevMonthStudents') || '[]');
@@ -54,17 +73,6 @@ export const useDashboardStats = () => {
         if (!previous) return 0;
         return Math.round(((current - previous) / previous) * 100);
       };
-
-      // Calculate completion rates
-      const studentsWithMeals = students.filter((student: any) => 
-        meals.some((meal: any) => meal.studentId === student.id)
-      ).length;
-      const mealCompletionRate = students.length ? (studentsWithMeals / students.length) * 100 : 0;
-
-      const studentsWithSupplements = students.filter((student: any) => 
-        supplements.some((supplement: any) => supplement.studentId === student.id)
-      ).length;
-      const supplementCompletionRate = students.length ? (studentsWithSupplements / students.length) * 100 : 0;
 
       setStats({
         totalStudents: students.length,
@@ -86,15 +94,15 @@ export const useDashboardStats = () => {
     calculateStats();
 
     const storageHandler = () => {
-      calculateStats();
+      requestAnimationFrame(calculateStats);
     };
 
     window.addEventListener('storage', storageHandler);
-    const quickInterval = setInterval(calculateStats, 1000);
+    const updateInterval = setInterval(calculateStats, 2000); // Reduced frequency
 
     return () => {
       window.removeEventListener('storage', storageHandler);
-      clearInterval(quickInterval);
+      clearInterval(updateInterval);
     };
   }, []);
 
