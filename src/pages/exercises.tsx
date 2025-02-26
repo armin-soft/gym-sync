@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { 
   Plus, 
@@ -175,6 +176,7 @@ const ExercisesPage = () => {
   };
 
   const filteredCategories = categories.filter(cat => cat.type === selectedType);
+  const hasCategories = filteredCategories.length > 0;
 
   const filteredExercises = exercises
     .filter(ex => filteredCategories.some(cat => cat.id === ex.categoryId))
@@ -310,71 +312,75 @@ const ExercisesPage = () => {
           />
         </div>
 
-        <div className="flex flex-col gap-8">
-          <CategoryTable 
-            categories={filteredCategories}
-            onAdd={() => {
-              if (exerciseTypes.length === 0) {
+        {exerciseTypes.length > 0 && (
+          <div className="flex flex-col gap-8">
+            <CategoryTable 
+              categories={filteredCategories}
+              onAdd={() => {
+                if (exerciseTypes.length === 0) {
+                  toast({
+                    variant: "destructive",
+                    title: "خطا",
+                    description: "ابتدا باید یک نوع حرکت ایجاد کنید"
+                  });
+                  return;
+                }
+                setCategoryFormData({ name: "" });
+                setIsCategoryDialogOpen(true);
+              }}
+              onEdit={(category) => {
+                setCategoryFormData({ name: category.name });
+                setIsCategoryDialogOpen(true);
+              }}
+              onDelete={(category) => {
+                if (exercises.some(ex => ex.categoryId === category.id)) {
+                  toast({
+                    variant: "destructive",
+                    title: "خطا",
+                    description: "ابتدا باید تمام حرکات این دسته‌بندی را حذف کنید"
+                  });
+                  return;
+                }
+                setCategories(prevCategories => prevCategories.filter(c => c.id !== category.id));
                 toast({
-                  variant: "destructive",
-                  title: "خطا",
-                  description: "ابتدا باید یک نوع حرکت ایجاد کنید"
+                  title: "موفقیت",
+                  description: "دسته‌بندی با موفقیت حذف شد"
                 });
-                return;
-              }
-              setCategoryFormData({ name: "" });
-              setIsCategoryDialogOpen(true);
-            }}
-            onEdit={(category) => {
-              setCategoryFormData({ name: category.name });
-              setIsCategoryDialogOpen(true);
-            }}
-            onDelete={(category) => {
-              if (exercises.some(ex => ex.categoryId === category.id)) {
-                toast({
-                  variant: "destructive",
-                  title: "خطا",
-                  description: "ابتدا باید تمام حرکات این دسته‌بندی را حذف کنید"
-                });
-                return;
-              }
-              setCategories(prevCategories => prevCategories.filter(c => c.id !== category.id));
-              toast({
-                title: "موفقیت",
-                description: "دسته‌بندی با موفقیت حذف شد"
-              });
-            }}
-          />
+              }}
+            />
 
-          <ExerciseTable 
-            exercises={filteredExercises}
-            categories={categories}
-            onAdd={() => {
-              if (filteredCategories.length === 0) {
-                toast({
-                  variant: "destructive",
-                  title: "خطا",
-                  description: "ابتدا باید یک دسته‌بندی ایجاد کنید"
-                });
-                return;
-              }
-              setSelectedExercise(undefined);
-              setExerciseFormData({ name: "", categoryId: filteredCategories[0].id });
-              setIsExerciseDialogOpen(true);
-            }}
-            onEdit={(exercise) => {
-              setSelectedExercise(exercise);
-              setExerciseFormData({
-                name: exercise.name,
-                categoryId: exercise.categoryId
-              });
-              setIsExerciseDialogOpen(true);
-            }}
-            onDelete={handleDeleteExercises}
-            onSort={handleSort}
-            isAscending={isAscending}
-          />
-        </div>
+            {hasCategories && (
+              <ExerciseTable 
+                exercises={filteredExercises}
+                categories={categories}
+                onAdd={() => {
+                  if (filteredCategories.length === 0) {
+                    toast({
+                      variant: "destructive",
+                      title: "خطا",
+                      description: "ابتدا باید یک دسته‌بندی ایجاد کنید"
+                    });
+                    return;
+                  }
+                  setSelectedExercise(undefined);
+                  setExerciseFormData({ name: "", categoryId: filteredCategories[0].id });
+                  setIsExerciseDialogOpen(true);
+                }}
+                onEdit={(exercise) => {
+                  setSelectedExercise(exercise);
+                  setExerciseFormData({
+                    name: exercise.name,
+                    categoryId: exercise.categoryId
+                  });
+                  setIsExerciseDialogOpen(true);
+                }}
+                onDelete={handleDeleteExercises}
+                onSort={handleSort}
+                isAscending={isAscending}
+              />
+            )}
+          </div>
+        )}
 
         <TypeDialog
           isOpen={isTypeDialogOpen}
