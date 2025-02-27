@@ -126,7 +126,7 @@ const StudentsPage = () => {
       updatedStudents = [...students, newStudent];
       toast({
         title: "افزودن موفق",
-        description: "شاگرد جدید با موفقیت اضافه شد"
+        description: "شاگ��د جدید با موفقیت اضافه شد"
       });
     }
     
@@ -195,8 +195,8 @@ const StudentsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <UserRound className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 animate-fade-in">
+                  <UserRound className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">کل شاگردان</p>
@@ -207,8 +207,8 @@ const StudentsPage = () => {
             
             <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in [animation-delay:200ms]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Trophy className="h-6 w-6 text-green-600" />
+                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-white shadow-lg shadow-green-500/25 animate-fade-in">
+                  <Trophy className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">شاگردان فعال</p>
@@ -219,8 +219,8 @@ const StudentsPage = () => {
             
             <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in [animation-delay:400ms]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Scale className="h-6 w-6 text-purple-600" />
+                <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center text-white shadow-lg shadow-purple-500/25 animate-fade-in">
+                  <Scale className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">میانگین وزن</p>
@@ -238,8 +238,8 @@ const StudentsPage = () => {
             
             <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in [animation-delay:600ms]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <LineChart className="h-6 w-6 text-orange-600" />
+                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-white shadow-lg shadow-orange-500/25 animate-fade-in">
+                  <LineChart className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">میانگین قد</p>
@@ -332,28 +332,29 @@ const StudentsPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {!students.length ? (
+                {students.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-64">
                       <div className="flex flex-col items-center justify-center text-center space-y-4">
                         <div className="relative w-16 h-16">
-                          <div className="absolute inset-0 bg-yellow-500/10 animate-ping rounded-full" />
-                          <div className="relative w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                            <Search className="h-8 w-8 text-yellow-500/50" />
+                          <div className="absolute inset-0 bg-primary/10 animate-ping rounded-full" />
+                          <div className="relative w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                            <UserRound className="h-8 w-8 text-primary/50" />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <p className="text-lg font-medium">نتیجه‌ای یافت نشد</p>
+                          <p className="text-lg font-medium">هیچ شاگردی یافت نشد</p>
                           <p className="text-sm text-muted-foreground max-w-md">
-                            با معیارهای جستجوی فعلی هیچ شاگردی پیدا نشد. لطفاً معیارهای جستجو را تغییر دهید.
+                            برای افزودن شاگرد جدید روی دکمه «افزودن شاگرد جدید» کلیک کنید
                           </p>
                         </div>
                         <Button
+                          onClick={handleAdd}
                           variant="outline"
-                          onClick={() => setSearchQuery("")}
                           className="mt-4"
                         >
-                          پاک کردن جستجو
+                          <Plus className="ml-2 h-4 w-4" />
+                          افزودن شاگرد جدید
                         </Button>
                       </div>
                     </TableCell>
