@@ -48,7 +48,7 @@ interface Student {
   phone: string;
   height: string;
   weight: string;
-  image: string;
+  image: string | { _type: string; value: string } | null;
 }
 
 const StudentsPage = () => {
@@ -92,7 +92,7 @@ const StudentsPage = () => {
   useEffect(() => {
     const processedStudents = students.map(student => ({
       ...student,
-      image: typeof student.image === 'object' ? student.image.value : student.image
+      image: student.image && typeof student.image === 'object' ? student.image.value : student.image || '/placeholder.svg'
     }));
     
     console.log('Saving students to localStorage:', processedStudents);
@@ -412,7 +412,10 @@ const StudentsPage = () => {
                         <div className="relative w-10 h-10 mx-auto">
                           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-sky-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
                           <img
-                            src={typeof student.image === 'object' ? student.image.value : student.image}
+                            src={student.image ? 
+                              (typeof student.image === 'object' ? student.image.value : student.image) 
+                              : '/placeholder.svg'
+                            }
                             alt={student.name}
                             className="relative rounded-full object-cover w-full h-full ring-2 ring-white dark:ring-gray-800 shadow-lg group-hover:ring-primary/20 group-hover:shadow-primary/20 transition-all duration-300"
                           />
