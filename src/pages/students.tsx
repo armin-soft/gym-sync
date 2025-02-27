@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -59,6 +58,8 @@ const StudentsPage = () => {
   const [selectedStudent, setSelectedStudent] = useState<Student | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
+  const [selectedStudentForExercise, setSelectedStudentForExercise] = useState<Student | null>(null);
 
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
@@ -392,7 +393,12 @@ const StudentsPage = () => {
                                 <AppWindow className="h-4 w-4 ml-2" />
                                 نمایش جزئیات
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => {
+                                  setSelectedStudentForExercise(student);
+                                  setIsExerciseDialogOpen(true);
+                                }}
+                              >
                                 <ClipboardList className="h-4 w-4 ml-2" />
                                 برنامه تمرینی
                               </DropdownMenuItem>
@@ -422,6 +428,12 @@ const StudentsPage = () => {
           onClose={() => setIsDialogOpen(false)}
           onSave={handleSave}
           student={selectedStudent}
+        />
+
+        <StudentExerciseDialog
+          open={isExerciseDialogOpen}
+          onOpenChange={setIsExerciseDialogOpen}
+          studentName={selectedStudentForExercise?.name || ""}
         />
       </div>
     </div>
