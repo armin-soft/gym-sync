@@ -63,45 +63,62 @@ const StudentsPage = () => {
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
 
   useEffect(() => {
-    const savedStudents = localStorage.getItem('students');
-    console.log('Loading students from localStorage:', savedStudents);
-    
-    if (savedStudents) {
-      try {
+    try {
+      const savedStudents = localStorage.getItem('students');
+      console.log('Loading students from localStorage:', savedStudents);
+      
+      if (savedStudents) {
         const parsedStudents = JSON.parse(savedStudents);
         console.log('Successfully parsed students:', parsedStudents);
         
-        const processedStudents = parsedStudents.map((student: any) => ({
-          id: student.id,
-          name: student.name,
-          phone: student.phone,
-          height: student.height,
-          weight: student.weight,
-          image: student.image?._type === 'String' ? student.image.value : (student.image || '/placeholder.svg')
-        }));
-        
-        console.log('Processed students:', processedStudents);
-        setStudents(processedStudents);
-      } catch (error) {
-        console.error('Error processing students:', error);
-        toast({
-          variant: "destructive",
-          title: "خطا در بارگذاری",
-          description: "مشکلی در بارگذاری اطلاعات شاگردان پیش آمده است"
-        });
+        if (Array.isArray(parsedStudents)) {
+          const processedStudents = parsedStudents.map((student: any) => ({
+            id: student.id || Math.random(),
+            name: student.name || '',
+            phone: student.phone || '',
+            height: student.height || '',
+            weight: student.weight || '',
+            image: student.image?._type === 'String' ? student.image.value : (student.image || '/placeholder.svg')
+          }));
+          
+          console.log('Processed students:', processedStudents);
+          setStudents(processedStudents);
+        } else {
+          console.error('Parsed students is not an array:', parsedStudents);
+          setStudents([]);
+        }
       }
+    } catch (error) {
+      console.error('Error loading students:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا در بارگذاری",
+        description: "مشکلی در بارگذاری اطلاعات شاگردان پیش آمده است"
+      });
+      setStudents([]);
     }
   }, []);
 
-  useEffect(() => {
-    const processedStudents = students.map(student => ({
-      ...student,
-      image: student.image || '/placeholder.svg'
-    }));
-    
-    console.log('Saving students to localStorage:', processedStudents);
-    localStorage.setItem('students', JSON.stringify(processedStudents));
-  }, [students]);
+  // فیلتر و مرتب‌سازی شاگردان
+  const sortedAndFilteredStudents = React.useMemo(() => {
+    return students
+      .filter((student) =>
+        student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        student.phone.includes(searchQuery)
+      )
+      .sort((a, b) => {
+        if (sortField === "name") {
+          return sortOrder === "asc" 
+            ? a.name.localeCompare(b.name) 
+            : b.name.localeCompare(a.name);
+        }
+        const aValue = Number(a[sortField]);
+        const bValue = Number(b[sortField]);
+        return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+      });
+  }, [students, searchQuery, sortField, sortOrder]);
+
+  console.log('Sorted and filtered students:', sortedAndFilteredStudents);
 
   const handleDelete = (id: number) => {
     const updatedStudents = students.filter((student) => student.id !== id);
@@ -149,24 +166,6 @@ const StudentsPage = () => {
     setStudents(updatedStudents);
     setIsDialogOpen(false);
   };
-
-  const sortedAndFilteredStudents = students
-    .filter((student) =>
-      student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      student.phone.includes(searchQuery)
-    )
-    .sort((a, b) => {
-      if (sortField === "name") {
-        return sortOrder === "asc" 
-          ? a.name.localeCompare(b.name) 
-          : b.name.localeCompare(a.name);
-      }
-      const aValue = Number(a[sortField]);
-      const bValue = Number(b[sortField]);
-      return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
-    });
-
-  console.log('Filtered and sorted students:', sortedAndFilteredStudents);
 
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) {
@@ -348,7 +347,7 @@ const StudentsPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {!students || students.length === 0 ? (
+                {students.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-64">
                       <div className="flex flex-col items-center justify-center text-center space-y-4">
@@ -406,11 +405,6 @@ const StudentsPage = () => {
                     <TableRow 
                       key={student.id} 
                       className="group transition-all duration-300 hover:bg-primary/5"
-                      style={{ 
-                        animationDelay: `${index * 50}ms`,
-                        animation: "fade-in 0.5s ease-out forwards",
-                        opacity: 0
-                      }}
                     >
                       <TableCell>
                         <div className="relative w-10 h-10 mx-auto">
@@ -431,7 +425,7 @@ const StudentsPage = () => {
                       <TableCell>{toPersianNumbers(student.height)}</TableCell>
                       <TableCell>{toPersianNumbers(student.weight)}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <div className="flex items-center gap-2">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -448,37 +442,6 @@ const StudentsPage = () => {
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="size-8 hover:bg-primary/10"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem 
-                                onClick={() => {
-                                  setSelectedStudentForExercise(student);
-                                  setIsExerciseDialogOpen(true);
-                                }}
-                              >
-                                <ClipboardList className="h-4 w-4 ml-2" />
-                                برنامه تمرینی
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Scale className="h-4 w-4 ml-2" />
-                                برنامه غذایی
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-destructive">
-                                <Power className="h-4 w-4 ml-2" />
-                                غیرفعال سازی
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
                         </div>
                       </TableCell>
                     </TableRow>
