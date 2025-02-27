@@ -25,11 +25,9 @@ import {
   Scale,
   CalendarDays,
   ClipboardList,
-  AppWindow,
   Power,
   Trophy,
   LineChart,
-  Bell
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
@@ -62,6 +60,8 @@ const StudentsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
   const [selectedStudentForExercise, setSelectedStudentForExercise] = useState<Student | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
 
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
@@ -69,10 +69,10 @@ const StudentsPage = () => {
       try {
         setStudents(JSON.parse(savedStudents));
       } catch (error) {
-        console.error('Error loading students from localStorage:', error);
+        console.error('Error loading students:', error);
         toast({
           variant: "destructive",
-          title: "خطا در بارگذاری اطلاعات",
+          title: "خطا در بارگذاری",
           description: "مشکلی در بارگذاری اطلاعات شاگردان پیش آمده است"
         });
       }
@@ -130,9 +130,29 @@ const StudentsPage = () => {
     setIsDialogOpen(false);
   };
 
-  const filteredStudents = students.filter((student) =>
-    student.name.includes(searchQuery) || student.phone.includes(searchQuery)
-  );
+  const sortedAndFilteredStudents = students
+    .filter((student) =>
+      student.name.includes(searchQuery) || student.phone.includes(searchQuery)
+    )
+    .sort((a, b) => {
+      if (sortField === "name") {
+        return sortOrder === "asc" 
+          ? a.name.localeCompare(b.name) 
+          : b.name.localeCompare(a.name);
+      }
+      const aValue = Number(a[sortField]);
+      const bValue = Number(b[sortField]);
+      return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+    });
+
+  const toggleSort = (field: typeof sortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -143,12 +163,12 @@ const StudentsPage = () => {
       <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
         {/* Header Section */}
         <div className="flex flex-col space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 animate-fade-in">
                 <GraduationCap className="h-6 w-6" />
               </div>
-              <div>
+              <div className="animate-fade-in">
                 <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
                   شاگردان
                 </h2>
@@ -157,23 +177,21 @@ const StudentsPage = () => {
                 </p>
               </div>
             </div>
-            <div>
-              <Button
-                onClick={handleAdd}
-                size="lg"
-                className="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
-              >
-                <Plus className="ml-2 h-5 w-5" />
-                افزودن شاگرد جدید
-              </Button>
-            </div>
+            <Button
+              onClick={handleAdd}
+              size="lg"
+              className="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 animate-fade-in"
+            >
+              <Plus className="ml-2 h-5 w-5" />
+              افزودن شاگرد جدید
+            </Button>
           </div>
 
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <UserRound className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
@@ -183,9 +201,9 @@ const StudentsPage = () => {
               </div>
             </Card>
             
-            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in [animation-delay:200ms]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Trophy className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
@@ -195,9 +213,9 @@ const StudentsPage = () => {
               </div>
             </Card>
             
-            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in [animation-delay:400ms]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Scale className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
@@ -214,9 +232,9 @@ const StudentsPage = () => {
               </div>
             </Card>
             
-            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10">
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in [animation-delay:600ms]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <LineChart className="h-6 w-6 text-orange-600" />
                 </div>
                 <div>
@@ -236,7 +254,7 @@ const StudentsPage = () => {
 
           {/* Search and Filter Section */}
           <div className="grid sm:grid-cols-[1fr_auto] gap-4">
-            <Card className="backdrop-blur-xl bg-white/50 border-primary/10">
+            <Card className="backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60">
               <div className="relative p-4">
                 <Search className="absolute right-7 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -251,26 +269,21 @@ const StudentsPage = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="w-full sm:w-auto gap-2">
                   <ListFilter className="h-4 w-4" />
-                  فیلترها
+                  مرتب‌سازی
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toggleSort("name")}>
                   <UserRound className="h-4 w-4 ml-2" />
-                  همه شاگردان
+                  بر اساس نام {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CalendarDays className="h-4 w-4 ml-2" />
-                  شاگردان فعال
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toggleSort("weight")}>
                   <Scale className="h-4 w-4 ml-2" />
-                  مرتب سازی بر اساس نام
+                  بر اساس وزن {sortField === "weight" && (sortOrder === "asc" ? "↑" : "↓")}
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CalendarDays className="h-4 w-4 ml-2" />
-                  مرتب سازی بر اساس تاریخ
+                <DropdownMenuItem onClick={() => toggleSort("height")}>
+                  <Ruler className="h-4 w-4 ml-2" />
+                  بر اساس قد {sortField === "height" && (sortOrder === "asc" ? "↑" : "↓")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -278,7 +291,7 @@ const StudentsPage = () => {
         </div>
 
         {/* Table Section */}
-        <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden">
+        <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-white/60">
           <ScrollArea className="h-[calc(100vh-20rem)] rounded-lg">
             <Table>
               <TableHeader>
@@ -314,7 +327,7 @@ const StudentsPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStudents.length === 0 ? (
+                {sortedAndFilteredStudents.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-64">
                       <div className="flex flex-col items-center justify-center text-center space-y-4">
@@ -342,8 +355,16 @@ const StudentsPage = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredStudents.map((student) => (
-                    <TableRow key={student.id} className="group">
+                  sortedAndFilteredStudents.map((student, index) => (
+                    <TableRow 
+                      key={student.id} 
+                      className="group transition-all duration-300 hover:bg-primary/5"
+                      style={{ 
+                        animationDelay: `${index * 50}ms`,
+                        animation: "fade-in 0.5s ease-out forwards",
+                        opacity: 0
+                      }}
+                    >
                       <TableCell>
                         <div className="relative w-10 h-10 mx-auto">
                           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-sky-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
@@ -391,10 +412,6 @@ const StudentsPage = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
-                                <AppWindow className="h-4 w-4 ml-2" />
-                                نمایش جزئیات
-                              </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => {
                                   setSelectedStudentForExercise(student);
