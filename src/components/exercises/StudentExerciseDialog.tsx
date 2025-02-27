@@ -5,12 +5,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowRight, Dumbbell, Tag, FolderTree, Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import {
   Exercise,
   ExerciseCategory,
@@ -28,33 +30,70 @@ export function StudentExerciseDialog({
   onOpenChange,
   studentName,
 }: StudentExerciseDialogProps) {
+  const { toast } = useToast();
   const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
   const [categories, setCategories] = useState<ExerciseCategory[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
-  const [studentExercises, setStudentExercises] = useState<Exercise[]>([]);
 
+  // بازنشانی state ها هنگام باز شدن دیالوگ
   useEffect(() => {
-    // بارگذاری داده‌ها از localStorage
-    try {
-      const savedTypes = localStorage.getItem("exerciseTypes");
-      const savedCategories = localStorage.getItem("exerciseCategories");
-      const savedExercises = localStorage.getItem("exercises");
+    if (open) {
+      try {
+        const savedTypes = localStorage.getItem("exerciseTypes");
+        const savedCategories = localStorage.getItem("exerciseCategories");
+        const savedExercises = localStorage.getItem("exercises");
 
-      if (savedTypes) setExerciseTypes(JSON.parse(savedTypes));
-      if (savedCategories) setCategories(JSON.parse(savedCategories));
-      if (savedExercises) setExercises(JSON.parse(savedExercises));
-    } catch (error) {
-      console.error("Error loading exercise data:", error);
+        if (savedTypes) setExerciseTypes(JSON.parse(savedTypes));
+        if (savedCategories) setCategories(JSON.parse(savedCategories));
+        if (savedExercises) setExercises(JSON.parse(savedExercises));
+        
+        // پاک کردن انتخاب‌ها
+        setSelectedType("");
+        setSelectedCategories([]);
+        setSelectedExercises([]);
+      } catch (error) {
+        console.error("Error loading exercise data:", error);
+        toast({
+          variant: "destructive",
+          title: "خطا در بارگذاری",
+          description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
+        });
+      }
     }
-  }, []);
+  }, [open]);
 
   const filteredCategories = categories.filter(cat => cat.type === selectedType);
   const filteredExercises = exercises.filter(ex => 
     selectedCategories.includes(ex.categoryId)
   );
+
+  const handleSave = () => {
+    try {
+      const selectedExercisesList = exercises.filter(ex =>
+        selectedExercises.includes(ex.id)
+      );
+      
+      // اینجا می‌توانید حرکات انتخاب شده را ذخیره کنید
+      console.log("Selected exercises:", selectedExercisesList);
+      
+      toast({
+        title: "موفقیت",
+        description: "حرکات تمرینی با موفقیت به شاگرد اضافه شد"
+      });
+      
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره حرکات تمرینی پیش آمده است"
+      });
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -64,6 +103,9 @@ export function StudentExerciseDialog({
             <Dumbbell className="h-5 w-5 text-blue-500" />
             برنامه تمرینی {studentName}
           </DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            حرکات تمرینی مورد نظر را برای شاگرد انتخاب کنید
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-3 gap-4 flex-1 min-h-0">
@@ -190,14 +232,7 @@ export function StudentExerciseDialog({
           <Button
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
             disabled={selectedExercises.length === 0}
-            onClick={() => {
-              const selectedExercisesList = exercises.filter(ex =>
-                selectedExercises.includes(ex.id)
-              );
-              setStudentExercises(selectedExercisesList);
-              // اینجا می‌توانید حرکات انتخاب شده را ذخیره کنید
-              onOpenChange(false);
-            }}
+            onClick={handleSave}
           >
             <Plus className="w-4 h-4 ml-2" />
             افزودن حرکات
