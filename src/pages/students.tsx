@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -32,6 +33,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
+import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
 import { Input } from "@/components/ui/input";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ScrollArea } from "@/components/ui/scroll-area";
