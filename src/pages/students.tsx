@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -45,6 +46,7 @@ interface Student {
   height: string;
   weight: string;
   image: string;
+  exercises?: number[]; // آرایه‌ای از شناسه‌های تمرین‌ها
 }
 
 const StudentsPage = () => {
@@ -74,7 +76,8 @@ const StudentsPage = () => {
             phone: student.phone || '',
             height: student.height || '',
             weight: student.weight || '',
-            image: student.image?._type === 'String' ? student.image.value : (student.image || '/placeholder.svg')
+            image: student.image || '/placeholder.svg',
+            exercises: student.exercises || []
           }));
           
           console.log('Processed students:', processedStudents);
@@ -94,6 +97,14 @@ const StudentsPage = () => {
       setStudents([]);
     }
   }, []);
+  
+  // ذخیره دانشجویان در localStorage هر زمان که تغییر کنند
+  useEffect(() => {
+    if (students.length > 0) {
+      localStorage.setItem('students', JSON.stringify(students));
+      console.log('Saved students to localStorage:', students);
+    }
+  }, [students]);
 
   const sortedAndFilteredStudents = React.useMemo(() => {
     return students
@@ -135,12 +146,12 @@ const StudentsPage = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSave = (data: Omit<Student, "id">) => {
+  const handleSave = (data: Omit<Student, "id" | "exercises">) => {
     let updatedStudents: Student[];
     
     if (selectedStudent) {
       updatedStudents = students.map((s) =>
-        s.id === selectedStudent.id ? { ...s, ...data } : s
+        s.id === selectedStudent.id ? { ...s, ...data, exercises: s.exercises || [] } : s
       );
       toast({
         title: "ویرایش موفق",
@@ -149,7 +160,8 @@ const StudentsPage = () => {
     } else {
       const newStudent: Student = {
         ...data,
-        id: Math.max(...students.map((s) => s.id), 0) + 1,
+        id: Math.max(0, ...students.map((s) => s.id)) + 1,
+        exercises: []
       };
       updatedStudents = [...students, newStudent];
       toast({
@@ -165,6 +177,27 @@ const StudentsPage = () => {
   const handleAddExercise = (student: Student) => {
     setSelectedStudentForExercise(student);
     setIsExerciseDialogOpen(true);
+  };
+  
+  // تابع برای به‌روزرسانی تمرین‌های شاگرد
+  const handleSaveExercises = (exerciseIds: number[]) => {
+    if (!selectedStudentForExercise) return;
+    
+    const updatedStudents = students.map(student => {
+      if (student.id === selectedStudentForExercise.id) {
+        return {
+          ...student,
+          exercises: exerciseIds
+        };
+      }
+      return student;
+    });
+    
+    setStudents(updatedStudents);
+    toast({
+      title: "افزودن موفق",
+      description: "تمرین‌ها با موفقیت به شاگرد اضافه شدند"
+    });
   };
 
   const toggleSort = (field: typeof sortField) => {
@@ -343,13 +376,19 @@ const StudentsPage = () => {
                       وزن (کیلوگرم)
                     </div>
                   </TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-2">
+                      <Dumbbell className="h-4 w-4 text-muted-foreground" />
+                      تعداد تمرین‌ها
+                    </div>
+                  </TableHead>
                   <TableHead className="text-left">عملیات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {students.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-64">
+                    <TableCell colSpan={7} className="h-64">
                       <div className="flex flex-col items-center justify-center text-center space-y-4">
                         <div className="relative w-16 h-16">
                           <div className="absolute inset-0 bg-primary/10 animate-ping rounded-full" />
@@ -376,7 +415,7 @@ const StudentsPage = () => {
                   </TableRow>
                 ) : sortedAndFilteredStudents.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-64">
+                    <TableCell colSpan={7} className="h-64">
                       <div className="flex flex-col items-center justify-center text-center space-y-4">
                         <div className="relative w-16 h-16">
                           <div className="absolute inset-0 bg-yellow-500/10 animate-ping rounded-full" />
@@ -425,6 +464,13 @@ const StudentsPage = () => {
                       <TableCell>{toPersianNumbers(student.height)}</TableCell>
                       <TableCell>{toPersianNumbers(student.weight)}</TableCell>
                       <TableCell>
+                        <div className="flex items-center">
+                          <span className="bg-blue-100 text-blue-800 font-medium px-2.5 py-0.5 rounded-full text-xs">
+                            {toPersianNumbers(student.exercises?.length || 0)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex items-center gap-2">
                           <Button
                             variant="ghost"
@@ -471,6 +517,8 @@ const StudentsPage = () => {
           open={isExerciseDialogOpen}
           onOpenChange={setIsExerciseDialogOpen}
           studentName={selectedStudentForExercise?.name || ""}
+          onSave={handleSaveExercises}
+          initialExercises={selectedStudentForExercise?.exercises || []}
         />
       </div>
     </div>

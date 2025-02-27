@@ -23,12 +23,16 @@ interface StudentExerciseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
+  onSave?: (exerciseIds: number[]) => void;
+  initialExercises?: number[];
 }
 
 export function StudentExerciseDialog({
   open,
   onOpenChange,
   studentName,
+  onSave,
+  initialExercises = [],
 }: StudentExerciseDialogProps) {
   const { toast } = useToast();
   const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
@@ -36,7 +40,7 @@ export function StudentExerciseDialog({
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<number[]>(initialExercises);
   const [isLoading, setIsLoading] = useState(false);
 
   // بارگذاری داده‌ها از localStorage
@@ -59,44 +63,50 @@ export function StudentExerciseDialog({
     }
   };
 
-  // پاکسازی انتخاب‌ها
+  // پاکسازی انتخاب‌ها به جز تمرینات اولیه
   const resetSelections = () => {
     setSelectedType("");
     setSelectedCategories([]);
-    setSelectedExercises([]);
+    // تنظیم تمرینات انتخاب شده به مقدار اولیه
+    setSelectedExercises(initialExercises);
   };
 
-  // بارگذاری اولیه داده‌ها
+  // بارگذاری اولیه داده‌ها و تنظیم تمرینات اولیه
   useEffect(() => {
     if (open) {
       loadData();
       resetSelections();
     }
-  }, [open]);
+  }, [open, initialExercises]);
 
   const filteredCategories = categories.filter(cat => cat.type === selectedType);
   
   const filteredExercises = exercises.filter(ex => 
     selectedCategories.includes(ex.categoryId)
   );
+  
+  // تمرینات انتخاب شده قبلی که باید نمایش داده شوند
+  const selectedExercisesList = initialExercises.length > 0 
+    ? exercises.filter(ex => initialExercises.includes(ex.id))
+    : [];
 
   const handleSave = async () => {
     if (selectedExercises.length === 0) return;
 
     setIsLoading(true);
     try {
-      const selectedExercisesList = exercises.filter(ex =>
-        selectedExercises.includes(ex.id)
-      );
+      console.log("Selected exercises:", selectedExercises);
       
-      console.log("Selected exercises:", selectedExercisesList);
+      // فراخوانی callback برای ذخیره‌سازی
+      if (onSave) {
+        onSave(selectedExercises);
+      }
       
       toast({
         title: "موفقیت",
         description: "حرکات تمرینی با موفقیت اضافه شدند"
       });
       
-      resetSelections();
       onOpenChange(false);
     } catch (error) {
       console.error("Error saving exercises:", error);
@@ -123,6 +133,23 @@ export function StudentExerciseDialog({
           </DialogDescription>
         </DialogHeader>
 
+        {/* نمایش تمرینات فعلی */}
+        {selectedExercisesList.length > 0 && (
+          <div className="bg-blue-50 p-3 rounded-md mb-4">
+            <h3 className="font-semibold text-blue-700 mb-2 flex items-center gap-1">
+              <Dumbbell className="h-4 w-4" />
+              تمرینات فعلی ({selectedExercisesList.length})
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {selectedExercisesList.map(exercise => (
+                <div key={exercise.id} className="bg-white rounded-full px-3 py-1 text-sm border border-blue-200 flex items-center">
+                  {exercise.name}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-3 gap-4 flex-1 min-h-0">
           {/* ستون نوع تمرین */}
           <Card className="p-4 space-y-4 overflow-hidden flex flex-col">
@@ -140,7 +167,6 @@ export function StudentExerciseDialog({
                     onClick={() => {
                       setSelectedType(type);
                       setSelectedCategories([]);
-                      setSelectedExercises([]);
                     }}
                   >
                     <ArrowRight className="h-4 w-4" />
@@ -174,7 +200,6 @@ export function StudentExerciseDialog({
                               ? [...prev, category.id]
                               : prev.filter(id => id !== category.id)
                           );
-                          setSelectedExercises([]);
                         }}
                       />
                       <label
@@ -241,7 +266,6 @@ export function StudentExerciseDialog({
           <Button
             variant="outline"
             onClick={() => {
-              resetSelections();
               onOpenChange(false);
             }}
             disabled={isLoading}
@@ -258,7 +282,7 @@ export function StudentExerciseDialog({
             ) : (
               <>
                 <Plus className="w-4 h-4 ml-2" />
-                افزودن حرکات
+                ذخیره حرکات
               </>
             )}
           </Button>
