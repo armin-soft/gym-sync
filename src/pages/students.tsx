@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -126,7 +127,7 @@ const StudentsPage = () => {
       updatedStudents = [...students, newStudent];
       toast({
         title: "افزودن موفق",
-        description: "شاگ��د جدید با موفقیت اضافه شد"
+        description: "شاگرد جدید با موفقیت اضافه شد"
       });
     }
     
