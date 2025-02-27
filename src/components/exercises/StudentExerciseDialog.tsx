@@ -37,82 +37,89 @@ export function StudentExerciseDialog({
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // بازنشانی state ها هنگام باز شدن دیالوگ
+  // بارگذاری داده‌ها از localStorage
+  const loadData = () => {
+    try {
+      const savedTypes = localStorage.getItem("exerciseTypes");
+      const savedCategories = localStorage.getItem("exerciseCategories");
+      const savedExercises = localStorage.getItem("exercises");
+
+      if (savedTypes) setExerciseTypes(JSON.parse(savedTypes));
+      if (savedCategories) setCategories(JSON.parse(savedCategories));
+      if (savedExercises) setExercises(JSON.parse(savedExercises));
+    } catch (error) {
+      console.error("Error loading data:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در بارگذاری اطلاعات"
+      });
+    }
+  };
+
+  // پاکسازی انتخاب‌ها
+  const resetSelections = () => {
+    setSelectedType("");
+    setSelectedCategories([]);
+    setSelectedExercises([]);
+  };
+
+  // بارگذاری اولیه داده‌ها
   useEffect(() => {
     if (open) {
-      try {
-        const savedTypes = localStorage.getItem("exerciseTypes");
-        const savedCategories = localStorage.getItem("exerciseCategories");
-        const savedExercises = localStorage.getItem("exercises");
-
-        if (savedTypes) setExerciseTypes(JSON.parse(savedTypes));
-        if (savedCategories) setCategories(JSON.parse(savedCategories));
-        if (savedExercises) setExercises(JSON.parse(savedExercises));
-        
-        // پاک کردن انتخاب‌ها
-        setSelectedType("");
-        setSelectedCategories([]);
-        setSelectedExercises([]);
-      } catch (error) {
-        console.error("Error loading exercise data:", error);
-        toast({
-          variant: "destructive",
-          title: "خطا در بارگذاری",
-          description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
-        });
-      }
+      loadData();
+      resetSelections();
     }
   }, [open]);
 
   const filteredCategories = categories.filter(cat => cat.type === selectedType);
+  
   const filteredExercises = exercises.filter(ex => 
     selectedCategories.includes(ex.categoryId)
   );
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (selectedExercises.length === 0) return;
+
+    setIsLoading(true);
     try {
       const selectedExercisesList = exercises.filter(ex =>
         selectedExercises.includes(ex.id)
       );
       
-      // اینجا می‌توانید حرکات انتخاب شده را ذخیره کنید
       console.log("Selected exercises:", selectedExercisesList);
       
       toast({
         title: "موفقیت",
-        description: "حرکات تمرینی با موفقیت به شاگرد اضافه شد"
+        description: "حرکات تمرینی با موفقیت اضافه شدند"
       });
       
+      resetSelections();
       onOpenChange(false);
     } catch (error) {
       console.error("Error saving exercises:", error);
       toast({
         variant: "destructive",
-        title: "خطا در ذخیره‌سازی",
-        description: "مشکلی در ذخیره حرکات تمرینی پیش آمده است"
+        title: "خطا",
+        description: "خطا در ذخیره‌سازی اطلاعات"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleClose = () => {
-    // پاک کردن انتخاب‌ها قبل از بستن دیالوگ
-    setSelectedType("");
-    setSelectedCategories([]);
-    setSelectedExercises([]);
-    onOpenChange(false);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-2 text-lg">
             <Dumbbell className="h-5 w-5 text-blue-500" />
-            برنامه تمرینی {studentName}
+            افزودن تمرین برای {studentName}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            حرکات تمرینی مورد نظر را برای شاگرد انتخاب کنید
+            حرکات تمرینی مورد نظر را انتخاب کنید
           </DialogDescription>
         </DialogHeader>
 
@@ -148,7 +155,7 @@ export function StudentExerciseDialog({
           <Card className="p-4 space-y-4 overflow-hidden flex flex-col">
             <div className="flex items-center gap-2 pb-2 border-b">
               <FolderTree className="h-5 w-5 text-purple-500" />
-              <h3 className="font-semibold">دسته بندی تمرین</h3>
+              <h3 className="font-semibold">دسته بندی</h3>
             </div>
             <ScrollArea className="flex-1">
               <div className="space-y-2 pr-4">
@@ -191,7 +198,7 @@ export function StudentExerciseDialog({
           <Card className="p-4 space-y-4 overflow-hidden flex flex-col">
             <div className="flex items-center gap-2 pb-2 border-b">
               <Dumbbell className="h-5 w-5 text-indigo-500" />
-              <h3 className="font-semibold">حرکات تمرینی</h3>
+              <h3 className="font-semibold">حرکات</h3>
             </div>
             <ScrollArea className="flex-1">
               <div className="space-y-2 pr-4">
@@ -233,17 +240,27 @@ export function StudentExerciseDialog({
         <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
           <Button
             variant="outline"
-            onClick={handleClose}
+            onClick={() => {
+              resetSelections();
+              onOpenChange(false);
+            }}
+            disabled={isLoading}
           >
             انصراف
           </Button>
           <Button
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-            disabled={selectedExercises.length === 0}
+            disabled={selectedExercises.length === 0 || isLoading}
             onClick={handleSave}
           >
-            <Plus className="w-4 h-4 ml-2" />
-            افزودن حرکات
+            {isLoading ? (
+              "در حال ذخیره..."
+            ) : (
+              <>
+                <Plus className="w-4 h-4 ml-2" />
+                افزودن حرکات
+              </>
+            )}
           </Button>
         </div>
       </DialogContent>
