@@ -13,7 +13,7 @@ export const StatsSummary = ({ data, growthData }: StatsSummaryProps) => {
   
   return (
     <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-      {growthData?.рشد_شاگردان !== undefined && (
+      {growthData?.رشد_شاگردان !== undefined && (
         <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-none">
           <div className="flex flex-col space-y-2">
             <span className="text-xs text-blue-700">رشد شاگردان در ماه اخیر</span>
@@ -27,7 +27,7 @@ export const StatsSummary = ({ data, growthData }: StatsSummaryProps) => {
         </Card>
       )}
       
-      {growthData?.рشد_درآمد !== undefined && (
+      {growthData?.رشد_درآمد !== undefined && (
         <Card className="p-4 bg-gradient-to-br from-green-50 to-green-100 border-none">
           <div className="flex flex-col space-y-2">
             <span className="text-xs text-green-700">رشد درآمد در ماه اخیر</span>
