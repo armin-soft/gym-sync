@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -16,19 +17,13 @@ import {
   Edit, 
   GraduationCap, 
   ListFilter, 
-  MoreHorizontal, 
   Plus, 
   Search, 
   Trash2, 
   UserRound,
   Scale,
-  CalendarDays,
-  ClipboardList,
-  Power,
-  Trophy,
   LineChart,
 } from "lucide-react";
-import { useState, useEffect } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
 import { Input } from "@/components/ui/input";
@@ -38,7 +33,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -99,7 +93,6 @@ const StudentsPage = () => {
     }
   }, []);
 
-  // فیلتر و مرتب‌سازی شاگردان
   const sortedAndFilteredStudents = React.useMemo(() => {
     return students
       .filter((student) =>
