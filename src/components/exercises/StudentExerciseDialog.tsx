@@ -95,8 +95,16 @@ export function StudentExerciseDialog({
     }
   };
 
+  const handleClose = () => {
+    // پاک کردن انتخاب‌ها قبل از بستن دیالوگ
+    setSelectedType("");
+    setSelectedCategories([]);
+    setSelectedExercises([]);
+    onOpenChange(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-2 text-lg">
@@ -225,7 +233,7 @@ export function StudentExerciseDialog({
         <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
           >
             انصراف
           </Button>
