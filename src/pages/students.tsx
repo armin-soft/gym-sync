@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -65,9 +64,13 @@ const StudentsPage = () => {
 
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
+    console.log('Saved students from localStorage:', savedStudents);
+    
     if (savedStudents) {
       try {
-        setStudents(JSON.parse(savedStudents));
+        const parsedStudents = JSON.parse(savedStudents);
+        console.log('Parsed students:', parsedStudents);
+        setStudents(parsedStudents);
       } catch (error) {
         console.error('Error loading students:', error);
         toast({
@@ -80,6 +83,7 @@ const StudentsPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log('Saving students to localStorage:', students);
     localStorage.setItem('students', JSON.stringify(students));
   }, [students]);
 
@@ -132,7 +136,8 @@ const StudentsPage = () => {
 
   const sortedAndFilteredStudents = students
     .filter((student) =>
-      student.name.includes(searchQuery) || student.phone.includes(searchQuery)
+      student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      student.phone.includes(searchQuery)
     )
     .sort((a, b) => {
       if (sortField === "name") {
@@ -145,6 +150,8 @@ const StudentsPage = () => {
       return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
     });
 
+  console.log('Filtered and sorted students:', sortedAndFilteredStudents);
+
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -156,12 +163,10 @@ const StudentsPage = () => {
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      {/* Decorative Elements */}
       <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
       
       <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
-        {/* Header Section */}
         <div className="flex flex-col space-y-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -187,7 +192,6 @@ const StudentsPage = () => {
             </Button>
           </div>
 
-          {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-6 backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60 animate-fade-in">
               <div className="flex items-center gap-4">
@@ -252,7 +256,6 @@ const StudentsPage = () => {
             </Card>
           </div>
 
-          {/* Search and Filter Section */}
           <div className="grid sm:grid-cols-[1fr_auto] gap-4">
             <Card className="backdrop-blur-xl bg-white/50 border-primary/10 transition-all duration-300 hover:shadow-lg hover:bg-white/60">
               <div className="relative p-4">
@@ -260,7 +263,10 @@ const StudentsPage = () => {
                 <Input
                   placeholder="جستجو بر اساس نام یا شماره موبایل..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    console.log('Search query changed:', e.target.value);
+                  }}
                   className="pl-4 pr-10 bg-transparent border-none focus-visible:ring-1 focus-visible:ring-primary/20"
                 />
               </div>
@@ -290,7 +296,6 @@ const StudentsPage = () => {
           </div>
         </div>
 
-        {/* Table Section */}
         <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-white/60">
           <ScrollArea className="h-[calc(100vh-20rem)] rounded-lg">
             <Table>
@@ -327,29 +332,54 @@ const StudentsPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedAndFilteredStudents.length === 0 ? (
+                {!students.length ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-64">
                       <div className="flex flex-col items-center justify-center text-center space-y-4">
                         <div className="relative w-16 h-16">
-                          <div className="absolute inset-0 bg-primary/10 animate-ping rounded-full" />
-                          <div className="relative w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                            <UserRound className="h-8 w-8 text-primary/50" />
+                          <div className="absolute inset-0 bg-yellow-500/10 animate-ping rounded-full" />
+                          <div className="relative w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                            <Search className="h-8 w-8 text-yellow-500/50" />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <p className="text-lg font-medium">هیچ شاگردی یافت نشد</p>
+                          <p className="text-lg font-medium">نتیجه‌ای یافت نشد</p>
                           <p className="text-sm text-muted-foreground max-w-md">
-                            برای افزودن شاگرد جدید روی دکمه «افزودن شاگرد جدید» کلیک کنید
+                            با معیارهای جستجوی فعلی هیچ شاگردی پیدا نشد. لطفاً معیارهای جستجو را تغییر دهید.
                           </p>
                         </div>
                         <Button
-                          onClick={handleAdd}
                           variant="outline"
+                          onClick={() => setSearchQuery("")}
                           className="mt-4"
                         >
-                          <Plus className="ml-2 h-4 w-4" />
-                          افزودن شاگرد جدید
+                          پاک کردن جستجو
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : sortedAndFilteredStudents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-64">
+                      <div className="flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="relative w-16 h-16">
+                          <div className="absolute inset-0 bg-yellow-500/10 animate-ping rounded-full" />
+                          <div className="relative w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                            <Search className="h-8 w-8 text-yellow-500/50" />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-lg font-medium">نتیجه‌ای یافت نشد</p>
+                          <p className="text-sm text-muted-foreground max-w-md">
+                            با معیارهای جستجوی فعلی هیچ شاگردی پیدا نشد. لطفاً معیارهای جستجو را تغییر دهید.
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={() => setSearchQuery("")}
+                          className="mt-4"
+                        >
+                          پاک کردن جستجو
                         </Button>
                       </div>
                     </TableCell>
