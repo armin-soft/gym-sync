@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -65,15 +64,22 @@ const StudentsPage = () => {
 
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
-    console.log('Saved students from localStorage:', savedStudents);
+    console.log('Loading students from localStorage:', savedStudents);
     
     if (savedStudents) {
       try {
         const parsedStudents = JSON.parse(savedStudents);
-        console.log('Parsed students:', parsedStudents);
-        setStudents(parsedStudents);
+        console.log('Successfully parsed students:', parsedStudents);
+        
+        const processedStudents = parsedStudents.map((student: any) => ({
+          ...student,
+          image: student.image?._type === 'String' ? student.image.value : student.image
+        }));
+        
+        console.log('Processed students:', processedStudents);
+        setStudents(processedStudents);
       } catch (error) {
-        console.error('Error loading students:', error);
+        console.error('Error processing students:', error);
         toast({
           variant: "destructive",
           title: "خطا در بارگذاری",
@@ -84,8 +90,13 @@ const StudentsPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Saving students to localStorage:', students);
-    localStorage.setItem('students', JSON.stringify(students));
+    const processedStudents = students.map(student => ({
+      ...student,
+      image: typeof student.image === 'object' ? student.image.value : student.image
+    }));
+    
+    console.log('Saving students to localStorage:', processedStudents);
+    localStorage.setItem('students', JSON.stringify(processedStudents));
   }, [students]);
 
   const handleDelete = (id: number) => {
@@ -333,7 +344,7 @@ const StudentsPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {students.length === 0 ? (
+                {!students || students.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-64">
                       <div className="flex flex-col items-center justify-center text-center space-y-4">
@@ -401,7 +412,7 @@ const StudentsPage = () => {
                         <div className="relative w-10 h-10 mx-auto">
                           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-sky-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
                           <img
-                            src={student.image}
+                            src={typeof student.image === 'object' ? student.image.value : student.image}
                             alt={student.name}
                             className="relative rounded-full object-cover w-full h-full ring-2 ring-white dark:ring-gray-800 shadow-lg group-hover:ring-primary/20 group-hover:shadow-primary/20 transition-all duration-300"
                           />
