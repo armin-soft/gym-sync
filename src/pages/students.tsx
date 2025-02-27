@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -25,6 +24,7 @@ import {
   Scale,
   LineChart,
   Trophy,
+  Dumbbell,
 } from "lucide-react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
@@ -160,6 +160,11 @@ const StudentsPage = () => {
     
     setStudents(updatedStudents);
     setIsDialogOpen(false);
+  };
+
+  const handleAddExercise = (student: Student) => {
+    setSelectedStudentForExercise(student);
+    setIsExerciseDialogOpen(true);
   };
 
   const toggleSort = (field: typeof sortField) => {
@@ -436,6 +441,14 @@ const StudentsPage = () => {
                             className="size-8 hover:bg-destructive/10 hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleAddExercise(student)}
+                            className="size-8 hover:bg-blue-500/10 hover:text-blue-500"
+                          >
+                            <Dumbbell className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>
