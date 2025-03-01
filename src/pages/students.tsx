@@ -598,7 +598,7 @@ const StudentsPage = () => {
                             className="size-8 hover:bg-purple-500/10 hover:text-purple-500"
                             title="مدیریت مکمل‌ها و ویتامین‌ها"
                           >
-                            <Pills className="h-4 w-4" />
+                            <Pill className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>
