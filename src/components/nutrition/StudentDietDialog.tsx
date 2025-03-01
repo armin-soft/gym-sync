@@ -33,6 +33,27 @@ interface Meal {
   fat?: number;
 }
 
+// Default days of the week in Persian
+const defaultDays = [
+  "شنبه",
+  "یکشنبه",
+  "دوشنبه",
+  "سه‌شنبه",
+  "چهارشنبه",
+  "پنج‌شنبه",
+  "جمعه"
+];
+
+// Default meal types in Persian
+const defaultMealTypes = [
+  "صبحانه",
+  "میان وعده صبح",
+  "ناهار",
+  "میان وعده عصر",
+  "شام",
+  "میان وعده شب"
+];
+
 export function StudentDietDialog({
   open,
   onOpenChange,
@@ -46,8 +67,8 @@ export function StudentDietDialog({
   const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
   const [currentDay, setCurrentDay] = useState<string | "all">("all");
   const [currentType, setCurrentType] = useState<string | "all">("all");
-  const [days, setDays] = useState<string[]>([]);
-  const [types, setTypes] = useState<string[]>([]);
+  const [days, setDays] = useState<string[]>(defaultDays);
+  const [types, setTypes] = useState<string[]>(defaultMealTypes);
 
   // Load meals from localStorage
   useEffect(() => {
@@ -63,10 +84,20 @@ export function StudentDietDialog({
     }
   }, []);
 
-  // Extract days and types
+  // Extract days and types from meals, or use defaults if none exist
   useEffect(() => {
-    const uniqueDays = Array.from(new Set(meals.map((meal) => meal.day)));
-    const uniqueTypes = Array.from(new Set(meals.map((meal) => meal.type)));
+    // Get unique days from meals, or use defaults if no meals have days
+    const mealsWithDays = meals.filter(meal => meal.day);
+    const uniqueDays = mealsWithDays.length > 0 
+      ? Array.from(new Set(mealsWithDays.map(meal => meal.day)))
+      : defaultDays;
+    
+    // Get unique types from meals, or use defaults if no meals have types
+    const mealsWithTypes = meals.filter(meal => meal.type);
+    const uniqueTypes = mealsWithTypes.length > 0
+      ? Array.from(new Set(mealsWithTypes.map(meal => meal.type)))
+      : defaultMealTypes;
+    
     setDays(uniqueDays);
     setTypes(uniqueTypes);
   }, [meals]);
@@ -109,7 +140,7 @@ export function StudentDietDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] h-[750px] flex flex-col overflow-hidden">
+      <DialogContent className="max-w-4xl max-h-[90vh] h-[750px] flex flex-col overflow-hidden" dir="rtl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
