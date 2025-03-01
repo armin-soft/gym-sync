@@ -9,8 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Search, Save, X } from "lucide-react";
-import { type Meal, type WeekDay } from "@/types/meal";
+import { Search, Save, X, Apple } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentDietDialogProps {
@@ -19,6 +18,19 @@ interface StudentDietDialogProps {
   studentName: string;
   onSave: (mealIds: number[]) => void;
   initialMeals: number[];
+}
+
+interface Meal {
+  id: number;
+  name: string;
+  description: string;
+  imageUrl?: string;
+  day: string;
+  type: string;
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 }
 
 export function StudentDietDialog({
@@ -32,7 +44,10 @@ export function StudentDietDialog({
   const [searchQuery, setSearchQuery] = useState("");
   const [meals, setMeals] = useState<Meal[]>([]);
   const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
-  const [currentDay, setCurrentDay] = useState<WeekDay | "همه">("همه");
+  const [currentDay, setCurrentDay] = useState<string | "all">("all");
+  const [currentType, setCurrentType] = useState<string | "all">("all");
+  const [days, setDays] = useState<string[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
 
   // Load meals from localStorage
   useEffect(() => {
@@ -48,7 +63,15 @@ export function StudentDietDialog({
     }
   }, []);
 
-  // Filter meals based on search query and day
+  // Extract days and types
+  useEffect(() => {
+    const uniqueDays = Array.from(new Set(meals.map((meal) => meal.day)));
+    const uniqueTypes = Array.from(new Set(meals.map((meal) => meal.type)));
+    setDays(uniqueDays);
+    setTypes(uniqueTypes);
+  }, [meals]);
+
+  // Filter meals based on search query, day, and type
   useEffect(() => {
     let filtered = meals;
     
@@ -60,12 +83,16 @@ export function StudentDietDialog({
       );
     }
 
-    if (currentDay !== "همه") {
+    if (currentDay !== "all") {
       filtered = filtered.filter((meal) => meal.day === currentDay);
     }
 
+    if (currentType !== "all") {
+      filtered = filtered.filter((meal) => meal.type === currentType);
+    }
+
     setFilteredMeals(filtered);
-  }, [searchQuery, meals, currentDay]);
+  }, [searchQuery, meals, currentDay, currentType]);
 
   const toggleMeal = (mealId: number) => {
     setSelectedMeals((prev) =>
@@ -80,16 +107,13 @@ export function StudentDietDialog({
     onOpenChange(false);
   };
 
-  const weekDays: WeekDay[] = ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج شنبه", "جمعه"];
-  const mealTypes = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام"];
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] h-[750px] flex flex-col overflow-hidden">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-              <span className="text-green-600 text-lg">🍽️</span>
+              <Apple className="h-5 w-5 text-green-600" />
             </div>
             <span>برنامه غذایی برای {studentName}</span>
           </DialogTitle>
@@ -98,122 +122,166 @@ export function StudentDietDialog({
         <div className="relative mb-4 flex-shrink-0">
           <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="جستجو در برنامه‌های غذایی..."
+            placeholder="جستجو در برنامه های غذایی..."
             className="pl-3 pr-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        <div className="mb-4 flex-shrink-0 overflow-x-auto">
-          <div className="flex space-x-2 space-x-reverse">
-            <Button
-              variant={currentDay === "همه" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCurrentDay("همه")}
-              className="flex-shrink-0"
-            >
-              همه روزها
-            </Button>
-            {weekDays.map((day) => (
+        <div className="mb-4 grid grid-cols-2 gap-4 flex-shrink-0">
+          <div className="space-y-2">
+            <p className="text-sm font-medium">روز هفته:</p>
+            <div className="flex flex-wrap gap-2">
               <Button
-                key={day}
-                variant={currentDay === day ? "default" : "outline"}
+                variant={currentDay === "all" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setCurrentDay(day)}
-                className="flex-shrink-0"
+                onClick={() => setCurrentDay("all")}
+                className="text-xs h-8"
               >
-                {day}
+                همه روزها
               </Button>
-            ))}
+              {days.map((day) => (
+                <Button
+                  key={day}
+                  variant={currentDay === day ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentDay(day)}
+                  className="text-xs h-8"
+                >
+                  {day}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-medium">نوع وعده:</p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={currentType === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCurrentType("all")}
+                className="text-xs h-8"
+              >
+                همه وعده‌ها
+              </Button>
+              {types.map((type) => (
+                <Button
+                  key={type}
+                  variant={currentType === type ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentType(type)}
+                  className="text-xs h-8"
+                >
+                  {type}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <ScrollArea className="flex-grow overflow-y-auto pr-4">
+        <ScrollArea className="flex-grow">
           {filteredMeals.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-40 text-center p-4">
               <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
-                <span className="text-2xl">🍽️</span>
+                <Apple className="h-8 w-8 text-green-500" />
               </div>
-              <h3 className="font-medium text-lg">برنامه غذایی یافت نشد</h3>
+              <h3 className="font-medium text-lg">هیچ وعده غذایی یافت نشد</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                برنامه غذایی مورد نظر شما موجود نیست یا هنوز هیچ برنامه غذایی ثبت نشده است
+                وعده غذایی مورد نظر شما موجود نیست یا هنوز هیچ وعده غذایی ثبت نشده است
               </p>
             </div>
           ) : (
-            <>
-              {mealTypes.map((type) => {
-                const mealsOfType = filteredMeals.filter((meal) => meal.type === type);
-                if (mealsOfType.length === 0) return null;
-                
-                return (
-                  <div key={type} className="mb-6">
-                    <h3 className="font-medium text-base mb-3 bg-green-50 p-2 rounded-md text-green-700">
-                      {type}
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {mealsOfType.map((meal) => (
-                        <div
-                          key={meal.id}
-                          className={`p-3 rounded-lg border transition-all cursor-pointer flex items-center gap-3 ${
-                            selectedMeals.includes(meal.id)
-                              ? "border-green-500 bg-green-50"
-                              : "border-gray-200 hover:border-green-300"
-                          }`}
-                          onClick={() => toggleMeal(meal.id)}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pr-4">
+              {filteredMeals.map((meal) => (
+                <div
+                  key={meal.id}
+                  className={`p-3 rounded-lg border transition-all cursor-pointer ${
+                    selectedMeals.includes(meal.id)
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-200 hover:border-green-300"
+                  }`}
+                  onClick={() => toggleMeal(meal.id)}
+                >
+                  <div className="flex gap-3 items-start">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-1 flex items-center justify-center ${
+                        selectedMeals.includes(meal.id)
+                          ? "border-green-500 bg-green-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {selectedMeals.includes(meal.id) && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          <div
-                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                              selectedMeals.includes(meal.id)
-                                ? "border-green-500 bg-green-500"
-                                : "border-gray-300"
-                            }`}
-                          >
-                            {selectedMeals.includes(meal.id) && (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="10"
-                                height="10"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="white"
-                                strokeWidth="4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="20 6 9 17 4 12" />
-                              </svg>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                              <h4 className="font-medium text-sm truncate">
-                                {meal.name}
-                              </h4>
-                              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                                {meal.day}
-                              </span>
-                            </div>
-                            <p className="text-muted-foreground text-xs truncate">
-                              {meal.description}
-                            </p>
-                          </div>
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <h4 className="font-medium text-sm">{meal.name}</h4>
+                        <div className="flex gap-2">
+                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                            {meal.day}
+                          </span>
+                          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                            {meal.type}
+                          </span>
                         </div>
-                      ))}
+                      </div>
+                      <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
+                        {meal.description}
+                      </p>
+                      {(meal.calories || meal.protein || meal.carbs || meal.fat) && (
+                        <div className="grid grid-cols-4 gap-1 mt-2">
+                          {meal.calories && (
+                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                              <span className="block font-medium">کالری</span>
+                              <span>{toPersianNumbers(meal.calories)}</span>
+                            </div>
+                          )}
+                          {meal.protein && (
+                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                              <span className="block font-medium">پروتئین</span>
+                              <span>{toPersianNumbers(meal.protein)}</span>
+                            </div>
+                          )}
+                          {meal.carbs && (
+                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                              <span className="block font-medium">کربوهیدرات</span>
+                              <span>{toPersianNumbers(meal.carbs)}</span>
+                            </div>
+                          )}
+                          {meal.fat && (
+                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                              <span className="block font-medium">چربی</span>
+                              <span>{toPersianNumbers(meal.fat)}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </>
+                </div>
+              ))}
+            </div>
           )}
         </ScrollArea>
 
-        <div className="border-t pt-4 mt-4 flex justify-between items-center flex-shrink-0">
+        <div className="border-t pt-4 mt-4 flex justify-between items-center">
           <div className="text-sm font-medium">
-            تعداد انتخاب شده:{" "}
-            <span className="text-green-600">
-              {toPersianNumbers(selectedMeals.length)}
-            </span>
+            وعده‌های غذایی انتخاب شده:{" "}
+            <span className="text-green-600">{toPersianNumbers(selectedMeals.length)}</span>
           </div>
           <div className="flex gap-2">
             <Button
