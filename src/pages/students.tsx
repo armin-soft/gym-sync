@@ -27,11 +27,13 @@ import {
   Dumbbell,
   Apple,
   Pill,
+  Download,
 } from "lucide-react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
 import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
 import { StudentSupplementDialog } from "@/components/supplements/StudentSupplementDialog";
+import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
 import { Input } from "@/components/ui/input";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -64,11 +66,16 @@ const StudentsPage = () => {
   const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
   const [isDietDialogOpen, setIsDietDialogOpen] = useState(false);
   const [isSupplementDialogOpen, setIsSupplementDialogOpen] = useState(false);
+  const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
   const [selectedStudentForExercise, setSelectedStudentForExercise] = useState<Student | null>(null);
   const [selectedStudentForDiet, setSelectedStudentForDiet] = useState<Student | null>(null);
   const [selectedStudentForSupplement, setSelectedStudentForSupplement] = useState<Student | null>(null);
+  const [selectedStudentForDownload, setSelectedStudentForDownload] = useState<Student | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
+  const [exercises, setExercises] = useState<any[]>([]);
+  const [meals, setMeals] = useState<any[]>([]);
+  const [supplements, setSupplements] = useState<any[]>([]);
 
   useEffect(() => {
     try {
@@ -99,6 +106,22 @@ const StudentsPage = () => {
           console.error('Parsed students is not an array:', parsedStudents);
           setStudents([]);
         }
+      }
+
+      // Load exercises, meals, and supplements from localStorage
+      const savedExercises = localStorage.getItem('exercises');
+      if (savedExercises) {
+        setExercises(JSON.parse(savedExercises));
+      }
+
+      const savedMeals = localStorage.getItem('meals');
+      if (savedMeals) {
+        setMeals(JSON.parse(savedMeals));
+      }
+
+      const savedSupplements = localStorage.getItem('supplements');
+      if (savedSupplements) {
+        setSupplements(JSON.parse(savedSupplements));
       }
     } catch (error) {
       console.error('Error loading students:', error);
@@ -203,6 +226,11 @@ const StudentsPage = () => {
   const handleAddSupplement = (student: Student) => {
     setSelectedStudentForSupplement(student);
     setIsSupplementDialogOpen(true);
+  };
+
+  const handleDownload = (student: Student) => {
+    setSelectedStudentForDownload(student);
+    setIsDownloadDialogOpen(true);
   };
   
   // تابع برای به‌روزرسانی تمرین‌های شاگرد
@@ -600,6 +628,15 @@ const StudentsPage = () => {
                           >
                             <Pill className="h-4 w-4" />
                           </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDownload(student)}
+                            className="size-8 hover:bg-indigo-500/10 hover:text-indigo-500"
+                            title="دانلود اطلاعات"
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -642,6 +679,16 @@ const StudentsPage = () => {
             supplements: selectedStudentForSupplement?.supplements || [],
             vitamins: selectedStudentForSupplement?.vitamins || []
           }}
+        />
+
+        <StudentDownloadDialog
+          open={isDownloadDialogOpen}
+          onOpenChange={setIsDownloadDialogOpen}
+          student={selectedStudentForDownload}
+          exercises={exercises}
+          meals={meals}
+          supplements={supplements}
+          vitamins={supplements.filter(item => item.type === 'vitamin')}
         />
       </div>
     </div>
