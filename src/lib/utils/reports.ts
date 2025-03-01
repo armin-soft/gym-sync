@@ -38,13 +38,22 @@ export const formatJalaliDate = (date: Date): string => {
   ];
   
   // تبدیل ساده (برای نمایش)
-  const gregorianYear = date.getFullYear();
-  const gregorianMonth = date.getMonth();
-  const gregorianDay = date.getDate();
+  const today = new Date();
   
-  // محاسبه تقریبی سال شمسی (برای نمایش)
+  // اختلاف ساعت تهران با UTC (3.5 ساعت)
+  const tehranOffset = 3.5 * 60 * 60 * 1000;
+  // تنظیم تاریخ با زمان تهران
+  const tehranDate = new Date(date.getTime() + tehranOffset);
+  
+  const gregorianYear = tehranDate.getUTCFullYear();
+  const gregorianMonth = tehranDate.getUTCMonth();
+  const gregorianDay = tehranDate.getUTCDate();
+  const hours = tehranDate.getUTCHours();
+  const minutes = tehranDate.getUTCMinutes();
+  
+  // محاسبه تاریخ شمسی (تقریبی)
   let jalaliYear = gregorianYear - 622;
-  let jalaliMonth = gregorianMonth + 1;
+  let jalaliMonth = gregorianMonth;
   let jalaliDay = gregorianDay;
   
   // تنظیم ماه‌ها (تقریبی)
@@ -56,7 +65,22 @@ export const formatJalaliDate = (date: Date): string => {
     jalaliYear = gregorianYear - 621;
   }
   
-  return `${jalaliDay} ${jalaliMonths[jalaliMonth]} ${jalaliYear}`;
+  // فرمت زمان
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  
+  // بررسی آیا تاریخ امروز است
+  const isToday = 
+    today.getUTCFullYear() === gregorianYear && 
+    today.getUTCMonth() === gregorianMonth && 
+    today.getUTCDate() === gregorianDay;
+  
+  // فرمت تاریخ و زمان
+  if (isToday) {
+    return `امروز، ${jalaliDay} ${jalaliMonths[jalaliMonth]} ${jalaliYear} - ساعت ${formattedHours}:${formattedMinutes}`;
+  } else {
+    return `${jalaliDay} ${jalaliMonths[jalaliMonth]} ${jalaliYear} - ساعت ${formattedHours}:${formattedMinutes}`;
+  }
 };
 
 /**

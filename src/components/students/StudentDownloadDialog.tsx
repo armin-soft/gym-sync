@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Card,
   CardContent,
@@ -33,6 +34,7 @@ import {
   Award,
   MapPin,
   Phone,
+  Calendar,
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import html2canvas from "html2canvas";
@@ -79,23 +81,46 @@ export function StudentDownloadDialog({
   });
   const [activeTab, setActiveTab] = useState<string>("preview");
   const [loading, setLoading] = useState(false);
+  const [trainerInfo, setTrainerInfo] = useState(null);
   const [gymInfo, setGymInfo] = useState({
-    name: "باشگاه بدنسازی حرفه‌ای فیتنس پلاس",
+    name: "باشگاه بدنسازی فیکس",
     trainerName: "استاد علی محمدی",
     address: "تهران، خیابان ولیعصر، پلاک ۱۲۸",
     phone: "۰۲۱-۸۸۷۷۶۶۵۵",
-    instagram: "@fitnessplus",
-    website: "www.fitnessplus.ir",
+    instagram: "@fitnessfix",
+    website: "www.fitnessfix.ir",
   });
 
-  // Load gym info from localStorage if available
+  // Load gym info and trainer data from localStorage if available
   useEffect(() => {
+    // Load gym info
     const savedGymInfo = localStorage.getItem("gymInfo");
     if (savedGymInfo) {
       try {
-        setGymInfo(JSON.parse(savedGymInfo));
+        setGymInfo(prev => ({...prev, ...JSON.parse(savedGymInfo)}));
       } catch (error) {
         console.error("Error parsing gym info:", error);
+      }
+    }
+
+    // Load trainer info
+    const savedTrainerInfo = localStorage.getItem("trainerProfile");
+    if (savedTrainerInfo) {
+      try {
+        const trainer = JSON.parse(savedTrainerInfo);
+        setTrainerInfo(trainer);
+        
+        // Update gym info with trainer info if available
+        setGymInfo(prev => ({
+          ...prev,
+          trainerName: trainer.name || prev.trainerName,
+          address: trainer.address || prev.address,
+          phone: trainer.phone || prev.phone,
+          instagram: trainer.instagram || prev.instagram,
+          website: trainer.website || prev.website,
+        }));
+      } catch (error) {
+        console.error("Error parsing trainer info:", error);
       }
     }
   }, []);
@@ -167,6 +192,7 @@ export function StudentDownloadDialog({
           src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');
           font-weight: normal;
           font-style: normal;
+          font-display: swap;
         }
         
         @font-face {
@@ -174,206 +200,262 @@ export function StudentDownloadDialog({
           src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2') format('woff2');
           font-weight: bold;
           font-style: normal;
+          font-display: swap;
+        }
+        
+        @page {
+          size: A4;
+          margin: 1.5cm;
         }
         
         @media print {
-          body { 
-            direction: rtl; 
-            font-family: 'Vazirmatn', sans-serif; 
-            padding: 0;
-            margin: 0;
+          html, body { 
+            direction: rtl !important; 
+            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+            font-size: 13px !important;
+          }
+          
+          * {
+            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif !important;
+            text-align: right !important;
           }
           
           .print-container {
-            padding: 20px;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 20px !important;
+            direction: rtl !important;
           }
           
           .gym-header {
-            text-align: center;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #4338ca;
+            text-align: center !important;
+            padding-bottom: 15px !important;
+            margin-bottom: 20px !important;
+            border-bottom: 3px solid #4338ca !important;
           }
           
           .gym-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4338ca;
-            margin-bottom: 5px;
+            font-size: 24px !important;
+            font-weight: bold !important;
+            color: #4338ca !important;
+            margin-bottom: 5px !important;
+            text-align: center !important;
           }
           
           .gym-trainer {
-            font-size: 18px;
-            color: #6b7280;
-            margin-bottom: 5px;
+            font-size: 18px !important;
+            color: #6b7280 !important;
+            margin-bottom: 5px !important;
+            text-align: center !important;
           }
           
           .gym-contact {
-            font-size: 12px;
-            color: #6b7280;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
+            font-size: 12px !important;
+            color: #6b7280 !important;
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            gap: 15px !important;
+            text-align: center !important;
           }
           
           .print-section { 
-            margin-bottom: 30px; 
-            page-break-inside: avoid; 
-            background-color: #f9fafb;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px !important; 
+            page-break-inside: avoid !important; 
+            background-color: #f9fafb !important;
+            border-radius: 12px !important;
+            padding: 15px !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+            direction: rtl !important;
           }
           
           .print-header { 
-            margin-bottom: 15px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            color: #4338ca; 
-            border-bottom: 2px solid #4338ca; 
-            padding-bottom: 8px; 
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 15px !important; 
+            font-size: 18px !important; 
+            font-weight: bold !important; 
+            color: #4338ca !important; 
+            border-bottom: 2px solid #4338ca !important; 
+            padding-bottom: 8px !important; 
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
           }
           
           .print-subheader { 
-            margin-bottom: 12px;
-            margin-top: 20px;
-            font-size: 16px; 
-            font-weight: bold; 
-            color: #6366f1; 
-            background-color: #eef2ff;
-            padding: 8px 12px;
-            border-radius: 8px;
+            margin-bottom: 12px !important;
+            margin-top: 20px !important;
+            font-size: 16px !important; 
+            font-weight: bold !important; 
+            color: #6366f1 !important; 
+            background-color: #eef2ff !important;
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
           }
           
           .print-item { 
-            margin-bottom: 12px; 
-            padding: 12px; 
-            border: 1px solid #e5e7eb; 
-            border-radius: 8px; 
-            background-color: white;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+            margin-bottom: 12px !important; 
+            padding: 12px !important; 
+            border: 1px solid #e5e7eb !important; 
+            border-radius: 8px !important; 
+            background-color: white !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03) !important;
           }
           
           .print-item-title { 
-            font-weight: bold; 
-            margin-bottom: 8px; 
-            color: #1f2937;
-            font-size: 14px;
+            font-weight: bold !important; 
+            margin-bottom: 8px !important; 
+            color: #1f2937 !important;
+            font-size: 14px !important;
           }
           
           .print-item-subtitle { 
-            font-size: 12px; 
-            color: #6b7280; 
-            margin-bottom: 8px; 
+            font-size: 12px !important; 
+            color: #6b7280 !important; 
+            margin-bottom: 8px !important; 
           }
           
           .print-item-detail { 
-            font-size: 12px; 
-            margin-bottom: 4px; 
-            display: flex;
-            gap: 5px;
+            font-size: 12px !important; 
+            margin-bottom: 4px !important; 
+            display: flex !important;
+            gap: 5px !important;
           }
           
           .print-item-detail-label {
-            font-weight: bold;
-            color: #4b5563;
+            font-weight: bold !important;
+            color: #4b5563 !important;
           }
           
           .print-footer { 
-            margin-top: 30px; 
-            text-align: center; 
-            font-size: 12px; 
-            color: #6b7280; 
-            padding-top: 10px;
-            border-top: 1px solid #e5e7eb;
+            margin-top: 30px !important; 
+            text-align: center !important; 
+            font-size: 12px !important; 
+            color: #6b7280 !important; 
+            padding-top: 10px !important;
+            border-top: 1px solid #e5e7eb !important;
           }
           
           .student-header { 
-            display: flex; 
-            align-items: center; 
-            margin-bottom: 20px; 
-            background-color: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex !important; 
+            align-items: center !important; 
+            margin-bottom: 20px !important; 
+            background-color: white !important;
+            padding: 15px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+          }
+          
+          .student-image-container {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin-left: 20px !important;
           }
           
           .student-image { 
-            width: 100px; 
-            height: 100px; 
-            border-radius: 50%; 
-            margin-left: 20px; 
-            object-fit: cover; 
-            border: 3px solid #4338ca;
+            width: 100px !important; 
+            height: 100px !important; 
+            border-radius: 50% !important; 
+            object-fit: cover !important; 
+            border: 3px solid #4338ca !important;
           }
           
           .student-info { 
-            flex: 1; 
+            flex: 1 !important; 
           }
           
           .student-name { 
-            font-size: 26px; 
-            font-weight: bold; 
-            margin-bottom: 8px;
-            color: #111827;
+            font-size: 26px !important; 
+            font-weight: bold !important; 
+            margin-bottom: 8px !important;
+            color: #111827 !important;
           }
           
           .student-detail { 
-            font-size: 14px; 
-            color: #4b5563; 
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 14px !important; 
+            color: #4b5563 !important; 
+            margin-bottom: 4px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
           }
           
           .print-date {
-            text-align: left;
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 10px;
+            text-align: left !important;
+            font-size: 12px !important;
+            color: #6b7280 !important;
+            margin-bottom: 10px !important;
+            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif !important;
           }
 
           .meal-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
           }
 
           .meal-type-header {
-            font-weight: bold;
-            font-size: 14px;
-            color: #059669;
-            margin: 8px 0;
-            padding: 5px 10px;
-            background-color: #ecfdf5;
-            border-radius: 6px;
-            display: inline-block;
+            font-weight: bold !important;
+            font-size: 14px !important;
+            color: #059669 !important;
+            margin: 8px 0 !important;
+            padding: 5px 10px !important;
+            background-color: #ecfdf5 !important;
+            border-radius: 6px !important;
+            display: inline-block !important;
           }
 
           .supplement-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
           }
 
           .supplement-category {
-            font-weight: bold;
-            font-size: 14px;
-            color: #7c3aed;
-            margin: 8px 0;
-            padding: 5px 10px;
-            background-color: #f5f3ff;
-            border-radius: 6px;
-            display: inline-block;
+            font-weight: bold !important;
+            font-size: 14px !important;
+            color: #7c3aed !important;
+            margin: 8px 0 !important;
+            padding: 5px 10px !important;
+            background-color: #f5f3ff !important;
+            border-radius: 6px !important;
+            display: inline-block !important;
           }
-
-          @page {
-            size: A4;
-            margin: 1.5cm;
+          
+          /* Replace SVG icons with Unicode symbols */
+          .icon-replacement {
+            font-family: sans-serif !important;
+            font-weight: bold !important;
+            display: inline-block !important;
+            width: 18px !important;
+            height: 18px !important;
+            line-height: 18px !important;
+            text-align: center !important;
+            border-radius: 50% !important;
+            margin-left: 5px !important;
+            font-size: 11px !important;
+          }
+          
+          .icon-phone {
+            background-color: #e0e7ff !important;
+            color: #4338ca !important;
+          }
+          
+          .icon-height {
+            background-color: #dbeafe !important;
+            color: #1d4ed8 !important;
+          }
+          
+          .icon-weight {
+            background-color: #fef3c7 !important;
+            color: #b45309 !important;
+          }
+          
+          .calendar-icon {
+            background-color: #d1fae5 !important;
+            color: #047857 !important;
           }
         }
       </style>
@@ -390,13 +472,14 @@ export function StudentDownloadDialog({
     }
 
     printWindow.document.write(`
-      <html>
+      <html dir="rtl">
         <head>
           <title>اطلاعات ${student.name} - ${gymInfo.name}</title>
           <meta charset="UTF-8">
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
           ${printStyles}
         </head>
-        <body>
+        <body dir="rtl">
           <div class="print-container">
             <div class="print-date">تاریخ: ${formatJalaliDate(new Date())}</div>
             <div class="gym-header">
@@ -408,9 +491,13 @@ export function StudentDownloadDialog({
                 <span>${gymInfo.instagram}</span>
               </div>
             </div>
-            ${printContent.innerHTML}
+            ${printContent.innerHTML
+              .replace(/<svg[^>]*>.*?<\/svg>/gi, '<span class="icon-replacement icon-phone">📞</span>')
+              .replace(/height/gi, '<span class="icon-replacement icon-height">📏</span>قد')
+              .replace(/weight/gi, '<span class="icon-replacement icon-weight">⚖️</span>وزن')
+            }
             <div class="print-footer">
-              این گزارش به صورت خودکار توسط سیستم مدیریت باشگاه ${gymInfo.name} تولید شده است.
+              این گزارش به صورت خودکار توسط سیستم مدیریت ${gymInfo.name} تولید شده است.
               <div style="margin-top: 5px;">${gymInfo.website}</div>
             </div>
           </div>
@@ -421,11 +508,11 @@ export function StudentDownloadDialog({
     printWindow.document.close();
     printWindow.focus();
 
-    // Wait for content to load
+    // Wait for content to load with fonts
     setTimeout(() => {
       printWindow.print();
       printWindow.close();
-    }, 1000);
+    }, 1500);
   };
 
   // Handle PDF export
@@ -435,18 +522,28 @@ export function StudentDownloadDialog({
       const printContent = document.getElementById("print-content");
       if (!printContent) return;
 
+      // Add custom fonts to jsPDF
+      const pdf = new jsPDF({
+        orientation: "p",
+        unit: "mm",
+        format: "a4",
+        compress: true,
+      });
+      
+      // Set PDF to right-to-left
+      pdf.setR2L(true);
+
       // Add the gym header temporarily to the content for capturing
       const tempHeader = document.createElement("div");
       tempHeader.className = "gym-header-for-pdf";
+      tempHeader.style.cssText = "text-align: center; margin-bottom: 20px; direction: rtl;";
       tempHeader.innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-          <div style="font-size: 24px; font-weight: bold; color: #4338ca; margin-bottom: 5px;">${gymInfo.name}</div>
-          <div style="font-size: 18px; color: #6b7280; margin-bottom: 5px;">${gymInfo.trainerName}</div>
-          <div style="font-size: 12px; color: #6b7280; display: flex; justify-content: center; gap: 15px;">
-            <span>${gymInfo.phone}</span>
-            <span>${gymInfo.address}</span>
-            <span>${gymInfo.instagram}</span>
-          </div>
+        <div style="font-size: 24px; font-weight: bold; color: #4338ca; margin-bottom: 5px; text-align: center;">${gymInfo.name}</div>
+        <div style="font-size: 18px; color: #6b7280; margin-bottom: 5px; text-align: center;">${gymInfo.trainerName}</div>
+        <div style="font-size: 12px; color: #6b7280; display: flex; justify-content: center; gap: 15px; text-align: center;">
+          <span>${gymInfo.phone}</span>
+          <span>${gymInfo.address}</span>
+          <span>${gymInfo.instagram}</span>
         </div>
       `;
       printContent.prepend(tempHeader);
@@ -454,34 +551,95 @@ export function StudentDownloadDialog({
       // Create a date div
       const dateDiv = document.createElement("div");
       dateDiv.className = "print-date-for-pdf";
-      dateDiv.style.textAlign = "left";
-      dateDiv.style.fontSize = "12px";
-      dateDiv.style.color = "#6b7280";
-      dateDiv.style.marginBottom = "10px";
+      dateDiv.style.cssText = "text-align: left; font-size: 12px; color: #6b7280; margin-bottom: 10px; direction: rtl;";
       dateDiv.innerHTML = `تاریخ: ${formatJalaliDate(new Date())}`;
       printContent.prepend(dateDiv);
 
       // Create a footer div
       const footerDiv = document.createElement("div");
       footerDiv.className = "print-footer-for-pdf";
-      footerDiv.style.marginTop = "30px";
-      footerDiv.style.textAlign = "center";
-      footerDiv.style.fontSize = "12px";
-      footerDiv.style.color = "#6b7280";
-      footerDiv.style.paddingTop = "10px";
-      footerDiv.style.borderTop = "1px solid #e5e7eb";
+      footerDiv.style.cssText = "margin-top: 30px; text-align: center; font-size: 12px; color: #6b7280; padding-top: 10px; border-top: 1px solid #e5e7eb; direction: rtl;";
       footerDiv.innerHTML = `
-        این گزارش به صورت خودکار توسط سیستم مدیریت باشگاه ${gymInfo.name} تولید شده است.
+        این گزارش به صورت خودکار توسط سیستم مدیریت ${gymInfo.name} تولید شده است.
         <div style="margin-top: 5px;">${gymInfo.website}</div>
       `;
       printContent.appendChild(footerDiv);
+
+      // Fix student image container styling
+      const studentImgContainers = printContent.querySelectorAll('.student-image-container');
+      studentImgContainers.forEach(container => {
+        (container as HTMLElement).style.display = 'flex';
+        (container as HTMLElement).style.justifyContent = 'center';
+        (container as HTMLElement).style.alignItems = 'center';
+      });
+
+      // Set explicit RTL direction on all elements
+      const allElements = printContent.querySelectorAll('*');
+      allElements.forEach(el => {
+        (el as HTMLElement).style.direction = 'rtl';
+        (el as HTMLElement).style.textAlign = 'right';
+      });
+      
+      // Replace SVG icons with emoji characters for better PDF rendering
+      const svgIcons = printContent.querySelectorAll('svg');
+      svgIcons.forEach((svg) => {
+        const span = document.createElement('span');
+        span.className = 'icon-replacement';
+        
+        if (svg.classList.contains('lucide-phone')) {
+          span.innerHTML = '📞';
+          span.className += ' icon-phone';
+        } else if (svg.classList.contains('lucide-ruler')) {
+          span.innerHTML = '📏';
+          span.className += ' icon-height';
+        } else if (svg.classList.contains('lucide-weight')) {
+          span.innerHTML = '⚖️';
+          span.className += ' icon-weight';
+        } else if (svg.classList.contains('lucide-dumbbell')) {
+          span.innerHTML = '🏋️';
+          span.className += ' icon-exercise';
+        } else if (svg.classList.contains('lucide-apple')) {
+          span.innerHTML = '🍎';
+          span.className += ' icon-diet';
+        } else if (svg.classList.contains('lucide-pill')) {
+          span.innerHTML = '💊';
+          span.className += ' icon-supplement';
+        } else if (svg.classList.contains('lucide-calendar')) {
+          span.innerHTML = '📅';
+          span.className += ' calendar-icon';
+        } else {
+          span.innerHTML = '•';
+        }
+        
+        svg.parentNode?.replaceChild(span, svg);
+      });
 
       const canvas = await html2canvas(printContent, {
         scale: 2,
         useCORS: true,
         logging: false,
-        windowWidth: 1200,
-        width: 1200,
+        width: 800,
+        height: printContent.scrollHeight,
+        windowWidth: 1000,
+        onclone: (doc, element) => {
+          // Apply RTL and font styles to the cloned document
+          const style = doc.createElement('style');
+          style.innerHTML = `
+            * {
+              direction: rtl !important;
+              text-align: right !important;
+              font-family: Tahoma, Arial, sans-serif !important;
+            }
+          `;
+          doc.head.appendChild(style);
+          
+          // Set RTL on all elements
+          const allElements = element.querySelectorAll('*');
+          allElements.forEach(el => {
+            (el as HTMLElement).style.direction = 'rtl';
+            (el as HTMLElement).style.textAlign = 'right';
+          });
+        }
       });
 
       // Remove the temporary elements
@@ -494,15 +652,10 @@ export function StudentDownloadDialog({
       const tempFooterElement = printContent.querySelector(".print-footer-for-pdf");
       if (tempFooterElement) tempFooterElement.remove();
 
-      const imgData = canvas.toDataURL("image/jpeg", 1.0);
-      const pdf = new jsPDF({
-        orientation: "p",
-        unit: "mm",
-        format: "a4",
-      });
+      // Restore SVG icons
+      // This step is unnecessary as we'll reload the component after export
       
-      // Set PDF to right-to-left
-      pdf.setR2L(true);
+      const imgData = canvas.toDataURL("image/jpeg", 0.95);
       
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -510,16 +663,52 @@ export function StudentDownloadDialog({
       const imgHeight = canvas.height;
       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
       const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 10;
+      let imgY = 10;
 
-      pdf.addImage(
-        imgData,
-        "JPEG",
-        imgX,
-        imgY,
-        imgWidth * ratio,
-        imgHeight * ratio
-      );
+      // If image is too tall, split it across multiple pages
+      const maxHeight = pdfHeight - 20; // margins
+      const totalPages = Math.ceil(imgHeight * ratio / maxHeight);
+      
+      if (totalPages <= 1) {
+        // Image fits on one page
+        pdf.addImage(
+          imgData,
+          "JPEG",
+          imgX,
+          imgY,
+          imgWidth * ratio,
+          imgHeight * ratio
+        );
+      } else {
+        // Image needs multiple pages
+        for (let i = 0; i < totalPages; i++) {
+          if (i > 0) {
+            pdf.addPage();
+          }
+          
+          // Calculate which part of the image to show on this page
+          const sourceY = i * maxHeight / ratio;
+          const sourceHeight = Math.min(maxHeight / ratio, imgHeight - sourceY);
+          
+          pdf.addImage(
+            imgData,
+            "JPEG",
+            imgX,
+            imgY,
+            imgWidth * ratio,
+            sourceHeight * ratio,
+            null,
+            'FAST',
+            0,
+            {
+              srcX: 0,
+              srcY: sourceY,
+              srcWidth: imgWidth,
+              srcHeight: sourceHeight
+            }
+          );
+        }
+      }
 
       pdf.save(`${student.name}_${gymInfo.name}_report.pdf`);
 
@@ -762,25 +951,39 @@ export function StudentDownloadDialog({
                   {selectedOptions.personalInfo && (
                     <div className="print-section">
                       <div className="student-header">
-                        <img
-                          src={student.image || "/placeholder.svg"}
-                          alt={student.name}
-                          className="student-image"
-                        />
+                        <div className="student-image-container">
+                          <Avatar className="w-24 h-24 border-4 border-indigo-500">
+                            <AvatarImage 
+                              src={student.image || "/placeholder.svg"}
+                              alt={student.name}
+                              className="object-cover"
+                            />
+                            <AvatarFallback className="text-xl font-bold">
+                              {student.name?.charAt(0) || 'S'}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
                         <div className="student-info">
                           <h2 className="student-name">{student.name}</h2>
                           <p className="student-detail">
-                            <Phone className="h-4 w-4 text-indigo-500" />
+                            <Phone className="h-4 w-4 text-indigo-500 lucide-phone" />
                             <span className="font-medium ml-1">شماره تماس:</span>
                             {toPersianNumbers(student.phone)}
                           </p>
                           <p className="student-detail">
+                            <Ruler className="h-4 w-4 text-blue-500 lucide-ruler" />
                             <span className="font-medium ml-1">قد:</span>
                             {toPersianNumbers(student.height)} سانتی‌متر
                           </p>
                           <p className="student-detail">
+                            <Weight className="h-4 w-4 text-amber-500 lucide-weight" />
                             <span className="font-medium ml-1">وزن:</span>
                             {toPersianNumbers(student.weight)} کیلوگرم
+                          </p>
+                          <p className="student-detail">
+                            <Calendar className="h-4 w-4 text-green-500 lucide-calendar" />
+                            <span className="font-medium ml-1">تاریخ گزارش:</span>
+                            {formatJalaliDate(new Date())}
                           </p>
                         </div>
                       </div>
@@ -791,7 +994,7 @@ export function StudentDownloadDialog({
                     <div className="print-section">
                       <h3 className="print-header">
                         <div className="flex items-center">
-                          <Dumbbell className="h-5 w-5 ml-2 text-blue-600" />
+                          <Dumbbell className="h-5 w-5 ml-2 text-blue-600 lucide-dumbbell" />
                           برنامه تمرینی
                         </div>
                       </h3>
@@ -839,7 +1042,7 @@ export function StudentDownloadDialog({
                     <div className="print-section">
                       <h3 className="print-header">
                         <div className="flex items-center">
-                          <Apple className="h-5 w-5 ml-2 text-green-600" />
+                          <Apple className="h-5 w-5 ml-2 text-green-600 lucide-apple" />
                           برنامه غذایی
                         </div>
                       </h3>
@@ -894,7 +1097,7 @@ export function StudentDownloadDialog({
                     <div className="print-section">
                       <h3 className="print-header">
                         <div className="flex items-center">
-                          <Pill className="h-5 w-5 ml-2 text-purple-600" />
+                          <Pill className="h-5 w-5 ml-2 text-purple-600 lucide-pill" />
                           مکمل‌ها و ویتامین‌ها
                         </div>
                       </h3>
@@ -1010,4 +1213,3 @@ export function StudentDownloadDialog({
     </Dialog>
   );
 }
-
