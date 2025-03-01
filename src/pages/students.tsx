@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -555,7 +554,7 @@ const StudentsPage = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center justify-end gap-1">
                           <Button
                             variant="ghost"
                             size="icon"

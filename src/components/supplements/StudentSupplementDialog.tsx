@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -85,7 +86,6 @@ export function StudentSupplementDialog({
 
   // Filter supplements based on search query and category
   useEffect(() => {
-    // Fix: Match item.type with the corresponding value based on currentTab
     let filtered = supplements.filter(item => 
       currentTab === "supplements" ? item.type === "supplement" : item.type === "vitamin"
     );
