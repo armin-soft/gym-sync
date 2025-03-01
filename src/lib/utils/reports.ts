@@ -28,6 +28,38 @@ export const calculateGrowth = (current: number, previous: number) => {
 };
 
 /**
+ * تبدیل تاریخ میلادی به تاریخ شمسی
+ */
+export const formatJalaliDate = (date: Date): string => {
+  // ماه‌های شمسی
+  const jalaliMonths = [
+    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+  ];
+  
+  // تبدیل ساده (برای نمایش)
+  const gregorianYear = date.getFullYear();
+  const gregorianMonth = date.getMonth();
+  const gregorianDay = date.getDate();
+  
+  // محاسبه تقریبی سال شمسی (برای نمایش)
+  let jalaliYear = gregorianYear - 622;
+  let jalaliMonth = gregorianMonth + 1;
+  let jalaliDay = gregorianDay;
+  
+  // تنظیم ماه‌ها (تقریبی)
+  if (gregorianMonth < 2) {
+    jalaliMonth = gregorianMonth + 10;
+    jalaliYear = gregorianYear - 622;
+  } else {
+    jalaliMonth = gregorianMonth - 2;
+    jalaliYear = gregorianYear - 621;
+  }
+  
+  return `${jalaliDay} ${jalaliMonths[jalaliMonth]} ${jalaliYear}`;
+};
+
+/**
  * ایجاد داده‌های تاریخی
  */
 export const generateHistoricalData = (currentMonthStudents: any[], prevMonthStudents: any[], prevMonthSupplements: any[], prevMonthMeals: any[], exercises: any[], supplements: any[], meals: any[]) => {
