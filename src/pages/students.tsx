@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -26,7 +27,7 @@ import {
   Trophy,
   Dumbbell,
   Apple,
-  Pill, // Changed from Pills to Pill
+  Pill,
 } from "lucide-react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
@@ -508,7 +509,7 @@ const StudentsPage = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  sortedAndFilteredStudents.map((student, index) => (
+                  sortedAndFilteredStudents.map((student) => (
                     <TableRow 
                       key={student.id} 
                       className="group transition-all duration-300 hover:bg-primary/5"
