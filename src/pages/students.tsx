@@ -26,7 +26,7 @@ import {
   Trophy,
   Dumbbell,
   Apple,
-  Pills,
+  Pill, // Changed from Pills to Pill
 } from "lucide-react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
