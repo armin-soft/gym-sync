@@ -64,6 +64,34 @@ export const StatsSummary = ({ data, growthData }: StatsSummaryProps) => {
           </div>
         </div>
       </Card>
+      
+      {growthData?.برنامه_غذایی !== undefined && (
+        <Card className="p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 border-none">
+          <div className="flex flex-col space-y-2">
+            <span className="text-xs text-emerald-700">میانگین برنامه‌های غذایی</span>
+            <div className="flex items-baseline">
+              <span className="text-2xl font-bold text-emerald-800">
+                {toPersianNumbers(Math.round(data.reduce((sum, item) => sum + (item.برنامه_غذایی || 0), 0) / data.length))}
+              </span>
+              <span className="text-xs text-emerald-700 mr-1">برنامه</span>
+            </div>
+          </div>
+        </Card>
+      )}
+      
+      {growthData?.مکمل_ها !== undefined && (
+        <Card className="p-4 bg-gradient-to-br from-pink-50 to-pink-100 border-none">
+          <div className="flex flex-col space-y-2">
+            <span className="text-xs text-pink-700">مصرف مکمل و ویتامین</span>
+            <div className="flex items-baseline">
+              <span className="text-2xl font-bold text-pink-800">
+                {toPersianNumbers(Math.round(data.reduce((sum, item) => sum + (item.مکمل_ها || 0), 0) / data.length))}
+              </span>
+              <span className="text-xs text-pink-700 mr-1">مورد</span>
+            </div>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };

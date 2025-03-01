@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -26,9 +25,13 @@ import {
   LineChart,
   Trophy,
   Dumbbell,
+  Apple,
+  Pills,
 } from "lucide-react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
+import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
+import { StudentSupplementDialog } from "@/components/supplements/StudentSupplementDialog";
 import { Input } from "@/components/ui/input";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -47,6 +50,9 @@ interface Student {
   weight: string;
   image: string;
   exercises?: number[]; // آرایه‌ای از شناسه‌های تمرین‌ها
+  meals?: number[]; // آرایه‌ای از شناسه‌های وعده‌های غذایی
+  supplements?: number[]; // آرایه‌ای از شناسه‌های مکمل‌ها
+  vitamins?: number[]; // آرایه‌ای از شناسه‌های ویتامین‌ها
 }
 
 const StudentsPage = () => {
@@ -56,7 +62,11 @@ const StudentsPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
+  const [isDietDialogOpen, setIsDietDialogOpen] = useState(false);
+  const [isSupplementDialogOpen, setIsSupplementDialogOpen] = useState(false);
   const [selectedStudentForExercise, setSelectedStudentForExercise] = useState<Student | null>(null);
+  const [selectedStudentForDiet, setSelectedStudentForDiet] = useState<Student | null>(null);
+  const [selectedStudentForSupplement, setSelectedStudentForSupplement] = useState<Student | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
 
@@ -77,7 +87,10 @@ const StudentsPage = () => {
             height: student.height || '',
             weight: student.weight || '',
             image: student.image || '/placeholder.svg',
-            exercises: student.exercises || []
+            exercises: student.exercises || [],
+            meals: student.meals || [],
+            supplements: student.supplements || [],
+            vitamins: student.vitamins || []
           }));
           
           console.log('Processed students:', processedStudents);
@@ -146,12 +159,12 @@ const StudentsPage = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSave = (data: Omit<Student, "id" | "exercises">) => {
+  const handleSave = (data: Omit<Student, "id" | "exercises" | "meals" | "supplements" | "vitamins">) => {
     let updatedStudents: Student[];
     
     if (selectedStudent) {
       updatedStudents = students.map((s) =>
-        s.id === selectedStudent.id ? { ...s, ...data, exercises: s.exercises || [] } : s
+        s.id === selectedStudent.id ? { ...s, ...data, exercises: s.exercises || [], meals: s.meals || [], supplements: s.supplements || [], vitamins: s.vitamins || [] } : s
       );
       toast({
         title: "ویرایش موفق",
@@ -161,7 +174,10 @@ const StudentsPage = () => {
       const newStudent: Student = {
         ...data,
         id: Math.max(0, ...students.map((s) => s.id)) + 1,
-        exercises: []
+        exercises: [],
+        meals: [],
+        supplements: [],
+        vitamins: []
       };
       updatedStudents = [...students, newStudent];
       toast({
@@ -177,6 +193,16 @@ const StudentsPage = () => {
   const handleAddExercise = (student: Student) => {
     setSelectedStudentForExercise(student);
     setIsExerciseDialogOpen(true);
+  };
+  
+  const handleAddDiet = (student: Student) => {
+    setSelectedStudentForDiet(student);
+    setIsDietDialogOpen(true);
+  };
+  
+  const handleAddSupplement = (student: Student) => {
+    setSelectedStudentForSupplement(student);
+    setIsSupplementDialogOpen(true);
   };
   
   // تابع برای به‌روزرسانی تمرین‌های شاگرد
@@ -197,6 +223,49 @@ const StudentsPage = () => {
     toast({
       title: "افزودن موفق",
       description: "تمرین‌ها با موفقیت به شاگرد اضافه شدند"
+    });
+  };
+  
+  // تابع برای به‌روزرسانی برنامه غذایی شاگرد
+  const handleSaveDiet = (mealIds: number[]) => {
+    if (!selectedStudentForDiet) return;
+    
+    const updatedStudents = students.map(student => {
+      if (student.id === selectedStudentForDiet.id) {
+        return {
+          ...student,
+          meals: mealIds
+        };
+      }
+      return student;
+    });
+    
+    setStudents(updatedStudents);
+    toast({
+      title: "افزودن موفق",
+      description: "برنامه غذایی با موفقیت به شاگرد اضافه شد"
+    });
+  };
+  
+  // تابع برای به‌روزرسانی مکمل‌ها و ویتامین‌های شاگرد
+  const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}) => {
+    if (!selectedStudentForSupplement) return;
+    
+    const updatedStudents = students.map(student => {
+      if (student.id === selectedStudentForSupplement.id) {
+        return {
+          ...student,
+          supplements: data.supplements,
+          vitamins: data.vitamins
+        };
+      }
+      return student;
+    });
+    
+    setStudents(updatedStudents);
+    toast({
+      title: "افزودن موفق",
+      description: "مکمل‌ها و ویتامین‌ها با موفقیت به شاگرد اضافه شدند"
     });
   };
 
@@ -377,9 +446,8 @@ const StudentsPage = () => {
                     </div>
                   </TableHead>
                   <TableHead>
-                    <div className="flex items-center gap-2">
-                      <Dumbbell className="h-4 w-4 text-muted-foreground" />
-                      تعداد تمرین‌ها
+                    <div className="flex items-center gap-2 justify-center">
+                      برنامه‌ها
                     </div>
                   </TableHead>
                   <TableHead className="text-left">عملیات</TableHead>
@@ -464,19 +532,35 @@ const StudentsPage = () => {
                       <TableCell>{toPersianNumbers(student.height)}</TableCell>
                       <TableCell>{toPersianNumbers(student.weight)}</TableCell>
                       <TableCell>
-                        <div className="flex items-center">
-                          <span className="bg-blue-100 text-blue-800 font-medium px-2.5 py-0.5 rounded-full text-xs">
-                            {toPersianNumbers(student.exercises?.length || 0)}
-                          </span>
+                        <div className="flex items-center justify-center gap-3">
+                          <div className="flex flex-col items-center">
+                            <div className="bg-blue-100 text-blue-800 font-medium size-6 flex items-center justify-center rounded-full text-xs">
+                              {toPersianNumbers(student.exercises?.length || 0)}
+                            </div>
+                            <span className="text-xs text-gray-500 mt-1">تمرین</span>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <div className="bg-green-100 text-green-800 font-medium size-6 flex items-center justify-center rounded-full text-xs">
+                              {toPersianNumbers(student.meals?.length || 0)}
+                            </div>
+                            <span className="text-xs text-gray-500 mt-1">غذا</span>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <div className="bg-purple-100 text-purple-800 font-medium size-6 flex items-center justify-center rounded-full text-xs">
+                              {toPersianNumbers((student.supplements?.length || 0) + (student.vitamins?.length || 0))}
+                            </div>
+                            <span className="text-xs text-gray-500 mt-1">مکمل</span>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleEdit(student)}
                             className="size-8 hover:bg-primary/10 hover:text-primary"
+                            title="ویرایش شاگرد"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -485,6 +569,7 @@ const StudentsPage = () => {
                             size="icon"
                             onClick={() => handleDelete(student.id)}
                             className="size-8 hover:bg-destructive/10 hover:text-destructive"
+                            title="حذف شاگرد"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -493,8 +578,27 @@ const StudentsPage = () => {
                             size="icon"
                             onClick={() => handleAddExercise(student)}
                             className="size-8 hover:bg-blue-500/10 hover:text-blue-500"
+                            title="مدیریت تمرین‌ها"
                           >
                             <Dumbbell className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleAddDiet(student)}
+                            className="size-8 hover:bg-green-500/10 hover:text-green-500"
+                            title="مدیریت برنامه غذایی"
+                          >
+                            <Apple className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleAddSupplement(student)}
+                            className="size-8 hover:bg-purple-500/10 hover:text-purple-500"
+                            title="مدیریت مکمل‌ها و ویتامین‌ها"
+                          >
+                            <Pills className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -519,6 +623,25 @@ const StudentsPage = () => {
           studentName={selectedStudentForExercise?.name || ""}
           onSave={handleSaveExercises}
           initialExercises={selectedStudentForExercise?.exercises || []}
+        />
+        
+        <StudentDietDialog
+          open={isDietDialogOpen}
+          onOpenChange={setIsDietDialogOpen}
+          studentName={selectedStudentForDiet?.name || ""}
+          onSave={handleSaveDiet}
+          initialMeals={selectedStudentForDiet?.meals || []}
+        />
+        
+        <StudentSupplementDialog
+          open={isSupplementDialogOpen}
+          onOpenChange={setIsSupplementDialogOpen}
+          studentName={selectedStudentForSupplement?.name || ""}
+          onSave={handleSaveSupplements}
+          initialData={{
+            supplements: selectedStudentForSupplement?.supplements || [],
+            vitamins: selectedStudentForSupplement?.vitamins || []
+          }}
         />
       </div>
     </div>
