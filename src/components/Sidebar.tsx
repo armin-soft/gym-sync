@@ -74,7 +74,7 @@ const sidebarItems: SidebarItem[] = [
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
-  const [gymName, setGymName] = useState("مدیریت برنامه تمرینی");
+  const [gymName, setGymName] = useState("مدیریت برنامه");
   
   const loadGymName = () => {
     const savedProfile = localStorage.getItem('trainerProfile');
@@ -82,7 +82,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       try {
         const profile = JSON.parse(savedProfile);
         if (profile.gymName) {
-          setGymName(profile.gymName);
+          setGymName(`مدیریت برنامه ${profile.gymName}`);
         }
       } catch (error) {
         console.error('Error loading gym name from localStorage:', error);

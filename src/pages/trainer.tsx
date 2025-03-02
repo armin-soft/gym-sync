@@ -21,7 +21,7 @@ const TrainerProfile = () => {
         const parsed = JSON.parse(savedProfile);
         // Handle migration from old profile structure to new one
         if (!parsed.gymName) {
-          parsed.gymName = "باشگاه بدنسازی فیکس";
+          parsed.gymName = "";
           parsed.gymDescription = "مرکز تخصصی آمادگی جسمانی و بدنسازی";
           parsed.gymAddress = "تهران، خیابان ولیعصر، پلاک ۱۲۸";
         }
