@@ -17,9 +17,7 @@ import {
   Database,
   HelpCircle,
   TrendingUp,
-  BarChart3,
-  Medal,
-  Heart
+  BarChart3
 } from "lucide-react";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Achievements } from "@/components/dashboard/Achievements";
@@ -62,6 +60,7 @@ const Index = () => {
     }
   }, []);
 
+  // Animation variants
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -233,12 +232,10 @@ const Index = () => {
                   </Badge>
                   <Badge 
                     variant="outline" 
-                    className={`border-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-white ${
-                      stats.totalStudents > 0 ? 'bg-emerald-500/20' : 'bg-amber-500/20'
-                    }`}
+                    className="border-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-white bg-emerald-500/20"
                   >
                     <Activity className="w-3.5 h-3.5 ml-1.5" />
-                    {stats.totalStudents > 0 ? 'در حال فعالیت' : 'در انتظار'}
+                    در حال فعالیت
                   </Badge>
                 </motion.div>
               </motion.div>
@@ -303,7 +300,7 @@ const Index = () => {
               animate="show"
               className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3"
             >
-              {dashboardItems.map((item, index) => (
+              {dashboardItems.map((item) => (
                 <motion.div key={item.href} variants={item}>
                   <Link 
                     to={item.href}
@@ -484,64 +481,6 @@ const Index = () => {
           >
             <Achievements stats={stats} />
           </motion.div>
-          
-          {/* کارت برتر */}
-          <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-slate-200 dark:border-slate-800 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30">
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/50">
-                    <Medal className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  <h3 className="font-semibold">تمرینات برتر</h3>
-                </div>
-                <Badge variant="outline" className="bg-white/50 dark:bg-white/5">جدید</Badge>
-              </div>
-              
-              <div className="mt-4 space-y-3">
-                <div className="bg-white dark:bg-slate-800/50 p-3 rounded-lg shadow-sm flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/30">
-                    <Dumbbell className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium">تمرینات قدرتی</h4>
-                    <div className="flex items-center justify-between mt-1">
-                      <div className="h-1.5 flex-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden mr-2">
-                        <div className="h-full bg-amber-500 rounded-full" style={{ width: '75%' }} />
-                      </div>
-                      <span className="text-xs font-medium">۷۵٪</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-white dark:bg-slate-800/50 p-3 rounded-lg shadow-sm flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-red-100 dark:bg-red-900/30">
-                    <Heart className="w-4 h-4 text-red-600 dark:text-red-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium">تمرینات قلبی-عروقی</h4>
-                    <div className="flex items-center justify-between mt-1">
-                      <div className="h-1.5 flex-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden mr-2">
-                        <div className="h-full bg-red-500 rounded-full" style={{ width: '60%' }} />
-                      </div>
-                      <span className="text-xs font-medium">۶۰٪</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <Button 
-                variant="outline"
-                className="w-full mt-4 bg-white dark:bg-slate-900/50"
-                asChild
-              >
-                <Link to="/Exercise-Movements">
-                  <span>مشاهده همه تمرینات</span>
-                  <ArrowRight className="w-4 h-4 mr-1" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
         </motion.div>
       </div>
     </motion.div>
