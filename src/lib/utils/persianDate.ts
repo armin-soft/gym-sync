@@ -13,8 +13,10 @@ export function formatPersianDateForFilename(): string {
   const minutes = now.getMinutes();
   const seconds = now.getSeconds();
   
-  // Convert to Persian year (approximately)
-  const persianYear = year - 621;
+  // Calculate Persian year based on month
+  // If we're in the first 3 months of Gregorian year, we're in the previous Persian year
+  const isPreviousPersianYear = month <= 3;
+  const persianYear = year - 621 - (isPreviousPersianYear ? 1 : 0);
   
   // Very simplified conversion (this is not accurate for all dates)
   // For a proper implementation, a complete Jalali calendar conversion library would be needed
@@ -24,9 +26,6 @@ export function formatPersianDateForFilename(): string {
   // Adjust for year boundary
   if (persianMonth > 12) {
     persianMonth -= 12;
-  } else {
-    // If we're in the first 3 months of Gregorian year, we're in the previous Persian year
-    persianYear -= 1;
   }
   
   // Format all components as 2-digit numbers with leading zeros
