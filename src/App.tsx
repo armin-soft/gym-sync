@@ -11,13 +11,14 @@ import DietPlan from "@/pages/diet";
 import SupplementsVitamins from "@/pages/supplements";
 import Reports from "@/pages/reports";
 import About from "@/pages/about";
+import BackupRestore from "@/pages/backup";
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
+      <Routes>
+        <Route element={<Layout />}>
           <Route path="/" element={<Index />} />
           <Route path="/Coach-Profile" element={<TrainerProfile />} />
           <Route path="/Students" element={<Students />} />
@@ -25,10 +26,11 @@ function App() {
           <Route path="/Diet-Plan" element={<DietPlan />} />
           <Route path="/Supplements-Vitamins" element={<SupplementsVitamins />} />
           <Route path="/Reports" element={<Reports />} />
+          <Route path="/Backup-Restore" element={<BackupRestore />} />
           <Route path="/About" element={<About />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
+        </Route>
+      </Routes>
       <Toaster />
     </BrowserRouter>
   );
