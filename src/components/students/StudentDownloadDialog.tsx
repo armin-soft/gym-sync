@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { TrainerProfile } from "@/types/trainer";
 
-// افزودن type declarations برای jspdf-autotable
+// Add type declarations for jspdf-autotable
 declare module 'jspdf' {
   interface jsPDF {
     autoTable: (options: any) => jsPDF;
@@ -45,14 +45,14 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
   const [isProfileComplete, setIsProfileComplete] = useState(false);
 
   useEffect(() => {
-    // خواندن اطلاعات مربی از localStorage
+    // Load trainer profile from localStorage
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
         const profile = JSON.parse(savedProfile);
         setTrainerProfile(profile);
         
-        // بررسی کامل بودن اطلاعات باشگاه
+        // Check if gym info is complete
         setIsProfileComplete(
           !!profile && 
           !!profile.gymName && profile.gymName.trim() !== '' && 
@@ -84,24 +84,24 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
     }
 
     try {
-      // استفاده از jsPDF با تنظیمات فارسی
+      // Create PDF with jsPDF
       const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4"
       });
 
-      // اطلاعات باشگاه در بالای صفحه
+      // Add gym info at the top
       doc.setFontSize(18);
-      doc.setTextColor("#003049");
+      doc.setTextColor(0, 48, 73); // #003049
       doc.text(`${trainerProfile.gymName}`, 15, 15);
       
       doc.setFontSize(12);
-      doc.setTextColor("#667788");
+      doc.setTextColor(102, 119, 136); // #667788
       doc.text(`آدرس: ${trainerProfile.gymAddress}`, 15, 22);
       
       if (trainerProfile.phone) {
-        doc.text(`تلفن: ${trainerProfile.phone}`, 15, 29);
+        doc.text(`تلفن: ${toPersianNumbers(trainerProfile.phone)}`, 15, 29);
       }
       
       let contactLine = "";
@@ -117,14 +117,14 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         doc.text(contactLine, 15, 36);
       }
 
-      // عنوان اصلی
+      // Main title
       doc.setFontSize(22);
-      doc.setTextColor("#003049");
+      doc.setTextColor(0, 48, 73); // #003049
       doc.text(`پروفایل شاگرد: ${student.name}`, 15, 50);
 
-      // اطلاعات فردی
+      // Personal information
       doc.setFontSize(16);
-      doc.setTextColor("#667788");
+      doc.setTextColor(102, 119, 136); // #667788
       doc.text("اطلاعات فردی", 15, 65);
 
       const personalData = [
@@ -138,10 +138,10 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         body: personalData,
         startY: 70,
         styles: {
-          font: "IRANSans",
+          font: "courier",
           fontSize: 12,
-          textColor: "#333",
-          lineColor: "#003049",
+          textColor: [51, 51, 51],
+          lineColor: [0, 48, 73],
           lineWidth: 0.2
         },
         columnStyles: {
@@ -149,18 +149,18 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
           1: { halign: "right" }
         },
         headerStyles: {
-          fillColor: "#003049",
-          textColor: "#fff",
+          fillColor: [0, 48, 73],
+          textColor: [255, 255, 255],
           fontStyle: "normal"
         }
       });
 
       let currentY = doc.lastAutoTable.finalY + 15;
 
-      // تمرینات
+      // Exercise program
       if (student.exercises && student.exercises.length > 0 && exercises && exercises.length > 0) {
         doc.setFontSize(16);
-        doc.setTextColor("#667788");
+        doc.setTextColor(102, 119, 136); // #667788
         doc.text("برنامه تمرینی", 15, currentY);
 
         const studentExercises = exercises.filter((exercise) => 
@@ -179,10 +179,10 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
           body: exerciseData,
           startY: currentY,
           styles: {
-            font: "IRANSans",
+            font: "courier",
             fontSize: 12,
-            textColor: "#333",
-            lineColor: "#003049",
+            textColor: [51, 51, 51],
+            lineColor: [0, 48, 73],
             lineWidth: 0.2
           },
           columnStyles: {
@@ -190,8 +190,8 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
             1: { halign: "right" }
           },
           headerStyles: {
-            fillColor: "#003049",
-            textColor: "#fff",
+            fillColor: [0, 48, 73],
+            textColor: [255, 255, 255],
             fontStyle: "normal"
           }
         });
@@ -199,10 +199,10 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         currentY = doc.lastAutoTable.finalY + 15;
       }
 
-      // برنامه غذایی
+      // Diet program
       if (student.meals && student.meals.length > 0 && meals && meals.length > 0) {
         doc.setFontSize(16);
-        doc.setTextColor("#667788");
+        doc.setTextColor(102, 119, 136); // #667788
         doc.text("برنامه غذایی", 15, currentY);
 
         const studentMeals = meals.filter((meal) => 
@@ -221,10 +221,10 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
           body: mealData,
           startY: currentY,
           styles: {
-            font: "IRANSans",
+            font: "courier",
             fontSize: 12,
-            textColor: "#333",
-            lineColor: "#003049",
+            textColor: [51, 51, 51],
+            lineColor: [0, 48, 73],
             lineWidth: 0.2
           },
           columnStyles: {
@@ -232,8 +232,8 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
             1: { halign: "right" }
           },
           headerStyles: {
-            fillColor: "#003049",
-            textColor: "#fff",
+            fillColor: [0, 48, 73],
+            textColor: [255, 255, 255],
             fontStyle: "normal"
           }
         });
@@ -241,13 +241,13 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         currentY = doc.lastAutoTable.finalY + 15;
       }
 
-      // مکمل‌ها و ویتامین‌ها
+      // Supplements and vitamins
       if ((student.supplements && student.supplements.length > 0) || 
           (student.vitamins && student.vitamins.length > 0) && 
           supplements && supplements.length > 0) {
         
         doc.setFontSize(16);
-        doc.setTextColor("#667788");
+        doc.setTextColor(102, 119, 136); // #667788
         doc.text("مکمل‌ها و ویتامین‌ها", 15, currentY);
 
         const supplementData = supplements
@@ -268,10 +268,10 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
             body: supplementData,
             startY: currentY,
             styles: {
-              font: "IRANSans",
+              font: "courier",
               fontSize: 12,
-              textColor: "#333",
-              lineColor: "#003049",
+              textColor: [51, 51, 51],
+              lineColor: [0, 48, 73],
               lineWidth: 0.2
             },
             columnStyles: {
@@ -279,15 +279,15 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
               1: { halign: "right" }
             },
             headerStyles: {
-              fillColor: "#003049",
-              textColor: "#fff",
+              fillColor: [0, 48, 73],
+              textColor: [255, 255, 255],
               fontStyle: "normal"
             }
           });
         }
       }
 
-      // ذخیره فایل PDF
+      // Save the PDF file
       doc.save(`profile_${student.name}.pdf`);
       toast({
         title: "دانلود موفق",
@@ -324,7 +324,7 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
     }
 
     try {
-      // ایجاد یک صفحه جدید برای چاپ
+      // Create a new window for printing
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
         toast({
@@ -335,12 +335,15 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         return;
       }
 
-      // محتوای HTML برای چاپ
+      // HTML content for printing
       printWindow.document.write(`
         <html dir="rtl">
         <head>
           <title>اطلاعات شاگرد: ${student.name}</title>
           <style>
+            @media print {
+              @page { size: A4; margin: 1cm; }
+            }
             body {
               font-family: 'Tahoma', 'Arial', sans-serif;
               margin: 20px;
@@ -400,12 +403,19 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
               padding: 5px;
               border-bottom: 1px dashed #eee;
             }
+            .print-button {
+              padding: 10px 20px;
+              background-color: #003049;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-family: 'Tahoma', sans-serif;
+              margin: 20px auto;
+              display: block;
+            }
             @media print {
-              body {
-                padding: 0;
-                margin: 0;
-              }
-              button {
+              .print-button {
                 display: none;
               }
             }
@@ -415,7 +425,7 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
           <div class="header">
             <div class="gym-name">${trainerProfile.gymName}</div>
             <div class="gym-info">آدرس: ${trainerProfile.gymAddress}</div>
-            ${trainerProfile.phone ? `<div class="gym-info">تلفن: ${trainerProfile.phone}</div>` : ''}
+            ${trainerProfile.phone ? `<div class="gym-info">تلفن: ${toPersianNumbers(trainerProfile.phone)}</div>` : ''}
             ${trainerProfile.website ? `<div class="gym-info">وب‌سایت: ${trainerProfile.website}</div>` : ''}
             ${trainerProfile.instagram ? `<div class="gym-info">اینستاگرام: ${trainerProfile.instagram}</div>` : ''}
           </div>
@@ -443,7 +453,7 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
           </table>
       `);
 
-      // افزودن بخش برنامه تمرینی اگر وجود دارد
+      // Add exercise section if exists
       if (student.exercises && student.exercises.length > 0 && exercises && exercises.length > 0) {
         const studentExercises = exercises.filter(exercise => 
           student.exercises?.includes(exercise.id)
@@ -472,7 +482,7 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         }
       }
 
-      // افزودن بخش برنامه غذایی اگر وجود دارد
+      // Add diet section if exists
       if (student.meals && student.meals.length > 0 && meals && meals.length > 0) {
         const studentMeals = meals.filter(meal => 
           student.meals?.includes(meal.id)
@@ -501,7 +511,7 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         }
       }
 
-      // افزودن بخش مکمل‌ها و ویتامین‌ها اگر وجود دارد
+      // Add supplements section if exists
       if (((student.supplements && student.supplements.length > 0) || 
           (student.vitamins && student.vitamins.length > 0)) && 
           supplements && supplements.length > 0) {
@@ -534,22 +544,22 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         }
       }
 
-      // پایان HTML و دستور چاپ
+      // End HTML and add print command
       printWindow.document.write(`
-          <div style="text-align: center; margin-top: 30px;">
-            <button onclick="window.print();" style="padding: 10px 20px; background-color: #003049; color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Tahoma', sans-serif;">چاپ</button>
-          </div>
+          <button onclick="window.print();" class="print-button">چاپ</button>
         </body>
         </html>
       `);
 
       printWindow.document.close();
-      printWindow.focus();
       
-      // اجرای اتوماتیک دستور چاپ بعد از بارگذاری کامل صفحه
-      setTimeout(() => {
-        printWindow.print();
-      }, 1000);
+      // Auto-trigger print after window loads
+      printWindow.onload = function() {
+        setTimeout(() => {
+          printWindow.focus();
+          printWindow.print();
+        }, 1000);
+      };
 
       toast({
         title: "آماده برای چاپ",
@@ -676,7 +686,7 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         <div className="flex justify-end gap-2">
           <Button 
             onClick={handlePrint}
-            className="bg-blue-500 text-white flex items-center gap-1" 
+            className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1" 
             disabled={!isProfileComplete}
           >
             <Printer size={16} />
@@ -684,7 +694,7 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
           </Button>
           <Button 
             onClick={handleDownload}
-            className="bg-indigo-500 text-white flex items-center gap-1" 
+            className="bg-indigo-500 hover:bg-indigo-600 text-white flex items-center gap-1" 
             disabled={!isProfileComplete}
           >
             <Download size={16} />
