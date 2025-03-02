@@ -21,6 +21,8 @@ import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+import type { TrainerProfile } from "@/types/trainer";
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -51,6 +53,20 @@ export const StudentDownloadDialog = ({
   vitamins,
 }: StudentDownloadDialogProps) => {
   const { toast } = useToast();
+  const [trainerProfile, setTrainerProfile] = useState<TrainerProfile | null>(null);
+
+  // Load trainer profile from localStorage
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const parsed = JSON.parse(savedProfile);
+        setTrainerProfile(parsed);
+      } catch (error) {
+        console.error('Error loading trainer profile from localStorage:', error);
+      }
+    }
+  }, []);
 
   const handleDownload = () => {
     if (!student) {
@@ -62,17 +78,47 @@ export const StudentDownloadDialog = ({
       return;
     }
 
+    if (!trainerProfile) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "اطلاعات مربی موجود نیست. لطفا ابتدا پروفایل مربی را تکمیل کنید.",
+      });
+      return;
+    }
+
     const doc = new jsPDF();
 
-    // عنوان اصلی
+    // عنوان اصلی و اطلاعات باشگاه
     doc.setFontSize(22);
     doc.setTextColor("#003049");
-    doc.text(`پروفایل شاگرد: ${student.name}`, 15, 20);
+    doc.text(`${trainerProfile.gymName}`, 15, 20);
+    
+    doc.setFontSize(12);
+    doc.text(`${trainerProfile.gymDescription}`, 15, 30);
+    doc.text(`آدرس: ${trainerProfile.gymAddress}`, 15, 38);
+    
+    if (trainerProfile.phone) {
+      doc.text(`تلفن: ${toPersianNumbers(trainerProfile.phone)}`, 15, 46);
+    }
+    
+    if (trainerProfile.instagram) {
+      doc.text(`اینستاگرام: ${trainerProfile.instagram}`, 15, 54);
+    }
+    
+    if (trainerProfile.website) {
+      doc.text(`وب‌سایت: ${trainerProfile.website}`, 15, 62);
+    }
+
+    // عنوان برنامه شاگرد
+    doc.setFontSize(18);
+    doc.setTextColor("#003049");
+    doc.text(`برنامه شاگرد: ${student.name}`, 15, 75);
 
     // اطلاعات فردی
     doc.setFontSize(16);
     doc.setTextColor("#667788");
-    doc.text("اطلاعات فردی", 15, 35);
+    doc.text("اطلاعات فردی", 15, 90);
 
     const personalData = [
       ["نام", student.name],
@@ -83,7 +129,7 @@ export const StudentDownloadDialog = ({
 
     doc.autoTable({
       body: personalData,
-      startY: 40,
+      startY: 95,
       styles: {
         font: "IRANSans",
         fontSize: 12,
@@ -261,6 +307,18 @@ export const StudentDownloadDialog = ({
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          {trainerProfile ? (
+            <div className="bg-gray-50 p-3 rounded-md">
+              <div className="text-sm font-bold text-indigo-700 mb-1">{trainerProfile.gymName}</div>
+              <div className="text-xs text-gray-600">{trainerProfile.gymDescription}</div>
+              <div className="text-xs text-gray-600 mt-1">آدرس: {trainerProfile.gymAddress}</div>
+            </div>
+          ) : (
+            <div className="text-amber-500 text-sm bg-amber-50 p-3 rounded-md">
+              اطلاعات باشگاه تکمیل نشده است. لطفا ابتدا از قسمت پروفایل مربی، اطلاعات باشگاه را تکمیل کنید.
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <div className="text-sm font-medium text-gray-700">نام:</div>
@@ -349,7 +407,11 @@ export const StudentDownloadDialog = ({
           </div>
         </div>
         <div className="flex justify-end">
-          <Button onClick={handleDownload} className="bg-indigo-500 text-white">
+          <Button 
+            onClick={handleDownload} 
+            className="bg-indigo-500 text-white"
+            disabled={!trainerProfile}
+          >
             دانلود PDF
           </Button>
         </div>

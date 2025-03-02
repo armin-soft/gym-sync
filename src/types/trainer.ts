@@ -9,6 +9,8 @@ export interface TrainerProfile {
   gymName: string;
   gymDescription: string;
   gymAddress: string;
+  instagram: string;
+  website: string;
 }
 
 export const defaultProfile: TrainerProfile = {
@@ -20,5 +22,7 @@ export const defaultProfile: TrainerProfile = {
   image: "/placeholder.svg",
   gymName: "",
   gymDescription: "",
-  gymAddress: ""
+  gymAddress: "",
+  instagram: "",
+  website: ""
 };

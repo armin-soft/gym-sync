@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { TrainerProfile } from "@/types/trainer";
 import { isValidEmail, isValidIranianMobile, isValidPassword, isValidPersianName } from "@/utils/validation";
-import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Building, MapPin, FileText, Check, Save } from "lucide-react";
+import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Building, MapPin, FileText, Check, Save, Instagram, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface ProfileFormProps {
@@ -74,6 +74,14 @@ export const ProfileForm = ({
       case 'gymAddress':
         isValid = !!value;
         error = !isValid ? "آدرس باشگاه اجباری است" : '';
+        break;
+      case 'instagram':
+        // اینستاگرام اختیاری است
+        isValid = true;
+        break;
+      case 'website':
+        // وب‌سایت اختیاری است
+        isValid = true;
         break;
       default:
         isValid = true;
@@ -154,13 +162,13 @@ export const ProfileForm = ({
           value={key === 'phone' ? toPersianNumbers(profile[key]) : profile[key]}
           onChange={(e) => handleInputChange(key, e.target.value)}
           placeholder={placeholder}
-          dir={['email', 'phone'].includes(key) ? "ltr" : undefined}
+          dir={['email', 'phone', 'instagram', 'website'].includes(key) ? "ltr" : undefined}
           className={cn(
             "pr-10 pl-10",
             errors[key] ? "border-red-500" : validFields[key] ? "border-green-500" : "",
-            ['email', 'phone'].includes(key) ? "text-left" : ""
+            ['email', 'phone', 'instagram', 'website'].includes(key) ? "text-left" : ""
           )}
-          required
+          required={!['instagram', 'website'].includes(key)}
         />
         {key === 'password' && (
           <Button
@@ -227,6 +235,20 @@ export const ProfileForm = ({
           <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
           'password',
           'حداقل ۸ کاراکتر شامل حروف انگلیسی و اعداد'
+        )}
+
+        <h3 className="text-lg font-medium border-b pb-2 mb-4 mt-8">اطلاعات ارتباطی و شبکه‌های اجتماعی</h3>
+
+        {renderInput('instagram', 'اینستاگرام',
+          <Instagram className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'text',
+          'username'
+        )}
+
+        {renderInput('website', 'وب‌سایت',
+          <Globe className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'text',
+          'https://example.com'
         )}
 
         <h3 className="text-lg font-medium border-b pb-2 mb-4 mt-8">اطلاعات باشگاه</h3>
