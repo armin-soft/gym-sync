@@ -2,7 +2,7 @@
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { TrainerProfile } from "@/types/trainer";
 import { defaultProfile } from "@/types/trainer";
 import { ProfileImage } from "@/components/trainer/ProfileImage";
@@ -13,6 +13,7 @@ const TrainerProfile = () => {
   const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
+  const [activeSection, setActiveSection] = useState<string>("personal");
 
   // Load saved profile from localStorage
   useEffect(() => {
@@ -80,6 +81,21 @@ const TrainerProfile = () => {
     }
   };
 
+  const tabVariants = {
+    inactive: { opacity: 0.7, y: 0 },
+    active: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: "spring", stiffness: 300, damping: 20 }
+    }
+  };
+
+  const sections = [
+    { id: "personal", label: "اطلاعات شخصی" },
+    { id: "gym", label: "اطلاعات باشگاه" },
+    { id: "social", label: "شبکه‌های اجتماعی" }
+  ];
+
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Background pattern */}
@@ -96,7 +112,12 @@ const TrainerProfile = () => {
           className="flex flex-col space-y-6"
           variants={fadeIn}
         >
-          <div className="flex items-center gap-4">
+          <motion.div 
+            className="flex items-center gap-4"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
               <Camera className="h-6 w-6" />
             </div>
@@ -108,11 +129,11 @@ const TrainerProfile = () => {
                 اطلاعات پروفایل خود را مدیریت کنید
               </p>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         <motion.div 
-          className="grid lg:grid-cols-[300px_1fr] gap-6"
+          className="grid lg:grid-cols-[300px_1fr] gap-8"
           variants={stagger}
         >
           <motion.div 
@@ -123,6 +144,25 @@ const TrainerProfile = () => {
               image={profile.image}
               onImageChange={(image) => handleUpdate('image', image)}
             />
+
+            {/* Tabs for mobile view */}
+            <div className="flex lg:hidden overflow-x-auto pb-2 gap-2 no-scrollbar">
+              {sections.map((section) => (
+                <motion.button
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
+                    activeSection === section.id
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                  variants={tabVariants}
+                  animate={activeSection === section.id ? "active" : "inactive"}
+                >
+                  {section.label}
+                </motion.button>
+              ))}
+            </div>
           </motion.div>
 
           <motion.div variants={fadeIn}>
@@ -134,6 +174,8 @@ const TrainerProfile = () => {
               setErrors={setErrors}
               validFields={validFields}
               setValidFields={setValidFields}
+              activeSection={activeSection}
+              setActiveSection={setActiveSection}
             />
           </motion.div>
         </motion.div>
