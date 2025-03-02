@@ -1,6 +1,7 @@
 
 export interface TrainerProfile {
   name: string;
+  fullName: string; // Added missing property
   bio: string;
   phone: string;
   email: string;
@@ -15,6 +16,7 @@ export interface TrainerProfile {
 
 export const defaultProfile: TrainerProfile = {
   name: "",
+  fullName: "", // Added missing property
   bio: "",
   phone: "",
   email: "",

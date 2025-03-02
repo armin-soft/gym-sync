@@ -1,4 +1,3 @@
-
 export interface Student {
   id: number;
   name: string;
@@ -6,7 +5,7 @@ export interface Student {
   height: string;
   weight: string;
   image: string;
-  payment?: string;
+  payment: string;
   exercises?: number[];
   meals?: number[];
   supplements?: number[];

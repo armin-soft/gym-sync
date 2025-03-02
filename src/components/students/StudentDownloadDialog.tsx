@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, Printer, FileText, FileCheck, X } from "lucide-react";
@@ -8,8 +7,6 @@ import { TrainerProfile } from "@/types/trainer";
 import { generateStudentPDF, openPrintWindow } from "@/lib/utils/export";
 import { StudentSummary } from "./StudentSummary";
 import { ProfileWarning } from "./ProfileWarning";
-import { motion, AnimatePresence } from "framer-motion";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface StudentDownloadDialogProps {
@@ -21,10 +18,12 @@ interface StudentDownloadDialogProps {
     phone: string;
     height: string;
     weight: string;
+    image: string;
     exercises?: number[];
     meals?: number[];
     supplements?: number[];
     vitamins?: number[];
+    payment?: string;
   } | null;
   exercises: any[];
   meals: any[];
@@ -49,14 +48,12 @@ export const StudentDownloadDialog = ({
   const [activeTab, setActiveTab] = useState("summary");
 
   useEffect(() => {
-    // Load trainer profile from localStorage
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
         const profile = JSON.parse(savedProfile);
         setTrainerProfile(profile);
         
-        // Check if gym info is complete
         setIsProfileComplete(
           !!profile && 
           !!profile.gymName && profile.gymName.trim() !== '' && 
@@ -90,10 +87,8 @@ export const StudentDownloadDialog = ({
     try {
       setIsDownloading(true);
       
-      // Generate PDF
       const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile);
       
-      // Save the PDF file
       doc.save(`profile_${student.name}.pdf`);
       
       toast({
@@ -162,7 +157,6 @@ export const StudentDownloadDialog = ({
     }
   };
 
-  // Prepare student data for display
   const studentExercises = student?.exercises?.map(id => 
     exercises.find(ex => ex.id === id)
   ).filter(Boolean) || [];
