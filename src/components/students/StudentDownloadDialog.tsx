@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -35,6 +34,8 @@ import {
   MapPin,
   Phone,
   Calendar,
+  Ruler,
+  Scale,
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import html2canvas from "html2canvas";
@@ -592,7 +593,7 @@ export function StudentDownloadDialog({
         } else if (svg.classList.contains('lucide-ruler')) {
           span.innerHTML = '📏';
           span.className += ' icon-height';
-        } else if (svg.classList.contains('lucide-weight')) {
+        } else if (svg.classList.contains('lucide-scale')) {
           span.innerHTML = '⚖️';
           span.className += ' icon-weight';
         } else if (svg.classList.contains('lucide-dumbbell')) {
@@ -697,15 +698,9 @@ export function StudentDownloadDialog({
             imgY,
             imgWidth * ratio,
             sourceHeight * ratio,
-            null,
+            undefined,
             'FAST',
-            0,
-            {
-              srcX: 0,
-              srcY: sourceY,
-              srcWidth: imgWidth,
-              srcHeight: sourceHeight
-            }
+            0
           );
         }
       }
@@ -976,7 +971,7 @@ export function StudentDownloadDialog({
                             {toPersianNumbers(student.height)} سانتی‌متر
                           </p>
                           <p className="student-detail">
-                            <Weight className="h-4 w-4 text-amber-500 lucide-weight" />
+                            <Scale className="h-4 w-4 text-amber-500 lucide-scale" />
                             <span className="font-medium ml-1">وزن:</span>
                             {toPersianNumbers(student.weight)} کیلوگرم
                           </p>

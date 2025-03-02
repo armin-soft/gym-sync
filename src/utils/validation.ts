@@ -7,3 +7,9 @@ export const isValidPassword = (password: string) => {
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return passwordRegex.test(password);
 };
+
+// Add the isValidPrice function for validating price strings
+export const isValidPrice = (price: string) => {
+  // Allow numbers with optional commas and optional تومان at the end
+  return /^[\d,]+(\s*تومان)?$/.test(price);
+};
