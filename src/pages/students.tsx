@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,6 +29,7 @@ import {
   Apple,
   Pill,
   Download,
+  Coins,
 } from "lucide-react";
 import { StudentDialog } from "@/components/StudentDialog";
 import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
@@ -51,6 +53,7 @@ interface Student {
   height: string;
   weight: string;
   image: string;
+  payment?: string; // New field for payment amount in Tomans
   exercises?: number[]; // آرایه‌ای از شناسه‌های تمرین‌ها
   meals?: number[]; // آرایه‌ای از شناسه‌های وعده‌های غذایی
   supplements?: number[]; // آرایه‌ای از شناسه‌های مکمل‌ها
@@ -94,6 +97,7 @@ const StudentsPage = () => {
             height: student.height || '',
             weight: student.weight || '',
             image: student.image || '/placeholder.svg',
+            payment: student.payment || '',
             exercises: student.exercises || [],
             meals: student.meals || [],
             supplements: student.supplements || [],
@@ -229,6 +233,16 @@ const StudentsPage = () => {
   };
 
   const handleDownload = (student: Student) => {
+    if (!student.payment || student.payment === '') {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "برای دانلود اطلاعات ابتدا باید مبلغ برنامه را وارد کنید"
+      });
+      handleEdit(student); // Open the edit dialog to enter payment
+      return;
+    }
+    
     setSelectedStudentForDownload(student);
     setIsDownloadDialogOpen(true);
   };
@@ -474,6 +488,12 @@ const StudentsPage = () => {
                     </div>
                   </TableHead>
                   <TableHead>
+                    <div className="flex items-center gap-2">
+                      <Coins className="h-4 w-4 text-muted-foreground" />
+                      مبلغ (تومان)
+                    </div>
+                  </TableHead>
+                  <TableHead>
                     <div className="flex items-center gap-2 justify-center">
                       برنامه‌ها
                     </div>
@@ -560,6 +580,11 @@ const StudentsPage = () => {
                       <TableCell>{toPersianNumbers(student.height)}</TableCell>
                       <TableCell>{toPersianNumbers(student.weight)}</TableCell>
                       <TableCell>
+                        {student.payment ? toPersianNumbers(student.payment) : (
+                          <span className="text-red-500 text-xs">تعیین نشده</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
                         <div className="flex items-center justify-center gap-3">
                           <div className="flex flex-col items-center">
                             <div className="bg-blue-100 text-blue-800 font-medium size-6 flex items-center justify-center rounded-full text-xs">
@@ -632,8 +657,8 @@ const StudentsPage = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleDownload(student)}
-                            className="size-8 hover:bg-indigo-500/10 hover:text-indigo-500"
-                            title="دانلود اطلاعات"
+                            className={`size-8 ${!student.payment ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-500/10 hover:text-indigo-500'}`}
+                            title={!student.payment ? "برای دانلود باید مبلغ را تعیین کنید" : "دانلود اطلاعات"}
                           >
                             <Download className="h-4 w-4" />
                           </Button>
