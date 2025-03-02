@@ -21,12 +21,14 @@ import {
   Pill, 
   Download,
   Coins,
-  Search
+  Search,
+  FileText
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EmptyStudentState } from "./EmptyStudentState";
 import { motion } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Student {
   id: number;
@@ -255,65 +257,108 @@ export const StudentsTable = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onEdit(student)}
-                        className="size-8 text-slate-600 hover:bg-indigo-100 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-900/50 dark:hover:text-indigo-400 rounded-full"
-                        title="ویرایش شاگرد"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onDelete(student.id)}
-                        className="size-8 text-slate-600 hover:bg-red-100 hover:text-red-700 dark:text-slate-300 dark:hover:bg-red-900/50 dark:hover:text-red-400 rounded-full"
-                        title="حذف شاگرد"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onAddExercise(student)}
-                        className="size-8 text-slate-600 hover:bg-blue-100 hover:text-blue-700 dark:text-slate-300 dark:hover:bg-blue-900/50 dark:hover:text-blue-400 rounded-full"
-                        title="مدیریت تمرین‌ها"
-                      >
-                        <Dumbbell className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onAddDiet(student)}
-                        className="size-8 text-slate-600 hover:bg-green-100 hover:text-green-700 dark:text-slate-300 dark:hover:bg-green-900/50 dark:hover:text-green-400 rounded-full"
-                        title="مدیریت برنامه غذایی"
-                      >
-                        <Apple className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onAddSupplement(student)}
-                        className="size-8 text-slate-600 hover:bg-purple-100 hover:text-purple-700 dark:text-slate-300 dark:hover:bg-purple-900/50 dark:hover:text-purple-400 rounded-full"
-                        title="مدیریت مکمل‌ها و ویتامین‌ها"
-                      >
-                        <Pill className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onDownload(student)}
-                        className={`size-8 text-slate-600 dark:text-slate-300 ${
-                          !student.payment 
-                            ? 'opacity-50 cursor-not-allowed' 
-                            : 'hover:bg-indigo-100 hover:text-indigo-700 dark:hover:bg-indigo-900/50 dark:hover:text-indigo-400'
-                        } rounded-full`}
-                        title={!student.payment ? "برای دانلود باید مبلغ را تعیین کنید" : "دانلود اطلاعات"}
-                        disabled={!student.payment}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onEdit(student)}
+                              className="size-8 text-slate-600 hover:bg-indigo-100 hover:text-indigo-700 dark:text-slate-300 dark:hover:bg-indigo-900/50 dark:hover:text-indigo-400 rounded-full"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>ویرایش شاگرد</p>
+                          </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onDelete(student.id)}
+                              className="size-8 text-slate-600 hover:bg-red-100 hover:text-red-700 dark:text-slate-300 dark:hover:bg-red-900/50 dark:hover:text-red-400 rounded-full"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>حذف شاگرد</p>
+                          </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onAddExercise(student)}
+                              className="size-8 text-slate-600 hover:bg-blue-100 hover:text-blue-700 dark:text-slate-300 dark:hover:bg-blue-900/50 dark:hover:text-blue-400 rounded-full"
+                            >
+                              <Dumbbell className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>مدیریت تمرین‌ها</p>
+                          </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onAddDiet(student)}
+                              className="size-8 text-slate-600 hover:bg-green-100 hover:text-green-700 dark:text-slate-300 dark:hover:bg-green-900/50 dark:hover:text-green-400 rounded-full"
+                            >
+                              <Apple className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>مدیریت برنامه غذایی</p>
+                          </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onAddSupplement(student)}
+                              className="size-8 text-slate-600 hover:bg-purple-100 hover:text-purple-700 dark:text-slate-300 dark:hover:bg-purple-900/50 dark:hover:text-purple-400 rounded-full"
+                            >
+                              <Pill className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>مدیریت مکمل‌ها و ویتامین‌ها</p>
+                          </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onDownload(student)}
+                              className={`size-8 text-slate-600 dark:text-slate-300 ${
+                                !student.payment 
+                                  ? 'opacity-50 cursor-not-allowed' 
+                                  : 'hover:bg-indigo-100 hover:text-indigo-700 dark:hover:bg-indigo-900/50 dark:hover:text-indigo-400'
+                              } rounded-full`}
+                              disabled={!student.payment}
+                            >
+                              <FileText className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p>{!student.payment ? "برای دانلود باید مبلغ را تعیین کنید" : "دانلود اطلاعات"}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                 </motion.tr>

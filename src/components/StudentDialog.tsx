@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,7 +27,7 @@ interface StudentFormData {
   height: string;
   weight: string;
   image: string;
-  payment?: string;
+  payment: string;
 }
 
 interface Student extends StudentFormData {
@@ -118,11 +117,10 @@ export const StudentDialog = ({
         else if (!/^\d+$/.test(value)) error = "وزن باید عدد باشد";
         break;
       case "image":
-        // This is now optional
         break;
       case "payment":
-        // Payment is optional but if provided, must be a valid number
-        if (value && !/^\d+$/.test(value)) error = "مبلغ باید عدد باشد";
+        if (!value) error = "مبلغ الزامی است";
+        else if (!/^\d+$/.test(value)) error = "مبلغ باید عدد باشد";
         break;
     }
     setErrors(prev => ({ ...prev, [key]: error }));
@@ -135,16 +133,10 @@ export const StudentDialog = ({
     let isValid = true;
     
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === "payment") return; // Skip validation for payment as it's optional
       if (!validateField(key as keyof StudentFormData, value)) {
         isValid = false;
       }
     });
-
-    // Validate payment separately since it's optional
-    if (formData.payment && !validateField("payment", formData.payment)) {
-      isValid = false;
-    }
 
     if (!isValid) {
       toast({
@@ -158,11 +150,8 @@ export const StudentDialog = ({
     onSave(formData);
   };
 
-  // Format payment input with thousand separators for display
   const formatPayment = (value: string) => {
-    // Remove non-digit characters
     const numericValue = value.replace(/\D/g, '');
-    // Format with commas for thousands
     return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
@@ -316,19 +305,20 @@ export const StudentDialog = ({
             <div>
               <Label className="flex items-center gap-2">
                 <Coins className="h-4 w-4 text-muted-foreground" />
-                مبلغ (تومان)
+                <span>مبلغ (تومان)</span>
+                <span className="text-xs text-red-500">*</span>
               </Label>
               <Input
                 dir="ltr"
                 className={`text-left ${errors.payment ? "border-red-500" : ""}`}
                 value={toPersianNumbers(formatPayment(formData.payment || ''))}
                 onChange={(e) => {
-                  // Remove non-numeric characters including Persian digits
                   const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).replace(/\D/g, '');
                   setFormData({ ...formData, payment: value });
                   validateField("payment", value);
                 }}
                 placeholder="۵۰۰,۰۰۰"
+                required
               />
               {errors.payment && (
                 <p className="text-sm text-red-500 mt-1">{errors.payment}</p>
