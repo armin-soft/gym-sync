@@ -4,6 +4,7 @@ import { Sidebar } from "./Sidebar";
 import { Menu, Weight } from "lucide-react";
 import { Spinner } from "./ui/spinner";
 import { cn } from "@/lib/utils";
+import { Outlet } from "react-router-dom";
 
 const LoadingFallback = () => (
   <div className="flex h-[50vh] items-center justify-center">
@@ -14,7 +15,7 @@ const LoadingFallback = () => (
   </div>
 );
 
-export const Layout = ({ children }: { children: React.ReactNode }) => {
+export const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("مدیریت برنامه");
   
@@ -74,7 +75,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <main className="flex-1">
           <div className="container py-6">
             <Suspense fallback={<LoadingFallback />}>
-              {children}
+              <Outlet />
             </Suspense>
           </div>
         </main>

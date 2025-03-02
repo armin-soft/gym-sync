@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Menu,
   ChevronLeft,
+  Database
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
@@ -64,6 +65,11 @@ const sidebarItems: SidebarItem[] = [
     title: "گزارشات",
     href: "/Reports",
     icon: LineChart,
+  },
+  {
+    title: "پشتیبان‌گیری و بازیابی",
+    href: "/Backup-Restore",
+    icon: Database,
   },
   {
     title: "درباره",
