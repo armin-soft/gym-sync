@@ -12,7 +12,8 @@ import {
   Calendar,
   ChartBar,
   Sun,
-  ArrowRight
+  ArrowRight,
+  Dumbbell
 } from "lucide-react";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Achievements } from "@/components/dashboard/Achievements";
