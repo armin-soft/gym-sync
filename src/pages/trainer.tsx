@@ -18,7 +18,14 @@ const TrainerProfile = () => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
-        setProfile(JSON.parse(savedProfile));
+        const parsed = JSON.parse(savedProfile);
+        // Handle migration from old profile structure to new one
+        if (!parsed.gymName) {
+          parsed.gymName = "باشگاه بدنسازی فیکس";
+          parsed.gymDescription = "مرکز تخصصی آمادگی جسمانی و بدنسازی";
+          parsed.gymAddress = "تهران، خیابان ولیعصر، پلاک ۱۲۸";
+        }
+        setProfile(parsed);
       } catch (error) {
         console.error('Error loading profile from localStorage:', error);
         toast({

@@ -5,8 +5,10 @@ export interface TrainerProfile {
   phone: string;
   email: string;
   password: string;
-  price: string;
   image: string;
+  gymName: string;
+  gymDescription: string;
+  gymAddress: string;
 }
 
 export const defaultProfile: TrainerProfile = {
@@ -15,6 +17,8 @@ export const defaultProfile: TrainerProfile = {
   phone: "",
   email: "",
   password: "",
-  price: "",
-  image: "/placeholder.svg"
+  image: "/placeholder.svg",
+  gymName: "",
+  gymDescription: "",
+  gymAddress: ""
 };

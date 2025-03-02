@@ -8,8 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { TrainerProfile } from "@/types/trainer";
-import { isValidEmail, isValidIranianMobile, isValidPassword, isValidPersianName, isValidPrice } from "@/utils/validation";
-import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Tag, Check, Save } from "lucide-react";
+import { isValidEmail, isValidIranianMobile, isValidPassword, isValidPersianName } from "@/utils/validation";
+import { Eye, EyeOff, UserRound, Phone, Mail, Lock, Building, MapPin, FileText, Check, Save } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface ProfileFormProps {
@@ -63,10 +63,17 @@ export const ProfileForm = ({
         error = !value ? "گذرواژه اجباری است" :
                 !isValid ? "گذرواژه باید شامل حروف انگلیسی و اعداد باشد (حداقل ۸ کاراکتر)" : '';
         break;
-      case 'price':
-        isValid = isValidPrice(value);
-        error = !value ? "هزینه جلسه اجباری است" :
-                !isValid ? "لطفاً فقط اعداد وارد کنید" : '';
+      case 'gymName':
+        isValid = !!value;
+        error = !isValid ? "نام باشگاه اجباری است" : '';
+        break;
+      case 'gymDescription':
+        isValid = !!value;
+        error = !isValid ? "توضیحات باشگاه اجباری است" : '';
+        break;
+      case 'gymAddress':
+        isValid = !!value;
+        error = !isValid ? "آدرس باشگاه اجباری است" : '';
         break;
       default:
         isValid = true;
@@ -94,10 +101,10 @@ export const ProfileForm = ({
       return;
     }
 
-    // Filter input for phone and price fields - only allow numbers
-    if (key === 'phone' || key === 'price') {
+    // Filter input for phone field - only allow numbers
+    if (key === 'phone') {
       let numbersOnly = value.replace(/[^0-9۰-۹]/g, '');
-      if (key === 'phone' && !numbersOnly.startsWith('09') && !numbersOnly.startsWith('۰۹')) {
+      if (!numbersOnly.startsWith('09') && !numbersOnly.startsWith('۰۹')) {
         numbersOnly = '09' + numbersOnly.slice(2);
       }
       onUpdate(key, numbersOnly);
@@ -132,7 +139,7 @@ export const ProfileForm = ({
   };
 
   const renderInput = (
-    key: keyof Omit<TrainerProfile, 'image' | 'bio'>,
+    key: keyof Omit<TrainerProfile, 'image' | 'bio' | 'gymDescription'>,
     label: string,
     icon: React.ReactNode,
     type: string = 'text',
@@ -144,14 +151,14 @@ export const ProfileForm = ({
         {icon}
         <Input
           type={key === 'password' ? (showPassword ? 'text' : 'password') : type}
-          value={key === 'phone' || key === 'price' ? toPersianNumbers(profile[key]) : profile[key]}
+          value={key === 'phone' ? toPersianNumbers(profile[key]) : profile[key]}
           onChange={(e) => handleInputChange(key, e.target.value)}
           placeholder={placeholder}
-          dir={['email', 'phone', 'price'].includes(key) ? "ltr" : undefined}
+          dir={['email', 'phone'].includes(key) ? "ltr" : undefined}
           className={cn(
             "pr-10 pl-10",
             errors[key] ? "border-red-500" : validFields[key] ? "border-green-500" : "",
-            ['email', 'phone', 'price'].includes(key) ? "text-left" : ""
+            ['email', 'phone'].includes(key) ? "text-left" : ""
           )}
           required
         />
@@ -177,17 +184,11 @@ export const ProfileForm = ({
     </div>
   );
 
-  const formatPrice = (price: string) => {
-    if (!price) return '';
-    // تبدیل اعداد فارسی به انگلیسی قبل از پردازش
-    const englishNumbers = price.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-    const numericPrice = parseInt(englishNumbers.replace(/[^0-9]/g, ''));
-    return isNaN(numericPrice) ? '' : numericPrice.toLocaleString();
-  };
-
   return (
     <Card className="backdrop-blur-xl bg-white/50 border-primary/10">
       <div className="p-6 space-y-6">
+        <h3 className="text-lg font-medium border-b pb-2 mb-4">اطلاعات شخصی</h3>
+        
         {renderInput('name', 'نام و نام خانوادگی', 
           <UserRound className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
           'text',
@@ -228,16 +229,34 @@ export const ProfileForm = ({
           'حداقل ۸ کاراکتر شامل حروف انگلیسی و اعداد'
         )}
 
-        {renderInput('price', 'هزینه هر جلسه (تومان)',
-          <Tag className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+        <h3 className="text-lg font-medium border-b pb-2 mb-4 mt-8">اطلاعات باشگاه</h3>
+
+        {renderInput('gymName', 'نام باشگاه',
+          <Building className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
           'text',
-          '۲۰۰,۰۰۰'
+          'باشگاه بدنسازی فیکس'
         )}
 
-        {profile.price && (
-          <p className="text-sm text-muted-foreground mt-1">
-            معادل {toPersianNumbers(formatPrice(profile.price))} تومان
-          </p>
+        <div>
+          <Label>توضیحات باشگاه</Label>
+          <Textarea
+            value={profile.gymDescription}
+            onChange={(e) => handleInputChange('gymDescription', e.target.value)}
+            placeholder="توضیحات باشگاه را وارد کنید"
+            className={cn(
+              "resize-none h-32",
+              errors.gymDescription ? "border-red-500" : validFields.gymDescription ? "border-green-500" : ""
+            )}
+            required
+          />
+          {errors.gymDescription && <p className="mt-1 text-sm text-red-500">{errors.gymDescription}</p>}
+          {validFields.gymDescription && <Check className="h-4 w-4 text-green-500 mt-1" />}
+        </div>
+
+        {renderInput('gymAddress', 'آدرس باشگاه',
+          <MapPin className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />,
+          'text',
+          'تهران، خیابان ولیعصر، پلاک ۱۲۸'
         )}
 
         <Button onClick={handleSave} className="w-full">

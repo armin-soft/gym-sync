@@ -16,6 +16,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useEffect, useState } from "react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -73,6 +74,22 @@ const sidebarItems: SidebarItem[] = [
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const [gymName, setGymName] = useState("مدیریت برنامه تمرینی فیکس");
+  
+  useEffect(() => {
+    // Load gym name from local storage
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        if (profile.gymName) {
+          setGymName(profile.gymName);
+        }
+      } catch (error) {
+        console.error('Error loading gym name from localStorage:', error);
+      }
+    }
+  }, []);
   
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -88,7 +105,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <Menu className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">مدیریت برنامه تمرینی فیکس</p>
+                  <p className="text-xs text-muted-foreground">{gymName}</p>
                 </div>
               </div>
             </div>
@@ -137,7 +154,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <Dumbbell className="h-5 w-5 text-primary" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">مدیریت برنامه تمرینی فیکس</span>
+                <span className="text-sm font-medium">{gymName}</span>
                 <span className="text-xs text-muted-foreground">نسخه ۱.۰.۰</span>
               </div>
             </div>
