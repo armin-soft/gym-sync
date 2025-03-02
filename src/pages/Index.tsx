@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { 
@@ -142,6 +143,7 @@ const Index = () => {
     }
   ];
 
+  // Fix for the TypeScript error - define proper animation variants
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -224,7 +226,6 @@ const Index = () => {
                     <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
                     {currentTime.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </Badge>
-                  {/* نشانگر وضعیت فعالیت حذف شد */}
                 </motion.div>
               </motion.div>
               
@@ -285,19 +286,19 @@ const Index = () => {
               animate="show"
               className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3"
             >
-              {dashboardItems.map((item) => (
-                <motion.div key={item.href} variants={item}>
+              {dashboardItems.map((dashItem) => (
+                <motion.div key={dashItem.href} variants={item}>
                   <Link 
-                    to={item.href}
-                    className={`block group relative overflow-hidden ${item.bgColor} rounded-xl border border-white/10 p-3 md:p-4 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
+                    to={dashItem.href}
+                    className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-white/10 p-3 md:p-4 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
                   >
-                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r ${item.color} transition-opacity duration-300`} />
+                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r ${dashItem.color} transition-opacity duration-300`} />
                     <div className="relative flex flex-col items-center text-center gap-2 md:gap-3">
-                      <div className={`p-3 rounded-lg bg-gradient-to-br ${item.color} text-white shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
-                        <item.icon className="w-5 h-5" />
+                      <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
+                        <dashItem.icon className="w-5 h-5" />
                       </div>
                       <span className="font-medium text-sm md:text-base text-gray-800 dark:text-white">
-                        {item.title}
+                        {dashItem.title}
                       </span>
                     </div>
                   </Link>
