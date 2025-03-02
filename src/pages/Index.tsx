@@ -5,7 +5,6 @@ import {
   Activity, 
   Clock,
   User2,
-  Dumbbell,
   UtensilsCrossed,
   Pill,
   Crown,
@@ -111,18 +110,11 @@ const Index = () => {
               {/* اطلاعات سریع */}
               <div className="hidden lg:block p-3 rounded-xl bg-white/10 backdrop-blur-sm">
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 px-3 border-l border-white/20">
+                  <div className="flex items-center gap-2 px-3">
                     <Users className="w-4 h-4 text-blue-300" />
                     <div className="flex flex-col">
                       <span className="text-xs text-white/60">شاگردان فعال</span>
                       <span className="text-sm font-semibold">{toPersianNumbers(stats.totalStudents)}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 px-3">
-                    <Calendar className="w-4 h-4 text-emerald-300" />
-                    <div className="flex flex-col">
-                      <span className="text-xs text-white/60">جلسات امروز</span>
-                      <span className="text-sm font-semibold">{toPersianNumbers(stats.totalSessions)}</span>
                     </div>
                   </div>
                 </div>
@@ -130,7 +122,7 @@ const Index = () => {
             </div>
 
             {/* کارت های آمار سریع */}
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
                 <div className="p-2 rounded-lg bg-blue-500/20">
                   <Users className="h-5 w-5 text-blue-300" />
@@ -142,16 +134,7 @@ const Index = () => {
               </div>
               <div className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
                 <div className="p-2 rounded-lg bg-emerald-500/20">
-                  <Calendar className="h-5 w-5 text-emerald-300" />
-                </div>
-                <div>
-                  <p className="text-sm text-white/80">جلسات تمرینی</p>
-                  <p className="text-lg font-semibold">{toPersianNumbers(stats.totalSessions)}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
-                <div className="p-2 rounded-lg bg-amber-500/20">
-                  <UtensilsCrossed className="h-5 w-5 text-amber-300" />
+                  <UtensilsCrossed className="h-5 w-5 text-emerald-300" />
                 </div>
                 <div>
                   <p className="text-sm text-white/80">برنامه های غذایی</p>
