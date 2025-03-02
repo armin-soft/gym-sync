@@ -83,204 +83,206 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
       return;
     }
 
-    const doc = new jsPDF();
+    try {
+      const doc = new jsPDF();
 
-    // اطلاعات باشگاه در بالای صفحه
-    doc.setFontSize(18);
-    doc.setTextColor("#003049");
-    doc.text(`${trainerProfile.gymName}`, 15, 15);
-    
-    doc.setFontSize(12);
-    doc.setTextColor("#667788");
-    doc.text(`آدرس: ${trainerProfile.gymAddress}`, 15, 22);
-    
-    if (trainerProfile.phone) {
-      doc.text(`تلفن: ${trainerProfile.phone}`, 15, 29);
-    }
-    
-    let contactLine = "";
-    if (trainerProfile.website) {
-      contactLine += `وب‌سایت: ${trainerProfile.website}`;
-    }
-    if (trainerProfile.instagram) {
-      if (contactLine) contactLine += " | ";
-      contactLine += `اینستاگرام: ${trainerProfile.instagram}`;
-    }
-    
-    if (contactLine) {
-      doc.text(contactLine, 15, 36);
-    }
-
-    // عنوان اصلی
-    doc.setFontSize(22);
-    doc.setTextColor("#003049");
-    doc.text(`پروفایل شاگرد: ${student.name}`, 15, 50);
-
-    // اطلاعات فردی
-    doc.setFontSize(16);
-    doc.setTextColor("#667788");
-    doc.text("اطلاعات فردی", 15, 65);
-
-    const personalData = [
-      ["نام", student.name || ''],
-      ["شماره موبایل", student.phone ? toPersianNumbers(student.phone) : ''],
-      ["قد (سانتی متر)", student.height ? toPersianNumbers(student.height) : ''],
-      ["وزن (کیلوگرم)", student.weight ? toPersianNumbers(student.weight) : '']
-    ];
-
-    doc.autoTable({
-      body: personalData,
-      startY: 70,
-      styles: {
-        font: "IRANSans",
-        fontSize: 12,
-        textColor: "#333",
-        lineColor: "#003049",
-        lineWidth: 0.2
-      },
-      columnStyles: {
-        0: { halign: "right" },
-        1: { halign: "right" }
-      },
-      headerStyles: {
-        fillColor: "#003049",
-        textColor: "#fff",
-        fontStyle: "normal"
-      }
-    });
-
-    let currentY = doc.lastAutoTable.finalY + 15;
-
-    // تمرینات
-    if (student.exercises && student.exercises.length > 0 && exercises && exercises.length > 0) {
-      doc.setFontSize(16);
-      doc.setTextColor("#667788");
-      doc.text("برنامه تمرینی", 15, currentY);
-
-      const studentExercises = exercises.filter((exercise) => 
-        student.exercises && student.exercises.includes(exercise.id)
-      );
-
-      const exerciseData = studentExercises.map((exercise) => [
-        exercise.name || "",
-        exercise.description || ""
-      ]);
-
-      currentY += 5;
-
-      doc.autoTable({
-        head: [["نام تمرین", "توضیحات"]],
-        body: exerciseData,
-        startY: currentY,
-        styles: {
-          font: "IRANSans",
-          fontSize: 12,
-          textColor: "#333",
-          lineColor: "#003049",
-          lineWidth: 0.2
-        },
-        columnStyles: {
-          0: { halign: "right" },
-          1: { halign: "right" }
-        },
-        headerStyles: {
-          fillColor: "#003049",
-          textColor: "#fff",
-          fontStyle: "normal"
-        }
-      });
-
-      currentY = doc.lastAutoTable.finalY + 15;
-    }
-
-    // برنامه غذایی
-    if (student.meals && student.meals.length > 0 && meals && meals.length > 0) {
-      doc.setFontSize(16);
-      doc.setTextColor("#667788");
-      doc.text("برنامه غذایی", 15, currentY);
-
-      const studentMeals = meals.filter((meal) => 
-        student.meals && student.meals.includes(meal.id)
-      );
-
-      const mealData = studentMeals.map((meal) => [
-        meal.name || "",
-        meal.description || ""
-      ]);
-
-      currentY += 5;
-
-      doc.autoTable({
-        head: [["نام وعده", "توضیحات"]],
-        body: mealData,
-        startY: currentY,
-        styles: {
-          font: "IRANSans",
-          fontSize: 12,
-          textColor: "#333",
-          lineColor: "#003049",
-          lineWidth: 0.2
-        },
-        columnStyles: {
-          0: { halign: "right" },
-          1: { halign: "right" }
-        },
-        headerStyles: {
-          fillColor: "#003049",
-          textColor: "#fff",
-          fontStyle: "normal"
-        }
-      });
-
-      currentY = doc.lastAutoTable.finalY + 15;
-    }
-
-    // مکمل‌ها و ویتامین‌ها
-    if ((student.supplements && student.supplements.length > 0) || 
-        (student.vitamins && student.vitamins.length > 0) && 
-        supplements && supplements.length > 0) {
+      // اطلاعات باشگاه در بالای صفحه
+      doc.setFontSize(18);
+      doc.setTextColor("#003049");
+      doc.text(`${trainerProfile.gymName}`, 15, 15);
       
+      doc.setFontSize(12);
+      doc.setTextColor("#667788");
+      doc.text(`آدرس: ${trainerProfile.gymAddress}`, 15, 22);
+      
+      if (trainerProfile.phone) {
+        doc.text(`تلفن: ${trainerProfile.phone}`, 15, 29);
+      }
+      
+      let contactLine = "";
+      if (trainerProfile.website) {
+        contactLine += `وب‌سایت: ${trainerProfile.website}`;
+      }
+      if (trainerProfile.instagram) {
+        if (contactLine) contactLine += " | ";
+        contactLine += `اینستاگرام: ${trainerProfile.instagram}`;
+      }
+      
+      if (contactLine) {
+        doc.text(contactLine, 15, 36);
+      }
+
+      // عنوان اصلی
+      doc.setFontSize(22);
+      doc.setTextColor("#003049");
+      doc.text(`پروفایل شاگرد: ${student.name}`, 15, 50);
+
+      // اطلاعات فردی
       doc.setFontSize(16);
       doc.setTextColor("#667788");
-      doc.text("مکمل‌ها و ویتامین‌ها", 15, currentY);
+      doc.text("اطلاعات فردی", 15, 65);
 
-      const supplementData = supplements
-        .filter((supplement) => 
-          (student.supplements && student.supplements.includes(supplement.id)) || 
-          (student.vitamins && student.vitamins.includes(supplement.id))
-        )
-        .map((item) => [
-          item.name || "",
-          item.description || ""
+      const personalData = [
+        ["نام", student.name || ''],
+        ["شماره موبایل", student.phone ? toPersianNumbers(student.phone) : ''],
+        ["قد (سانتی متر)", student.height ? toPersianNumbers(student.height) : ''],
+        ["وزن (کیلوگرم)", student.weight ? toPersianNumbers(student.weight) : '']
+      ];
+
+      doc.autoTable({
+        body: personalData,
+        startY: 70,
+        styles: {
+          font: "IRANSans",
+          fontSize: 12,
+          textColor: "#333",
+          lineColor: "#003049",
+          lineWidth: 0.2
+        },
+        columnStyles: {
+          0: { halign: "right" },
+          1: { halign: "right" }
+        },
+        headerStyles: {
+          fillColor: "#003049",
+          textColor: "#fff",
+          fontStyle: "normal"
+        }
+      });
+
+      let currentY = doc.lastAutoTable.finalY + 15;
+
+      // تمرینات
+      if (student.exercises && student.exercises.length > 0 && exercises && exercises.length > 0) {
+        doc.setFontSize(16);
+        doc.setTextColor("#667788");
+        doc.text("برنامه تمرینی", 15, currentY);
+
+        const studentExercises = exercises.filter((exercise) => 
+          student.exercises && student.exercises.includes(exercise.id)
+        );
+
+        const exerciseData = studentExercises.map((exercise) => [
+          exercise.name || "",
+          exercise.description || ""
         ]);
 
-      currentY += 5;
+        currentY += 5;
 
-      doc.autoTable({
-        head: [["نام مکمل/ویتامین", "توضیحات"]],
-        body: supplementData,
-        startY: currentY,
-        styles: {
-          font: "IRANSans",
-          fontSize: 12,
-          textColor: "#333",
-          lineColor: "#003049",
-          lineWidth: 0.2
-        },
-        columnStyles: {
-          0: { halign: "right" },
-          1: { halign: "right" }
-        },
-        headerStyles: {
-          fillColor: "#003049",
-          textColor: "#fff",
-          fontStyle: "normal"
+        doc.autoTable({
+          head: [["نام تمرین", "توضیحات"]],
+          body: exerciseData,
+          startY: currentY,
+          styles: {
+            font: "IRANSans",
+            fontSize: 12,
+            textColor: "#333",
+            lineColor: "#003049",
+            lineWidth: 0.2
+          },
+          columnStyles: {
+            0: { halign: "right" },
+            1: { halign: "right" }
+          },
+          headerStyles: {
+            fillColor: "#003049",
+            textColor: "#fff",
+            fontStyle: "normal"
+          }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 15;
+      }
+
+      // برنامه غذایی
+      if (student.meals && student.meals.length > 0 && meals && meals.length > 0) {
+        doc.setFontSize(16);
+        doc.setTextColor("#667788");
+        doc.text("برنامه غذایی", 15, currentY);
+
+        const studentMeals = meals.filter((meal) => 
+          student.meals && student.meals.includes(meal.id)
+        );
+
+        const mealData = studentMeals.map((meal) => [
+          meal.name || "",
+          meal.description || ""
+        ]);
+
+        currentY += 5;
+
+        doc.autoTable({
+          head: [["نام وعده", "توضیحات"]],
+          body: mealData,
+          startY: currentY,
+          styles: {
+            font: "IRANSans",
+            fontSize: 12,
+            textColor: "#333",
+            lineColor: "#003049",
+            lineWidth: 0.2
+          },
+          columnStyles: {
+            0: { halign: "right" },
+            1: { halign: "right" }
+          },
+          headerStyles: {
+            fillColor: "#003049",
+            textColor: "#fff",
+            fontStyle: "normal"
+          }
+        });
+
+        currentY = doc.lastAutoTable.finalY + 15;
+      }
+
+      // مکمل‌ها و ویتامین‌ها
+      if ((student.supplements && student.supplements.length > 0) || 
+          (student.vitamins && student.vitamins.length > 0) && 
+          supplements && supplements.length > 0) {
+        
+        doc.setFontSize(16);
+        doc.setTextColor("#667788");
+        doc.text("مکمل‌ها و ویتامین‌ها", 15, currentY);
+
+        const supplementData = supplements
+          .filter((supplement) => 
+            (student.supplements && student.supplements.includes(supplement.id)) || 
+            (student.vitamins && student.vitamins.includes(supplement.id))
+          )
+          .map((item) => [
+            item.name || "",
+            item.description || ""
+          ]);
+
+        currentY += 5;
+
+        if (supplementData.length > 0) {
+          doc.autoTable({
+            head: [["نام مکمل/ویتامین", "توضیحات"]],
+            body: supplementData,
+            startY: currentY,
+            styles: {
+              font: "IRANSans",
+              fontSize: 12,
+              textColor: "#333",
+              lineColor: "#003049",
+              lineWidth: 0.2
+            },
+            columnStyles: {
+              0: { halign: "right" },
+              1: { halign: "right" }
+            },
+            headerStyles: {
+              fillColor: "#003049",
+              textColor: "#fff",
+              fontStyle: "normal"
+            }
+          });
         }
-      });
-    }
+      }
 
-    // ذخیره فایل PDF
-    try {
+      // ذخیره فایل PDF
       doc.save(`profile_${student.name}.pdf`);
       toast({
         title: "دانلود موفق",
