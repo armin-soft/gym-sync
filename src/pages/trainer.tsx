@@ -2,6 +2,7 @@
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 import type { TrainerProfile } from "@/types/trainer";
 import { defaultProfile } from "@/types/trainer";
 import { ProfileImage } from "@/components/trainer/ProfileImage";
@@ -65,13 +66,36 @@ const TrainerProfile = () => {
     }
   };
 
+  // Animation variants
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
+  const stagger = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      {/* Background pattern */}
       <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
       
-      <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
-        <div className="flex flex-col space-y-6">
+      <motion.div 
+        className="container mx-auto py-8 relative z-10 space-y-8 px-4"
+        variants={stagger}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div 
+          className="flex flex-col space-y-6"
+          variants={fadeIn}
+        >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
               <Camera className="h-6 w-6" />
@@ -85,27 +109,35 @@ const TrainerProfile = () => {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-          <div className="space-y-6">
+        <motion.div 
+          className="grid lg:grid-cols-[300px_1fr] gap-6"
+          variants={stagger}
+        >
+          <motion.div 
+            className="space-y-6"
+            variants={fadeIn}
+          >
             <ProfileImage 
               image={profile.image}
               onImageChange={(image) => handleUpdate('image', image)}
             />
-          </div>
+          </motion.div>
 
-          <ProfileForm
-            profile={profile}
-            onUpdate={handleUpdate}
-            onSave={handleSave}
-            errors={errors}
-            setErrors={setErrors}
-            validFields={validFields}
-            setValidFields={setValidFields}
-          />
-        </div>
-      </div>
+          <motion.div variants={fadeIn}>
+            <ProfileForm
+              profile={profile}
+              onUpdate={handleUpdate}
+              onSave={handleSave}
+              errors={errors}
+              setErrors={setErrors}
+              validFields={validFields}
+              setValidFields={setValidFields}
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
