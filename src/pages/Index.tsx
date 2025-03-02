@@ -13,7 +13,9 @@ import {
   ChartBar,
   Sun,
   ArrowRight,
-  Dumbbell
+  Dumbbell,
+  Database,
+  HelpCircle
 } from "lucide-react";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Achievements } from "@/components/dashboard/Achievements";
@@ -156,11 +158,14 @@ const Index = () => {
             {/* دکمه های اصلی */}
             <div className="flex flex-wrap gap-2 justify-center">
               {[
-                { title: "مدیریت شاگردان", icon: User2, href: '/Students', color: "from-blue-600 to-blue-400" },
-                { title: "مدیریت تمرین ها", icon: Dumbbell, href: '/Exercise-Movements', color: "from-emerald-600 to-emerald-400" },
-                { title: "برنامه های غذایی", icon: UtensilsCrossed, href: '/Diet-Plan', color: "from-amber-600 to-amber-400" },
-                { title: "مکمل ها", icon: Pill, href: '/Supplements-Vitamins', color: "from-purple-600 to-purple-400" },
-                { title: "گزارشات", icon: ChartBar, href: '/Reports', color: "from-pink-600 to-pink-400" }
+                { title: "پروفایل مربی", icon: User2, href: '/Coach-Profile', color: "from-blue-600 to-blue-400" },
+                { title: "شاگردان", icon: Users, href: '/Students', color: "from-emerald-600 to-emerald-400" },
+                { title: "حرکات تمرینی", icon: Dumbbell, href: '/Exercise-Movements', color: "from-amber-600 to-amber-400" },
+                { title: "برنامه های غذایی", icon: UtensilsCrossed, href: '/Diet-Plan', color: "from-purple-600 to-purple-400" },
+                { title: "مکمل و ویتامین", icon: Pill, href: '/Supplements-Vitamins', color: "from-pink-600 to-pink-400" },
+                { title: "گزارشات", icon: ChartBar, href: '/Reports', color: "from-indigo-600 to-indigo-400" },
+                { title: "پشتیبان‌گیری و بازیابی", icon: Database, href: '/Backup-Restore', color: "from-cyan-600 to-cyan-400" },
+                { title: "درباره", icon: HelpCircle, href: '/About', color: "from-gray-600 to-gray-400" }
               ].map((item) => (
                 <Button 
                   key={item.href}
@@ -262,6 +267,3 @@ const Index = () => {
       </div>
     </div>
   );
-};
-
-export default Index;
