@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, Printer, FileText, FileCheck, X } from "lucide-react";
@@ -169,6 +170,7 @@ export const StudentDownloadDialog = ({
     supplements.find(sup => sup.id === id)
   ).filter(Boolean) || [];
 
+  // The key fix is in the structure below - we need to make sure TabsContent is properly nested inside Tabs component
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-white dark:bg-gray-950 rounded-lg">
@@ -199,123 +201,123 @@ export const StudentDownloadDialog = ({
                 پیش‌نمایش خروجی
               </TabsTrigger>
             </TabsList>
-          </Tabs>
-        </div>
-        
-        <div className="overflow-y-auto max-h-[calc(80vh-150px)] p-6 pt-4">
-          <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
-          
-          <TabsContent value="summary" className="mt-0 space-y-4">
-            <StudentSummary 
-              student={student} 
-              exercises={exercises} 
-              meals={meals} 
-              supplements={supplements} 
-            />
-          </TabsContent>
-          
-          <TabsContent value="preview" className="mt-0">
-            <div className="flex flex-col space-y-4">
-              <div className="rounded-lg border p-4 bg-indigo-50/50 dark:bg-indigo-950/30">
-                <h3 className="font-semibold text-lg mb-3 text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
-                  <div className="p-1.5 rounded-md bg-indigo-100 dark:bg-indigo-900">
-                    <FileCheck className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  پیش‌نمایش پرینت و PDF
-                </h3>
-                
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-5 border border-indigo-100 dark:border-indigo-900">
-                  {student && (
-                    <div className="space-y-4">
-                      <div className="border-b border-gray-200 dark:border-gray-800 pb-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3 space-x-reverse">
-                            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-800">
-                              <img 
-                                src={student.image || "/placeholder.svg"} 
-                                alt={student.name} 
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <h3 className="font-bold text-xl text-gray-900 dark:text-white">{student.name}</h3>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                قد: {student.height} سانتی‌متر - وزن: {student.weight} کیلوگرم
-                              </p>
+            
+            <div className="overflow-y-auto max-h-[calc(80vh-150px)] p-6 pt-4">
+              <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
+              
+              <TabsContent value="summary" className="mt-0 space-y-4">
+                <StudentSummary 
+                  student={student} 
+                  exercises={exercises} 
+                  meals={meals} 
+                  supplements={supplements} 
+                />
+              </TabsContent>
+              
+              <TabsContent value="preview" className="mt-0">
+                <div className="flex flex-col space-y-4">
+                  <div className="rounded-lg border p-4 bg-indigo-50/50 dark:bg-indigo-950/30">
+                    <h3 className="font-semibold text-lg mb-3 text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
+                      <div className="p-1.5 rounded-md bg-indigo-100 dark:bg-indigo-900">
+                        <FileCheck className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                      </div>
+                      پیش‌نمایش پرینت و PDF
+                    </h3>
+                    
+                    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-5 border border-indigo-100 dark:border-indigo-900">
+                      {student && (
+                        <div className="space-y-4">
+                          <div className="border-b border-gray-200 dark:border-gray-800 pb-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3 space-x-reverse">
+                                <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-800">
+                                  <img 
+                                    src={student.image || "/placeholder.svg"} 
+                                    alt={student.name} 
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
+                                <div>
+                                  <h3 className="font-bold text-xl text-gray-900 dark:text-white">{student.name}</h3>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    قد: {student.height} سانتی‌متر - وزن: {student.weight} کیلوگرم
+                                  </p>
+                                </div>
+                              </div>
+                              {trainerProfile && (
+                                <div className="text-left">
+                                  <p className="font-bold text-gray-900 dark:text-white">{trainerProfile.gymName}</p>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">{trainerProfile.fullName}</p>
+                                </div>
+                              )}
                             </div>
                           </div>
-                          {trainerProfile && (
-                            <div className="text-left">
-                              <p className="font-bold text-gray-900 dark:text-white">{trainerProfile.gymName}</p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">{trainerProfile.fullName}</p>
+                          
+                          {studentExercises.length > 0 && (
+                            <div>
+                              <h4 className="text-lg font-medium mb-2 text-indigo-700 dark:text-indigo-400">برنامه تمرینی</h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                {studentExercises.slice(0, 4).map((exercise: any) => (
+                                  <div key={exercise.id} className="border border-gray-200 dark:border-gray-800 rounded p-2 text-sm">
+                                    {exercise.name}
+                                  </div>
+                                ))}
+                                {studentExercises.length > 4 && (
+                                  <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-500">
+                                    و {studentExercises.length - 4} مورد دیگر...
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           )}
-                        </div>
-                      </div>
-                      
-                      {studentExercises.length > 0 && (
-                        <div>
-                          <h4 className="text-lg font-medium mb-2 text-indigo-700 dark:text-indigo-400">برنامه تمرینی</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {studentExercises.slice(0, 4).map((exercise: any) => (
-                              <div key={exercise.id} className="border border-gray-200 dark:border-gray-800 rounded p-2 text-sm">
-                                {exercise.name}
+                          
+                          {studentMeals.length > 0 && (
+                            <div>
+                              <h4 className="text-lg font-medium mb-2 text-green-700 dark:text-green-400">برنامه غذایی</h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                {studentMeals.slice(0, 4).map((meal: any) => (
+                                  <div key={meal.id} className="border border-gray-200 dark:border-gray-800 rounded p-2 text-sm">
+                                    {meal.name}
+                                  </div>
+                                ))}
+                                {studentMeals.length > 4 && (
+                                  <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-500">
+                                    و {studentMeals.length - 4} مورد دیگر...
+                                  </div>
+                                )}
                               </div>
-                            ))}
-                            {studentExercises.length > 4 && (
-                              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-500">
-                                و {studentExercises.length - 4} مورد دیگر...
+                            </div>
+                          )}
+                          
+                          {studentSupplements.length > 0 && (
+                            <div>
+                              <h4 className="text-lg font-medium mb-2 text-purple-700 dark:text-purple-400">مکمل‌ها و ویتامین‌ها</h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                {studentSupplements.slice(0, 4).map((supplement: any) => (
+                                  <div key={supplement.id} className="border border-gray-200 dark:border-gray-800 rounded p-2 text-sm">
+                                    {supplement.name}
+                                  </div>
+                                ))}
+                                {studentSupplements.length > 4 && (
+                                  <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-500">
+                                    و {studentSupplements.length - 4} مورد دیگر...
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            </div>
+                          )}
+                          
+                          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500">
+                            این یک پیش‌نمایش از خروجی PDF و چاپ است. خروجی نهایی حاوی تمامی جزئیات خواهد بود.
                           </div>
                         </div>
                       )}
-                      
-                      {studentMeals.length > 0 && (
-                        <div>
-                          <h4 className="text-lg font-medium mb-2 text-green-700 dark:text-green-400">برنامه غذایی</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {studentMeals.slice(0, 4).map((meal: any) => (
-                              <div key={meal.id} className="border border-gray-200 dark:border-gray-800 rounded p-2 text-sm">
-                                {meal.name}
-                              </div>
-                            ))}
-                            {studentMeals.length > 4 && (
-                              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-500">
-                                و {studentMeals.length - 4} مورد دیگر...
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {studentSupplements.length > 0 && (
-                        <div>
-                          <h4 className="text-lg font-medium mb-2 text-purple-700 dark:text-purple-400">مکمل‌ها و ویتامین‌ها</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {studentSupplements.slice(0, 4).map((supplement: any) => (
-                              <div key={supplement.id} className="border border-gray-200 dark:border-gray-800 rounded p-2 text-sm">
-                                {supplement.name}
-                              </div>
-                            ))}
-                            {studentSupplements.length > 4 && (
-                              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-500">
-                                و {studentSupplements.length - 4} مورد دیگر...
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500">
-                        این یک پیش‌نمایش از خروجی PDF و چاپ است. خروجی نهایی حاوی تمامی جزئیات خواهد بود.
-                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
+              </TabsContent>
             </div>
-          </TabsContent>
+          </Tabs>
         </div>
         
         <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 rounded-b-lg">
