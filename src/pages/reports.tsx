@@ -9,7 +9,6 @@ import {
   Users,
   Dumbbell,
   Wallet,
-  Calendar,
   BarChart as ChartBarIcon,
   PieChart as ChartPieIcon,
   UtensilsCrossed,
@@ -17,7 +16,6 @@ import {
 } from "lucide-react";
 import { 
   calculateTotalIncome, 
-  calculateTotalSessions, 
   calculateGrowth, 
   generateHistoricalData 
 } from "@/lib/utils/reports";
@@ -30,7 +28,6 @@ interface MonthlyData {
   name: string;
   شاگردان: number;
   درآمد: number;
-  جلسات: number;
   تمرین: number;
   مکمل: number;
   برنامه_غذایی: number;
@@ -123,15 +120,6 @@ const Reports = () => {
       format: (value: number) => `${toPersianNumbers(value.toLocaleString())} تومان`
     },
     {
-      title: "جلسات این ماه",
-      value: currentMonth.جلسات,
-      growth: calculateGrowth(currentMonth.جلسات, previousMonth.جلسات),
-      icon: Calendar,
-      color: "from-purple-600 to-purple-400",
-      bgLight: "bg-purple-50",
-      textColor: "text-purple-600"
-    },
-    {
       title: "برنامه‌های تمرینی",
       value: currentMonth.تمرین,
       growth: calculateGrowth(currentMonth.تمرین, previousMonth.تمرین),
@@ -180,10 +168,6 @@ const Reports = () => {
       label: "رشد درآمد (%)",
       color: "#ec4899"
     },
-    جلسات: {
-      label: "تعداد جلسات",
-      color: "#8b5cf6"
-    },
     تمرین: {
       label: "برنامه‌های تمرینی",
       color: "#f59e0b"
@@ -213,7 +197,7 @@ const Reports = () => {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat, index) => (
           <StatCard
             key={stat.title}
@@ -241,7 +225,7 @@ const Reports = () => {
             color={stat.color}
             bgLight={stat.bgLight}
             textColor={stat.textColor}
-            index={index + 4}
+            index={index + 3}
           />
         ))}
       </div>

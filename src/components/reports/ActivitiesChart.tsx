@@ -40,15 +40,6 @@ export const ActivitiesChart = ({ data, chartConfig }: ActivitiesChartProps) => 
             <Legend />
             <Line 
               type="monotone" 
-              dataKey="جلسات" 
-              stroke="#4f46e5" 
-              strokeWidth={2}
-              dot={{ stroke: '#4f46e5', strokeWidth: 2, r: 4, fill: '#fff' }}
-              activeDot={{ r: 6, stroke: '#4f46e5', strokeWidth: 2, fill: '#fff' }}
-              name="تعداد جلسات" 
-            />
-            <Line 
-              type="monotone" 
               dataKey="تمرین" 
               stroke="#f59e0b" 
               strokeWidth={2}

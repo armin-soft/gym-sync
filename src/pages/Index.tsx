@@ -9,7 +9,6 @@ import {
   Pill,
   Crown,
   Users,
-  Calendar,
   ChartBar,
   Sun,
   ArrowRight,
@@ -58,6 +57,23 @@ const Index = () => {
       setStudents([]);
     }
   }, []);
+
+  // Animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
 
   const dashboardItems = [
     { 
@@ -144,23 +160,6 @@ const Index = () => {
       textColor: "text-purple-400"
     }
   ];
-
-  // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
 
   return (
     <motion.div 
@@ -253,15 +252,6 @@ const Index = () => {
                   <div className="flex flex-col">
                     <span className="text-xs text-white/60">پیشرفت</span>
                     <span className="text-sm font-bold">{toPersianNumbers(stats.studentsProgress)}٪</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2">
-                  <div className="p-2 rounded-lg bg-purple-500/30 text-white">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-white/60">جلسات</span>
-                    <span className="text-sm font-bold">{toPersianNumbers(stats.totalSessions)}</span>
                   </div>
                 </div>
               </motion.div>
@@ -470,10 +460,10 @@ const Index = () => {
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg hover:shadow-md transition-all duration-300">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                    <Calendar className="w-4 h-4" />
-                    <span>جلسات ماهانه</span>
+                    <Dumbbell className="w-4 h-4" />
+                    <span>پیشرفت</span>
                   </div>
-                  <p className="mt-1 text-xl font-bold">{toPersianNumbers(stats.totalSessions)}</p>
+                  <p className="mt-1 text-xl font-bold">{toPersianNumbers(stats.studentsProgress)}%</p>
                 </div>
               </div>
             </CardContent>

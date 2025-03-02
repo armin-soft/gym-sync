@@ -6,16 +6,13 @@ import { isValidPrice } from "@/utils/validation";
 export const useDashboardStats = () => {
   const [stats, setStats] = useState<DashboardStats>({
     totalStudents: 0,
-    totalSessions: 0,
     totalMeals: 0,
     totalSupplements: 0,
     studentsProgress: 0,
     studentGrowth: 0,
-    sessionGrowth: 0,
     mealGrowth: 0,
     supplementGrowth: 0,
     maxCapacity: 50,
-    maxSessionsPerMonth: 120,
     mealCompletionRate: 0,
     supplementCompletionRate: 0
   });
@@ -37,13 +34,11 @@ export const useDashboardStats = () => {
       const trainerProfile = cachedTrainerProfile ? JSON.parse(cachedTrainerProfile) : {};
       
       // محاسبه آمار در یک پیمایش
-      let totalSessions = 0;
       let totalProgress = 0;
       let studentsWithMeals = 0;
       let studentsWithSupplements = 0;
 
       students.forEach((student: any) => {
-        totalSessions += (student.sessionsPerWeek || 3) * 4; // جلسات ماهانه
         totalProgress += (student.progress || 0);
         
         if (meals.some((meal: any) => meal.studentId === student.id)) {
@@ -58,16 +53,10 @@ export const useDashboardStats = () => {
       const mealCompletionRate = students.length ? (studentsWithMeals / students.length) * 100 : 0;
       const supplementCompletionRate = students.length ? (studentsWithSupplements / students.length) * 100 : 0;
 
-      // محاسبه درآمد ماهانه
-      const pricePerSession = trainerProfile.price || "0";
-      const monthlyIncome = isValidPrice(pricePerSession) ? 
-        totalSessions * parseInt(pricePerSession.replace(/[^0-9]/g, '')) : 0;
-
       // محاسبه نرخ رشد
       const prevStudents = JSON.parse(localStorage.getItem('prevMonthStudents') || '[]');
       const prevMeals = JSON.parse(localStorage.getItem('prevMonthMeals') || '[]');
       const prevSupplements = JSON.parse(localStorage.getItem('prevMonthSupplements') || '[]');
-      const prevSessions = prevStudents.length * 12;
 
       const calculateGrowth = (current: number, previous: number) => {
         if (!previous) return 0;
@@ -76,16 +65,13 @@ export const useDashboardStats = () => {
 
       setStats({
         totalStudents: students.length,
-        totalSessions,
         totalMeals: meals.length,
         totalSupplements: supplements.length,
         studentsProgress: averageProgress,
         studentGrowth: calculateGrowth(students.length, prevStudents.length),
-        sessionGrowth: calculateGrowth(totalSessions, prevSessions),
         mealGrowth: calculateGrowth(meals.length, prevMeals.length),
         supplementGrowth: calculateGrowth(supplements.length, prevSupplements.length),
         maxCapacity: 50,
-        maxSessionsPerMonth: 120,
         mealCompletionRate,
         supplementCompletionRate
       });
