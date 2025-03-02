@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Printer } from "lucide-react";
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -84,7 +84,12 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
     }
 
     try {
-      const doc = new jsPDF();
+      // استفاده از jsPDF با تنظیمات فارسی
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4"
+      });
 
       // اطلاعات باشگاه در بالای صفحه
       doc.setFontSize(18);
@@ -288,13 +293,274 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
         title: "دانلود موفق",
         description: "فایل PDF با موفقیت دانلود شد."
       });
-      onOpenChange(false);
+      
     } catch (error) {
-      console.error("Error saving PDF:", error);
+      console.error("Error generating PDF:", error);
       toast({
         variant: "destructive",
         title: "خطا",
         description: "در هنگام دانلود فایل PDF خطایی رخ داد."
+      });
+    }
+  };
+
+  const handlePrint = () => {
+    if (!student) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "اطلاعات شاگرد موجود نیست."
+      });
+      return;
+    }
+
+    if (!trainerProfile || !isProfileComplete) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "لطفاً ابتدا اطلاعات باشگاه خود را در بخش پروفایل تکمیل کنید."
+      });
+      return;
+    }
+
+    try {
+      // ایجاد یک صفحه جدید برای چاپ
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "امکان باز کردن پنجره چاپ وجود ندارد."
+        });
+        return;
+      }
+
+      // محتوای HTML برای چاپ
+      printWindow.document.write(`
+        <html dir="rtl">
+        <head>
+          <title>اطلاعات شاگرد: ${student.name}</title>
+          <style>
+            body {
+              font-family: 'Tahoma', 'Arial', sans-serif;
+              margin: 20px;
+              direction: rtl;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              border-bottom: 2px solid #003049;
+              padding-bottom: 10px;
+            }
+            .gym-name {
+              font-size: 24px;
+              font-weight: bold;
+              color: #003049;
+            }
+            .gym-info {
+              color: #667788;
+              font-size: 14px;
+              margin-top: 5px;
+            }
+            .section-title {
+              color: #003049;
+              font-size: 18px;
+              margin-top: 20px;
+              margin-bottom: 10px;
+              border-bottom: 1px solid #eee;
+              padding-bottom: 5px;
+            }
+            .student-header {
+              font-size: 22px;
+              color: #003049;
+              text-align: center;
+              margin: 20px 0;
+            }
+            .info-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 20px;
+            }
+            .info-table th, .info-table td {
+              border: 1px solid #ddd;
+              padding: 8px 12px;
+              text-align: right;
+            }
+            .info-table th {
+              background-color: #f4f4f4;
+              font-weight: bold;
+              width: 30%;
+            }
+            .item-list {
+              list-style-type: none;
+              padding-right: 20px;
+            }
+            .item-list li {
+              margin-bottom: 5px;
+              padding: 5px;
+              border-bottom: 1px dashed #eee;
+            }
+            @media print {
+              body {
+                padding: 0;
+                margin: 0;
+              }
+              button {
+                display: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="gym-name">${trainerProfile.gymName}</div>
+            <div class="gym-info">آدرس: ${trainerProfile.gymAddress}</div>
+            ${trainerProfile.phone ? `<div class="gym-info">تلفن: ${trainerProfile.phone}</div>` : ''}
+            ${trainerProfile.website ? `<div class="gym-info">وب‌سایت: ${trainerProfile.website}</div>` : ''}
+            ${trainerProfile.instagram ? `<div class="gym-info">اینستاگرام: ${trainerProfile.instagram}</div>` : ''}
+          </div>
+
+          <h1 class="student-header">پروفایل شاگرد: ${student.name}</h1>
+
+          <h2 class="section-title">اطلاعات فردی</h2>
+          <table class="info-table">
+            <tr>
+              <th>نام</th>
+              <td>${student.name || ''}</td>
+            </tr>
+            <tr>
+              <th>شماره موبایل</th>
+              <td>${student.phone ? toPersianNumbers(student.phone) : ''}</td>
+            </tr>
+            <tr>
+              <th>قد (سانتی متر)</th>
+              <td>${student.height ? toPersianNumbers(student.height) : ''}</td>
+            </tr>
+            <tr>
+              <th>وزن (کیلوگرم)</th>
+              <td>${student.weight ? toPersianNumbers(student.weight) : ''}</td>
+            </tr>
+          </table>
+      `);
+
+      // افزودن بخش برنامه تمرینی اگر وجود دارد
+      if (student.exercises && student.exercises.length > 0 && exercises && exercises.length > 0) {
+        const studentExercises = exercises.filter(exercise => 
+          student.exercises?.includes(exercise.id)
+        );
+
+        if (studentExercises.length > 0) {
+          printWindow.document.write(`
+            <h2 class="section-title">برنامه تمرینی</h2>
+            <table class="info-table">
+              <tr>
+                <th>نام تمرین</th>
+                <th>توضیحات</th>
+              </tr>
+          `);
+
+          studentExercises.forEach(exercise => {
+            printWindow.document.write(`
+              <tr>
+                <td>${exercise.name || ''}</td>
+                <td>${exercise.description || ''}</td>
+              </tr>
+            `);
+          });
+
+          printWindow.document.write(`</table>`);
+        }
+      }
+
+      // افزودن بخش برنامه غذایی اگر وجود دارد
+      if (student.meals && student.meals.length > 0 && meals && meals.length > 0) {
+        const studentMeals = meals.filter(meal => 
+          student.meals?.includes(meal.id)
+        );
+
+        if (studentMeals.length > 0) {
+          printWindow.document.write(`
+            <h2 class="section-title">برنامه غذایی</h2>
+            <table class="info-table">
+              <tr>
+                <th>نام وعده</th>
+                <th>توضیحات</th>
+              </tr>
+          `);
+
+          studentMeals.forEach(meal => {
+            printWindow.document.write(`
+              <tr>
+                <td>${meal.name || ''}</td>
+                <td>${meal.description || ''}</td>
+              </tr>
+            `);
+          });
+
+          printWindow.document.write(`</table>`);
+        }
+      }
+
+      // افزودن بخش مکمل‌ها و ویتامین‌ها اگر وجود دارد
+      if (((student.supplements && student.supplements.length > 0) || 
+          (student.vitamins && student.vitamins.length > 0)) && 
+          supplements && supplements.length > 0) {
+        
+        const studentSupplements = supplements.filter(supplement => 
+          (student.supplements?.includes(supplement.id)) || 
+          (student.vitamins?.includes(supplement.id))
+        );
+
+        if (studentSupplements.length > 0) {
+          printWindow.document.write(`
+            <h2 class="section-title">مکمل‌ها و ویتامین‌ها</h2>
+            <table class="info-table">
+              <tr>
+                <th>نام مکمل/ویتامین</th>
+                <th>توضیحات</th>
+              </tr>
+          `);
+
+          studentSupplements.forEach(supplement => {
+            printWindow.document.write(`
+              <tr>
+                <td>${supplement.name || ''}</td>
+                <td>${supplement.description || ''}</td>
+              </tr>
+            `);
+          });
+
+          printWindow.document.write(`</table>`);
+        }
+      }
+
+      // پایان HTML و دستور چاپ
+      printWindow.document.write(`
+          <div style="text-align: center; margin-top: 30px;">
+            <button onclick="window.print();" style="padding: 10px 20px; background-color: #003049; color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Tahoma', sans-serif;">چاپ</button>
+          </div>
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+      printWindow.focus();
+      
+      // اجرای اتوماتیک دستور چاپ بعد از بارگذاری کامل صفحه
+      setTimeout(() => {
+        printWindow.print();
+      }, 1000);
+
+      toast({
+        title: "آماده برای چاپ",
+        description: "صفحه چاپ با موفقیت آماده شد."
+      });
+    } catch (error) {
+      console.error("Error preparing print:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "در آماده‌سازی چاپ خطایی رخ داد."
       });
     }
   };
@@ -407,12 +673,21 @@ export const StudentDownloadDialog = ({ open, onOpenChange, student, exercises, 
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Button 
-            onClick={handleDownload}
-            className="bg-indigo-500 text-white" 
+            onClick={handlePrint}
+            className="bg-blue-500 text-white flex items-center gap-1" 
             disabled={!isProfileComplete}
           >
+            <Printer size={16} />
+            چاپ
+          </Button>
+          <Button 
+            onClick={handleDownload}
+            className="bg-indigo-500 text-white flex items-center gap-1" 
+            disabled={!isProfileComplete}
+          >
+            <Download size={16} />
             دانلود PDF
           </Button>
         </div>
