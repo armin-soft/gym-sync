@@ -16,7 +16,6 @@ import {
   TrendingUp,
   CalendarCheck,
   ArrowUpRight,
-  CalendarDays,
   ArrowRight
 } from "lucide-react";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -28,38 +27,37 @@ import { Button } from "@/components/ui/button";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
-import { TrainingSession } from "@/components/students/StudentTypes";
+import { Student } from "@/components/students/StudentTypes";
 
 const Index = () => {
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
-  const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
   
   // بازیابی اطلاعات مربی از localStorage
   const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
 
-  // بارگیری جلسات تمرینی از localStorage
+  // بارگیری شاگردان از localStorage
   useEffect(() => {
     try {
-      const savedSessions = localStorage.getItem('trainingSessions');
-      if (savedSessions) {
-        const sessions = JSON.parse(savedSessions);
-        setTrainingSessions(sessions);
+      const savedStudents = localStorage.getItem('students');
+      if (savedStudents) {
+        const parsedStudents = JSON.parse(savedStudents);
+        if (Array.isArray(parsedStudents)) {
+          setStudents(parsedStudents);
+        } else {
+          console.error('Parsed students is not an array:', parsedStudents);
+          setStudents([]);
+        }
       } else {
-        // اگر هیچ داده‌ای در localStorage نبود، آرایه خالی را تنظیم می‌کنیم
-        setTrainingSessions([]);
+        setStudents([]);
       }
     } catch (error) {
-      console.error('Error loading training sessions:', error);
-      setTrainingSessions([]);
+      console.error('Error loading students:', error);
+      setStudents([]);
     }
   }, []);
-
-  // گروه‌بندی جلسات بر اساس وضعیت
-  const upcomingSessions = trainingSessions.filter(session => session.status === 'upcoming');
-  const completedSessions = trainingSessions.filter(session => session.status === 'completed');
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
@@ -96,7 +94,7 @@ const Index = () => {
                 <div className="flex flex-wrap gap-3">
                   <Badge variant="outline" className="border-white/10 bg-white/5 text-white backdrop-blur-sm px-3 py-1">
                     <Sun className="w-3.5 h-3.5 ml-1.5 text-yellow-400" />
-                    {currentTime.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    {currentTime.toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).replace(',', '')}
                   </Badge>
                   <Badge variant="outline" className="border-white/10 bg-white/5 text-white backdrop-blur-sm px-3 py-1">
                     <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
@@ -204,110 +202,72 @@ const Index = () => {
         </div>
       </div>
 
-      {/* جلسات تمرینی */}
+      {/* شاگردان */}
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
-          {/* جلسات تمرینی */}
+          {/* نمایش شاگردان */}
           <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
             <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  <CalendarCheck className="w-5 h-5 text-indigo-500" />
-                  جلسات تمرینی
+                  <Users className="w-5 h-5 text-indigo-500" />
+                  شاگردان
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/20">
-                  مشاهده همه
-                  <ArrowRight className="w-3 h-3" />
+                <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/20" asChild>
+                  <Link to="/Students">
+                    مشاهده همه
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
                 </Button>
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              <Tabs defaultValue="upcoming" className="w-full">
-                <div className="px-4 pt-2 pb-0 border-b">
-                  <TabsList className="w-full justify-start gap-2 bg-transparent h-auto p-0">
-                    <TabsTrigger value="upcoming" className="data-[state=active]:bg-indigo-100 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/30 dark:data-[state=active]:text-indigo-400 rounded-t-lg rounded-b-none border-b-2 border-transparent data-[state=active]:border-indigo-500 px-4 py-2">
-                      آینده
-                    </TabsTrigger>
-                    <TabsTrigger value="completed" className="data-[state=active]:bg-indigo-100 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/30 dark:data-[state=active]:text-indigo-400 rounded-t-lg rounded-b-none border-b-2 border-transparent data-[state=active]:border-indigo-500 px-4 py-2">
-                      انجام شده
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-                
-                <TabsContent value="upcoming" className="mt-0">
-                  <div className="divide-y">
-                    {upcomingSessions.length > 0 ? (
-                      upcomingSessions.map(session => (
-                        <div key={session.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 p-2 rounded-full">
-                              <CalendarDays className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{session.student}</h4>
-                              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                <span>{session.type}</span>
-                                <span className="inline-block w-1 h-1 rounded-full bg-gray-400"></span>
-                                <span dir="ltr">{toPersianNumbers(session.time)}</span>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center">
-                            <Badge variant="outline" className="text-xs bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
-                              {toPersianNumbers(session.duration)}
-                            </Badge>
-                            <Button variant="ghost" size="icon" className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                              <ArrowUpRight className="w-4 h-4" />
-                            </Button>
-                          </div>
+              <div className="divide-y">
+                {students.length > 0 ? (
+                  students.slice(0, 5).map(student => (
+                    <div key={student.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10 border border-slate-200 dark:border-slate-700">
+                          <AvatarImage src={student.image || "/placeholder.svg"} alt={student.name} />
+                          <AvatarFallback>
+                            <User2 className="w-5 h-5" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{student.name}</h4>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <span dir="ltr">{toPersianNumbers(student.phone)}</span>
+                          </p>
                         </div>
-                      ))
-                    ) : (
-                      <div className="p-8 text-center text-muted-foreground">
-                        <CalendarDays className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
-                        <p>هیچ جلسه آینده‌ای یافت نشد</p>
                       </div>
-                    )}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="completed" className="mt-0">
-                  <div className="divide-y">
-                    {completedSessions.length > 0 ? (
-                      completedSessions.map(session => (
-                        <div key={session.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-2 rounded-full">
-                              <TrendingUp className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{session.student}</h4>
-                              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                <span>{session.type}</span>
-                                <span className="inline-block w-1 h-1 rounded-full bg-gray-400"></span>
-                                <span dir="ltr">{toPersianNumbers(session.time)}</span>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center">
-                            <Badge variant="outline" className="text-xs bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800">
-                              تکمیل شده
-                            </Badge>
-                            <Button variant="ghost" size="icon" className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                              <ArrowUpRight className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-8 text-center text-muted-foreground">
-                        <TrendingUp className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
-                        <p>هیچ جلسه تکمیل شده‌ای یافت نشد</p>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                          {student.exercises?.length ? toPersianNumbers(student.exercises.length) : '۰'} تمرین
+                        </Badge>
+                        <Button variant="ghost" size="icon" className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" asChild>
+                          <Link to={`/Students`}>
+                            <ArrowUpRight className="w-4 h-4" />
+                          </Link>
+                        </Button>
                       </div>
-                    )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-8 text-center text-muted-foreground">
+                    <Users className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
+                    <p>هیچ شاگردی یافت نشد</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      asChild
+                    >
+                      <Link to="/Students">
+                        افزودن شاگرد جدید
+                      </Link>
+                    </Button>
                   </div>
-                </TabsContent>
-              </Tabs>
+                )}
+              </div>
             </CardContent>
           </Card>
           
