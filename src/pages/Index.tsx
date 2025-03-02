@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { 
@@ -20,7 +19,6 @@ import {
   BarChart3
 } from "lucide-react";
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import { Achievements } from "@/components/dashboard/Achievements";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Button } from "@/components/ui/button";
@@ -36,10 +34,8 @@ const Index = () => {
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
   
-  // بازیابی اطلاعات مربی از localStorage
   const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
 
-  // بارگیری شاگردان از localStorage
   useEffect(() => {
     try {
       const savedStudents = localStorage.getItem('students');
@@ -59,23 +55,6 @@ const Index = () => {
       setStudents([]);
     }
   }, []);
-
-  // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
 
   const dashboardItems = [
     { 
@@ -163,6 +142,22 @@ const Index = () => {
     }
   ];
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -170,7 +165,6 @@ const Index = () => {
       transition={{ duration: 0.5 }}
       className="container mx-auto px-4 py-8 space-y-8"
     >
-      {/* Hero Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-6 md:p-8 text-white shadow-lg shadow-indigo-500/20">
         <div className="absolute inset-0 bg-[url(/pattern.svg)] opacity-10" />
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-white/10 via-white/30 to-white/10" />
@@ -234,7 +228,6 @@ const Index = () => {
                 </motion.div>
               </motion.div>
               
-              {/* اطلاعات سریع */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -255,7 +248,6 @@ const Index = () => {
               </motion.div>
             </div>
 
-            {/* کارت های آمار سریع */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -287,7 +279,6 @@ const Index = () => {
               ))}
             </motion.div>
 
-            {/* دکمه های اصلی */}
             <motion.div 
               variants={container}
               initial="hidden"
@@ -317,7 +308,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="grid gap-6 md:grid-cols-3">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -325,7 +315,6 @@ const Index = () => {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="md:col-span-2 space-y-6"
         >
-          {/* نمایش شاگردان */}
           <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-slate-200 dark:border-slate-800">
             <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 py-4">
               <div className="flex items-center justify-between">
@@ -417,7 +406,6 @@ const Index = () => {
             )}
           </Card>
           
-          {/* کارت‌های آمار */}
           <StatsCards stats={stats} />
         </motion.div>
         
@@ -427,7 +415,6 @@ const Index = () => {
           transition={{ duration: 0.5, delay: 0.7 }}
           className="space-y-6"
         >
-          {/* پیشرفت کلی */}
           <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-slate-200 dark:border-slate-800">
             <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 py-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -466,15 +453,6 @@ const Index = () => {
               </div>
             </CardContent>
           </Card>
-          
-          {/* دستاوردها و موفقیت‌ها */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-          >
-            <Achievements stats={stats} />
-          </motion.div>
         </motion.div>
       </div>
     </motion.div>
