@@ -230,13 +230,7 @@ const Index = () => {
                     <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
                     {currentTime.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </Badge>
-                  <Badge 
-                    variant="outline" 
-                    className="border-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-white bg-emerald-500/20"
-                  >
-                    <Activity className="w-3.5 h-3.5 ml-1.5" />
-                    در حال فعالیت
-                  </Badge>
+                  {/* نشانگر وضعیت فعالیت حذف شد */}
                 </motion.div>
               </motion.div>
               
