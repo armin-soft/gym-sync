@@ -15,11 +15,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Download, UserRound, Dumbbell, Apple, Pill } from "lucide-react";
+import { Download } from "lucide-react";
 import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+import 'jspdf-autotable';
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useToast } from "@/hooks/use-toast";
+
+declare module 'jspdf' {
+  interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+    lastAutoTable: {
+      finalY: number;
+    };
+  }
+}
 
 interface StudentDownloadDialogProps {
   open: boolean;
@@ -71,7 +80,7 @@ export const StudentDownloadDialog = ({
       ["وزن (کیلوگرم)", toPersianNumbers(student.weight)],
     ];
 
-    autoTable(doc, {
+    doc.autoTable({
       body: personalData,
       startY: 40,
       styles: {
@@ -111,7 +120,7 @@ export const StudentDownloadDialog = ({
 
       currentY += 5;
 
-      autoTable(doc, {
+      doc.autoTable({
         head: [["نام تمرین", "توضیحات"]],
         body: exerciseData,
         startY: currentY,
@@ -150,7 +159,7 @@ export const StudentDownloadDialog = ({
 
       currentY += 5;
 
-      autoTable(doc, {
+      doc.autoTable({
         head: [["نام وعده", "توضیحات"]],
         body: mealData,
         startY: currentY,
@@ -194,7 +203,7 @@ export const StudentDownloadDialog = ({
 
       currentY += 5;
 
-      autoTable(doc, {
+      doc.autoTable({
         head: [["نام مکمل/ویتامین", "توضیحات"]],
         body: supplementData,
         startY: currentY,
@@ -246,7 +255,7 @@ export const StudentDownloadDialog = ({
             <span>دانلود اطلاعات شاگرد</span>
           </DialogTitle>
           <DialogDescription>
-            دانلود اطلاعات شاگرد شامل اطلاعات فردی، برنامه تمرینی، برنامه غذایی،
+            دانلود اطلاعات شاگرد شامل اطلاعات فردی، برنامه تمرینی، برنامه غذایی，
             مکمل‌ها و ویتامین‌ها
           </DialogDescription>
         </DialogHeader>
