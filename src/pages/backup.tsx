@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { formatPersianDateForFilename } from "@/lib/utils/persianDate";
 
 const BackupPage = () => {
   const { toast } = useToast();
@@ -72,9 +72,8 @@ const BackupPage = () => {
         }
       });
       
-      // Create JSON string with timestamp
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      const filename = `gym-manager-backup-${timestamp}.json`;
+      // Create filename with Persian date format
+      const filename = `${formatPersianDateForFilename()}.json`;
       const backupString = JSON.stringify(backupData, null, 2);
       
       // Create download file
