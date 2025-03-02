@@ -17,7 +17,9 @@ import {
   Database,
   HelpCircle,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Sparkles,
+  LineChart
 } from "lucide-react";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
@@ -143,7 +145,7 @@ const Index = () => {
     }
   ];
 
-  // Fix for the TypeScript error - define proper animation variants
+  // Animation variants
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -167,11 +169,11 @@ const Index = () => {
       transition={{ duration: 0.5 }}
       className="container mx-auto px-4 py-8 space-y-8"
     >
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-6 md:p-8 text-white shadow-lg shadow-indigo-500/20">
+      {/* Hero Section with Glass Effect */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-700 via-violet-700 to-purple-700 p-6 md:p-8 text-white shadow-lg">
         <div className="absolute inset-0 bg-[url(/pattern.svg)] opacity-10" />
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-white/10 via-white/30 to-white/10" />
-        <div className="absolute -bottom-2 right-0 w-28 h-28 md:w-40 md:h-40 blur-3xl rounded-full bg-pink-500/30" />
-        <div className="absolute -top-5 -left-5 w-24 h-24 blur-3xl rounded-full bg-indigo-500/30" />
+        <div className="absolute -bottom-5 -left-5 w-40 h-40 blur-3xl rounded-full bg-pink-600/30" />
+        <div className="absolute -top-10 -right-10 w-40 h-40 blur-3xl rounded-full bg-indigo-600/30" />
         
         <div className="relative">
           <motion.div 
@@ -189,8 +191,8 @@ const Index = () => {
               >
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 blur-sm opacity-50 animate-pulse" />
-                    <Avatar className="h-14 w-14 border-2 border-white/20 relative">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 blur-sm opacity-70 animate-pulse" />
+                    <Avatar className="h-16 w-16 border-2 border-white/30 relative shadow-lg">
                       <AvatarImage src={trainerProfile.image} alt="تصویر پروفایل" />
                       <AvatarFallback>
                         <Crown className="w-6 h-6 text-white" />
@@ -199,14 +201,14 @@ const Index = () => {
                   </div>
                   <div>
                     <div className="flex items-center gap-3">
-                      <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
-                        خوش آمدید 👋
+                      <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                        خوش آمدید <span className="inline-block ml-1">👋</span>
                       </h1>
-                      <Badge variant="secondary" className="bg-white/10 text-white border-0 backdrop-blur-sm">
+                      <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm">
                         {trainerProfile.name || "مربی حرفه ای"}
                       </Badge>
                     </div>
-                    <p className="mt-2 text-white/80 text-sm">
+                    <p className="mt-2 text-white/80">
                       به داشبورد مدیریت برنامه تمرینی خود خوش آمدید
                     </p>
                   </div>
@@ -218,11 +220,11 @@ const Index = () => {
                   transition={{ duration: 0.5, delay: 0.3 }}
                   className="flex flex-wrap gap-3"
                 >
-                  <Badge variant="outline" className="border-white/10 bg-white/5 text-white backdrop-blur-sm px-3 py-1.5 rounded-full">
-                    <Sun className="w-3.5 h-3.5 ml-1.5 text-yellow-400" />
+                  <Badge variant="outline" className="border-white/10 bg-white/10 text-white backdrop-blur-sm px-3 py-1.5 rounded-full">
+                    <Sun className="w-3.5 h-3.5 ml-1.5 text-yellow-300" />
                     {currentTime.toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).replace(/(\d+)\s+(\S+)\s+(\d+),\s+(\S+)/, '$4 $1 $2 $3')}
                   </Badge>
-                  <Badge variant="outline" className="border-white/10 bg-white/5 text-white backdrop-blur-sm px-3 py-1.5 rounded-full">
+                  <Badge variant="outline" className="border-white/10 bg-white/10 text-white backdrop-blur-sm px-3 py-1.5 rounded-full">
                     <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
                     {currentTime.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </Badge>
@@ -233,17 +235,33 @@ const Index = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.4 }}
-                className="hidden lg:block p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 shadow-inner"
+                className="hidden lg:flex items-center gap-4 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 shadow-inner"
               >
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 px-3">
-                    <div className="p-2 rounded-lg bg-blue-500/20 text-blue-300">
-                      <Users className="w-5 h-5" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-xs text-white/60">شاگردان فعال</span>
-                      <span className="text-sm font-bold">{toPersianNumbers(stats.totalStudents)}</span>
-                    </div>
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <div className="p-2 rounded-lg bg-indigo-500/30 text-white">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-white/60">شاگردان فعال</span>
+                    <span className="text-sm font-bold">{toPersianNumbers(stats.totalStudents)}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <div className="p-2 rounded-lg bg-emerald-500/30 text-white">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-white/60">پیشرفت</span>
+                    <span className="text-sm font-bold">{toPersianNumbers(stats.studentsProgress)}٪</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <div className="p-2 rounded-lg bg-purple-500/30 text-white">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-white/60">جلسات</span>
+                    <span className="text-sm font-bold">{toPersianNumbers(stats.totalSessions)}</span>
                   </div>
                 </div>
               </motion.div>
@@ -253,7 +271,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+              className="grid gap-4 grid-cols-1 sm:grid-cols-3"
             >
               {quickStats.map((stat, index) => (
                 <motion.div 
@@ -261,16 +279,16 @@ const Index = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.2 + (index * 0.1) }}
-                  className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 shadow-inner group"
+                  className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition-all duration-300 shadow-inner group"
                 >
-                  <div className={`p-2 rounded-lg ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
-                    <stat.icon className={`h-5 w-5 ${stat.textColor}`} />
+                  <div className={`p-2 rounded-lg bg-gradient-to-br from-white/10 to-white/5 group-hover:scale-110 transition-transform duration-300`}>
+                    <stat.icon className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-white/80">{stat.title}</p>
                     <div className="flex items-center justify-between">
                       <p className="text-lg font-bold">{toPersianNumbers(stat.value)}</p>
-                      <div className={`flex items-center text-xs ${stat.growth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <div className={`flex items-center text-xs ${stat.growth >= 0 ? 'text-green-300' : 'text-red-300'}`}>
                         {stat.growth >= 0 ? <TrendingUp className="w-3 h-3 ml-1" /> : <Activity className="w-3 h-3 ml-1" />}
                         {toPersianNumbers(Math.abs(stat.growth))}٪
                       </div>
@@ -279,36 +297,38 @@ const Index = () => {
                 </motion.div>
               ))}
             </motion.div>
-
-            <motion.div 
-              variants={container}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3"
-            >
-              {dashboardItems.map((dashItem) => (
-                <motion.div key={dashItem.href} variants={item}>
-                  <Link 
-                    to={dashItem.href}
-                    className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-white/10 p-3 md:p-4 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
-                  >
-                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r ${dashItem.color} transition-opacity duration-300`} />
-                    <div className="relative flex flex-col items-center text-center gap-2 md:gap-3">
-                      <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
-                        <dashItem.icon className="w-5 h-5" />
-                      </div>
-                      <span className="font-medium text-sm md:text-base text-gray-800 dark:text-white">
-                        {dashItem.title}
-                      </span>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </motion.div>
           </motion.div>
         </div>
       </div>
 
+      {/* Main Menu Grid */}
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
+      >
+        {dashboardItems.map((dashItem) => (
+          <motion.div key={dashItem.href} variants={item}>
+            <Link 
+              to={dashItem.href}
+              className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-slate-200 dark:border-slate-800 p-3 md:p-4 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
+            >
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 bg-gradient-to-r ${dashItem.color} transition-opacity duration-300`} />
+              <div className="relative flex flex-col items-center text-center gap-2 md:gap-3">
+                <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
+                  <dashItem.icon className="w-5 h-5" />
+                </div>
+                <span className="font-medium text-sm md:text-base text-gray-800 dark:text-white">
+                  {dashItem.title}
+                </span>
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Stats and Recent Students */}
       <div className="grid gap-6 md:grid-cols-3">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -316,6 +336,7 @@ const Index = () => {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="md:col-span-2 space-y-6"
         >
+          {/* Students Card */}
           <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-slate-200 dark:border-slate-800">
             <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 py-4">
               <div className="flex items-center justify-between">
@@ -416,6 +437,7 @@ const Index = () => {
           transition={{ duration: 0.5, delay: 0.7 }}
           className="space-y-6"
         >
+          {/* Progress Card */}
           <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-slate-200 dark:border-slate-800">
             <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 py-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -431,26 +453,96 @@ const Index = () => {
                 <span className="text-xl font-bold">{toPersianNumbers(stats.studentsProgress)}٪</span>
               </div>
               <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div 
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${stats.studentsProgress}%` }}
+                  transition={{ duration: 1, delay: 0.5 }}
                   className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
-                  style={{ width: `${stats.studentsProgress}%` }}
                 />
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg">
+              <div className="mt-6 grid grid-cols-2 gap-2">
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg hover:shadow-md transition-all duration-300">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
                     <Users className="w-4 h-4" />
-                    <span>تعداد شاگردان فعال</span>
+                    <span>شاگردان فعال</span>
                   </div>
                   <p className="mt-1 text-xl font-bold">{toPersianNumbers(stats.totalStudents)}</p>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg">
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg hover:shadow-md transition-all duration-300">
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
                     <Calendar className="w-4 h-4" />
-                    <span>جلسات در ماه</span>
+                    <span>جلسات ماهانه</span>
                   </div>
                   <p className="mt-1 text-xl font-bold">{toPersianNumbers(stats.totalSessions)}</p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Activity Summary Card */}
+          <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-slate-200 dark:border-slate-800">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 py-4">
+              <CardTitle className="text-lg font-bold flex items-center gap-2">
+                <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-900/30">
+                  <LineChart className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                </div>
+                خلاصه فعالیت‌ها
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                      <UtensilsCrossed className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                    </div>
+                    <span className="text-sm font-medium">برنامه‌های غذایی</span>
+                  </div>
+                  <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                    {toPersianNumbers(stats.totalMeals)} برنامه
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                      <Pill className="w-4 h-4 text-purple-500 dark:text-purple-400" />
+                    </div>
+                    <span className="text-sm font-medium">مکمل‌های تجویز شده</span>
+                  </div>
+                  <Badge variant="outline" className="bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800">
+                    {toPersianNumbers(stats.totalSupplements)} مورد
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                      <Dumbbell className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                    </div>
+                    <span className="text-sm font-medium">نرخ تکمیل تمرین‌ها</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-20 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden ml-2">
+                      <div 
+                        className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full"
+                        style={{ width: `${stats.studentsProgress}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-medium">{toPersianNumbers(stats.studentsProgress)}٪</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-4 border-t dark:border-slate-800">
+                <Button 
+                  variant="outline" 
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r hover:from-indigo-500 hover:to-indigo-600 hover:text-white transition-colors duration-300" 
+                  asChild
+                >
+                  <Link to="/Reports">
+                    <span>مشاهده گزارش کامل</span>
+                    <Sparkles className="w-4 h-4" />
+                  </Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
