@@ -29,62 +29,37 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Fake training sessions data
-const trainingSessions = [
-  { 
-    id: 1, 
-    student: "علی محمدی", 
-    type: "تمرین بدنسازی", 
-    date: "1402/10/12", 
-    time: "16:30", 
-    duration: "90 دقیقه",
-    status: "completed"
-  },
-  { 
-    id: 2, 
-    student: "رضا کریمی", 
-    type: "تمرین کاردیو", 
-    date: "1402/10/12", 
-    time: "18:00", 
-    duration: "60 دقیقه",
-    status: "completed"
-  },
-  { 
-    id: 3, 
-    student: "مریم علوی", 
-    type: "تمرین قدرتی", 
-    date: "1402/10/13", 
-    time: "10:00", 
-    duration: "75 دقیقه",
-    status: "upcoming"
-  },
-  { 
-    id: 4, 
-    student: "سعید رضایی", 
-    type: "تمرین استقامتی", 
-    date: "1402/10/13", 
-    time: "14:30", 
-    duration: "60 دقیقه",
-    status: "upcoming"
-  },
-  { 
-    id: 5, 
-    student: "نیما صادقی", 
-    type: "تمرین انعطاف پذیری", 
-    date: "1402/10/14", 
-    time: "09:00", 
-    duration: "45 دقیقه",
-    status: "upcoming"
-  }
-];
+import { useState, useEffect } from "react";
+import { TrainingSession } from "@/components/students/StudentTypes";
 
 const Index = () => {
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
+  const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([]);
   
   // بازیابی اطلاعات مربی از localStorage
   const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
+
+  // بارگیری جلسات تمرینی از localStorage
+  useEffect(() => {
+    try {
+      const savedSessions = localStorage.getItem('trainingSessions');
+      if (savedSessions) {
+        const sessions = JSON.parse(savedSessions);
+        setTrainingSessions(sessions);
+      } else {
+        // اگر هیچ داده‌ای در localStorage نبود، آرایه خالی را تنظیم می‌کنیم
+        setTrainingSessions([]);
+      }
+    } catch (error) {
+      console.error('Error loading training sessions:', error);
+      setTrainingSessions([]);
+    }
+  }, []);
+
+  // گروه‌بندی جلسات بر اساس وضعیت
+  const upcomingSessions = trainingSessions.filter(session => session.status === 'upcoming');
+  const completedSessions = trainingSessions.filter(session => session.status === 'completed');
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
@@ -261,61 +236,75 @@ const Index = () => {
                 
                 <TabsContent value="upcoming" className="mt-0">
                   <div className="divide-y">
-                    {trainingSessions.filter(session => session.status === "upcoming").map(session => (
-                      <div key={session.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 p-2 rounded-full">
-                            <CalendarDays className="w-5 h-5" />
+                    {upcomingSessions.length > 0 ? (
+                      upcomingSessions.map(session => (
+                        <div key={session.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 p-2 rounded-full">
+                              <CalendarDays className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{session.student}</h4>
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <span>{session.type}</span>
+                                <span className="inline-block w-1 h-1 rounded-full bg-gray-400"></span>
+                                <span dir="ltr">{toPersianNumbers(session.time)}</span>
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{session.student}</h4>
-                            <p className="text-xs text-muted-foreground flex items-center gap-1">
-                              <span>{session.type}</span>
-                              <span className="inline-block w-1 h-1 rounded-full bg-gray-400"></span>
-                              <span dir="ltr">{session.time}</span>
-                            </p>
+                          <div className="flex items-center">
+                            <Badge variant="outline" className="text-xs bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
+                              {toPersianNumbers(session.duration)}
+                            </Badge>
+                            <Button variant="ghost" size="icon" className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex items-center">
-                          <Badge variant="outline" className="text-xs bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
-                            {session.duration}
-                          </Badge>
-                          <Button variant="ghost" size="icon" className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                            <ArrowUpRight className="w-4 h-4" />
-                          </Button>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center text-muted-foreground">
+                        <CalendarDays className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
+                        <p>هیچ جلسه آینده‌ای یافت نشد</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </TabsContent>
                 
                 <TabsContent value="completed" className="mt-0">
                   <div className="divide-y">
-                    {trainingSessions.filter(session => session.status === "completed").map(session => (
-                      <div key={session.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-2 rounded-full">
-                            <TrendingUp className="w-5 h-5" />
+                    {completedSessions.length > 0 ? (
+                      completedSessions.map(session => (
+                        <div key={session.id} className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-2 rounded-full">
+                              <TrendingUp className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{session.student}</h4>
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <span>{session.type}</span>
+                                <span className="inline-block w-1 h-1 rounded-full bg-gray-400"></span>
+                                <span dir="ltr">{toPersianNumbers(session.time)}</span>
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{session.student}</h4>
-                            <p className="text-xs text-muted-foreground flex items-center gap-1">
-                              <span>{session.type}</span>
-                              <span className="inline-block w-1 h-1 rounded-full bg-gray-400"></span>
-                              <span dir="ltr">{session.time}</span>
-                            </p>
+                          <div className="flex items-center">
+                            <Badge variant="outline" className="text-xs bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800">
+                              تکمیل شده
+                            </Badge>
+                            <Button variant="ghost" size="icon" className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex items-center">
-                          <Badge variant="outline" className="text-xs bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800">
-                            تکمیل شده
-                          </Badge>
-                          <Button variant="ghost" size="icon" className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                            <ArrowUpRight className="w-4 h-4" />
-                          </Button>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center text-muted-foreground">
+                        <TrendingUp className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
+                        <p>هیچ جلسه تکمیل شده‌ای یافت نشد</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </TabsContent>
               </Tabs>
