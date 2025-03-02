@@ -15,7 +15,6 @@ import {
   Sun,
   ArrowRight
 } from "lucide-react";
-import { QuickActions } from "@/components/dashboard/QuickActions";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Achievements } from "@/components/dashboard/Achievements";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
@@ -273,78 +272,8 @@ const Index = () => {
         </div>
         
         <div className="space-y-6">
-          {/* دسترسی سریع */}
-          <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-              <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <Activity className="w-5 h-5" />
-                دسترسی سریع
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 grid grid-cols-2 gap-2">
-              {[
-                { title: "شاگردان", icon: Users, href: "/Students", color: "bg-blue-500" },
-                { title: "تمرین‌ها", icon: Dumbbell, href: "/Exercise-Movements", color: "bg-emerald-500" },
-                { title: "برنامه غذایی", icon: UtensilsCrossed, href: "/Diet-Plan", color: "bg-amber-500" },
-                { title: "مکمل‌ها", icon: Pill, href: "/Supplements-Vitamins", color: "bg-purple-500" },
-                { title: "گزارشات", icon: ChartBar, href: "/Reports", color: "bg-pink-500" },
-                { title: "پروفایل", icon: User2, href: "/Coach-Profile", color: "bg-indigo-500" },
-              ].map((item) => (
-                <Button
-                  key={item.href}
-                  variant="outline"
-                  className="h-20 w-full bg-gray-50 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800 border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:shadow-md"
-                  asChild
-                >
-                  <Link to={item.href}>
-                    <div className={`p-2 rounded-full ${item.color} text-white mb-1`}>
-                      <item.icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-medium">{item.title}</span>
-                  </Link>
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
-          
           {/* دستاوردها و موفقیت‌ها */}
           <Achievements stats={stats} />
-        </div>
-      </div>
-      
-      {/* بهبود بخش دسترسی سریع */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <Activity className="w-6 h-6 text-primary" />
-          دسترسی سریع به بخش‌های کاربردی
-        </h2>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {[
-            { title: "مدیریت شاگردان", desc: "افزودن و مدیریت شاگردان", icon: Users, href: "/Students", color: "from-blue-600 to-blue-400", bgColor: "bg-blue-50 dark:bg-blue-950" },
-            { title: "تمرین‌های جدید", desc: "ایجاد برنامه تمرینی", icon: Dumbbell, href: "/Exercise-Movements", color: "from-emerald-600 to-emerald-400", bgColor: "bg-emerald-50 dark:bg-emerald-950" },
-            { title: "برنامه غذایی", desc: "تنظیم رژیم غذایی", icon: UtensilsCrossed, href: "/Diet-Plan", color: "from-amber-600 to-amber-400", bgColor: "bg-amber-50 dark:bg-amber-950" },
-            { title: "مکمل‌های ورزشی", desc: "توصیه مکمل‌ها", icon: Pill, href: "/Supplements-Vitamins", color: "from-purple-600 to-purple-400", bgColor: "bg-purple-50 dark:bg-purple-950" },
-            { title: "گزارش‌گیری", desc: "آمار و گزارشات", icon: ChartBar, href: "/Reports", color: "from-pink-600 to-pink-400", bgColor: "bg-pink-50 dark:bg-pink-950" },
-            { title: "پروفایل مربی", desc: "تنظیمات پروفایل", icon: User2, href: "/Coach-Profile", color: "from-indigo-600 to-indigo-400", bgColor: "bg-indigo-50 dark:bg-indigo-950" },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={`group relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-gray-200 dark:border-gray-800 ${item.bgColor} hover:border-primary/30 transition-all duration-300 hover:shadow-md overflow-hidden`}
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-              <div className={`relative flex flex-col items-center justify-center gap-3 z-10 transition-transform duration-300 group-hover:scale-105`}>
-                <div className={`p-3 rounded-full bg-gradient-to-br ${item.color} text-white shadow-md group-hover:shadow-lg transition-all duration-300`}>
-                  <item.icon className="w-5 h-5" />
-                </div>
-                <div className="text-center space-y-1">
-                  <h3 className="font-medium text-sm">{item.title}</h3>
-                  <p className="text-xs text-muted-foreground">{item.desc}</p>
-                </div>
-              </div>
-            </Link>
-          ))}
         </div>
       </div>
     </div>
