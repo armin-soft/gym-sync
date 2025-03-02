@@ -74,10 +74,9 @@ const sidebarItems: SidebarItem[] = [
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
-  const [gymName, setGymName] = useState("مدیریت برنامه تمرینی فیکس");
+  const [gymName, setGymName] = useState("مدیریت برنامه تمرینی");
   
-  useEffect(() => {
-    // Load gym name from local storage
+  const loadGymName = () => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
@@ -89,6 +88,22 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         console.error('Error loading gym name from localStorage:', error);
       }
     }
+  };
+  
+  useEffect(() => {
+    // Load gym name from local storage
+    loadGymName();
+    
+    // Listen for storage events to update gym name when it changes
+    const handleStorageChange = () => {
+      loadGymName();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
   
   return (

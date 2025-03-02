@@ -1,5 +1,4 @@
-
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu, Weight } from "lucide-react";
 import { Spinner } from "./ui/spinner";
@@ -16,6 +15,37 @@ const LoadingFallback = () => (
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [gymName, setGymName] = useState("مدیریت برنامه تمرینی");
+  
+  const loadGymName = () => {
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        if (profile.gymName) {
+          setGymName(profile.gymName);
+        }
+      } catch (error) {
+        console.error('Error loading gym name from localStorage:', error);
+      }
+    }
+  };
+  
+  useEffect(() => {
+    // Load gym name from local storage
+    loadGymName();
+    
+    // Listen for storage events to update gym name when it changes
+    const handleStorageChange = () => {
+      loadGymName();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background persian-numbers" dir="rtl">
@@ -35,7 +65,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 "h-6 w-6",
                 "text-primary animate-pulse"
               )} />
-              <h1 className="text-lg font-semibold">مدیریت برنامه تمرینی فیکس</h1>
+              <h1 className="text-lg font-semibold">{gymName}</h1>
             </div>
           </div>
         </header>

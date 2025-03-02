@@ -48,6 +48,9 @@ const TrainerProfile = () => {
   const handleSave = () => {
     try {
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
+      // Force update of any components that depend on the gym name
+      window.dispatchEvent(new Event('storage'));
+      
       toast({
         title: "ذخیره موفق",
         description: "اطلاعات پروفایل با موفقیت ذخیره شد"
