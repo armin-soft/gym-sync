@@ -33,3 +33,20 @@ export interface Supplement {
   type?: string;
   description?: string;
 }
+
+export interface Vitamin {
+  id: number;
+  name: string;
+  type?: string;
+  description?: string;
+}
+
+export interface TrainingSession {
+  id: number;
+  student: string;
+  type: string;
+  date: string;
+  time: string;
+  duration: string;
+  status: 'upcoming' | 'completed' | 'cancelled';
+}
