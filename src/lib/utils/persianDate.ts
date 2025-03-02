@@ -35,6 +35,6 @@ export function formatPersianDateForFilename(): string {
   const formattedPersianMonth = persianMonth.toString().padStart(2, '0');
   const formattedPersianDay = persianDay.toString().padStart(2, '0');
   
-  // Create the Persian date string in the requested format
-  return `Program-Management-${persianYear}-${formattedPersianMonth}-${formattedPersianDay}-${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  // Create the Persian date string in the requested format with hyphens instead of colons
+  return `Program-Management-${persianYear}-${formattedPersianMonth}-${formattedPersianDay}-${formattedHours}-${formattedMinutes}-${formattedSeconds}`;
 }
