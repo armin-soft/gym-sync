@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -255,7 +256,7 @@ export const StudentDownloadDialog = ({
             <span>دانلود اطلاعات شاگرد</span>
           </DialogTitle>
           <DialogDescription>
-            دانلود اطلاعات شاگرد شامل اطلاعات فردی، برنامه تمرینی، برنامه غذایی，
+            دانلود اطلاعات شاگرد شامل اطلاعات فردی، برنامه تمرینی، برنامه غذایی،
             مکمل‌ها و ویتامین‌ها
           </DialogDescription>
         </DialogHeader>
