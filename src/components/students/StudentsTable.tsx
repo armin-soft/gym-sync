@@ -68,7 +68,9 @@ export const StudentsTable = ({
   onAddStudent,
   onClearSearch,
 }: StudentsTableProps) => {
+  // تغییر منطق نمایش وضعیت خالی برای حل مشکل نمایش ندادن شاگردان
   const isSearching = searchQuery !== "" && sortedAndFilteredStudents.length === 0;
+  // فقط زمانی EmptyState را نمایش بده که یا هیچ شاگردی نباشد یا جستجو نتیجه‌ای نداشته باشد
   const showEmptyState = students.length === 0 || isSearching;
 
   const container = {
@@ -147,7 +149,7 @@ export const StudentsTable = ({
         <TableBody>
           {showEmptyState ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-64 p-0">
+              <TableCell colSpan={8} className="h-64 p-0">
                 <EmptyStudentState 
                   isSearching={isSearching} 
                   onAddStudent={onAddStudent} 
