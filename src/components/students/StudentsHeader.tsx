@@ -17,14 +17,15 @@ export const StudentsHeader = ({ onAddStudent }: StudentsHeaderProps) => {
         transition={{ duration: 0.5 }}
         className="flex items-center gap-4"
       >
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
-          <GraduationCap className="h-7 w-7" />
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-white/10 rounded-2xl transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-bottom-right"></div>
+          <GraduationCap className="h-8 w-8 z-10 transition-transform duration-300 group-hover:scale-110" />
         </div>
         <div>
           <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-indigo-600 dark:from-white dark:to-indigo-400 bg-clip-text text-transparent">
             شاگردان
           </h2>
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-lg">
             مدیریت و پیگیری پیشرفت شاگردان
           </p>
         </div>
@@ -38,10 +39,13 @@ export const StudentsHeader = ({ onAddStudent }: StudentsHeaderProps) => {
         <Button
           onClick={onAddStudent}
           size="lg"
-          className="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white shadow-lg hover:shadow-xl hover:shadow-indigo-500/25 transition-all duration-300 transform hover:-translate-y-1"
+          className="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white shadow-lg hover:shadow-xl hover:shadow-indigo-500/25 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden group"
         >
-          <Plus className="ml-2 h-5 w-5" />
-          افزودن شاگرد جدید
+          <span className="absolute inset-0 bg-white/10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+          <div className="relative flex items-center">
+            <Plus className="ml-2 h-5 w-5" />
+            <span className="font-medium">افزودن شاگرد جدید</span>
+          </div>
         </Button>
       </motion.div>
     </div>
