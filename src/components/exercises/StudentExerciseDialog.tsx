@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -12,7 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Exercise } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -37,7 +35,10 @@ import {
   FolderTree,
   ListFilter
 } from "lucide-react";
-import { ExerciseType, ExerciseCategory } from "@/types/exercise";
+
+// Import both Exercise types to resolve the conflict
+import { ExerciseType, ExerciseCategory, Exercise as ExerciseData } from "@/types/exercise";
+import { Exercise as StudentExercise } from "@/components/students/StudentTypes";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 
@@ -165,7 +166,7 @@ export function StudentExerciseDialog({
   const handleSelectAllExercisesInCategory = () => {
     if (!selectedCategory) return;
     
-    const exercisesInCategory = exercises.filter((exercise: Exercise) => 
+    const exercisesInCategory = exercises.filter((exercise: ExerciseData) => 
       exercise.categoryId === selectedCategory
     ).map(exercise => exercise.id);
     
@@ -251,7 +252,7 @@ export function StudentExerciseDialog({
   };
 
   const filteredExercises = React.useMemo(() => {
-    return exercises.filter((exercise: Exercise) => {
+    return exercises.filter((exercise: ExerciseData) => {
       const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = !selectedCategory || exercise.categoryId === selectedCategory;
       const matchesSelected = !showSelectedOnly || getCurrentSelectedExercises().includes(exercise.id);
@@ -298,6 +299,7 @@ export function StudentExerciseDialog({
     return category ? category.name : "بدون دسته‌بندی";
   };
 
+  // Continue with the component's render JSX
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] flex flex-col overflow-hidden">
@@ -580,7 +582,7 @@ export function StudentExerciseDialog({
                     </div>
                   ) : (
                     <ul className="divide-y divide-gray-200 dark:divide-gray-800">
-                      {filteredExercises.map((exercise: Exercise) => {
+                      {filteredExercises.map((exercise: ExerciseData) => {
                         const isSelected = getCurrentSelectedExercises().includes(exercise.id);
                         const isExpanded = expandedExercise === exercise.id;
                         
@@ -712,106 +714,4 @@ export function StudentExerciseDialog({
                       selectedDay === 'day2' ? 'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-400 border-purple-200' : 
                       selectedDay === 'day3' ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400 border-green-200' : 
                       selectedDay === 'day4' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400 border-amber-200' : 
-                      'bg-gray-50 text-gray-700 dark:bg-gray-950 dark:text-gray-400 border-gray-200'}
-                  `}>
-                    {toPersianNumbers(getCurrentSelectedExercises().length)}
-                  </Badge>
-                </div>
-                
-                <ScrollArea className="h-[calc(100%-49px)]">
-                  {getCurrentSelectedExercises().length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                        <PlusCircle className="h-8 w-8 text-slate-400" />
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده است</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-500">تمرین‌های مورد نظر را از سمت چپ انتخاب کنید</p>
-                    </div>
-                  ) : (
-                    <div>
-                      <ul className="divide-y divide-gray-200 dark:divide-gray-800">
-                        {getCurrentSelectedExercises().map((id, index) => {
-                          const exercise = exercises.find((e: Exercise) => e.id === id);
-                          if (!exercise) return null;
-                          
-                          return (
-                            <motion.li 
-                              key={exercise.id}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -20 }}
-                              transition={{ duration: 0.2 }}
-                              className="relative p-3 group"
-                            >
-                              <div className="flex items-center">
-                                <div className={`size-6 flex items-center justify-center rounded-full mr-2 ${
-                                  selectedDay === 'day1' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400' : 
-                                  selectedDay === 'day2' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-400' : 
-                                  selectedDay === 'day3' ? 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400' : 
-                                  selectedDay === 'day4' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400' : 
-                                  'bg-gray-100 text-gray-700 dark:bg-gray-950 dark:text-gray-400'
-                                }`}>
-                                  {toPersianNumbers(index + 1)}
-                                </div>
-                                <div className="flex-1 mr-2">
-                                  <span className="font-medium block text-sm">{exercise.name}</span>
-                                  <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">
-                                    {getCategoryName(exercise.categoryId)}
-                                  </span>
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => handleSelectExercise(exercise.id)}
-                                >
-                                  <X className="h-4 w-4 text-red-500" />
-                                </Button>
-                              </div>
-                            </motion.li>
-                          );
-                        })}
-                      </ul>
-                      
-                      <div className="p-3">
-                        <Label htmlFor="notes" className="text-sm font-medium mb-2 block">یادداشت برنامه تمرینی</Label>
-                        <Textarea 
-                          id="notes"
-                          placeholder="یادداشت‌های اضافی برای این برنامه..." 
-                          className="min-h-[100px] text-sm"
-                          value={notes}
-                          onChange={(e) => setNotes(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </ScrollArea>
-              </Card>
-            </div>
-          </Tabs>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4 border-t mt-auto">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="gap-1">
-            <X className="h-4 w-4" />
-            انصراف
-          </Button>
-          <Button 
-            onClick={handleSave}
-            className={`gap-1 ${
-              selectedDay === 'day1' ? 'bg-blue-600 hover:bg-blue-700' : 
-              selectedDay === 'day2' ? 'bg-purple-600 hover:bg-purple-700' : 
-              selectedDay === 'day3' ? 'bg-green-600 hover:bg-green-700' : 
-              selectedDay === 'day4' ? 'bg-amber-600 hover:bg-amber-700' : 
-              'bg-primary hover:bg-primary/90'
-            }`}
-          >
-            <Save className="h-4 w-4" />
-            ذخیره تمرین‌ها
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
+                      'bg-gray-50 text-gray-700 dark:bg-gray-950 dark:text
