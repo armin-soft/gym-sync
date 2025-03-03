@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -743,3 +744,239 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                         Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
                                       )}
                                       className="h-9"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">تکرار</label>
+                                    <Input 
+                                      value={setsData.reps} 
+                                      onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
+                                      className="h-9"
+                                      placeholder="مثال: 10-12"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">استراحت (ثانیه)</label>
+                                    <Input 
+                                      value={setsData.rest} 
+                                      onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
+                                      className="h-9"
+                                      placeholder="مثال: 60"
+                                    />
+                                  </div>
+                                </div>
+                                
+                                {exercise.description && (
+                                  <div className="mt-3 p-2 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
+                                    <Info className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                                    <p>{exercise.description}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="day3" className="flex-1 m-0 overflow-hidden flex flex-col">
+                  {selectedExercisesDay3.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
+                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
+                      </div>
+                      <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
+                    </div>
+                  ) : (
+                    <ScrollArea className="flex-1 p-4">
+                      <div className="space-y-4">
+                        {selectedExercisesDay3.map(exerciseId => {
+                          const exercise = exercises.find((ex: ExerciseData) => ex.id === exerciseId);
+                          if (!exercise) return null;
+                          
+                          const category = categories.find((cat: ExerciseCategory) => cat.id === exercise.categoryId);
+                          const setsData = day3ExercisesSets[exerciseId] || { sets: 3, reps: "10-12", rest: "60" };
+                          
+                          return (
+                            <Card key={exerciseId} className="overflow-hidden">
+                              <div className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                  <div>
+                                    <h3 className="font-medium">{exercise.name}</h3>
+                                    {category && (
+                                      <Badge variant="secondary" className="mt-1">
+                                        {category.name}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleExerciseSelection(exercise.id);
+                                    }}
+                                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                
+                                <div className="grid grid-cols-3 gap-3">
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">تعداد ست</label>
+                                    <Input 
+                                      type="number" 
+                                      value={setsData.sets} 
+                                      min={1}
+                                      max={10}
+                                      onChange={(e) => updateCurrentSetsData(
+                                        exercise.id, 
+                                        "sets", 
+                                        Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
+                                      )}
+                                      className="h-9"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">تکرار</label>
+                                    <Input 
+                                      value={setsData.reps} 
+                                      onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
+                                      className="h-9"
+                                      placeholder="مثال: 10-12"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">استراحت (ثانیه)</label>
+                                    <Input 
+                                      value={setsData.rest} 
+                                      onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
+                                      className="h-9"
+                                      placeholder="مثال: 60"
+                                    />
+                                  </div>
+                                </div>
+                                
+                                {exercise.description && (
+                                  <div className="mt-3 p-2 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
+                                    <Info className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                                    <p>{exercise.description}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="day4" className="flex-1 m-0 overflow-hidden flex flex-col">
+                  {selectedExercisesDay4.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
+                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
+                      </div>
+                      <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
+                    </div>
+                  ) : (
+                    <ScrollArea className="flex-1 p-4">
+                      <div className="space-y-4">
+                        {selectedExercisesDay4.map(exerciseId => {
+                          const exercise = exercises.find((ex: ExerciseData) => ex.id === exerciseId);
+                          if (!exercise) return null;
+                          
+                          const category = categories.find((cat: ExerciseCategory) => cat.id === exercise.categoryId);
+                          const setsData = day4ExercisesSets[exerciseId] || { sets: 3, reps: "10-12", rest: "60" };
+                          
+                          return (
+                            <Card key={exerciseId} className="overflow-hidden">
+                              <div className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                  <div>
+                                    <h3 className="font-medium">{exercise.name}</h3>
+                                    {category && (
+                                      <Badge variant="secondary" className="mt-1">
+                                        {category.name}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleExerciseSelection(exercise.id);
+                                    }}
+                                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                
+                                <div className="grid grid-cols-3 gap-3">
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">تعداد ست</label>
+                                    <Input 
+                                      type="number" 
+                                      value={setsData.sets} 
+                                      min={1}
+                                      max={10}
+                                      onChange={(e) => updateCurrentSetsData(
+                                        exercise.id, 
+                                        "sets", 
+                                        Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
+                                      )}
+                                      className="h-9"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">تکرار</label>
+                                    <Input 
+                                      value={setsData.reps} 
+                                      onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
+                                      className="h-9"
+                                      placeholder="مثال: 10-12"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs font-medium mb-1 block">استراحت (ثانیه)</label>
+                                    <Input 
+                                      value={setsData.rest} 
+                                      onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
+                                      className="h-9"
+                                      placeholder="مثال: 60"
+                                    />
+                                  </div>
+                                </div>
+                                
+                                {exercise.description && (
+                                  <div className="mt-3 p-2 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
+                                    <Info className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                                    <p>{exercise.description}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </TabsContent>
+              </div>
+            </div>
+          </Tabs>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default StudentExerciseDialog;
