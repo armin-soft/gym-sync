@@ -17,6 +17,11 @@ export interface Exercise {
   description?: string;
   targetMuscle?: string;
   equipment?: string;
+  category?: string; // افزودن فیلد category برای سازگاری با سایر بخش‌ها
+  sets?: number; // فیلدهای مورد نیاز برای StudentExerciseDialog
+  reps?: string;
+  rest?: string;
+  day?: number;
 }
 
 // مقادیر پیش‌فرض - به صورت خالی
