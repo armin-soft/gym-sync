@@ -46,7 +46,7 @@ export const StudentSearchSort = ({
   categories = [],
   showExerciseFilters = false
 }: StudentSearchSortProps) => {
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>(selectedExerciseType || null);
   const [filteredCategories, setFilteredCategories] = useState<ExerciseCategory[]>([]);
 
   useEffect(() => {
@@ -56,6 +56,10 @@ export const StudentSearchSort = ({
       setFilteredCategories([]);
     }
   }, [selectedType, categories]);
+
+  useEffect(() => {
+    setSelectedType(selectedExerciseType || null);
+  }, [selectedExerciseType]);
 
   const handleTypeSelect = (type: string) => {
     setSelectedType(type);

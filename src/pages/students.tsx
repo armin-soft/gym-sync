@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -12,9 +11,9 @@ import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentSearchSort } from "@/components/students/StudentSearchSort";
 import { StudentsTable } from "@/components/students/StudentsTable";
 import { Student } from "@/components/students/StudentTypes";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { ExerciseCategory, ExerciseType } from "@/types/exercise";
 
-// Create a new query client
 const queryClient = new QueryClient();
 
 const StudentsPage = () => {
@@ -36,6 +35,24 @@ const StudentsPage = () => {
   const [exercises, setExercises] = useState<any[]>([]);
   const [meals, setMeals] = useState<any[]>([]);
   const [supplements, setSupplements] = useState<any[]>([]);
+  const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
+  const { data: exerciseTypes = [] } = useQuery({
+    queryKey: ["exerciseTypes"],
+    queryFn: () => {
+      const typesData = localStorage.getItem("exerciseTypes");
+      return typesData ? JSON.parse(typesData) : [];
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["exerciseCategories"],
+    queryFn: () => {
+      const categoriesData = localStorage.getItem("exerciseCategories");
+      return categoriesData ? JSON.parse(categoriesData) : [];
+    },
+  });
 
   useEffect(() => {
     try {
@@ -73,7 +90,6 @@ const StudentsPage = () => {
         }
       }
 
-      // Load exercises, meals, and supplements from localStorage
       const savedExercises = localStorage.getItem('exercises');
       if (savedExercises) {
         setExercises(JSON.parse(savedExercises));
@@ -99,7 +115,6 @@ const StudentsPage = () => {
     }
   }, []);
   
-  // ذخیره دانشجویان در localStorage هر زمان که تغییر کنند
   useEffect(() => {
     if (students.length > 0) {
       localStorage.setItem('students', JSON.stringify(students));
@@ -108,22 +123,54 @@ const StudentsPage = () => {
   }, [students]);
 
   const sortedAndFilteredStudents = React.useMemo(() => {
-    return students
-      .filter((student) =>
-        student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        student.phone.includes(searchQuery)
-      )
-      .sort((a, b) => {
-        if (sortField === "name") {
-          return sortOrder === "asc" 
-            ? a.name.localeCompare(b.name) 
-            : b.name.localeCompare(a.name);
+    let filteredStudents = students.filter((student) =>
+      student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      student.phone.includes(searchQuery)
+    );
+
+    if (selectedExerciseType || selectedCategory) {
+      filteredStudents = filteredStudents.filter(student => {
+        const allStudentExercises = [
+          ...(student.exercises || []),
+          ...(student.exercisesDay1 || []),
+          ...(student.exercisesDay2 || []),
+          ...(student.exercisesDay3 || []),
+          ...(student.exercisesDay4 || [])
+        ];
+
+        if (selectedCategory) {
+          return allStudentExercises.some(exerciseId => {
+            const exercise = exercises.find(e => e.id === exerciseId);
+            return exercise && exercise.categoryId === selectedCategory;
+          });
         }
-        const aValue = Number(a[sortField]);
-        const bValue = Number(b[sortField]);
-        return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+        
+        if (selectedExerciseType) {
+          const categoryIds = categories
+            .filter(cat => cat.type === selectedExerciseType)
+            .map(cat => cat.id);
+          
+          return allStudentExercises.some(exerciseId => {
+            const exercise = exercises.find(e => e.id === exerciseId);
+            return exercise && categoryIds.includes(exercise.categoryId);
+          });
+        }
+
+        return true;
       });
-  }, [students, searchQuery, sortField, sortOrder]);
+    }
+
+    return filteredStudents.sort((a, b) => {
+      if (sortField === "name") {
+        return sortOrder === "asc" 
+          ? a.name.localeCompare(b.name) 
+          : b.name.localeCompare(a.name);
+      }
+      const aValue = Number(a[sortField]);
+      const bValue = Number(b[sortField]);
+      return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+    });
+  }, [students, searchQuery, sortField, sortOrder, selectedExerciseType, selectedCategory, exercises, categories]);
 
   console.log('Sorted and filtered students:', sortedAndFilteredStudents);
 
@@ -215,7 +262,7 @@ const StudentsPage = () => {
         title: "خطا",
         description: "برای دانلود اطلاعات ابتدا باید مبلغ برنامه را وارد کنید"
       });
-      handleEdit(student); // Open the edit dialog to enter payment
+      handleEdit(student);
       return;
     }
     
@@ -223,13 +270,11 @@ const StudentsPage = () => {
     setIsDownloadDialogOpen(true);
   };
   
-  // تابع برای به‌روزرسانی تمرین‌های شاگرد
   const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
     if (!selectedStudentForExercise) return;
     
     const updatedStudents = students.map(student => {
       if (student.id === selectedStudentForExercise.id) {
-        // If no day number is specified, update the main exercises array
         if (!dayNumber) {
           return {
             ...student,
@@ -237,7 +282,6 @@ const StudentsPage = () => {
           };
         }
         
-        // Update the day-specific exercises array
         switch (dayNumber) {
           case 1:
             return {
@@ -273,7 +317,6 @@ const StudentsPage = () => {
     });
   };
   
-  // تابع برای به‌روزرسانی برنامه غذایی شاگرد
   const handleSaveDiet = (mealIds: number[]) => {
     if (!selectedStudentForDiet) return;
     
@@ -294,7 +337,6 @@ const StudentsPage = () => {
     });
   };
   
-  // تابع برای به‌روزرسانی مکمل‌ها و ویتامین‌های شاگرد
   const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}) => {
     if (!selectedStudentForSupplement) return;
     
@@ -325,7 +367,11 @@ const StudentsPage = () => {
     }
   };
 
-  const handleClearSearch = () => setSearchQuery("");
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSelectedExerciseType(null);
+    setSelectedCategory(null);
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -345,6 +391,13 @@ const StudentsPage = () => {
               sortField={sortField}
               sortOrder={sortOrder}
               toggleSort={toggleSort}
+              selectedExerciseType={selectedExerciseType}
+              setSelectedExerciseType={setSelectedExerciseType}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              exerciseTypes={exerciseTypes}
+              categories={categories}
+              showExerciseFilters={true}
             />
           </div>
 
