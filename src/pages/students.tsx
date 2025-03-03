@@ -12,6 +12,10 @@ import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentSearchSort } from "@/components/students/StudentSearchSort";
 import { StudentsTable } from "@/components/students/StudentsTable";
 import { Student } from "@/components/students/StudentTypes";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Create a new query client
+const queryClient = new QueryClient();
 
 const StudentsPage = () => {
   const { toast } = useToast();
@@ -324,90 +328,92 @@ const StudentsPage = () => {
   const handleClearSearch = () => setSearchQuery("");
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
-      
-      <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
-        <div className="flex flex-col space-y-6">
-          <StudentsHeader onAddStudent={handleAdd} />
+    <QueryClientProvider client={queryClient}>
+      <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+        <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
+        
+        <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
+          <div className="flex flex-col space-y-6">
+            <StudentsHeader onAddStudent={handleAdd} />
+            
+            <StudentStatsCards students={students} />
+            
+            <StudentSearchSort 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              sortField={sortField}
+              sortOrder={sortOrder}
+              toggleSort={toggleSort}
+            />
+          </div>
+
+          <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-white/60">
+            <StudentsTable 
+              students={students}
+              sortedAndFilteredStudents={sortedAndFilteredStudents}
+              searchQuery={searchQuery}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onAddExercise={handleAddExercise}
+              onAddDiet={handleAddDiet}
+              onAddSupplement={handleAddSupplement}
+              onDownload={handleDownload}
+              onAddStudent={handleAdd}
+              onClearSearch={handleClearSearch}
+            />
+          </Card>
+
+          <StudentDialog
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+            onSave={handleSave}
+            student={selectedStudent}
+          />
+
+          <StudentExerciseDialog
+            open={isExerciseDialogOpen}
+            onOpenChange={setIsExerciseDialogOpen}
+            studentName={selectedStudentForExercise?.name || ""}
+            onSave={handleSaveExercises}
+            initialExercises={selectedStudentForExercise?.exercises || []}
+            initialExercisesDay1={selectedStudentForExercise?.exercisesDay1 || []}
+            initialExercisesDay2={selectedStudentForExercise?.exercisesDay2 || []}
+            initialExercisesDay3={selectedStudentForExercise?.exercisesDay3 || []}
+            initialExercisesDay4={selectedStudentForExercise?.exercisesDay4 || []}
+          />
           
-          <StudentStatsCards students={students} />
+          <StudentDietDialog
+            open={isDietDialogOpen}
+            onOpenChange={setIsDietDialogOpen}
+            studentName={selectedStudentForDiet?.name || ""}
+            onSave={handleSaveDiet}
+            initialMeals={selectedStudentForDiet?.meals || []}
+          />
           
-          <StudentSearchSort 
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            toggleSort={toggleSort}
+          <StudentSupplementDialog
+            open={isSupplementDialogOpen}
+            onOpenChange={setIsSupplementDialogOpen}
+            studentName={selectedStudentForSupplement?.name || ""}
+            onSave={handleSaveSupplements}
+            initialData={{
+              supplements: selectedStudentForSupplement?.supplements || [],
+              vitamins: selectedStudentForSupplement?.vitamins || []
+            }}
+          />
+
+          <StudentDownloadDialog
+            open={isDownloadDialogOpen}
+            onOpenChange={setIsDownloadDialogOpen}
+            student={selectedStudentForDownload}
+            exercises={exercises}
+            meals={meals}
+            supplements={supplements}
+            vitamins={supplements.filter(item => item.type === 'vitamin')}
           />
         </div>
-
-        <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-white/60">
-          <StudentsTable 
-            students={students}
-            sortedAndFilteredStudents={sortedAndFilteredStudents}
-            searchQuery={searchQuery}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onAddExercise={handleAddExercise}
-            onAddDiet={handleAddDiet}
-            onAddSupplement={handleAddSupplement}
-            onDownload={handleDownload}
-            onAddStudent={handleAdd}
-            onClearSearch={handleClearSearch}
-          />
-        </Card>
-
-        <StudentDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          onSave={handleSave}
-          student={selectedStudent}
-        />
-
-        <StudentExerciseDialog
-          open={isExerciseDialogOpen}
-          onOpenChange={setIsExerciseDialogOpen}
-          studentName={selectedStudentForExercise?.name || ""}
-          onSave={handleSaveExercises}
-          initialExercises={selectedStudentForExercise?.exercises || []}
-          initialExercisesDay1={selectedStudentForExercise?.exercisesDay1 || []}
-          initialExercisesDay2={selectedStudentForExercise?.exercisesDay2 || []}
-          initialExercisesDay3={selectedStudentForExercise?.exercisesDay3 || []}
-          initialExercisesDay4={selectedStudentForExercise?.exercisesDay4 || []}
-        />
-        
-        <StudentDietDialog
-          open={isDietDialogOpen}
-          onOpenChange={setIsDietDialogOpen}
-          studentName={selectedStudentForDiet?.name || ""}
-          onSave={handleSaveDiet}
-          initialMeals={selectedStudentForDiet?.meals || []}
-        />
-        
-        <StudentSupplementDialog
-          open={isSupplementDialogOpen}
-          onOpenChange={setIsSupplementDialogOpen}
-          studentName={selectedStudentForSupplement?.name || ""}
-          onSave={handleSaveSupplements}
-          initialData={{
-            supplements: selectedStudentForSupplement?.supplements || [],
-            vitamins: selectedStudentForSupplement?.vitamins || []
-          }}
-        />
-
-        <StudentDownloadDialog
-          open={isDownloadDialogOpen}
-          onOpenChange={setIsDownloadDialogOpen}
-          student={selectedStudentForDownload}
-          exercises={exercises}
-          meals={meals}
-          supplements={supplements}
-          vitamins={supplements.filter(item => item.type === 'vitamin')}
-        />
       </div>
-    </div>
+    </QueryClientProvider>
   );
 };
 
