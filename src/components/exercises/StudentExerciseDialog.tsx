@@ -32,7 +32,8 @@ import {
   ChevronDown,
   ChevronUp,
   Layers,
-  Info
+  Info,
+  Tag
 } from "lucide-react";
 
 interface StudentExerciseDialogProps {
@@ -70,6 +71,7 @@ export function StudentExerciseDialog({
   const [notes, setNotes] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
   const [expandedExercise, setExpandedExercise] = useState<number | null>(null);
+  const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
   // Fetch exercises from localStorage
   const { data: exercises = [], isLoading } = useQuery({
@@ -180,9 +182,10 @@ export function StudentExerciseDialog({
     return exercises.filter((exercise: Exercise) => {
       const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = !filterCategory || exercise.category === filterCategory;
-      return matchesSearch && matchesCategory;
+      const matchesSelected = !showSelectedOnly || getCurrentSelectedExercises().includes(exercise.id);
+      return matchesSearch && matchesCategory && matchesSelected;
     });
-  }, [exercises, searchQuery, filterCategory]);
+  }, [exercises, searchQuery, filterCategory, showSelectedOnly, getCurrentSelectedExercises]);
 
   const handleClearSelections = () => {
     if (selectedDay === "all") {
@@ -205,6 +208,10 @@ export function StudentExerciseDialog({
 
   const toggleExpandExercise = (id: number) => {
     setExpandedExercise(expandedExercise === id ? null : id);
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setFilterCategory(category);
   };
 
   return (
@@ -334,13 +341,33 @@ export function StudentExerciseDialog({
                           </select>
                         </div>
                         
-                        <div className="flex items-end">
+                        <div className="flex flex-col justify-between gap-2">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium flex items-center gap-1">
+                              <Tag className="h-3.5 w-3.5 text-muted-foreground" />
+                              فیلتر وضعیت
+                            </Label>
+                            <div className="flex items-center space-x-2 space-x-reverse">
+                              <Checkbox 
+                                id="show-selected"
+                                checked={showSelectedOnly}
+                                onCheckedChange={(checked) => setShowSelectedOnly(!!checked)}
+                              />
+                              <label
+                                htmlFor="show-selected"
+                                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                فقط تمرین‌های انتخاب شده
+                              </label>
+                            </div>
+                          </div>
                           <Button
-                            className="gap-1 w-full" 
+                            className="gap-1 mt-auto" 
                             variant="outline"
                             onClick={() => {
                               setSearchQuery("");
                               setFilterCategory("");
+                              setShowSelectedOnly(false);
                             }}
                           >
                             <X className="h-4 w-4" />
@@ -353,6 +380,31 @@ export function StudentExerciseDialog({
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Category chips for quick filtering */}
+            {showFilters && categories.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 mb-3 px-1">
+                <Badge 
+                  variant={!filterCategory ? "default" : "outline"}
+                  className="cursor-pointer transition-all hover:scale-105 px-3 py-1 text-xs"
+                  onClick={() => setFilterCategory("")}
+                >
+                  همه دسته‌بندی‌ها
+                </Badge>
+                {categories.map((category) => (
+                  <Badge 
+                    key={category}
+                    variant={filterCategory === category ? "default" : "outline"}
+                    className={`cursor-pointer transition-all hover:scale-105 px-3 py-1 text-xs ${
+                      filterCategory === category ? 'bg-blue-600' : 'hover:bg-blue-100 hover:text-blue-600'
+                    }`}
+                    onClick={() => handleCategorySelect(category)}
+                  >
+                    {category}
+                  </Badge>
+                ))}
+              </div>
+            )}
 
             <div className="flex gap-4 h-[calc(100vh-350px)] min-h-[300px]">
               {/* Exercise selection panel */}
@@ -439,9 +491,18 @@ export function StudentExerciseDialog({
                                   <div>
                                     <span className="font-medium block text-sm">{exercise.name}</span>
                                     {exercise.category && (
-                                      <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">
-                                        {exercise.category}
-                                      </span>
+                                      <div className="flex items-center gap-1 mt-1">
+                                        <Badge 
+                                          variant="outline" 
+                                          className="px-2 py-0 h-5 text-xs bg-blue-50 text-blue-700 border-blue-200 cursor-pointer hover:bg-blue-100"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            handleCategorySelect(exercise.category || "");
+                                          }}
+                                        >
+                                          {exercise.category}
+                                        </Badge>
+                                      </div>
                                     )}
                                   </div>
                                   <Button
@@ -629,3 +690,4 @@ export function StudentExerciseDialog({
     </Dialog>
   );
 }
+
