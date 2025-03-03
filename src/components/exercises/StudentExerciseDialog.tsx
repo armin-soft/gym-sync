@@ -34,7 +34,8 @@ import {
   Info,
   Tag,
   FolderTree,
-  ListFilter
+  ListFilter,
+  ClipboardCheck
 } from "lucide-react";
 
 // Import both Exercise types to resolve the conflict
@@ -725,7 +726,7 @@ export function StudentExerciseDialog({
                   {getCurrentSelectedExercises().length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
                       <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                        <Clipboard className="h-8 w-8 text-slate-400" />
+                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
                       </div>
                       <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
                       <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
