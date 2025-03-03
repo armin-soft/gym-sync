@@ -52,6 +52,10 @@ const StudentsPage = () => {
             image: student.image || '/placeholder.svg',
             payment: student.payment || '',
             exercises: student.exercises || [],
+            exercisesDay1: student.exercisesDay1 || [],
+            exercisesDay2: student.exercisesDay2 || [],
+            exercisesDay3: student.exercisesDay3 || [],
+            exercisesDay4: student.exercisesDay4 || [],
             meals: student.meals || [],
             supplements: student.supplements || [],
             vitamins: student.vitamins || []
@@ -139,12 +143,23 @@ const StudentsPage = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSave = (data: Omit<Student, "id" | "exercises" | "meals" | "supplements" | "vitamins">) => {
+  const handleSave = (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">) => {
     let updatedStudents: Student[];
     
     if (selectedStudent) {
       updatedStudents = students.map((s) =>
-        s.id === selectedStudent.id ? { ...s, ...data, exercises: s.exercises || [], meals: s.meals || [], supplements: s.supplements || [], vitamins: s.vitamins || [] } : s
+        s.id === selectedStudent.id ? { 
+          ...s, 
+          ...data, 
+          exercises: s.exercises || [], 
+          exercisesDay1: s.exercisesDay1 || [],
+          exercisesDay2: s.exercisesDay2 || [],
+          exercisesDay3: s.exercisesDay3 || [],
+          exercisesDay4: s.exercisesDay4 || [],
+          meals: s.meals || [], 
+          supplements: s.supplements || [], 
+          vitamins: s.vitamins || [] 
+        } : s
       );
       toast({
         title: "ویرایش موفق",
@@ -155,6 +170,10 @@ const StudentsPage = () => {
         ...data,
         id: Math.max(0, ...students.map((s) => s.id)) + 1,
         exercises: [],
+        exercisesDay1: [],
+        exercisesDay2: [],
+        exercisesDay3: [],
+        exercisesDay4: [],
         meals: [],
         supplements: [],
         vitamins: []
@@ -201,15 +220,44 @@ const StudentsPage = () => {
   };
   
   // تابع برای به‌روزرسانی تمرین‌های شاگرد
-  const handleSaveExercises = (exerciseIds: number[]) => {
+  const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
     if (!selectedStudentForExercise) return;
     
     const updatedStudents = students.map(student => {
       if (student.id === selectedStudentForExercise.id) {
-        return {
-          ...student,
-          exercises: exerciseIds
-        };
+        // If no day number is specified, update the main exercises array
+        if (!dayNumber) {
+          return {
+            ...student,
+            exercises: exerciseIds
+          };
+        }
+        
+        // Update the day-specific exercises array
+        switch (dayNumber) {
+          case 1:
+            return {
+              ...student,
+              exercisesDay1: exerciseIds
+            };
+          case 2:
+            return {
+              ...student,
+              exercisesDay2: exerciseIds
+            };
+          case 3:
+            return {
+              ...student,
+              exercisesDay3: exerciseIds
+            };
+          case 4:
+            return {
+              ...student,
+              exercisesDay4: exerciseIds
+            };
+          default:
+            return student;
+        }
       }
       return student;
     });
@@ -324,6 +372,10 @@ const StudentsPage = () => {
           studentName={selectedStudentForExercise?.name || ""}
           onSave={handleSaveExercises}
           initialExercises={selectedStudentForExercise?.exercises || []}
+          initialExercisesDay1={selectedStudentForExercise?.exercisesDay1 || []}
+          initialExercisesDay2={selectedStudentForExercise?.exercisesDay2 || []}
+          initialExercisesDay3={selectedStudentForExercise?.exercisesDay3 || []}
+          initialExercisesDay4={selectedStudentForExercise?.exercisesDay4 || []}
         />
         
         <StudentDietDialog
