@@ -975,3 +975,224 @@ export const openPrintWindow = (
 
   return printWindow;
 };
+
+export const exportStudentToPDF = (student: Student) => {
+  try {
+    const doc = new jsPDF();
+    const margin = 10;
+    let yPos = margin;
+    
+    // Set right-to-left
+    doc.setR2L(true);
+    
+    // Add logo (if available)
+    // This would normally be an image, but for simplicity we'll use text
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(0, 79, 156); // Blue color for header
+    doc.text("فیتنس اپلیکیشن", doc.internal.pageSize.width - margin, yPos);
+    yPos += 10;
+    
+    // Header
+    doc.setFontSize(16);
+    doc.setTextColor(33, 33, 33);
+    doc.text(`اطلاعات شاگرد: ${student.firstName} ${student.lastName}`, doc.internal.pageSize.width - margin, yPos);
+    yPos += 15;
+    
+    // Add Student Photo (if available)
+    if (student.profileImage) {
+      try {
+        doc.addImage(student.profileImage, 'JPEG', margin, yPos, 40, 40);
+        yPos += 45; // Move down after image
+      } catch (error) {
+        console.error("Error adding image:", error);
+        // Just continue if image cannot be added
+      }
+    }
+    
+    // Personal Information
+    doc.setFontSize(12);
+    doc.setTextColor(33, 33, 33);
+    doc.text("اطلاعات شخصی", doc.internal.pageSize.width - margin, yPos);
+    yPos += 5;
+    
+    // Table formatting
+    doc.setFontSize(10);
+    doc.setTextColor(66, 66, 66);
+    
+    // Draw a light blue background for the table header
+    doc.setFillColor(240, 247, 255);
+    doc.rect(margin, yPos, doc.internal.pageSize.width - (margin * 2), 8, 'F');
+    
+    // Personal Information Table
+    const personalInfoRows = [
+      ["نام", "نام خانوادگی", "تلفن همراه", "تاریخ تولد", "قد", "وزن"],
+      [
+        student.firstName || '-', 
+        student.lastName || '-',
+        student.phoneNumber || '-',
+        student.birthDate || '-',
+        student.height ? `${student.height} سانتی‌متر` : '-',
+        student.weight ? `${student.weight} کیلوگرم` : '-'
+      ]
+    ];
+    
+    // Auto table with custom styling
+    autoTable(doc, {
+      startY: yPos,
+      body: personalInfoRows,
+      theme: 'grid',
+      styles: {
+        font: 'helvetica',
+        fontStyle: 'normal',
+        fontSize: 10,
+        cellPadding: 3,
+        lineWidth: 0.1,
+        lineColor: [220, 220, 220]
+      },
+      headStyles: {
+        fillColor: [240, 247, 255],
+        textColor: [0, 79, 156],
+        fontStyle: 'bold'
+      }
+    });
+    
+    yPos = (doc as any).lastAutoTable.finalY + 15;
+    
+    // Add Exercises
+    if (student.exercises && student.exercises.length > 0) {
+      doc.setFontSize(12);
+      doc.setTextColor(33, 33, 33);
+      doc.text("تمرین‌های تجویز شده", doc.internal.pageSize.width - margin, yPos);
+      yPos += 5;
+      
+      const exerciseRows = [["ردیف", "نام تمرین", "دسته‌بندی"]];
+      
+      student.exercises.forEach((exercise, index) => {
+        exerciseRows.push([
+          (index + 1).toString(),
+          exercise.name || '-',
+          exercise.category || '-'
+        ]);
+      });
+      
+      autoTable(doc, {
+        startY: yPos,
+        body: exerciseRows,
+        theme: 'grid',
+        styles: {
+          font: 'helvetica',
+          fontStyle: 'normal',
+          fontSize: 10,
+          cellPadding: 3,
+          lineWidth: 0.1,
+          lineColor: [220, 220, 220]
+        },
+        headStyles: {
+          fillColor: [240, 247, 255],
+          textColor: [0, 79, 156],
+          fontStyle: 'bold'
+        }
+      });
+      
+      yPos = (doc as any).lastAutoTable.finalY + 15;
+    }
+    
+    // Add Diet
+    if (student.diet && student.diet.length > 0) {
+      doc.setFontSize(12);
+      doc.setTextColor(33, 33, 33);
+      doc.text("برنامه‌ی غذایی", doc.internal.pageSize.width - margin, yPos);
+      yPos += 5;
+      
+      const dietRows = [["ردیف", "نام وعده", "غذا"]];
+      
+      student.diet.forEach((meal, index) => {
+        dietRows.push([
+          (index + 1).toString(),
+          meal.mealTime || '-',
+          meal.food || '-'
+        ]);
+      });
+      
+      autoTable(doc, {
+        startY: yPos,
+        body: dietRows,
+        theme: 'grid',
+        styles: {
+          font: 'helvetica',
+          fontStyle: 'normal',
+          fontSize: 10,
+          cellPadding: 3,
+          lineWidth: 0.1,
+          lineColor: [220, 220, 220]
+        },
+        headStyles: {
+          fillColor: [240, 247, 255],
+          textColor: [0, 79, 156],
+          fontStyle: 'bold'
+        }
+      });
+      
+      yPos = (doc as any).lastAutoTable.finalY + 15;
+    }
+    
+    // Add Supplements
+    if (student.supplements && student.supplements.length > 0) {
+      doc.setFontSize(12);
+      doc.setTextColor(33, 33, 33);
+      doc.text("مکمل‌های تجویز شده", doc.internal.pageSize.width - margin, yPos);
+      yPos += 5;
+      
+      const suppRows = [["ردیف", "نام مکمل", "دسته‌بندی", "نحوه مصرف"]];
+      
+      student.supplements.forEach((supplement, index) => {
+        suppRows.push([
+          (index + 1).toString(),
+          supplement.name || '-',
+          supplement.category || '-',
+          supplement.usage || '-'
+        ]);
+      });
+      
+      autoTable(doc, {
+        startY: yPos,
+        body: suppRows,
+        theme: 'grid',
+        styles: {
+          font: 'helvetica',
+          fontStyle: 'normal',
+          fontSize: 10,
+          cellPadding: 3,
+          lineWidth: 0.1,
+          lineColor: [220, 220, 220]
+        },
+        headStyles: {
+          fillColor: [240, 247, 255],
+          textColor: [0, 79, 156],
+          fontStyle: 'bold'
+        }
+      });
+      
+      yPos = (doc as any).lastAutoTable.finalY + 15;
+    }
+    
+    // Footer with current date
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    const today = new Date();
+    doc.text(
+      `تاریخ گزارش: ${today.toLocaleDateString('fa-IR')}`,
+      doc.internal.pageSize.width - margin,
+      doc.internal.pageSize.height - 10
+    );
+    
+    // Save document
+    doc.save(`${student.firstName || ''}_${student.lastName || ''}_گزارش.pdf`);
+    
+    return true;
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    return false;
+  }
+};

@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowUpDown, Edit, Plus, Trash2, Activity, Dumbbell } from "lucide-react";
+import { ArrowUpDown, Edit, Plus, Trash2, Activity, Dumbbell, Filter, Search } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -25,6 +25,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 interface ExerciseTableProps {
   exercises: Exercise[];
@@ -48,10 +56,13 @@ export function ExerciseTable({
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [exercisesToDelete, setExercisesToDelete] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [filteredExercises, setFilteredExercises] = useState<Exercise[]>(exercises);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedExercises(exercises.map(ex => ex.id));
+      setSelectedExercises(filteredExercises.map(ex => ex.id));
     } else {
       setSelectedExercises([]);
     }
@@ -77,12 +88,33 @@ export function ExerciseTable({
     setSelectedExercises([]);
   };
 
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setSelectedCategoryId(null);
+  };
+
+  useEffect(() => {
+    let result = exercises;
+
+    if (searchQuery) {
+      result = result.filter(ex => 
+        ex.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (selectedCategoryId) {
+      result = result.filter(ex => ex.categoryId === selectedCategoryId);
+    }
+
+    setFilteredExercises(result);
+  }, [exercises, searchQuery, selectedCategoryId]);
+
   useEffect(() => {
     setSelectedExercises([]);
-  }, [exercises]);
+  }, [filteredExercises]);
 
-  const allSelected = exercises.length > 0 && selectedExercises.length === exercises.length;
-  const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
+  const allSelected = filteredExercises.length > 0 && selectedExercises.length === filteredExercises.length;
+  const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < filteredExercises.length;
 
   return (
     <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
@@ -125,6 +157,58 @@ export function ExerciseTable({
           </div>
         </div>
 
+        <div className="mb-4 flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <Search className="h-4 w-4" />
+            </div>
+            <Input
+              placeholder="جستجوی حرکت..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pr-10"
+            />
+          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 w-full md:w-auto">
+                <Filter className="h-4 w-4" />
+                فیلتر دسته‌بندی
+                {selectedCategoryId && <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded-full text-xs mr-1">{toPersianNumbers(1)}</span>}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem 
+                onClick={() => setSelectedCategoryId(null)}
+                className={!selectedCategoryId ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
+              >
+                همه دسته‌بندی‌ها
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              
+              {categories.map(category => (
+                <DropdownMenuItem
+                  key={category.id}
+                  onClick={() => setSelectedCategoryId(category.id)}
+                  className={selectedCategoryId === category.id ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
+                >
+                  {category.name}
+                </DropdownMenuItem>
+              ))}
+              
+              {(searchQuery || selectedCategoryId) && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleClearFilters} className="text-red-600">
+                    پاک کردن فیلترها
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         <div className="relative overflow-x-auto rounded-lg border border-indigo-100">
           <Table>
             <TableHeader>
@@ -145,7 +229,7 @@ export function ExerciseTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {exercises.length === 0 ? (
+              {filteredExercises.length === 0 ? (
                 <TableRow>
                   <TableCell 
                     colSpan={5} 
@@ -153,12 +237,17 @@ export function ExerciseTable({
                   >
                     <div className="flex flex-col items-center gap-2">
                       <Dumbbell className="w-8 h-8 text-indigo-200" />
-                      <p>هیچ حرکتی ثبت نشده است</p>
+                      <p>هیچ حرکتی یافت نشد</p>
+                      {(searchQuery || selectedCategoryId) && (
+                        <Button variant="link" onClick={handleClearFilters} className="text-indigo-500">
+                          پاک کردن فیلترها
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                exercises.map((exercise, index) => {
+                filteredExercises.map((exercise, index) => {
                   const category = categories.find(c => c.id === exercise.categoryId);
                   const key = `${exercise.id}-${exercise.name}-${index}`;
                   return (
