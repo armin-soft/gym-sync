@@ -15,6 +15,7 @@ export interface Student {
   meals?: number[];
   supplements?: number[];
   vitamins?: number[];
+  notes?: string;
 }
 
 export interface Exercise {
@@ -22,6 +23,10 @@ export interface Exercise {
   name: string;
   category?: string;
   description?: string;
+  equipment?: string;
+  targetMuscle?: string;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  instructions?: string[];
 }
 
 export interface Meal {
@@ -36,6 +41,8 @@ export interface Supplement {
   name: string;
   type?: string;
   description?: string;
+  dosage?: string;
+  timing?: string;
 }
 
 export interface Vitamin {
@@ -43,6 +50,8 @@ export interface Vitamin {
   name: string;
   type?: string;
   description?: string;
+  dosage?: string;
+  timing?: string;
 }
 
 export interface TrainingSession {
@@ -53,4 +62,10 @@ export interface TrainingSession {
   time: string;
   duration: string;
   status: 'upcoming' | 'completed' | 'cancelled';
+}
+
+export interface WorkoutPlan {
+  day: number;
+  exercises: number[];
+  notes?: string;
 }

@@ -1,10 +1,8 @@
-
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { TrainerProfile } from "@/types/trainer";
 
-// Add type declarations for jspdf-autotable
 declare module 'jspdf' {
   interface jsPDF {
     autoTable: (options: any) => jsPDF;
@@ -34,42 +32,34 @@ export const generateStudentPDF = (
   supplements: any[],
   trainerProfile: TrainerProfile
 ): jsPDF => {
-  // Create PDF with jsPDF
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
     format: "a4"
   });
 
-  // Add fancy header with gradient effect
   const addGradientHeader = (doc: jsPDF) => {
-    // Create gradient background for header
     const width = doc.internal.pageSize.getWidth();
     const height = 50;
     
-    // Draw gradient manually (since jsPDF doesn't support gradients directly)
     for (let i = 0; i < height; i++) {
       const opacity = 1 - (i / height * 0.7);
-      doc.setFillColor(48, 63, 159); // Indigo base color
+      doc.setFillColor(48, 63, 159);
       doc.setGlobalAlpha(opacity);
       doc.rect(0, i, width, 1, 'F');
     }
     
     doc.setGlobalAlpha(1);
     
-    // Add white text for gym name
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(24);
     
-    // Add gym name with stylish presentation
     doc.text(`${trainerProfile.gymName}`, 15, 20);
     
-    // Add white separator line
     doc.setDrawColor(255, 255, 255);
     doc.setLineWidth(0.5);
     doc.line(15, 24, 100, 24);
     
-    // Add gym contact info in slightly smaller text
     doc.setFontSize(10);
     doc.text(`آدرس: ${trainerProfile.gymAddress}`, 15, 32);
     
@@ -87,7 +77,6 @@ export const generateStudentPDF = (
       doc.text(socialText, 15, 44);
     }
     
-    // Add trainer info on the right side
     if (trainerProfile.fullName) {
       doc.setFontSize(12);
       const trainerText = `مربی: ${trainerProfile.fullName}`;
@@ -95,45 +84,45 @@ export const generateStudentPDF = (
       doc.text(trainerText, width - 15 - trainerTextWidth, 20);
     }
   };
-  
+
   addGradientHeader(doc);
-  
-  // Add student profile header with stylish design
-  doc.setFillColor(63, 81, 181, 0.1); // Light indigo
-  doc.setDrawColor(63, 81, 181);      // Indigo border
+
+  const applyBackgroundEffect = (doc: jsPDF, x: number, y: number, width: number, height: number, color: string) => {
+    const originalFillColor = doc.getFillColor();
+    doc.setFillColor(color);
+    doc.rect(x, y, width, height, 'F');
+    doc.setFillColor(originalFillColor);
+  };
+
+  doc.setFillColor(63, 81, 181, 0.1);
+  doc.setDrawColor(63, 81, 181);
   doc.setLineWidth(0.5);
   doc.roundedRect(15, 60, doc.internal.pageSize.getWidth() - 30, 15, 5, 5, 'FD');
-  
-  // Add student name with stylish presentation
-  doc.setTextColor(40, 53, 147); // Dark indigo
+
+  doc.setTextColor(40, 53, 147);
   doc.setFontSize(16);
   doc.text(`پروفایل شاگرد: ${student.name}`, 20, 70);
-  
+
   let currentY = 85;
 
-  // Personal information with modern card styling
   doc.setFillColor(255, 255, 255);
   doc.setDrawColor(220, 220, 240);
   doc.roundedRect(15, currentY, doc.internal.pageSize.getWidth() - 30, 50, 5, 5, 'FD');
-  
-  // Add stylish section header
+
   doc.setFillColor(63, 81, 181);
   doc.roundedRect(25, currentY - 5, 40, 10, 5, 5, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(11);
   doc.text("اطلاعات فردی", 45, currentY);
-  
-  // Add horizontal separator line
+
   doc.setDrawColor(230, 230, 240);
   doc.setLineWidth(0.5);
   doc.line(25, currentY + 10, doc.internal.pageSize.getWidth() - 25, currentY + 10);
-  
-  // Two-column personal data layout with icons (simulated)
+
   const personalInfoWidth = doc.internal.pageSize.getWidth() - 50;
   const colWidth = personalInfoWidth / 2;
   currentY += 20;
-  
-  // Left column - Name
+
   doc.setFillColor(63, 81, 181, 0.1);
   doc.roundedRect(25, currentY - 7, colWidth - 10, 12, 3, 3, 'F');
   doc.setTextColor(80, 80, 80);
@@ -142,8 +131,7 @@ export const generateStudentPDF = (
   doc.setTextColor(40, 40, 40);
   doc.setFontSize(11);
   doc.text(student.name || '-', 45, currentY);
-  
-  // Right column - Phone
+
   doc.setFillColor(63, 81, 181, 0.1);
   doc.roundedRect(25 + colWidth, currentY - 7, colWidth - 10, 12, 3, 3, 'F');
   doc.setTextColor(80, 80, 80);
@@ -152,10 +140,9 @@ export const generateStudentPDF = (
   doc.setTextColor(40, 40, 40);
   doc.setFontSize(11);
   doc.text(student.phone ? toPersianNumbers(student.phone) : '-', 60 + colWidth, currentY);
-  
+
   currentY += 15;
-  
-  // Left column - Height
+
   doc.setFillColor(63, 81, 181, 0.1);
   doc.roundedRect(25, currentY - 7, colWidth - 10, 12, 3, 3, 'F');
   doc.setTextColor(80, 80, 80);
@@ -164,8 +151,7 @@ export const generateStudentPDF = (
   doc.setTextColor(40, 40, 40);
   doc.setFontSize(11);
   doc.text(student.height ? toPersianNumbers(student.height) : '-', 60, currentY);
-  
-  // Right column - Weight
+
   doc.setFillColor(63, 81, 181, 0.1);
   doc.roundedRect(25 + colWidth, currentY - 7, colWidth - 10, 12, 3, 3, 'F');
   doc.setTextColor(80, 80, 80);
@@ -174,65 +160,54 @@ export const generateStudentPDF = (
   doc.setTextColor(40, 40, 40);
   doc.setFontSize(11);
   doc.text(student.weight ? toPersianNumbers(student.weight) : '-', 60 + colWidth, currentY);
-  
+
   currentY += 35;
 
-  // Exercise program with visual card
   if (student.exercises && student.exercises.length > 0 && exercises && exercises.length > 0) {
-    // Add card with gradient background
     const drawExerciseCard = () => {
-      // Create card with gradient background
       const width = doc.internal.pageSize.getWidth() - 30;
       const height = Math.min(student.exercises!.length * 15 + 20, 150);
-      
-      // Draw gradient background using opacity variations in colors
+
       for (let i = 0; i < height; i++) {
-        // Calculate opacity percentage as decimal (0.05 to 0.1)
         const opacityFactor = 0.05 + (i / height * 0.05);
-        // Convert to RGB with alpha
         const r = 63;
         const g = 81;
         const b = 181;
-        // Calculate the lighter color based on opacity blend with white background
         const lightR = Math.floor(r + (255 - r) * (1 - opacityFactor));
         const lightG = Math.floor(g + (255 - g) * (1 - opacityFactor));
         const lightB = Math.floor(b + (255 - b) * (1 - opacityFactor));
-        
+
         doc.setFillColor(lightR, lightG, lightB);
         doc.roundedRect(15, currentY + i, width, 1, 0, 0, 'F');
       }
-      
+
       doc.setDrawColor(63, 81, 181);
       doc.setLineWidth(0.5);
       doc.roundedRect(15, currentY, width, height, 5, 5, 'S');
-      
-      // Add header with fill
+
       doc.setFillColor(63, 81, 181);
       doc.roundedRect(25, currentY - 5, 35, 10, 5, 5, 'F');
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(11);
       doc.text("برنامه تمرینی", 42, currentY);
-      
-      // Add horizontal separator line
+
       doc.setDrawColor(63, 81, 181, 0.3);
       doc.setLineWidth(0.5);
       doc.line(25, currentY + 10, width - 10, currentY + 10);
-      
+
       return height;
     };
-    
+
     const cardHeight = drawExerciseCard();
-    
+
     currentY += 20;
-    
+
     const studentExercises = exercises.filter(exercise => 
       student.exercises && student.exercises.includes(exercise.id)
     );
-    
-    // Add items with colored badges and structured layout
+
     doc.setFontSize(10);
     studentExercises.forEach((exercise, index) => {
-      // Check if we need a new page
       if (currentY > doc.internal.pageSize.getHeight() - 20) {
         doc.addPage();
         currentY = 20;
@@ -241,19 +216,16 @@ export const generateStudentPDF = (
         drawExerciseCard();
         currentY += 20;
       }
-      
-      // Add exercise item with colored badge
+
       doc.setFillColor(63, 81, 181);
       doc.circle(25, currentY, 2, 'F');
-      
-      // Add exercise name with light background
+
       doc.setFillColor(240, 242, 255);
       doc.roundedRect(30, currentY - 6, 150, 12, 2, 2, 'F');
-      
-      // Add text
+
       doc.setTextColor(40, 40, 40);
       doc.text(exercise.name || "", 35, currentY);
-      
+
       if (exercise.description) {
         currentY += 6;
         doc.setFontSize(8);
@@ -265,74 +237,62 @@ export const generateStudentPDF = (
         currentY += 10;
       }
     });
-    
+
     currentY += 10;
   }
 
-  // Diet program with visual card
   if (student.meals && student.meals.length > 0 && meals && meals.length > 0) {
-    // Add new page if near bottom
     if (currentY > doc.internal.pageSize.getHeight() - 50) {
       doc.addPage();
       currentY = 20;
       addGradientHeader(doc);
       currentY = 80;
     }
-    
-    // Draw card with gradient background for meals
+
     const drawMealCard = () => {
-      // Create card with gradient background
       const width = doc.internal.pageSize.getWidth() - 30;
       const height = Math.min(student.meals!.length * 15 + 20, 150);
-      
-      // Draw gradient background using opacity variations in colors
+
       for (let i = 0; i < height; i++) {
-        // Calculate opacity percentage as decimal (0.05 to 0.1)
         const opacityFactor = 0.05 + (i / height * 0.05);
-        // Green color base
         const r = 76;
         const g = 175;
         const b = 80;
-        // Calculate the lighter color based on opacity blend with white background
         const lightR = Math.floor(r + (255 - r) * (1 - opacityFactor));
         const lightG = Math.floor(g + (255 - g) * (1 - opacityFactor));
         const lightB = Math.floor(b + (255 - b) * (1 - opacityFactor));
-        
+
         doc.setFillColor(lightR, lightG, lightB);
         doc.roundedRect(15, currentY + i, width, 1, 0, 0, 'F');
       }
-      
+
       doc.setDrawColor(76, 175, 80);
       doc.setLineWidth(0.5);
       doc.roundedRect(15, currentY, width, height, 5, 5, 'S');
-      
-      // Add header with fill
+
       doc.setFillColor(76, 175, 80);
       doc.roundedRect(25, currentY - 5, 35, 10, 5, 5, 'F');
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(11);
       doc.text("برنامه غذایی", 42, currentY);
-      
-      // Add horizontal separator line
+
       doc.setDrawColor(76, 175, 80, 0.3);
       doc.setLineWidth(0.5);
       doc.line(25, currentY + 10, width - 10, currentY + 10);
-      
+
       return height;
     };
-    
+
     const cardHeight = drawMealCard();
-    
+
     currentY += 20;
-    
+
     const studentMeals = meals.filter(meal => 
       student.meals && student.meals.includes(meal.id)
     );
-    
-    // Add items with colored badges and structured layout
+
     doc.setFontSize(10);
     studentMeals.forEach((meal, index) => {
-      // Check if we need a new page
       if (currentY > doc.internal.pageSize.getHeight() - 20) {
         doc.addPage();
         currentY = 20;
@@ -341,19 +301,16 @@ export const generateStudentPDF = (
         drawMealCard();
         currentY += 20;
       }
-      
-      // Add meal item with colored badge
+
       doc.setFillColor(76, 175, 80);
       doc.circle(25, currentY, 2, 'F');
-      
-      // Add meal name with light background
+
       doc.setFillColor(240, 250, 240);
       doc.roundedRect(30, currentY - 6, 150, 12, 2, 2, 'F');
-      
-      // Add text
+
       doc.setTextColor(40, 40, 40);
       doc.text(meal.name || "", 35, currentY);
-      
+
       if (meal.description) {
         currentY += 6;
         doc.setFontSize(8);
@@ -365,23 +322,21 @@ export const generateStudentPDF = (
         currentY += 10;
       }
     });
-    
+
     currentY += 10;
   }
 
-  // Supplements and vitamins with visual card
   if ((student.supplements && student.supplements.length > 0) || 
       (student.vitamins && student.vitamins.length > 0) && 
       supplements && supplements.length > 0) {
     
-    // Add new page if near bottom
     if (currentY > doc.internal.pageSize.getHeight() - 50) {
       doc.addPage();
       currentY = 20;
       addGradientHeader(doc);
       currentY = 80;
     }
-    
+
     const supplementItems = supplements
       .filter(supplement => 
         (student.supplements && student.supplements.includes(supplement.id)) || 
@@ -389,21 +344,15 @@ export const generateStudentPDF = (
       );
       
     if (supplementItems.length > 0) {
-      // Draw card with gradient background for supplements
       const drawSupplementCard = () => {
-        // Create card with gradient background
         const width = doc.internal.pageSize.getWidth() - 30;
         const height = Math.min(supplementItems.length * 15 + 20, 150);
         
-        // Draw gradient background using opacity variations in colors
         for (let i = 0; i < height; i++) {
-          // Calculate opacity percentage as decimal (0.05 to 0.1)
           const opacityFactor = 0.05 + (i / height * 0.05);
-          // Purple color base
           const r = 156;
           const g = 39;
           const b = 176;
-          // Calculate the lighter color based on opacity blend with white background
           const lightR = Math.floor(r + (255 - r) * (1 - opacityFactor));
           const lightG = Math.floor(g + (255 - g) * (1 - opacityFactor));
           const lightB = Math.floor(b + (255 - b) * (1 - opacityFactor));
@@ -416,14 +365,12 @@ export const generateStudentPDF = (
         doc.setLineWidth(0.5);
         doc.roundedRect(15, currentY, width, height, 5, 5, 'S');
         
-        // Add header with fill
         doc.setFillColor(156, 39, 176);
         doc.roundedRect(25, currentY - 5, 55, 10, 5, 5, 'F');
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(11);
         doc.text("مکمل‌ها و ویتامین‌ها", 55, currentY);
         
-        // Add horizontal separator line
         doc.setDrawColor(156, 39, 176, 0.3);
         doc.setLineWidth(0.5);
         doc.line(25, currentY + 10, width - 10, currentY + 10);
@@ -435,10 +382,8 @@ export const generateStudentPDF = (
       
       currentY += 20;
       
-      // Add items with colored badges and structured layout
       doc.setFontSize(10);
       supplementItems.forEach((supplement, index) => {
-        // Check if we need a new page
         if (currentY > doc.internal.pageSize.getHeight() - 20) {
           doc.addPage();
           currentY = 20;
@@ -448,15 +393,12 @@ export const generateStudentPDF = (
           currentY += 20;
         }
         
-        // Add supplement item with colored badge
         doc.setFillColor(156, 39, 176);
         doc.circle(25, currentY, 2, 'F');
         
-        // Add supplement name with light background
         doc.setFillColor(250, 240, 250);
         doc.roundedRect(30, currentY - 6, 150, 12, 2, 2, 'F');
         
-        // Add text
         doc.setTextColor(40, 40, 40);
         doc.text(supplement.name || "", 35, currentY);
         
@@ -474,18 +416,14 @@ export const generateStudentPDF = (
     }
   }
 
-  // Add stylish footer to all pages
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     
-    // Add gradient footer
     const footerHeight = 15;
     const width = doc.internal.pageSize.getWidth();
     
-    // Create a fade effect for the footer
     for (let j = 0; j < footerHeight; j++) {
-      // Calculate a light color with varying opacity for the gradient
       const r = 63;
       const g = 81;
       const b = 181;
@@ -498,14 +436,12 @@ export const generateStudentPDF = (
       doc.rect(0, doc.internal.pageSize.getHeight() - footerHeight + j, width, 1, 'F');
     }
     
-    // Add page numbers
     doc.setFontSize(9);
     doc.setTextColor(63, 81, 181);
     const pageText = `صفحه ${toPersianNumbers(i)} از ${toPersianNumbers(pageCount)}`;
     const textWidth = doc.getStringUnitWidth(pageText) * 9 / doc.internal.scaleFactor;
     doc.text(pageText, width - 15 - textWidth, doc.internal.pageSize.getHeight() - 8);
     
-    // Add gym name
     doc.text(trainerProfile.gymName, 15, doc.internal.pageSize.getHeight() - 8);
   }
 
@@ -519,13 +455,11 @@ export const openPrintWindow = (
   supplements: any[],
   trainerProfile: TrainerProfile
 ): Window | null => {
-  // Create a new window for printing
   const printWindow = window.open('', '_blank');
   if (!printWindow) {
     return null;
   }
 
-  // Get student data
   const studentExercises = exercises.filter(exercise => 
     student.exercises && student.exercises.includes(exercise.id)
   ).filter(Boolean) || [];
@@ -539,7 +473,6 @@ export const openPrintWindow = (
     (student.vitamins && student.vitamins.includes(supplement.id))
   ).filter(Boolean) || [];
 
-  // HTML content for printing with modern styling
   printWindow.document.write(`
     <html dir="rtl">
     <head>
@@ -1034,11 +967,9 @@ export const openPrintWindow = (
 
   printWindow.document.close();
   
-  // Auto-trigger print after window loads
   printWindow.onload = function() {
     setTimeout(() => {
       printWindow.focus();
-      // Let user see the preview first
     }, 1000);
   };
 
