@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -714,4 +715,99 @@ export function StudentExerciseDialog({
                       selectedDay === 'day2' ? 'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-400 border-purple-200' : 
                       selectedDay === 'day3' ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400 border-green-200' : 
                       selectedDay === 'day4' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400 border-amber-200' : 
-                      'bg-gray-50 text-gray-700 dark:bg-gray-950 dark:text
+                      'bg-gray-50 text-gray-700 dark:bg-gray-950 dark:text-gray-400 border-gray-200'}
+                  `}>
+                    {toPersianNumbers(getCurrentSelectedExercises().length)}
+                  </Badge>
+                </div>
+                
+                <ScrollArea className="h-[calc(100%-49px)]">
+                  {getCurrentSelectedExercises().length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
+                        <Clipboard className="h-8 w-8 text-slate-400" />
+                      </div>
+                      <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
+                    </div>
+                  ) : (
+                    <ul className="divide-y divide-gray-200 dark:divide-gray-800">
+                      {getCurrentSelectedExercises().map((exerciseId, index) => {
+                        const exercise = exercises.find((e: ExerciseData) => e.id === exerciseId);
+                        if (!exercise) return null;
+                        
+                        return (
+                          <motion.li 
+                            key={exercise.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                            className="p-3 relative border-r-4 border-r-transparent hover:bg-slate-50 dark:hover:bg-slate-800/30"
+                          >
+                            <div className="flex items-center">
+                              <div className="mr-2 font-bold text-xs rounded-full size-5 flex items-center justify-center bg-slate-100 dark:bg-slate-700">
+                                {toPersianNumbers(index + 1)}
+                              </div>
+                              <div className="flex-1 mr-2">
+                                <div className="font-medium text-sm">{exercise.name}</div>
+                                <Badge 
+                                  variant="outline" 
+                                  className="mt-1 px-2 py-0 h-5 text-xs bg-blue-50/50 text-blue-600 border-blue-200"
+                                >
+                                  {getCategoryName(exercise.categoryId)}
+                                </Badge>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                onClick={() => handleSelectExercise(exercise.id)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </motion.li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </ScrollArea>
+              </Card>
+            </div>
+            
+            {/* Footer - Save Button */}
+            <div className="border-t mt-4 pt-4 flex justify-between items-center">
+              <div className="flex items-center">
+                <Badge variant="outline" className="px-3 py-1 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                  <span className="font-semibold mr-1">تعداد کل:</span> {toPersianNumbers(getCurrentSelectedExercises().length)}
+                </Badge>
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  انصراف
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  className={`px-6 ${
+                    selectedDay === 'day1' ? 'bg-blue-600 hover:bg-blue-700' : 
+                    selectedDay === 'day2' ? 'bg-purple-600 hover:bg-purple-700' : 
+                    selectedDay === 'day3' ? 'bg-green-600 hover:bg-green-700' : 
+                    selectedDay === 'day4' ? 'bg-amber-600 hover:bg-amber-700' : 
+                    'bg-gray-600 hover:bg-gray-700'
+                  }`}
+                >
+                  <Save className="h-4 w-4 mr-1" />
+                  ذخیره برنامه
+                </Button>
+              </div>
+            </div>
+          </Tabs>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

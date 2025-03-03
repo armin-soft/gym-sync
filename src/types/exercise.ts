@@ -14,6 +14,9 @@ export interface Exercise {
   id: number;
   name: string;
   categoryId: number;
+  description?: string;
+  targetMuscle?: string;
+  equipment?: string;
 }
 
 // مقادیر پیش‌فرض - به صورت خالی
