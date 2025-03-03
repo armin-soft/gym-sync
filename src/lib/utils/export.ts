@@ -796,4 +796,3 @@ export const openPrintWindow = (
 
   return printWindow;
 };
-
