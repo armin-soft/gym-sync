@@ -170,15 +170,13 @@ const StudentsPage = () => {
     });
   }, [students, searchQuery, sortField, sortOrder, selectedExerciseType, selectedCategory, exercises, categories]);
 
-  console.log('Sorted and filtered students:', sortedAndFilteredStudents);
-
   const handleDelete = (id: number) => {
     const updatedStudents = students.filter((student) => student.id !== id);
     setStudents(updatedStudents);
     
     toast({
       title: "حذف موفق",
-      description: "شاگرد مورد نظر با موفقیت ��ذف شد",
+      description: "شاگرد مورد نظر با موفقیت حذف شد",
     });
   };
 
