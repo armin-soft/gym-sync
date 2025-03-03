@@ -185,15 +185,23 @@ export const generateStudentPDF = (
       const width = doc.internal.pageSize.getWidth() - 30;
       const height = Math.min(student.exercises!.length * 15 + 20, 150);
       
-      // Draw gradient background
+      // Draw gradient background using opacity variations in colors
       for (let i = 0; i < height; i++) {
-        const opacity = 0.05 + (i / height * 0.05);
-        doc.setFillColor(63, 81, 181); // Indigo base color
-        doc.setGlobalAlpha(opacity);
+        // Calculate opacity percentage as decimal (0.05 to 0.1)
+        const opacityFactor = 0.05 + (i / height * 0.05);
+        // Convert to RGB with alpha
+        const r = 63;
+        const g = 81;
+        const b = 181;
+        // Calculate the lighter color based on opacity blend with white background
+        const lightR = Math.floor(r + (255 - r) * (1 - opacityFactor));
+        const lightG = Math.floor(g + (255 - g) * (1 - opacityFactor));
+        const lightB = Math.floor(b + (255 - b) * (1 - opacityFactor));
+        
+        doc.setFillColor(lightR, lightG, lightB);
         doc.roundedRect(15, currentY + i, width, 1, 0, 0, 'F');
       }
       
-      doc.setGlobalAlpha(1);
       doc.setDrawColor(63, 81, 181);
       doc.setLineWidth(0.5);
       doc.roundedRect(15, currentY, width, height, 5, 5, 'S');
@@ -277,15 +285,23 @@ export const generateStudentPDF = (
       const width = doc.internal.pageSize.getWidth() - 30;
       const height = Math.min(student.meals!.length * 15 + 20, 150);
       
-      // Draw gradient background
+      // Draw gradient background using opacity variations in colors
       for (let i = 0; i < height; i++) {
-        const opacity = 0.05 + (i / height * 0.05);
-        doc.setFillColor(76, 175, 80); // Green base color
-        doc.setGlobalAlpha(opacity);
+        // Calculate opacity percentage as decimal (0.05 to 0.1)
+        const opacityFactor = 0.05 + (i / height * 0.05);
+        // Green color base
+        const r = 76;
+        const g = 175;
+        const b = 80;
+        // Calculate the lighter color based on opacity blend with white background
+        const lightR = Math.floor(r + (255 - r) * (1 - opacityFactor));
+        const lightG = Math.floor(g + (255 - g) * (1 - opacityFactor));
+        const lightB = Math.floor(b + (255 - b) * (1 - opacityFactor));
+        
+        doc.setFillColor(lightR, lightG, lightB);
         doc.roundedRect(15, currentY + i, width, 1, 0, 0, 'F');
       }
       
-      doc.setGlobalAlpha(1);
       doc.setDrawColor(76, 175, 80);
       doc.setLineWidth(0.5);
       doc.roundedRect(15, currentY, width, height, 5, 5, 'S');
@@ -379,15 +395,23 @@ export const generateStudentPDF = (
         const width = doc.internal.pageSize.getWidth() - 30;
         const height = Math.min(supplementItems.length * 15 + 20, 150);
         
-        // Draw gradient background
+        // Draw gradient background using opacity variations in colors
         for (let i = 0; i < height; i++) {
-          const opacity = 0.05 + (i / height * 0.05);
-          doc.setFillColor(156, 39, 176); // Purple base color
-          doc.setGlobalAlpha(opacity);
+          // Calculate opacity percentage as decimal (0.05 to 0.1)
+          const opacityFactor = 0.05 + (i / height * 0.05);
+          // Purple color base
+          const r = 156;
+          const g = 39;
+          const b = 176;
+          // Calculate the lighter color based on opacity blend with white background
+          const lightR = Math.floor(r + (255 - r) * (1 - opacityFactor));
+          const lightG = Math.floor(g + (255 - g) * (1 - opacityFactor));
+          const lightB = Math.floor(b + (255 - b) * (1 - opacityFactor));
+          
+          doc.setFillColor(lightR, lightG, lightB);
           doc.roundedRect(15, currentY + i, width, 1, 0, 0, 'F');
         }
         
-        doc.setGlobalAlpha(1);
         doc.setDrawColor(156, 39, 176);
         doc.setLineWidth(0.5);
         doc.roundedRect(15, currentY, width, height, 5, 5, 'S');
@@ -459,14 +483,20 @@ export const generateStudentPDF = (
     const footerHeight = 15;
     const width = doc.internal.pageSize.getWidth();
     
+    // Create a fade effect for the footer
     for (let j = 0; j < footerHeight; j++) {
-      const opacity = 0.1 + (j / footerHeight * 0.1);
-      doc.setFillColor(63, 81, 181); // Indigo color
-      doc.setGlobalAlpha(opacity);
+      // Calculate a light color with varying opacity for the gradient
+      const r = 63;
+      const g = 81;
+      const b = 181;
+      const opacityFactor = 0.1 + (j / footerHeight * 0.1);
+      const lightR = Math.floor(r + (255 - r) * (1 - opacityFactor));
+      const lightG = Math.floor(g + (255 - g) * (1 - opacityFactor));
+      const lightB = Math.floor(b + (255 - b) * (1 - opacityFactor));
+      
+      doc.setFillColor(lightR, lightG, lightB);
       doc.rect(0, doc.internal.pageSize.getHeight() - footerHeight + j, width, 1, 'F');
     }
-    
-    doc.setGlobalAlpha(1);
     
     // Add page numbers
     doc.setFontSize(9);
@@ -498,16 +528,16 @@ export const openPrintWindow = (
   // Get student data
   const studentExercises = exercises.filter(exercise => 
     student.exercises && student.exercises.includes(exercise.id)
-  );
+  ).filter(Boolean) || [];
   
   const studentMeals = meals.filter(meal => 
     student.meals && student.meals.includes(meal.id)
-  );
+  ).filter(Boolean) || [];
   
   const studentSupplements = supplements.filter(supplement => 
     (student.supplements && student.supplements.includes(supplement.id)) || 
     (student.vitamins && student.vitamins.includes(supplement.id))
-  );
+  ).filter(Boolean) || [];
 
   // HTML content for printing with modern styling
   printWindow.document.write(`
@@ -1014,4 +1044,3 @@ export const openPrintWindow = (
 
   return printWindow;
 };
-
