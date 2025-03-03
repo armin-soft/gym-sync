@@ -33,8 +33,13 @@ import {
   ChevronUp,
   Layers,
   Info,
-  Tag
+  Tag,
+  FolderTree,
+  ListFilter
 } from "lucide-react";
+import { ExerciseType, ExerciseCategory } from "@/types/exercise";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -62,7 +67,6 @@ export function StudentExerciseDialog({
   const { toast } = useToast();
   const [selectedDay, setSelectedDay] = useState<string>("day1");
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterCategory, setFilterCategory] = useState<string>("");
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
   const [selectedExercisesDay1, setSelectedExercisesDay1] = useState<number[]>([]);
   const [selectedExercisesDay2, setSelectedExercisesDay2] = useState<number[]>([]);
@@ -72,6 +76,27 @@ export function StudentExerciseDialog({
   const [showFilters, setShowFilters] = useState(false);
   const [expandedExercise, setExpandedExercise] = useState<number | null>(null);
   const [showSelectedOnly, setShowSelectedOnly] = useState(false);
+  const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectionMode, setSelectionMode] = useState<"single" | "group">("single");
+
+  // Fetch exercise types from localStorage
+  const { data: exerciseTypes = [] } = useQuery({
+    queryKey: ["exerciseTypes"],
+    queryFn: () => {
+      const typesData = localStorage.getItem("exerciseTypes");
+      return typesData ? JSON.parse(typesData) : [];
+    },
+  });
+
+  // Fetch categories from localStorage
+  const { data: categories = [] } = useQuery({
+    queryKey: ["exerciseCategories"],
+    queryFn: () => {
+      const categoriesData = localStorage.getItem("exerciseCategories");
+      return categoriesData ? JSON.parse(categoriesData) : [];
+    },
+  });
 
   // Fetch exercises from localStorage
   const { data: exercises = [], isLoading } = useQuery({
@@ -82,16 +107,11 @@ export function StudentExerciseDialog({
     },
   });
 
-  // Get unique categories for filtering
-  const categories = React.useMemo(() => {
-    const uniqueCategories = new Set<string>();
-    exercises.forEach((exercise: Exercise) => {
-      if (exercise.category) {
-        uniqueCategories.add(exercise.category);
-      }
-    });
-    return Array.from(uniqueCategories);
-  }, [exercises]);
+  // Get filtered categories based on selected exercise type
+  const filteredCategories = React.useMemo(() => {
+    if (!selectedExerciseType) return categories;
+    return categories.filter((category: ExerciseCategory) => category.type === selectedExerciseType);
+  }, [categories, selectedExerciseType]);
 
   useEffect(() => {
     if (open) {
@@ -102,6 +122,11 @@ export function StudentExerciseDialog({
       setSelectedExercisesDay4(initialExercisesDay4 || []);
     }
   }, [open, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
+
+  useEffect(() => {
+    // Reset category when exercise type changes
+    setSelectedCategory(null);
+  }, [selectedExerciseType]);
 
   const handleSelectExercise = (exerciseId: number) => {
     if (selectedDay === "all") {
@@ -135,6 +160,53 @@ export function StudentExerciseDialog({
           : [...prev, exerciseId]
       );
     }
+  };
+
+  const handleSelectAllExercisesInCategory = () => {
+    if (!selectedCategory) return;
+    
+    const exercisesInCategory = exercises.filter((exercise: Exercise) => 
+      exercise.categoryId === selectedCategory
+    ).map(exercise => exercise.id);
+    
+    if (exercisesInCategory.length === 0) return;
+    
+    if (selectedDay === "all") {
+      setSelectedExercises(prev => {
+        const existingIds = new Set(prev);
+        const newIds = exercisesInCategory.filter(id => !existingIds.has(id));
+        return [...prev, ...newIds];
+      });
+    } else if (selectedDay === "day1") {
+      setSelectedExercisesDay1(prev => {
+        const existingIds = new Set(prev);
+        const newIds = exercisesInCategory.filter(id => !existingIds.has(id));
+        return [...prev, ...newIds];
+      });
+    } else if (selectedDay === "day2") {
+      setSelectedExercisesDay2(prev => {
+        const existingIds = new Set(prev);
+        const newIds = exercisesInCategory.filter(id => !existingIds.has(id));
+        return [...prev, ...newIds];
+      });
+    } else if (selectedDay === "day3") {
+      setSelectedExercisesDay3(prev => {
+        const existingIds = new Set(prev);
+        const newIds = exercisesInCategory.filter(id => !existingIds.has(id));
+        return [...prev, ...newIds];
+      });
+    } else if (selectedDay === "day4") {
+      setSelectedExercisesDay4(prev => {
+        const existingIds = new Set(prev);
+        const newIds = exercisesInCategory.filter(id => !existingIds.has(id));
+        return [...prev, ...newIds];
+      });
+    }
+    
+    toast({
+      title: "انتخاب گروهی",
+      description: `تمامی حرکات دسته‌بندی انتخاب شدند`,
+    });
   };
 
   const handleSave = () => {
@@ -181,11 +253,22 @@ export function StudentExerciseDialog({
   const filteredExercises = React.useMemo(() => {
     return exercises.filter((exercise: Exercise) => {
       const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = !filterCategory || exercise.category === filterCategory;
+      const matchesCategory = !selectedCategory || exercise.categoryId === selectedCategory;
       const matchesSelected = !showSelectedOnly || getCurrentSelectedExercises().includes(exercise.id);
-      return matchesSearch && matchesCategory && matchesSelected;
+      
+      // Filter by category only if we have a selected category
+      // If no category is selected but we have an exercise type, filter exercises by categories of that type
+      let matchesExerciseType = true;
+      if (selectedExerciseType && !selectedCategory) {
+        const categoriesOfType = categories
+          .filter((cat: ExerciseCategory) => cat.type === selectedExerciseType)
+          .map((cat: ExerciseCategory) => cat.id);
+        matchesExerciseType = categoriesOfType.includes(exercise.categoryId);
+      }
+      
+      return matchesSearch && matchesCategory && matchesSelected && matchesExerciseType;
     });
-  }, [exercises, searchQuery, filterCategory, showSelectedOnly, getCurrentSelectedExercises]);
+  }, [exercises, searchQuery, selectedCategory, showSelectedOnly, getCurrentSelectedExercises, selectedExerciseType, categories]);
 
   const handleClearSelections = () => {
     if (selectedDay === "all") {
@@ -210,8 +293,9 @@ export function StudentExerciseDialog({
     setExpandedExercise(expandedExercise === id ? null : id);
   };
 
-  const handleCategorySelect = (category: string) => {
-    setFilterCategory(category);
+  const getCategoryName = (categoryId: number) => {
+    const category = categories.find((cat: ExerciseCategory) => cat.id === categoryId);
+    return category ? category.name : "بدون دسته‌بندی";
   };
 
   return (
@@ -294,6 +378,100 @@ export function StudentExerciseDialog({
               </div>
             </div>
 
+            {/* Hierarchical Exercise Selection */}
+            <Card className="mb-4 border-blue-100 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/20">
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Exercise Type Selection */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-1">
+                      <FolderTree className="h-3.5 w-3.5 text-blue-600" />
+                      نوع تمرین
+                    </Label>
+                    <Select
+                      value={selectedExerciseType || ""}
+                      onValueChange={(value) => setSelectedExerciseType(value || null)}
+                    >
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="انتخاب نوع تمرین" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">همه انواع تمرین</SelectItem>
+                        {exerciseTypes.map((type: ExerciseType) => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* Exercise Category Selection */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-1">
+                      <ListFilter className="h-3.5 w-3.5 text-purple-600" />
+                      دسته‌بندی تمرین
+                    </Label>
+                    <Select
+                      value={selectedCategory?.toString() || ""}
+                      onValueChange={(value) => setSelectedCategory(value ? Number(value) : null)}
+                      disabled={filteredCategories.length === 0}
+                    >
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="انتخاب دسته‌بندی" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">همه دسته‌بندی‌ها</SelectItem>
+                        {filteredCategories.map((category: ExerciseCategory) => (
+                          <SelectItem key={category.id} value={category.id.toString()}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* Selection Mode & Actions */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-1">
+                      <Tag className="h-3.5 w-3.5 text-green-600" />
+                      نحوه انتخاب
+                    </Label>
+                    <div className="flex space-x-2 space-x-reverse">
+                      <Button 
+                        variant={selectionMode === "single" ? "default" : "outline"}
+                        size="sm"
+                        className="flex-1 gap-1"
+                        onClick={() => setSelectionMode("single")}
+                      >
+                        <Dumbbell className="h-4 w-4" />
+                        تکی
+                      </Button>
+                      <Button 
+                        variant={selectionMode === "group" ? "default" : "outline"}
+                        size="sm"
+                        className="flex-1 gap-1"
+                        onClick={() => setSelectionMode("group")}
+                        disabled={!selectedCategory}
+                      >
+                        <Layers className="h-4 w-4" />
+                        گروهی
+                      </Button>
+                    </div>
+                    
+                    {selectionMode === "group" && selectedCategory && (
+                      <Button
+                        onClick={handleSelectAllExercisesInCategory}
+                        className="w-full mt-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600"
+                        size="sm"
+                      >
+                        <PlusCircle className="h-4 w-4 mr-1" />
+                        انتخاب همه حرکات این دسته
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <AnimatePresence>
               {showFilters && (
                 <motion.div
@@ -322,25 +500,6 @@ export function StudentExerciseDialog({
                           </div>
                         </div>
                         
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium flex items-center gap-1">
-                            <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-                            دسته‌بندی
-                          </Label>
-                          <select
-                            value={filterCategory}
-                            onChange={(e) => setFilterCategory(e.target.value)}
-                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            <option value="">همه دسته‌بندی‌ها</option>
-                            {categories.map((category) => (
-                              <option key={category} value={category}>
-                                {category}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        
                         <div className="flex flex-col justify-between gap-2">
                           <div className="space-y-2">
                             <Label className="text-sm font-medium flex items-center gap-1">
@@ -366,7 +525,6 @@ export function StudentExerciseDialog({
                             variant="outline"
                             onClick={() => {
                               setSearchQuery("");
-                              setFilterCategory("");
                               setShowSelectedOnly(false);
                             }}
                           >
@@ -381,32 +539,7 @@ export function StudentExerciseDialog({
               )}
             </AnimatePresence>
 
-            {/* Category chips for quick filtering */}
-            {showFilters && categories.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2 mb-3 px-1">
-                <Badge 
-                  variant={!filterCategory ? "default" : "outline"}
-                  className="cursor-pointer transition-all hover:scale-105 px-3 py-1 text-xs"
-                  onClick={() => setFilterCategory("")}
-                >
-                  همه دسته‌بندی‌ها
-                </Badge>
-                {categories.map((category) => (
-                  <Badge 
-                    key={category}
-                    variant={filterCategory === category ? "default" : "outline"}
-                    className={`cursor-pointer transition-all hover:scale-105 px-3 py-1 text-xs ${
-                      filterCategory === category ? 'bg-blue-600' : 'hover:bg-blue-100 hover:text-blue-600'
-                    }`}
-                    onClick={() => handleCategorySelect(category)}
-                  >
-                    {category}
-                  </Badge>
-                ))}
-              </div>
-            )}
-
-            <div className="flex gap-4 h-[calc(100vh-350px)] min-h-[300px]">
+            <div className="flex gap-4 h-[calc(100vh-400px)] min-h-[300px]">
               {/* Exercise selection panel */}
               <Card className="flex-1 border overflow-hidden">
                 <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border-b flex items-center justify-between">
@@ -490,20 +623,14 @@ export function StudentExerciseDialog({
                                 >
                                   <div>
                                     <span className="font-medium block text-sm">{exercise.name}</span>
-                                    {exercise.category && (
-                                      <div className="flex items-center gap-1 mt-1">
-                                        <Badge 
-                                          variant="outline" 
-                                          className="px-2 py-0 h-5 text-xs bg-blue-50 text-blue-700 border-blue-200 cursor-pointer hover:bg-blue-100"
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            handleCategorySelect(exercise.category || "");
-                                          }}
-                                        >
-                                          {exercise.category}
-                                        </Badge>
-                                      </div>
-                                    )}
+                                    <div className="flex items-center gap-1 mt-1">
+                                      <Badge 
+                                        variant="outline" 
+                                        className="px-2 py-0 h-5 text-xs bg-blue-50 text-blue-700 border-blue-200 cursor-pointer hover:bg-blue-100"
+                                      >
+                                        {getCategoryName(exercise.categoryId)}
+                                      </Badge>
+                                    </div>
                                   </div>
                                   <Button
                                     type="button"
@@ -628,11 +755,9 @@ export function StudentExerciseDialog({
                                 </div>
                                 <div className="flex-1 mr-2">
                                   <span className="font-medium block text-sm">{exercise.name}</span>
-                                  {exercise.category && (
-                                    <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">
-                                      {exercise.category}
-                                    </span>
-                                  )}
+                                  <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">
+                                    {getCategoryName(exercise.categoryId)}
+                                  </span>
                                 </div>
                                 <Button
                                   type="button"
@@ -690,4 +815,3 @@ export function StudentExerciseDialog({
     </Dialog>
   );
 }
-
