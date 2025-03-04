@@ -1,99 +1,85 @@
 
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Dumbbell, Package } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import React from "react";
+import { Exercise } from "@/types/exercise";
+import { Dumbbell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-interface Exercise {
-  id: number;
-  name: string;
-  muscleGroup: string;
-  equipment: string;
-  description: string;
-  image: string;
-}
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface ExerciseCardProps {
   exercise: Exercise;
-  onEdit: (exercise: Exercise) => void;
-  onDelete: (id: number) => void;
+  category: any;
+  isSelected: boolean;
+  viewMode: "grid" | "list";
+  onClick: () => void;
 }
 
-export const ExerciseCard = ({ exercise, onEdit, onDelete }: ExerciseCardProps) => {
+export const ExerciseCard: React.FC<ExerciseCardProps> = ({
+  exercise,
+  category,
+  isSelected,
+  viewMode,
+  onClick,
+}) => {
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1">
-      <div className="aspect-video relative overflow-hidden bg-muted">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
-        <img
-          src={exercise.image || "/placeholder.svg"}
-          alt={exercise.name}
-          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-        />
-        <div className="absolute top-3 right-3 z-20">
-          <Badge variant="secondary" className="bg-black/50 hover:bg-black/70 backdrop-blur-sm">
-            {exercise.muscleGroup}
-          </Badge>
-        </div>
-        <div className="absolute bottom-3 right-3 flex items-center gap-2 z-20">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onEdit(exercise)}
-                  className="h-8 w-8 bg-white/10 border-white/20 hover:bg-white/20 backdrop-blur-sm"
-                >
-                  <Edit className="h-4 w-4 text-white" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>ویرایش حرکت</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onDelete(exercise.id)}
-                  className="h-8 w-8 bg-white/10 border-white/20 hover:bg-red-500/20 backdrop-blur-sm"
-                >
-                  <Trash2 className="h-4 w-4 text-white" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>حذف حرکت</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-lg mb-2 line-clamp-1">{exercise.name}</h3>
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Package className="h-4 w-4" />
-            <span className="line-clamp-1">تجهیزات: {exercise.equipment}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Dumbbell className="h-4 w-4" />
-            <span className="line-clamp-1">گروه عضلانی: {exercise.muscleGroup}</span>
-          </div>
-          <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
-            {exercise.description}
-          </p>
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer",
+        viewMode === "grid" ? "w-full aspect-square" : "w-full h-24",
+        isSelected ? "ring-2 ring-primary shadow-lg" : "hover:shadow-md"
+      )}
+      onClick={onClick}
+    >
+      <div className={cn(
+        "absolute inset-0 bg-gradient-to-br",
+        isSelected ? "from-primary/10 to-primary/30" : "from-gray-50 to-gray-100"
+      )}>
+        <div className={cn(
+          "absolute inset-0 flex flex-col",
+          viewMode === "grid" ? "items-center justify-center p-4" : "p-3"
+        )}>
+          {viewMode === "grid" ? (
+            <>
+              <div className={cn(
+                "mb-3 p-3 rounded-full",
+                isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
+              )}>
+                <Dumbbell className="w-8 h-8" />
+              </div>
+              <h3 className="font-semibold text-center line-clamp-2">{exercise.name}</h3>
+              {category && (
+                <Badge variant={isSelected ? "default" : "outline"} className="mt-2">
+                  {category.name}
+                </Badge>
+              )}
+            </>
+          ) : (
+            <div className="flex items-center w-full h-full">
+              <div className={cn(
+                "p-3 mr-3 rounded-full shrink-0",
+                isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
+              )}>
+                <Dumbbell className="w-6 h-6" />
+              </div>
+              <div className="flex flex-col flex-1 overflow-hidden">
+                <h3 className="font-semibold text-lg line-clamp-1">{exercise.name}</h3>
+                <div className="flex items-center mt-1">
+                  {category && (
+                    <Badge variant={isSelected ? "default" : "outline"} className="mr-2">
+                      {category.name}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </Card>
+    </motion.div>
   );
 };
