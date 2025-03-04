@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { StudentDialog } from "@/components/StudentDialog";
-import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
+import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
 import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
 import { StudentSupplementDialog } from "@/components/supplements/StudentSupplementDialog";
 import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
