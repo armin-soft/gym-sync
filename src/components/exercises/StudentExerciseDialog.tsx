@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,24 +11,23 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Search, 
-  ArrowLeft, 
   X, 
   Save, 
   Dumbbell, 
-  Filter, 
   ArrowUpDown, 
-  CalendarRange, 
   Calendar, 
-  Check, 
   RotateCcw, 
   Info, 
   Tag, 
   FolderTree, 
   ListFilter,
-  ClipboardCheck
+  ClipboardCheck,
+  ArrowLeft,
+  Check,
+  ClipboardList
 } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
-// Import both Exercise types to resolve the conflict
 import { Exercise as ExerciseData, ExerciseCategory } from "@/types/exercise";
 import { useQuery } from "@tanstack/react-query";
 
@@ -57,9 +56,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 }) => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTab, setSelectedTab] = useState("all");
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
+  const [selectedTab, setSelectedTab] = useState("day1");
   const [selectedExercisesDay1, setSelectedExercisesDay1] = useState<number[]>([]);
   const [selectedExercisesDay2, setSelectedExercisesDay2] = useState<number[]>([]);
   const [selectedExercisesDay3, setSelectedExercisesDay3] = useState<number[]>([]);
@@ -67,7 +64,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [exercisesSets, setExercisesSets] = useState<{ [key: number]: { sets: number; reps: string; rest: string } }>({});
   const [day1ExercisesSets, setDay1ExercisesSets] = useState<{ [key: number]: { sets: number; reps: string; rest: string } }>({});
   const [day2ExercisesSets, setDay2ExercisesSets] = useState<{ [key: number]: { sets: number; reps: string; rest: string } }>({});
   const [day3ExercisesSets, setDay3ExercisesSets] = useState<{ [key: number]: { sets: number; reps: string; rest: string } }>({});
@@ -103,7 +99,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   // Set initial values on dialog open
   useEffect(() => {
     if (open) {
-      setSelectedExercises(initialExercises);
       setSelectedExercisesDay1(initialExercisesDay1);
       setSelectedExercisesDay2(initialExercisesDay2);
       setSelectedExercisesDay3(initialExercisesDay3);
@@ -120,13 +115,12 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         return newState;
       };
       
-      setExercisesSets(initializeSetsData(initialExercises, {}));
       setDay1ExercisesSets(initializeSetsData(initialExercisesDay1, {}));
       setDay2ExercisesSets(initializeSetsData(initialExercisesDay2, {}));
       setDay3ExercisesSets(initializeSetsData(initialExercisesDay3, {}));
       setDay4ExercisesSets(initializeSetsData(initialExercisesDay4, {}));
     }
-  }, [open, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
+  }, [open, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
 
   // Filter exercises based on search query and selected category/type
   const filteredExercises = React.useMemo(() => {
@@ -167,7 +161,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       case "day4":
         return selectedExercisesDay4;
       default:
-        return selectedExercises;
+        return selectedExercisesDay1;
     }
   };
 
@@ -183,7 +177,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       case "day4":
         return day4ExercisesSets;
       default:
-        return exercisesSets;
+        return day1ExercisesSets;
     }
   };
 
@@ -203,7 +197,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         setSelectedExercisesDay4(ids);
         break;
       default:
-        setSelectedExercises(ids);
+        setSelectedExercisesDay1(ids);
         break;
     }
   };
@@ -234,7 +228,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         setDay4ExercisesSets(updateSetsState);
         break;
       default:
-        setExercisesSets(updateSetsState);
+        setDay1ExercisesSets(updateSetsState);
         break;
     }
   };
@@ -268,7 +262,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         onSave(selectedExercisesDay4, 4);
         break;
       default:
-        onSave(selectedExercises);
+        onSave(selectedExercisesDay1, 1);
         break;
     }
     
@@ -280,78 +274,107 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     onOpenChange(false);
   };
 
+  // Function to get day name based on tab value
+  const getDayName = (tabValue: string) => {
+    switch (tabValue) {
+      case "day1": return "روز اول";
+      case "day2": return "روز دوم";
+      case "day3": return "روز سوم";
+      case "day4": return "روز چهارم";
+      default: return "روز اول";
+    }
+  };
+
+  // Function to get day color based on tab value
+  const getDayColor = (tabValue: string) => {
+    switch (tabValue) {
+      case "day1": return "bg-blue-50 text-blue-700 dark:bg-blue-950";
+      case "day2": return "bg-green-50 text-green-700 dark:bg-green-950";
+      case "day3": return "bg-amber-50 text-amber-700 dark:bg-amber-950";
+      case "day4": return "bg-purple-50 text-purple-700 dark:bg-purple-950";
+      default: return "bg-blue-50 text-blue-700 dark:bg-blue-950";
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] h-[90vh] flex flex-col overflow-hidden px-0">
-        <DialogHeader className="px-6 pt-6 pb-2">
-          <DialogTitle className="text-xl text-center mb-2 flex items-center justify-center gap-2">
-            <Dumbbell className="h-5 w-5 text-indigo-500" />
-            <span>مدیریت تمرین‌های <span className="text-indigo-600 font-bold">{studentName}</span></span>
-          </DialogTitle>
-          
-          <div className="flex items-center gap-2 flex-wrap justify-center">
-            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100">
-              <CalendarRange className="h-3.5 w-3.5 mr-1" />
-              {selectedExercises.length} تمرین پایه
-            </Badge>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-100">
-              <Calendar className="h-3.5 w-3.5 mr-1" />
-              {selectedExercisesDay1.length} تمرین روز اول
-            </Badge>
-            <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-100">
-              <Calendar className="h-3.5 w-3.5 mr-1" />
-              {selectedExercisesDay2.length} تمرین روز دوم
-            </Badge>
-            <Badge variant="outline" className="bg-amber-50 text-amber-700 hover:bg-amber-100">
-              <Calendar className="h-3.5 w-3.5 mr-1" />
-              {selectedExercisesDay3.length} تمرین روز سوم
-            </Badge>
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 hover:bg-purple-100">
-              <Calendar className="h-3.5 w-3.5 mr-1" />
-              {selectedExercisesDay4.length} تمرین روز چهارم
-            </Badge>
+      <DialogContent className="max-w-full h-[100vh] p-0 m-0 flex flex-col overflow-hidden">
+        <div className="flex flex-col h-full">
+          {/* Header with gradient background */}
+          <div className="bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-4 text-white relative">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => onOpenChange(false)}
+              className="absolute left-4 top-4 text-white hover:bg-white/10 h-9 w-9"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            
+            <div className="flex flex-col items-center">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Dumbbell className="h-5 w-5" />
+                <span>مدیریت تمرین‌های شاگرد</span>
+              </h2>
+              <p className="text-white/80 text-center mt-1">
+                <span className="font-bold">{studentName}</span>
+              </p>
+              
+              <div className="flex items-center gap-2 flex-wrap justify-center mt-3">
+                <Badge variant="secondary" className="bg-blue-100/20 text-white border-blue-200/30 backdrop-blur-sm">
+                  <Calendar className="h-3.5 w-3.5 mr-1" />
+                  {toPersianNumbers(selectedExercisesDay1.length)} تمرین روز اول
+                </Badge>
+                <Badge variant="secondary" className="bg-green-100/20 text-white border-green-200/30 backdrop-blur-sm">
+                  <Calendar className="h-3.5 w-3.5 mr-1" />
+                  {toPersianNumbers(selectedExercisesDay2.length)} تمرین روز دوم
+                </Badge>
+                <Badge variant="secondary" className="bg-amber-100/20 text-white border-amber-200/30 backdrop-blur-sm">
+                  <Calendar className="h-3.5 w-3.5 mr-1" />
+                  {toPersianNumbers(selectedExercisesDay3.length)} تمرین روز سوم
+                </Badge>
+                <Badge variant="secondary" className="bg-purple-100/20 text-white border-purple-200/30 backdrop-blur-sm">
+                  <Calendar className="h-3.5 w-3.5 mr-1" />
+                  {toPersianNumbers(selectedExercisesDay4.length)} تمرین روز چهارم
+                </Badge>
+              </div>
+            </div>
           </div>
-        </DialogHeader>
-        
-        <div className="flex-1 flex overflow-hidden">
+          
           <Tabs 
-            defaultValue="all" 
+            defaultValue="day1" 
             className="flex-1 flex flex-col h-full overflow-hidden"
             value={selectedTab}
             onValueChange={setSelectedTab}
           >
-            <div className="px-6 flex justify-between items-center border-b">
-              <TabsList className="grid grid-cols-5 my-2">
-                <TabsTrigger value="all" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-950">
-                  <Dumbbell className="h-4 w-4 mr-1" />
-                  تمرین‌های پایه
-                </TabsTrigger>
-                <TabsTrigger value="day1" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 dark:data-[state=active]:bg-blue-950">
+            <div className="px-6 flex justify-between items-center border-b shadow-sm bg-white dark:bg-gray-950">
+              <TabsList className="grid grid-cols-4 my-2">
+                <TabsTrigger value="day1" className={`data-[state=active]:${getDayColor("day1")}`}>
                   <Calendar className="h-4 w-4 mr-1" />
                   روز اول
                 </TabsTrigger>
-                <TabsTrigger value="day2" className="data-[state=active]:bg-green-50 data-[state=active]:text-green-700 dark:data-[state=active]:bg-green-950">
+                <TabsTrigger value="day2" className={`data-[state=active]:${getDayColor("day2")}`}>
                   <Calendar className="h-4 w-4 mr-1" />
                   روز دوم
                 </TabsTrigger>
-                <TabsTrigger value="day3" className="data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 dark:data-[state=active]:bg-amber-950">
+                <TabsTrigger value="day3" className={`data-[state=active]:${getDayColor("day3")}`}>
                   <Calendar className="h-4 w-4 mr-1" />
                   روز سوم
                 </TabsTrigger>
-                <TabsTrigger value="day4" className="data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 dark:data-[state=active]:bg-purple-950">
+                <TabsTrigger value="day4" className={`data-[state=active]:${getDayColor("day4")}`}>
                   <Calendar className="h-4 w-4 mr-1" />
                   روز چهارم
                 </TabsTrigger>
               </TabsList>
               
-              <Button variant="outline" size="sm" onClick={handleSave} className="gap-1">
+              <Button variant="default" size="sm" onClick={handleSave} className="gap-1 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600">
                 <Save className="h-4 w-4" />
                 ذخیره
               </Button>
             </div>
             
             <div className="flex flex-1 overflow-hidden">
-              <div className="w-[400px] border-l flex flex-col h-full">
+              <div className="w-[350px] border-l flex flex-col h-full bg-gray-50 dark:bg-gray-900">
                 <div className="p-4 space-y-3 border-b">
                   <div className="relative">
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -389,9 +412,9 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                     </Button>
                     
                     <div className="flex-1 flex justify-end">
-                      <span className="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">
-                        {filteredExercises.length} تمرین
-                      </span>
+                      <Badge className="bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 text-xs">
+                        {toPersianNumbers(filteredExercises.length)} تمرین
+                      </Badge>
                     </div>
                   </div>
                   
@@ -482,6 +505,12 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                   </Badge>
                                 )}
                               </div>
+                              
+                              {isSelected && (
+                                <div className="bg-indigo-100 rounded-full p-1">
+                                  <Check className="h-3.5 w-3.5 text-indigo-600" />
+                                </div>
+                              )}
                             </div>
                             
                             {isSelected && (
@@ -496,114 +525,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               </div>
               
               <div className="flex-1 h-full flex flex-col">
-                <TabsContent value="all" className="flex-1 m-0 overflow-hidden flex flex-col">
-                  {getCurrentSelectedExercises().length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
-                    </div>
-                  ) : (
-                    <ScrollArea className="flex-1 p-4">
-                      <div className="space-y-4">
-                        {getCurrentSelectedExercises().map(exerciseId => {
-                          const exercise = exercises.find((ex: ExerciseData) => ex.id === exerciseId);
-                          if (!exercise) return null;
-                          
-                          const category = categories.find((cat: ExerciseCategory) => cat.id === exercise.categoryId);
-                          const setsData = getCurrentSetsData()[exerciseId] || { sets: 3, reps: "10-12", rest: "60" };
-                          
-                          return (
-                            <Card key={exerciseId} className="overflow-hidden">
-                              <div className="p-4">
-                                <div className="flex justify-between items-start mb-3">
-                                  <div>
-                                    <h3 className="font-medium">{exercise.name}</h3>
-                                    {category && (
-                                      <Badge variant="secondary" className="mt-1">
-                                        {category.name}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      toggleExerciseSelection(exercise.id);
-                                    }}
-                                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                                
-                                <div className="grid grid-cols-3 gap-3">
-                                  <div>
-                                    <label className="text-xs font-medium mb-1 block">تعداد ست</label>
-                                    <Input 
-                                      type="number" 
-                                      value={setsData.sets} 
-                                      min={1}
-                                      max={10}
-                                      onChange={(e) => updateCurrentSetsData(
-                                        exercise.id, 
-                                        "sets", 
-                                        Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
-                                      )}
-                                      className="h-9"
-                                    />
-                                  </div>
-                                  <div>
-                                    <label className="text-xs font-medium mb-1 block">تکرار</label>
-                                    <Input 
-                                      value={setsData.reps} 
-                                      onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
-                                      className="h-9"
-                                      placeholder="مثال: 10-12"
-                                    />
-                                  </div>
-                                  <div>
-                                    <label className="text-xs font-medium mb-1 block">استراحت (ثانیه)</label>
-                                    <Input 
-                                      value={setsData.rest} 
-                                      onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
-                                      className="h-9"
-                                      placeholder="مثال: 60"
-                                    />
-                                  </div>
-                                </div>
-                                
-                                {exercise.description && (
-                                  <div className="mt-3 p-2 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
-                                    <Info className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                                    <p>{exercise.description}</p>
-                                  </div>
-                                )}
-                              </div>
-                            </Card>
-                          );
-                        })}
-                      </div>
-                    </ScrollArea>
-                  )}
-                </TabsContent>
-                
+                {/* Day 1 content */}
                 <TabsContent value="day1" className="flex-1 m-0 overflow-hidden flex flex-col">
                   {selectedExercisesDay1.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
                       <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
+                        <ClipboardList className="h-8 w-8 text-slate-400" />
                       </div>
+                      <p className="text-slate-700 dark:text-slate-300 font-medium mb-2 text-lg">برنامه روز اول</p>
                       <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
                       <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
                     </div>
                   ) : (
                     <ScrollArea className="flex-1 p-4">
                       <div className="space-y-4">
-                        {selectedExercisesDay1.map(exerciseId => {
+                        {selectedExercisesDay1.map((exerciseId, index) => {
                           const exercise = exercises.find((ex: ExerciseData) => ex.id === exerciseId);
                           if (!exercise) return null;
                           
@@ -611,16 +547,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           const setsData = day1ExercisesSets[exerciseId] || { sets: 3, reps: "10-12", rest: "60" };
                           
                           return (
-                            <Card key={exerciseId} className="overflow-hidden">
+                            <Card key={exerciseId} className="overflow-hidden border-indigo-100 dark:border-indigo-800/30">
                               <div className="p-4">
                                 <div className="flex justify-between items-start mb-3">
-                                  <div>
-                                    <h3 className="font-medium">{exercise.name}</h3>
-                                    {category && (
-                                      <Badge variant="secondary" className="mt-1">
-                                        {category.name}
-                                      </Badge>
-                                    )}
+                                  <div className="flex items-center">
+                                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 min-w-8 flex items-center justify-center ml-3">
+                                      {toPersianNumbers(index + 1)}
+                                    </Badge>
+                                    <div>
+                                      <h3 className="font-medium">{exercise.name}</h3>
+                                      {category && (
+                                        <Badge variant="secondary" className="mt-1">
+                                          {category.name}
+                                        </Badge>
+                                      )}
+                                    </div>
                                   </div>
                                   <Button 
                                     variant="ghost" 
@@ -648,7 +589,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                         "sets", 
                                         Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
                                       )}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                     />
                                   </div>
                                   <div>
@@ -656,7 +597,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.reps} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 10-12"
                                     />
                                   </div>
@@ -665,7 +606,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.rest} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 60"
                                     />
                                   </div>
@@ -686,19 +627,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   )}
                 </TabsContent>
                 
+                {/* Day 2 content */}
                 <TabsContent value="day2" className="flex-1 m-0 overflow-hidden flex flex-col">
                   {selectedExercisesDay2.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
                       <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
+                        <ClipboardList className="h-8 w-8 text-slate-400" />
                       </div>
+                      <p className="text-slate-700 dark:text-slate-300 font-medium mb-2 text-lg">برنامه روز دوم</p>
                       <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
                       <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
                     </div>
                   ) : (
                     <ScrollArea className="flex-1 p-4">
                       <div className="space-y-4">
-                        {selectedExercisesDay2.map(exerciseId => {
+                        {selectedExercisesDay2.map((exerciseId, index) => {
                           const exercise = exercises.find((ex: ExerciseData) => ex.id === exerciseId);
                           if (!exercise) return null;
                           
@@ -706,16 +649,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           const setsData = day2ExercisesSets[exerciseId] || { sets: 3, reps: "10-12", rest: "60" };
                           
                           return (
-                            <Card key={exerciseId} className="overflow-hidden">
+                            <Card key={exerciseId} className="overflow-hidden border-green-100 dark:border-green-800/30">
                               <div className="p-4">
                                 <div className="flex justify-between items-start mb-3">
-                                  <div>
-                                    <h3 className="font-medium">{exercise.name}</h3>
-                                    {category && (
-                                      <Badge variant="secondary" className="mt-1">
-                                        {category.name}
-                                      </Badge>
-                                    )}
+                                  <div className="flex items-center">
+                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 min-w-8 flex items-center justify-center ml-3">
+                                      {toPersianNumbers(index + 1)}
+                                    </Badge>
+                                    <div>
+                                      <h3 className="font-medium">{exercise.name}</h3>
+                                      {category && (
+                                        <Badge variant="secondary" className="mt-1">
+                                          {category.name}
+                                        </Badge>
+                                      )}
+                                    </div>
                                   </div>
                                   <Button 
                                     variant="ghost" 
@@ -743,7 +691,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                         "sets", 
                                         Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
                                       )}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                     />
                                   </div>
                                   <div>
@@ -751,7 +699,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.reps} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 10-12"
                                     />
                                   </div>
@@ -760,7 +708,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.rest} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 60"
                                     />
                                   </div>
@@ -781,19 +729,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   )}
                 </TabsContent>
                 
+                {/* Day 3 content */}
                 <TabsContent value="day3" className="flex-1 m-0 overflow-hidden flex flex-col">
                   {selectedExercisesDay3.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
                       <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
+                        <ClipboardList className="h-8 w-8 text-slate-400" />
                       </div>
+                      <p className="text-slate-700 dark:text-slate-300 font-medium mb-2 text-lg">برنامه روز سوم</p>
                       <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
                       <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
                     </div>
                   ) : (
                     <ScrollArea className="flex-1 p-4">
                       <div className="space-y-4">
-                        {selectedExercisesDay3.map(exerciseId => {
+                        {selectedExercisesDay3.map((exerciseId, index) => {
                           const exercise = exercises.find((ex: ExerciseData) => ex.id === exerciseId);
                           if (!exercise) return null;
                           
@@ -801,16 +751,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           const setsData = day3ExercisesSets[exerciseId] || { sets: 3, reps: "10-12", rest: "60" };
                           
                           return (
-                            <Card key={exerciseId} className="overflow-hidden">
+                            <Card key={exerciseId} className="overflow-hidden border-amber-100 dark:border-amber-800/30">
                               <div className="p-4">
                                 <div className="flex justify-between items-start mb-3">
-                                  <div>
-                                    <h3 className="font-medium">{exercise.name}</h3>
-                                    {category && (
-                                      <Badge variant="secondary" className="mt-1">
-                                        {category.name}
-                                      </Badge>
-                                    )}
+                                  <div className="flex items-center">
+                                    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 min-w-8 flex items-center justify-center ml-3">
+                                      {toPersianNumbers(index + 1)}
+                                    </Badge>
+                                    <div>
+                                      <h3 className="font-medium">{exercise.name}</h3>
+                                      {category && (
+                                        <Badge variant="secondary" className="mt-1">
+                                          {category.name}
+                                        </Badge>
+                                      )}
+                                    </div>
                                   </div>
                                   <Button 
                                     variant="ghost" 
@@ -838,7 +793,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                         "sets", 
                                         Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
                                       )}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                     />
                                   </div>
                                   <div>
@@ -846,7 +801,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.reps} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 10-12"
                                     />
                                   </div>
@@ -855,7 +810,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.rest} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 60"
                                     />
                                   </div>
@@ -876,19 +831,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   )}
                 </TabsContent>
                 
+                {/* Day 4 content */}
                 <TabsContent value="day4" className="flex-1 m-0 overflow-hidden flex flex-col">
                   {selectedExercisesDay4.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
                       <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                        <ClipboardCheck className="h-8 w-8 text-slate-400" />
+                        <ClipboardList className="h-8 w-8 text-slate-400" />
                       </div>
+                      <p className="text-slate-700 dark:text-slate-300 font-medium mb-2 text-lg">برنامه روز چهارم</p>
                       <p className="text-slate-600 dark:text-slate-400 mb-2">هیچ تمرینی انتخاب نشده</p>
                       <p className="text-xs text-slate-500 dark:text-slate-500">از سمت چپ تمرین‌های مورد نظر را انتخاب کنید</p>
                     </div>
                   ) : (
                     <ScrollArea className="flex-1 p-4">
                       <div className="space-y-4">
-                        {selectedExercisesDay4.map(exerciseId => {
+                        {selectedExercisesDay4.map((exerciseId, index) => {
                           const exercise = exercises.find((ex: ExerciseData) => ex.id === exerciseId);
                           if (!exercise) return null;
                           
@@ -896,16 +853,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           const setsData = day4ExercisesSets[exerciseId] || { sets: 3, reps: "10-12", rest: "60" };
                           
                           return (
-                            <Card key={exerciseId} className="overflow-hidden">
+                            <Card key={exerciseId} className="overflow-hidden border-purple-100 dark:border-purple-800/30">
                               <div className="p-4">
                                 <div className="flex justify-between items-start mb-3">
-                                  <div>
-                                    <h3 className="font-medium">{exercise.name}</h3>
-                                    {category && (
-                                      <Badge variant="secondary" className="mt-1">
-                                        {category.name}
-                                      </Badge>
-                                    )}
+                                  <div className="flex items-center">
+                                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 min-w-8 flex items-center justify-center ml-3">
+                                      {toPersianNumbers(index + 1)}
+                                    </Badge>
+                                    <div>
+                                      <h3 className="font-medium">{exercise.name}</h3>
+                                      {category && (
+                                        <Badge variant="secondary" className="mt-1">
+                                          {category.name}
+                                        </Badge>
+                                      )}
+                                    </div>
                                   </div>
                                   <Button 
                                     variant="ghost" 
@@ -933,7 +895,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                         "sets", 
                                         Math.max(1, Math.min(10, parseInt(e.target.value) || 1))
                                       )}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                     />
                                   </div>
                                   <div>
@@ -941,7 +903,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.reps} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "reps", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 10-12"
                                     />
                                   </div>
@@ -950,7 +912,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                                     <Input 
                                       value={setsData.rest} 
                                       onChange={(e) => updateCurrentSetsData(exercise.id, "rest", e.target.value)}
-                                      className="h-9"
+                                      className="h-9 text-center"
                                       placeholder="مثال: 60"
                                     />
                                   </div>
