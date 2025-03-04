@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 
 interface StudentExerciseDialogProps {
@@ -38,7 +37,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
 }) => {
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("day1");
   const [searchQuery, setSearchQuery] = useState("");
