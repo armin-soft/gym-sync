@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -458,7 +457,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                         انتخاب نوع تمرین
                       </label>
                       <Select
-                        value={selectedExerciseType || ""}
+                        value={selectedExerciseType || undefined}
                         onValueChange={(value) => {
                           setSelectedExerciseType(value || null);
                           setSelectedCategoryId(null); // Reset category when type changes
@@ -468,7 +467,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           <SelectValue placeholder="انتخاب نوع تمرین" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">همه انواع تمرین</SelectItem>
+                          <SelectItem value="all-types">همه انواع تمرین</SelectItem>
                           {exerciseTypes.map((type: string) => (
                             <SelectItem key={type} value={type}>
                               {type}
@@ -484,7 +483,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                         انتخاب دسته‌بندی تمرین
                       </label>
                       <Select
-                        value={selectedCategoryId?.toString() || ""}
+                        value={selectedCategoryId?.toString() || undefined}
                         onValueChange={(value) => setSelectedCategoryId(value ? Number(value) : null)}
                         disabled={filteredCategories.length === 0}
                       >
@@ -492,7 +491,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           <SelectValue placeholder="انتخاب دسته‌بندی" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">همه دسته‌بندی‌ها</SelectItem>
+                          <SelectItem value="all-categories">همه دسته‌بندی‌ها</SelectItem>
                           {filteredCategories.map((category: any) => (
                             <SelectItem key={category.id} value={category.id.toString()}>
                               {category.name}
