@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Outlet } from "react-router-dom";
 
 const LoadingFallback = () => (
-  <div className="flex h-[50vh] items-center justify-center">
+  <div className="flex h-[80vh] items-center justify-center">
     <div className="text-center space-y-4">
       <Spinner size="lg" className="mx-auto" />
       <p className="text-muted-foreground animate-pulse">در حال بارگذاری...</p>
@@ -50,12 +50,12 @@ export const Layout = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background persian-numbers" dir="rtl">
+    <div className="min-h-screen h-screen w-screen overflow-hidden bg-background persian-numbers" dir="rtl">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      <div className="flex min-h-screen flex-col">
+      <div className="flex flex-col h-full w-full">
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-14 items-center">
+          <div className="w-full flex h-14 items-center px-4">
             <button
               onClick={() => setSidebarOpen(true)}
               className="mr-2 rounded-md p-2 hover:bg-accent"
@@ -72,8 +72,8 @@ export const Layout = () => {
           </div>
         </header>
         
-        <main className="flex-1">
-          <div className="container py-6">
+        <main className="flex-1 overflow-auto">
+          <div className="w-full h-full py-6 px-4 md:px-6 lg:px-8">
             <Suspense fallback={<LoadingFallback />}>
               <Outlet />
             </Suspense>

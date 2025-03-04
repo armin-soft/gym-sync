@@ -45,7 +45,7 @@ const Index = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="container mx-auto px-4 py-8 space-y-8"
+      className="w-full h-full overflow-auto space-y-6"
     >
       {/* Hero Section with Glass Effect */}
       <HeroSection 

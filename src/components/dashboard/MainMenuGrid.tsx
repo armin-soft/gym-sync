@@ -95,7 +95,7 @@ export const MainMenuGrid = () => {
       variants={container}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4"
     >
       {dashboardItems.map((dashItem) => (
         <motion.div key={dashItem.href} variants={item}>
@@ -108,7 +108,7 @@ export const MainMenuGrid = () => {
               <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
                 <dashItem.icon className="w-5 h-5" />
               </div>
-              <span className="font-medium text-sm md:text-base text-gray-800 dark:text-white">
+              <span className="font-medium text-xs sm:text-sm md:text-base text-gray-800 dark:text-white">
                 {dashItem.title}
               </span>
             </div>
