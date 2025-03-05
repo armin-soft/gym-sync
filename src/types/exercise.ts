@@ -25,7 +25,7 @@ export interface Exercise {
   type?: string; // نوع تمرین مانند "قدرتی"، "استقامتی" و غیره
 }
 
-// مقادیر پیش‌فرض - به صورت خالی
+// مقادیر پیش‌فرض
 export const defaultExerciseTypes: ExerciseType[] = [];
 export const defaultCategories: ExerciseCategory[] = [];
 export const defaultExercises: Exercise[] = [];
