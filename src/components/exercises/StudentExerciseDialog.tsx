@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Exercise } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -462,21 +464,20 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal>
       <DialogContent className="max-w-full w-full min-h-screen p-0 m-0 rounded-none">
-        <DialogTitle className="sr-only">مدیریت تمرین‌های شاگرد</DialogTitle>
-        <div className="flex flex-col h-screen w-full bg-gradient-to-br from-gray-50 to-indigo-50/30">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b p-4 bg-white shadow-sm z-10">
+        <div className="flex flex-col h-screen w-full bg-gradient-to-br from-slate-50 to-indigo-50/30">
+          {/* Header with glass effect */}
+          <div className="flex items-center justify-between border-b p-4 bg-white/80 backdrop-blur-md shadow-sm z-10 sticky top-0">
             <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => onOpenChange(false)}
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100/80 transition-colors"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="flex flex-col">
-                <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent">
                   مدیریت تمرین‌های شاگرد
                 </h2>
                 <div className="flex items-center gap-2">
@@ -490,14 +491,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                 onClick={() => setShowFilters(!showFilters)}
                 variant={showFilters ? "default" : "outline"}
                 size="sm"
-                className="gap-1"
+                className="gap-1 transition-all duration-300"
               >
                 <Filter className="h-4 w-4" />
                 {showFilters ? "مخفی کردن فیلترها" : "نمایش فیلترها"}
               </Button>
               <Button 
                 onClick={handleSave}
-                className="gap-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all duration-300"
+                className="gap-1 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 shadow-md hover:shadow-lg transition-all duration-300"
                 size="sm"
               >
                 <Save className="h-4 w-4" />
@@ -514,29 +515,29 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               onValueChange={setActiveTab}
               className="w-full flex flex-col flex-1"
             >
-              <div className="bg-white border-b px-4">
+              <div className="bg-white/80 backdrop-blur-sm border-b px-4 shadow-sm">
                 <TabsList className="h-16 w-full bg-transparent gap-1">
                   <TabsTrigger
                     value="day1"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary/5 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg"
+                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
                   >
                     {getTabTitle(1)}
                   </TabsTrigger>
                   <TabsTrigger
                     value="day2"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary/5 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg"
+                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
                   >
                     {getTabTitle(2)}
                   </TabsTrigger>
                   <TabsTrigger
                     value="day3"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary/5 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg"
+                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
                   >
                     {getTabTitle(3)}
                   </TabsTrigger>
                   <TabsTrigger
                     value="day4"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary/5 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg"
+                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
                   >
                     {getTabTitle(4)}
                   </TabsTrigger>
@@ -551,15 +552,15 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="border-b bg-white overflow-hidden"
+                    className="border-b bg-white/70 backdrop-blur-sm overflow-hidden shadow-sm"
                   >
                     <div className="p-4 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                          <Label className="flex items-center gap-1 text-gray-700">
                             <ListChecks className="h-4 w-4 text-primary/70" />
                             انتخاب نوع تمرین
-                          </label>
+                          </Label>
                           <Select
                             value={getSelectedExerciseType() || undefined}
                             onValueChange={(value) => {
@@ -570,7 +571,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                               }
                             }}
                           >
-                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300">
+                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300 bg-white/80">
                               <SelectValue placeholder="انتخاب نوع تمرین" />
                             </SelectTrigger>
                             <SelectContent>
@@ -585,10 +586,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                         </div>
                         
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                          <Label className="flex items-center gap-1 text-gray-700">
                             <Dumbbell className="h-4 w-4 text-primary/70" />
                             انتخاب دسته‌بندی تمرین
-                          </label>
+                          </Label>
                           <Select
                             value={getSelectedCategoryId()?.toString() || undefined}
                             onValueChange={(value) => {
@@ -600,7 +601,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                             }}
                             disabled={filteredCategories.length === 0 || !getSelectedExerciseType()}
                           >
-                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300">
+                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300 bg-white/80">
                               <SelectValue placeholder="انتخاب دسته‌بندی" />
                             </SelectTrigger>
                             <SelectContent>
@@ -615,16 +616,16 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                         </div>
                         
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                          <Label className="flex items-center gap-1 text-gray-700">
                             <Search className="h-4 w-4 text-primary/70" />
                             جستجوی نام تمرین
-                          </label>
+                          </Label>
                           <div className="relative">
                             <Input
                               placeholder="جستجوی نام تمرین..."
                               value={searchQuery}
                               onChange={(e) => setSearchQuery(e.target.value)}
-                              className="pl-3 pr-10 border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300"
+                              className="pl-3 pr-10 border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300 bg-white/80"
                               disabled={!hasCompleteFilters()}
                             />
                             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -638,7 +639,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                             variant={viewMode === "grid" ? "default" : "outline"}
                             size="sm"
                             onClick={() => setViewMode("grid")}
-                            className="gap-1"
+                            className="gap-1 transition-all duration-300"
                             disabled={!hasCompleteFilters()}
                           >
                             <LayoutGrid className="h-4 w-4" />
@@ -648,7 +649,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                             variant={viewMode === "list" ? "default" : "outline"}
                             size="sm"
                             onClick={() => setViewMode("list")}
-                            className="gap-1"
+                            className="gap-1 transition-all duration-300"
                             disabled={!hasCompleteFilters()}
                           >
                             <LayoutList className="h-4 w-4" />
@@ -661,7 +662,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                             variant="ghost"
                             size="sm"
                             onClick={handleClearFilters}
-                            className="text-destructive hover:text-destructive/90 gap-1"
+                            className="text-destructive hover:text-destructive/90 gap-1 transition-colors"
                           >
                             <X className="h-4 w-4" />
                             پاک کردن فیلترها
@@ -680,13 +681,13 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                     value={day}
                     className="h-full p-0 m-0 data-[state=active]:flex data-[state=active]:flex-col flex-1"
                   >
-                    {/* Modified ScrollArea to ensure proper scroll behavior */}
+                    {/* ScrollArea to ensure proper scroll behavior */}
                     <ScrollArea className="flex-1 w-full">
                       <div className="p-4">
                         {/* First check if both type and category are selected */}
                         {!hasCompleteFilters() ? (
                           // Show this when either type or category is not selected
-                          <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                          <div className="flex flex-col items-center justify-center h-64 bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-sm border border-indigo-100/50">
                             <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
                               <ListChecks className="h-12 w-12" />
                             </div>
@@ -701,7 +702,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           </div>
                         ) : filteredExercises.length === 0 ? (
                           // Show when both filters are selected but no exercises match
-                          <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                          <div className="flex flex-col items-center justify-center h-64 bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-sm border border-indigo-100/50">
                             <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
                               <Dumbbell className="h-12 w-12" />
                             </div>
@@ -712,7 +713,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                             <Button
                               variant="outline"
                               onClick={handleClearFilters}
-                              className="gap-2"
+                              className="gap-2 hover:bg-primary/5 transition-colors"
                             >
                               <X className="h-4 w-4" />
                               پاک کردن فیلترها
@@ -734,10 +735,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                       </div>
                     </ScrollArea>
 
-                    {/* Selected exercises counter */}
-                    <div className="bg-white border-t p-4 flex justify-between items-center">
+                    {/* Selected exercises counter with glass effect */}
+                    <div className="bg-white/80 backdrop-blur-md border-t p-4 flex justify-between items-center shadow-sm">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-primary" />
+                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-indigo-500 animate-pulse" />
                         <p className="text-sm font-medium text-gray-700">
                           {getSelectedExercisesText()}
                         </p>
