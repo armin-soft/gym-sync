@@ -673,62 +673,65 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                 )}
               </AnimatePresence>
 
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 flex overflow-hidden">
                 {["day1", "day2", "day3", "day4"].map((day) => (
                   <TabsContent
                     key={day}
                     value={day}
-                    className="h-full p-0 m-0 data-[state=active]:flex data-[state=active]:flex-col"
+                    className="h-full p-0 m-0 data-[state=active]:flex data-[state=active]:flex-col flex-1"
                   >
-                    <ScrollArea className="flex-1 w-full p-4">
-                      {/* First check if both type and category are selected */}
-                      {!hasCompleteFilters() ? (
-                        // Show this when either type or category is not selected
-                        <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-                          <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
-                            <ListChecks className="h-12 w-12" />
+                    {/* Modified ScrollArea to ensure proper scroll behavior */}
+                    <ScrollArea className="flex-1 w-full">
+                      <div className="p-4">
+                        {/* First check if both type and category are selected */}
+                        {!hasCompleteFilters() ? (
+                          // Show this when either type or category is not selected
+                          <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                            <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
+                              <ListChecks className="h-12 w-12" />
+                            </div>
+                            <p className="text-lg font-medium text-gray-700 mb-2">
+                              {!getSelectedExerciseType() 
+                                ? "لطفاً ابتدا نوع تمرین را انتخاب کنید" 
+                                : "لطفاً دسته‌بندی تمرین را انتخاب کنید"}
+                            </p>
+                            <p className="text-sm text-gray-500 text-center max-w-md mb-4">
+                              برای مشاهده و انتخاب تمرینات، باید هم نوع تمرین و هم دسته‌بندی انتخاب شده باشد
+                            </p>
                           </div>
-                          <p className="text-lg font-medium text-gray-700 mb-2">
-                            {!getSelectedExerciseType() 
-                              ? "لطفاً ابتدا نوع تمرین را انتخاب کنید" 
-                              : "لطفاً دسته‌بندی تمرین را انتخاب کنید"}
-                          </p>
-                          <p className="text-sm text-gray-500 text-center max-w-md mb-4">
-                            برای مشاهده و انتخاب تمرینات، باید هم نوع تمرین و هم دسته‌بندی انتخاب شده باشد
-                          </p>
-                        </div>
-                      ) : filteredExercises.length === 0 ? (
-                        // Show when both filters are selected but no exercises match
-                        <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-                          <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
-                            <Dumbbell className="h-12 w-12" />
+                        ) : filteredExercises.length === 0 ? (
+                          // Show when both filters are selected but no exercises match
+                          <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                            <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
+                              <Dumbbell className="h-12 w-12" />
+                            </div>
+                            <p className="text-lg font-medium text-gray-700 mb-2">هیچ تمرینی یافت نشد</p>
+                            <p className="text-sm text-gray-500 text-center max-w-md mb-4">
+                              لطفاً معیارهای جستجو را تغییر دهید یا فیلترها را پاک کنید
+                            </p>
+                            <Button
+                              variant="outline"
+                              onClick={handleClearFilters}
+                              className="gap-2"
+                            >
+                              <X className="h-4 w-4" />
+                              پاک کردن فیلترها
+                            </Button>
                           </div>
-                          <p className="text-lg font-medium text-gray-700 mb-2">هیچ تمرینی یافت نشد</p>
-                          <p className="text-sm text-gray-500 text-center max-w-md mb-4">
-                            لطفاً معیارهای جستجو را تغییر دهید یا فیلترها را پاک کنید
-                          </p>
-                          <Button
-                            variant="outline"
-                            onClick={handleClearFilters}
-                            className="gap-2"
-                          >
-                            <X className="h-4 w-4" />
-                            پاک کردن فیلترها
-                          </Button>
-                        </div>
-                      ) : (
-                        // Show exercises when both filters are selected and exercises exist
-                        <div className={cn(
-                          "grid gap-4",
-                          viewMode === "grid" 
-                            ? "grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
-                            : "grid-cols-1"
-                        )}>
-                          <AnimatePresence>
-                            {filteredExercises.map((exercise: Exercise) => renderExerciseCard(exercise))}
-                          </AnimatePresence>
-                        </div>
-                      )}
+                        ) : (
+                          // Show exercises when both filters are selected and exercises exist
+                          <div className={cn(
+                            "grid gap-4",
+                            viewMode === "grid" 
+                              ? "grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+                              : "grid-cols-1"
+                          )}>
+                            <AnimatePresence>
+                              {filteredExercises.map((exercise: Exercise) => renderExerciseCard(exercise))}
+                            </AnimatePresence>
+                          </div>
+                        )}
+                      </div>
                     </ScrollArea>
 
                     {/* Selected exercises counter */}
