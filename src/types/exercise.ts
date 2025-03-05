@@ -22,6 +22,7 @@ export interface Exercise {
   reps?: string;
   rest?: string;
   day?: number;
+  type?: string; // نوع تمرین مانند "قدرتی"، "استقامتی" و غیره
 }
 
 // مقادیر پیش‌فرض - به صورت خالی

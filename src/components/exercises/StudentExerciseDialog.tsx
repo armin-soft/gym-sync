@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Exercise } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,8 +52,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("day1");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
   const [selectedExercisesDay1, setSelectedExercisesDay1] = useState<number[]>([]);
   const [selectedExercisesDay2, setSelectedExercisesDay2] = useState<number[]>([]);
@@ -60,6 +59,17 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const [selectedExercisesDay4, setSelectedExercisesDay4] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(true);
+  
+  // Per-day state for exercise type and category
+  const [exerciseTypeDay1, setExerciseTypeDay1] = useState<string | null>(null);
+  const [exerciseTypeDay2, setExerciseTypeDay2] = useState<string | null>(null);
+  const [exerciseTypeDay3, setExerciseTypeDay3] = useState<string | null>(null);
+  const [exerciseTypeDay4, setExerciseTypeDay4] = useState<string | null>(null);
+  
+  const [categoryIdDay1, setCategoryIdDay1] = useState<number | null>(null);
+  const [categoryIdDay2, setCategoryIdDay2] = useState<number | null>(null);
+  const [categoryIdDay3, setCategoryIdDay3] = useState<number | null>(null);
+  const [categoryIdDay4, setCategoryIdDay4] = useState<number | null>(null);
 
   const { data: exercises = [] } = useQuery({
     queryKey: ["exercises"],
@@ -95,12 +105,66 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   }, [open, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
 
+  const getSelectedExerciseType = () => {
+    switch (activeTab) {
+      case "day1": return exerciseTypeDay1;
+      case "day2": return exerciseTypeDay2;
+      case "day3": return exerciseTypeDay3;
+      case "day4": return exerciseTypeDay4;
+      default: return null;
+    }
+  };
+
+  const setSelectedExerciseType = (value: string | null) => {
+    switch (activeTab) {
+      case "day1": 
+        setExerciseTypeDay1(value);
+        setCategoryIdDay1(null); // Reset category when type changes
+        break;
+      case "day2": 
+        setExerciseTypeDay2(value);
+        setCategoryIdDay2(null);
+        break;
+      case "day3": 
+        setExerciseTypeDay3(value);
+        setCategoryIdDay3(null);
+        break;
+      case "day4": 
+        setExerciseTypeDay4(value);
+        setCategoryIdDay4(null);
+        break;
+    }
+  };
+
+  const getSelectedCategoryId = () => {
+    switch (activeTab) {
+      case "day1": return categoryIdDay1;
+      case "day2": return categoryIdDay2;
+      case "day3": return categoryIdDay3;
+      case "day4": return categoryIdDay4;
+      default: return null;
+    }
+  };
+
+  const setSelectedCategoryId = (value: number | null) => {
+    switch (activeTab) {
+      case "day1": setCategoryIdDay1(value); break;
+      case "day2": setCategoryIdDay2(value); break;
+      case "day3": setCategoryIdDay3(value); break;
+      case "day4": setCategoryIdDay4(value); break;
+    }
+  };
+
   const filteredCategories = React.useMemo(() => {
-    if (!selectedExerciseType) return categories;
-    return categories.filter((category: any) => category.type === selectedExerciseType);
-  }, [categories, selectedExerciseType]);
+    const selectedType = getSelectedExerciseType();
+    if (!selectedType) return categories;
+    return categories.filter((category: any) => category.type === selectedType);
+  }, [categories, activeTab, exerciseTypeDay1, exerciseTypeDay2, exerciseTypeDay3, exerciseTypeDay4]);
 
   const filteredExercises = React.useMemo(() => {
+    const selectedType = getSelectedExerciseType();
+    const selectedCategoryId = getSelectedCategoryId();
+    
     return exercises.filter((exercise: Exercise) => {
       let matchesSearch = true;
       let matchesCategory = true;
@@ -114,16 +178,23 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         matchesCategory = exercise.categoryId === selectedCategoryId;
       }
 
-      if (selectedExerciseType !== null) {
+      if (selectedType !== null) {
         const categoryIds = categories
-          .filter((cat: any) => cat.type === selectedExerciseType)
+          .filter((cat: any) => cat.type === selectedType)
           .map((cat: any) => cat.id);
         matchesType = categoryIds.includes(exercise.categoryId);
       }
 
       return matchesSearch && matchesCategory && matchesType;
     });
-  }, [exercises, searchQuery, selectedCategoryId, selectedExerciseType, categories]);
+  }, [
+    exercises, 
+    searchQuery, 
+    categories, 
+    activeTab, 
+    exerciseTypeDay1, exerciseTypeDay2, exerciseTypeDay3, exerciseTypeDay4,
+    categoryIdDay1, categoryIdDay2, categoryIdDay3, categoryIdDay4
+  ]);
 
   const handleSelectExercise = (exerciseId: number) => {
     switch (activeTab) {
@@ -196,8 +267,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   const handleClearFilters = () => {
     setSearchQuery("");
-    setSelectedCategoryId(null);
     setSelectedExerciseType(null);
+    setSelectedCategoryId(null);
   };
 
   const handleSave = () => {
@@ -380,6 +451,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal>
       <DialogContent className="max-w-full w-full min-h-screen p-0 m-0 rounded-none">
+        <DialogTitle className="sr-only">مدیریت تمرین‌های شاگرد</DialogTitle>
         <div className="flex flex-col h-screen w-full bg-gradient-to-br from-gray-50 to-indigo-50/30">
           {/* Header */}
           <div className="flex items-center justify-between border-b p-4 bg-white shadow-sm z-10">
@@ -423,124 +495,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             </div>
           </div>
 
-          {/* Search and Filter Section */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="border-b bg-white overflow-hidden"
-              >
-                <div className="p-4 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
-                        <Search className="h-4 w-4 text-primary/70" />
-                        جستجوی نام تمرین
-                      </label>
-                      <div className="relative">
-                        <Input
-                          placeholder="جستجوی نام تمرین..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="pl-3 pr-10 border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300"
-                        />
-                        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
-                        <ListChecks className="h-4 w-4 text-primary/70" />
-                        انتخاب نوع تمرین
-                      </label>
-                      <Select
-                        value={selectedExerciseType || undefined}
-                        onValueChange={(value) => {
-                          setSelectedExerciseType(value || null);
-                          setSelectedCategoryId(null); // Reset category when type changes
-                        }}
-                      >
-                        <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300">
-                          <SelectValue placeholder="انتخاب نوع تمرین" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all-types">همه انواع تمرین</SelectItem>
-                          {exerciseTypes.map((type: string) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
-                        <Dumbbell className="h-4 w-4 text-primary/70" />
-                        انتخاب دسته‌بندی تمرین
-                      </label>
-                      <Select
-                        value={selectedCategoryId?.toString() || undefined}
-                        onValueChange={(value) => setSelectedCategoryId(value ? Number(value) : null)}
-                        disabled={filteredCategories.length === 0}
-                      >
-                        <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300">
-                          <SelectValue placeholder="انتخاب دسته‌بندی" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all-categories">همه دسته‌بندی‌ها</SelectItem>
-                          {filteredCategories.map((category: any) => (
-                            <SelectItem key={category.id} value={category.id.toString()}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-2">
-                    <div className="flex gap-2">
-                      <Button
-                        variant={viewMode === "grid" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setViewMode("grid")}
-                        className="gap-1"
-                      >
-                        <LayoutGrid className="h-4 w-4" />
-                        شبکه‌ای
-                      </Button>
-                      <Button
-                        variant={viewMode === "list" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setViewMode("list")}
-                        className="gap-1"
-                      >
-                        <LayoutList className="h-4 w-4" />
-                        لیستی
-                      </Button>
-                    </div>
-                    
-                    {(searchQuery || selectedCategoryId !== null || selectedExerciseType !== null) && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleClearFilters}
-                        className="text-destructive hover:text-destructive/90 gap-1"
-                      >
-                        <X className="h-4 w-4" />
-                        پاک کردن فیلترها
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Tabs and Content */}
           <div className="flex-1 flex flex-col">
             <Tabs
@@ -578,6 +532,133 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                 </TabsList>
               </div>
 
+              {/* Search and Filter Section - Independent for each tab */}
+              <AnimatePresence>
+                {showFilters && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="border-b bg-white overflow-hidden"
+                  >
+                    <div className="p-4 space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                            <ListChecks className="h-4 w-4 text-primary/70" />
+                            انتخاب نوع تمرین
+                          </label>
+                          <Select
+                            value={getSelectedExerciseType() || undefined}
+                            onValueChange={(value) => {
+                              if (value === "all-types") {
+                                setSelectedExerciseType(null);
+                              } else {
+                                setSelectedExerciseType(value || null);
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300">
+                              <SelectValue placeholder="انتخاب نوع تمرین" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-types">همه انواع تمرین</SelectItem>
+                              {exerciseTypes.map((type: string) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                            <Dumbbell className="h-4 w-4 text-primary/70" />
+                            انتخاب دسته‌بندی تمرین
+                          </label>
+                          <Select
+                            value={getSelectedCategoryId()?.toString() || undefined}
+                            onValueChange={(value) => {
+                              if (value === "all-categories") {
+                                setSelectedCategoryId(null);
+                              } else {
+                                setSelectedCategoryId(value ? Number(value) : null);
+                              }
+                            }}
+                            disabled={filteredCategories.length === 0}
+                          >
+                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300">
+                              <SelectValue placeholder="انتخاب دسته‌بندی" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all-categories">همه دسته‌بندی‌ها</SelectItem>
+                              {filteredCategories.map((category: any) => (
+                                <SelectItem key={category.id} value={category.id.toString()}>
+                                  {category.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                            <Search className="h-4 w-4 text-primary/70" />
+                            جستجوی نام تمرین
+                          </label>
+                          <div className="relative">
+                            <Input
+                              placeholder="جستجوی نام تمرین..."
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              className="pl-3 pr-10 border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300"
+                            />
+                            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-2">
+                        <div className="flex gap-2">
+                          <Button
+                            variant={viewMode === "grid" ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setViewMode("grid")}
+                            className="gap-1"
+                          >
+                            <LayoutGrid className="h-4 w-4" />
+                            شبکه‌ای
+                          </Button>
+                          <Button
+                            variant={viewMode === "list" ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setViewMode("list")}
+                            className="gap-1"
+                          >
+                            <LayoutList className="h-4 w-4" />
+                            لیستی
+                          </Button>
+                        </div>
+                        
+                        {(searchQuery || getSelectedCategoryId() !== null || getSelectedExerciseType() !== null) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleClearFilters}
+                            className="text-destructive hover:text-destructive/90 gap-1"
+                          >
+                            <X className="h-4 w-4" />
+                            پاک کردن فیلترها
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <div className="flex-1 overflow-hidden">
                 {["day1", "day2", "day3", "day4"].map((day) => (
                   <TabsContent
@@ -593,11 +674,11 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                           </div>
                           <p className="text-lg font-medium text-gray-700 mb-2">هیچ تمرینی یافت نشد</p>
                           <p className="text-sm text-gray-500 text-center max-w-md mb-4">
-                            {selectedExerciseType || selectedCategoryId || searchQuery 
+                            {getSelectedExerciseType() || getSelectedCategoryId() || searchQuery 
                               ? "لطفاً معیارهای جستجو را تغییر دهید یا فیلترها را پاک کنید" 
-                              : "لطفاً ابتدا تمرین‌های مورد نظر را ایجاد کنید"}
+                              : "لطفاً ابتدا نوع تمرین و دسته‌بندی را انتخاب کنید تا تمرین‌ها نمایش داده شوند"}
                           </p>
-                          {(searchQuery || selectedCategoryId !== null || selectedExerciseType !== null) && (
+                          {(searchQuery || getSelectedCategoryId() !== null || getSelectedExerciseType() !== null) && (
                             <Button
                               variant="outline"
                               onClick={handleClearFilters}
