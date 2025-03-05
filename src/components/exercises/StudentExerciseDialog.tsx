@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -195,6 +194,12 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     exerciseTypeDay1, exerciseTypeDay2, exerciseTypeDay3, exerciseTypeDay4,
     categoryIdDay1, categoryIdDay2, categoryIdDay3, categoryIdDay4
   ]);
+
+  const hasActiveFilters = () => {
+    const selectedType = getSelectedExerciseType();
+    const selectedCategoryId = getSelectedCategoryId();
+    return selectedType !== null || selectedCategoryId !== null;
+  };
 
   const handleSelectExercise = (exerciseId: number) => {
     switch (activeTab) {
@@ -614,6 +619,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                               value={searchQuery}
                               onChange={(e) => setSearchQuery(e.target.value)}
                               className="pl-3 pr-10 border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300"
+                              disabled={!hasActiveFilters()}
                             />
                             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                           </div>
@@ -627,6 +633,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                             size="sm"
                             onClick={() => setViewMode("grid")}
                             className="gap-1"
+                            disabled={!hasActiveFilters()}
                           >
                             <LayoutGrid className="h-4 w-4" />
                             شبکه‌ای
@@ -636,6 +643,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                             size="sm"
                             onClick={() => setViewMode("list")}
                             className="gap-1"
+                            disabled={!hasActiveFilters()}
                           >
                             <LayoutList className="h-4 w-4" />
                             لیستی
@@ -667,29 +675,38 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                     className="h-full p-0 m-0 data-[state=active]:flex data-[state=active]:flex-col"
                   >
                     <ScrollArea className="flex-1 w-full p-4">
-                      {filteredExercises.length === 0 ? (
+                      {!hasActiveFilters() ? (
+                        // New condition: Show this when no filters are selected
+                        <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                          <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
+                            <ListChecks className="h-12 w-12" />
+                          </div>
+                          <p className="text-lg font-medium text-gray-700 mb-2">لطفاً ابتدا نوع تمرین یا دسته‌بندی را انتخاب کنید</p>
+                          <p className="text-sm text-gray-500 text-center max-w-md mb-4">
+                            برای مشاهده و انتخاب تمرینات، ابتدا یک نوع تمرین یا دسته‌بندی را انتخاب کنید
+                          </p>
+                        </div>
+                      ) : filteredExercises.length === 0 ? (
+                        // Original empty state when filters are selected but no exercises match
                         <div className="flex flex-col items-center justify-center h-64 bg-white rounded-xl p-8 shadow-sm border border-gray-100">
                           <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
                             <Dumbbell className="h-12 w-12" />
                           </div>
                           <p className="text-lg font-medium text-gray-700 mb-2">هیچ تمرینی یافت نشد</p>
                           <p className="text-sm text-gray-500 text-center max-w-md mb-4">
-                            {getSelectedExerciseType() || getSelectedCategoryId() || searchQuery 
-                              ? "لطفاً معیارهای جستجو را تغییر دهید یا فیلترها را پاک کنید" 
-                              : "لطفاً ابتدا نوع تمرین و دسته‌بندی را انتخاب کنید تا تمرین‌ها نمایش داده شوند"}
+                            لطفاً معیارهای جستجو را تغییر دهید یا فیلترها را پاک کنید
                           </p>
-                          {(searchQuery || getSelectedCategoryId() !== null || getSelectedExerciseType() !== null) && (
-                            <Button
-                              variant="outline"
-                              onClick={handleClearFilters}
-                              className="gap-2"
-                            >
-                              <X className="h-4 w-4" />
-                              پاک کردن فیلترها
-                            </Button>
-                          )}
+                          <Button
+                            variant="outline"
+                            onClick={handleClearFilters}
+                            className="gap-2"
+                          >
+                            <X className="h-4 w-4" />
+                            پاک کردن فیلترها
+                          </Button>
                         </div>
                       ) : (
+                        // Original grid/list display of filtered exercises
                         <div className={cn(
                           "grid gap-4",
                           viewMode === "grid" 
