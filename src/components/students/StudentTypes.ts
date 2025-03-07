@@ -6,7 +6,7 @@ export interface Student {
   height: string;
   weight: string;
   image: string;
-  payment: string;
+  payment: string; // This is now required
   exercises?: number[];
   exercisesDay1?: number[];
   exercisesDay2?: number[];

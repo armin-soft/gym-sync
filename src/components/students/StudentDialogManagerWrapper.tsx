@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Student } from "@/components/students/StudentTypes";
-import { StudentDialogManager } from "@/components/students/StudentDialogManager";
+import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 
 interface StudentDialogManagerWrapperProps {
   onSave: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => boolean;
@@ -14,10 +14,8 @@ interface StudentDialogManagerWrapperProps {
 }
 
 export class StudentDialogManagerWrapper extends React.Component<StudentDialogManagerWrapperProps> {
-  // Reference to dialog manager for external access
-  dialogManagerRef = React.createRef<StudentDialogManager>();
+  dialogManagerRef = React.createRef<StudentDialogManagerRef>();
   
-  // Methods to be called from parent component
   handleAdd = () => {
     if (this.dialogManagerRef.current) {
       this.dialogManagerRef.current.handleAdd();

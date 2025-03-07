@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
@@ -10,7 +9,6 @@ export const useStudents = () => {
   const [meals, setMeals] = useState<any[]>([]);
   const [supplements, setSupplements] = useState<any[]>([]);
 
-  // Load data from localStorage
   useEffect(() => {
     try {
       const savedStudents = localStorage.getItem('students');
@@ -28,7 +26,7 @@ export const useStudents = () => {
             height: student.height || '',
             weight: student.weight || '',
             image: student.image || '/placeholder.svg',
-            payment: student.payment || '',
+            payment: student.payment || '', // Ensure payment is always initialized
             exercises: student.exercises || [],
             exercisesDay1: student.exercisesDay1 || [],
             exercisesDay2: student.exercisesDay2 || [],
@@ -72,7 +70,6 @@ export const useStudents = () => {
     }
   }, []);
   
-  // Save students to localStorage when state changes
   useEffect(() => {
     if (students.length > 0) {
       localStorage.setItem('students', JSON.stringify(students));
