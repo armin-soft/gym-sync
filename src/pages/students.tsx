@@ -9,6 +9,7 @@ import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/useStudents";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
+import { Student } from "@/components/students/StudentTypes";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
@@ -87,12 +88,12 @@ const StudentsPage = () => {
             students={students}
             sortedAndFilteredStudents={sortedAndFilteredStudents}
             searchQuery={searchQuery}
-            onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+            onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
             onDelete={handleDelete}
-            onAddExercise={(student) => dialogManagerRef.current?.handleAddExercise(student)}
-            onAddDiet={(student) => dialogManagerRef.current?.handleAddDiet(student)}
-            onAddSupplement={(student) => dialogManagerRef.current?.handleAddSupplement(student)}
-            onDownload={(student) => dialogManagerRef.current?.handleDownload(student)}
+            onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
+            onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
+            onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
+            onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
           />

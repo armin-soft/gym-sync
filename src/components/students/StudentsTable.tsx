@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   Table, 
@@ -29,20 +28,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { EmptyStudentState } from "./EmptyStudentState";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-interface Student {
-  id: number;
-  name: string;
-  phone: string;
-  height: string;
-  weight: string;
-  image: string;
-  payment?: string;
-  exercises?: number[];
-  meals?: number[];
-  supplements?: number[];
-  vitamins?: number[];
-}
+import { Student } from "@/components/students/StudentTypes";
 
 interface StudentsTableProps {
   students: Student[];

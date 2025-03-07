@@ -13,6 +13,7 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Camera, UserRound, Phone, Ruler, Weight, Save, X, Coins } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { isValidPrice } from "@/utils/validation";
+import { Student } from "@/components/students/StudentTypes";
 
 interface StudentDialogProps {
   isOpen: boolean;
@@ -28,10 +29,6 @@ interface StudentFormData {
   weight: string;
   image: string;
   payment: string;
-}
-
-interface Student extends StudentFormData {
-  id: number;
 }
 
 export const StudentDialog = ({
