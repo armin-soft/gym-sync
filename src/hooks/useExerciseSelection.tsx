@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { Exercise } from '@/types/exercise';
 
 interface UseExerciseSelectionProps {
   initialExercises?: number[];
@@ -9,15 +10,13 @@ interface UseExerciseSelectionProps {
   initialExercisesDay4?: number[];
 }
 
-export function useExerciseSelection(initialProps: UseExerciseSelectionProps = {}) {
-  const {
-    initialExercises = [],
-    initialExercisesDay1 = [],
-    initialExercisesDay2 = [],
-    initialExercisesDay3 = [],
-    initialExercisesDay4 = [],
-  } = initialProps;
-
+export function useExerciseSelection({
+  initialExercises = [],
+  initialExercisesDay1 = [],
+  initialExercisesDay2 = [],
+  initialExercisesDay3 = [],
+  initialExercisesDay4 = [],
+}: UseExerciseSelectionProps) {
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
   const [selectedExercisesDay1, setSelectedExercisesDay1] = useState<number[]>([]);
   const [selectedExercisesDay2, setSelectedExercisesDay2] = useState<number[]>([]);
