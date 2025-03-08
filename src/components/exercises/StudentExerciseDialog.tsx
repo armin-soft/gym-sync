@@ -1,5 +1,5 @@
+
 import React from "react";
-import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
-import { ExerciseCard } from "./ExerciseCard";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
+import { Exercise } from "@/types/exercise";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -56,11 +56,38 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     toggleExerciseDay2,
     toggleExerciseDay3,
     toggleExerciseDay4,
-  } = useExerciseSelection(initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4);
+  } = useExerciseSelection(
+    initialExercises,
+    initialExercisesDay1,
+    initialExercisesDay2,
+    initialExercisesDay3,
+    initialExercisesDay4
+  );
 
   const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
-    onSave(exerciseIds, dayNumber);
+    return onSave(exerciseIds, dayNumber);
   };
+
+  // Create a simplified exercise card component that fits our current needs
+  const ExerciseCard = ({ 
+    exercise, 
+    selected, 
+    onClick 
+  }: { 
+    exercise: any, 
+    selected: boolean, 
+    onClick: () => void 
+  }) => (
+    <div 
+      className={`border rounded-lg p-3 mb-2 cursor-pointer transition-all ${
+        selected ? "border-primary bg-primary/10" : "border-gray-200 hover:border-gray-300"
+      }`} 
+      onClick={onClick}
+    >
+      <h3 className="font-medium">{exercise.name}</h3>
+      {exercise.description && <p className="text-sm text-gray-500 mt-1">{exercise.description}</p>}
+    </div>
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -86,9 +113,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               {exercises.map((exercise) => (
                 <ExerciseCard
                   key={exercise.id}
-                  title={exercise.name}
-                  description={exercise.description}
-                  imageUrl={exercise.imageUrl}
+                  exercise={exercise}
                   selected={selectedExercisesDay1.includes(exercise.id)}
                   onClick={() => toggleExerciseDay1(exercise.id)}
                 />
@@ -110,9 +135,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               {exercises.map((exercise) => (
                 <ExerciseCard
                   key={exercise.id}
-                  title={exercise.name}
-                  description={exercise.description}
-                  imageUrl={exercise.imageUrl}
+                  exercise={exercise}
                   selected={selectedExercisesDay2.includes(exercise.id)}
                   onClick={() => toggleExerciseDay2(exercise.id)}
                 />
@@ -134,9 +157,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               {exercises.map((exercise) => (
                 <ExerciseCard
                   key={exercise.id}
-                  title={exercise.name}
-                  description={exercise.description}
-                  imageUrl={exercise.imageUrl}
+                  exercise={exercise}
                   selected={selectedExercisesDay3.includes(exercise.id)}
                   onClick={() => toggleExerciseDay3(exercise.id)}
                 />
@@ -158,9 +179,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               {exercises.map((exercise) => (
                 <ExerciseCard
                   key={exercise.id}
-                  title={exercise.name}
-                  description={exercise.description}
-                  imageUrl={exercise.imageUrl}
+                  exercise={exercise}
                   selected={selectedExercisesDay4.includes(exercise.id)}
                   onClick={() => toggleExerciseDay4(exercise.id)}
                 />
@@ -182,9 +201,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               {exercises.map((exercise) => (
                 <ExerciseCard
                   key={exercise.id}
-                  title={exercise.name}
-                  description={exercise.description}
-                  imageUrl={exercise.imageUrl}
+                  exercise={exercise}
                   selected={selectedExercises.includes(exercise.id)}
                   onClick={() => toggleExercise(exercise.id)}
                 />

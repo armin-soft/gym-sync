@@ -94,31 +94,32 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     setIsDownloadDialogOpen(true);
   };
   
-  const handleSaveExercisesWrapper = (exerciseIds: number[], dayNumber?: number) => {
-    if (!selectedStudentForExercise) return;
+  const handleSaveExercisesWrapper = (exerciseIds: number[], dayNumber?: number): boolean => {
+    if (!selectedStudentForExercise) return false;
     
     const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
-    if (success) {
-      // Keep dialog open to allow editing multiple days
-    }
+    // Keep dialog open to allow editing multiple days
+    return success;
   };
   
-  const handleSaveDietWrapper = (mealIds: number[]) => {
-    if (!selectedStudentForDiet) return;
+  const handleSaveDietWrapper = (mealIds: number[]): boolean => {
+    if (!selectedStudentForDiet) return false;
     
     const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
     if (success) {
       setIsDietDialogOpen(false);
     }
+    return success;
   };
   
-  const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}) => {
-    if (!selectedStudentForSupplement) return;
+  const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}): boolean => {
+    if (!selectedStudentForSupplement) return false;
     
     const success = onSaveSupplements(data, selectedStudentForSupplement.id);
     if (success) {
       setIsSupplementDialogOpen(false);
     }
+    return success;
   };
 
   // Expose methods to parent component via ref
