@@ -303,7 +303,6 @@ export const StudentDialog = ({
               <Label className="flex items-center gap-2">
                 <Coins className="h-4 w-4 text-muted-foreground" />
                 <span>مبلغ (تومان)</span>
-                <span className="text-xs text-red-500">*</span>
               </Label>
               <Input
                 dir="ltr"
@@ -315,7 +314,6 @@ export const StudentDialog = ({
                   validateField("payment", value);
                 }}
                 placeholder="۵۰۰,۰۰۰"
-                required
               />
               {errors.payment && (
                 <p className="text-sm text-red-500 mt-1">{errors.payment}</p>

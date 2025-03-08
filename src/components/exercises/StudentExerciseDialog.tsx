@@ -1,41 +1,23 @@
-
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Exercise } from "@/types/exercise";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { useQuery } from "@tanstack/react-query";
-import { toPersianNumbers } from "@/lib/utils/numbers";
-import { 
-  Plus, X, Save, ArrowLeft, Dumbbell, LayoutGrid, ListChecks, 
-  LayoutList, Search, Filter, CheckCircle2, Calendar, Clock, CheckSquare
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { motion, AnimatePresence } from "framer-motion";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+import StudentExerciseListWrapper from "./StudentExerciseListWrapper";
 
 interface StudentExerciseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
   onSave: (exerciseIds: number[], dayNumber?: number) => void;
-  initialExercises?: number[];
-  initialExercisesDay1?: number[];
-  initialExercisesDay2?: number[];
-  initialExercisesDay3?: number[];
-  initialExercisesDay4?: number[];
+  initialExercises: number[];
+  initialExercisesDay1: number[];
+  initialExercisesDay2: number[];
+  initialExercisesDay3: number[];
+  initialExercisesDay4: number[];
 }
 
 const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
@@ -43,717 +25,241 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   onOpenChange,
   studentName,
   onSave,
-  initialExercises = [],
-  initialExercisesDay1 = [],
-  initialExercisesDay2 = [],
-  initialExercisesDay3 = [],
-  initialExercisesDay4 = [],
+  initialExercises,
+  initialExercisesDay1,
+  initialExercisesDay2,
+  initialExercisesDay3,
+  initialExercisesDay4,
 }) => {
-  const isMobile = useIsMobile();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("day1");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
-  const [selectedExercisesDay1, setSelectedExercisesDay1] = useState<number[]>([]);
-  const [selectedExercisesDay2, setSelectedExercisesDay2] = useState<number[]>([]);
-  const [selectedExercisesDay3, setSelectedExercisesDay3] = useState<number[]>([]);
-  const [selectedExercisesDay4, setSelectedExercisesDay4] = useState<number[]>([]);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [showFilters, setShowFilters] = useState(true);
+  const [selectedExercisesDay1, setSelectedExercisesDay1] = useState<number[]>(initialExercisesDay1 || []);
+  const [selectedExercisesDay2, setSelectedExercisesDay2] = useState<number[]>(initialExercisesDay2 || []);
+  const [selectedExercisesDay3, setSelectedExercisesDay3] = useState<number[]>(initialExercisesDay3 || []);
+  const [selectedExercisesDay4, setSelectedExercisesDay4] = useState<number[]>(initialExercisesDay4 || []);
   
-  // Per-day state for exercise type and category
-  const [exerciseTypeDay1, setExerciseTypeDay1] = useState<string | null>(null);
-  const [exerciseTypeDay2, setExerciseTypeDay2] = useState<string | null>(null);
-  const [exerciseTypeDay3, setExerciseTypeDay3] = useState<string | null>(null);
-  const [exerciseTypeDay4, setExerciseTypeDay4] = useState<string | null>(null);
+  const { selectedExercises, toggleExercise } = useExerciseSelection(initialExercises);
   
-  const [categoryIdDay1, setCategoryIdDay1] = useState<number | null>(null);
-  const [categoryIdDay2, setCategoryIdDay2] = useState<number | null>(null);
-  const [categoryIdDay3, setCategoryIdDay3] = useState<number | null>(null);
-  const [categoryIdDay4, setCategoryIdDay4] = useState<number | null>(null);
-
   const { data: exercises = [] } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
       const exercisesData = localStorage.getItem("exercises");
-      console.log("Loaded exercises:", exercisesData ? JSON.parse(exercisesData) : []);
       return exercisesData ? JSON.parse(exercisesData) : [];
     },
   });
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ["exerciseCategories"],
-    queryFn: () => {
-      const categoriesData = localStorage.getItem("exerciseCategories");
-      console.log("Loaded categories:", categoriesData ? JSON.parse(categoriesData) : []);
-      return categoriesData ? JSON.parse(categoriesData) : [];
-    },
-  });
-
-  const { data: exerciseTypes = [] } = useQuery({
-    queryKey: ["exerciseTypes"],
-    queryFn: () => {
-      const typesData = localStorage.getItem("exerciseTypes");
-      console.log("Loaded exercise types:", typesData ? JSON.parse(typesData) : []);
-      return typesData ? JSON.parse(typesData) : [];
-    },
-  });
-
+  
   useEffect(() => {
-    if (open) {
-      setSelectedExercises(initialExercises || []);
-      setSelectedExercisesDay1(initialExercisesDay1 || []);
-      setSelectedExercisesDay2(initialExercisesDay2 || []);
-      setSelectedExercisesDay3(initialExercisesDay3 || []);
-      setSelectedExercisesDay4(initialExercisesDay4 || []);
-    }
-  }, [open, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
+    setSelectedExercisesDay1(initialExercisesDay1 || []);
+  }, [initialExercisesDay1]);
+  
+  useEffect(() => {
+    setSelectedExercisesDay2(initialExercisesDay2 || []);
+  }, [initialExercisesDay2]);
+  
+  useEffect(() => {
+    setSelectedExercisesDay3(initialExercisesDay3 || []);
+  }, [initialExercisesDay3]);
+  
+  useEffect(() => {
+    setSelectedExercisesDay4(initialExercisesDay4 || []);
+  }, [initialExercisesDay4]);
 
-  const getSelectedExerciseType = () => {
-    switch (activeTab) {
-      case "day1": return exerciseTypeDay1;
-      case "day2": return exerciseTypeDay2;
-      case "day3": return exerciseTypeDay3;
-      case "day4": return exerciseTypeDay4;
-      default: return null;
-    }
-  };
-
-  const setSelectedExerciseType = (value: string | null) => {
-    switch (activeTab) {
-      case "day1": 
-        setExerciseTypeDay1(value);
-        setCategoryIdDay1(null); // Reset category when type changes
-        break;
-      case "day2": 
-        setExerciseTypeDay2(value);
-        setCategoryIdDay2(null);
-        break;
-      case "day3": 
-        setExerciseTypeDay3(value);
-        setCategoryIdDay3(null);
-        break;
-      case "day4": 
-        setExerciseTypeDay4(value);
-        setCategoryIdDay4(null);
-        break;
-    }
-  };
-
-  const getSelectedCategoryId = () => {
-    switch (activeTab) {
-      case "day1": return categoryIdDay1;
-      case "day2": return categoryIdDay2;
-      case "day3": return categoryIdDay3;
-      case "day4": return categoryIdDay4;
-      default: return null;
-    }
-  };
-
-  const setSelectedCategoryId = (value: number | null) => {
-    switch (activeTab) {
-      case "day1": setCategoryIdDay1(value); break;
-      case "day2": setCategoryIdDay2(value); break;
-      case "day3": setCategoryIdDay3(value); break;
-      case "day4": setCategoryIdDay4(value); break;
-    }
-  };
-
-  const filteredCategories = React.useMemo(() => {
-    const selectedType = getSelectedExerciseType();
-    if (!selectedType) return categories;
-    return categories.filter((category: any) => category.type === selectedType);
-  }, [categories, activeTab, exerciseTypeDay1, exerciseTypeDay2, exerciseTypeDay3, exerciseTypeDay4]);
-
-  const filteredExercises = React.useMemo(() => {
-    const selectedType = getSelectedExerciseType();
-    const selectedCategoryId = getSelectedCategoryId();
+  const handleSave = (dayNumber?: number) => {
+    let exerciseIds: number[] = [];
     
-    // Only filter and show exercises if both type and category are selected
-    if (!selectedType || !selectedCategoryId) {
-      return [];
-    }
-    
-    return exercises.filter((exercise: Exercise) => {
-      let matchesSearch = true;
-      let matchesCategory = true;
-
-      if (searchQuery) {
-        matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
-      }
-
-      matchesCategory = exercise.categoryId === selectedCategoryId;
-
-      return matchesSearch && matchesCategory;
-    });
-  }, [
-    exercises, 
-    searchQuery, 
-    categories, 
-    activeTab, 
-    exerciseTypeDay1, exerciseTypeDay2, exerciseTypeDay3, exerciseTypeDay4,
-    categoryIdDay1, categoryIdDay2, categoryIdDay3, categoryIdDay4
-  ]);
-
-  // Check if both type and category are selected
-  const hasCompleteFilters = () => {
-    const selectedType = getSelectedExerciseType();
-    const selectedCategoryId = getSelectedCategoryId();
-    return selectedType !== null && selectedCategoryId !== null;
-  };
-
-  // Check if any filter is selected
-  const hasAnyFilters = () => {
-    const selectedType = getSelectedExerciseType();
-    const selectedCategoryId = getSelectedCategoryId();
-    return selectedType !== null || selectedCategoryId !== null;
-  };
-
-  const handleSelectExercise = (exerciseId: number) => {
-    switch (activeTab) {
-      case "day1":
-        setSelectedExercisesDay1((prev) => 
-          prev.includes(exerciseId) 
-            ? prev.filter(id => id !== exerciseId) 
-            : [...prev, exerciseId]
-        );
+    switch (dayNumber) {
+      case 1:
+        exerciseIds = selectedExercisesDay1;
         break;
-      case "day2":
-        setSelectedExercisesDay2((prev) => 
-          prev.includes(exerciseId) 
-            ? prev.filter(id => id !== exerciseId) 
-            : [...prev, exerciseId]
-        );
+      case 2:
+        exerciseIds = selectedExercisesDay2;
         break;
-      case "day3":
-        setSelectedExercisesDay3((prev) => 
-          prev.includes(exerciseId) 
-            ? prev.filter(id => id !== exerciseId) 
-            : [...prev, exerciseId]
-        );
+      case 3:
+        exerciseIds = selectedExercisesDay3;
         break;
-      case "day4":
-        setSelectedExercisesDay4((prev) => 
-          prev.includes(exerciseId) 
-            ? prev.filter(id => id !== exerciseId) 
-            : [...prev, exerciseId]
-        );
+      case 4:
+        exerciseIds = selectedExercisesDay4;
         break;
       default:
-        setSelectedExercises((prev) => 
-          prev.includes(exerciseId) 
-            ? prev.filter(id => id !== exerciseId) 
-            : [...prev, exerciseId]
-        );
-    }
-  };
-
-  const isExerciseSelected = (exerciseId: number) => {
-    switch (activeTab) {
-      case "day1":
-        return selectedExercisesDay1.includes(exerciseId);
-      case "day2":
-        return selectedExercisesDay2.includes(exerciseId);
-      case "day3":
-        return selectedExercisesDay3.includes(exerciseId);
-      case "day4":
-        return selectedExercisesDay4.includes(exerciseId);
-      default:
-        return selectedExercises.includes(exerciseId);
-    }
-  };
-
-  const getCurrentSelectedExercises = () => {
-    switch (activeTab) {
-      case "day1":
-        return selectedExercisesDay1;
-      case "day2":
-        return selectedExercisesDay2;
-      case "day3":
-        return selectedExercisesDay3;
-      case "day4":
-        return selectedExercisesDay4;
-      default:
-        return selectedExercises;
-    }
-  };
-
-  const handleClearFilters = () => {
-    setSearchQuery("");
-    setSelectedExerciseType(null);
-    setSelectedCategoryId(null);
-  };
-
-  const handleSave = () => {
-    // Save exercises for the current tab
-    switch (activeTab) {
-      case "day1":
-        onSave(selectedExercisesDay1, 1);
+        exerciseIds = selectedExercises;
         break;
-      case "day2":
-        onSave(selectedExercisesDay2, 2);
-        break;
-      case "day3":
-        onSave(selectedExercisesDay3, 3);
-        break;
-      case "day4":
-        onSave(selectedExercisesDay4, 4);
-        break;
-      default:
-        onSave(selectedExercises);
     }
     
-    toast({
-      title: "ذخیره‌سازی موفق",
-      description: "تمرین‌های انتخابی با موفقیت ذخیره شدند",
-    });
-    
-    onOpenChange(false);
+    const success = onSave(exerciseIds, dayNumber);
+    if (success) {
+      toast({
+        title: "ذخیره موفق",
+        description: "تغییرات با موفقیت ذخیره شدند",
+      });
+    }
   };
-
-  const renderExerciseCard = (exercise: Exercise) => {
-    const isSelected = isExerciseSelected(exercise.id);
-    const category = categories.find((c: any) => c.id === exercise.categoryId);
-    const exerciseType = category ? exerciseTypes.find((t: any) => t === category.type) : null;
-
-    return (
-      <motion.div
-        layout
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        transition={{ duration: 0.2 }}
-        key={exercise.id}
-        className={cn(
-          "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer group",
-          viewMode === "grid" ? "w-full aspect-square" : "w-full h-24",
-          isSelected 
-            ? "bg-gradient-to-br from-primary/10 to-primary/30 ring-2 ring-primary shadow-lg" 
-            : "bg-white hover:bg-gradient-to-br hover:from-gray-50 hover:to-gray-100 hover:shadow-md border border-gray-200"
-        )}
-        onClick={() => handleSelectExercise(exercise.id)}
-      >
-        {isSelected && (
-          <div className="absolute top-2 right-2 bg-primary text-white rounded-full p-1 z-10 animate-scale-in">
-            <CheckCircle2 className="h-5 w-5" />
-          </div>
-        )}
-
-        <div className={cn(
-          "absolute inset-0 flex flex-col",
-          viewMode === "grid" ? "items-center justify-center p-4" : "p-3"
-        )}>
-          {viewMode === "grid" ? (
-            <>
-              <div className={cn(
-                "mb-3 p-3 rounded-full transition-all duration-300 transform group-hover:scale-110",
-                isSelected ? "bg-primary text-white" : "bg-gray-100 text-gray-700 group-hover:bg-primary/10"
-              )}>
-                <Dumbbell className="w-8 h-8" />
-              </div>
-              <h3 className={cn(
-                "font-semibold text-center line-clamp-2 transition-colors duration-300",
-                isSelected ? "text-primary" : "text-gray-800 group-hover:text-primary"
-              )}>
-                {exercise.name}
-              </h3>
-              <div className="flex flex-wrap gap-1 mt-2 justify-center">
-                {category && (
-                  <Badge 
-                    variant={isSelected ? "default" : "outline"} 
-                    className={cn(
-                      "transition-all duration-300",
-                      !isSelected && "group-hover:bg-primary/10 group-hover:text-primary"
-                    )}
-                  >
-                    {category.name}
-                  </Badge>
-                )}
-                {exerciseType && (
-                  <Badge 
-                    variant="outline" 
-                    className={cn(
-                      "bg-gray-100/50 transition-all duration-300", 
-                      isSelected ? "border-primary/30 text-primary" : "border-gray-200"
-                    )}
-                  >
-                    {exerciseType}
-                  </Badge>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="flex items-center w-full h-full">
-              <div className={cn(
-                "p-3 mr-3 rounded-full shrink-0 transition-all duration-300 transform group-hover:scale-110",
-                isSelected ? "bg-primary text-white" : "bg-gray-100 text-gray-700 group-hover:bg-primary/10"
-              )}>
-                <Dumbbell className="w-6 h-6" />
-              </div>
-              <div className="flex flex-col flex-1 overflow-hidden">
-                <h3 className={cn(
-                  "font-semibold text-lg line-clamp-1 transition-colors duration-300",
-                  isSelected ? "text-primary" : "text-gray-800 group-hover:text-primary"
-                )}>
-                  {exercise.name}
-                </h3>
-                <div className="flex items-center flex-wrap gap-1 mt-1">
-                  {category && (
-                    <Badge 
-                      variant={isSelected ? "default" : "outline"} 
-                      className={cn(
-                        "transition-all duration-300",
-                        !isSelected && "group-hover:bg-primary/10 group-hover:text-primary"
-                      )}
-                    >
-                      {category.name}
-                    </Badge>
-                  )}
-                  {exerciseType && (
-                    <Badge 
-                      variant="outline" 
-                      className={cn(
-                        "bg-gray-100/50 transition-all duration-300", 
-                        isSelected ? "border-primary/30 text-primary" : "border-gray-200"
-                      )}
-                    >
-                      {exerciseType}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </motion.div>
+  
+  const toggleExerciseDay1 = (exerciseId: number) => {
+    setSelectedExercisesDay1(prevExercises =>
+      prevExercises.includes(exerciseId)
+        ? prevExercises.filter(id => id !== exerciseId)
+        : [...prevExercises, exerciseId]
     );
   };
-
-  const getSelectedExercisesText = () => {
-    const count = getCurrentSelectedExercises().length;
-    if (count === 0) return "هیچ تمرینی انتخاب نشده";
-    return `${toPersianNumbers(count)} تمرین انتخاب شده`;
+  
+  const toggleExerciseDay2 = (exerciseId: number) => {
+    setSelectedExercisesDay2(prevExercises =>
+      prevExercises.includes(exerciseId)
+        ? prevExercises.filter(id => id !== exerciseId)
+        : [...prevExercises, exerciseId]
+    );
   };
-
-  const getTabTitle = (day: number) => {
-    let count;
-    switch (day) {
-      case 1: count = selectedExercisesDay1.length; break;
-      case 2: count = selectedExercisesDay2.length; break;
-      case 3: count = selectedExercisesDay3.length; break;
-      case 4: count = selectedExercisesDay4.length; break;
-      default: count = 0;
-    }
-    
-    return (
-      <div className="flex items-center gap-2">
-        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10">
-          <Calendar className="h-4 w-4 text-primary" />
-        </div>
-        <span>روز {toPersianNumbers(day)}</span>
-        {count > 0 && (
-          <div className="flex items-center gap-1 px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
-            <CheckSquare className="h-3 w-3" />
-            {toPersianNumbers(count)}
-          </div>
-        )}
-      </div>
+  
+  const toggleExerciseDay3 = (exerciseId: number) => {
+    setSelectedExercisesDay3(prevExercises =>
+      prevExercises.includes(exerciseId)
+        ? prevExercises.filter(id => id !== exerciseId)
+        : [...prevExercises, exerciseId]
+    );
+  };
+  
+  const toggleExerciseDay4 = (exerciseId: number) => {
+    setSelectedExercisesDay4(prevExercises =>
+      prevExercises.includes(exerciseId)
+        ? prevExercises.filter(id => id !== exerciseId)
+        : [...prevExercises, exerciseId]
     );
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} modal>
-      <DialogContent className="max-w-full w-full min-h-screen p-0 m-0 rounded-none">
-        <div className="flex flex-col h-screen w-full bg-gradient-to-br from-slate-50 to-indigo-50/30">
-          {/* Header with glass effect */}
-          <div className="flex items-center justify-between border-b p-4 bg-white/80 backdrop-blur-md shadow-sm z-10 sticky top-0">
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => onOpenChange(false)}
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100/80 transition-colors"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className="flex flex-col">
-                <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent">
-                  مدیریت تمرین‌های شاگرد
-                </h2>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <p className="text-sm text-gray-600">{studentName}</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => setShowFilters(!showFilters)}
-                variant={showFilters ? "default" : "outline"}
-                size="sm"
-                className="gap-1 transition-all duration-300"
-              >
-                <Filter className="h-4 w-4" />
-                {showFilters ? "مخفی کردن فیلترها" : "نمایش فیلترها"}
-              </Button>
-              <Button 
-                onClick={handleSave}
-                className="gap-1 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 shadow-md hover:shadow-lg transition-all duration-300"
-                size="sm"
-              >
-                <Save className="h-4 w-4" />
-                ذخیره تمرین‌ها
-              </Button>
-            </div>
-          </div>
-
-          {/* Tabs and Content */}
-          <div className="flex-1 flex flex-col">
-            <Tabs
-              defaultValue="day1"
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full flex flex-col flex-1"
-            >
-              <div className="bg-white/80 backdrop-blur-sm border-b px-4 shadow-sm">
-                <TabsList className="h-16 w-full bg-transparent gap-1">
-                  <TabsTrigger
-                    value="day1"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
-                  >
-                    {getTabTitle(1)}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="day2"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
-                  >
-                    {getTabTitle(2)}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="day3"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
-                  >
-                    {getTabTitle(3)}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="day4"
-                    className="flex-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
-                  >
-                    {getTabTitle(4)}
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              {/* Search and Filter Section - Independent for each tab */}
-              <AnimatePresence>
-                {showFilters && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="border-b bg-white/70 backdrop-blur-sm overflow-hidden shadow-sm"
-                  >
-                    <div className="p-4 space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                          <Label className="flex items-center gap-1 text-gray-700">
-                            <ListChecks className="h-4 w-4 text-primary/70" />
-                            انتخاب نوع تمرین
-                          </Label>
-                          <Select
-                            value={getSelectedExerciseType() || undefined}
-                            onValueChange={(value) => {
-                              if (value === "all-types") {
-                                setSelectedExerciseType(null);
-                              } else {
-                                setSelectedExerciseType(value || null);
-                              }
-                            }}
-                          >
-                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300 bg-white/80">
-                              <SelectValue placeholder="انتخاب نوع تمرین" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all-types">همه انواع تمرین</SelectItem>
-                              {exerciseTypes.map((type: string) => (
-                                <SelectItem key={type} value={type}>
-                                  {type}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label className="flex items-center gap-1 text-gray-700">
-                            <Dumbbell className="h-4 w-4 text-primary/70" />
-                            انتخاب دسته‌بندی تمرین
-                          </Label>
-                          <Select
-                            value={getSelectedCategoryId()?.toString() || undefined}
-                            onValueChange={(value) => {
-                              if (value === "all-categories") {
-                                setSelectedCategoryId(null);
-                              } else {
-                                setSelectedCategoryId(value ? Number(value) : null);
-                              }
-                            }}
-                            disabled={filteredCategories.length === 0 || !getSelectedExerciseType()}
-                          >
-                            <SelectTrigger className="border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300 bg-white/80">
-                              <SelectValue placeholder="انتخاب دسته‌بندی" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all-categories">همه دسته‌بندی‌ها</SelectItem>
-                              {filteredCategories.map((category: any) => (
-                                <SelectItem key={category.id} value={category.id.toString()}>
-                                  {category.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label className="flex items-center gap-1 text-gray-700">
-                            <Search className="h-4 w-4 text-primary/70" />
-                            جستجوی نام تمرین
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              placeholder="جستجوی نام تمرین..."
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              className="pl-3 pr-10 border-gray-200 focus:border-primary/30 focus:ring focus:ring-primary/20 transition-all duration-300 bg-white/80"
-                              disabled={!hasCompleteFilters()}
-                            />
-                            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center pt-2">
-                        <div className="flex gap-2">
-                          <Button
-                            variant={viewMode === "grid" ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setViewMode("grid")}
-                            className="gap-1 transition-all duration-300"
-                            disabled={!hasCompleteFilters()}
-                          >
-                            <LayoutGrid className="h-4 w-4" />
-                            شبکه‌ای
-                          </Button>
-                          <Button
-                            variant={viewMode === "list" ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setViewMode("list")}
-                            className="gap-1 transition-all duration-300"
-                            disabled={!hasCompleteFilters()}
-                          >
-                            <LayoutList className="h-4 w-4" />
-                            لیستی
-                          </Button>
-                        </div>
-                        
-                        {hasAnyFilters() && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleClearFilters}
-                            className="text-destructive hover:text-destructive/90 gap-1 transition-colors"
-                          >
-                            <X className="h-4 w-4" />
-                            پاک کردن فیلترها
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <div className="flex-1 flex overflow-hidden">
-                {["day1", "day2", "day3", "day4"].map((day) => (
-                  <TabsContent
-                    key={day}
-                    value={day}
-                    className="h-full p-0 m-0 data-[state=active]:flex data-[state=active]:flex-col flex-1"
-                  >
-                    {/* ScrollArea to ensure proper scroll behavior */}
-                    <ScrollArea className="flex-1 w-full">
-                      <div className="p-4">
-                        {/* First check if both type and category are selected */}
-                        {!hasCompleteFilters() ? (
-                          // Show this when either type or category is not selected
-                          <div className="flex flex-col items-center justify-center h-64 bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-sm border border-indigo-100/50">
-                            <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
-                              <ListChecks className="h-12 w-12" />
-                            </div>
-                            <p className="text-lg font-medium text-gray-700 mb-2">
-                              {!getSelectedExerciseType() 
-                                ? "لطفاً ابتدا نوع تمرین را انتخاب کنید" 
-                                : "لطفاً دسته‌بندی تمرین را انتخاب کنید"}
-                            </p>
-                            <p className="text-sm text-gray-500 text-center max-w-md mb-4">
-                              برای مشاهده و انتخاب تمرینات، باید هم نوع تمرین و هم دسته‌بندی انتخاب شده باشد
-                            </p>
-                          </div>
-                        ) : filteredExercises.length === 0 ? (
-                          // Show when both filters are selected but no exercises match
-                          <div className="flex flex-col items-center justify-center h-64 bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-sm border border-indigo-100/50">
-                            <div className="mb-4 p-4 bg-primary/10 text-primary rounded-full">
-                              <Dumbbell className="h-12 w-12" />
-                            </div>
-                            <p className="text-lg font-medium text-gray-700 mb-2">هیچ تمرینی یافت نشد</p>
-                            <p className="text-sm text-gray-500 text-center max-w-md mb-4">
-                              لطفاً معیارهای جستجو را تغییر دهید یا فیلترها را پاک کنید
-                            </p>
-                            <Button
-                              variant="outline"
-                              onClick={handleClearFilters}
-                              className="gap-2 hover:bg-primary/5 transition-colors"
-                            >
-                              <X className="h-4 w-4" />
-                              پاک کردن فیلترها
-                            </Button>
-                          </div>
-                        ) : (
-                          // Show exercises when both filters are selected and exercises exist
-                          <div className={cn(
-                            "grid gap-4",
-                            viewMode === "grid" 
-                              ? "grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
-                              : "grid-cols-1"
-                          )}>
-                            <AnimatePresence>
-                              {filteredExercises.map((exercise: Exercise) => renderExerciseCard(exercise))}
-                            </AnimatePresence>
-                          </div>
-                        )}
-                      </div>
-                    </ScrollArea>
-
-                    {/* Selected exercises counter with glass effect */}
-                    <div className="bg-white/80 backdrop-blur-md border-t p-4 flex justify-between items-center shadow-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-indigo-500 animate-pulse" />
-                        <p className="text-sm font-medium text-gray-700">
-                          {getSelectedExercisesText()}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Clock className="h-4 w-4" />
-                        <span>آخرین بروزرسانی: همین الان</span>
-                      </div>
-                    </div>
-                  </TabsContent>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-hidden">
+        <DialogHeader>
+          <DialogTitle>مدیریت تمرین‌های {studentName}</DialogTitle>
+        </DialogHeader>
+        
+        <Tabs defaultValue="day1" className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="day1">روز اول</TabsTrigger>
+            <TabsTrigger value="day2">روز دوم</TabsTrigger>
+            <TabsTrigger value="day3">روز سوم</TabsTrigger>
+            <TabsTrigger value="day4">روز چهارم</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="day1">
+            <StudentExerciseListWrapper>
+              <div className="grid gap-4">
+                {exercises.map((exercise) => (
+                  <div key={exercise.id} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`exercise-${exercise.id}-day1`}
+                      className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      checked={selectedExercisesDay1.includes(exercise.id)}
+                      onChange={() => toggleExerciseDay1(exercise.id)}
+                    />
+                    <label
+                      htmlFor={`exercise-${exercise.id}-day1`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {exercise.name}
+                    </label>
+                  </div>
                 ))}
               </div>
-            </Tabs>
-          </div>
-        </div>
+            </StudentExerciseListWrapper>
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => handleSave(1)} className="gap-2">
+                <Save className="h-4 w-4" />
+                ذخیره تمرین‌های روز اول
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="day2">
+            <StudentExerciseListWrapper>
+              <div className="grid gap-4">
+                {exercises.map((exercise) => (
+                  <div key={exercise.id} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`exercise-${exercise.id}-day2`}
+                      className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      checked={selectedExercisesDay2.includes(exercise.id)}
+                      onChange={() => toggleExerciseDay2(exercise.id)}
+                    />
+                    <label
+                      htmlFor={`exercise-${exercise.id}-day2`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {exercise.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </StudentExerciseListWrapper>
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => handleSave(2)} className="gap-2">
+                <Save className="h-4 w-4" />
+                ذخیره تمرین‌های روز دوم
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="day3">
+            <StudentExerciseListWrapper>
+              <div className="grid gap-4">
+                {exercises.map((exercise) => (
+                  <div key={exercise.id} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`exercise-${exercise.id}-day3`}
+                      className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      checked={selectedExercisesDay3.includes(exercise.id)}
+                      onChange={() => toggleExerciseDay3(exercise.id)}
+                    />
+                    <label
+                      htmlFor={`exercise-${exercise.id}-day3`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {exercise.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </StudentExerciseListWrapper>
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => handleSave(3)} className="gap-2">
+                <Save className="h-4 w-4" />
+                ذخیره تمرین‌های روز سوم
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="day4">
+            <StudentExerciseListWrapper>
+              <div className="grid gap-4">
+                {exercises.map((exercise) => (
+                  <div key={exercise.id} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`exercise-${exercise.id}-day4`}
+                      className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      checked={selectedExercisesDay4.includes(exercise.id)}
+                      onChange={() => toggleExerciseDay4(exercise.id)}
+                    />
+                    <label
+                      htmlFor={`exercise-${exercise.id}-day4`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {exercise.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </StudentExerciseListWrapper>
+            <div className="flex justify-end mt-4">
+              <Button onClick={() => handleSave(4)} className="gap-2">
+                <Save className="h-4 w-4" />
+                ذخیره تمرین‌های روز چهارم
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
