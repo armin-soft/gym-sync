@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
-import { Dumbbell, Check, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
+import { Dumbbell, Check, Filter, Search, X, ArrowDown, ArrowUp, Tag, FolderTree } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -22,6 +23,13 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -62,8 +70,17 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     },
   });
 
+  const { data: exerciseTypes = [] } = useQuery({
+    queryKey: ["exerciseTypes"],
+    queryFn: () => {
+      const typesData = localStorage.getItem("exerciseTypes");
+      return typesData ? JSON.parse(typesData) : [];
+    },
+  });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const {
@@ -85,6 +102,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     initialExercisesDay4
   );
 
+  // Filter categories based on selected exercise type
+  const filteredCategories = categories.filter(category => 
+    selectedExerciseType ? category.type === selectedExerciseType : true
+  );
+
+  // Reset the selected category if it's not in the filtered categories
+  useEffect(() => {
+    if (selectedCategoryId && filteredCategories.length > 0) {
+      const categoryExists = filteredCategories.some(cat => cat.id === selectedCategoryId);
+      if (!categoryExists) {
+        setSelectedCategoryId(null);
+      }
+    }
+  }, [selectedExerciseType, filteredCategories, selectedCategoryId]);
+
   const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
     return onSave(exerciseIds, dayNumber);
   };
@@ -93,9 +125,18 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     .filter((exercise) =>
       exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .filter((exercise) => 
-      selectedCategoryId ? exercise.categoryId === selectedCategoryId : true
-    )
+    .filter((exercise) => {
+      if (selectedCategoryId) {
+        return exercise.categoryId === selectedCategoryId;
+      }
+      
+      if (selectedExerciseType) {
+        const category = categories.find(cat => cat.id === exercise.categoryId);
+        return category && category.type === selectedExerciseType;
+      }
+      
+      return true;
+    })
     .sort((a, b) => {
       if (sortOrder === "asc") {
         return a.name.localeCompare(b.name);
@@ -111,6 +152,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const handleClearSearch = () => {
     setSearchQuery("");
     setSelectedCategoryId(null);
+    setSelectedExerciseType(null);
   };
 
   const ExerciseCard = ({ 
@@ -121,40 +163,52 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     exercise: any, 
     selected: boolean, 
     onClick: () => void 
-  }) => (
-    <div 
-      className={`border rounded-lg p-4 mb-3 cursor-pointer transition-all hover:shadow-md ${
-        selected 
-          ? "border-primary bg-primary/10 shadow-inner" 
-          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-      }`} 
-      onClick={onClick}
-    >
-      <div className="flex items-start gap-3">
-        <div className={`rounded-full p-2 ${selected ? 'bg-primary text-white' : 'bg-gray-100'}`}>
-          <Dumbbell className="h-4 w-4" />
-        </div>
-        <div className="flex-1">
-          <h3 className="font-medium text-base">{exercise.name}</h3>
-          {exercise.description && (
-            <p className="text-sm text-gray-500 mt-1 line-clamp-2">{exercise.description}</p>
-          )}
-          {categories.length > 0 && (
-            <div className="mt-2">
-              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-full">
-                {categories.find(cat => cat.id === exercise.categoryId)?.name || "بدون دسته‌بندی"}
-              </span>
+  }) => {
+    const category = categories.find(cat => cat.id === exercise.categoryId);
+    const exerciseType = category ? category.type : null;
+    
+    return (
+      <div 
+        className={`border rounded-lg p-4 mb-3 cursor-pointer transition-all hover:shadow-md ${
+          selected 
+            ? "border-primary bg-primary/10 shadow-inner" 
+            : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+        }`} 
+        onClick={onClick}
+      >
+        <div className="flex items-start gap-3">
+          <div className={`rounded-full p-2 ${selected ? 'bg-primary text-white' : 'bg-gray-100'}`}>
+            <Dumbbell className="h-4 w-4" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-medium text-base">{exercise.name}</h3>
+            {exercise.description && (
+              <p className="text-sm text-gray-500 mt-1 line-clamp-2">{exercise.description}</p>
+            )}
+            <div className="mt-2 flex flex-wrap gap-2">
+              {category && (
+                <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-full flex items-center gap-1">
+                  <FolderTree className="h-3 w-3" />
+                  {category.name}
+                </span>
+              )}
+              {exerciseType && (
+                <span className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs rounded-full flex items-center gap-1">
+                  <Tag className="h-3 w-3" />
+                  {exerciseType}
+                </span>
+              )}
+            </div>
+          </div>
+          {selected && (
+            <div className="bg-primary text-primary-foreground rounded-full p-1">
+              <Check className="h-3.5 w-3.5" />
             </div>
           )}
         </div>
-        {selected && (
-          <div className="bg-primary text-primary-foreground rounded-full p-1">
-            <Check className="h-3.5 w-3.5" />
-          </div>
-        )}
       </div>
-    </div>
-  );
+    );
+  };
 
   const getActiveTabContentColor = (tab: string) => {
     switch(tab) {
@@ -261,6 +315,9 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             <Dumbbell className="h-5 w-5 text-primary" />
             <span>مدیریت تمرین‌های {studentName}</span>
           </DialogTitle>
+          <DialogDescription>
+            تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگرد اضافه شوند
+          </DialogDescription>
         </DialogHeader>
 
         <div className="mt-4 px-1">
@@ -286,6 +343,26 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               )}
             </div>
             
+            {exerciseTypes.length > 0 && (
+              <Select
+                value={selectedExerciseType || ""}
+                onValueChange={(value) => {
+                  setSelectedExerciseType(value === "" ? null : value);
+                  setSelectedCategoryId(null);
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="نوع تمرین" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">همه انواع</SelectItem>
+                  {exerciseTypes.map((type) => (
+                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 whitespace-nowrap">
@@ -307,17 +384,26 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 
-                {categories.map(category => (
-                  <DropdownMenuItem
-                    key={category.id}
-                    onClick={() => setSelectedCategoryId(category.id)}
-                    className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
-                  >
-                    {category.name}
+                {filteredCategories.length > 0 ? (
+                  filteredCategories.map(category => (
+                    <DropdownMenuItem
+                      key={category.id}
+                      onClick={() => setSelectedCategoryId(category.id)}
+                      className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
+                    >
+                      {category.name}
+                      {category.type && (
+                        <span className="mr-auto text-xs text-gray-500">{category.type}</span>
+                      )}
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  <DropdownMenuItem disabled className="text-gray-400">
+                    دسته‌بندی‌ای یافت نشد
                   </DropdownMenuItem>
-                ))}
+                )}
                 
-                {(searchQuery || selectedCategoryId) && (
+                {(searchQuery || selectedCategoryId || selectedExerciseType) && (
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
