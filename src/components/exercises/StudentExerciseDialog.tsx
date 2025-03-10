@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,16 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
-import { Dumbbell, Check, Filter, Search } from "lucide-react";
+import { Dumbbell, Check, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -46,7 +54,17 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     },
   });
 
+  const { data: categories = [] } = useQuery({
+    queryKey: ["exerciseCategories"],
+    queryFn: () => {
+      const categoriesData = localStorage.getItem("exerciseCategories");
+      return categoriesData ? JSON.parse(categoriesData) : [];
+    },
+  });
+
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const {
     selectedExercises,
@@ -71,9 +89,29 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     return onSave(exerciseIds, dayNumber);
   };
 
-  const filteredExercises = exercises.filter((exercise) =>
-    exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredExercises = exercises
+    .filter((exercise) =>
+      exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter((exercise) => 
+      selectedCategoryId ? exercise.categoryId === selectedCategoryId : true
+    )
+    .sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSelectedCategoryId(null);
+  };
 
   const ExerciseCard = ({ 
     exercise, 
@@ -101,6 +139,13 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           {exercise.description && (
             <p className="text-sm text-gray-500 mt-1 line-clamp-2">{exercise.description}</p>
           )}
+          {categories.length > 0 && (
+            <div className="mt-2">
+              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-full">
+                {categories.find(cat => cat.id === exercise.categoryId)?.name || "بدون دسته‌بندی"}
+              </span>
+            </div>
+          )}
         </div>
         {selected && (
           <div className="bg-primary text-primary-foreground rounded-full p-1">
@@ -110,6 +155,103 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       </div>
     </div>
   );
+
+  const getActiveTabContentColor = (tab: string) => {
+    switch(tab) {
+      case "day1": return "bg-blue-50 text-blue-600";
+      case "day2": return "bg-purple-50 text-purple-600";
+      case "day3": return "bg-pink-50 text-pink-600";
+      case "day4": return "bg-amber-50 text-amber-600";
+      case "general": return "bg-green-50 text-green-600";
+      default: return "bg-slate-50 text-slate-600";
+    }
+  };
+
+  const getBtnGradient = (tab: string) => {
+    switch(tab) {
+      case "day1": return "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700";
+      case "day2": return "bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700";
+      case "day3": return "bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700";
+      case "day4": return "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700";
+      case "general": return "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700";
+      default: return "";
+    }
+  };
+
+  const ExerciseTabContent = ({ 
+    selectedExercises, 
+    toggleExercise, 
+    dayNumber, 
+    tabValue 
+  }: { 
+    selectedExercises: number[], 
+    toggleExercise: (id: number) => void, 
+    dayNumber?: number, 
+    tabValue: string 
+  }) => {
+    const activeColorClass = getActiveTabContentColor(tabValue);
+    const btnGradient = getBtnGradient(tabValue);
+
+    return (
+      <div className="flex-1 overflow-hidden flex flex-col mt-4">
+        <div className={`mb-4 text-sm font-medium flex justify-between items-center ${activeColorClass}`}>
+          <span>
+            تمرین‌های انتخاب شده: {selectedExercises.length}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={toggleSortOrder}
+              title={sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
+            >
+              {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+            </Button>
+          </div>
+        </div>
+        
+        {filteredExercises.length > 0 ? (
+          <ScrollArea className="flex-1 pr-4" style={{ height: "50vh" }}>
+            <div className="space-y-3">
+              {filteredExercises.map((exercise) => (
+                <ExerciseCard
+                  key={exercise.id}
+                  exercise={exercise}
+                  selected={selectedExercises.includes(exercise.id)}
+                  onClick={() => toggleExercise(exercise.id)}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[50vh]">
+            <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
+            <p className="text-center mb-2">هیچ تمرینی یافت نشد</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleClearSearch}
+              className="mt-2"
+            >
+              پاک کردن فیلترها
+            </Button>
+          </div>
+        )}
+        
+        <div className="mt-6 flex justify-end">
+          <Button 
+            onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
+            className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
+          >
+            ذخیره تمرین‌ها
+            {dayNumber ? ` روز ${dayNumber}` : ' عمومی'}
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -122,26 +264,76 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </DialogHeader>
 
         <div className="mt-4 px-1">
-          <div className="relative">
-            <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="جستجوی تمرین..."
-              className="pl-10 pr-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-1 top-1 h-8 w-8 text-muted-foreground"
-              title="فیلترها"
-            >
-              <Filter className="h-4 w-4" />
-            </Button>
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="جستجوی تمرین..."
+                className="pl-10 pr-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute left-1 top-1 h-8 w-8 text-muted-foreground hover:text-gray-700"
+                  onClick={() => setSearchQuery("")}
+                  title="پاک کردن جستجو"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 whitespace-nowrap">
+                  <Filter className="h-4 w-4" />
+                  دسته‌بندی
+                  {selectedCategoryId && (
+                    <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
+                      ✓
+                    </span>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem 
+                  onClick={() => setSelectedCategoryId(null)}
+                  className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
+                >
+                  همه دسته‌بندی‌ها
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                
+                {categories.map(category => (
+                  <DropdownMenuItem
+                    key={category.id}
+                    onClick={() => setSelectedCategoryId(category.id)}
+                    className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
+                  >
+                    {category.name}
+                  </DropdownMenuItem>
+                ))}
+                
+                {(searchQuery || selectedCategoryId) && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={handleClearSearch} 
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      پاک کردن فیلترها
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
-        <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-4">
+        <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-6">
           <TabsList className="grid grid-cols-5 gap-2 w-full">
             <TabsTrigger 
               value="day1" 
@@ -175,159 +367,48 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          {/* Day 1 */}
-          <TabsContent value="day1" className="flex-1 overflow-hidden flex flex-col mt-4">
-            <div className="mb-2 text-sm text-blue-600 font-medium flex justify-between items-center">
-              <span>تمرین‌های انتخاب شده: {selectedExercisesDay1.length}</span>
-              <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
-            </div>
-            <StudentExerciseListWrapper maxHeight="50vh">
-              {filteredExercises.map((exercise) => (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  selected={selectedExercisesDay1.includes(exercise.id)}
-                  onClick={() => toggleExerciseDay1(exercise.id)}
-                />
-              ))}
-              {filteredExercises.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  هیچ تمرینی یافت نشد
-                </div>
-              )}
-            </StudentExerciseListWrapper>
-            <div className="mt-4 flex justify-end">
-              <Button 
-                onClick={() => handleSaveExercises(selectedExercisesDay1, 1)} 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-              >
-                ذخیره تمرین‌های روز اول
-              </Button>
-            </div>
+          <TabsContent value="day1" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+            <ExerciseTabContent 
+              selectedExercises={selectedExercisesDay1} 
+              toggleExercise={toggleExerciseDay1} 
+              dayNumber={1}
+              tabValue="day1"
+            />
           </TabsContent>
 
-          {/* Day 2 */}
-          <TabsContent value="day2" className="flex-1 overflow-hidden flex flex-col mt-4">
-            <div className="mb-2 text-sm text-purple-600 font-medium flex justify-between items-center">
-              <span>تمرین‌های انتخاب شده: {selectedExercisesDay2.length}</span>
-              <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
-            </div>
-            <StudentExerciseListWrapper maxHeight="50vh">
-              {filteredExercises.map((exercise) => (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  selected={selectedExercisesDay2.includes(exercise.id)}
-                  onClick={() => toggleExerciseDay2(exercise.id)}
-                />
-              ))}
-              {filteredExercises.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  هیچ تمرینی یافت نشد
-                </div>
-              )}
-            </StudentExerciseListWrapper>
-            <div className="mt-4 flex justify-end">
-              <Button 
-                onClick={() => handleSaveExercises(selectedExercisesDay2, 2)} 
-                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700"
-              >
-                ذخیره تمرین‌های روز دوم
-              </Button>
-            </div>
+          <TabsContent value="day2" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+            <ExerciseTabContent 
+              selectedExercises={selectedExercisesDay2} 
+              toggleExercise={toggleExerciseDay2} 
+              dayNumber={2}
+              tabValue="day2"
+            />
           </TabsContent>
 
-          {/* Day 3 */}
-          <TabsContent value="day3" className="flex-1 overflow-hidden flex flex-col mt-4">
-            <div className="mb-2 text-sm text-pink-600 font-medium flex justify-between items-center">
-              <span>تمرین‌های انتخاب شده: {selectedExercisesDay3.length}</span>
-              <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
-            </div>
-            <StudentExerciseListWrapper maxHeight="50vh">
-              {filteredExercises.map((exercise) => (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  selected={selectedExercisesDay3.includes(exercise.id)}
-                  onClick={() => toggleExerciseDay3(exercise.id)}
-                />
-              ))}
-              {filteredExercises.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  هیچ تمرینی یافت نشد
-                </div>
-              )}
-            </StudentExerciseListWrapper>
-            <div className="mt-4 flex justify-end">
-              <Button 
-                onClick={() => handleSaveExercises(selectedExercisesDay3, 3)} 
-                className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700"
-              >
-                ذخیره تمرین‌های روز سوم
-              </Button>
-            </div>
+          <TabsContent value="day3" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+            <ExerciseTabContent 
+              selectedExercises={selectedExercisesDay3} 
+              toggleExercise={toggleExerciseDay3} 
+              dayNumber={3}
+              tabValue="day3"
+            />
           </TabsContent>
 
-          {/* Day 4 */}
-          <TabsContent value="day4" className="flex-1 overflow-hidden flex flex-col mt-4">
-            <div className="mb-2 text-sm text-amber-600 font-medium flex justify-between items-center">
-              <span>تمرین‌های انتخاب شده: {selectedExercisesDay4.length}</span>
-              <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
-            </div>
-            <StudentExerciseListWrapper maxHeight="50vh">
-              {filteredExercises.map((exercise) => (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  selected={selectedExercisesDay4.includes(exercise.id)}
-                  onClick={() => toggleExerciseDay4(exercise.id)}
-                />
-              ))}
-              {filteredExercises.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  هیچ تمرینی یافت نشد
-                </div>
-              )}
-            </StudentExerciseListWrapper>
-            <div className="mt-4 flex justify-end">
-              <Button 
-                onClick={() => handleSaveExercises(selectedExercisesDay4, 4)} 
-                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
-              >
-                ذخیره تمرین‌های روز چهارم
-              </Button>
-            </div>
+          <TabsContent value="day4" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+            <ExerciseTabContent 
+              selectedExercises={selectedExercisesDay4} 
+              toggleExercise={toggleExerciseDay4} 
+              dayNumber={4}
+              tabValue="day4"
+            />
           </TabsContent>
 
-          {/* General */}
-          <TabsContent value="general" className="flex-1 overflow-hidden flex flex-col mt-4">
-            <div className="mb-2 text-sm text-green-600 font-medium flex justify-between items-center">
-              <span>تمرین‌های انتخاب شده: {selectedExercises.length}</span>
-              <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
-            </div>
-            <StudentExerciseListWrapper maxHeight="50vh">
-              {filteredExercises.map((exercise) => (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  selected={selectedExercises.includes(exercise.id)}
-                  onClick={() => toggleExercise(exercise.id)}
-                />
-              ))}
-              {filteredExercises.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  هیچ تمرینی یافت نشد
-                </div>
-              )}
-            </StudentExerciseListWrapper>
-            <div className="mt-4 flex justify-end">
-              <Button 
-                onClick={() => handleSaveExercises(selectedExercises)} 
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-              >
-                ذخیره تمرین‌های عمومی
-              </Button>
-            </div>
+          <TabsContent value="general" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+            <ExerciseTabContent 
+              selectedExercises={selectedExercises} 
+              toggleExercise={toggleExercise}
+              tabValue="general"
+            />
           </TabsContent>
         </Tabs>
 
