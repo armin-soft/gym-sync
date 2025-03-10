@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -104,7 +105,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   // Filter categories based on selected exercise type
   const filteredCategories = categories.filter(category => 
-    selectedExerciseType ? category.type === selectedExerciseType : true
+    selectedExerciseType ? category.type === selectedExerciseType : false
   );
 
   // Reset the selected category if it's not in the filtered categories
@@ -169,23 +170,20 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     
     return (
       <div 
-        className={`border rounded-lg p-4 mb-3 cursor-pointer transition-all hover:shadow-md ${
+        className={`border rounded-lg p-3 mb-2 cursor-pointer transition-all hover:shadow-md ${
           selected 
             ? "border-primary bg-primary/10 shadow-inner" 
             : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
         }`} 
         onClick={onClick}
       >
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2">
           <div className={`rounded-full p-2 ${selected ? 'bg-primary text-white' : 'bg-gray-100'}`}>
             <Dumbbell className="h-4 w-4" />
           </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-base">{exercise.name}</h3>
-            {exercise.description && (
-              <p className="text-sm text-gray-500 mt-1 line-clamp-2">{exercise.description}</p>
-            )}
-            <div className="mt-2 flex flex-wrap gap-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-medium text-base truncate">{exercise.name}</h3>
+            <div className="mt-1 flex flex-wrap gap-1">
               {category && (
                 <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-full flex items-center gap-1">
                   <FolderTree className="h-3 w-3" />
@@ -201,7 +199,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             </div>
           </div>
           {selected && (
-            <div className="bg-primary text-primary-foreground rounded-full p-1">
+            <div className="bg-primary text-primary-foreground rounded-full p-1 flex-shrink-0">
               <Check className="h-3.5 w-3.5" />
             </div>
           )}
@@ -250,10 +248,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
         <div className={`mb-4 text-sm font-medium flex justify-between items-center ${activeColorClass}`}>
           <span>
-            تمرین‌های انتخاب شده: {selectedExercises.length}
+            تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
+            <span className="text-gray-500">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
             <Button 
               variant="ghost" 
               size="sm"
@@ -267,8 +265,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
         
         {filteredExercises.length > 0 ? (
-          <ScrollArea className="flex-1 pr-4" style={{ height: "50vh" }}>
-            <div className="space-y-3">
+          <ScrollArea className="flex-1 pr-4" style={{ height: "50vh", maxHeight: "400px" }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-4">
               {filteredExercises.map((exercise) => (
                 <ExerciseCard
                   key={exercise.id}
@@ -300,7 +298,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
           >
             ذخیره تمرین‌ها
-            {dayNumber ? ` روز ${dayNumber}` : ' عمومی'}
+            {dayNumber ? ` روز ${toPersianNumbers(dayNumber)}` : ' عمومی'}
           </Button>
         </div>
       </div>
@@ -363,59 +361,58 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               </Select>
             )}
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 whitespace-nowrap">
-                  <Filter className="h-4 w-4" />
-                  دسته‌بندی
-                  {selectedCategoryId && (
-                    <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
-                      ✓
-                    </span>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem 
-                  onClick={() => setSelectedCategoryId(null)}
-                  className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
-                >
-                  همه دسته‌بندی‌ها
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                
-                {filteredCategories.length > 0 ? (
-                  filteredCategories.map(category => (
-                    <DropdownMenuItem
-                      key={category.id}
-                      onClick={() => setSelectedCategoryId(category.id)}
-                      className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
-                    >
-                      {category.name}
-                      {category.type && (
-                        <span className="mr-auto text-xs text-gray-500">{category.type}</span>
-                      )}
-                    </DropdownMenuItem>
-                  ))
-                ) : (
-                  <DropdownMenuItem disabled className="text-gray-400">
-                    دسته‌بندی‌ای یافت نشد
+            {selectedExerciseType && filteredCategories.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2 whitespace-nowrap">
+                    <Filter className="h-4 w-4" />
+                    دسته‌بندی
+                    {selectedCategoryId && (
+                      <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
+                        ✓
+                      </span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem 
+                    onClick={() => setSelectedCategoryId(null)}
+                    className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
+                  >
+                    همه دسته‌بندی‌ها
                   </DropdownMenuItem>
-                )}
-                
-                {(searchQuery || selectedCategoryId || selectedExerciseType) && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={handleClearSearch} 
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      پاک کردن فیلترها
+                  <DropdownMenuSeparator />
+                  
+                  {filteredCategories.length > 0 ? (
+                    filteredCategories.map(category => (
+                      <DropdownMenuItem
+                        key={category.id}
+                        onClick={() => setSelectedCategoryId(category.id)}
+                        className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
+                      >
+                        {category.name}
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <DropdownMenuItem disabled className="text-gray-400">
+                      دسته‌بندی‌ای یافت نشد
                     </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  )}
+                  
+                  {(searchQuery || selectedCategoryId || selectedExerciseType) && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={handleClearSearch} 
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        پاک کردن فیلترها
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
 
