@@ -345,9 +345,9 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             
             {exerciseTypes.length > 0 && (
               <Select
-                value={selectedExerciseType || ""}
+                value={selectedExerciseType || "all"}
                 onValueChange={(value) => {
-                  setSelectedExerciseType(value === "" ? null : value);
+                  setSelectedExerciseType(value === "all" ? null : value);
                   setSelectedCategoryId(null);
                 }}
               >
@@ -355,7 +355,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   <SelectValue placeholder="نوع تمرین" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">همه انواع</SelectItem>
+                  <SelectItem value="all">همه انواع</SelectItem>
                   {exerciseTypes.map((type) => (
                     <SelectItem key={type} value={type}>{type}</SelectItem>
                   ))}
