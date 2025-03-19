@@ -1,19 +1,19 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock, AlertTriangle, Clock, Shield, UserCircle2 } from "lucide-react";
+import { Mail, Lock, AlertTriangle, Clock, Shield, UserCircle2, CheckCircle } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { TrainerProfile } from "@/types/trainer";
-import { toast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface LoginFormProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (rememberMe: boolean) => void;
 }
 
 export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
@@ -26,7 +26,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [lockExpiry, setLockExpiry] = useState<Date | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [gymName, setGymName] = useState("");
-  const navigate = useNavigate();
+  const [rememberMe, setRememberMe] = useState(false);
 
   // Load gym name and check if account is locked
   useEffect(() => {
@@ -37,6 +37,11 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         const profile = JSON.parse(savedProfile);
         if (profile.gymName) {
           setGymName(profile.gymName);
+        }
+        
+        // Pre-fill email if available
+        if (profile.email) {
+          setEmail(profile.email);
         }
       } catch (error) {
         console.error('Error loading gym name:', error);
@@ -137,11 +142,28 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.removeItem("loginAttempts");
           setAttempts(0);
-          toast({
-            title: "خوش آمدید",
-            description: `${profile.name} عزیز، با موفقیت وارد شدید.`,
-          });
-          onLoginSuccess();
+          
+          // Show success notification with nice animation
+          toast.custom((t) => (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bg-white/90 backdrop-blur-sm text-green-800 p-4 rounded-lg shadow-lg border border-green-200 w-full max-w-md mx-auto"
+            >
+              <div className="flex items-start gap-3">
+                <div className="bg-green-100 p-2 rounded-full">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-1">ورود موفقیت‌آمیز</h3>
+                  <p className="text-sm text-gray-600">{profile.name || 'کاربر'} عزیز، خوش آمدید</p>
+                </div>
+              </div>
+            </motion.div>
+          ), { duration: 3000 });
+          
+          onLoginSuccess(rememberMe);
         } else {
           // Failed login
           const newAttempts = attempts + 1;
@@ -170,35 +192,57 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     }, 800);
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
       className="w-full max-w-md"
     >
-      <Card className="overflow-hidden border-none bg-white/80 backdrop-blur-xl shadow-2xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 z-0"></div>
+      <Card className="overflow-hidden border-none bg-white/90 backdrop-blur-xl shadow-2xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 z-0 rounded-lg"></div>
         
         <CardHeader className="relative z-10 pb-0">
-          <div className="mx-auto mb-4 rounded-full bg-primary/10 p-3 w-16 h-16 flex items-center justify-center">
+          <motion.div 
+            className="mx-auto mb-4 rounded-full bg-primary/10 p-3 w-16 h-16 flex items-center justify-center"
+            variants={itemVariants}
+          >
             <UserCircle2 className="h-10 w-10 text-primary" />
-          </div>
-          <CardTitle className="text-2xl font-bold text-center mb-2">
-            {gymName ? (
-              <>ورود به سیستم مدیریت {gymName}</>
-            ) : (
-              <>ورود به سیستم مدیریت</>
-            )}
-          </CardTitle>
-          <p className="text-center text-muted-foreground text-sm">برای دسترسی به پنل، وارد حساب کاربری خود شوید</p>
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <CardTitle className="text-2xl font-bold text-center mb-2">
+              {gymName ? (
+                <>ورود به سیستم مدیریت {gymName}</>
+              ) : (
+                <>ورود به سیستم مدیریت</>
+              )}
+            </CardTitle>
+            <p className="text-center text-muted-foreground text-sm">برای دسترسی به پنل، وارد حساب کاربری خود شوید</p>
+          </motion.div>
         </CardHeader>
         
         <CardContent className="relative z-10 pt-6">
           {locked ? (
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              variants={containerVariants}
               className="flex flex-col items-center justify-center space-y-6 p-4"
             >
               <div className="rounded-full bg-destructive/10 p-5">
@@ -230,11 +274,9 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
             <motion.form 
               onSubmit={handleLogin} 
               className="space-y-5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              variants={containerVariants}
             >
-              <div className="space-y-3">
+              <motion.div className="space-y-3" variants={itemVariants}>
                 <Label htmlFor="email" className="text-sm font-medium">ایمیل</Label>
                 <div className="relative">
                   <div className="absolute right-3 top-3 rounded-full bg-primary/10 p-1">
@@ -251,9 +293,9 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                     dir="ltr"
                   />
                 </div>
-              </div>
+              </motion.div>
               
-              <div className="space-y-3">
+              <motion.div className="space-y-3" variants={itemVariants}>
                 <div className="flex justify-between items-center">
                   <Label htmlFor="password" className="text-sm font-medium">رمز عبور</Label>
                 </div>
@@ -271,7 +313,25 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                     required 
                   />
                 </div>
-              </div>
+              </motion.div>
+              
+              <motion.div 
+                className="flex items-center space-x-2 space-x-reverse"
+                variants={itemVariants}
+              >
+                <Checkbox 
+                  id="rememberMe" 
+                  checked={rememberMe} 
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                  className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                />
+                <Label 
+                  htmlFor="rememberMe" 
+                  className="text-sm text-muted-foreground cursor-pointer select-none"
+                >
+                  مرا به خاطر بسپار (به مدت ۳۰ روز)
+                </Label>
+              </motion.div>
               
               {error && (
                 <motion.div
@@ -286,26 +346,28 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                 </motion.div>
               )}
               
-              <Button 
-                type="submit" 
-                className="w-full h-12 text-base font-medium transition-all relative overflow-hidden group"
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    در حال ورود...
-                  </div>
-                ) : (
-                  <>
-                    <span className="relative z-10">ورود به سیستم</span>
-                    <span className="absolute inset-0 bg-primary/90 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-                  </>
-                )}
-              </Button>
+              <motion.div variants={itemVariants}>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 text-base font-medium transition-all relative overflow-hidden group"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      در حال ورود...
+                    </div>
+                  ) : (
+                    <>
+                      <span className="relative z-10">ورود به سیستم</span>
+                      <span className="absolute inset-0 bg-primary/90 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+                    </>
+                  )}
+                </Button>
+              </motion.div>
             </motion.form>
           )}
         </CardContent>
