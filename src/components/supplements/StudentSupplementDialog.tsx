@@ -46,7 +46,7 @@ export function StudentSupplementDialog({
   const [searchQuery, setSearchQuery] = useState("");
   const [supplements, setSupplements] = useState<Supplement[]>([]);
   const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
-  const [currentTab, setCurrentTab] = useState<'supplements' | 'vitamins'>('supplements');
+  const [currentTab, setCurrentTab] = useState<'supplement' | 'vitamin'>('supplement');
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
 
@@ -98,7 +98,7 @@ export function StudentSupplementDialog({
   }, [searchQuery, supplements, currentTab, selectedCategory]);
 
   const toggleItem = (itemId: number) => {
-    if (currentTab === 'supplements') {
+    if (currentTab === 'supplement') {
       setSelectedSupplements((prev) =>
         prev.includes(itemId)
           ? prev.filter((id) => id !== itemId)
@@ -125,7 +125,7 @@ export function StudentSupplementDialog({
   };
 
   const handleChangeTab = (value: string) => {
-    setCurrentTab(value as 'supplements' | 'vitamins');
+    setCurrentTab(value as 'supplement' | 'vitamin');
     setSelectedCategory('all');
     setSearchQuery('');
   };
@@ -143,20 +143,20 @@ export function StudentSupplementDialog({
         </DialogHeader>
 
         <Tabs 
-          defaultValue="supplements" 
+          defaultValue="supplement" 
           className="flex-1 flex flex-col overflow-hidden"
           onValueChange={handleChangeTab}
         >
           <div className="flex flex-col sm:flex-row gap-4 items-center mb-4">
             <TabsList className="h-10">
-              <TabsTrigger value="supplements" className="px-4">مکمل‌ها</TabsTrigger>
-              <TabsTrigger value="vitamins" className="px-4">ویتامین‌ها</TabsTrigger>
+              <TabsTrigger value="supplement" className="px-4">مکمل‌ها</TabsTrigger>
+              <TabsTrigger value="vitamin" className="px-4">ویتامین‌ها</TabsTrigger>
             </TabsList>
             
             <div className="relative flex-1 w-full">
               <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder={`جستجو در ${currentTab === 'supplements' ? 'مکمل‌ها' : 'ویتامین‌ها'}...`}
+                placeholder={`جستجو در ${currentTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}...`}
                 className="pl-3 pr-9 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -188,7 +188,7 @@ export function StudentSupplementDialog({
             )}
           </div>
 
-          <TabsContent value="supplements" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+          <TabsContent value="supplement" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
             <ScrollArea className="flex-grow">
               {filteredItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-40 text-center p-4">
@@ -263,7 +263,7 @@ export function StudentSupplementDialog({
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="vitamins" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+          <TabsContent value="vitamin" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
             <ScrollArea className="flex-grow">
               {filteredItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-40 text-center p-4">
@@ -341,9 +341,9 @@ export function StudentSupplementDialog({
 
         <DialogFooter className="border-t pt-4 mt-4">
           <div className="text-sm font-medium mr-auto">
-            {currentTab === 'supplements' ? 'مکمل‌های' : 'ویتامین‌های'} انتخاب شده:{" "}
+            {currentTab === 'supplement' ? 'مکمل‌های' : 'ویتامین‌های'} انتخاب شده:{" "}
             <span className="text-purple-600">{toPersianNumbers(
-              currentTab === 'supplements' ? selectedSupplements.length : selectedVitamins.length
+              currentTab === 'supplement' ? selectedSupplements.length : selectedVitamins.length
             )}</span>
           </div>
           <div className="flex gap-2">
