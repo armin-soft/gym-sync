@@ -1,8 +1,8 @@
+
 import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { Spinner } from "./ui/spinner";
-import { cn } from "@/lib/utils";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AppIcon } from "./ui/app-icon";
@@ -18,7 +18,7 @@ const LoadingFallback = () => (
 
 export const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [gymName, setGymName] = useState("مدیریت برنامه");
+  const [gymName, setGymName] = useState("");
   
   const loadGymName = () => {
     const savedProfile = localStorage.getItem('trainerProfile');
@@ -26,7 +26,7 @@ export const Layout = () => {
       try {
         const profile = JSON.parse(savedProfile);
         if (profile.gymName) {
-          setGymName(`مدیریت برنامه ${profile.gymName}`);
+          setGymName(profile.gymName);
         }
       } catch (error) {
         console.error('Error loading gym name from localStorage:', error);
@@ -88,7 +88,9 @@ export const Layout = () => {
             </button>
             <div className="flex items-center gap-2">
               <AppIcon size="sm" animated />
-              <h1 className="text-lg font-semibold">{gymName}</h1>
+              <h1 className="text-lg font-semibold">
+                {gymName ? `${gymName} - مدیریت برنامه` : 'مدیریت برنامه'}
+              </h1>
             </div>
           </div>
         </header>

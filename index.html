@@ -3,9 +3,9 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>مدیریت برنامه فیکس</title>
+    <title id="page-title">مدیریت برنامه</title>
     <meta name="description" content="سیستم مدیریت برنامه تمرینی فیکس" />
     <meta name="author" content="محمد عباسی" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +17,38 @@
     <link rel="apple-touch-icon" href="/logo.png">
     <!-- Add manifest file for PWA support -->
     <link rel="manifest" href="/manifest.json">
+    <script>
+      // Dynamic title update based on gym name from trainer profile
+      document.addEventListener('DOMContentLoaded', function() {
+        try {
+          const savedProfile = localStorage.getItem('trainerProfile');
+          if (savedProfile) {
+            const profile = JSON.parse(savedProfile);
+            if (profile.gymName) {
+              document.title = profile.gymName + ' - مدیریت برنامه';
+              document.getElementById('page-title').textContent = document.title;
+            }
+          }
+        } catch (error) {
+          console.error('Error updating page title:', error);
+        }
+        
+        // Listen for profile updates
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'trainerProfile') {
+            try {
+              const profile = JSON.parse(e.newValue);
+              if (profile && profile.gymName) {
+                document.title = profile.gymName + ' - مدیریت برنامه';
+                document.getElementById('page-title').textContent = document.title;
+              }
+            } catch (error) {
+              console.error('Error updating page title on storage change:', error);
+            }
+          }
+        });
+      });
+    </script>
   </head>
   <body class="persian-numbers">
     <div id="root"></div>
