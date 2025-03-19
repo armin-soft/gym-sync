@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -103,12 +102,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     initialExercisesDay4
   );
 
-  // Filter categories based on selected exercise type
   const filteredCategories = categories.filter(category => 
     selectedExerciseType ? category.type === selectedExerciseType : true
   );
 
-  // Reset the selected category if it's not in the filtered categories
   useEffect(() => {
     if (selectedCategoryId && filteredCategories.length > 0) {
       const categoryExists = filteredCategories.some(cat => cat.id === selectedCategoryId);
@@ -122,7 +119,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     return onSave(exerciseIds, dayNumber);
   };
 
-  // Only filter exercises if a category is selected
   const filteredExercises = selectedCategoryId !== null
     ? exercises
         .filter((exercise) => 
@@ -162,40 +158,37 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     
     return (
       <div 
-        className={`border rounded-lg p-4 mb-3 cursor-pointer transition-all hover:shadow-md ${
+        className={`border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${
           selected 
             ? "border-primary bg-primary/10 shadow-inner" 
             : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
         }`} 
         onClick={onClick}
       >
-        <div className="flex items-start gap-3">
-          <div className={`rounded-full p-2 ${selected ? 'bg-primary text-white' : 'bg-gray-100'}`}>
-            <Dumbbell className="h-4 w-4" />
+        <div className="flex items-start gap-2">
+          <div className={`rounded-full p-1.5 ${selected ? 'bg-primary text-white' : 'bg-gray-100'}`}>
+            <Dumbbell className="h-3.5 w-3.5" />
           </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-base">{exercise.name}</h3>
-            {exercise.description && (
-              <p className="text-sm text-gray-500 mt-1 line-clamp-2">{exercise.description}</p>
-            )}
-            <div className="mt-2 flex flex-wrap gap-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-medium text-sm line-clamp-1">{exercise.name}</h3>
+            <div className="mt-1 flex flex-wrap gap-1">
               {category && (
-                <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-full flex items-center gap-1">
-                  <FolderTree className="h-3 w-3" />
+                <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-full flex items-center gap-1">
+                  <FolderTree className="h-2.5 w-2.5" />
                   {category.name}
                 </span>
               )}
               {exerciseType && (
-                <span className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs rounded-full flex items-center gap-1">
-                  <Tag className="h-3 w-3" />
+                <span className="px-1.5 py-0.5 bg-purple-50 text-purple-700 text-xs rounded-full flex items-center gap-1">
+                  <Tag className="h-2.5 w-2.5" />
                   {exerciseType}
                 </span>
               )}
             </div>
           </div>
           {selected && (
-            <div className="bg-primary text-primary-foreground rounded-full p-1">
-              <Check className="h-3.5 w-3.5" />
+            <div className="bg-primary text-primary-foreground rounded-full p-0.5">
+              <Check className="h-3 w-3" />
             </div>
           )}
         </div>
@@ -266,7 +259,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         ) : filteredExercises.length > 0 ? (
           <ScrollArea className="flex-1 pr-4" style={{ height: "60vh" }}>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {filteredExercises.map((exercise) => (
                 <ExerciseCard
                   key={exercise.id}
