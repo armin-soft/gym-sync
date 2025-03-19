@@ -51,46 +51,133 @@ export const NotificationToast = ({
   return (
     <motion.div
       initial={{ opacity: 0, y: -20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+      animate={{ 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        transition: { 
+          type: "spring", 
+          stiffness: 400, 
+          damping: 25 
+        }
+      }}
+      exit={{ 
+        opacity: 0, 
+        y: -20, 
+        scale: 0.95,
+        transition: { duration: 0.2 }
+      }}
       className={cn(
         "relative bg-gradient-to-r backdrop-blur-md border shadow-lg rounded-xl px-6 py-4 flex items-center gap-3 persian-numbers select-none",
         gradients[type],
         borders[type]
       )}
     >
-      <div className={cn("flex-shrink-0 p-2 rounded-full", bgColors[type])}>
+      <motion.div 
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ 
+          scale: 1, 
+          opacity: 1,
+          transition: { delay: 0.1, duration: 0.2 }
+        }}
+        className={cn("flex-shrink-0 p-2 rounded-full", bgColors[type])}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
         {icons[type]}
-      </div>
+      </motion.div>
+      
       <div className="flex-1 pr-6">
-        <h3 className="font-semibold text-foreground">{title}</h3>
+        <motion.h3 
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ 
+            opacity: 1, 
+            y: 0,
+            transition: { delay: 0.2, duration: 0.3 }
+          }}
+          className="font-semibold text-foreground"
+        >
+          {title}
+        </motion.h3>
+        
         {description && (
-          <p className="text-sm text-muted-foreground/80 mt-0.5">{description}</p>
+          <motion.p 
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              transition: { delay: 0.3, duration: 0.3 }
+            }}
+            className="text-sm text-muted-foreground/80 mt-0.5"
+          >
+            {description}
+          </motion.p>
         )}
       </div>
       
-      <button 
+      <motion.button 
         onClick={onClose}
-        className="absolute top-3 right-3 p-1 rounded-full hover:bg-foreground/10 transition-colors duration-200"
+        className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-foreground/10 transition-colors duration-200"
         aria-label="Close"
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, rotate: -90 }}
+        animate={{ 
+          opacity: 1, 
+          rotate: 0,
+          transition: { delay: 0.4, duration: 0.2 }
+        }}
       >
-        <X className="h-4 w-4 text-foreground/50 hover:text-foreground/80" />
-      </button>
+        <X className="h-4 w-4 text-foreground/50 hover:text-foreground/90" />
+      </motion.button>
       
-      {/* Progress bar animation */}
+      {/* Enhanced progress bar animation */}
       <motion.div
         initial={{ width: "0%" }}
-        animate={{ width: "100%" }}
-        transition={{ duration: 5, ease: "linear" }}
+        animate={{ 
+          width: "100%",
+          transition: { 
+            duration: 5, 
+            ease: "linear"
+          }
+        }}
         className={cn(
-          "absolute bottom-0 left-0 h-0.5 rounded-full",
-          type === "success" ? "bg-green-500/50" : 
-          type === "info" ? "bg-primary/50" : 
-          type === "warning" ? "bg-amber-500/50" : 
-          "bg-red-500/50"
+          "absolute bottom-0 left-0 h-1 rounded-full bg-gradient-to-r",
+          type === "success" ? "from-green-300 to-green-500" : 
+          type === "info" ? "from-blue-300 to-primary" : 
+          type === "warning" ? "from-amber-300 to-amber-500" : 
+          "from-red-300 to-red-500"
         )}
       />
+      
+      {/* Added visual effect elements */}
+      <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className={cn(
+              "absolute rounded-full w-4 h-4 opacity-20",
+              type === "success" ? "bg-green-500" : 
+              type === "info" ? "bg-primary" : 
+              type === "warning" ? "bg-amber-500" : 
+              "bg-red-500"
+            )}
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              scale: [0.5, 1.5, 0.5],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </div>
     </motion.div>
   );
 };
