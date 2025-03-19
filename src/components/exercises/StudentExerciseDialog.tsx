@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { ExerciseCard } from "./ExerciseCard";
-import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
+import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -32,8 +32,6 @@ import {
 } from "@/components/ui/select";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -87,8 +85,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
-  
+
   const {
     selectedExercisesDay1,
     selectedExercisesDay2,
@@ -126,10 +123,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const filteredExercises = exercises
     .filter((exercise) => 
       exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : true) &&
-      (selectedExerciseType 
-        ? categories.some(cat => cat.id === exercise.categoryId && cat.type === selectedExerciseType)
-        : true)
+      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : true)
     )
     .sort((a, b) => {
       if (sortOrder === "asc") {
@@ -169,12 +163,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const activeFiltersCount = [
-    searchQuery ? 1 : 0,
-    selectedExerciseType ? 1 : 0, 
-    selectedCategoryId ? 1 : 0
-  ].reduce((a, b) => a + b, 0);
-
   const ExerciseTabContent = ({ 
     selectedExercises, 
     toggleExercise, 
@@ -191,183 +179,50 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
     return (
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
-        <div className="flex flex-col gap-4">
-          <div className="relative">
-            <div className="mb-4 flex flex-wrap justify-between items-center gap-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full shadow-sm`}>
-                  تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
-                </div>
-                
-                <div className="bg-gray-100 rounded-full px-3 py-1 shadow-sm">
-                  <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsFilterExpanded(!isFilterExpanded)}
-                  className="gap-2"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  فیلترها
-                  {activeFiltersCount > 0 && (
-                    <Badge variant="secondary" className="h-5 w-5 p-0 flex items-center justify-center">
-                      {toPersianNumbers(activeFiltersCount)}
-                    </Badge>
-                  )}
-                  {isFilterExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                </Button>
-                
-                <div className="flex border rounded overflow-hidden shadow-sm">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-gray-100" : ""}`}
-                    onClick={() => setViewMode("grid")}
-                    title="نمایش گرید"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-gray-100" : ""}`}
-                    onClick={() => setViewMode("list")}
-                    title="نمایش لیست"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="h-8 w-8 p-0 rounded-none"
-                    onClick={toggleSortOrder}
-                    title={sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
-                  >
-                    {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
+        <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
+          <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full shadow-sm`}>
+            تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <div className="bg-gray-100 rounded-full px-3 py-1 shadow-sm">
+              <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
             </div>
             
-            {isFilterExpanded && (
-              <div className={cn(
-                "mb-4 p-4 rounded-lg border border-gray-200 shadow-sm bg-white/80 backdrop-blur-sm transition-all",
-                "animate-in fade-in-50 slide-in-from-top-5 duration-200"
-              )}>
-                <div className="flex flex-col gap-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="relative">
-                      <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="جستجوی تمرین..."
-                        className="pl-10 pr-10"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                      {searchQuery && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute left-1 top-1 h-8 w-8 text-muted-foreground hover:text-gray-700"
-                          onClick={() => setSearchQuery("")}
-                          title="پاک کردن جستجو"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                    
-                    {exerciseTypes.length > 0 && (
-                      <Select
-                        value={selectedExerciseType || "all"}
-                        onValueChange={(value) => {
-                          setSelectedExerciseType(value === "all" ? null : value);
-                          setSelectedCategoryId(null);
-                        }}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="نوع تمرین" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">همه انواع</SelectItem>
-                          {exerciseTypes.map((type) => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                    
-                    {selectedExerciseType && filteredCategories.length > 0 && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="outline" className="gap-2 w-full">
-                            <Filter className="h-4 w-4" />
-                            دسته‌بندی
-                            {selectedCategoryId && (
-                              <Badge variant="secondary" className="mr-1">
-                                {categories.find(c => c.id === selectedCategoryId)?.name}
-                              </Badge>
-                            )}
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">
-                          <DropdownMenuItem 
-                            onClick={() => setSelectedCategoryId(null)}
-                            className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
-                          >
-                            همه دسته‌بندی‌ها
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          
-                          {filteredCategories.length > 0 ? (
-                            filteredCategories.map(category => (
-                              <DropdownMenuItem
-                                key={category.id}
-                                onClick={() => setSelectedCategoryId(category.id)}
-                                className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
-                              >
-                                {category.name}
-                              </DropdownMenuItem>
-                            ))
-                          ) : (
-                            <DropdownMenuItem disabled className="text-gray-400">
-                              دسته‌بندی‌ای یافت نشد
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                  
-                  {activeFiltersCount > 0 && (
-                    <div className="flex justify-end">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={handleClearSearch}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        پاک کردن فیلترها
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            <div className="flex border rounded overflow-hidden shadow-sm">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-gray-100" : ""}`}
+                onClick={() => setViewMode("grid")}
+                title="نمایش گرید"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-gray-100" : ""}`}
+                onClick={() => setViewMode("list")}
+                title="نمایش لیست"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="h-8 w-8 p-0 rounded-none"
+                onClick={toggleSortOrder}
+                title={sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
+              >
+                {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </div>
         
         {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper 
-            maxHeight="calc(80vh - 320px)" 
-            className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-md"
-            viewMode={viewMode}
-          >
+          <StudentExerciseListWrapper maxHeight="calc(80vh - 250px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-md">
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -421,6 +276,105 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگرد اضافه شوند
           </DialogDescription>
         </DialogHeader>
+
+        <div className="mt-4 px-1">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="جستجوی تمرین..."
+                className="pl-10 pr-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute left-1 top-1 h-8 w-8 text-muted-foreground hover:text-gray-700"
+                  onClick={() => setSearchQuery("")}
+                  title="پاک کردن جستجو"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            
+            {exerciseTypes.length > 0 && (
+              <Select
+                value={selectedExerciseType || "all"}
+                onValueChange={(value) => {
+                  setSelectedExerciseType(value === "all" ? null : value);
+                  setSelectedCategoryId(null);
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="نوع تمرین" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">همه انواع</SelectItem>
+                  {exerciseTypes.map((type) => (
+                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 whitespace-nowrap">
+                  <Filter className="h-4 w-4" />
+                  دسته‌بندی
+                  {selectedCategoryId && (
+                    <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
+                      ✓
+                    </span>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">
+                <DropdownMenuItem 
+                  onClick={() => setSelectedCategoryId(null)}
+                  className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
+                >
+                  همه دسته‌بندی‌ها
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                
+                {filteredCategories.length > 0 ? (
+                  filteredCategories.map(category => (
+                    <DropdownMenuItem
+                      key={category.id}
+                      onClick={() => setSelectedCategoryId(category.id)}
+                      className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
+                    >
+                      {category.name}
+                      {category.type && (
+                        <span className="mr-auto text-xs text-gray-500">{category.type}</span>
+                      )}
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  <DropdownMenuItem disabled className="text-gray-400">
+                    دسته‌بندی‌ای یافت نشد
+                  </DropdownMenuItem>
+                )}
+                
+                {(searchQuery || selectedCategoryId || selectedExerciseType) && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={handleClearSearch} 
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      پاک کردن فیلترها
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
 
         <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-6">
           <TabsList className="grid grid-cols-4 gap-2 w-full">
