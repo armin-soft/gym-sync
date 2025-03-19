@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -29,9 +28,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Load gym name and check if account is locked
   useEffect(() => {
-    // Get gym name
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
@@ -44,7 +41,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
       }
     }
 
-    // Check if account is locked
     const lockedUntil = localStorage.getItem("loginLockExpiry");
     if (lockedUntil) {
       const expiryDate = new Date(lockedUntil);
@@ -52,7 +48,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         setLocked(true);
         setLockExpiry(expiryDate);
       } else {
-        // Lock expired
         localStorage.removeItem("loginLockExpiry");
         localStorage.removeItem("loginAttempts");
         setLocked(false);
@@ -66,7 +61,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     }
   }, []);
 
-  // Update countdown timer
   useEffect(() => {
     if (!locked || !lockExpiry) return;
 
@@ -83,13 +77,11 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         return;
       }
 
-      // Calculate days, hours, minutes, seconds
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      // Format the countdown
       setTimeLeft(`${toPersianNumbers(days)} روز ${toPersianNumbers(hours)} ساعت ${toPersianNumbers(minutes)} دقیقه ${toPersianNumbers(seconds)} ثانیه`);
     }, 1000);
 
@@ -101,14 +93,12 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     setLoading(true);
     setError("");
 
-    // Check if account is locked
     if (locked) {
       setError("حساب کاربری شما قفل شده است. لطفاً صبر کنید.");
       setLoading(false);
       return;
     }
 
-    // Validate inputs
     if (!email.trim()) {
       setError("لطفاً ایمیل خود را وارد کنید");
       setLoading(false);
@@ -121,7 +111,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
       return;
     }
 
-    // Simulate a delay for API call
     setTimeout(() => {
       try {
         const savedProfile = localStorage.getItem('trainerProfile');
@@ -134,12 +123,10 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         const profile: TrainerProfile = JSON.parse(savedProfile);
         
         if (email === profile.email && password === profile.password) {
-          // Successful login
           localStorage.setItem("isLoggedIn", "true");
           localStorage.removeItem("loginAttempts");
           setAttempts(0);
           
-          // Show success notification
           successToast(
             "ورود موفقیت‌آمیز",
             `${profile.name || 'کاربر'} عزیز، خوش آمدید`
@@ -147,16 +134,13 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           
           onLoginSuccess(rememberMe);
         } else {
-          // Failed login
           const newAttempts = attempts + 1;
           setAttempts(newAttempts);
           localStorage.setItem("loginAttempts", newAttempts.toString());
           
-          // Lock account after 3 failed attempts
           if (newAttempts >= 3) {
             const expiryDate = new Date();
-            expiryDate.setDate(expiryDate.getDate() + 1); // Lock for 1 day
-            
+            expiryDate.setDate(expiryDate.getDate() + 1);
             setLocked(true);
             setLockExpiry(expiryDate);
             localStorage.setItem("loginLockExpiry", expiryDate.toString());
@@ -174,7 +158,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     }, 800);
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -203,7 +186,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     }
   };
 
-  // Button animation variants
   const buttonVariants = {
     rest: { scale: 1 },
     hover: { 
@@ -221,7 +203,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     tap: { scale: 0.97 }
   };
 
-  // Login icon animation
   const loginIconVariants = {
     rest: { rotate: 0 },
     hover: { 
@@ -303,7 +284,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                   <p className="text-muted-foreground font-medium">زمان باقی‌مانده تا رفع محدودیت:</p>
                 </div>
                 <motion.div 
-                  className="bg-gradient-to-r from-red-500/10 to-orange-500/10 rounded-lg py-3 px-4 text-center backdrop-blur-sm border border-red-500/20"
+                  className="bg-red-600/15 rounded-lg py-3 px-4 text-center border-2 border-red-600/30 shadow-inner shadow-red-500/10"
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ 
                     scale: 1,
@@ -321,7 +302,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                     }
                   }}
                 >
-                  <p className="text-lg font-bold text-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent persian-numbers">{timeLeft}</p>
+                  <p className="text-lg font-bold text-red-700 persian-numbers">{timeLeft}</p>
                 </motion.div>
               </div>
               
@@ -429,10 +410,10 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                     animate={{ opacity: 1, y: 0, height: 'auto' }}
                     exit={{ opacity: 0, y: -10, height: 0 }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    className="p-3 rounded-md bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-400/30 text-red-600 text-sm font-medium backdrop-blur-sm"
+                    className="p-3 rounded-md bg-red-600/15 border-2 border-red-600/30 text-red-700 text-sm font-medium shadow-sm"
                   >
                     <div className="flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                      <AlertTriangle className="h-4 w-4 flex-shrink-0 text-red-600" />
                       <span>{error}</span>
                     </div>
                   </motion.div>
@@ -468,7 +449,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                         <LogIn className="h-5 w-5" />
                       </motion.div>
                       
-                      {/* Animated background */}
                       <div className="absolute inset-0 overflow-hidden">
                         <motion.div 
                           className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-primary to-indigo-600 bg-[length:200%_100%]"
@@ -483,7 +463,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                         />
                       </div>
                       
-                      {/* Shimmer effect */}
                       <motion.div
                         className="absolute inset-0 opacity-20"
                         animate={{
@@ -513,7 +492,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           </p>
         </CardFooter>
 
-        {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden rounded-lg pointer-events-none z-0">
           {[...Array(6)].map((_, i) => (
             <motion.div
