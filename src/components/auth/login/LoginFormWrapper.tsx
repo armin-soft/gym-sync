@@ -1,10 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AccountLockedView } from "./AccountLockedView";
 import { LoginFormView } from "./LoginFormView";
 import { motion } from "framer-motion";
 import { successToast } from "@/components/ui/notification-toast";
 import { TrainerProfile } from "@/types/trainer";
+import { AnimatedBackground } from "./AnimatedBackground";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface LoginFormProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -24,7 +26,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Load profile data and lock status on component mount
-  useState(() => {
+  useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
@@ -187,7 +189,3 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     </motion.div>
   );
 };
-
-// Importing this at the end to avoid circular dependencies
-import { AnimatedBackground } from "./AnimatedBackground";
-import { toPersianNumbers } from "@/lib/utils/numbers";
