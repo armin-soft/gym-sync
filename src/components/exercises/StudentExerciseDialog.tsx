@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
-import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
+import { ExerciseCard } from "./ExerciseCard";
 import { Dumbbell, Check, Filter, Search, X, ArrowDown, ArrowUp, Tag, FolderTree } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -82,6 +83,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const {
     selectedExercises,
@@ -144,58 +146,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     setSelectedExerciseType(null);
   };
 
-  const ExerciseCard = ({ 
-    exercise, 
-    selected, 
-    onClick 
-  }: { 
-    exercise: any, 
-    selected: boolean, 
-    onClick: () => void 
-  }) => {
-    const category = categories.find(cat => cat.id === exercise.categoryId);
-    const exerciseType = category ? category.type : null;
-    
-    return (
-      <div 
-        className={`border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${
-          selected 
-            ? "border-primary bg-primary/10 shadow-inner" 
-            : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-        }`} 
-        onClick={onClick}
-      >
-        <div className="flex items-start gap-2">
-          <div className={`rounded-full p-1.5 ${selected ? 'bg-primary text-white' : 'bg-gray-100'}`}>
-            <Dumbbell className="h-3.5 w-3.5" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-sm line-clamp-1">{exercise.name}</h3>
-            <div className="mt-1 flex flex-wrap gap-1">
-              {category && (
-                <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-full flex items-center gap-1">
-                  <FolderTree className="h-2.5 w-2.5" />
-                  {category.name}
-                </span>
-              )}
-              {exerciseType && (
-                <span className="px-1.5 py-0.5 bg-purple-50 text-purple-700 text-xs rounded-full flex items-center gap-1">
-                  <Tag className="h-2.5 w-2.5" />
-                  {exerciseType}
-                </span>
-              )}
-            </div>
-          </div>
-          {selected && (
-            <div className="bg-primary text-primary-foreground rounded-full p-0.5">
-              <Check className="h-3 w-3" />
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
   const getActiveTabContentColor = (tab: string) => {
     switch(tab) {
       case "day1": return "bg-blue-50 text-blue-600";
@@ -234,21 +184,45 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
     return (
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
-        <div className={`mb-4 text-sm font-medium flex justify-between items-center ${activeColorClass}`}>
-          <span>
+        <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50">
+          <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full`}>
             تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
-          </span>
+          </div>
+          
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={toggleSortOrder}
-              title={sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
-            >
-              {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
-            </Button>
+            <div className="bg-gray-100 rounded-full px-3 py-1">
+              <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
+            </div>
+            
+            <div className="flex border rounded overflow-hidden">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-gray-100" : ""}`}
+                onClick={() => setViewMode("grid")}
+                title="نمایش گرید"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-gray-100" : ""}`}
+                onClick={() => setViewMode("list")}
+                title="نمایش لیست"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="h-8 w-8 p-0 rounded-none"
+                onClick={toggleSortOrder}
+                title={sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
+              >
+                {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
         </div>
         
@@ -258,16 +232,24 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             <p className="text-center mb-2">لطفاً ابتدا یک دسته‌بندی انتخاب کنید</p>
           </div>
         ) : filteredExercises.length > 0 ? (
-          <ScrollArea className="flex-1 pr-4" style={{ height: "60vh" }}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {filteredExercises.map((exercise) => (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  selected={selectedExercises.includes(exercise.id)}
-                  onClick={() => toggleExercise(exercise.id)}
-                />
-              ))}
+          <ScrollArea className="flex-1 pr-4" style={{ height: "calc(60vh - 60px)" }}>
+            <div className={viewMode === "grid" 
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" 
+              : "flex flex-col space-y-3"
+            }>
+              {filteredExercises.map((exercise) => {
+                const category = categories.find(cat => cat.id === exercise.categoryId);
+                return (
+                  <ExerciseCard
+                    key={exercise.id}
+                    exercise={exercise}
+                    category={category}
+                    isSelected={selectedExercises.includes(exercise.id)}
+                    viewMode={viewMode}
+                    onClick={() => toggleExercise(exercise.id)}
+                  />
+                );
+              })}
             </div>
           </ScrollArea>
         ) : (
@@ -300,7 +282,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader className="pb-4 border-b">
           <DialogTitle className="text-xl flex items-center gap-2">
             <Dumbbell className="h-5 w-5 text-primary" />
@@ -366,7 +348,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">
                 <DropdownMenuItem 
                   onClick={() => setSelectedCategoryId(null)}
                   className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}

@@ -30,7 +30,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       transition={{ duration: 0.2 }}
       className={cn(
         "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer",
-        viewMode === "grid" ? "w-full aspect-square" : "w-full h-24",
+        viewMode === "grid" ? "w-full h-32" : "w-full h-24",
         isSelected ? "ring-2 ring-primary shadow-lg" : "hover:shadow-md"
       )}
       onClick={onClick}
@@ -46,10 +46,10 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           {viewMode === "grid" ? (
             <>
               <div className={cn(
-                "mb-3 p-3 rounded-full",
+                "mb-3 p-2 rounded-full",
                 isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
               )}>
-                <Dumbbell className="w-8 h-8" />
+                <Dumbbell className="w-6 h-6" />
               </div>
               <h3 className="font-semibold text-center line-clamp-2">{exercise.name}</h3>
               {category && (
