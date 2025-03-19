@@ -29,9 +29,11 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer",
-        viewMode === "grid" ? "w-full h-32" : "w-full h-24",
-        isSelected ? "ring-2 ring-primary shadow-lg" : "hover:shadow-md"
+        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border",
+        viewMode === "grid" ? "w-full h-36" : "w-full h-24",
+        isSelected 
+          ? "ring-2 ring-primary shadow-lg border-primary/50" 
+          : "hover:shadow-md border-gray-100 hover:border-gray-200"
       )}
       onClick={onClick}
     >
@@ -46,12 +48,12 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           {viewMode === "grid" ? (
             <>
               <div className={cn(
-                "mb-3 p-2 rounded-full",
+                "mb-3 p-2.5 rounded-full",
                 isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
               )}>
                 <Dumbbell className="w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-center line-clamp-2">{exercise.name}</h3>
+              <h3 className="font-semibold text-center line-clamp-2 mb-1">{exercise.name}</h3>
               {category && (
                 <Badge variant={isSelected ? "default" : "outline"} className="mt-2">
                   {category.name}
