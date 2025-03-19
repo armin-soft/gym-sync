@@ -1,10 +1,11 @@
 
 import React from "react";
 import { Exercise } from "@/types/exercise";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, Plus, Save } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -12,6 +13,8 @@ interface ExerciseCardProps {
   isSelected: boolean;
   viewMode: "grid" | "list";
   onClick: () => void;
+  onAddToWorkout?: () => void;
+  onSave?: () => void;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
@@ -20,6 +23,8 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   isSelected,
   viewMode,
   onClick,
+  onAddToWorkout,
+  onSave,
 }) => {
   return (
     <motion.div
@@ -57,6 +62,40 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               )}
             </div>
           </div>
+          
+          {isSelected && (
+            <div className="flex items-center gap-1 ml-2">
+              {onAddToWorkout && (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="h-8 w-8 p-0 bg-white/80 hover:bg-primary hover:text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToWorkout();
+                  }}
+                  title="افزودن به تمرین"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              )}
+              
+              {onSave && (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="h-8 w-8 p-0 bg-white/80 hover:bg-primary hover:text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSave();
+                  }}
+                  title="ذخیره"
+                >
+                  <Save className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
