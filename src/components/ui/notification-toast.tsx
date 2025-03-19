@@ -27,6 +27,7 @@ export const warningToast = (title: string, description?: string) => {
 
 export const infoToast = (title: string, description?: string) => {
   toast({
+    variant: "default",
     title,
     description,
   });
