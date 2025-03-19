@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Bell, CheckCircle, Info, AlertTriangle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type NotificationType = "success" | "info" | "warning" | "error";
 
