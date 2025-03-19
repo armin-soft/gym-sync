@@ -12,12 +12,12 @@ interface StudentExerciseListWrapperProps {
 export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "60vh"
+  maxHeight = "calc(70vh - 180px)" // Increased max height for better visibility
 }) => {
   return (
     <Card className="border border-slate-100 bg-white/80 backdrop-blur-sm">
       <ScrollArea className={`${className} pr-4`} style={{ maxHeight }}>
-        <div className="p-4 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="p-4 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
           {children}
         </div>
       </ScrollArea>
