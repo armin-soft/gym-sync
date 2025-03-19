@@ -35,15 +35,12 @@ export function Toaster() {
           <Toast 
             key={id} 
             {...props}
+            variant={variant}
             className={cn(
               "group backdrop-blur-md border border-border/30 shadow-lg",
               "data-[state=open]:animate-in data-[state=closed]:animate-out",
               "data-[swipe=end]:animate-out data-[state=closed]:fade-out-80",
-              "persian-numbers rounded-xl flex items-start gap-3 p-4",
-              variant === "destructive" && "bg-destructive/10 border-destructive/20",
-              variant === "success" && "bg-emerald-500/10 border-emerald-500/20",
-              variant === "warning" && "bg-amber-500/10 border-amber-500/20",
-              !variant && "bg-background/80 border-border/30"
+              "persian-numbers rounded-xl flex items-start gap-3 p-4"
             )}
           >
             <div className="shrink-0 pt-0.5">
@@ -52,10 +49,7 @@ export function Toaster() {
             <div className="grid gap-1 flex-1 text-right">
               {title && (
                 <ToastTitle className={cn(
-                  "text-base font-semibold",
-                  variant === "destructive" && "text-destructive",
-                  variant === "success" && "text-emerald-600",
-                  variant === "warning" && "text-amber-600"
+                  "text-base font-semibold"
                 )}>
                   {title}
                 </ToastTitle>
