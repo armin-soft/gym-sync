@@ -11,11 +11,11 @@ interface StudentExerciseListWrapperProps {
 export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "400px"
+  maxHeight = "60vh"
 }) => {
   return (
     <ScrollArea className={`${className} pr-4`} style={{ maxHeight }}>
-      <div className="w-full">{children}</div>
+      <div className="w-full space-y-3">{children}</div>
     </ScrollArea>
   );
 };

@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -121,29 +122,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     return onSave(exerciseIds, dayNumber);
   };
 
-  const filteredExercises = exercises
-    .filter((exercise) =>
-      exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .filter((exercise) => {
-      if (selectedCategoryId) {
-        return exercise.categoryId === selectedCategoryId;
-      }
-      
-      if (selectedExerciseType) {
-        const category = categories.find(cat => cat.id === exercise.categoryId);
-        return category && category.type === selectedExerciseType;
-      }
-      
-      return true;
-    })
-    .sort((a, b) => {
-      if (sortOrder === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
+  // Only filter exercises if a category is selected
+  const filteredExercises = selectedCategoryId !== null
+    ? exercises
+        .filter((exercise) => 
+          exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+          (selectedCategoryId ? exercise.categoryId === selectedCategoryId : true)
+        )
+        .sort((a, b) => {
+          if (sortOrder === "asc") {
+            return a.name.localeCompare(b.name);
+          } else {
+            return b.name.localeCompare(a.name);
+          }
+        })
+    : [];
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -250,10 +243,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
         <div className={`mb-4 text-sm font-medium flex justify-between items-center ${activeColorClass}`}>
           <span>
-            تمرین‌های انتخاب شده: {selectedExercises.length}
+            تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">{filteredExercises.length} تمرین موجود</span>
+            <span className="text-gray-500">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
             <Button 
               variant="ghost" 
               size="sm"
@@ -266,8 +259,13 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         </div>
         
-        {filteredExercises.length > 0 ? (
-          <ScrollArea className="flex-1 pr-4" style={{ height: "50vh" }}>
+        {selectedCategoryId === null ? (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh]">
+            <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
+            <p className="text-center mb-2">لطفاً ابتدا یک دسته‌بندی انتخاب کنید</p>
+          </div>
+        ) : filteredExercises.length > 0 ? (
+          <ScrollArea className="flex-1 pr-4" style={{ height: "60vh" }}>
             <div className="space-y-3">
               {filteredExercises.map((exercise) => (
                 <ExerciseCard
@@ -280,7 +278,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             </div>
           </ScrollArea>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[50vh]">
+          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh]">
             <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
             <p className="text-center mb-2">هیچ تمرینی یافت نشد</p>
             <Button 
@@ -300,7 +298,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
           >
             ذخیره تمرین‌ها
-            {dayNumber ? ` روز ${dayNumber}` : ' عمومی'}
+            {dayNumber ? ` روز ${toPersianNumbers(dayNumber)}` : ' عمومی'}
           </Button>
         </div>
       </div>
