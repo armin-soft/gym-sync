@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import { LoginForm } from "./auth/LoginForm";
 import { LoadingScreen } from "./LoadingScreen";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { defaultProfile } from "@/types/trainer";
 import { toast } from "sonner";
+import { Bell, CheckCircle, Info } from "lucide-react";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -42,14 +43,32 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
           // Show welcome back notification
           const profile = JSON.parse(localStorage.getItem('trainerProfile') || '{}');
           setTimeout(() => {
-            toast.success(
-              `${profile.name || 'کاربر'} عزیز، خوش آمدید`,
-              {
-                description: "به سیستم مدیریت برنامه وارد شدید",
-                position: "top-center",
-                className: "persian-numbers",
-              }
-            );
+            toast.custom((t) => (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-md border border-primary/20 shadow-lg rounded-lg px-6 py-4 flex items-center gap-3 persian-numbers select-none"
+                onClick={() => toast.dismiss(t)}
+              >
+                <div className="flex-shrink-0 bg-primary/10 p-2 rounded-full">
+                  <Bell className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-foreground">
+                    {profile.name || 'کاربر'} عزیز، خوش آمدید
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    به سیستم مدیریت برنامه وارد شدید
+                  </p>
+                </div>
+                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+              </motion.div>
+            ), {
+              position: "top-center",
+              duration: 5000,
+            });
           }, 1000);
         } else {
           // Remember me expired, clear it
@@ -70,6 +89,35 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       expiryDate.setDate(expiryDate.getDate() + 30);
       localStorage.setItem("rememberMeExpiry", expiryDate.toString());
     }
+
+    // Show success notification
+    const profile = JSON.parse(localStorage.getItem('trainerProfile') || '{}');
+    toast.custom((t) => (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3 }}
+        className="bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-md border border-primary/20 shadow-lg rounded-lg px-6 py-4 flex items-center gap-3 persian-numbers select-none"
+        onClick={() => toast.dismiss(t)}
+      >
+        <div className="flex-shrink-0 bg-primary/10 p-2 rounded-full">
+          <Info className="h-5 w-5 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-medium text-foreground">
+            ورود موفقیت‌آمیز
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {profile.name || 'کاربر'} عزیز، خوش آمدید
+          </p>
+        </div>
+        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+      </motion.div>
+    ), {
+      position: "top-center",
+      duration: 5000,
+    });
   };
 
   const handleLoadingComplete = () => {

@@ -54,25 +54,26 @@ export const Layout = () => {
     <div className="min-h-screen h-screen w-screen overflow-hidden bg-background persian-numbers" dir="rtl">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      {/* Toaster component for notifications */}
+      {/* Enhanced Toaster component for notifications */}
       <Toaster 
-        position="top-center" 
+        position="top-center"
         toastOptions={{
+          className: 'persian-numbers', 
+          duration: 5000,
           style: {
-            background: 'rgba(255, 255, 255, 0.9)',
-            color: '#333',
-            borderRadius: '8px',
-            padding: '16px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            borderRadius: '0.75rem',
+            padding: '1rem',
+            backdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
             border: '1px solid rgba(0, 0, 0, 0.05)',
-            maxWidth: '400px',
-            backdropFilter: 'blur(8px)',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
             direction: 'rtl',
-            fontSize: '14px',
           },
-          className: 'persian-numbers',
-          duration: 4000,
         }}
+        closeButton
+        richColors
+        expand={true}
+        visibleToasts={3}
       />
       
       <div className="flex flex-col h-full w-full">
