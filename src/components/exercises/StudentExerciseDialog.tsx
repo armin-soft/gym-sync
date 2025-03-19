@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { ExerciseCard } from "./ExerciseCard";
-import { Dumbbell, Check, Filter, Search, X, ArrowDown, ArrowUp, Tag, FolderTree } from "lucide-react";
+import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -86,12 +87,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const {
-    selectedExercises,
     selectedExercisesDay1,
     selectedExercisesDay2,
     selectedExercisesDay3,
     selectedExercisesDay4,
-    toggleExercise,
     toggleExerciseDay1,
     toggleExerciseDay2,
     toggleExerciseDay3,
@@ -121,20 +120,18 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     return onSave(exerciseIds, dayNumber);
   };
 
-  const filteredExercises = selectedCategoryId !== null
-    ? exercises
-        .filter((exercise) => 
-          exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-          (selectedCategoryId ? exercise.categoryId === selectedCategoryId : true)
-        )
-        .sort((a, b) => {
-          if (sortOrder === "asc") {
-            return a.name.localeCompare(b.name);
-          } else {
-            return b.name.localeCompare(a.name);
-          }
-        })
-    : [];
+  const filteredExercises = exercises
+    .filter((exercise) => 
+      exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : true)
+    )
+    .sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -152,7 +149,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       case "day2": return "bg-purple-50 text-purple-600";
       case "day3": return "bg-pink-50 text-pink-600";
       case "day4": return "bg-amber-50 text-amber-600";
-      case "general": return "bg-green-50 text-green-600";
       default: return "bg-slate-50 text-slate-600";
     }
   };
@@ -163,7 +159,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       case "day2": return "bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700";
       case "day3": return "bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700";
       case "day4": return "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700";
-      case "general": return "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700";
       default: return "";
     }
   };
@@ -176,7 +171,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   }: { 
     selectedExercises: number[], 
     toggleExercise: (id: number) => void, 
-    dayNumber?: number, 
+    dayNumber: number, 
     tabValue: string 
   }) => {
     const activeColorClass = getActiveTabContentColor(tabValue);
@@ -184,17 +179,17 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
     return (
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
-        <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50">
-          <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full`}>
+        <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
+          <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full shadow-sm`}>
             تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
           </div>
           
           <div className="flex items-center gap-2">
-            <div className="bg-gray-100 rounded-full px-3 py-1">
+            <div className="bg-gray-100 rounded-full px-3 py-1 shadow-sm">
               <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
             </div>
             
-            <div className="flex border rounded overflow-hidden">
+            <div className="flex border rounded overflow-hidden shadow-sm">
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -226,13 +221,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         </div>
         
-        {selectedCategoryId === null ? (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh]">
-            <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
-            <p className="text-center mb-2">لطفاً ابتدا یک دسته‌بندی انتخاب کنید</p>
-          </div>
-        ) : filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper maxHeight="calc(80vh - 250px)">
+        {filteredExercises.length > 0 ? (
+          <StudentExerciseListWrapper maxHeight="calc(80vh - 250px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-md">
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -248,7 +238,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             })}
           </StudentExerciseListWrapper>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh]">
+          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh] shadow-inner">
             <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
             <p className="text-center mb-2">هیچ تمرینی یافت نشد</p>
             <Button 
@@ -267,8 +257,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
             className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
           >
-            ذخیره تمرین‌ها
-            {dayNumber ? ` روز ${toPersianNumbers(dayNumber)}` : ' عمومی'}
+            ذخیره تمرین‌های روز {toPersianNumbers(dayNumber)}
           </Button>
         </div>
       </div>
@@ -388,7 +377,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
 
         <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-6">
-          <TabsList className="grid grid-cols-5 gap-2 w-full">
+          <TabsList className="grid grid-cols-4 gap-2 w-full">
             <TabsTrigger 
               value="day1" 
               className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
@@ -412,12 +401,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               className="data-[state=active]:bg-amber-50 data-[state=active]:text-amber-600 data-[state=active]:border-b-2 data-[state=active]:border-amber-600"
             >
               روز چهارم
-            </TabsTrigger>
-            <TabsTrigger 
-              value="general"
-              className="data-[state=active]:bg-green-50 data-[state=active]:text-green-600 data-[state=active]:border-b-2 data-[state=active]:border-green-600"
-            >
-              عمومی
             </TabsTrigger>
           </TabsList>
 
@@ -454,14 +437,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               toggleExercise={toggleExerciseDay4} 
               dayNumber={4}
               tabValue="day4"
-            />
-          </TabsContent>
-
-          <TabsContent value="general" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-            <ExerciseTabContent 
-              selectedExercises={selectedExercises} 
-              toggleExercise={toggleExercise}
-              tabValue="general"
             />
           </TabsContent>
         </Tabs>
