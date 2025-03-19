@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -222,7 +221,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
         
         {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper maxHeight="calc(80vh - 250px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-md">
+          <StudentExerciseListWrapper maxHeight="calc(80vh - 250px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -356,7 +355,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   ))
                 ) : (
                   <DropdownMenuItem disabled className="text-gray-400">
-                    دسته‌بندی‌ای یافت نشد
+                    دسته��بندی‌ای یافت نشد
                   </DropdownMenuItem>
                 )}
                 
