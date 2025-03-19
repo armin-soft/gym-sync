@@ -8,7 +8,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
-import { AlertCircle, CheckCircle2, Info, XCircle } from "lucide-react"
+import { AlertCircle, AlertTriangle, CheckCircle, Info, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function Toaster() {
@@ -18,11 +18,11 @@ export function Toaster() {
   const getToastIcon = (variant: string | undefined) => {
     switch (variant) {
       case "destructive":
-        return <XCircle className="h-5 w-5 text-destructive" />
+        return <XCircle className="h-5 w-5 text-red-500" />
       case "success":
-        return <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+        return <CheckCircle className="h-5 w-5 text-emerald-500" />
       case "warning":
-        return <AlertCircle className="h-5 w-5 text-amber-500" />
+        return <AlertTriangle className="h-5 w-5 text-amber-500" />
       default:
         return <Info className="h-5 w-5 text-blue-500" />
     }
@@ -37,10 +37,11 @@ export function Toaster() {
             {...props}
             variant={variant}
             className={cn(
-              "group shadow-lg backdrop-blur-sm border border-slate-200",
+              "group shadow-lg backdrop-blur-sm border border-slate-200 dark:border-slate-700",
               "data-[state=open]:animate-in data-[state=closed]:animate-out",
               "data-[swipe=end]:animate-out data-[state=closed]:fade-out-80",
-              "persian-numbers flex items-start gap-3 p-4"
+              "data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-top-full",
+              "persian-numbers flex items-start gap-3 p-4 rounded-xl"
             )}
           >
             <div className="shrink-0 pt-0.5">
@@ -63,7 +64,7 @@ export function Toaster() {
           </Toast>
         )
       })}
-      <ToastViewport className="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:top-0 sm:right-0 sm:left-0 sm:flex-col md:max-w-[420px] mx-auto" />
+      <ToastViewport className="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:top-0 sm:flex-col md:max-w-[420px] mx-auto" />
     </ToastProvider>
   )
 }

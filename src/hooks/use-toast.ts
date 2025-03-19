@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 5
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 2000 // 2 seconds auto-dismiss time
 
 type ToastType = Omit<ToastProps, "id"> & {
   id: string
@@ -163,6 +163,11 @@ function toast({ ...props }: { variant?: ToastVariant } & Toast) {
       },
     },
   })
+
+  // Auto dismiss after TOAST_REMOVE_DELAY
+  setTimeout(() => {
+    dismiss()
+  }, TOAST_REMOVE_DELAY - 100) // Dismiss slightly before removal to trigger animation
 
   return {
     id: id,
