@@ -226,14 +226,69 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
-                <ExerciseCard
+                <div
                   key={exercise.id}
-                  exercise={exercise}
-                  category={category}
-                  isSelected={selectedExercises.includes(exercise.id)}
-                  viewMode={viewMode}
+                  className={`p-4 rounded-lg border transition-all cursor-pointer ${
+                    selectedExercises.includes(exercise.id)
+                      ? `border-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-500 bg-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-50`
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
                   onClick={() => toggleExercise(exercise.id)}
-                />
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                        selectedExercises.includes(exercise.id)
+                          ? `bg-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-100 text-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-600`
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      <Dumbbell className="h-6 w-6" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <h3 className="font-bold text-lg">{exercise.name}</h3>
+                        {category && (
+                          <span className={`text-sm px-3 py-1 rounded-full ${
+                            selectedExercises.includes(exercise.id)
+                              ? `bg-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-200 text-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-700`
+                              : "bg-gray-200 text-gray-700"
+                          }`}>
+                            {category.name}
+                          </span>
+                        )}
+                      </div>
+                      {category && (
+                        <div className="text-sm text-gray-500 mt-1">
+                          نوع: {category.type || "نامشخص"}
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
+                        selectedExercises.includes(exercise.id)
+                          ? `border-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-500 bg-${tabValue === 'day1' ? 'blue' : tabValue === 'day2' ? 'purple' : tabValue === 'day3' ? 'pink' : 'amber'}-500`
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {selectedExercises.includes(exercise.id) && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </StudentExerciseListWrapper>
