@@ -282,8 +282,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader className="pb-4 border-b">
+      <DialogContent className="max-w-full w-[98vw] h-[98vh] max-h-[98vh] overflow-hidden flex flex-col p-0">
+        <DialogHeader className="pb-4 border-b p-6">
           <DialogTitle className="text-xl flex items-center gap-2">
             <Dumbbell className="h-5 w-5 text-primary" />
             <span>مدیریت تمرین‌های {studentName}</span>
@@ -293,7 +293,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 px-1">
+        <div className="mt-4 px-6 flex-shrink-0">
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -392,7 +392,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         </div>
 
-        <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-6">
+        <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-2 px-6">
           <TabsList className="grid grid-cols-5 gap-2 w-full">
             <TabsTrigger 
               value="day1" 
@@ -471,7 +471,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter className="pt-4 border-t mt-4">
+        <DialogFooter className="pt-4 border-t mt-4 px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             بستن
           </Button>

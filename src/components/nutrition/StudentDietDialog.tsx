@@ -140,8 +140,8 @@ export function StudentDietDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] h-[750px] flex flex-col overflow-hidden" dir="rtl">
-        <DialogHeader>
+      <DialogContent className="max-w-full w-[98vw] h-[98vh] max-h-[98vh] flex flex-col overflow-hidden p-0" dir="rtl">
+        <DialogHeader className="p-6 border-b">
           <DialogTitle className="text-xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
               <Apple className="h-5 w-5 text-green-600" />
@@ -150,186 +150,188 @@ export function StudentDietDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="relative mb-4 flex-shrink-0">
-          <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="جستجو در برنامه های غذایی..."
-            className="pl-3 pr-9"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <div className="p-6 flex flex-col h-full overflow-hidden">
+          <div className="relative mb-4 flex-shrink-0">
+            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="جستجو در برنامه های غذایی..."
+              className="pl-3 pr-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
 
-        <div className="mb-4 grid grid-cols-2 gap-4 flex-shrink-0">
-          <div className="space-y-2">
-            <p className="text-sm font-medium">روز هفته:</p>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={currentDay === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentDay("all")}
-                className="text-xs h-8"
-              >
-                همه روزها
-              </Button>
-              {days.map((day) => (
+          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4 flex-shrink-0">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">روز هفته:</p>
+              <div className="flex flex-wrap gap-2">
                 <Button
-                  key={day}
-                  variant={currentDay === day ? "default" : "outline"}
+                  variant={currentDay === "all" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setCurrentDay(day)}
+                  onClick={() => setCurrentDay("all")}
                   className="text-xs h-8"
                 >
-                  {day}
+                  همه روزها
                 </Button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium">نوع وعده:</p>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={currentType === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentType("all")}
-                className="text-xs h-8"
-              >
-                همه وعده‌ها
-              </Button>
-              {types.map((type) => (
-                <Button
-                  key={type}
-                  variant={currentType === type ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentType(type)}
-                  className="text-xs h-8"
-                >
-                  {type}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <ScrollArea className="flex-grow">
-          {filteredMeals.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-40 text-center p-4">
-              <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
-                <Apple className="h-8 w-8 text-green-500" />
+                {days.map((day) => (
+                  <Button
+                    key={day}
+                    variant={currentDay === day ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentDay(day)}
+                    className="text-xs h-8"
+                  >
+                    {day}
+                  </Button>
+                ))}
               </div>
-              <h3 className="font-medium text-lg">هیچ وعده غذایی یافت نشد</h3>
-              <p className="text-muted-foreground text-sm mt-2">
-                وعده غذایی مورد نظر شما موجود نیست یا هنوز هیچ وعده غذایی ثبت نشده است
-              </p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pr-4">
-              {filteredMeals.map((meal) => (
-                <div
-                  key={meal.id}
-                  className={`p-3 rounded-lg border transition-all cursor-pointer ${
-                    selectedMeals.includes(meal.id)
-                      ? "border-green-500 bg-green-50"
-                      : "border-gray-200 hover:border-green-300"
-                  }`}
-                  onClick={() => toggleMeal(meal.id)}
+            <div className="space-y-2">
+              <p className="text-sm font-medium">نوع وعده:</p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={currentType === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentType("all")}
+                  className="text-xs h-8"
                 >
-                  <div className="flex gap-3 items-start">
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-1 flex items-center justify-center ${
-                        selectedMeals.includes(meal.id)
-                          ? "border-green-500 bg-green-500"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {selectedMeals.includes(meal.id) && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="10"
-                          height="10"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="white"
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h4 className="font-medium text-sm">{meal.name}</h4>
-                        <div className="flex gap-2">
-                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                            {meal.day}
-                          </span>
-                          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
-                            {meal.type}
-                          </span>
-                        </div>
+                  همه وعده‌ها
+                </Button>
+                {types.map((type) => (
+                  <Button
+                    key={type}
+                    variant={currentType === type ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentType(type)}
+                    className="text-xs h-8"
+                  >
+                    {type}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <ScrollArea className="flex-grow">
+            {filteredMeals.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-40 text-center p-4">
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
+                  <Apple className="h-8 w-8 text-green-500" />
+                </div>
+                <h3 className="font-medium text-lg">هیچ وعده غذایی یافت نشد</h3>
+                <p className="text-muted-foreground text-sm mt-2">
+                  وعده غذایی مورد نظر شما موجود نیست یا هنوز هیچ وعده غذایی ثبت نشده است
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pr-4">
+                {filteredMeals.map((meal) => (
+                  <div
+                    key={meal.id}
+                    className={`p-3 rounded-lg border transition-all cursor-pointer ${
+                      selectedMeals.includes(meal.id)
+                        ? "border-green-500 bg-green-50"
+                        : "border-gray-200 hover:border-green-300"
+                    }`}
+                    onClick={() => toggleMeal(meal.id)}
+                  >
+                    <div className="flex gap-3 items-start">
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-1 flex items-center justify-center ${
+                          selectedMeals.includes(meal.id)
+                            ? "border-green-500 bg-green-500"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {selectedMeals.includes(meal.id) && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="10"
+                            height="10"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        )}
                       </div>
-                      <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                        {meal.description}
-                      </p>
-                      {(meal.calories || meal.protein || meal.carbs || meal.fat) && (
-                        <div className="grid grid-cols-4 gap-1 mt-2">
-                          {meal.calories && (
-                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
-                              <span className="block font-medium">کالری</span>
-                              <span>{toPersianNumbers(meal.calories)}</span>
-                            </div>
-                          )}
-                          {meal.protein && (
-                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
-                              <span className="block font-medium">پروتئین</span>
-                              <span>{toPersianNumbers(meal.protein)}</span>
-                            </div>
-                          )}
-                          {meal.carbs && (
-                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
-                              <span className="block font-medium">کربوهیدرات</span>
-                              <span>{toPersianNumbers(meal.carbs)}</span>
-                            </div>
-                          )}
-                          {meal.fat && (
-                            <div className="text-xs bg-gray-100 p-1 rounded text-center">
-                              <span className="block font-medium">چربی</span>
-                              <span>{toPersianNumbers(meal.fat)}</span>
-                            </div>
-                          )}
+                      <div className="flex-1">
+                        <div className="flex justify-between">
+                          <h4 className="font-medium text-sm">{meal.name}</h4>
+                          <div className="flex gap-2">
+                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                              {meal.day}
+                            </span>
+                            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                              {meal.type}
+                            </span>
+                          </div>
                         </div>
-                      )}
+                        <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
+                          {meal.description}
+                        </p>
+                        {(meal.calories || meal.protein || meal.carbs || meal.fat) && (
+                          <div className="grid grid-cols-4 gap-1 mt-2">
+                            {meal.calories && (
+                              <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                                <span className="block font-medium">کالری</span>
+                                <span>{toPersianNumbers(meal.calories)}</span>
+                              </div>
+                            )}
+                            {meal.protein && (
+                              <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                                <span className="block font-medium">پروتئین</span>
+                                <span>{toPersianNumbers(meal.protein)}</span>
+                              </div>
+                            )}
+                            {meal.carbs && (
+                              <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                                <span className="block font-medium">کربوهیدرات</span>
+                                <span>{toPersianNumbers(meal.carbs)}</span>
+                              </div>
+                            )}
+                            {meal.fat && (
+                              <div className="text-xs bg-gray-100 p-1 rounded text-center">
+                                <span className="block font-medium">چربی</span>
+                                <span>{toPersianNumbers(meal.fat)}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </ScrollArea>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
 
-        <div className="border-t pt-4 mt-4 flex justify-between items-center">
-          <div className="text-sm font-medium">
-            وعده‌های غذایی انتخاب شده:{" "}
-            <span className="text-green-600">{toPersianNumbers(selectedMeals.length)}</span>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="gap-2"
-            >
-              <X className="h-4 w-4" />
-              انصراف
-            </Button>
-            <Button
-              onClick={handleSave}
-              className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-            >
-              <Save className="h-4 w-4" />
-              ذخیره برنامه غذایی
-            </Button>
+          <div className="border-t pt-4 mt-4 flex justify-between items-center">
+            <div className="text-sm font-medium">
+              وعده‌های غذایی انتخاب شده:{" "}
+              <span className="text-green-600">{toPersianNumbers(selectedMeals.length)}</span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="gap-2"
+              >
+                <X className="h-4 w-4" />
+                انصراف
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                <Save className="h-4 w-4" />
+                ذخیره برنامه غذایی
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

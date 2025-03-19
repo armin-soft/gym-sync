@@ -3,19 +3,16 @@ import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { Search, Save, X, FlaskConical, Pill } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, FlaskConical, Pill, X, Save } from "lucide-react";
 import { Supplement } from "@/types/supplement";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -23,8 +20,9 @@ interface StudentSupplementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
-  onSave: (supplementIds: {supplements: number[], vitamins: number[]}) => void;
-  initialData: {supplements: number[], vitamins: number[]};
+  onSave: (data: { supplements: number[]; vitamins: number[] }) => void;
+  initialSupplements?: number[];
+  initialVitamins?: number[];
 }
 
 export function StudentSupplementDialog({
@@ -32,21 +30,15 @@ export function StudentSupplementDialog({
   onOpenChange,
   studentName,
   onSave,
-  initialData = {supplements: [], vitamins: []},
+  initialSupplements = [],
+  initialVitamins = [],
 }: StudentSupplementDialogProps) {
-  const [selectedSupplements, setSelectedSupplements] = useState<number[]>(initialData.supplements || []);
-  const [selectedVitamins, setSelectedVitamins] = useState<number[]>(initialData.vitamins || []);
-  const [searchQuery, setSearchQuery] = useState("");
   const [supplements, setSupplements] = useState<Supplement[]>([]);
-  const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
-  const [currentTab, setCurrentTab] = useState<"supplements" | "vitamins">("supplements");
-  const [currentCategory, setCurrentCategory] = useState<string | "all">("all");
-  const [categories, setCategories] = useState<{[key: string]: string[]}>({
-    supplements: [],
-    vitamins: []
-  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSupplements, setSelectedSupplements] = useState<number[]>(initialSupplements);
+  const [selectedVitamins, setSelectedVitamins] = useState<number[]>(initialVitamins);
+  const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">("supplements");
 
-  // Load supplements from localStorage
   useEffect(() => {
     try {
       const savedSupplements = localStorage.getItem("supplements");
@@ -60,336 +52,270 @@ export function StudentSupplementDialog({
     }
   }, []);
 
-  // Extract categories
   useEffect(() => {
-    const supplementCategories = Array.from(
-      new Set(
-        supplements
-          .filter(item => item.type === 'supplement')
-          .map(item => item.category)
-      )
-    );
-    
-    const vitaminCategories = Array.from(
-      new Set(
-        supplements
-          .filter(item => item.type === 'vitamin')
-          .map(item => item.category)
-      )
-    );
-    
-    setCategories({
-      supplements: supplementCategories,
-      vitamins: vitaminCategories
-    });
-  }, [supplements]);
+    setSelectedSupplements(initialSupplements);
+    setSelectedVitamins(initialVitamins);
+  }, [initialSupplements, initialVitamins]);
 
-  // Filter supplements based on search query and category
-  useEffect(() => {
-    let filtered = supplements.filter(item => 
-      currentTab === "supplements" ? item.type === "supplement" : item.type === "vitamin"
-    );
-    
-    if (searchQuery.trim() !== "") {
-      filtered = filtered.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    if (currentCategory !== "all") {
-      filtered = filtered.filter((item) => item.category === currentCategory);
-    }
-
-    setFilteredItems(filtered);
-  }, [searchQuery, supplements, currentTab, currentCategory]);
-
-  const toggleItem = (itemId: number) => {
-    if (currentTab === "supplements") {
-      setSelectedSupplements((prev) =>
-        prev.includes(itemId)
-          ? prev.filter((id) => id !== itemId)
-          : [...prev, itemId]
-      );
-    } else {
-      setSelectedVitamins((prev) =>
-        prev.includes(itemId)
-          ? prev.filter((id) => id !== itemId)
-          : [...prev, itemId]
-      );
-    }
-  };
-
-  const handleSave = () => {
+  const handleSaveSelections = () => {
     onSave({
       supplements: selectedSupplements,
-      vitamins: selectedVitamins
+      vitamins: selectedVitamins,
     });
     onOpenChange(false);
   };
 
-  const getCategoryChipColor = (category: string) => {
-    const colorMap: {[key: string]: string} = {
-      "پروتئین": "bg-blue-100 text-blue-700",
-      "کربوهیدرات": "bg-yellow-100 text-yellow-700",
-      "چربی": "bg-red-100 text-red-700",
-      "آمینو اسید": "bg-green-100 text-green-700",
-      "مولتی ویتامین": "bg-purple-100 text-purple-700",
-      "اسید چرب": "bg-orange-100 text-orange-700",
-      "ویتامین محلول در آب": "bg-cyan-100 text-cyan-700",
-      "ویتامین محلول در چربی": "bg-rose-100 text-rose-700",
-      "مینرال": "bg-emerald-100 text-emerald-700",
-    };
-    
-    return colorMap[category] || "bg-gray-100 text-gray-700";
+  const toggleItem = (id: number, type: "supplement" | "vitamin") => {
+    if (type === "supplement") {
+      setSelectedSupplements((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+    } else {
+      setSelectedVitamins((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+    }
   };
+
+  const filteredSupplements = supplements.filter((s) => {
+    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = s.type === (activeTab === "supplements" ? "supplement" : "vitamin");
+    return matchesSearch && matchesType;
+  });
+
+  const getSelectedItems = () =>
+    activeTab === "supplements" ? selectedSupplements : selectedVitamins;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] h-[750px] flex flex-col overflow-hidden" dir="rtl">
-        <DialogHeader>
+      <DialogContent className="max-w-full w-[98vw] h-[98vh] max-h-[98vh] flex flex-col overflow-hidden p-0" dir="rtl">
+        <DialogHeader className="p-6 border-b">
           <DialogTitle className="text-xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-              <span className="text-purple-600 text-lg">
-                {currentTab === "supplements" ? <FlaskConical className="h-5 w-5" /> : <Pill className="h-5 w-5" />}
-              </span>
+              {activeTab === "supplements" ? (
+                <FlaskConical className="h-5 w-5 text-purple-600" />
+              ) : (
+                <Pill className="h-5 w-5 text-blue-600" />
+              )}
             </div>
-            <span>
-              {currentTab === "supplements" ? "مکمل‌ها" : "ویتامین‌ها"} برای {studentName}
-            </span>
+            <span>انتخاب مکمل و ویتامین برای {studentName}</span>
           </DialogTitle>
+          <DialogDescription>
+            مکمل ها و ویتامین های مورد نیاز را انتخاب کنید
+          </DialogDescription>
         </DialogHeader>
 
-        <Tabs 
-          defaultValue="supplements" 
-          className="w-full"
-          onValueChange={(value) => setCurrentTab(value as "supplements" | "vitamins")}
-        >
-          <TabsList className="grid grid-cols-2 mb-4">
-            <TabsTrigger value="supplements" className="flex items-center gap-2">
-              <FlaskConical className="h-4 w-4" />
-              مکمل‌ها
-            </TabsTrigger>
-            <TabsTrigger value="vitamins" className="flex items-center gap-2">
-              <Pill className="h-4 w-4" />
-              ویتامین‌ها
-            </TabsTrigger>
-          </TabsList>
+        <div className="p-6 flex flex-col h-full overflow-hidden">
+          <Tabs
+            defaultValue="supplements"
+            value={activeTab}
+            onValueChange={(v) => setActiveTab(v as "supplements" | "vitamins")}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="supplements" className="flex items-center gap-2">
+                <FlaskConical className="h-4 w-4" />
+                مکمل ها
+              </TabsTrigger>
+              <TabsTrigger value="vitamins" className="flex items-center gap-2">
+                <Pill className="h-4 w-4" />
+                ویتامین ها
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="relative mb-4 flex-shrink-0">
-            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={`جستجو در ${currentTab === "supplements" ? "مکمل‌ها" : "ویتامین‌ها"}...`}
-              className="pl-3 pr-9"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-4 flex-shrink-0 overflow-x-auto">
-            <div className="flex space-x-2 space-x-reverse">
-              <Button
-                variant={currentCategory === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentCategory("all")}
-                className="flex-shrink-0"
-              >
-                همه دسته‌ها
-              </Button>
-              {categories[currentTab].map((category) => (
-                <Button
-                  key={category}
-                  variant={currentCategory === category ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentCategory(category)}
-                  className="flex-shrink-0"
-                >
-                  {category}
-                </Button>
-              ))}
+            <div className="relative mb-6 flex-shrink-0">
+              <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={`جستجو در ${
+                  activeTab === "supplements" ? "مکمل ها" : "ویتامین ها"
+                }...`}
+                className="pl-3 pr-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-          </div>
 
-          <TabsContent value="supplements" className="mt-0">
-            <ScrollArea className="flex-grow h-[450px] overflow-y-auto pr-4">
-              {filteredItems.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-40 text-center p-4">
-                  <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-4">
-                    <FlaskConical className="h-8 w-8 text-purple-500" />
-                  </div>
-                  <h3 className="font-medium text-lg">مکملی یافت نشد</h3>
-                  <p className="text-muted-foreground text-sm mt-2">
-                    مکمل مورد نظر شما موجود نیست یا هنوز هیچ مکملی ثبت نشده است
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {filteredItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className={`p-3 rounded-lg border transition-all cursor-pointer flex items-start gap-3 ${
-                        selectedSupplements.includes(item.id)
-                          ? "border-purple-500 bg-purple-50"
-                          : "border-gray-200 hover:border-purple-300"
-                      }`}
-                      onClick={() => toggleItem(item.id)}
-                    >
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-1 flex items-center justify-center ${
-                          selectedSupplements.includes(item.id)
-                            ? "border-purple-500 bg-purple-500"
-                            : "border-gray-300"
-                        }`}
-                      >
-                        {selectedSupplements.includes(item.id) && (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="10"
-                            height="10"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="white"
-                            strokeWidth="4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start">
-                          <h4 className="font-medium text-sm">{item.name}</h4>
-                          <span className={`text-xs ${getCategoryChipColor(item.category)} px-2 py-0.5 rounded mr-1`}>
-                            {item.category}
-                          </span>
-                        </div>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <span className="font-medium">مقدار مصرف:</span>
-                          <span className="mr-1">{item.dosage}</span>
-                        </div>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <span className="font-medium">زمان مصرف:</span>
-                          <span className="mr-1">{item.timing}</span>
-                        </div>
-                        <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                          {item.description}
-                        </p>
-                      </div>
+            <TabsContent value="supplements" className="mt-0 flex-1 overflow-hidden">
+              <ScrollArea className="h-[calc(98vh-300px)]">
+                {filteredSupplements.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-40 text-center p-4">
+                    <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-4">
+                      <FlaskConical className="h-8 w-8 text-purple-500" />
                     </div>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </TabsContent>
-
-          <TabsContent value="vitamins" className="mt-0">
-            <ScrollArea className="flex-grow h-[450px] overflow-y-auto pr-4">
-              {filteredItems.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-40 text-center p-4">
-                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
-                    <Pill className="h-8 w-8 text-blue-500" />
+                    <h3 className="font-medium text-lg">هیچ مکملی یافت نشد</h3>
+                    <p className="text-muted-foreground text-sm mt-2">
+                      مکمل مورد نظر شما موجود نیست یا هنوز هیچ مکملی ثبت نشده است
+                    </p>
                   </div>
-                  <h3 className="font-medium text-lg">ویتامینی یافت نشد</h3>
-                  <p className="text-muted-foreground text-sm mt-2">
-                    ویتامین مورد نظر شما موجود نیست یا هنوز هیچ ویتامینی ثبت نشده است
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {filteredItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className={`p-3 rounded-lg border transition-all cursor-pointer flex items-start gap-3 ${
-                        selectedVitamins.includes(item.id)
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-blue-300"
-                      }`}
-                      onClick={() => toggleItem(item.id)}
-                    >
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pr-4">
+                    {filteredSupplements.map((supplement) => (
                       <div
-                        className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-1 flex items-center justify-center ${
-                          selectedVitamins.includes(item.id)
-                            ? "border-blue-500 bg-blue-500"
-                            : "border-gray-300"
+                        key={supplement.id}
+                        className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                          selectedSupplements.includes(supplement.id)
+                            ? "border-purple-500 bg-purple-50"
+                            : "border-gray-200 hover:border-purple-300"
                         }`}
+                        onClick={() => toggleItem(supplement.id, "supplement")}
                       >
-                        {selectedVitamins.includes(item.id) && (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="10"
-                            height="10"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="white"
-                            strokeWidth="4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
+                        <div className="flex gap-3">
+                          <div
+                            className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${
+                              selectedSupplements.includes(supplement.id)
+                                ? "border-purple-500 bg-purple-500"
+                                : "border-gray-300"
+                            }`}
                           >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
+                            {selectedSupplements.includes(supplement.id) && (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="10"
+                                height="10"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="white"
+                                strokeWidth="4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
+                          </div>
+                          <div>
+                            <div className="flex justify-between">
+                              <h4 className="font-medium">{supplement.name}</h4>
+                              {supplement.category && (
+                                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                                  {supplement.category}
+                                </span>
+                              )}
+                            </div>
+                            {supplement.description && (
+                              <p className="text-muted-foreground text-sm mt-1 line-clamp-2">
+                                {supplement.description}
+                              </p>
+                            )}
+                            {supplement.dosage && (
+                              <p className="text-xs text-gray-600 mt-2">
+                                دوز مصرفی: {supplement.dosage}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start">
-                          <h4 className="font-medium text-sm">{item.name}</h4>
-                          <span className={`text-xs ${getCategoryChipColor(item.category)} px-2 py-0.5 rounded mr-1`}>
-                            {item.category}
-                          </span>
-                        </div>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <span className="font-medium">مقدار مصرف:</span>
-                          <span className="mr-1">{item.dosage}</span>
-                        </div>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <span className="font-medium">زمان مصرف:</span>
-                          <span className="mr-1">{item.timing}</span>
-                        </div>
-                        <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </TabsContent>
-        </Tabs>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
 
-        <div className="border-t pt-4 mt-auto flex justify-between items-center flex-shrink-0">
-          <div className="text-sm font-medium">
-            {currentTab === "supplements" ? "مکمل‌های" : "ویتامین‌های"} انتخاب شده:{" "}
-            <span className={currentTab === "supplements" ? "text-purple-600" : "text-blue-600"}>
-              {toPersianNumbers(
-                currentTab === "supplements" 
-                  ? selectedSupplements.length 
-                  : selectedVitamins.length
-              )}
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="gap-2"
-            >
-              <X className="h-4 w-4" />
-              انصراف
-            </Button>
-            <Button
-              onClick={handleSave}
-              className={`gap-2 bg-gradient-to-r ${
-                currentTab === "supplements"
-                  ? "from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                  : "from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-              }`}
-            >
-              <Save className="h-4 w-4" />
-              ذخیره {currentTab === "supplements" ? "مکمل‌ها" : "ویتامین‌ها"}
-            </Button>
+            <TabsContent value="vitamins" className="mt-0 flex-1 overflow-hidden">
+              <ScrollArea className="h-[calc(98vh-300px)]">
+                {filteredSupplements.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-40 text-center p-4">
+                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+                      <Pill className="h-8 w-8 text-blue-500" />
+                    </div>
+                    <h3 className="font-medium text-lg">هیچ ویتامینی یافت نشد</h3>
+                    <p className="text-muted-foreground text-sm mt-2">
+                      ویتامین مورد نظر شما موجود نیست یا هنوز هیچ ویتامینی ثبت نشده است
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pr-4">
+                    {filteredSupplements.map((vitamin) => (
+                      <div
+                        key={vitamin.id}
+                        className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                          selectedVitamins.includes(vitamin.id)
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-blue-300"
+                        }`}
+                        onClick={() => toggleItem(vitamin.id, "vitamin")}
+                      >
+                        <div className="flex gap-3">
+                          <div
+                            className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${
+                              selectedVitamins.includes(vitamin.id)
+                                ? "border-blue-500 bg-blue-500"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {selectedVitamins.includes(vitamin.id) && (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="10"
+                                height="10"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="white"
+                                strokeWidth="4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
+                          </div>
+                          <div>
+                            <div className="flex justify-between">
+                              <h4 className="font-medium">{vitamin.name}</h4>
+                              {vitamin.category && (
+                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                  {vitamin.category}
+                                </span>
+                              )}
+                            </div>
+                            {vitamin.description && (
+                              <p className="text-muted-foreground text-sm mt-1 line-clamp-2">
+                                {vitamin.description}
+                              </p>
+                            )}
+                            {vitamin.dosage && (
+                              <p className="text-xs text-gray-600 mt-2">
+                                دوز مصرفی: {vitamin.dosage}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
+          
+          <div className="border-t mt-auto pt-4 flex justify-between items-center">
+            <div className="text-sm font-medium">
+              {activeTab === "supplements" ? "مکمل" : "ویتامین"}های انتخاب شده:{" "}
+              <span className={activeTab === "supplements" ? "text-purple-600" : "text-blue-600"}>
+                {toPersianNumbers(getSelectedItems().length)}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="gap-2"
+              >
+                <X className="h-4 w-4" />
+                انصراف
+              </Button>
+              <Button
+                onClick={handleSaveSelections}
+                className={`gap-2 ${
+                  activeTab === "supplements"
+                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                    : "bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700"
+                }`}
+              >
+                <Save className="h-4 w-4" />
+                ذخیره {activeTab === "supplements" ? "مکمل ها" : "ویتامین ها"}
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
