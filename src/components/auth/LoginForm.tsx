@@ -25,10 +25,25 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [locked, setLocked] = useState(false);
   const [lockExpiry, setLockExpiry] = useState<Date | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
+  const [gymName, setGymName] = useState("");
   const navigate = useNavigate();
 
-  // Check if account is locked
+  // Load gym name and check if account is locked
   useEffect(() => {
+    // Get gym name
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        if (profile.gymName) {
+          setGymName(profile.gymName);
+        }
+      } catch (error) {
+        console.error('Error loading gym name:', error);
+      }
+    }
+
+    // Check if account is locked
     const lockedUntil = localStorage.getItem("loginLockExpiry");
     if (lockedUntil) {
       const expiryDate = new Date(lockedUntil);
@@ -88,6 +103,19 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     // Check if account is locked
     if (locked) {
       setError("حساب کاربری شما قفل شده است. لطفاً صبر کنید.");
+      setLoading(false);
+      return;
+    }
+
+    // Validate inputs
+    if (!email.trim()) {
+      setError("لطفاً ایمیل خود را وارد کنید");
+      setLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("لطفاً رمز عبور خود را وارد کنید");
       setLoading(false);
       return;
     }
@@ -156,7 +184,13 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           <div className="mx-auto mb-4 rounded-full bg-primary/10 p-3 w-16 h-16 flex items-center justify-center">
             <UserCircle2 className="h-10 w-10 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold text-center mb-2">ورود به سیستم مدیریت</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center mb-2">
+            {gymName ? (
+              <>ورود به سیستم مدیریت {gymName}</>
+            ) : (
+              <>ورود به سیستم مدیریت</>
+            )}
+          </CardTitle>
           <p className="text-center text-muted-foreground text-sm">برای دسترسی به پنل، وارد حساب کاربری خود شوید</p>
         </CardHeader>
         
@@ -243,9 +277,12 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm"
+                  className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium"
                 >
-                  {error}
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
                 </motion.div>
               )}
               

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
-import { Loader } from "lucide-react";
+import { Loader, Weight } from "lucide-react";
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
@@ -11,8 +11,22 @@ interface LoadingScreenProps {
 
 export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
   const [progress, setProgress] = useState(0);
+  const [gymName, setGymName] = useState("");
   
   useEffect(() => {
+    // Load gym name from trainer profile
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        if (profile.gymName) {
+          setGymName(profile.gymName);
+        }
+      } catch (error) {
+        console.error('Error loading gym name:', error);
+      }
+    }
+    
     // Simulate asset loading with realistic progress
     const steps = [
       { target: 15, duration: 400 },
@@ -83,7 +97,11 @@ export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
         </div>
         
         <h1 className="text-2xl font-bold mb-8 text-center">
-          در حال بارگذاری برنامه مدیریت باشگاه
+          {gymName ? (
+            <>در حال بارگذاری برنامه {gymName}</>
+          ) : (
+            <>در حال بارگذاری برنامه مدیریت باشگاه</>
+          )}
         </h1>
         
         <div className="w-full space-y-4">
@@ -100,6 +118,3 @@ export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
     </motion.div>
   );
 };
-
-// Import the Weight icon
-import { Weight } from "lucide-react";
