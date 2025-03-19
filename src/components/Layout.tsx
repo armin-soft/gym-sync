@@ -1,11 +1,11 @@
-
 import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu, Weight } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Spinner } from "./ui/spinner";
 import { cn } from "@/lib/utils";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
+import { AppIcon } from "./ui/app-icon";
 
 const LoadingFallback = () => (
   <div className="flex h-[80vh] items-center justify-center">
@@ -35,10 +35,8 @@ export const Layout = () => {
   };
   
   useEffect(() => {
-    // Load gym name from local storage
     loadGymName();
     
-    // Listen for storage events to update gym name when it changes
     const handleStorageChange = () => {
       loadGymName();
     };
@@ -54,7 +52,6 @@ export const Layout = () => {
     <div className="min-h-screen h-screen w-screen overflow-hidden bg-background persian-numbers" dir="rtl">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      {/* Enhanced Toaster component for notifications */}
       <Toaster 
         position="top-center"
         toastOptions={{
@@ -90,10 +87,7 @@ export const Layout = () => {
               <Menu className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-2">
-              <Weight className={cn(
-                "h-6 w-6",
-                "text-primary animate-pulse"
-              )} />
+              <AppIcon size="sm" animated />
               <h1 className="text-lg font-semibold">{gymName}</h1>
             </div>
           </div>

@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
-import { Loader, Weight } from "lucide-react";
+import { Loader } from "lucide-react";
+import { AppIcon } from "./ui/app-icon";
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
@@ -92,7 +92,7 @@ export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
         <div className="relative mb-4">
           <Loader className="h-16 w-16 text-primary animate-spin" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <Weight className="h-8 w-8 text-primary" />
+            <AppIcon size="lg" animated />
           </div>
         </div>
         
