@@ -232,28 +232,26 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             <p className="text-center mb-2">لطفاً ابتدا یک دسته‌بندی انتخاب کنید</p>
           </div>
         ) : filteredExercises.length > 0 ? (
-          <div className="flex-1 overflow-hidden" style={{ minHeight: "400px", height: "calc(65vh - 180px)" }}>
-            <ScrollArea className="h-full pr-4">
-              <div className={viewMode === "grid" 
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 p-2" 
-                : "flex flex-col space-y-3 p-2"
-              }>
-                {filteredExercises.map((exercise) => {
-                  const category = categories.find(cat => cat.id === exercise.categoryId);
-                  return (
-                    <ExerciseCard
-                      key={exercise.id}
-                      exercise={exercise}
-                      category={category}
-                      isSelected={selectedExercises.includes(exercise.id)}
-                      viewMode={viewMode}
-                      onClick={() => toggleExercise(exercise.id)}
-                    />
-                  );
-                })}
-              </div>
-            </ScrollArea>
-          </div>
+          <ScrollArea className="flex-1 pr-4" style={{ height: "calc(60vh - 60px)" }}>
+            <div className={viewMode === "grid" 
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" 
+              : "flex flex-col space-y-3"
+            }>
+              {filteredExercises.map((exercise) => {
+                const category = categories.find(cat => cat.id === exercise.categoryId);
+                return (
+                  <ExerciseCard
+                    key={exercise.id}
+                    exercise={exercise}
+                    category={category}
+                    isSelected={selectedExercises.includes(exercise.id)}
+                    viewMode={viewMode}
+                    onClick={() => toggleExercise(exercise.id)}
+                  />
+                );
+              })}
+            </div>
+          </ScrollArea>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh]">
             <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
