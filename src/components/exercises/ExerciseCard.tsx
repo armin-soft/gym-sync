@@ -29,8 +29,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border",
-        viewMode === "grid" ? "w-full h-36" : "w-full h-24",
+        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full h-24",
         isSelected 
           ? "ring-2 ring-primary shadow-lg border-primary/50" 
           : "hover:shadow-md border-gray-100 hover:border-gray-200"
@@ -41,45 +40,23 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         "absolute inset-0 bg-gradient-to-br",
         isSelected ? "from-primary/10 to-primary/30" : "from-gray-50 to-gray-100"
       )}>
-        <div className={cn(
-          "absolute inset-0 flex flex-col",
-          viewMode === "grid" ? "items-center justify-center p-4" : "p-3"
-        )}>
-          {viewMode === "grid" ? (
-            <>
-              <div className={cn(
-                "mb-3 p-2.5 rounded-full",
-                isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
-              )}>
-                <Dumbbell className="w-6 h-6" />
-              </div>
-              <h3 className="font-semibold text-center line-clamp-2 mb-1">{exercise.name}</h3>
+        <div className="absolute inset-0 flex items-center p-3">
+          <div className={cn(
+            "p-3 mr-3 rounded-full shrink-0",
+            isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
+          )}>
+            <Dumbbell className="w-6 h-6" />
+          </div>
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <h3 className="font-semibold text-lg line-clamp-1">{exercise.name}</h3>
+            <div className="flex items-center mt-1">
               {category && (
-                <Badge variant={isSelected ? "default" : "outline"} className="mt-2">
+                <Badge variant={isSelected ? "default" : "outline"} className="mr-2">
                   {category.name}
                 </Badge>
               )}
-            </>
-          ) : (
-            <div className="flex items-center w-full h-full">
-              <div className={cn(
-                "p-3 mr-3 rounded-full shrink-0",
-                isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
-              )}>
-                <Dumbbell className="w-6 h-6" />
-              </div>
-              <div className="flex flex-col flex-1 overflow-hidden">
-                <h3 className="font-semibold text-lg line-clamp-1">{exercise.name}</h3>
-                <div className="flex items-center mt-1">
-                  {category && (
-                    <Badge variant={isSelected ? "default" : "outline"} className="mr-2">
-                      {category.name}
-                    </Badge>
-                  )}
-                </div>
-              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </motion.div>
