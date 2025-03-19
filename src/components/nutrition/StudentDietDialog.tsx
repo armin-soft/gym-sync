@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -140,7 +141,7 @@ export function StudentDietDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] h-[750px] flex flex-col overflow-hidden" dir="rtl">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col overflow-hidden" dir="rtl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -223,7 +224,7 @@ export function StudentDietDialog({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pr-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 pr-4">
               {filteredMeals.map((meal) => (
                 <div
                   key={meal.id}
@@ -309,8 +310,8 @@ export function StudentDietDialog({
           )}
         </ScrollArea>
 
-        <div className="border-t pt-4 mt-4 flex justify-between items-center">
-          <div className="text-sm font-medium">
+        <DialogFooter className="border-t pt-4 mt-4">
+          <div className="text-sm font-medium mr-auto">
             وعده‌های غذایی انتخاب شده:{" "}
             <span className="text-green-600">{toPersianNumbers(selectedMeals.length)}</span>
           </div>
@@ -331,7 +332,7 @@ export function StudentDietDialog({
               ذخیره برنامه غذایی
             </Button>
           </div>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -232,26 +232,21 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             <p className="text-center mb-2">لطفاً ابتدا یک دسته‌بندی انتخاب کنید</p>
           </div>
         ) : filteredExercises.length > 0 ? (
-          <ScrollArea className="flex-1 pr-4" style={{ height: "calc(60vh - 60px)" }}>
-            <div className={viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" 
-              : "flex flex-col space-y-3"
-            }>
-              {filteredExercises.map((exercise) => {
-                const category = categories.find(cat => cat.id === exercise.categoryId);
-                return (
-                  <ExerciseCard
-                    key={exercise.id}
-                    exercise={exercise}
-                    category={category}
-                    isSelected={selectedExercises.includes(exercise.id)}
-                    viewMode={viewMode}
-                    onClick={() => toggleExercise(exercise.id)}
-                  />
-                );
-              })}
-            </div>
-          </ScrollArea>
+          <StudentExerciseListWrapper maxHeight="calc(80vh - 250px)">
+            {filteredExercises.map((exercise) => {
+              const category = categories.find(cat => cat.id === exercise.categoryId);
+              return (
+                <ExerciseCard
+                  key={exercise.id}
+                  exercise={exercise}
+                  category={category}
+                  isSelected={selectedExercises.includes(exercise.id)}
+                  viewMode={viewMode}
+                  onClick={() => toggleExercise(exercise.id)}
+                />
+              );
+            })}
+          </StudentExerciseListWrapper>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh]">
             <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
@@ -282,7 +277,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full overflow-hidden flex flex-col">
         <DialogHeader className="pb-4 border-b">
           <DialogTitle className="text-xl flex items-center gap-2">
             <Dumbbell className="h-5 w-5 text-primary" />

@@ -166,10 +166,8 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         onOpenChange={setIsSupplementDialogOpen}
         studentName={selectedStudentForSupplement?.name || ""}
         onSave={handleSaveSupplementsWrapper}
-        initialData={{
-          supplements: selectedStudentForSupplement?.supplements || [],
-          vitamins: selectedStudentForSupplement?.vitamins || []
-        }}
+        initialSupplements={selectedStudentForSupplement?.supplements || []}
+        initialVitamins={selectedStudentForSupplement?.vitamins || []}
       />
 
       <StudentDownloadDialog
