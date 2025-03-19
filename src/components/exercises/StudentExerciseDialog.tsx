@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { ExerciseCard } from "./ExerciseCard";
-import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp, Save, Plus } from "lucide-react";
+import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -32,7 +32,6 @@ import {
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { useToast } from "@/hooks/use-toast";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -57,7 +56,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
 }) => {
-  const { toast } = useToast();
   const { data: exercises = [] } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
@@ -179,26 +177,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     const activeColorClass = getActiveTabContentColor(tabValue);
     const btnGradient = getBtnGradient(tabValue);
 
-    const handleAddToWorkout = (exerciseId: number) => {
-      if (!selectedExercises.includes(exerciseId)) {
-        toggleExercise(exerciseId);
-        toast({
-          title: "اضافه شد",
-          description: "تمرین به لیست اضافه شد",
-        });
-      }
-    };
-
-    const handleSaveExercise = (exerciseId: number) => {
-      const exerciseToSave = exercises.find(ex => ex.id === exerciseId);
-      if (exerciseToSave) {
-        toast({
-          title: "ذخیره شد",
-          description: `تمرین ${exerciseToSave.name} ذخیره شد`,
-        });
-      }
-    };
-
     return (
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
         <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
@@ -255,8 +233,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   isSelected={selectedExercises.includes(exercise.id)}
                   viewMode={viewMode}
                   onClick={() => toggleExercise(exercise.id)}
-                  onAddToWorkout={() => handleAddToWorkout(exercise.id)}
-                  onSave={() => handleSaveExercise(exercise.id)}
                 />
               );
             })}
@@ -281,7 +257,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
             className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
           >
-            <Save className="mr-1 h-4 w-4" />
             ذخیره تمرین‌های روز {toPersianNumbers(dayNumber)}
           </Button>
         </div>
