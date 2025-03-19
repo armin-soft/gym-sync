@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -221,7 +222,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
         
         {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper maxHeight="calc(80vh - 250px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
+          <StudentExerciseListWrapper maxHeight="calc(85vh - 200px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -265,8 +266,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full overflow-hidden flex flex-col">
-        <DialogHeader className="pb-4 border-b">
+      <DialogContent className="max-w-[98vw] w-full max-h-[98vh] p-0 overflow-hidden">
+        <DialogHeader className="pb-4 border-b p-6">
           <DialogTitle className="text-xl flex items-center gap-2">
             <Dumbbell className="h-5 w-5 text-primary" />
             <span>مدیریت تمرین‌های {studentName}</span>
@@ -276,7 +277,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 px-1">
+        <div className="mt-4 px-6">
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -319,63 +320,65 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               </Select>
             )}
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 whitespace-nowrap">
-                  <Filter className="h-4 w-4" />
-                  دسته‌بندی
-                  {selectedCategoryId && (
-                    <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
-                      ✓
-                    </span>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">
-                <DropdownMenuItem 
-                  onClick={() => setSelectedCategoryId(null)}
-                  className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
-                >
-                  همه دسته‌بندی‌ها
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                
-                {filteredCategories.length > 0 ? (
-                  filteredCategories.map(category => (
-                    <DropdownMenuItem
-                      key={category.id}
-                      onClick={() => setSelectedCategoryId(category.id)}
-                      className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
-                    >
-                      {category.name}
-                      {category.type && (
-                        <span className="mr-auto text-xs text-gray-500">{category.type}</span>
-                      )}
-                    </DropdownMenuItem>
-                  ))
-                ) : (
-                  <DropdownMenuItem disabled className="text-gray-400">
-                    دسته��بندی‌ای یافت نشد
+            {selectedExerciseType && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2 whitespace-nowrap">
+                    <Filter className="h-4 w-4" />
+                    دسته‌بندی
+                    {selectedCategoryId && (
+                      <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
+                        ✓
+                      </span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">
+                  <DropdownMenuItem 
+                    onClick={() => setSelectedCategoryId(null)}
+                    className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
+                  >
+                    همه دسته‌بندی‌ها
                   </DropdownMenuItem>
-                )}
-                
-                {(searchQuery || selectedCategoryId || selectedExerciseType) && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={handleClearSearch} 
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      پاک کردن فیلترها
+                  <DropdownMenuSeparator />
+                  
+                  {filteredCategories.length > 0 ? (
+                    filteredCategories.map(category => (
+                      <DropdownMenuItem
+                        key={category.id}
+                        onClick={() => setSelectedCategoryId(category.id)}
+                        className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
+                      >
+                        {category.name}
+                        {category.type && (
+                          <span className="mr-auto text-xs text-gray-500">{category.type}</span>
+                        )}
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <DropdownMenuItem disabled className="text-gray-400">
+                      دسته‌بندی‌ای یافت نشد
                     </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  )}
+                  
+                  {(searchQuery || selectedCategoryId || selectedExerciseType) && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={handleClearSearch} 
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        پاک کردن فیلترها
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
 
-        <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-6">
+        <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-6 px-6 pb-6">
           <TabsList className="grid grid-cols-4 gap-2 w-full">
             <TabsTrigger 
               value="day1" 
@@ -440,7 +443,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter className="pt-4 border-t mt-4">
+        <DialogFooter className="p-6 pt-4 border-t mt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             بستن
           </Button>
