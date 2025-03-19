@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { LoginForm } from "./auth/LoginForm";
 import { LoadingScreen } from "./LoadingScreen";
 import { motion } from "framer-motion";
+import { defaultProfile } from "@/types/trainer";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -13,6 +14,12 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
+    // Initialize default trainer profile if it doesn't exist
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (!savedProfile) {
+      localStorage.setItem('trainerProfile', JSON.stringify(defaultProfile));
+    }
+    
     // Check if the user is already logged in
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (isLoggedIn) {
