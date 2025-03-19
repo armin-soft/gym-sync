@@ -1,7 +1,7 @@
 
 import React from "react";
-import { motion } from "framer-motion";
-import { Bell, CheckCircle, Info, AlertTriangle, XCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Bell, CheckCircle, Info, AlertTriangle, XCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -28,10 +28,10 @@ export const NotificationToast = ({
   };
 
   const gradients = {
-    success: "from-green-500/10 to-green-500/5",
-    info: "from-primary/10 to-primary/5",
-    warning: "from-amber-500/10 to-amber-500/5",
-    error: "from-red-500/10 to-red-500/5",
+    success: "from-green-500/20 to-green-500/5",
+    info: "from-primary/20 to-primary/5",
+    warning: "from-amber-500/20 to-amber-500/5",
+    error: "from-red-500/20 to-red-500/5",
   };
 
   const borders = {
@@ -42,42 +42,60 @@ export const NotificationToast = ({
   };
 
   const bgColors = {
-    success: "bg-green-500/10",
-    info: "bg-primary/10",
-    warning: "bg-amber-500/10",
-    error: "bg-red-500/10",
+    success: "bg-green-500/20",
+    info: "bg-primary/20",
+    warning: "bg-amber-500/20",
+    error: "bg-red-500/20",
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       className={cn(
-        "bg-gradient-to-r backdrop-blur-md border shadow-lg rounded-lg px-6 py-4 flex items-center gap-3 persian-numbers select-none",
+        "relative bg-gradient-to-r backdrop-blur-md border shadow-lg rounded-xl px-6 py-4 flex items-center gap-3 persian-numbers select-none",
         gradients[type],
         borders[type]
       )}
-      onClick={onClose}
     >
       <div className={cn("flex-shrink-0 p-2 rounded-full", bgColors[type])}>
-        {type === "info" ? <Bell className="h-5 w-5 text-primary" /> : icons[type]}
+        {icons[type]}
       </div>
-      <div className="flex-1">
-        <h3 className="font-medium text-foreground">{title}</h3>
+      <div className="flex-1 pr-6">
+        <h3 className="font-semibold text-foreground">{title}</h3>
         {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-sm text-muted-foreground/80 mt-0.5">{description}</p>
         )}
       </div>
-      {type === "success" && (
-        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-      )}
+      
+      <button 
+        onClick={onClose}
+        className="absolute top-3 right-3 p-1 rounded-full hover:bg-foreground/10 transition-colors duration-200"
+        aria-label="Close"
+      >
+        <X className="h-4 w-4 text-foreground/50 hover:text-foreground/80" />
+      </button>
+      
+      {/* Progress bar animation */}
+      <motion.div
+        initial={{ width: "0%" }}
+        animate={{ width: "100%" }}
+        transition={{ duration: 5, ease: "linear" }}
+        className={cn(
+          "absolute bottom-0 left-0 h-0.5 rounded-full",
+          type === "success" ? "bg-green-500/50" : 
+          type === "info" ? "bg-primary/50" : 
+          type === "warning" ? "bg-amber-500/50" : 
+          "bg-red-500/50"
+        )}
+      />
     </motion.div>
   );
 };
 
-// Helper function to create toast content
+// Helper functions to create toast content with enhanced UI
 export const createNotificationToast = (
   type: NotificationType,
   title: string,
@@ -91,4 +109,33 @@ export const createNotificationToast = (
       onClose={() => toast.dismiss(t)}
     />
   );
+};
+
+// Pre-configured toast functions
+export const successToast = (title: string, description?: string) => {
+  toast.custom(createNotificationToast("success", title, description), {
+    position: "top-center",
+    duration: 5000,
+  });
+};
+
+export const infoToast = (title: string, description?: string) => {
+  toast.custom(createNotificationToast("info", title, description), {
+    position: "top-center",
+    duration: 5000,
+  });
+};
+
+export const warningToast = (title: string, description?: string) => {
+  toast.custom(createNotificationToast("warning", title, description), {
+    position: "top-center",
+    duration: 5000,
+  });
+};
+
+export const errorToast = (title: string, description?: string) => {
+  toast.custom(createNotificationToast("error", title, description), {
+    position: "top-center",
+    duration: 7000, // Longer duration for errors
+  });
 };

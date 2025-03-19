@@ -61,19 +61,23 @@ export const Layout = () => {
           className: 'persian-numbers', 
           duration: 5000,
           style: {
-            borderRadius: '0.75rem',
-            padding: '1rem',
+            borderRadius: '1rem',
+            padding: '0',
             backdropFilter: 'blur(10px)',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            border: '1px solid rgba(0, 0, 0, 0.05)',
-            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+            backgroundColor: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
             direction: 'rtl',
+            margin: '0 auto',
+            width: 'auto',
+            maxWidth: '420px',
           },
         }}
-        closeButton
+        closeButton={false}
         richColors
         expand={true}
         visibleToasts={3}
+        gap={10}
       />
       
       <div className="flex flex-col h-full w-full">
