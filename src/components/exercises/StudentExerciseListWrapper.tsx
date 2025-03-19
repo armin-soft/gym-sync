@@ -8,12 +8,14 @@ interface StudentExerciseListWrapperProps {
   children: React.ReactNode;
   className?: string;
   maxHeight?: string;
+  viewMode?: "grid" | "list";
 }
 
 export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "70vh"
+  maxHeight = "70vh",
+  viewMode = "grid"
 }) => {
   return (
     <Card className={cn(
@@ -21,7 +23,12 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
       className
     )}>
       <ScrollArea className="p-1 mx-auto" style={{ maxHeight }}>
-        <div className="p-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+        <div className={cn(
+          "p-4 w-full", 
+          viewMode === "grid" 
+            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4" 
+            : "flex flex-col space-y-2"
+        )}>
           {children}
         </div>
       </ScrollArea>
