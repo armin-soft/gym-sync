@@ -99,7 +99,7 @@ export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
         
         <h1 className="text-2xl font-bold mb-8 text-center">
           {gymName ? (
-            <>در حال بارگذاری {gymName} - مدیریت برنامه</>
+            <>در حال بارگذاری مدیریت برنامه {gymName}</>
           ) : (
             <>در حال بارگذاری مدیریت برنامه</>
           )}

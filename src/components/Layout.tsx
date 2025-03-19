@@ -89,7 +89,7 @@ export const Layout = () => {
             <div className="flex items-center gap-2">
               <AppIcon size="sm" animated />
               <h1 className="text-lg font-semibold">
-                {gymName ? `${gymName} - مدیریت برنامه` : 'مدیریت برنامه'}
+                {gymName ? `مدیریت برنامه ${gymName}` : 'مدیریت برنامه'}
               </h1>
             </div>
           </div>
