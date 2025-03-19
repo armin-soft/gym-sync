@@ -1,11 +1,10 @@
-
 import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { Spinner } from "./ui/spinner";
 import { Outlet } from "react-router-dom";
-import { Toaster } from "sonner";
 import { AppIcon } from "./ui/app-icon";
+import { Toaster } from "@/components/ui/toaster";
 
 const LoadingFallback = () => (
   <div className="flex h-[80vh] items-center justify-center">
@@ -52,30 +51,7 @@ export const Layout = () => {
     <div className="min-h-screen h-screen w-screen overflow-hidden bg-background persian-numbers" dir="rtl">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      <Toaster 
-        position="top-center"
-        toastOptions={{
-          className: 'persian-numbers', 
-          duration: 5000,
-          style: {
-            borderRadius: '1rem',
-            padding: '0',
-            backdropFilter: 'blur(10px)',
-            backgroundColor: 'transparent',
-            border: 'none',
-            boxShadow: 'none',
-            direction: 'rtl',
-            margin: '0 auto',
-            width: 'auto',
-            maxWidth: '420px',
-          },
-        }}
-        closeButton={false}
-        richColors
-        expand={true}
-        visibleToasts={3}
-        gap={10}
-      />
+      <Toaster />
       
       <div className="flex flex-col h-full w-full">
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
