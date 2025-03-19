@@ -177,6 +177,18 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     const activeColorClass = getActiveTabContentColor(tabValue);
     const btnGradient = getBtnGradient(tabValue);
 
+    const handleAddToWorkout = (exerciseId: number) => {
+      if (!selectedExercises.includes(exerciseId)) {
+        toggleExercise(exerciseId);
+      }
+    };
+
+    const handleSaveExercise = (exerciseId: number) => {
+      if (!selectedExercises.includes(exerciseId)) {
+        toggleExercise(exerciseId);
+      }
+    };
+
     return (
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
         <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
@@ -233,6 +245,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   isSelected={selectedExercises.includes(exercise.id)}
                   viewMode={viewMode}
                   onClick={() => toggleExercise(exercise.id)}
+                  onAddToWorkout={() => handleAddToWorkout(exercise.id)}
+                  onSave={() => handleSaveExercise(exercise.id)}
                 />
               );
             })}

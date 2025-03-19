@@ -21,7 +21,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
       className
     )}>
       <ScrollArea className="w-full overflow-auto" style={{ maxHeight }}>
-        <div className="p-4 w-full flex flex-col space-y-3">
+        <div className="p-4 w-full flex flex-col space-y-4">
           {children}
         </div>
       </ScrollArea>
