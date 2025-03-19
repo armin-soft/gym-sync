@@ -4,9 +4,7 @@ import { LoginForm } from "./auth/LoginForm";
 import { LoadingScreen } from "./LoadingScreen";
 import { motion, AnimatePresence } from "framer-motion";
 import { defaultProfile } from "@/types/trainer";
-import { toast } from "sonner";
-import { Bell, CheckCircle, Info } from "lucide-react";
-import { NotificationToast, successToast, infoToast } from "./ui/notification-toast";
+import { successToast } from "./ui/notification-toast";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -98,13 +96,13 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
           transition={{ duration: 1 }}
         >
           {/* Gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-primary/5 to-violet-500/10"></div>
           
-          {/* Animated circles */}
-          {[...Array(8)].map((_, i) => (
+          {/* Animated floating particles */}
+          {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute rounded-full bg-primary/5"
+              className="absolute rounded-full bg-gradient-to-r from-primary/10 to-indigo-500/20"
               style={{
                 width: `${Math.random() * 400 + 100}px`,
                 height: `${Math.random() * 400 + 100}px`,
@@ -117,7 +115,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
                 scale: 0.8,
               }}
               animate={{
-                opacity: [0.3, 0.6, 0.3],
+                opacity: [0.2, 0.5, 0.2],
                 scale: [0.8, 1.2, 0.8],
                 x: [0, Math.random() * 100 - 50, 0],
                 y: [0, Math.random() * 100 - 50, 0],

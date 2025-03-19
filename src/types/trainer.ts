@@ -19,7 +19,7 @@ export const defaultProfile: TrainerProfile = {
   fullName: "",
   bio: "",
   phone: "",
-  email: "MohammadAbbasiFix@gmail.com",
+  email: "",
   password: "Mohammad@1403",
   image: "/placeholder.svg",
   gymName: "",
