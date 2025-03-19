@@ -8,7 +8,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
-import { AlertCircle, CheckCircle2, Info, XCircle, Bell } from "lucide-react"
+import { AlertCircle, CheckCircle2, Info, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function Toaster() {
@@ -37,7 +37,7 @@ export function Toaster() {
             {...props}
             variant={variant}
             className={cn(
-              "group shadow-lg",
+              "group shadow-lg backdrop-blur-sm border border-slate-200",
               "data-[state=open]:animate-in data-[state=closed]:animate-out",
               "data-[swipe=end]:animate-out data-[state=closed]:fade-out-80",
               "persian-numbers flex items-start gap-3 p-4"
@@ -63,7 +63,7 @@ export function Toaster() {
           </Toast>
         )
       })}
-      <ToastViewport />
+      <ToastViewport className="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:top-0 sm:right-0 sm:left-0 sm:flex-col md:max-w-[420px] mx-auto" />
     </ToastProvider>
   )
 }
