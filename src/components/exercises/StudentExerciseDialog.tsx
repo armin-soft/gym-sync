@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -192,7 +191,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
         <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
           <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full shadow-sm`}>
-            تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
+            تمرین‌های انتخاب شده:{" "}
+            <span className="text-green-600">{toPersianNumbers(selectedExercises.length)}</span>
           </div>
           
           <div className="flex items-center gap-2">
@@ -265,23 +265,29 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         )}
         
-        <div className="mt-6 p-5 border border-slate-200 rounded-lg bg-slate-50 flex flex-col items-center justify-center space-y-3">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <BookmarkCheck className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">تعداد تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}</span>
-            </div>
-            <span className="text-xs text-gray-500">روز {toPersianNumbers(dayNumber)}</span>
+        <DialogFooter className="p-6 pt-4 border-t mt-4">
+          <div className="text-sm font-medium mr-auto">
+            تمرین‌های انتخاب شده:{" "}
+            <span className="text-green-600">{toPersianNumbers(selectedExercises.length)}</span>
           </div>
-          
-          <Button 
-            onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
-            className={`${btnGradient} shadow-md hover:shadow-lg transition-all w-full flex items-center justify-center gap-2`}
-          >
-            <Save className="h-4 w-4" />
-            ذخیره تمرین‌های روز {toPersianNumbers(dayNumber)}
-          </Button>
-        </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="gap-2"
+            >
+              <X className="h-4 w-4" />
+              انصراف
+            </Button>
+            <Button 
+              onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
+              className={`gap-2 ${btnGradient}`}
+            >
+              <Save className="h-4 w-4" />
+              ذخیره تمرین‌ها
+            </Button>
+          </div>
+        </DialogFooter>
       </div>
     );
   };
