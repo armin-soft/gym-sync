@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { 
-  Search, Save, X, Apple, CalendarDays, 
+  Search, Save, X, Apple, 
   Check, Salad, UtensilsCrossed, Sparkles, ChevronLeft,
   LayoutGrid, ListFilter, SlidersHorizontal
 } from "lucide-react";
@@ -33,8 +33,6 @@ interface StudentDietDialogProps {
 interface Meal {
   id: number;
   name: string;
-  description: string;
-  imageUrl?: string;
   day: string;
   type: string;
   calories?: number;
@@ -115,8 +113,7 @@ export function StudentDietDialog({
     if (searchQuery.trim() !== "") {
       filtered = filtered.filter(
         (meal) =>
-          meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          meal.description.toLowerCase().includes(searchQuery.toLowerCase())
+          meal.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 

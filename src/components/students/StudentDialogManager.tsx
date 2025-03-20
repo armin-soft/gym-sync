@@ -1,3 +1,4 @@
+
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
@@ -99,6 +100,13 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     
     try {
       const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
+      if (success && dayNumber === undefined) {
+        setIsExerciseDialogOpen(false);
+        toast({
+          title: "برنامه تمرینی ذخیره شد",
+          description: "برنامه تمرینی با موفقیت برای شاگرد ذخیره شد."
+        });
+      }
       return success;
     } catch (error) {
       console.error("Error saving exercises:", error);
@@ -114,25 +122,49 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
   const handleSaveDietWrapper = (mealIds: number[]): boolean => {
     if (!selectedStudentForDiet) return false;
     
-    const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
-    if (success) {
-      setIsDietDialogOpen(false);
+    try {
+      const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
+      if (success) {
+        setIsDietDialogOpen(false);
+        toast({
+          title: "برنامه غذایی ذخیره شد",
+          description: "برنامه غذایی با موفقیت برای شاگرد ذخیره شد."
+        });
+      }
+      return success;
+    } catch (error) {
+      console.error("Error saving diet:", error);
       toast({
-        title: "برنامه غذایی ذخیره شد",
-        description: "برنامه غذایی با موفقیت برای شاگرد ذخیره شد.",
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی برنامه غذایی پیش آمد. لطفا مجدد تلاش کنید."
       });
+      return false;
     }
-    return success;
   };
   
   const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}): boolean => {
     if (!selectedStudentForSupplement) return false;
     
-    const success = onSaveSupplements(data, selectedStudentForSupplement.id);
-    if (success) {
-      setIsSupplementDialogOpen(false);
+    try {
+      const success = onSaveSupplements(data, selectedStudentForSupplement.id);
+      if (success) {
+        setIsSupplementDialogOpen(false);
+        toast({
+          title: "مکمل‌ها و ویتامین‌ها ذخیره شدند",
+          description: "برنامه مکمل‌ها و ویتامین‌ها با موفقیت برای شاگرد ذخیره شد."
+        });
+      }
+      return success;
+    } catch (error) {
+      console.error("Error saving supplements:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی مکمل‌ها و ویتامین‌ها پیش آمد. لطفا مجدد تلاش کنید."
+      });
+      return false;
     }
-    return success;
   };
 
   useImperativeHandle(ref, () => ({
