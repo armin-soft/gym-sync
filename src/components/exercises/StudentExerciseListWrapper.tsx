@@ -4,6 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ExerciseViewControls } from "./ExerciseViewControls";
+import { motion } from "framer-motion";
 
 interface StudentExerciseListWrapperProps {
   children: React.ReactNode;
@@ -42,15 +43,20 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
         </div>
       )}
       <ScrollArea className="w-full overflow-auto" style={{ maxHeight }}>
-        <div className={cn(
-          "p-4 w-full", 
-          viewMode === "grid" 
-            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3" 
-            : "flex flex-col space-y-3"
-        )}>
+        <motion.div
+          layout
+          className={cn(
+            "p-4 w-full", 
+            viewMode === "grid" 
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3" 
+              : "flex flex-col space-y-3"
+          )}
+        >
           {children}
-        </div>
+        </motion.div>
       </ScrollArea>
     </Card>
   );
 };
+
+export default StudentExerciseListWrapper;

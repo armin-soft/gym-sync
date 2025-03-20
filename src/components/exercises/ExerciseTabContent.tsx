@@ -1,12 +1,14 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Dumbbell, Tag } from "lucide-react";
+import { Dumbbell, Tag, Info } from "lucide-react";
 import { ExerciseCard } from "./ExerciseCard";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { ExerciseViewControls } from "./ExerciseViewControls";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ExerciseTabContentProps {
   selectedExercises: number[];
@@ -41,11 +43,11 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
 }) => {
   const getActiveTabContentColor = (tab: string) => {
     switch (tab) {
-      case "day1": return "bg-blue-50 text-blue-600";
-      case "day2": return "bg-purple-50 text-purple-600";
-      case "day3": return "bg-pink-50 text-pink-600";
-      case "day4": return "bg-amber-50 text-amber-600";
-      default: return "bg-slate-50 text-slate-600";
+      case "day1": return "bg-blue-50/70 text-blue-600";
+      case "day2": return "bg-purple-50/70 text-purple-600";
+      case "day3": return "bg-pink-50/70 text-pink-600";
+      case "day4": return "bg-amber-50/70 text-amber-600";
+      default: return "bg-slate-50/70 text-slate-600";
     }
   };
 
@@ -63,14 +65,36 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   const btnGradient = getBtnGradient(tabValue);
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col mt-4">
-      <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
-        <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full shadow-sm`}>
-          تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.2 }}
+      className="flex-1 overflow-hidden flex flex-col mt-4"
+    >
+      <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-2">
+          <div className={`text-sm font-medium ${activeColorClass} px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5`}>
+            <Dumbbell className="h-3.5 w-3.5" />
+            <span>تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}</span>
+          </div>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full">
+                  <Info className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">با کلیک بر روی هر تمرین آن را به لیست اضافه یا از آن حذف کنید</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         
         <div className="flex items-center gap-2">
-          <div className="bg-gray-100 rounded-full px-3 py-1 shadow-sm">
+          <div className="bg-gray-100 rounded-full px-3 py-1.5 shadow-sm flex items-center gap-1.5">
             <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
           </div>
           
@@ -83,61 +107,63 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
         </div>
       </div>
       
-      {filteredExercises.length > 0 ? (
-        <StudentExerciseListWrapper 
-          maxHeight="calc(85vh - 260px)" 
-          className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm"
-          viewMode={viewMode}
-        >
-          {filteredExercises.map((exercise) => {
-            const category = categories.find(cat => cat.id === exercise.categoryId);
-            return (
-              <ExerciseCard
-                key={exercise.id}
-                exercise={exercise}
-                category={category}
-                isSelected={selectedExercises.includes(exercise.id)}
-                viewMode={viewMode}
-                onClick={() => toggleExercise(exercise.id)}
-              />
-            );
-          })}
-        </StudentExerciseListWrapper>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh] shadow-inner">
-          <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
-          <p className="text-center mb-2">
-            {selectedCategoryId === null 
-              ? "لطفا ابتدا یک دسته‌بندی انتخاب کنید" 
-              : "هیچ تمرینی یافت نشد"}
-          </p>
-          {selectedCategoryId !== null && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleClearSearch}
-              className="mt-2"
-            >
-              پاک کردن فیلترها
-            </Button>
-          )}
-          {selectedCategoryId === null && (
-            <div className="flex items-center justify-center mt-2 text-sm text-gray-500">
-              <Tag className="h-4 w-4 mr-1" />
-              <span>برای مشاهده تمرین‌ها، یک دسته‌بندی را انتخاب کنید</span>
-            </div>
-          )}
-        </div>
-      )}
-      
-      <div className="mt-6 flex justify-end">
-        <Button 
-          onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
-          className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
-        >
-          ذخیره تمرین‌های روز {toPersianNumbers(dayNumber)}
-        </Button>
-      </div>
-    </div>
+      <AnimatePresence mode="wait">
+        {filteredExercises.length > 0 ? (
+          <StudentExerciseListWrapper 
+            maxHeight="calc(85vh - 280px)" 
+            className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm"
+            viewMode={viewMode}
+          >
+            <AnimatePresence>
+              {filteredExercises.map((exercise) => {
+                const category = categories.find(cat => cat.id === exercise.categoryId);
+                return (
+                  <ExerciseCard
+                    key={exercise.id}
+                    exercise={exercise}
+                    category={category}
+                    isSelected={selectedExercises.includes(exercise.id)}
+                    viewMode={viewMode}
+                    onClick={() => toggleExercise(exercise.id)}
+                  />
+                );
+              })}
+            </AnimatePresence>
+          </StudentExerciseListWrapper>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-16 text-gray-500 bg-white/50 rounded-lg border border-dashed border-gray-200 h-[60vh] shadow-inner"
+          >
+            <Dumbbell className="h-16 w-16 text-gray-300 mb-5" />
+            <p className="text-center mb-3 text-lg">
+              {selectedCategoryId === null 
+                ? "لطفا ابتدا یک دسته‌بندی انتخاب کنید" 
+                : "هیچ تمرینی یافت نشد"}
+            </p>
+            {selectedCategoryId !== null && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleClearSearch}
+                className="mt-2"
+              >
+                پاک کردن فیلترها
+              </Button>
+            )}
+            {selectedCategoryId === null && (
+              <div className="flex items-center justify-center mt-3 text-sm text-gray-500 bg-gray-50 rounded-full px-4 py-2 shadow-sm">
+                <Tag className="h-4 w-4 ml-2" />
+                <span>برای مشاهده تمرین‌ها، یک دسته‌بندی را انتخاب کنید</span>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
+
+export default ExerciseTabContent;

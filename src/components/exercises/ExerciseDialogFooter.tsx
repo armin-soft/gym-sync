@@ -1,25 +1,26 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
-import { Save, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Check, X } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { motion } from "framer-motion";
 
 interface ExerciseDialogFooterProps {
-  onCancel: () => void;
-  onSave: () => void;
   activeTab: string;
   selectedExercisesCount: number;
+  onCancel: () => void;
+  onSave: () => void;
 }
 
 const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
-  onCancel,
-  onSave,
   activeTab,
   selectedExercisesCount,
+  onCancel,
+  onSave,
 }) => {
   const getBtnGradient = (tab: string) => {
-    switch(tab) {
+    switch (tab) {
       case "day1": return "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700";
       case "day2": return "bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700";
       case "day3": return "bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700";
@@ -28,52 +29,53 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
     }
   };
 
-  const getTabColorClass = (tab: string) => {
-    switch(tab) {
-      case "day1": return "text-blue-600";
-      case "day2": return "text-purple-600";
-      case "day3": return "text-pink-600";
-      case "day4": return "text-amber-600";
-      default: return "";
-    }
+  const dayText = {
+    day1: "روز اول",
+    day2: "روز دوم", 
+    day3: "روز سوم",
+    day4: "روز چهارم"
   };
-
-  const getDayText = (tab: string) => {
-    switch(tab) {
-      case "day1": return "روز اول";
-      case "day2": return "روز دوم";
-      case "day3": return "روز سوم";
-      case "day4": return "روز چهارم";
-      default: return "";
-    }
-  };
+  
+  const dayName = dayText[activeTab as keyof typeof dayText] || "";
+  const btnGradient = getBtnGradient(activeTab);
 
   return (
-    <DialogFooter className="p-6 pt-4 border-t mt-4">
-      <div className="text-sm font-medium mr-auto">
-        تمرین‌های {getDayText(activeTab)} انتخاب شده: 
-        <span className={getTabColorClass(activeTab)}>
-          {toPersianNumbers(selectedExercisesCount)}
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-center justify-between p-4 border-t bg-white/80 dark:bg-gray-800/30 backdrop-blur-sm"
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          تعداد تمرین‌های انتخاب شده:
         </span>
+        <Badge variant={selectedExercisesCount > 0 ? "default" : "outline"} className="px-2.5 py-1">
+          {toPersianNumbers(selectedExercisesCount)}
+        </Badge>
       </div>
-      <div className="flex gap-2">
+
+      <div className="flex items-center gap-2">
         <Button
           variant="outline"
+          size="sm"
           onClick={onCancel}
-          className="gap-2"
+          className="border-gray-300 hover:bg-gray-100"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4 ml-1" />
           انصراف
         </Button>
         <Button
           onClick={onSave}
-          className={`gap-2 ${getBtnGradient(activeTab)}`}
+          disabled={selectedExercisesCount === 0}
+          size="sm"
+          className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
         >
-          <Save className="h-4 w-4" />
-          ذخیره تمرین‌های {getDayText(activeTab)}
+          <Check className="h-4 w-4 ml-1" />
+          ذخیره تمرین‌های {dayName}
         </Button>
       </div>
-    </DialogFooter>
+    </motion.div>
   );
 };
 

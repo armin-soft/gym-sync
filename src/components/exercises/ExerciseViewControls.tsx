@@ -1,7 +1,9 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, Grid, List } from "lucide-react";
+import { motion } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ExerciseViewControlsProps {
   viewMode: "grid" | "list";
@@ -17,34 +19,62 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
   sortOrder
 }) => {
   return (
-    <div className="flex border rounded overflow-hidden shadow-sm">
-      <Button 
-        variant="ghost" 
-        size="sm"
-        className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-gray-100" : ""}`}
-        onClick={() => setViewMode("grid")}
-        title="نمایش گرید"
+    <TooltipProvider>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex rounded-md overflow-hidden border shadow-sm bg-white"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="sm"
-        className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-gray-100" : ""}`}
-        onClick={() => setViewMode("list")}
-        title="نمایش لیست"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="sm"
-        className="h-8 w-8 p-0 rounded-none"
-        onClick={toggleSortOrder}
-        title={sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
-      >
-        {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
-      </Button>
-    </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-primary/10 text-primary" : ""}`}
+              onClick={() => setViewMode("grid")}
+            >
+              <Grid className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-xs">نمایش گرید</p>
+          </TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-primary/10 text-primary" : ""}`}
+              onClick={() => setViewMode("list")}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-xs">نمایش لیست</p>
+          </TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="h-8 w-8 p-0 rounded-none"
+              onClick={toggleSortOrder}
+            >
+              {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-xs">{sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}</p>
+          </TooltipContent>
+        </Tooltip>
+      </motion.div>
+    </TooltipProvider>
   );
 };
+
+export default ExerciseViewControls;

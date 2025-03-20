@@ -11,6 +11,8 @@ import { ExerciseSearchFilters } from "./ExerciseSearchFilters";
 import ExerciseDayTabs from "./ExerciseDayTabs";
 import ExerciseDialogFooter from "./ExerciseDialogFooter";
 import ExerciseDialogHeader from "./ExerciseDialogHeader";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -35,7 +37,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
 }) => {
-  const { data: exercises = [] } = useQuery({
+  const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
       const exercisesData = localStorage.getItem("exercises");
@@ -43,7 +45,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     },
   });
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["exerciseCategories"],
     queryFn: () => {
       const categoriesData = localStorage.getItem("exerciseCategories");
@@ -51,7 +53,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     },
   });
 
-  const { data: exerciseTypes = [] } = useQuery({
+  const { data: exerciseTypes = [], isLoading: typesLoading } = useQuery({
     queryKey: ["exerciseTypes"],
     queryFn: () => {
       const typesData = localStorage.getItem("exerciseTypes");
@@ -116,47 +118,65 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     if (success) onOpenChange(false);
   };
 
+  const isLoading = exercisesLoading || categoriesLoading || typesLoading;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[98vw] w-full max-h-[98vh] p-0 overflow-hidden">
+      <DialogContent className="max-w-[98vw] w-full max-h-[98vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10">
         <ExerciseDialogHeader studentName={studentName} />
 
-        <ExerciseSearchFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedExerciseType={selectedExerciseType}
-          setSelectedExerciseType={setSelectedExerciseType}
-          selectedCategoryId={selectedCategoryId}
-          setSelectedCategoryId={setSelectedCategoryId}
-          exerciseTypes={exerciseTypes}
-          categories={categories}
-          filteredCategories={filteredCategories}
-          handleClearSearch={handleClearSearch}
-          toggleSortOrder={toggleSortOrder}
-          sortOrder={sortOrder}
-        />
+        {isLoading ? (
+          <div className="flex items-center justify-center h-[70vh]">
+            <Loader2 className="h-12 w-12 text-primary animate-spin" />
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              initial={{ opacity: 0.5, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0.5, y: 10 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col flex-grow"
+            >
+              <ExerciseSearchFilters
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                selectedExerciseType={selectedExerciseType}
+                setSelectedExerciseType={setSelectedExerciseType}
+                selectedCategoryId={selectedCategoryId}
+                setSelectedCategoryId={setSelectedCategoryId}
+                exerciseTypes={exerciseTypes}
+                categories={categories}
+                filteredCategories={filteredCategories}
+                handleClearSearch={handleClearSearch}
+                toggleSortOrder={toggleSortOrder}
+                sortOrder={sortOrder}
+              />
 
-        <ExerciseDayTabs 
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          selectedExercisesDay1={selectedExercisesDay1}
-          selectedExercisesDay2={selectedExercisesDay2}
-          selectedExercisesDay3={selectedExercisesDay3}
-          selectedExercisesDay4={selectedExercisesDay4}
-          toggleExerciseDay1={toggleExerciseDay1}
-          toggleExerciseDay2={toggleExerciseDay2}
-          toggleExerciseDay3={toggleExerciseDay3}
-          toggleExerciseDay4={toggleExerciseDay4}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          filteredExercises={filteredExercises}
-          categories={categories}
-          handleClearSearch={handleClearSearch}
-          handleSaveExercises={handleSaveExercises}
-          selectedCategoryId={selectedCategoryId}
-          toggleSortOrder={toggleSortOrder}
-          sortOrder={sortOrder}
-        />
+              <ExerciseDayTabs 
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                selectedExercisesDay1={selectedExercisesDay1}
+                selectedExercisesDay2={selectedExercisesDay2}
+                selectedExercisesDay3={selectedExercisesDay3}
+                selectedExercisesDay4={selectedExercisesDay4}
+                toggleExerciseDay1={toggleExerciseDay1}
+                toggleExerciseDay2={toggleExerciseDay2}
+                toggleExerciseDay3={toggleExerciseDay3}
+                toggleExerciseDay4={toggleExerciseDay4}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                filteredExercises={filteredExercises}
+                categories={categories}
+                handleClearSearch={handleClearSearch}
+                handleSaveExercises={handleSaveExercises}
+                selectedCategoryId={selectedCategoryId}
+                toggleSortOrder={toggleSortOrder}
+                sortOrder={sortOrder}
+              />
+            </motion.div>
+          </AnimatePresence>
+        )}
 
         <ExerciseDialogFooter
           activeTab={activeTab}
