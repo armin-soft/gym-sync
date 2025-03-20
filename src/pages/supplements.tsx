@@ -200,9 +200,6 @@ const SupplementsPage = () => {
               <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 مکمل ها و ویتامین ها
               </h2>
-              <p className="text-muted-foreground mt-2">
-                در این بخش می توانید مکمل های ورزشی و ویتامین های خود را مدیریت کنید
-              </p>
             </div>
           </div>
         </div>

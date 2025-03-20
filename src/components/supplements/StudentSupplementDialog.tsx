@@ -153,7 +153,7 @@ export function StudentSupplementDialog({
             <div className="relative flex-1 w-full">
               <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder={`جستجو در ${currentTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}...`}
+                placeholder={`جستجو در ${currentTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}`}
                 className="pl-3 pr-9 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -193,9 +193,6 @@ export function StudentSupplementDialog({
                     <Pill className="h-8 w-8 text-purple-500" />
                   </div>
                   <h3 className="font-medium text-lg">هیچ مکملی یافت نشد</h3>
-                  <p className="text-muted-foreground text-sm mt-2">
-                    مکمل مورد نظر شما موجود نیست یا هنوز هیچ مکملی ثبت نشده است
-                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 pr-4">
@@ -242,9 +239,6 @@ export function StudentSupplementDialog({
                               </span>
                             )}
                           </div>
-                          <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                            {item.description}
-                          </p>
                           {item.dosage && (
                             <div className="mt-2 text-xs bg-gray-100 p-1 rounded text-center">
                               <span className="block font-medium">دوز مصرف</span>
@@ -268,9 +262,6 @@ export function StudentSupplementDialog({
                     <Pill className="h-8 w-8 text-green-500" />
                   </div>
                   <h3 className="font-medium text-lg">هیچ ویتامینی یافت نشد</h3>
-                  <p className="text-muted-foreground text-sm mt-2">
-                    ویتامین مورد نظر شما موجود نیست یا هنوز هیچ ویتامینی ثبت نشده است
-                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 pr-4">
@@ -317,9 +308,6 @@ export function StudentSupplementDialog({
                               </span>
                             )}
                           </div>
-                          <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                            {item.description}
-                          </p>
                           {item.dosage && (
                             <div className="mt-2 text-xs bg-gray-100 p-1 rounded text-center">
                               <span className="block font-medium">دوز مصرف</span>
