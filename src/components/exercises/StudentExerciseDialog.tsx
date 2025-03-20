@@ -168,12 +168,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     selectedExercises, 
     toggleExercise, 
     dayNumber, 
-    tabValue 
+    tabValue,
+    viewMode
   }: { 
     selectedExercises: number[], 
     toggleExercise: (id: number) => void, 
     dayNumber: number, 
-    tabValue: string 
+    tabValue: string,
+    viewMode: "grid" | "list"
   }) => {
     const activeColorClass = getActiveTabContentColor(tabValue);
     const btnGradient = getBtnGradient(tabValue);
@@ -223,7 +225,11 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
         
         {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper maxHeight="calc(85vh - 260px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
+          <StudentExerciseListWrapper 
+            maxHeight="calc(85vh - 260px)" 
+            className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm"
+            viewMode={viewMode}
+          >
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -274,7 +280,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             <span>مدیریت تمرین‌های {studentName}</span>
           </DialogTitle>
           <DialogDescription>
-            تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگرد اضافه شوند
+            تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگر�� اضافه شوند
           </DialogDescription>
         </DialogHeader>
 
@@ -417,6 +423,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               toggleExercise={toggleExerciseDay1} 
               dayNumber={1}
               tabValue="day1"
+              viewMode={viewMode}
             />
           </TabsContent>
 
@@ -426,6 +433,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               toggleExercise={toggleExerciseDay2} 
               dayNumber={2}
               tabValue="day2"
+              viewMode={viewMode}
             />
           </TabsContent>
 
@@ -435,6 +443,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               toggleExercise={toggleExerciseDay3} 
               dayNumber={3}
               tabValue="day3"
+              viewMode={viewMode}
             />
           </TabsContent>
 
@@ -444,6 +453,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               toggleExercise={toggleExerciseDay4} 
               dayNumber={4}
               tabValue="day4"
+              viewMode={viewMode}
             />
           </TabsContent>
         </Tabs>

@@ -21,6 +21,47 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   viewMode,
   onClick,
 }) => {
+  if (viewMode === "list") {
+    return (
+      <motion.div
+        layout
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.2 }}
+        className={cn(
+          "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full h-14",
+          isSelected 
+            ? "ring-2 ring-primary shadow-lg border-primary/50" 
+            : "hover:shadow-md border-gray-100 hover:border-gray-200"
+        )}
+        onClick={onClick}
+      >
+        <div className={cn(
+          "absolute inset-0 bg-gradient-to-br",
+          isSelected ? "from-primary/10 to-primary/30" : "from-gray-50 to-gray-100"
+        )}>
+          <div className="absolute inset-0 flex items-center p-2">
+            <div className={cn(
+              "p-2 mr-2 rounded-full shrink-0",
+              isSelected ? "bg-primary text-white" : "bg-gray-200/80 text-gray-700"
+            )}>
+              <Dumbbell className="w-4 h-4" />
+            </div>
+            <div className="flex items-center justify-between flex-1 overflow-hidden">
+              <h3 className="font-medium text-base line-clamp-1">{exercise.name}</h3>
+              {category && (
+                <Badge variant={isSelected ? "default" : "outline"} className="mr-2 whitespace-nowrap text-xs">
+                  {category.name}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       layout
