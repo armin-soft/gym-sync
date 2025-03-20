@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,27 +12,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
-import { ExerciseCard } from "./ExerciseCard";
-import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp, Save } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Dumbbell, X, Save } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { ExerciseSearchFilters } from "./ExerciseSearchFilters";
+import { ExerciseTabContent } from "./ExerciseTabContent";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -144,16 +128,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     setSelectedExerciseType(null);
   };
 
-  const getActiveTabContentColor = (tab: string) => {
-    switch(tab) {
-      case "day1": return "bg-blue-50 text-blue-600";
-      case "day2": return "bg-purple-50 text-purple-600";
-      case "day3": return "bg-pink-50 text-pink-600";
-      case "day4": return "bg-amber-50 text-amber-600";
-      default: return "bg-slate-50 text-slate-600";
-    }
-  };
-
   const getBtnGradient = (tab: string) => {
     switch(tab) {
       case "day1": return "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700";
@@ -164,111 +138,24 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const ExerciseTabContent = ({ 
-    selectedExercises, 
-    toggleExercise, 
-    dayNumber, 
-    tabValue,
-    viewMode
-  }: { 
-    selectedExercises: number[], 
-    toggleExercise: (id: number) => void, 
-    dayNumber: number, 
-    tabValue: string,
-    viewMode: "grid" | "list"
-  }) => {
-    const activeColorClass = getActiveTabContentColor(tabValue);
-    const btnGradient = getBtnGradient(tabValue);
+  const getActiveTabSelectedExercises = () => {
+    switch(activeTab) {
+      case "day1": return selectedExercisesDay1;
+      case "day2": return selectedExercisesDay2;
+      case "day3": return selectedExercisesDay3;
+      case "day4": return selectedExercisesDay4;
+      default: return [];
+    }
+  };
 
-    return (
-      <div className="flex-1 overflow-hidden flex flex-col mt-4">
-        <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
-          <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full shadow-sm`}>
-            تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <div className="bg-gray-100 rounded-full px-3 py-1 shadow-sm">
-              <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
-            </div>
-            
-            <div className="flex border rounded overflow-hidden shadow-sm">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-gray-100" : ""}`}
-                onClick={() => setViewMode("grid")}
-                title="نمایش گرید"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-gray-100" : ""}`}
-                onClick={() => setViewMode("list")}
-                title="نمایش لیست"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="h-8 w-8 p-0 rounded-none"
-                onClick={toggleSortOrder}
-                title={sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
-              >
-                {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-        </div>
-        
-        {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper 
-            maxHeight="calc(85vh - 260px)" 
-            className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm"
-            viewMode={viewMode}
-          >
-            {filteredExercises.map((exercise) => {
-              const category = categories.find(cat => cat.id === exercise.categoryId);
-              return (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  category={category}
-                  isSelected={selectedExercises.includes(exercise.id)}
-                  viewMode={viewMode}
-                  onClick={() => toggleExercise(exercise.id)}
-                />
-              );
-            })}
-          </StudentExerciseListWrapper>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh] shadow-inner">
-            <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
-            <p className="text-center mb-2">هیچ تمرینی یافت نشد</p>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleClearSearch}
-              className="mt-2"
-            >
-              پاک کردن فیلترها
-            </Button>
-          </div>
-        )}
-        
-        <div className="mt-6 flex justify-end">
-          <Button 
-            onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
-            className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
-          >
-            ذخیره تمرین‌های روز {toPersianNumbers(dayNumber)}
-          </Button>
-        </div>
-      </div>
-    );
+  const getActiveTabToggleFunction = () => {
+    switch(activeTab) {
+      case "day1": return toggleExerciseDay1;
+      case "day2": return toggleExerciseDay2;
+      case "day3": return toggleExerciseDay3;
+      case "day4": return toggleExerciseDay4;
+      default: return toggleExerciseDay1;
+    }
   };
 
   return (
@@ -284,106 +171,20 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 px-6">
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="جستجوی تمرین..."
-                className="pl-10 pr-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute left-1 top-1 h-8 w-8 text-muted-foreground hover:text-gray-700"
-                  onClick={() => setSearchQuery("")}
-                  title="پاک کردن جستجو"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-            
-            {exerciseTypes.length > 0 && (
-              <Select
-                value={selectedExerciseType || "all"}
-                onValueChange={(value) => {
-                  setSelectedExerciseType(value === "all" ? null : value);
-                  setSelectedCategoryId(null);
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="نوع تمرین" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">همه انواع</SelectItem>
-                  {exerciseTypes.map((type) => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-            
-            {selectedExerciseType && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2 whitespace-nowrap">
-                    <Filter className="h-4 w-4" />
-                    دسته‌بندی
-                    {selectedCategoryId && (
-                      <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
-                        ✓
-                      </span>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 max-h-[400px] overflow-y-auto">
-                  <DropdownMenuItem 
-                    onClick={() => setSelectedCategoryId(null)}
-                    className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
-                  >
-                    همه دسته‌بندی‌ها
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  
-                  {filteredCategories.length > 0 ? (
-                    filteredCategories.map(category => (
-                      <DropdownMenuItem
-                        key={category.id}
-                        onClick={() => setSelectedCategoryId(category.id)}
-                        className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
-                      >
-                        {category.name}
-                        {category.type && (
-                          <span className="mr-auto text-xs text-gray-500">{category.type}</span>
-                        )}
-                      </DropdownMenuItem>
-                    ))
-                  ) : (
-                    <DropdownMenuItem disabled className="text-gray-400">
-                      دسته‌بندی‌ای یافت نشد
-                    </DropdownMenuItem>
-                  )}
-                  
-                  {(searchQuery || selectedCategoryId || selectedExerciseType) && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        onClick={handleClearSearch} 
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        پاک کردن فیلترها
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </div>
+        <ExerciseSearchFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedExerciseType={selectedExerciseType}
+          setSelectedExerciseType={setSelectedExerciseType}
+          selectedCategoryId={selectedCategoryId}
+          setSelectedCategoryId={setSelectedCategoryId}
+          exerciseTypes={exerciseTypes}
+          categories={categories}
+          filteredCategories={filteredCategories}
+          handleClearSearch={handleClearSearch}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+        />
 
         <Tabs 
           defaultValue="day1" 
@@ -424,6 +225,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               dayNumber={1}
               tabValue="day1"
               viewMode={viewMode}
+              filteredExercises={filteredExercises}
+              categories={categories}
+              handleClearSearch={handleClearSearch}
+              handleSaveExercises={handleSaveExercises}
             />
           </TabsContent>
 
@@ -434,6 +239,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               dayNumber={2}
               tabValue="day2"
               viewMode={viewMode}
+              filteredExercises={filteredExercises}
+              categories={categories}
+              handleClearSearch={handleClearSearch}
+              handleSaveExercises={handleSaveExercises}
             />
           </TabsContent>
 
@@ -444,6 +253,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               dayNumber={3}
               tabValue="day3"
               viewMode={viewMode}
+              filteredExercises={filteredExercises}
+              categories={categories}
+              handleClearSearch={handleClearSearch}
+              handleSaveExercises={handleSaveExercises}
             />
           </TabsContent>
 
@@ -454,6 +267,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               dayNumber={4}
               tabValue="day4"
               viewMode={viewMode}
+              filteredExercises={filteredExercises}
+              categories={categories}
+              handleClearSearch={handleClearSearch}
+              handleSaveExercises={handleSaveExercises}
             />
           </TabsContent>
         </Tabs>
@@ -485,20 +302,9 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             <Button
               onClick={() => {
                 let success = false;
-                switch(activeTab) {
-                  case "day1":
-                    success = handleSaveExercises(selectedExercisesDay1, 1);
-                    break;
-                  case "day2":
-                    success = handleSaveExercises(selectedExercisesDay2, 2);
-                    break;
-                  case "day3":
-                    success = handleSaveExercises(selectedExercisesDay3, 3);
-                    break;
-                  case "day4":
-                    success = handleSaveExercises(selectedExercisesDay4, 4);
-                    break;
-                }
+                const selectedExercises = getActiveTabSelectedExercises();
+                const dayNumber = parseInt(activeTab.replace("day", ""));
+                success = handleSaveExercises(selectedExercises, dayNumber);
                 if (success) onOpenChange(false);
               }}
               className={`gap-2 ${getBtnGradient(activeTab)}`}
