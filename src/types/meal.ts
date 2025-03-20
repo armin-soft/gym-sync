@@ -8,4 +8,8 @@ export interface Meal {
   description: string;
   type: MealType;
   day: WeekDay;
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 }
