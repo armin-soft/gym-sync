@@ -4,16 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
-import { Dumbbell } from "lucide-react";
 import { ExerciseSearchFilters } from "./ExerciseSearchFilters";
 import ExerciseDayTabs from "./ExerciseDayTabs";
 import ExerciseDialogFooter from "./ExerciseDialogFooter";
+import ExerciseDialogHeader from "./ExerciseDialogHeader";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -121,15 +118,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[98vw] w-full max-h-[98vh] p-0 overflow-hidden">
-        <DialogHeader className="pb-4 border-b p-6">
-          <DialogTitle className="text-xl flex items-center gap-2">
-            <Dumbbell className="h-5 w-5 text-primary" />
-            <span>مدیریت تمرین‌های {studentName}</span>
-          </DialogTitle>
-          <DialogDescription>
-            تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگرد اضافه شوند
-          </DialogDescription>
-        </DialogHeader>
+        <ExerciseDialogHeader studentName={studentName} />
 
         <ExerciseSearchFilters
           searchQuery={searchQuery}
