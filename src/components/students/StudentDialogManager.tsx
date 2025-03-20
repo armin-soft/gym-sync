@@ -119,6 +119,10 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
     if (success) {
       setIsDietDialogOpen(false);
+      toast({
+        title: "برنامه غذایی ذخیره شد",
+        description: "برنامه غذایی با موفقیت برای شاگرد ذخیره شد.",
+      });
     }
     return success;
   };

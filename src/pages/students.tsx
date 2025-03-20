@@ -61,6 +61,7 @@ const StudentsPage = () => {
   const handleSaveDietWithRefresh = useCallback((mealIds: number[], studentId: number) => {
     const result = handleSaveDiet(mealIds, studentId);
     if (result) {
+      console.log('Diet saved, triggering refresh');
       triggerRefresh();
     }
     return result;
@@ -69,6 +70,7 @@ const StudentsPage = () => {
   const handleSaveSupplementsWithRefresh = useCallback((data: {supplements: number[], vitamins: number[]}, studentId: number) => {
     const result = handleSaveSupplements(data, studentId);
     if (result) {
+      console.log('Supplements saved, triggering refresh');
       triggerRefresh();
     }
     return result;
