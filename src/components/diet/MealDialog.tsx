@@ -90,7 +90,7 @@ export const MealDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] p-0">
+      <DialogContent className="sm:max-w-[500px] p-0" dir="rtl">
         <DialogHeader className="p-6 pb-4 bg-gradient-to-b from-muted/50 to-transparent">
           <DialogTitle className="flex items-center gap-2 text-lg">
             <UtensilsCrossed className="w-5 h-5 text-primary" />
@@ -104,7 +104,7 @@ export const MealDialog = ({
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="text-right">
                     <FormLabel className="flex items-center gap-2">
                       <Type className="w-4 h-4 text-muted-foreground" />
                       نام غذا
@@ -112,8 +112,9 @@ export const MealDialog = ({
                     <FormControl>
                       <Input 
                         placeholder="نام غذا را وارد کنید" 
-                        className="bg-muted/50 focus:bg-background transition-colors duration-300"
+                        className="bg-muted/50 focus:bg-background transition-colors duration-300 text-right"
                         {...field} 
+                        dir="rtl"
                       />
                     </FormControl>
                     <FormMessage />
@@ -126,18 +127,18 @@ export const MealDialog = ({
                   control={form.control}
                   name="type"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="text-right">
                       <FormLabel className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-muted-foreground" />
                         نوع وعده
                       </FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger className="bg-muted/50 focus:bg-background transition-colors duration-300">
+                          <SelectTrigger className="bg-muted/50 focus:bg-background transition-colors duration-300 text-right">
                             <SelectValue placeholder="نوع وعده را انتخاب کنید" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent dir="rtl">
                           {mealTypes.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
@@ -154,18 +155,18 @@ export const MealDialog = ({
                   control={form.control}
                   name="day"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="text-right">
                       <FormLabel className="flex items-center gap-2">
                         <CalendarDays className="w-4 h-4 text-muted-foreground" />
                         روز هفته
                       </FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger className="bg-muted/50 focus:bg-background transition-colors duration-300">
+                          <SelectTrigger className="bg-muted/50 focus:bg-background transition-colors duration-300 text-right">
                             <SelectValue placeholder="روز هفته را انتخاب کنید" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent dir="rtl">
                           {weekDays.map((day) => (
                             <SelectItem key={day} value={day}>
                               {day}

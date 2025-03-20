@@ -71,7 +71,7 @@ const getMealTypeStyle = (type: MealType) => {
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
       {mealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter((meal) => meal.type === type);
         const styles = getMealTypeStyle(type);
@@ -83,6 +83,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: typeIndex * 0.05 }}
             className="rounded-xl border border-border/50"
+            dir="rtl"
           >
             <div className={`p-4 ${styles.bg} rounded-t-xl border-b ${styles.border}`}>
               <div className="flex items-center gap-2">
@@ -98,7 +99,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               </div>
             </div>
 
-            <ScrollArea className="w-full">
+            <ScrollArea className="w-full" dir="rtl">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
                 {typeMeals.length > 0 ? (
                   typeMeals.map((meal, index) => (
@@ -114,7 +115,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                       <Card 
                         className={`group relative border ${styles.border} ${styles.hover} transition-all duration-300 hover:shadow-sm`}
                       >
-                        <div className="p-4">
+                        <div className="p-4 text-right">
                           <div className="flex items-start justify-between gap-2">
                             <h4 className="text-sm font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300">
                               {meal.name}
@@ -153,6 +154,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                   </div>
                 )}
               </div>
+              <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </motion.div>
         );

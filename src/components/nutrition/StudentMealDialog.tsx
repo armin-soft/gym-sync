@@ -48,6 +48,7 @@ export function StudentMealDialog({
   const [activeMealType, setActiveMealType] = useState<MealType | "all">("all");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   // Get unique days and meal types from meals
   const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
@@ -84,8 +85,17 @@ export function StudentMealDialog({
       filtered = filtered.filter((meal) => meal.type === activeMealType);
     }
 
+    // Sort meals
+    filtered.sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+
     setFilteredMeals(filtered);
-  }, [searchQuery, meals, activeDay, activeMealType]);
+  }, [searchQuery, meals, activeDay, activeMealType, sortOrder]);
 
   const toggleMeal = (id: number) => {
     setSelectedMeals(prev =>
@@ -93,6 +103,10 @@ export function StudentMealDialog({
         ? prev.filter(mealId => mealId !== id)
         : [...prev, id]
     );
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
   const handleSave = () => {
@@ -232,6 +246,7 @@ export function StudentMealDialog({
                 className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted text-right"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                dir="rtl"
               />
             </div>
           </div>
@@ -246,7 +261,7 @@ export function StudentMealDialog({
                 transition={{ duration: 0.2 }}
                 className="flex-shrink-0 overflow-hidden bg-muted/10 border-b"
               >
-                <div className="p-4 flex flex-col gap-3">
+                <div className="p-4 flex flex-col gap-3" dir="rtl">
                   <div>
                     <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
                     <div className="flex flex-wrap gap-1.5">
@@ -283,10 +298,11 @@ export function StudentMealDialog({
               value={activeDay === "all" ? "all" : activeDay} 
               onValueChange={(value) => setActiveDay(value as WeekDay | "all")}
               className="flex-1 flex flex-col overflow-hidden"
+              dir="rtl"
             >
               <div className="border-b bg-muted/10 shrink-0">
                 <ScrollArea className="w-full" orientation="horizontal">
-                  <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1">
+                  <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1" dir="rtl">
                     <TabsTrigger 
                       value="all"
                       className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
@@ -309,10 +325,15 @@ export function StudentMealDialog({
               <TabsContent 
                 value={activeDay === "all" ? "all" : activeDay.toString()} 
                 className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full"
+                dir="rtl"
               >
                 <StudentMealListWrapper
                   viewMode={viewMode}
                   maxHeight="70vh"
+                  setViewMode={setViewMode}
+                  toggleSortOrder={toggleSortOrder}
+                  sortOrder={sortOrder}
+                  showControls={true}
                 >
                   {filteredMeals.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-64 text-center p-4">
@@ -333,7 +354,7 @@ export function StudentMealDialog({
                       >
                         <div
                           className={`${viewMode === "grid" ? "p-4 rounded-xl border shadow-sm hover:shadow" : "p-4 hover:bg-muted/50"} 
-                            transition-all cursor-pointer
+                            transition-all cursor-pointer text-right
                             ${selectedMeals.includes(meal.id)
                               ? viewMode === "grid" 
                                 ? "border-primary/30 bg-primary/5 dark:bg-primary/10" 
@@ -343,6 +364,7 @@ export function StudentMealDialog({
                                 : ""
                             }`}
                           onClick={() => toggleMeal(meal.id)}
+                          dir="rtl"
                         >
                           <div className={`flex gap-3 ${viewMode === "list" ? "flex-row" : "flex-col"} items-start`}>
                             <div
@@ -408,7 +430,7 @@ export function StudentMealDialog({
           </div>
 
           {/* Footer */}
-          <SheetFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row gap-2 justify-between">
+          <SheetFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row gap-2 justify-between" dir="rtl">
             <div className="flex items-center gap-2">
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}

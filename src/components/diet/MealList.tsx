@@ -32,30 +32,30 @@ interface MealListProps {
 export const MealList = ({ meals, onEdit, onDelete }: MealListProps) => {
   return (
     <Card className="p-6">
-      <div className="relative w-full overflow-auto">
+      <div className="relative w-full overflow-auto" dir="rtl">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>نام غذا</TableHead>
-              <TableHead>زمان</TableHead>
-              <TableHead>کالری</TableHead>
-              <TableHead>پروتئین</TableHead>
-              <TableHead>کربوهیدرات</TableHead>
-              <TableHead>چربی</TableHead>
-              <TableHead>عملیات</TableHead>
+              <TableHead className="text-right">نام غذا</TableHead>
+              <TableHead className="text-right">زمان</TableHead>
+              <TableHead className="text-right">کالری</TableHead>
+              <TableHead className="text-right">پروتئین</TableHead>
+              <TableHead className="text-right">کربوهیدرات</TableHead>
+              <TableHead className="text-right">چربی</TableHead>
+              <TableHead className="text-right">عملیات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {meals.map((meal) => (
               <TableRow key={meal.id}>
-                <TableCell>{meal.name}</TableCell>
-                <TableCell>{meal.time}</TableCell>
-                <TableCell>{meal.calories}</TableCell>
-                <TableCell>{meal.protein}</TableCell>
-                <TableCell>{meal.carbs}</TableCell>
-                <TableCell>{meal.fat}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
+                <TableCell className="text-right">{meal.name}</TableCell>
+                <TableCell className="text-right">{meal.time}</TableCell>
+                <TableCell className="text-right">{meal.calories}</TableCell>
+                <TableCell className="text-right">{meal.protein}</TableCell>
+                <TableCell className="text-right">{meal.carbs}</TableCell>
+                <TableCell className="text-right">{meal.fat}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center gap-2 justify-end">
                     <Button
                       variant="outline"
                       size="icon"
