@@ -15,7 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -33,7 +32,6 @@ import {
   Pill, 
   ListTodo,
   Clock, 
-  AlignLeft,
   Save,
   X
 } from "lucide-react";
@@ -43,7 +41,6 @@ const supplementFormSchema = z.object({
   category: z.string().min(1, "انتخاب دسته بندی الزامی است"),
   dosage: z.string().min(1, "مقدار مصرف نمی تواند خالی باشد"),
   timing: z.string().min(1, "زمان مصرف نمی تواند خالی باشد"),
-  description: z.string().min(5, "توضیحات باید حداقل ۵ کاراکتر باشد"),
 });
 
 interface SupplementDialogProps {
@@ -72,7 +69,6 @@ export const SupplementDialog = ({
       category: "",
       dosage: "",
       timing: "",
-      description: "",
     },
   });
 
@@ -83,7 +79,6 @@ export const SupplementDialog = ({
         category: "",
         dosage: "",
         timing: "",
-        description: "",
       });
     } else if (defaultValues) {
       form.reset(defaultValues);
@@ -95,13 +90,11 @@ export const SupplementDialog = ({
       name: "نام مکمل را وارد کنید (مثال: کراتین مونوهیدرات)",
       dosage: "مقدار مصرف را وارد کنید (مثال: ۵ گرم)",
       timing: "زمان مصرف را وارد کنید (مثال: قبل و بعد از تمرین)",
-      description: "توضیحات مکمل را وارد کنید (مثال: برای افزایش قدرت و حجم عضلات)",
     },
     vitamin: {
       name: "نام ویتامین را وارد کنید (مثال: ویتامین D3)",
       dosage: "مقدار مصرف را وارد کنید (مثال: ۱۰۰۰ واحد)",
       timing: "زمان مصرف را وارد کنید (مثال: صبح با صبحانه)",
-      description: "توضیحات ویتامین را وارد کنید (مثال: برای تقویت سیستم ایمنی و سلامت استخوان ها)",
     }
   };
 
@@ -224,27 +217,6 @@ export const SupplementDialog = ({
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <AlignLeft className="h-4 w-4 text-purple-500" />
-                    توضیحات
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={currentPlaceholders.description}
-                      className="min-h-[100px] border-purple-200 focus-visible:ring-purple-500 resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-end gap-2">
               <Button

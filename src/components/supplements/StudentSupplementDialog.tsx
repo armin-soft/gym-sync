@@ -26,7 +26,6 @@ interface StudentSupplementDialogProps {
 interface Supplement {
   id: number;
   name: string;
-  description: string;
   dosage: string;
   type: 'supplement' | 'vitamin';
   category?: string;
@@ -82,8 +81,7 @@ export function StudentSupplementDialog({
     if (searchQuery.trim() !== "") {
       filtered = filtered.filter(
         (item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+          item.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -242,9 +240,6 @@ export function StudentSupplementDialog({
                               </span>
                             )}
                           </div>
-                          <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                            {item.description}
-                          </p>
                           {item.dosage && (
                             <div className="mt-2 text-xs bg-gray-100 p-1 rounded text-center">
                               <span className="block font-medium">دوز مصرف</span>
@@ -317,9 +312,6 @@ export function StudentSupplementDialog({
                               </span>
                             )}
                           </div>
-                          <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                            {item.description}
-                          </p>
                           {item.dosage && (
                             <div className="mt-2 text-xs bg-gray-100 p-1 rounded text-center">
                               <span className="block font-medium">دوز مصرف</span>

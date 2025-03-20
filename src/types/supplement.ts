@@ -11,6 +11,5 @@ export interface Supplement {
   category: string;
   dosage: string;
   timing: string;
-  description: string;
   type: 'supplement' | 'vitamin';
 }

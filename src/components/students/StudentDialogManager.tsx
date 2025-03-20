@@ -1,4 +1,3 @@
-
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
@@ -100,7 +99,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     
     try {
       const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
-      // We don't close the dialog here to allow saving for multiple days
       return success;
     } catch (error) {
       console.error("Error saving exercises:", error);
@@ -137,7 +135,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     return success;
   };
 
-  // Expose methods to parent component via ref
   useImperativeHandle(ref, () => ({
     handleAdd,
     handleEdit,

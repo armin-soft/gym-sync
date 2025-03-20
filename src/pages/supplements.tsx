@@ -115,7 +115,7 @@ const SupplementsPage = () => {
     setSupplementDialogOpen(true);
   };
 
-  const handleSubmitSupplement = (data: Omit<Supplement, "id">) => {
+  const handleSubmitSupplement = (data: Omit<Supplement, "id" | "type">) => {
     if (editingSupplement) {
       setSupplements(
         supplements.map((supplement) =>
