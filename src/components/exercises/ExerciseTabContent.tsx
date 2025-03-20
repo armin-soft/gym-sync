@@ -6,6 +6,7 @@ import { ExerciseCard } from "./ExerciseCard";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { ExerciseViewControls } from "./ExerciseViewControls";
 
 interface ExerciseTabContentProps {
   selectedExercises: number[];
@@ -13,11 +14,14 @@ interface ExerciseTabContentProps {
   dayNumber: number;
   tabValue: string;
   viewMode: "grid" | "list";
+  setViewMode: (mode: "grid" | "list") => void;
   filteredExercises: Exercise[];
   categories: ExerciseCategory[];
   handleClearSearch: () => void;
   handleSaveExercises: (exerciseIds: number[], dayNumber?: number) => boolean;
-  selectedCategoryId: number | null; // Added this prop
+  selectedCategoryId: number | null;
+  toggleSortOrder: () => void;
+  sortOrder: "asc" | "desc";
 }
 
 export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
@@ -26,11 +30,14 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   dayNumber,
   tabValue,
   viewMode,
+  setViewMode,
   filteredExercises,
   categories,
   handleClearSearch,
   handleSaveExercises,
-  selectedCategoryId // Added this prop
+  selectedCategoryId,
+  toggleSortOrder,
+  sortOrder
 }) => {
   const getActiveTabContentColor = (tab: string) => {
     switch (tab) {
@@ -67,26 +74,12 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
             <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
           </div>
           
-          <div className="flex border rounded overflow-hidden shadow-sm">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-gray-100" : ""}`}
-              onClick={() => {}}
-              title="نمایش گرید"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-gray-100" : ""}`}
-              onClick={() => {}}
-              title="نمایش لیست"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
-            </Button>
-          </div>
+          <ExerciseViewControls 
+            viewMode={viewMode} 
+            setViewMode={setViewMode} 
+            toggleSortOrder={toggleSortOrder} 
+            sortOrder={sortOrder}
+          />
         </div>
       </div>
       

@@ -88,6 +88,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     sortOrder,
     toggleSortOrder,
     viewMode,
+    setViewMode,
     filteredExercises,
     filteredCategories,
     handleClearSearch,
@@ -147,11 +148,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           toggleExerciseDay3={toggleExerciseDay3}
           toggleExerciseDay4={toggleExerciseDay4}
           viewMode={viewMode}
+          setViewMode={setViewMode}
           filteredExercises={filteredExercises}
           categories={categories}
           handleClearSearch={handleClearSearch}
           handleSaveExercises={handleSaveExercises}
           selectedCategoryId={selectedCategoryId}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
         />
 
         <ExerciseDialogFooter

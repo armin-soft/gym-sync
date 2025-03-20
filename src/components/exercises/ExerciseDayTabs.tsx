@@ -15,11 +15,14 @@ interface ExerciseDayTabsProps {
   toggleExerciseDay3: (exerciseId: number) => void;
   toggleExerciseDay4: (exerciseId: number) => void;
   viewMode: "grid" | "list";
+  setViewMode: (mode: "grid" | "list") => void;
   filteredExercises: any[];
   categories: any[];
   handleClearSearch: () => void;
   handleSaveExercises: (exerciseIds: number[], dayNumber?: number) => boolean;
   selectedCategoryId: number | null;
+  toggleSortOrder: () => void;
+  sortOrder: "asc" | "desc";
 }
 
 const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
@@ -34,11 +37,14 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
   toggleExerciseDay3,
   toggleExerciseDay4,
   viewMode,
+  setViewMode,
   filteredExercises,
   categories,
   handleClearSearch,
   handleSaveExercises,
   selectedCategoryId,
+  toggleSortOrder,
+  sortOrder,
 }) => {
   return (
     <Tabs 
@@ -81,11 +87,14 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           dayNumber={1}
           tabValue="day1"
           viewMode={viewMode}
+          setViewMode={setViewMode}
           filteredExercises={filteredExercises}
           categories={categories}
           handleClearSearch={handleClearSearch}
           handleSaveExercises={handleSaveExercises}
           selectedCategoryId={selectedCategoryId}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
         />
       </TabsContent>
 
@@ -96,11 +105,14 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           dayNumber={2}
           tabValue="day2"
           viewMode={viewMode}
+          setViewMode={setViewMode}
           filteredExercises={filteredExercises}
           categories={categories}
           handleClearSearch={handleClearSearch}
           handleSaveExercises={handleSaveExercises}
           selectedCategoryId={selectedCategoryId}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
         />
       </TabsContent>
 
@@ -111,11 +123,14 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           dayNumber={3}
           tabValue="day3"
           viewMode={viewMode}
+          setViewMode={setViewMode}
           filteredExercises={filteredExercises}
           categories={categories}
           handleClearSearch={handleClearSearch}
           handleSaveExercises={handleSaveExercises}
           selectedCategoryId={selectedCategoryId}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
         />
       </TabsContent>
 
@@ -126,11 +141,14 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           dayNumber={4}
           tabValue="day4"
           viewMode={viewMode}
+          setViewMode={setViewMode}
           filteredExercises={filteredExercises}
           categories={categories}
           handleClearSearch={handleClearSearch}
           handleSaveExercises={handleSaveExercises}
           selectedCategoryId={selectedCategoryId}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
         />
       </TabsContent>
     </Tabs>
