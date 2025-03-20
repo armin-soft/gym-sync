@@ -1,21 +1,19 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
-import { Dumbbell, X, Save } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Dumbbell } from "lucide-react";
 import { ExerciseSearchFilters } from "./ExerciseSearchFilters";
 import ExerciseDayTabs from "./ExerciseDayTabs";
+import ExerciseDialogFooter from "./ExerciseDialogFooter";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -102,16 +100,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     return onSave(exerciseIds, dayNumber);
   };
 
-  const getBtnGradient = (tab: string) => {
-    switch(tab) {
-      case "day1": return "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700";
-      case "day2": return "bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700";
-      case "day3": return "bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700";
-      case "day4": return "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700";
-      default: return "";
-    }
-  };
-
   const getActiveTabSelectedExercises = () => {
     switch(activeTab) {
       case "day1": return selectedExercisesDay1;
@@ -120,6 +108,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       case "day4": return selectedExercisesDay4;
       default: return [];
     }
+  };
+
+  const handleSave = () => {
+    let success = false;
+    const selectedExercises = getActiveTabSelectedExercises();
+    const dayNumber = parseInt(activeTab.replace("day", ""));
+    success = handleSaveExercises(selectedExercises, dayNumber);
+    if (success) onOpenChange(false);
   };
 
   return (
@@ -169,49 +165,12 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           selectedCategoryId={selectedCategoryId}
         />
 
-        <DialogFooter className="p-6 pt-4 border-t mt-4">
-          <div className="text-sm font-medium mr-auto">
-            {activeTab === "day1" && (
-              <>تمرین‌های روز اول انتخاب شده: <span className="text-blue-600">{toPersianNumbers(selectedExercisesDay1.length)}</span></>
-            )}
-            {activeTab === "day2" && (
-              <>تمرین‌های روز دوم انتخاب شده: <span className="text-purple-600">{toPersianNumbers(selectedExercisesDay2.length)}</span></>
-            )}
-            {activeTab === "day3" && (
-              <>تمرین‌های روز سوم انتخاب شده: <span className="text-pink-600">{toPersianNumbers(selectedExercisesDay3.length)}</span></>
-            )}
-            {activeTab === "day4" && (
-              <>تمرین‌های روز چهارم انتخاب شده: <span className="text-amber-600">{toPersianNumbers(selectedExercisesDay4.length)}</span></>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="gap-2"
-            >
-              <X className="h-4 w-4" />
-              انصراف
-            </Button>
-            <Button
-              onClick={() => {
-                let success = false;
-                const selectedExercises = getActiveTabSelectedExercises();
-                const dayNumber = parseInt(activeTab.replace("day", ""));
-                success = handleSaveExercises(selectedExercises, dayNumber);
-                if (success) onOpenChange(false);
-              }}
-              className={`gap-2 ${getBtnGradient(activeTab)}`}
-            >
-              <Save className="h-4 w-4" />
-              ذخیره تمرین‌های 
-              {activeTab === "day1" && "روز اول"}
-              {activeTab === "day2" && "روز دوم"}
-              {activeTab === "day3" && "روز سوم"}
-              {activeTab === "day4" && "روز چهارم"}
-            </Button>
-          </div>
-        </DialogFooter>
+        <ExerciseDialogFooter
+          activeTab={activeTab}
+          selectedExercisesCount={getActiveTabSelectedExercises().length}
+          onCancel={() => onOpenChange(false)}
+          onSave={handleSave}
+        />
       </DialogContent>
     </Dialog>
   );
