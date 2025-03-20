@@ -113,6 +113,12 @@ export const SupplementList = ({
                     <Clock className="h-4 w-4 text-purple-500 shrink-0" />
                     <span className="line-clamp-1">زمان مصرف: {supplement.timing}</span>
                   </div>
+                  {supplement.description && (
+                    <div className="flex items-start gap-2 text-gray-600">
+                      <FileText className="h-4 w-4 text-purple-500 shrink-0 mt-1" />
+                      <span className="line-clamp-2 text-xs">{supplement.description}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>

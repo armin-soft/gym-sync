@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { 
   Search, Save, X, Apple, 
-  Check, Salad, UtensilsCrossed, Sparkles, ChevronRight,
+  Check, Salad, UtensilsCrossed, Sparkles, ChevronLeft,
   LayoutGrid, ListFilter, SlidersHorizontal
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -182,7 +182,7 @@ export function StudentDietDialog({
                   onClick={() => onOpenChange(false)}
                   className="h-10 w-10 rounded-full"
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  <ChevronLeft className="h-5 w-5" />
                 </Button>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-md">
@@ -466,9 +466,9 @@ export function StudentDietDialog({
                               </div>
                               
                               <div className="flex-1">
-                                <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+                                <div className="flex items-start justify-between">
                                   <h4 className="font-medium text-base text-foreground">{meal.name}</h4>
-                                  <div className="flex gap-1.5 mt-1 md:mt-0">
+                                  <div className="flex gap-1.5">
                                     <span className={`text-xs px-2 py-0.5 rounded-full border flex items-center gap-1 ${getMealTypeColor(meal.type)}`}>
                                       {getMealTypeIcon(meal.type)}
                                       <span>{meal.type}</span>
@@ -480,7 +480,7 @@ export function StudentDietDialog({
                                 </div>
                                 
                                 {(meal.calories || meal.protein || meal.carbs || meal.fat) && (
-                                  <div className="flex flex-wrap gap-3 mt-2">
+                                  <div className="flex gap-3 mt-2">
                                     {meal.calories && (
                                       <div className="text-xs flex items-center gap-1">
                                         <span className="font-medium text-foreground">کالری:</span>
@@ -520,7 +520,7 @@ export function StudentDietDialog({
           </div>
 
           {/* Footer */}
-          <SheetFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row-reverse gap-2 justify-between">
+          <SheetFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row gap-2 justify-between">
             <div className="flex items-center gap-2">
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -536,20 +536,20 @@ export function StudentDietDialog({
             </div>
             <div className="flex gap-2">
               <Button
-                onClick={handleSave}
-                className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0"
-                disabled={selectedMeals.length === 0}
-              >
-                <Save className="h-4 w-4" />
-                ذخیره برنامه غذایی
-              </Button>
-              <Button
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className="gap-2"
               >
                 <X className="h-4 w-4" />
                 انصراف
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0"
+                disabled={selectedMeals.length === 0}
+              >
+                <Save className="h-4 w-4" />
+                ذخیره برنامه غذایی
               </Button>
             </div>
           </SheetFooter>

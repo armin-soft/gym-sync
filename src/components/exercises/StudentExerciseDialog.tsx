@@ -12,7 +12,7 @@ import ExerciseDayTabs from "./ExerciseDayTabs";
 import ExerciseDialogFooter from "./ExerciseDialogFooter";
 import ExerciseDialogHeader from "./ExerciseDialogHeader";
 import { AnimatePresence, motion } from "framer-motion";
-import { Spinner } from "@/components/ui/spinner";
+import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface StudentExerciseDialogProps {
@@ -186,7 +186,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
-            <Spinner className="h-12 w-12 text-primary" />
+            <Loader2 className="h-12 w-12 text-primary animate-spin" />
           </div>
         ) : (
           <AnimatePresence mode="wait">
