@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -184,9 +185,12 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     };
 
     const handleSaveExercise = (exerciseId: number) => {
-      if (!selectedExercises.includes(exerciseId)) {
-        toggleExercise(exerciseId);
-      }
+      // Always toggle the exercise when the save button is clicked
+      toggleExercise(exerciseId);
+      
+      // This is optional, but you could also call the onSave function directly
+      // if you want to immediately save after clicking the save button
+      // onSave(selectedExercises, dayNumber);
     };
 
     return (
