@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { ExerciseCard } from "./ExerciseCard";
-import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
+import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp, Save } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -85,6 +85,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [activeTab, setActiveTab] = useState<string>("day1");
 
   const {
     selectedExercisesDay1,
@@ -222,7 +223,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
         
         {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper maxHeight="calc(85vh - 200px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
+          <StudentExerciseListWrapper maxHeight="calc(85vh - 260px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -378,7 +379,11 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         </div>
 
-        <Tabs defaultValue="day1" className="flex-1 flex flex-col overflow-hidden mt-6 px-6 pb-6">
+        <Tabs 
+          defaultValue="day1" 
+          className="flex-1 flex flex-col overflow-hidden mt-6 px-6 pb-6"
+          onValueChange={setActiveTab}
+        >
           <TabsList className="grid grid-cols-4 gap-2 w-full">
             <TabsTrigger 
               value="day1" 
@@ -444,9 +449,58 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </Tabs>
 
         <DialogFooter className="p-6 pt-4 border-t mt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            بستن
-          </Button>
+          <div className="text-sm font-medium mr-auto">
+            {activeTab === "day1" && (
+              <>تمرین‌های روز اول انتخاب شده: <span className="text-blue-600">{toPersianNumbers(selectedExercisesDay1.length)}</span></>
+            )}
+            {activeTab === "day2" && (
+              <>تمرین‌های روز دوم انتخاب شده: <span className="text-purple-600">{toPersianNumbers(selectedExercisesDay2.length)}</span></>
+            )}
+            {activeTab === "day3" && (
+              <>تمرین‌های روز سوم انتخاب شده: <span className="text-pink-600">{toPersianNumbers(selectedExercisesDay3.length)}</span></>
+            )}
+            {activeTab === "day4" && (
+              <>تمرین‌های روز چهارم انتخاب شده: <span className="text-amber-600">{toPersianNumbers(selectedExercisesDay4.length)}</span></>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="gap-2"
+            >
+              <X className="h-4 w-4" />
+              انصراف
+            </Button>
+            <Button
+              onClick={() => {
+                let success = false;
+                switch(activeTab) {
+                  case "day1":
+                    success = handleSaveExercises(selectedExercisesDay1, 1);
+                    break;
+                  case "day2":
+                    success = handleSaveExercises(selectedExercisesDay2, 2);
+                    break;
+                  case "day3":
+                    success = handleSaveExercises(selectedExercisesDay3, 3);
+                    break;
+                  case "day4":
+                    success = handleSaveExercises(selectedExercisesDay4, 4);
+                    break;
+                }
+                if (success) onOpenChange(false);
+              }}
+              className={`gap-2 ${getBtnGradient(activeTab)}`}
+            >
+              <Save className="h-4 w-4" />
+              ذخیره تمرین‌های 
+              {activeTab === "day1" && "روز اول"}
+              {activeTab === "day2" && "روز دوم"}
+              {activeTab === "day3" && "روز سوم"}
+              {activeTab === "day4" && "روز چهارم"}
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
