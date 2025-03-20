@@ -4,19 +4,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { 
-  LayoutGrid, 
-  ListFilter, 
-  ArrowDownAZ, 
-  ArrowUpZA 
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface StudentMealListWrapperProps {
   children: React.ReactNode;
   className?: string;
-  maxHeight?: string;
   viewMode?: "grid" | "list";
   setViewMode?: (mode: "grid" | "list") => void;
   toggleSortOrder?: () => void;
@@ -27,7 +18,6 @@ interface StudentMealListWrapperProps {
 const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "70vh",
   viewMode = "list",
   setViewMode,
   toggleSortOrder,
@@ -39,7 +29,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
       "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white",
       className
     )}>
-      <ScrollArea className="w-full overflow-auto" style={{ maxHeight }}>
+      <ScrollArea className="w-full overflow-auto">
         <motion.div
           layout
           className={cn(
