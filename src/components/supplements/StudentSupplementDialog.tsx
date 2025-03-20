@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -128,8 +129,8 @@ export function StudentSupplementDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] max-h-[90vh] w-full flex flex-col overflow-hidden" dir="rtl">
-        <DialogHeader>
+      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 flex flex-col overflow-hidden m-0 rounded-none" dir="rtl">
+        <DialogHeader className="px-6 py-4 border-b shrink-0">
           <DialogTitle className="text-xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
               <Pill className="h-5 w-5 text-purple-600" />
@@ -140,10 +141,10 @@ export function StudentSupplementDialog({
 
         <Tabs 
           defaultValue="supplement" 
-          className="flex-1 flex flex-col overflow-hidden"
+          className="flex-1 flex flex-col overflow-hidden p-6"
           onValueChange={handleChangeTab}
         >
-          <div className="flex flex-col sm:flex-row gap-4 items-center mb-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center mb-4 shrink-0">
             <TabsList className="h-10">
               <TabsTrigger value="supplement" className="px-4">مکمل‌ها</TabsTrigger>
               <TabsTrigger value="vitamin" className="px-4">ویتامین‌ها</TabsTrigger>
@@ -335,7 +336,7 @@ export function StudentSupplementDialog({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter className="border-t pt-4 mt-4 shrink-0">
+        <DialogFooter className="border-t py-4 px-6 mt-auto shrink-0">
           <div className="text-sm font-medium mr-auto">
             {currentTab === 'supplement' ? 'مکمل‌های' : 'ویتامین‌های'} انتخاب شده:{" "}
             <span className="text-purple-600">{toPersianNumbers(

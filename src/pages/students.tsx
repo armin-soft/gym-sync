@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
@@ -13,6 +13,7 @@ import { Student } from "@/components/students/StudentTypes";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   const {
     students,
@@ -41,6 +42,31 @@ const StudentsPage = () => {
       return categoriesData ? JSON.parse(categoriesData) : [];
     },
   });
+
+  // Wrapper functions to trigger refresh after saving
+  const handleSaveExercisesWithRefresh = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
+    const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
+    if (result) {
+      setRefreshTrigger(prev => prev + 1);
+    }
+    return result;
+  };
+
+  const handleSaveDietWithRefresh = (mealIds: number[], studentId: number) => {
+    const result = handleSaveDiet(mealIds, studentId);
+    if (result) {
+      setRefreshTrigger(prev => prev + 1);
+    }
+    return result;
+  };
+
+  const handleSaveSupplementsWithRefresh = (data: {supplements: number[], vitamins: number[]}, studentId: number) => {
+    const result = handleSaveSupplements(data, studentId);
+    if (result) {
+      setRefreshTrigger(prev => prev + 1);
+    }
+    return result;
+  };
 
   const {
     searchQuery,
@@ -88,6 +114,7 @@ const StudentsPage = () => {
             students={students}
             sortedAndFilteredStudents={sortedAndFilteredStudents}
             searchQuery={searchQuery}
+            refreshTrigger={refreshTrigger}
             onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
             onDelete={handleDelete}
             onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
@@ -102,9 +129,9 @@ const StudentsPage = () => {
         <StudentDialogManager
           ref={dialogManagerRef}
           onSave={handleSave}
-          onSaveExercises={handleSaveExercises}
-          onSaveDiet={handleSaveDiet}
-          onSaveSupplements={handleSaveSupplements}
+          onSaveExercises={handleSaveExercisesWithRefresh}
+          onSaveDiet={handleSaveDietWithRefresh}
+          onSaveSupplements={handleSaveSupplementsWithRefresh}
           exercises={exercises}
           meals={meals}
           supplements={supplements}
