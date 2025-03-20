@@ -54,13 +54,13 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           </div>
           <div className="flex items-center justify-between flex-1 overflow-hidden">
             <div className="flex flex-col">
-              <h3 className="font-medium text-base line-clamp-1">{exercise.name}</h3>
-              <p className="text-xs text-gray-500 line-clamp-1">
+              <h3 className="font-semibold text-base line-clamp-1 text-gray-900 dark:text-white">{exercise.name}</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-1 font-medium">
                 {exercise.description || (category ? `دسته: ${category.name}` : '')}
               </p>
             </div>
             {category && (
-              <Badge variant={isSelected ? "default" : "outline"} className="mr-2 whitespace-nowrap text-xs">
+              <Badge variant={isSelected ? "default" : "outline"} className="mr-2 whitespace-nowrap text-xs font-bold">
                 {category.name}
               </Badge>
             )}
@@ -100,10 +100,10 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               )}>
                 {isSelected ? <Check className="w-5 h-5" /> : <Dumbbell className="w-5 h-5" />}
               </div>
-              <h3 className="font-semibold text-lg line-clamp-1 mr-2">{exercise.name}</h3>
+              <h3 className="font-bold text-lg line-clamp-1 mr-2 text-gray-900 dark:text-white">{exercise.name}</h3>
             </div>
             {isSelected && (
-              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
+              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-bold">
                 انتخاب شده
               </Badge>
             )}
@@ -111,10 +111,10 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           
           <div className="flex items-center justify-between mt-2">
             {exercise.description && (
-              <p className="text-xs text-gray-500 line-clamp-1 mr-12">{exercise.description}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-1 mr-12 font-medium">{exercise.description}</p>
             )}
             {category && (
-              <Badge variant={isSelected ? "default" : "outline"} className="mr-auto">
+              <Badge variant={isSelected ? "default" : "outline"} className="mr-auto font-bold">
                 {category.name}
               </Badge>
             )}

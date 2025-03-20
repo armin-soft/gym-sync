@@ -26,9 +26,9 @@ const ExerciseDialogHeader: React.FC<ExerciseDialogHeaderProps> = ({
           <div className="p-2 bg-primary/10 rounded-full">
             <Dumbbell className="h-5 w-5 text-primary" />
           </div>
-          <span>مدیریت تمرین‌های {studentName}</span>
+          <span className="text-gray-900 dark:text-white">مدیریت تمرین‌های {studentName}</span>
         </DialogTitle>
-        <DialogDescription className="mt-1 text-muted-foreground/80">
+        <DialogDescription className="mt-2 text-base text-gray-700 dark:text-gray-300 font-medium">
           تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگرد اضافه شوند
         </DialogDescription>
       </motion.div>

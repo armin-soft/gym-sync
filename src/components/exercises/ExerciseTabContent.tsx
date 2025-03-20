@@ -74,7 +74,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
     >
       <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
         <div className="flex items-center gap-2">
-          <div className={`text-sm font-medium ${activeColorClass} px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5`}>
+          <div className={`text-sm font-bold ${activeColorClass} px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5`}>
             <Dumbbell className="h-3.5 w-3.5" />
             <span>تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}</span>
           </div>
@@ -86,7 +86,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
                   <Info className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent className="bg-gray-900 text-white border-gray-800 font-medium">
                 <p className="text-xs">با کلیک بر روی هر تمرین آن را به لیست اضافه یا از آن حذف کنید</p>
               </TooltipContent>
             </Tooltip>
@@ -95,7 +95,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
         
         <div className="flex items-center gap-2">
           <div className="bg-gray-100 rounded-full px-3 py-1.5 shadow-sm flex items-center gap-1.5">
-            <span className="text-gray-700 text-sm">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
+            <span className="text-gray-700 text-sm font-bold">{toPersianNumbers(filteredExercises.length)} تمرین موجود</span>
           </div>
           
           <ExerciseViewControls 
@@ -138,7 +138,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
             className="flex flex-col items-center justify-center py-16 text-gray-500 bg-white/50 rounded-lg border border-dashed border-gray-200 h-[60vh] shadow-inner"
           >
             <Dumbbell className="h-16 w-16 text-gray-300 mb-5" />
-            <p className="text-center mb-3 text-lg">
+            <p className="text-center mb-3 text-lg font-bold text-gray-700">
               {selectedCategoryId === null 
                 ? "لطفا ابتدا یک دسته‌بندی انتخاب کنید" 
                 : "هیچ تمرینی یافت نشد"}
@@ -148,13 +148,13 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
                 variant="outline" 
                 size="sm" 
                 onClick={handleClearSearch}
-                className="mt-2"
+                className="mt-2 font-medium text-gray-700"
               >
                 پاک کردن فیلترها
               </Button>
             )}
             {selectedCategoryId === null && (
-              <div className="flex items-center justify-center mt-3 text-sm text-gray-500 bg-gray-50 rounded-full px-4 py-2 shadow-sm">
+              <div className="flex items-center justify-center mt-3 text-sm font-medium text-gray-700 bg-gray-50 rounded-full px-4 py-2 shadow-sm">
                 <Tag className="h-4 w-4 ml-2" />
                 <span>برای مشاهده تمرین‌ها، یک دسته‌بندی را انتخاب کنید</span>
               </div>

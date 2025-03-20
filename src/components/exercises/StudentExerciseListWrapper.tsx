@@ -29,7 +29,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
 }) => {
   return (
     <Card className={cn(
-      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all",
+      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white",
       className
     )}>
       {showControls && setViewMode && toggleSortOrder && (
