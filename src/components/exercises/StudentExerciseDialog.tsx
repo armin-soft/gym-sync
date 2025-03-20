@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { ExerciseCard } from "./ExerciseCard";
-import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
+import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp, Save, BookmarkCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -185,12 +185,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     };
 
     const handleSaveExercise = (exerciseId: number) => {
-      // Always toggle the exercise when the save button is clicked
       toggleExercise(exerciseId);
-      
-      // This is optional, but you could also call the onSave function directly
-      // if you want to immediately save after clicking the save button
-      // onSave(selectedExercises, dayNumber);
     };
 
     return (
@@ -238,7 +233,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
         
         {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper maxHeight="calc(85vh - 200px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
+          <StudentExerciseListWrapper maxHeight="calc(85vh - 280px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -270,11 +265,20 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         )}
         
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 p-5 border border-slate-200 rounded-lg bg-slate-50 flex flex-col items-center justify-center space-y-3">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <BookmarkCheck className="h-5 w-5 text-primary" />
+              <span className="text-sm font-medium">تعداد تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}</span>
+            </div>
+            <span className="text-xs text-gray-500">روز {toPersianNumbers(dayNumber)}</span>
+          </div>
+          
           <Button 
             onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
-            className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
+            className={`${btnGradient} shadow-md hover:shadow-lg transition-all w-full flex items-center justify-center gap-2`}
           >
+            <Save className="h-4 w-4" />
             ذخیره تمرین‌های روز {toPersianNumbers(dayNumber)}
           </Button>
         </div>
