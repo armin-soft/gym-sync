@@ -1,11 +1,10 @@
 
 import React from "react";
 import { Exercise } from "@/types/exercise";
-import { Dumbbell, Plus, Save } from "lucide-react";
+import { Dumbbell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -13,8 +12,6 @@ interface ExerciseCardProps {
   isSelected: boolean;
   viewMode: "grid" | "list";
   onClick: () => void;
-  onAddToWorkout?: () => void;
-  onSave?: () => void;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
@@ -23,8 +20,6 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   isSelected,
   viewMode,
   onClick,
-  onAddToWorkout,
-  onSave,
 }) => {
   return (
     <motion.div
@@ -34,8 +29,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full",
-        viewMode === "list" ? "h-auto" : "h-24",
+        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full h-24",
         isSelected 
           ? "ring-2 ring-primary shadow-lg border-primary/50" 
           : "hover:shadow-md border-gray-100 hover:border-gray-200"
@@ -62,39 +56,6 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
                 </Badge>
               )}
             </div>
-            
-            {isSelected && (viewMode === "list") && (
-              <div className="flex mt-3 space-x-2 rtl:space-x-reverse">
-                {onAddToWorkout && (
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="bg-white hover:bg-white/90"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onAddToWorkout();
-                    }}
-                  >
-                    <Plus className="w-4 h-4 mr-1" />
-                    افزودن به تمرین
-                  </Button>
-                )}
-                
-                {onSave && (
-                  <Button 
-                    size="sm" 
-                    className="bg-primary/90 hover:bg-primary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSave();
-                    }}
-                  >
-                    <Save className="w-4 h-4 mr-1" />
-                    ذخیره
-                  </Button>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </div>

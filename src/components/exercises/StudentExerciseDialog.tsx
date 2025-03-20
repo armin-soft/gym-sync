@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { ExerciseCard } from "./ExerciseCard";
-import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp, Save, BookmarkCheck } from "lucide-react";
+import { Dumbbell, Filter, Search, X, ArrowDown, ArrowUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -177,22 +177,11 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     const activeColorClass = getActiveTabContentColor(tabValue);
     const btnGradient = getBtnGradient(tabValue);
 
-    const handleAddToWorkout = (exerciseId: number) => {
-      if (!selectedExercises.includes(exerciseId)) {
-        toggleExercise(exerciseId);
-      }
-    };
-
-    const handleSaveExercise = (exerciseId: number) => {
-      toggleExercise(exerciseId);
-    };
-
     return (
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
         <div className="mb-4 p-3 rounded-md flex flex-wrap gap-2 justify-between items-center bg-gray-50 border border-gray-100 shadow-sm">
           <div className={`text-sm font-medium ${activeColorClass} px-3 py-1 rounded-full shadow-sm`}>
-            تمرین‌های انتخاب شده:{" "}
-            <span className="text-green-600">{toPersianNumbers(selectedExercises.length)}</span>
+            تمرین‌های انتخاب شده: {toPersianNumbers(selectedExercises.length)}
           </div>
           
           <div className="flex items-center gap-2">
@@ -233,7 +222,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         </div>
         
         {filteredExercises.length > 0 ? (
-          <StudentExerciseListWrapper maxHeight="calc(85vh - 280px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
+          <StudentExerciseListWrapper maxHeight="calc(85vh - 200px)" className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm">
             {filteredExercises.map((exercise) => {
               const category = categories.find(cat => cat.id === exercise.categoryId);
               return (
@@ -244,8 +233,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   isSelected={selectedExercises.includes(exercise.id)}
                   viewMode={viewMode}
                   onClick={() => toggleExercise(exercise.id)}
-                  onAddToWorkout={() => handleAddToWorkout(exercise.id)}
-                  onSave={() => handleSaveExercise(exercise.id)}
                 />
               );
             })}
@@ -265,29 +252,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           </div>
         )}
         
-        <DialogFooter className="p-6 pt-4 border-t mt-4">
-          <div className="text-sm font-medium mr-auto">
-            تمرین‌های انتخاب شده:{" "}
-            <span className="text-green-600">{toPersianNumbers(selectedExercises.length)}</span>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="gap-2"
-            >
-              <X className="h-4 w-4" />
-              انصراف
-            </Button>
-            <Button 
-              onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
-              className={`gap-2 ${btnGradient}`}
-            >
-              <Save className="h-4 w-4" />
-              ذخیره تمرین‌ها
-            </Button>
-          </div>
-        </DialogFooter>
+        <div className="mt-6 flex justify-end">
+          <Button 
+            onClick={() => handleSaveExercises(selectedExercises, dayNumber)} 
+            className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
+          >
+            ذخیره تمرین‌های روز {toPersianNumbers(dayNumber)}
+          </Button>
+        </div>
       </div>
     );
   };
