@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, Tag } from "lucide-react";
 import { ExerciseCard } from "./ExerciseCard";
 import { StudentExerciseListWrapper } from "./StudentExerciseListWrapper";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -111,15 +111,27 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 h-[60vh] shadow-inner">
           <Dumbbell className="h-12 w-12 text-gray-300 mb-3" />
-          <p className="text-center mb-2">هیچ تمرینی یافت نشد</p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleClearSearch}
-            className="mt-2"
-          >
-            پاک کردن فیلترها
-          </Button>
+          <p className="text-center mb-2">
+            {selectedCategoryId === null 
+              ? "لطفا ابتدا یک دسته‌بندی انتخاب کنید" 
+              : "هیچ تمرینی یافت نشد"}
+          </p>
+          {selectedCategoryId !== null && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleClearSearch}
+              className="mt-2"
+            >
+              پاک کردن فیلترها
+            </Button>
+          )}
+          {selectedCategoryId === null && (
+            <div className="flex items-center justify-center mt-2 text-sm text-gray-500">
+              <Tag className="h-4 w-4 mr-1" />
+              <span>برای مشاهده تمرین‌ها، یک دسته‌بندی را انتخاب کنید</span>
+            </div>
+          )}
         </div>
       )}
       

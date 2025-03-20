@@ -108,7 +108,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const filteredExercises = exercises
     .filter((exercise) => 
       exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : true)
+      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : false) // Changed to false to hide exercises when no category is selected
     )
     .sort((a, b) => {
       if (sortOrder === "asc") {
