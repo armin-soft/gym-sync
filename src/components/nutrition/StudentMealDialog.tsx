@@ -98,7 +98,11 @@ export function StudentMealDialog({
 
     // Sort meals
     filtered.sort((a, b) => {
-      // First sort by meal type order
+      // First sort by day order
+      const dayOrderDiff = dayOrder[a.day] - dayOrder[b.day];
+      if (dayOrderDiff !== 0) return dayOrderDiff;
+      
+      // Then sort by meal type if days are same
       const typeOrderDiff = mealTypeOrder[a.type] - mealTypeOrder[b.type];
       if (typeOrderDiff !== 0) return typeOrderDiff;
       
@@ -347,85 +351,85 @@ export function StudentMealDialog({
                     <p className="text-muted-foreground text-sm mt-2">برای افزودن وعده غذایی به صفحه مدیریت غذا مراجعه کنید</p>
                   </div>
                 ) : (
-                  filteredMeals.map((meal) => (
-                    <motion.div
-                      key={meal.id}
-                      initial={{ opacity: 0, scale: viewMode === "grid" ? 0.95 : 1, y: viewMode === "list" ? 5 : 0 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{ duration: 0.2 }}
-                      layout
-                    >
-                      <div
-                        className={`${viewMode === "grid" ? "p-4 rounded-xl border shadow-sm hover:shadow" : "p-4 hover:bg-muted/50"} 
-                          transition-all cursor-pointer text-right
-                          ${selectedMeals.includes(meal.id)
-                            ? viewMode === "grid" 
-                              ? "border-primary/30 bg-primary/5 dark:bg-primary/10" 
-                              : "bg-primary/5 dark:bg-primary/10"
-                            : viewMode === "grid" 
-                              ? "border-border hover:border-primary/20 bg-card hover:bg-muted/50" 
-                              : ""
-                          }`}
-                        onClick={() => toggleMeal(meal.id)}
-                        dir="rtl"
-                      >
-                        <div className={`flex gap-3 ${viewMode === "list" ? "flex-row" : "flex-col"} items-start`}>
-                          <div
-                            className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${
-                              selectedMeals.includes(meal.id)
-                                ? "bg-primary"
-                                : "border-2 border-muted-foreground/30"
-                            }`}
-                          >
-                            {selectedMeals.includes(meal.id) && (
-                              <Check className="h-3 w-3 text-primary-foreground" />
-                            )}
-                          </div>
-                          
-                          <div className={`${viewMode === "list" ? "flex-1 flex justify-between" : ""}`}>
-                            {viewMode === "grid" ? (
-                              <div className="space-y-2 text-right">
-                                <div>
-                                  <h4 className="font-medium text-base text-foreground">{meal.name}</h4>
-                                  <div className="flex flex-wrap gap-1.5 mt-1.5">
-                                    <span className={`text-xs px-2 py-0.5 rounded-full border flex items-center gap-1 ${getMealTypeColor(meal.type)}`}>
-                                      {getMealTypeIcon(meal.type)}
-                                      <span>{meal.type}</span>
-                                    </span>
-                                    <span className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded-full">
-                                      {meal.day}
-                                    </span>
+                  <div className="space-y-6">
+                    {activeMealType === "all" && activeDay === "all" ? (
+                      // Group by day and then by meal type
+                      sortedDays.map(day => {
+                        const dayMeals = filteredMeals.filter(meal => meal.day === day);
+                        if (dayMeals.length === 0) return null;
+                        
+                        return (
+                          <div key={day} className="space-y-4">
+                            <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
+                            <div className="space-y-4">
+                              {sortedMealTypes.map(type => {
+                                const typeMeals = dayMeals.filter(meal => meal.type === type);
+                                if (typeMeals.length === 0) return null;
+                                
+                                const typeColor = getMealTypeColor(type);
+                                return (
+                                  <div key={`${day}-${type}`} className="space-y-2">
+                                    <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
+                                      {getMealTypeIcon(type)}
+                                      {type}
+                                      <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
+                                        {typeMeals.length} مورد
+                                      </span>
+                                    </h4>
+                                    <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
+                                      {typeMeals.map(meal => renderMealItem(meal))}
+                                    </div>
                                   </div>
-                                  
-                                  {meal.description && (
-                                    <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{meal.description}</p>
-                                  )}
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                <div className="space-y-1 text-right">
-                                  <h4 className="font-medium text-base text-foreground">{meal.name}</h4>
-                                  {meal.description && (
-                                    <p className="text-xs text-muted-foreground line-clamp-1">{meal.description}</p>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className={`text-xs px-2 py-0.5 rounded-full border flex items-center gap-1 ${getMealTypeColor(meal.type)}`}>
-                                    {getMealTypeIcon(meal.type)}
-                                    <span>{meal.type}</span>
-                                  </span>
-                                  <span className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded-full">
-                                    {meal.day}
-                                  </span>
-                                </div>
-                              </>
-                            )}
+                                );
+                              })}
+                            </div>
                           </div>
-                        </div>
+                        );
+                      })
+                    ) : activeMealType !== "all" && activeDay === "all" ? (
+                      // Group by day for a specific meal type
+                      sortedDays.map(day => {
+                        const dayMeals = filteredMeals.filter(meal => meal.day === day);
+                        if (dayMeals.length === 0) return null;
+                        
+                        return (
+                          <div key={day} className="space-y-4">
+                            <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
+                            <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
+                              {dayMeals.map(meal => renderMealItem(meal))}
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : activeDay !== "all" && activeMealType === "all" ? (
+                      // Group by meal type for a specific day
+                      sortedMealTypes.map(type => {
+                        const typeMeals = filteredMeals.filter(meal => meal.type === type);
+                        if (typeMeals.length === 0) return null;
+                        
+                        const typeColor = getMealTypeColor(type);
+                        return (
+                          <div key={type} className="space-y-2">
+                            <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
+                              {getMealTypeIcon(type)}
+                              {type}
+                              <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
+                                {typeMeals.length} مورد
+                              </span>
+                            </h4>
+                            <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
+                              {typeMeals.map(meal => renderMealItem(meal))}
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      // Just show the filtered meals when both day and meal type are selected
+                      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
+                        {filteredMeals.map(meal => renderMealItem(meal))}
                       </div>
-                    </motion.div>
-                  ))
+                    )}
+                  </div>
                 )}
               </StudentMealListWrapper>
             </TabsContent>
@@ -469,6 +473,59 @@ export function StudentMealDialog({
       </DialogContent>
     </Dialog>
   );
+  
+  // Helper function to render a meal item - define inside component so it has access to component state
+  function renderMealItem(meal: Meal) {
+    return (
+      <motion.div
+        key={meal.id}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        layout
+      >
+        <div
+          className={`p-4 rounded-xl border shadow-sm hover:shadow transition-all cursor-pointer text-right
+            ${selectedMeals.includes(meal.id)
+              ? "border-primary/30 bg-primary/5 dark:bg-primary/10" 
+              : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"
+            }`}
+          onClick={() => toggleMeal(meal.id)}
+          dir="rtl"
+        >
+          <div className="flex gap-3 items-start">
+            <div
+              className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${
+                selectedMeals.includes(meal.id)
+                  ? "bg-primary"
+                  : "border-2 border-muted-foreground/30"
+              }`}
+            >
+              {selectedMeals.includes(meal.id) && (
+                <Check className="h-3 w-3 text-primary-foreground" />
+              )}
+            </div>
+            
+            <div className="space-y-2 text-right flex-1">
+              <div>
+                <h4 className="font-medium text-base text-foreground">{meal.name}</h4>
+                <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  <span className={`text-xs px-2 py-0.5 rounded-full border flex items-center gap-1 ${getMealTypeColor(meal.type)}`}>
+                    {getMealTypeIcon(meal.type)}
+                    <span>{meal.type}</span>
+                  </span>
+                </div>
+                
+                {meal.description && (
+                  <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{meal.description}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 }
 
 export default StudentMealDialog;

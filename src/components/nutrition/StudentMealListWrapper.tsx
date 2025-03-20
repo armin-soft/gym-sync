@@ -27,7 +27,7 @@ interface StudentMealListWrapperProps {
 const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "auto",
+  maxHeight = "100%",
   viewMode = "list",
   setViewMode,
   toggleSortOrder,
@@ -39,13 +39,13 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
       "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white",
       className
     )}>
-      <ScrollArea className="w-full overflow-auto" style={{ maxHeight }}>
+      <ScrollArea className="w-full" style={{ maxHeight }}>
         <motion.div
           layout
           className={cn(
             "p-4 w-full", 
             viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" 
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" 
               : "flex flex-col space-y-3"
           )}
         >
