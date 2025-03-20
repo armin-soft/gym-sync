@@ -280,7 +280,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             <span>مدیریت تمرین‌های {studentName}</span>
           </DialogTitle>
           <DialogDescription>
-            تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگر�� اضافه شوند
+            تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگرد اضافه شوند
           </DialogDescription>
         </DialogHeader>
 
