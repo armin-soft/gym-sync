@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -108,7 +107,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   const filteredExercises = exercises
     .filter((exercise) => 
       exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : false) // Changed to false to hide exercises when no category is selected
+      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : false)
     )
     .sort((a, b) => {
       if (sortOrder === "asc") {
@@ -229,6 +228,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               categories={categories}
               handleClearSearch={handleClearSearch}
               handleSaveExercises={handleSaveExercises}
+              selectedCategoryId={selectedCategoryId}
             />
           </TabsContent>
 
@@ -243,6 +243,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               categories={categories}
               handleClearSearch={handleClearSearch}
               handleSaveExercises={handleSaveExercises}
+              selectedCategoryId={selectedCategoryId}
             />
           </TabsContent>
 
@@ -257,6 +258,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               categories={categories}
               handleClearSearch={handleClearSearch}
               handleSaveExercises={handleSaveExercises}
+              selectedCategoryId={selectedCategoryId}
             />
           </TabsContent>
 
@@ -271,6 +273,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               categories={categories}
               handleClearSearch={handleClearSearch}
               handleSaveExercises={handleSaveExercises}
+              selectedCategoryId={selectedCategoryId}
             />
           </TabsContent>
         </Tabs>

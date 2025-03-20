@@ -17,6 +17,7 @@ interface ExerciseTabContentProps {
   categories: ExerciseCategory[];
   handleClearSearch: () => void;
   handleSaveExercises: (exerciseIds: number[], dayNumber?: number) => boolean;
+  selectedCategoryId: number | null; // Added this prop
 }
 
 export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
@@ -28,7 +29,8 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   filteredExercises,
   categories,
   handleClearSearch,
-  handleSaveExercises
+  handleSaveExercises,
+  selectedCategoryId // Added this prop
 }) => {
   const getActiveTabContentColor = (tab: string) => {
     switch (tab) {
