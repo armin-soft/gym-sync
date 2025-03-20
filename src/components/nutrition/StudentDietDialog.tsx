@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -37,7 +36,6 @@ interface Meal {
   fat?: number;
 }
 
-// Default days of the week in Persian
 const defaultDays = [
   "شنبه",
   "یکشنبه",
@@ -48,7 +46,6 @@ const defaultDays = [
   "جمعه"
 ];
 
-// Default meal types in Persian
 const defaultMealTypes = [
   "صبحانه",
   "میان وعده صبح",
@@ -75,7 +72,6 @@ export function StudentDietDialog({
   const [types, setTypes] = useState<string[]>(defaultMealTypes);
   const [activeTab, setActiveTab] = useState<string>("all");
 
-  // Load meals from localStorage
   useEffect(() => {
     try {
       const savedMeals = localStorage.getItem("meals");
@@ -89,15 +85,12 @@ export function StudentDietDialog({
     }
   }, []);
 
-  // Extract days and types from meals, or use defaults if none exist
   useEffect(() => {
-    // Get unique days from meals, or use defaults if no meals have days
     const mealsWithDays = meals.filter(meal => meal.day);
     const uniqueDays = mealsWithDays.length > 0 
       ? Array.from(new Set(mealsWithDays.map(meal => meal.day)))
       : defaultDays;
     
-    // Get unique types from meals, or use defaults if no meals have types
     const mealsWithTypes = meals.filter(meal => meal.type);
     const uniqueTypes = mealsWithTypes.length > 0
       ? Array.from(new Set(mealsWithTypes.map(meal => meal.type)))
@@ -107,7 +100,6 @@ export function StudentDietDialog({
     setTypes(uniqueTypes);
   }, [meals]);
 
-  // Filter meals based on search query, tab, and filters
   useEffect(() => {
     let filtered = meals;
     
@@ -258,7 +250,7 @@ export function StudentDietDialog({
             <TabsContent 
               value={activeTab} 
               className="flex-grow m-0 p-0"
-              forceMount={activeTab === "all"}
+              forceMount={activeTab === "all" ? true : undefined}
             >
               <ScrollArea className="h-[calc(100vh-320px)] w-full">
                 {filteredMeals.length === 0 ? (
