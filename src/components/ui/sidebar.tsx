@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -88,7 +89,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </div>
                 <div>
                   <h2 className="font-semibold">منوی اصلی</h2>
-                  <p className="text-xs text-muted-foreground">مدیریت فیکس</p>
                 </div>
               </div>
             </div>
