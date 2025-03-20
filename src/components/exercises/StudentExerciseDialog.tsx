@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
+import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
 import { Dumbbell, X, Save } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ExerciseSearchFilters } from "./ExerciseSearchFilters";
@@ -63,11 +65,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     },
   });
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeTab, setActiveTab] = useState<string>("day1");
 
   const {
@@ -87,44 +84,23 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     initialExercisesDay4
   );
 
-  const filteredCategories = categories.filter(category => 
-    selectedExerciseType ? category.type === selectedExerciseType : true
-  );
-
-  useEffect(() => {
-    if (selectedCategoryId && filteredCategories.length > 0) {
-      const categoryExists = filteredCategories.some(cat => cat.id === selectedCategoryId);
-      if (!categoryExists) {
-        setSelectedCategoryId(null);
-      }
-    }
-  }, [selectedExerciseType, filteredCategories, selectedCategoryId]);
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedCategoryId,
+    setSelectedCategoryId,
+    selectedExerciseType,
+    setSelectedExerciseType,
+    sortOrder,
+    toggleSortOrder,
+    viewMode,
+    filteredExercises,
+    filteredCategories,
+    handleClearSearch,
+  } = useExerciseFiltering(exercises, categories);
 
   const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
     return onSave(exerciseIds, dayNumber);
-  };
-
-  const filteredExercises = exercises
-    .filter((exercise) => 
-      exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-      (selectedCategoryId ? exercise.categoryId === selectedCategoryId : false)
-    )
-    .sort((a, b) => {
-      if (sortOrder === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-
-  const toggleSortOrder = () => {
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery("");
-    setSelectedCategoryId(null);
-    setSelectedExerciseType(null);
   };
 
   const getBtnGradient = (tab: string) => {
