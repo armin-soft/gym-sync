@@ -54,8 +54,8 @@ export function StudentMealDialog({
   const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
   const [activeDay, setActiveDay] = useState<WeekDay | "all">("all");
   const [activeMealType, setActiveMealType] = useState<MealType | "all">("all");
-  const [showFilters, setShowFilters] = useState(true);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   // Get unique days and meal types from meals
@@ -158,7 +158,7 @@ export function StudentMealDialog({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent 
-        side="left"
+        side="right" 
         className="w-full p-0 sm:max-w-full flex flex-col border-0 text-right"
         dir="rtl"
       >
@@ -195,6 +195,27 @@ export function StudentMealDialog({
                         size="icon"
                         className={cn(
                           "h-9 w-9 border-muted transition-colors",
+                          viewMode === "grid" && "bg-primary/10 text-primary"
+                        )}
+                        onClick={() => setViewMode("grid")}
+                      >
+                        <LayoutGrid className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p className="text-xs font-medium">نمایش شبکه‌ای</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className={cn(
+                          "h-9 w-9 border-muted transition-colors",
                           viewMode === "list" && "bg-primary/10 text-primary"
                         )}
                         onClick={() => setViewMode("list")}
@@ -204,6 +225,27 @@ export function StudentMealDialog({
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
                       <p className="text-xs font-medium">نمایش لیستی</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline" 
+                        size="icon"
+                        className={cn(
+                          "h-9 w-9 border-muted transition-colors",
+                          showFilters && "bg-primary/10 text-primary"
+                        )}
+                        onClick={() => setShowFilters(!showFilters)}
+                      >
+                        <SlidersHorizontal className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p className="text-xs font-medium">فیلترها</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -226,35 +268,45 @@ export function StudentMealDialog({
           </div>
 
           {/* Filters */}
-          <div className="flex-shrink-0 overflow-hidden bg-muted/10 border-b">
-            <div className="p-4 flex flex-col gap-3" dir="rtl">
-              <div>
-                <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
-                <div className="flex flex-wrap gap-1.5">
-                  <Badge 
-                    variant={activeMealType === "all" ? "default" : "outline"}
-                    className="cursor-pointer transition-all hover:bg-primary/10"
-                    onClick={() => setActiveMealType("all")}
-                  >
-                    همه وعده‌ها
-                  </Badge>
-                  {sortedMealTypes.map((type) => (
-                    <Badge 
-                      key={type}
-                      variant={activeMealType === type ? "default" : "outline"}
-                      className={`cursor-pointer transition-all hover:bg-primary/10 flex gap-1 items-center ${
-                        activeMealType === type ? '' : getMealTypeColor(type).split(' ')[0]
-                      }`}
-                      onClick={() => setActiveMealType(type)}
-                    >
-                      {getMealTypeIcon(type)}
-                      <span>{type}</span>
-                    </Badge>
-                  ))}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex-shrink-0 overflow-hidden bg-muted/10 border-b"
+              >
+                <div className="p-4 flex flex-col gap-3" dir="rtl">
+                  <div>
+                    <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      <Badge 
+                        variant={activeMealType === "all" ? "default" : "outline"}
+                        className="cursor-pointer transition-all hover:bg-primary/10"
+                        onClick={() => setActiveMealType("all")}
+                      >
+                        همه وعده‌ها
+                      </Badge>
+                      {sortedMealTypes.map((type) => (
+                        <Badge 
+                          key={type}
+                          variant={activeMealType === type ? "default" : "outline"}
+                          className={`cursor-pointer transition-all hover:bg-primary/10 flex gap-1 items-center ${
+                            activeMealType === type ? '' : getMealTypeColor(type).split(' ')[0]
+                          }`}
+                          onClick={() => setActiveMealType(type)}
+                        >
+                          {getMealTypeIcon(type)}
+                          <span>{type}</span>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Tabs and Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
@@ -297,7 +349,7 @@ export function StudentMealDialog({
                   setViewMode={setViewMode}
                   toggleSortOrder={toggleSortOrder}
                   sortOrder={sortOrder}
-                  showControls={false}
+                  showControls={true}
                 >
                   {filteredMeals.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-64 text-center p-4">
@@ -434,4 +486,3 @@ export function StudentMealDialog({
 }
 
 export default StudentMealDialog;
-
