@@ -29,11 +29,16 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
 }) => {
   return (
     <Card className={cn(
-      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white",
+      "border border-slate-200 dark:border-slate-800 rounded-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white relative overflow-hidden group",
       className
     )}>
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500/50 via-blue-500/50 to-indigo-500/50 opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+      
       {showControls && setViewMode && toggleSortOrder && (
-        <div className="p-2 border-b">
+        <div className="p-2 border-b border-slate-200 dark:border-slate-800 relative z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
           <ExerciseViewControls
             viewMode={viewMode}
             setViewMode={setViewMode}
@@ -42,7 +47,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
           />
         </div>
       )}
-      <ScrollArea className="w-full overflow-auto" style={{ maxHeight }}>
+      <ScrollArea className="w-full overflow-auto relative z-10" style={{ maxHeight }}>
         <motion.div
           layout
           className={cn(

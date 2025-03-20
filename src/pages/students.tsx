@@ -108,15 +108,39 @@ const StudentsPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50/80 via-white to-sky-50/80 dark:from-gray-900/90 dark:via-gray-900 dark:to-indigo-950/90">
+    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50/90 via-white to-sky-50/90 dark:from-gray-900/90 dark:via-gray-900 dark:to-indigo-950/90">
       {/* Enhanced background decorations */}
-      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(to_bottom,white,transparent_70%)] dark:bg-grid-slate-800/50" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.100/30%),transparent_70%)] dark:bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.900/40%),transparent_70%)]" />
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-indigo-500/10 via-blue-500/5 to-transparent" />
+      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(to_bottom,white,transparent_80%)] dark:bg-grid-slate-800/50" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.100/40%),transparent_80%)] dark:bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.900/50%),transparent_80%)]" />
+      <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-indigo-500/15 via-blue-500/10 to-transparent" />
       
-      {/* Decorative elements */}
-      <div className="absolute top-40 left-10 w-64 h-64 rounded-full bg-purple-300/10 dark:bg-purple-700/10 blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-blue-300/10 dark:bg-blue-700/10 blur-3xl" />
+      {/* Animated decorative elements */}
+      <motion.div 
+        className="absolute top-40 left-10 w-64 h-64 rounded-full bg-purple-300/15 dark:bg-purple-700/15 blur-3xl" 
+        animate={{ 
+          x: [0, 20, 0],
+          scale: [1, 1.1, 1],
+          opacity: [0.5, 0.7, 0.5]
+        }}
+        transition={{ 
+          duration: 15,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-blue-300/15 dark:bg-blue-700/15 blur-3xl"
+        animate={{ 
+          x: [0, -20, 0],
+          scale: [1, 1.1, 1],
+          opacity: [0.5, 0.7, 0.5]
+        }}
+        transition={{ 
+          duration: 18,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      />
       
       <motion.div 
         initial="hidden"
@@ -126,14 +150,29 @@ const StudentsPage = () => {
       >
         <motion.div variants={itemVariants} className="flex flex-col space-y-8">
           <div className="relative">
-            <div className="absolute -top-6 -left-6 w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 dark:from-indigo-500/20 dark:to-purple-500/20 blur-2xl" />
+            <motion.div 
+              className="absolute -top-6 -left-6 w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400/30 to-purple-400/30 dark:from-indigo-500/30 dark:to-purple-500/30 blur-2xl"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 0.8, 0.5]
+              }}
+              transition={{ 
+                duration: 8,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
             <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
           </div>
           
           <StudentStatsCards students={students} />
           
-          <div className="relative p-0.5 rounded-2xl bg-gradient-to-r from-indigo-500/20 via-transparent to-blue-500/20 shadow-sm">
-            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl p-4">
+          <motion.div 
+            variants={itemVariants}
+            className="relative p-0.5 rounded-2xl bg-gradient-to-r from-indigo-500/30 via-transparent to-blue-500/30 shadow-sm overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl p-4 relative z-10">
               <StudentSearchSort 
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -149,7 +188,7 @@ const StudentsPage = () => {
                 showExerciseFilters={true}
               />
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         <motion.div 
@@ -157,12 +196,39 @@ const StudentsPage = () => {
           className="relative"
         >
           {/* Decorative gradient blobs */}
-          <div className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-br from-indigo-200/20 to-sky-200/20 dark:from-indigo-900/30 dark:to-sky-900/30 rounded-full blur-3xl opacity-70" />
-          <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-br from-purple-200/20 to-indigo-200/20 dark:from-purple-900/30 dark:to-indigo-900/30 rounded-full blur-3xl opacity-70" />
+          <motion.div 
+            className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-br from-indigo-200/30 to-sky-200/30 dark:from-indigo-900/40 dark:to-sky-900/40 rounded-full blur-3xl opacity-70"
+            animate={{ 
+              scale: [1, 1.1, 1],
+              opacity: [0.5, 0.7, 0.5],
+              x: [0, -10, 0],
+              y: [0, 10, 0]
+            }}
+            transition={{ 
+              duration: 12,
+              repeat: Infinity,
+              repeatType: "reverse"
+            }}
+          />
+          <motion.div 
+            className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-br from-purple-200/30 to-indigo-200/30 dark:from-purple-900/40 dark:to-indigo-900/40 rounded-full blur-3xl opacity-70"
+            animate={{ 
+              scale: [1, 1.1, 1],
+              opacity: [0.5, 0.7, 0.5],
+              x: [0, 10, 0],
+              y: [0, -10, 0]
+            }}
+            transition={{ 
+              duration: 15,
+              repeat: Infinity,
+              repeatType: "reverse"
+            }}
+          />
           
-          <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/60 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/10 dark:hover:shadow-indigo-500/20 relative rounded-2xl">
+          <Card className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/80 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/15 dark:hover:shadow-indigo-500/25 relative rounded-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent dark:from-indigo-950/50 dark:to-transparent opacity-60 pointer-events-none" />
             <div className="absolute inset-0 border border-indigo-500/10 dark:border-indigo-500/20 rounded-2xl pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500/70 via-blue-500/70 to-indigo-500/70"></div>
             
             <StudentsTable 
               students={students}
