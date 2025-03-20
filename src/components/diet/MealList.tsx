@@ -29,7 +29,24 @@ interface MealListProps {
   onDelete: (id: number) => void;
 }
 
+// Define meal time order for consistent display
+const mealTimeOrder: Record<string, number> = {
+  "صبحانه": 1,
+  "میان وعده صبح": 2, 
+  "ناهار": 3,
+  "میان وعده عصر": 4,
+  "شام": 5
+};
+
 export const MealList = ({ meals, onEdit, onDelete }: MealListProps) => {
+  // Sort meals by their time according to the defined order
+  const sortedMeals = [...meals].sort((a, b) => {
+    const timeA = a.time;
+    const timeB = b.time;
+    
+    return (mealTimeOrder[timeA] || 999) - (mealTimeOrder[timeB] || 999);
+  });
+
   return (
     <Card className="p-6">
       <div className="relative w-full overflow-auto" dir="rtl">
@@ -46,7 +63,7 @@ export const MealList = ({ meals, onEdit, onDelete }: MealListProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {meals.map((meal) => (
+            {sortedMeals.map((meal) => (
               <TableRow key={meal.id}>
                 <TableCell className="text-right">{meal.name}</TableCell>
                 <TableCell className="text-right">{meal.time}</TableCell>

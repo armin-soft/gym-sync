@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Sheet,
@@ -33,6 +32,15 @@ interface StudentMealDialogProps {
   meals: Meal[];
 }
 
+// Define the meal type order
+const mealTypeOrder: Record<MealType, number> = {
+  "صبحانه": 1,
+  "میان وعده صبح": 2,
+  "ناهار": 3,
+  "میان وعده عصر": 4,
+  "شام": 5
+};
+
 export function StudentMealDialog({
   open,
   onOpenChange,
@@ -53,6 +61,9 @@ export function StudentMealDialog({
   // Get unique days and meal types from meals
   const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
   const mealTypes = Array.from(new Set(meals.map(meal => meal.type))) as MealType[];
+
+  // Sort meal types in the correct order
+  const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
 
   // Sort days in the correct order
   const dayOrder: Record<WeekDay, number> = {
@@ -87,6 +98,11 @@ export function StudentMealDialog({
 
     // Sort meals
     filtered.sort((a, b) => {
+      // First sort by meal type order
+      const typeOrderDiff = mealTypeOrder[a.type] - mealTypeOrder[b.type];
+      if (typeOrderDiff !== 0) return typeOrderDiff;
+      
+      // Then sort by name if types are the same
       if (sortOrder === "asc") {
         return a.name.localeCompare(b.name);
       } else {
@@ -272,7 +288,7 @@ export function StudentMealDialog({
                       >
                         همه وعده‌ها
                       </Badge>
-                      {mealTypes.map((type) => (
+                      {sortedMealTypes.map((type) => (
                         <Badge 
                           key={type}
                           variant={activeMealType === type ? "default" : "outline"}

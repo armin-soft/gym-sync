@@ -14,6 +14,15 @@ interface DayMealsProps {
   onDelete: (id: number) => void;
 }
 
+// Define meal type order for consistent display
+const mealTypeOrder: Record<MealType, number> = {
+  "صبحانه": 1,
+  "میان وعده صبح": 2,
+  "ناهار": 3,
+  "میان وعده عصر": 4,
+  "شام": 5
+};
+
 const getMealTypeIcon = (type: MealType) => {
   switch (type) {
     case "صبحانه":
@@ -70,9 +79,12 @@ const getMealTypeStyle = (type: MealType) => {
 };
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
+  // Sort meal types based on the defined order
+  const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
+
   return (
     <div className="space-y-6" dir="rtl">
-      {mealTypes.map((type, typeIndex) => {
+      {sortedMealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter((meal) => meal.type === type);
         const styles = getMealTypeStyle(type);
         
