@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -20,6 +19,7 @@ import { motion } from "framer-motion";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useToast } from "@/hooks/use-toast";
+import { Spinner } from "@/components/ui/spinner";
 
 interface StudentDownloadDialogProps {
   open: boolean;
@@ -95,7 +95,6 @@ export const StudentDownloadDialog: React.FC<StudentDownloadDialogProps> = ({
 
       const imgData = canvas.toDataURL('image/png');
       
-      // Create PDF
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -455,7 +454,7 @@ export const StudentDownloadDialog: React.FC<StudentDownloadDialogProps> = ({
                       اطلاعات شخصی
                     </label>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      نام، شماره تماس، قد، وزن و مبلغ پرداختی
+                      نام، شمار�� تماس، قد، وزن و مبلغ پرداختی
                     </p>
                   </div>
                 </div>
@@ -576,18 +575,5 @@ export const StudentDownloadDialog: React.FC<StudentDownloadDialogProps> = ({
               >
                 {isDownloading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> در حال آماده‌سازی...
-                  </>
-                ) : (
-                  <>
-                    <Download className="mr-2 h-4 w-4" /> دانلود اطلاعات
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+                    <Spinner
+
