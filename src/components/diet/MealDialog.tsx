@@ -21,7 +21,7 @@ import * as z from "zod";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect } from "react";
-import { UtensilsCrossed, Type, Clock, CalendarDays, FileText, Save, X } from "lucide-react";
+import { UtensilsCrossed, Type, Clock, CalendarDays, Save, X } from "lucide-react";
 
 type MealFormData = z.infer<typeof mealFormSchema>;
 
@@ -178,27 +178,6 @@ export const MealDialog = ({
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-muted-foreground" />
-                      توضیحات
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="توضیحات وعده غذایی را وارد کنید" 
-                        className="bg-muted/50 focus:bg-background transition-colors duration-300"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <div className="p-4 bg-gradient-to-t from-muted/50 via-muted/30 to-transparent flex items-center justify-end gap-2">

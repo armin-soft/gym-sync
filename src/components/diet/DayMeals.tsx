@@ -138,11 +138,6 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                               </Button>
                             </div>
                           </div>
-                          {meal.description && (
-                            <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                              {meal.description}
-                            </p>
-                          )}
                         </div>
                       </Card>
                     </motion.div>

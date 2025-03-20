@@ -97,10 +97,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   };
   
   useEffect(() => {
-    // Load gym name from local storage
     loadGymName();
     
-    // Listen for storage events to update gym name when it changes
     const handleStorageChange = () => {
       loadGymName();
     };

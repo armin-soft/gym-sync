@@ -18,7 +18,6 @@ const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "نا
 const DietPage = () => {
   const { toast } = useToast();
   const [meals, setMeals] = useState<Meal[]>(() => {
-    // خواندن اطلاعات از localStorage در زمان مقداردهی اولیه
     try {
       const savedMeals = localStorage.getItem('meals');
       return savedMeals ? JSON.parse(savedMeals) : [];
@@ -32,7 +31,6 @@ const DietPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   
-  // ذخیره تغییرات در localStorage به صورت مستقیم
   const saveMeals = (newMeals: Meal[]) => {
     try {
       localStorage.setItem('meals', JSON.stringify(newMeals));
@@ -120,10 +118,6 @@ const DietPage = () => {
                   برنامه های غذایی هفتگی
                 </span>
               </h2>
-              <p className="text-muted-foreground/80 flex items-center gap-2 text-sm">
-                <UtensilsCrossed className="w-4 h-4" />
-                برنامه ریزی و مدیریت وعده های غذایی در طول هفته
-              </p>
             </div>
             <Button 
               onClick={handleAdd} 

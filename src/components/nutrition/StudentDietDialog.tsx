@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { 
-  Search, Save, X, Apple, CalendarDays, Filter, 
+  Search, Save, X, Apple, CalendarDays, 
   Check, Salad, UtensilsCrossed, Sparkles, ChevronLeft,
   LayoutGrid, ListFilter, SlidersHorizontal
 } from "lucide-react";
@@ -360,9 +360,6 @@ export function StudentDietDialog({
                         <UtensilsCrossed className="h-8 w-8 text-green-500 dark:text-green-400" />
                       </div>
                       <h3 className="font-medium text-lg text-foreground">هیچ وعده غذایی یافت نشد</h3>
-                      <p className="text-muted-foreground text-sm mt-2 max-w-xs">
-                        وعده غذایی مورد نظر شما موجود نیست یا هنوز هیچ وعده غذایی ثبت نشده است
-                      </p>
                     </div>
                   ) : viewMode === "grid" ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
@@ -407,9 +404,6 @@ export function StudentDietDialog({
                                     </span>
                                   </div>
                                 </div>
-                                <p className="text-muted-foreground text-sm line-clamp-2">
-                                  {meal.description}
-                                </p>
                                 {(meal.calories || meal.protein || meal.carbs || meal.fat) && (
                                   <div className="grid grid-cols-4 gap-1 mt-2">
                                     {meal.calories && (
@@ -487,10 +481,6 @@ export function StudentDietDialog({
                                     </span>
                                   </div>
                                 </div>
-                                
-                                <p className="text-muted-foreground text-sm mt-1">
-                                  {meal.description}
-                                </p>
                                 
                                 {(meal.calories || meal.protein || meal.carbs || meal.fat) && (
                                   <div className="flex gap-3 mt-2">
