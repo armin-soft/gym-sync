@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Dialog,
@@ -454,7 +455,7 @@ export const StudentDownloadDialog: React.FC<StudentDownloadDialogProps> = ({
                       اطلاعات شخصی
                     </label>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      نام، شمار�� تماس، قد، وزن و مبلغ پرداختی
+                      نام، شماره تماس، قد، وزن و مبلغ پرداختی
                     </p>
                   </div>
                 </div>
@@ -575,5 +576,18 @@ export const StudentDownloadDialog: React.FC<StudentDownloadDialogProps> = ({
               >
                 {isDownloading ? (
                   <>
-                    <Spinner
-
+                    <Spinner className="mr-2 h-4 w-4" /> در حال آماده‌سازی...
+                  </>
+                ) : (
+                  <>
+                    <Download className="mr-2 h-4 w-4" /> دانلود اطلاعات
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
