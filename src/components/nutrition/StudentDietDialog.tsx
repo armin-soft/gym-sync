@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -278,7 +277,7 @@ export function StudentDietDialog({
             className="flex-grow flex flex-col"
           >
             <div className="border-b bg-muted/20">
-              <ScrollArea orientation="horizontal" className="w-full">
+              <ScrollArea className="w-full">
                 <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1">
                   <TabsTrigger 
                     value="all"
