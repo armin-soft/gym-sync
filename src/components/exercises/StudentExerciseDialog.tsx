@@ -1,7 +1,6 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,7 +15,7 @@ import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
 import { Dumbbell, X, Save } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ExerciseSearchFilters } from "./ExerciseSearchFilters";
-import { ExerciseTabContent } from "./ExerciseTabContent";
+import ExerciseDayTabs from "./ExerciseDayTabs";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -123,16 +122,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const getActiveTabToggleFunction = () => {
-    switch(activeTab) {
-      case "day1": return toggleExerciseDay1;
-      case "day2": return toggleExerciseDay2;
-      case "day3": return toggleExerciseDay3;
-      case "day4": return toggleExerciseDay4;
-      default: return toggleExerciseDay1;
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[98vw] w-full max-h-[98vh] p-0 overflow-hidden">
@@ -161,98 +150,24 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           sortOrder={sortOrder}
         />
 
-        <Tabs 
-          defaultValue="day1" 
-          className="flex-1 flex flex-col overflow-hidden mt-6 px-6 pb-6"
-          onValueChange={setActiveTab}
-        >
-          <TabsList className="grid grid-cols-4 gap-2 w-full">
-            <TabsTrigger 
-              value="day1" 
-              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-            >
-              روز اول
-            </TabsTrigger>
-            <TabsTrigger 
-              value="day2"
-              className="data-[state=active]:bg-purple-50 data-[state=active]:text-purple-600 data-[state=active]:border-b-2 data-[state=active]:border-purple-600"
-            >
-              روز دوم
-            </TabsTrigger>
-            <TabsTrigger 
-              value="day3"
-              className="data-[state=active]:bg-pink-50 data-[state=active]:text-pink-600 data-[state=active]:border-b-2 data-[state=active]:border-pink-600"
-            >
-              روز سوم
-            </TabsTrigger>
-            <TabsTrigger 
-              value="day4"
-              className="data-[state=active]:bg-amber-50 data-[state=active]:text-amber-600 data-[state=active]:border-b-2 data-[state=active]:border-amber-600"
-            >
-              روز چهارم
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="day1" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-            <ExerciseTabContent 
-              selectedExercises={selectedExercisesDay1} 
-              toggleExercise={toggleExerciseDay1} 
-              dayNumber={1}
-              tabValue="day1"
-              viewMode={viewMode}
-              filteredExercises={filteredExercises}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              handleSaveExercises={handleSaveExercises}
-              selectedCategoryId={selectedCategoryId}
-            />
-          </TabsContent>
-
-          <TabsContent value="day2" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-            <ExerciseTabContent 
-              selectedExercises={selectedExercisesDay2} 
-              toggleExercise={toggleExerciseDay2} 
-              dayNumber={2}
-              tabValue="day2"
-              viewMode={viewMode}
-              filteredExercises={filteredExercises}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              handleSaveExercises={handleSaveExercises}
-              selectedCategoryId={selectedCategoryId}
-            />
-          </TabsContent>
-
-          <TabsContent value="day3" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-            <ExerciseTabContent 
-              selectedExercises={selectedExercisesDay3} 
-              toggleExercise={toggleExerciseDay3} 
-              dayNumber={3}
-              tabValue="day3"
-              viewMode={viewMode}
-              filteredExercises={filteredExercises}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              handleSaveExercises={handleSaveExercises}
-              selectedCategoryId={selectedCategoryId}
-            />
-          </TabsContent>
-
-          <TabsContent value="day4" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-            <ExerciseTabContent 
-              selectedExercises={selectedExercisesDay4} 
-              toggleExercise={toggleExerciseDay4} 
-              dayNumber={4}
-              tabValue="day4"
-              viewMode={viewMode}
-              filteredExercises={filteredExercises}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              handleSaveExercises={handleSaveExercises}
-              selectedCategoryId={selectedCategoryId}
-            />
-          </TabsContent>
-        </Tabs>
+        <ExerciseDayTabs 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          selectedExercisesDay1={selectedExercisesDay1}
+          selectedExercisesDay2={selectedExercisesDay2}
+          selectedExercisesDay3={selectedExercisesDay3}
+          selectedExercisesDay4={selectedExercisesDay4}
+          toggleExerciseDay1={toggleExerciseDay1}
+          toggleExerciseDay2={toggleExerciseDay2}
+          toggleExerciseDay3={toggleExerciseDay3}
+          toggleExerciseDay4={toggleExerciseDay4}
+          viewMode={viewMode}
+          filteredExercises={filteredExercises}
+          categories={categories}
+          handleClearSearch={handleClearSearch}
+          handleSaveExercises={handleSaveExercises}
+          selectedCategoryId={selectedCategoryId}
+        />
 
         <DialogFooter className="p-6 pt-4 border-t mt-4">
           <div className="text-sm font-medium mr-auto">
