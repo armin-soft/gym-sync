@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -50,7 +49,6 @@ export function StudentSupplementDialog({
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
 
-  // Load supplements from localStorage
   useEffect(() => {
     try {
       const savedItems = localStorage.getItem("supplements");
@@ -64,7 +62,6 @@ export function StudentSupplementDialog({
     }
   }, []);
 
-  // Extract categories from supplements
   useEffect(() => {
     const uniqueCategories = Array.from(
       new Set(
@@ -76,7 +73,6 @@ export function StudentSupplementDialog({
     setCategories(uniqueCategories);
   }, [supplements]);
 
-  // Filter supplements based on search query and type
   useEffect(() => {
     let filtered = supplements.filter(
       (item) => item.type === currentTab
@@ -132,7 +128,7 @@ export function StudentSupplementDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col overflow-hidden" dir="rtl">
+      <DialogContent className="max-w-[95vw] max-h-[90vh] w-full flex flex-col overflow-hidden" dir="rtl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
@@ -189,7 +185,7 @@ export function StudentSupplementDialog({
           </div>
 
           <TabsContent value="supplement" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-            <ScrollArea className="flex-grow">
+            <ScrollArea className="flex-1">
               {filteredItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-40 text-center p-4">
                   <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-4">
@@ -264,7 +260,7 @@ export function StudentSupplementDialog({
           </TabsContent>
 
           <TabsContent value="vitamin" className="flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-            <ScrollArea className="flex-grow">
+            <ScrollArea className="flex-1">
               {filteredItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-40 text-center p-4">
                   <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
@@ -339,7 +335,7 @@ export function StudentSupplementDialog({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter className="border-t pt-4 mt-4">
+        <DialogFooter className="border-t pt-4 mt-4 shrink-0">
           <div className="text-sm font-medium mr-auto">
             {currentTab === 'supplement' ? 'مکمل‌های' : 'ویتامین‌های'} انتخاب شده:{" "}
             <span className="text-purple-600">{toPersianNumbers(

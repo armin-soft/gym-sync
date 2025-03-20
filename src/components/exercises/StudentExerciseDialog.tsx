@@ -122,11 +122,11 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[98vw] w-full max-h-[98vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10">
+      <DialogContent className="max-w-[98vw] w-full max-h-[90vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col">
         <ExerciseDialogHeader studentName={studentName} />
 
         {isLoading ? (
-          <div className="flex items-center justify-center h-[70vh]">
+          <div className="flex items-center justify-center h-64">
             <Loader2 className="h-12 w-12 text-primary animate-spin" />
           </div>
         ) : (
@@ -136,7 +136,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0.5, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="flex flex-col flex-grow"
+              className="flex flex-col flex-1 overflow-hidden"
             >
               <ExerciseSearchFilters
                 searchQuery={searchQuery}

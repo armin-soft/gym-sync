@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -166,7 +167,7 @@ export function StudentDietDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col overflow-hidden p-0" dir="rtl">
+      <DialogContent className="max-w-[95vw] max-h-[90vh] w-full flex flex-col overflow-hidden p-0" dir="rtl">
         <DialogHeader className="border-b py-4 px-6 bg-gradient-to-b from-background to-background/80">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -270,11 +271,11 @@ export function StudentDietDialog({
           )}
         </AnimatePresence>
 
-        <div className="flex-grow flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           <Tabs 
             value={activeTab} 
             onValueChange={setActiveTab}
-            className="flex-grow flex flex-col"
+            className="flex-1 flex flex-col overflow-hidden"
           >
             <div className="border-b bg-muted/20">
               <ScrollArea className="w-full">
@@ -300,10 +301,10 @@ export function StudentDietDialog({
 
             <TabsContent 
               value={activeTab} 
-              className="flex-grow m-0 p-0 outline-none"
+              className="flex-1 overflow-hidden m-0 p-0 outline-none"
               forceMount={activeTab === "all" ? true : undefined}
             >
-              <ScrollArea className="h-[calc(100vh-320px)] w-full">
+              <ScrollArea className="h-full w-full">
                 {filteredMeals.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-64 text-center p-4">
                     <div className="w-16 h-16 bg-gradient-to-b from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
@@ -400,7 +401,7 @@ export function StudentDietDialog({
           </Tabs>
         </div>
 
-        <DialogFooter className="border-t p-4 mt-auto bg-muted/20">
+        <DialogFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0">
           <div className="flex items-center gap-2 mr-auto">
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }}
