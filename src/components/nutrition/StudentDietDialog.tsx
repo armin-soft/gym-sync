@@ -26,7 +26,7 @@ interface StudentDietDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
-  onSave: (mealIds: number[]) => void;
+  onSave: (mealIds: number[]) => boolean;
   initialMeals: number[];
 }
 
@@ -141,7 +141,6 @@ export function StudentDietDialog({
 
   const handleSave = () => {
     onSave(selectedMeals);
-    onOpenChange(false);
   };
 
   const getMealTypeColor = (type: string) => {
