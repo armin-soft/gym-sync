@@ -1,3 +1,4 @@
+
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
@@ -6,12 +7,11 @@ import { StudentSupplementDialog } from "@/components/supplements/StudentSupplem
 import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
-import { WeekDay } from "@/types/meal";
 
 interface StudentDialogManagerProps {
   onSave: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => boolean;
   onSaveExercises: (exerciseIds: number[], studentId: number, dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: {[key in WeekDay]?: number[]}, studentId: number) => boolean;
+  onSaveDiet: (mealIds: number[], studentId: number) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
   exercises: any[];
   meals: any[];
@@ -113,10 +113,10 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     }
   };
   
-  const handleSaveDietWrapper = (mealsByDay: {[key in WeekDay]?: number[]}): boolean => {
+  const handleSaveDietWrapper = (mealIds: number[]): boolean => {
     if (!selectedStudentForDiet) return false;
     
-    const success = onSaveDiet(mealsByDay, selectedStudentForDiet.id);
+    const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
     if (success) {
       setIsDietDialogOpen(false);
       toast({
@@ -137,21 +137,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     return success;
   };
 
-  const prepareInitialMealsByDay = () => {
-    if (!selectedStudentForDiet || !selectedStudentForDiet.meals) {
-      return {};
-    }
-
-    const weekDays: WeekDay[] = ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج شنبه", "جمعه"];
-    const initialMealsByDay: {[key in WeekDay]?: number[]} = {};
-    
-    const studentMeals = selectedStudentForDiet.meals || [];
-    
-    initialMealsByDay["شنبه"] = studentMeals;
-    
-    return initialMealsByDay;
-  };
-
+  // Expose methods to parent component via ref
   useImperativeHandle(ref, () => ({
     handleAdd,
     handleEdit,
@@ -187,7 +173,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         onOpenChange={setIsDietDialogOpen}
         studentName={selectedStudentForDiet?.name || ""}
         onSave={handleSaveDietWrapper}
-        initialMeals={prepareInitialMealsByDay()}
+        initialMeals={selectedStudentForDiet?.meals || []}
       />
       
       <StudentSupplementDialog
