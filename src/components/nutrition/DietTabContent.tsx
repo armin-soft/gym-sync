@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { MealViewControls } from "./MealViewControls";
+import { WeekDay, MealType } from "@/types/meal";
 
 interface DietTabContentProps {
   selectedMeals: number[];
@@ -20,6 +21,8 @@ interface DietTabContentProps {
   selectedCategoryId: number | null;
   toggleSortOrder: () => void;
   sortOrder: "asc" | "desc";
+  selectedDay: WeekDay;
+  selectedMealType: MealType | null;
 }
 
 export const DietTabContent: React.FC<DietTabContentProps> = ({
@@ -32,7 +35,9 @@ export const DietTabContent: React.FC<DietTabContentProps> = ({
   handleClearSearch,
   selectedCategoryId,
   toggleSortOrder,
-  sortOrder
+  sortOrder,
+  selectedDay,
+  selectedMealType
 }) => {
   // Count only selected meals that exist in the filtered meals
   const selectedFilteredMeals = filteredMeals.filter(meal => 
@@ -45,13 +50,15 @@ export const DietTabContent: React.FC<DietTabContentProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.2 }}
-      className="flex-1 overflow-hidden flex flex-col mt-4 px-6 pb-4"
+      className="flex-1 overflow-hidden flex flex-col mt-1 px-6 pb-4"
     >
       <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="text-sm font-bold bg-green-50/70 text-green-600 px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
             <Utensils className="h-3.5 w-3.5" />
-            <span>غذاهای انتخاب شده: {toPersianNumbers(selectedMeals.length)}</span>
+            <span>
+              غذاهای {selectedDay} {selectedMealType ? `(${selectedMealType})` : ''}: {toPersianNumbers(selectedMeals.length)}
+            </span>
           </div>
           
           <TooltipProvider>
@@ -85,7 +92,7 @@ export const DietTabContent: React.FC<DietTabContentProps> = ({
       <AnimatePresence mode="wait">
         {filteredMeals.length > 0 ? (
           <MealListWrapper 
-            maxHeight="calc(85vh - 280px)" 
+            maxHeight="calc(85vh - 340px)" 
             className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm"
             viewMode={viewMode}
           >

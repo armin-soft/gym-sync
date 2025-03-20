@@ -2,15 +2,17 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, X, Filter, SlidersHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { Search, X, SortAsc, SortDesc, UtensilsCrossed } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MealType } from "@/types/meal";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DietSearchFiltersProps {
   searchQuery: string;
@@ -22,6 +24,9 @@ interface DietSearchFiltersProps {
   handleClearSearch: () => void;
   toggleSortOrder: () => void;
   sortOrder: "asc" | "desc";
+  selectedMealType: MealType | null;
+  setSelectedMealType: (type: MealType | null) => void;
+  mealTypes: MealType[];
 }
 
 export const DietSearchFilters: React.FC<DietSearchFiltersProps> = ({
@@ -33,21 +38,19 @@ export const DietSearchFilters: React.FC<DietSearchFiltersProps> = ({
   filteredCategories,
   handleClearSearch,
   toggleSortOrder,
-  sortOrder
+  sortOrder,
+  selectedMealType,
+  setSelectedMealType,
+  mealTypes
 }) => {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: -5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="mt-4 px-6"
-    >
-      <div className="flex flex-col md:flex-row gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+    <div className="space-y-4 p-6 pt-2">
+      <div className="flex flex-wrap gap-4">
         <div className="relative flex-1">
-          <Search className="absolute right-3 top-2.5 h-4 w-4 text-gray-400" />
+          <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground/70" />
           <Input
-            placeholder="جستجوی غذا..."
-            className="pl-10 pr-10 h-10 border-gray-200 focus-visible:ring-primary"
+            placeholder="جستجو در غذاها..."
+            className="pr-10 h-10 bg-white border-gray-200 focus:border-primary/50 focus:ring-primary/50"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -55,66 +58,164 @@ export const DietSearchFilters: React.FC<DietSearchFiltersProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-1 top-1 h-8 w-8 text-gray-400 hover:text-gray-700"
+              className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full hover:bg-gray-100"
               onClick={() => setSearchQuery("")}
-              title="پاک کردن جستجو"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 text-gray-400" />
             </Button>
           )}
         </div>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2 whitespace-nowrap h-10 bg-gray-50/80 border-gray-200">
-              <Filter className="h-4 w-4 text-gray-500" />
-              دسته‌بندی
-              {selectedCategoryId && (
-                <span className="w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-xs mr-1">
-                  ✓
-                </span>
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64 max-h-[400px] overflow-y-auto">
-            <DropdownMenuItem 
-              onClick={() => setSelectedCategoryId(null)}
-              className={!selectedCategoryId ? "bg-primary/10 text-primary font-medium" : ""}
-            >
-              همه دسته‌بندی‌ها
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            
-            {filteredCategories.length > 0 ? (
-              filteredCategories.map(category => (
-                <DropdownMenuItem
-                  key={category.id}
-                  onClick={() => setSelectedCategoryId(category.id)}
-                  className={selectedCategoryId === category.id ? "bg-primary/10 text-primary font-medium" : ""}
-                >
-                  {category.name}
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem disabled className="text-gray-400">
-                دسته‌بندی‌ای یافت نشد
-              </DropdownMenuItem>
-            )}
-            
-            {(searchQuery || selectedCategoryId) && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={handleClearSearch} 
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  پاک کردن فیلترها
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        <div className="w-full sm:w-48 xl:w-64">
+          <Select
+            value={selectedMealType || ""}
+            onValueChange={(value) => setSelectedMealType(value ? value as MealType : null)}
+          >
+            <SelectTrigger className="h-10 bg-white border-gray-200 focus:border-primary/50 focus:ring-primary/50">
+              <SelectValue placeholder="نوع وعده" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">همه وعده‌ها</SelectItem>
+              {mealTypes.map((type) => (
+                <SelectItem key={type} value={type} className="flex items-center gap-2">
+                  <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 border-gray-200 hover:bg-gray-100 hover:text-primary"
+          onClick={toggleSortOrder}
+        >
+          {sortOrder === "asc" ? (
+            <SortAsc className="h-5 w-5" />
+          ) : (
+            <SortDesc className="h-5 w-5" />
+          )}
+        </Button>
       </div>
-    </motion.div>
+
+      <AnimatePresence>
+        {filteredCategories.length > 0 && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="flex flex-wrap gap-2 overflow-hidden"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className={`rounded-full text-xs font-medium transition-all duration-200 ${
+                selectedCategoryId === null
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
+                  : "bg-white hover:bg-gray-100"
+              }`}
+              onClick={() => setSelectedCategoryId(null)}
+            >
+              همه
+            </Button>
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant="outline"
+                size="sm"
+                className={`rounded-full text-xs font-medium transition-all duration-200 ${
+                  selectedCategoryId === category.id
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
+                    : "bg-white hover:bg-gray-100"
+                }`}
+                onClick={() => setSelectedCategoryId(category.id)}
+              >
+                {category.name}
+              </Button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {(searchQuery || selectedCategoryId !== null || selectedMealType !== null) && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-2"
+          >
+            <div className="text-sm text-gray-500">فیلترهای فعال:</div>
+            <div className="flex flex-wrap gap-2">
+              {searchQuery && (
+                <Badge
+                  variant="outline"
+                  className="gap-1 px-2 py-1 bg-background hover:bg-background border-primary/20"
+                >
+                  <span>{searchQuery}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4 p-0 hover:bg-red-500/10 hover:text-red-500"
+                    onClick={() => setSearchQuery("")}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              )}
+              {selectedCategoryId !== null && (
+                <Badge
+                  variant="outline"
+                  className="gap-1 px-2 py-1 bg-background hover:bg-background border-primary/20"
+                >
+                  <span>
+                    دسته:{" "}
+                    {
+                      categories.find((cat) => cat.id === selectedCategoryId)
+                        ?.name
+                    }
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4 p-0 hover:bg-red-500/10 hover:text-red-500"
+                    onClick={() => setSelectedCategoryId(null)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              )}
+              {selectedMealType !== null && (
+                <Badge
+                  variant="outline"
+                  className="gap-1 px-2 py-1 bg-background hover:bg-background border-primary/20"
+                >
+                  <span>وعده: {selectedMealType}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4 p-0 hover:bg-red-500/10 hover:text-red-500"
+                    onClick={() => setSelectedMealType(null)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              )}
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto text-xs text-gray-500 hover:text-red-500 hover:bg-red-500/10"
+              onClick={handleClearSearch}
+            >
+              پاک کردن همه
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };

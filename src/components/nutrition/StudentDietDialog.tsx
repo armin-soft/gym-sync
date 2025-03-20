@@ -9,8 +9,10 @@ import { DietDialogHeader } from "./DietDialogHeader";
 import { DietSearchFilters } from "./DietSearchFilters";
 import { DietTabContent } from "./DietTabContent";
 import { DietDialogFooter } from "./DietDialogFooter";
+import { MealDayTabs } from "./MealDayTabs";
 import { useMealSelection } from "@/hooks/useMealSelection";
 import { useMealFiltering } from "@/hooks/useMealFiltering";
+import { WeekDay, MealType } from "@/types/meal";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -19,18 +21,23 @@ interface StudentDietDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
-  onSave: (mealIds: number[]) => boolean;
-  initialMeals?: number[];
+  onSave: (mealIds: {[key in WeekDay]?: number[]}) => boolean;
+  initialMeals?: {[key in WeekDay]?: number[]};
 }
+
+const weekDays: WeekDay[] = ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج شنبه", "جمعه"];
+const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام"];
 
 export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
   open,
   onOpenChange,
   studentName,
   onSave,
-  initialMeals = [],
+  initialMeals = {},
 }) => {
   const { toast } = useToast();
+  const [selectedMealType, setSelectedMealType] = useState<MealType | null>(null);
+  
   const { data: meals = [], isLoading: mealsLoading } = useQuery({
     queryKey: ["meals"],
     queryFn: () => {
@@ -48,8 +55,11 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
   });
 
   const {
+    selectedDay,
+    setSelectedDay,
     selectedMeals,
-    toggleMeal
+    toggleMeal,
+    getAllSelectedMeals
   } = useMealSelection(initialMeals);
 
   const {
@@ -61,14 +71,19 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
     toggleSortOrder,
     viewMode,
     setViewMode,
-    filteredMeals,
+    filteredMeals: allFilteredMeals,
     filteredCategories,
     handleClearSearch,
   } = useMealFiltering(meals, categories);
 
+  // Filter meals by selected meal type
+  const filteredMeals = selectedMealType
+    ? allFilteredMeals.filter(meal => meal.type === selectedMealType)
+    : allFilteredMeals;
+
   const handleSave = () => {
     try {
-      const success = onSave(selectedMeals);
+      const success = onSave(getAllSelectedMeals());
       
       if (success) {
         toast({
@@ -110,6 +125,12 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
               transition={{ duration: 0.2 }}
               className="flex flex-col flex-1 overflow-hidden"
             >
+              <MealDayTabs 
+                selectedDay={selectedDay}
+                setSelectedDay={setSelectedDay}
+                weekDays={weekDays}
+              />
+              
               <DietSearchFilters
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -120,6 +141,9 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
                 handleClearSearch={handleClearSearch}
                 toggleSortOrder={toggleSortOrder}
                 sortOrder={sortOrder}
+                selectedMealType={selectedMealType}
+                setSelectedMealType={setSelectedMealType}
+                mealTypes={mealTypes}
               />
 
               <DietTabContent 
@@ -133,6 +157,8 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
                 selectedCategoryId={selectedCategoryId}
                 toggleSortOrder={toggleSortOrder}
                 sortOrder={sortOrder}
+                selectedDay={selectedDay}
+                selectedMealType={selectedMealType}
               />
             </motion.div>
           </AnimatePresence>
@@ -142,6 +168,7 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
           selectedMealsCount={selectedMeals.length}
           onCancel={() => onOpenChange(false)}
           onSave={handleSave}
+          selectedDay={selectedDay}
         />
       </DialogContent>
     </Dialog>
