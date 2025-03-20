@@ -27,7 +27,7 @@ interface StudentMealListWrapperProps {
 const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "70vh",
+  maxHeight = "auto",
   viewMode = "list",
   setViewMode,
   toggleSortOrder,
@@ -45,10 +45,9 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
           className={cn(
             "p-4 w-full", 
             viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3" 
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" 
               : "flex flex-col space-y-3"
           )}
-          dir="rtl" // Ensure right-to-left direction
         >
           {children}
         </motion.div>

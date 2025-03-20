@@ -332,7 +332,7 @@ export function StudentMealDialog({
             >
               <StudentMealListWrapper
                 viewMode={viewMode}
-                maxHeight="70vh"
+                maxHeight="calc(100vh - 240px)"
                 setViewMode={setViewMode}
                 toggleSortOrder={toggleSortOrder}
                 sortOrder={sortOrder}
