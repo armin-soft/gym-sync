@@ -44,7 +44,7 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex items-center justify-between p-4 border-t bg-white/80 dark:bg-gray-800/30 backdrop-blur-sm"
+      className="flex items-center justify-between p-4 border-t bg-white/80 dark:bg-gray-800/30 backdrop-blur-sm shrink-0"
     >
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-500 dark:text-gray-400">

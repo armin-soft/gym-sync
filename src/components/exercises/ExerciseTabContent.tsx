@@ -64,6 +64,11 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   const activeColorClass = getActiveTabContentColor(tabValue);
   const btnGradient = getBtnGradient(tabValue);
 
+  // Count only selected exercises that exist in the filtered exercises
+  const selectedFilteredExercises = filteredExercises.filter(exercise => 
+    selectedExercises.includes(exercise.id)
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -117,12 +122,14 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
             <AnimatePresence>
               {filteredExercises.map((exercise) => {
                 const category = categories.find(cat => cat.id === exercise.categoryId);
+                const isSelected = selectedExercises.includes(exercise.id);
+                
                 return (
                   <ExerciseCard
                     key={exercise.id}
                     exercise={exercise}
                     category={category}
-                    isSelected={selectedExercises.includes(exercise.id)}
+                    isSelected={isSelected}
                     viewMode={viewMode}
                     onClick={() => toggleExercise(exercise.id)}
                   />

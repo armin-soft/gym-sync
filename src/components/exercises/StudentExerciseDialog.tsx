@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import ExerciseDialogFooter from "./ExerciseDialogFooter";
 import ExerciseDialogHeader from "./ExerciseDialogHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -37,6 +38,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
 }) => {
+  const { toast } = useToast();
   const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
@@ -62,6 +64,26 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   });
 
   const [activeTab, setActiveTab] = useState<string>("day1");
+  
+  // Track if exercises have been saved for each day
+  const [savedState, setSavedState] = useState({
+    day1: false,
+    day2: false,
+    day3: false,
+    day4: false
+  });
+
+  useEffect(() => {
+    // Reset saved state when dialog opens
+    if (open) {
+      setSavedState({
+        day1: false,
+        day2: false,
+        day3: false,
+        day4: false
+      });
+    }
+  }, [open]);
 
   const {
     selectedExercisesDay1,
@@ -96,10 +118,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     handleClearSearch,
   } = useExerciseFiltering(exercises, categories);
 
-  const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
-    return onSave(exerciseIds, dayNumber);
-  };
-
   const getActiveTabSelectedExercises = () => {
     switch(activeTab) {
       case "day1": return selectedExercisesDay1;
@@ -111,11 +129,52 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   };
 
   const handleSave = () => {
-    let success = false;
     const selectedExercises = getActiveTabSelectedExercises();
     const dayNumber = parseInt(activeTab.replace("day", ""));
-    success = handleSaveExercises(selectedExercises, dayNumber);
-    if (success) onOpenChange(false);
+    
+    try {
+      const success = onSave(selectedExercises, dayNumber);
+      
+      if (success) {
+        // Update saved state for the current tab
+        setSavedState(prev => ({
+          ...prev,
+          [activeTab]: true
+        }));
+        
+        toast({
+          title: "ذخیره موفق",
+          description: `تمرین‌های ${dayNumber === 1 ? 'روز اول' : 
+                         dayNumber === 2 ? 'روز دوم' : 
+                         dayNumber === 3 ? 'روز سوم' : 'روز چهارم'} با موفقیت ذخیره شدند`,
+        });
+        
+        // Automatically switch to the next day tab if not on day4
+        if (activeTab !== "day4") {
+          const nextTab = `day${dayNumber + 1}`;
+          setActiveTab(nextTab);
+        } else {
+          // If all days have been saved, close the dialog
+          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true; // day4 is saved now
+          if (allSaved) {
+            onOpenChange(false);
+          }
+        }
+      }
+      return success;
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی تمرین‌ها پیش آمد. لطفا مجدد تلاش کنید."
+      });
+      return false;
+    }
+  };
+
+  const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
+    return onSave(exerciseIds, dayNumber);
   };
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;

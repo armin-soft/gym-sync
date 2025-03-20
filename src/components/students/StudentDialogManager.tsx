@@ -1,3 +1,4 @@
+
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
@@ -97,9 +98,19 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
   const handleSaveExercisesWrapper = (exerciseIds: number[], dayNumber?: number): boolean => {
     if (!selectedStudentForExercise) return false;
     
-    const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
-    // Keep dialog open to allow editing multiple days
-    return success;
+    try {
+      const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
+      // We don't close the dialog here to allow saving for multiple days
+      return success;
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی تمرین‌ها پیش آمد. لطفا مجدد تلاش کنید."
+      });
+      return false;
+    }
   };
   
   const handleSaveDietWrapper = (mealIds: number[]): boolean => {

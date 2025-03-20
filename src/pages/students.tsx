@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
@@ -43,30 +43,36 @@ const StudentsPage = () => {
     },
   });
 
+  // Function to trigger refresh after saving
+  const triggerRefresh = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
+
   // Wrapper functions to trigger refresh after saving
-  const handleSaveExercisesWithRefresh = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
+  const handleSaveExercisesWithRefresh = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
     const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
     if (result) {
-      setRefreshTrigger(prev => prev + 1);
+      console.log(`Exercise saved for day ${dayNumber}, triggering refresh`);
+      triggerRefresh();
     }
     return result;
-  };
+  }, [handleSaveExercises, triggerRefresh]);
 
-  const handleSaveDietWithRefresh = (mealIds: number[], studentId: number) => {
+  const handleSaveDietWithRefresh = useCallback((mealIds: number[], studentId: number) => {
     const result = handleSaveDiet(mealIds, studentId);
     if (result) {
-      setRefreshTrigger(prev => prev + 1);
+      triggerRefresh();
     }
     return result;
-  };
+  }, [handleSaveDiet, triggerRefresh]);
 
-  const handleSaveSupplementsWithRefresh = (data: {supplements: number[], vitamins: number[]}, studentId: number) => {
+  const handleSaveSupplementsWithRefresh = useCallback((data: {supplements: number[], vitamins: number[]}, studentId: number) => {
     const result = handleSaveSupplements(data, studentId);
     if (result) {
-      setRefreshTrigger(prev => prev + 1);
+      triggerRefresh();
     }
     return result;
-  };
+  }, [handleSaveSupplements, triggerRefresh]);
 
   const {
     searchQuery,

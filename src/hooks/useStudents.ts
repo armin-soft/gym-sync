@@ -134,49 +134,64 @@ export const useStudents = () => {
   };
   
   const handleSaveExercises = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
-    const updatedStudents = students.map(student => {
-      if (student.id === studentId) {
-        if (!dayNumber) {
-          return {
-            ...student,
-            exercises: exerciseIds
-          };
+    try {
+      const updatedStudents = students.map(student => {
+        if (student.id === studentId) {
+          if (!dayNumber) {
+            return {
+              ...student,
+              exercises: exerciseIds
+            };
+          }
+          
+          switch (dayNumber) {
+            case 1:
+              return {
+                ...student,
+                exercisesDay1: exerciseIds
+              };
+            case 2:
+              return {
+                ...student,
+                exercisesDay2: exerciseIds
+              };
+            case 3:
+              return {
+                ...student,
+                exercisesDay3: exerciseIds
+              };
+            case 4:
+              return {
+                ...student,
+                exercisesDay4: exerciseIds
+              };
+            default:
+              return student;
+          }
         }
-        
-        switch (dayNumber) {
-          case 1:
-            return {
-              ...student,
-              exercisesDay1: exerciseIds
-            };
-          case 2:
-            return {
-              ...student,
-              exercisesDay2: exerciseIds
-            };
-          case 3:
-            return {
-              ...student,
-              exercisesDay3: exerciseIds
-            };
-          case 4:
-            return {
-              ...student,
-              exercisesDay4: exerciseIds
-            };
-          default:
-            return student;
-        }
-      }
-      return student;
-    });
-    
-    setStudents(updatedStudents);
-    toast({
-      title: "افزودن موفق",
-      description: "تمرین‌ها با موفقیت به شاگرد اضافه شدند"
-    });
-    return true;
+        return student;
+      });
+      
+      setStudents(updatedStudents);
+      
+      const dayText = dayNumber 
+        ? (dayNumber === 1 ? 'روز اول' : 
+           dayNumber === 2 ? 'روز دوم' : 
+           dayNumber === 3 ? 'روز سوم' : 'روز چهارم') 
+        : '';
+      
+      console.log(`Successfully saved exercises for student ${studentId}, day ${dayNumber}:`, exerciseIds);
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی تمرین‌ها پیش آمد. لطفا مجدد تلاش کنید."
+      });
+      return false;
+    }
   };
   
   const handleSaveDiet = (mealIds: number[], studentId: number) => {
