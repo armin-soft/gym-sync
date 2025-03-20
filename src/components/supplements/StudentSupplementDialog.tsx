@@ -1,476 +1,334 @@
 
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogHeader,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { 
-  Search, Save, X, Plus, 
-  Check, ChevronLeft, Pill,
-  LayoutGrid, ListFilter, SlidersHorizontal
-} from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { motion, AnimatePresence } from "framer-motion";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Search, CheckCircle, XCircle, Pill, Loader2, Filter } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { Supplement, SupplementCategory } from "@/types/supplement";
+import { Input } from "@/components/ui/input";
+import { Supplement } from "@/types/supplement";
+import { motion, AnimatePresence } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentSupplementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
-  onSave: (data: {supplements: number[], vitamins: number[]}) => boolean;
-  initialSupplements: number[];
-  initialVitamins: number[];
+  onSave: (data: { supplements: number[]; vitamins: number[] }) => boolean;
+  initialSupplements?: number[];
+  initialVitamins?: number[];
 }
 
-export function StudentSupplementDialog({
+export const StudentSupplementDialog: React.FC<StudentSupplementDialogProps> = ({
   open,
   onOpenChange,
   studentName,
   onSave,
   initialSupplements = [],
   initialVitamins = [],
-}: StudentSupplementDialogProps) {
-  const [selectedSupplements, setSelectedSupplements] = useState<number[]>(initialSupplements);
-  const [selectedVitamins, setSelectedVitamins] = useState<number[]>(initialVitamins);
+}) => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [supplements, setSupplements] = useState<Supplement[]>([]);
-  const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
-  const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">("supplements");
-  const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [categories, setCategories] = useState<SupplementCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
+  const [selectedVitamins, setSelectedVitamins] = useState<number[]>([]);
+  const [activeTab, setActiveTab] = useState("supplements");
+  
+  const { data: allSupplements = [], isLoading } = useQuery({
+    queryKey: ["supplements"],
+    queryFn: () => {
+      const supplementsData = localStorage.getItem("supplements");
+      return supplementsData ? JSON.parse(supplementsData) : [];
+    },
+  });
 
   useEffect(() => {
-    try {
-      // Load supplements
-      const savedSupplements = localStorage.getItem("supplements");
-      if (savedSupplements) {
-        const parsedSupplements = JSON.parse(savedSupplements);
-        setSupplements(Array.isArray(parsedSupplements) ? parsedSupplements : []);
-      }
-      
-      // Load categories
-      const savedCategories = localStorage.getItem("supplementCategories");
-      if (savedCategories) {
-        const parsedCategories = JSON.parse(savedCategories);
-        setCategories(Array.isArray(parsedCategories) ? parsedCategories : []);
-      }
-    } catch (error) {
-      console.error("Error loading data:", error);
-      setSupplements([]);
-      setCategories([]);
+    if (open) {
+      setSelectedSupplements(initialSupplements);
+      setSelectedVitamins(initialVitamins);
     }
-  }, []);
+  }, [open, initialSupplements, initialVitamins]);
 
-  useEffect(() => {
-    let filtered = supplements;
-    
-    if (searchQuery.trim() !== "") {
-      filtered = filtered.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.dosage.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.timing.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  const supplements = allSupplements.filter((item: Supplement) => item.type === "supplement");
+  const vitamins = allSupplements.filter((item: Supplement) => item.type === "vitamin");
 
-    if (activeTab === "supplements") {
-      filtered = filtered.filter((item) => item.type === "supplement");
-    } else {
-      filtered = filtered.filter((item) => item.type === "vitamin");
-    }
+  const filteredSupplements = supplements.filter((item: Supplement) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter((item) => item.category === selectedCategory);
-    }
+  const filteredVitamins = vitamins.filter((item: Supplement) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    setFilteredItems(filtered);
-  }, [searchQuery, supplements, activeTab, selectedCategory]);
+  const toggleSupplement = (id: number) => {
+    setSelectedSupplements((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
 
-  const toggleItem = (id: number, type: "supplement" | "vitamin") => {
-    if (type === "supplement") {
-      setSelectedSupplements((prev) =>
-        prev.includes(id)
-          ? prev.filter((itemId) => itemId !== id)
-          : [...prev, id]
-      );
-    } else {
-      setSelectedVitamins((prev) =>
-        prev.includes(id)
-          ? prev.filter((itemId) => itemId !== id)
-          : [...prev, id]
-      );
-    }
+  const toggleVitamin = (id: number) => {
+    setSelectedVitamins((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
 
   const handleSave = () => {
-    onSave({
+    const success = onSave({
       supplements: selectedSupplements,
-      vitamins: selectedVitamins
+      vitamins: selectedVitamins,
     });
+
+    if (success) {
+      toast({
+        title: "ذخیره موفق",
+        description: "مکمل‌ها و ویتامین‌ها با موفقیت اضافه شدند",
+      });
+      onOpenChange(false);
+    }
   };
 
-  const isSelected = (id: number, type: "supplement" | "vitamin") => {
-    return type === "supplement" 
-      ? selectedSupplements.includes(id)
-      : selectedVitamins.includes(id);
+  const handleClearSearch = () => {
+    setSearchQuery("");
   };
+
+  const renderSupplementCard = (item: Supplement, isSelected: boolean, onClick: () => void) => (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className={`relative group p-4 rounded-xl backdrop-blur-sm border transition-all duration-300 
+        ${isSelected 
+          ? "bg-indigo-50/90 dark:bg-indigo-900/40 border-indigo-200 dark:border-indigo-700 shadow-md" 
+          : "bg-white/70 dark:bg-gray-900/40 border-gray-100 dark:border-gray-800 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 hover:border-indigo-100"
+        }`}
+      onClick={onClick}
+    >
+      <div className="flex items-start gap-3">
+        <div className={`mt-1 size-10 rounded-full flex items-center justify-center shrink-0
+          ${isSelected 
+            ? "bg-indigo-500 text-white" 
+            : "bg-indigo-100/70 dark:bg-indigo-900/50 text-indigo-500 dark:text-indigo-300"
+          }`}>
+          <Pill className="size-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className={`font-medium ${isSelected ? "text-indigo-700 dark:text-indigo-300" : "text-gray-800 dark:text-gray-200"}`}>
+              {item.name}
+            </h3>
+            {isSelected && (
+              <Badge variant="outline" className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700/50">
+                انتخاب شده
+              </Badge>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <span className="inline-block px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 rounded-full text-[10px] ml-1">
+              {item.category}
+            </span>
+            <span>دوز: {item.dosage}</span>
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            زمان مصرف: {item.timing}
+          </p>
+          {item.description && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+              {item.description}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="absolute top-2 left-2">
+        {isSelected ? (
+          <div className="size-5 rounded-full bg-indigo-500 flex items-center justify-center ring-4 ring-indigo-50 dark:ring-indigo-900/50">
+            <CheckCircle className="size-3.5 text-white" />
+          </div>
+        ) : (
+          <div className="size-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <XCircle className="size-3.5 text-gray-400 dark:text-gray-500" />
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+
+  const renderEmptyState = (type: string) => (
+    <div className="flex flex-col items-center justify-center h-64 p-6">
+      <div className="size-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+        <Pill className="size-6 text-gray-400 dark:text-gray-500" />
+      </div>
+      <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2">
+        هیچ {type === "supplements" ? "مکملی" : "ویتامینی"} یافت نشد
+      </h3>
+      <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-sm">
+        {searchQuery ? 
+          `هیچ ${type === "supplements" ? "مکملی" : "ویتامینی"} با این معیار یافت نشد. معیار جستجو را تغییر دهید.` : 
+          `هیچ ${type === "supplements" ? "مکملی" : "ویتامینی"} در سیستم ثبت نشده است.`
+        }
+      </p>
+      {searchQuery && (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleClearSearch} 
+          className="mt-4"
+        >
+          پاک کردن جستجو
+        </Button>
+      )}
+    </div>
+  );
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent 
-        side="right" 
-        className="w-full p-0 sm:max-w-full flex flex-col border-0"
-        dir="rtl"
-      >
-        <div className="flex flex-col h-full overflow-hidden">
-          {/* Header */}
-          <SheetHeader className="px-6 py-4 border-b bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm shrink-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => onOpenChange(false)}
-                  className="h-10 w-10 rounded-full"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </Button>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
-                    <Pill className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <SheetTitle className="text-lg font-bold text-foreground">مکمل‌ها و ویتامین‌ها</SheetTitle>
-                    <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className={cn(
-                          "h-9 w-9 border-muted transition-colors",
-                          viewMode === "grid" && "bg-primary/10 text-primary"
-                        )}
-                        onClick={() => setViewMode("grid")}
-                      >
-                        <LayoutGrid className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">نمایش شبکه‌ای</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className={cn(
-                          "h-9 w-9 border-muted transition-colors",
-                          viewMode === "list" && "bg-primary/10 text-primary"
-                        )}
-                        onClick={() => setViewMode("list")}
-                      >
-                        <ListFilter className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">نمایش لیستی</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline" 
-                        size="icon"
-                        className={cn(
-                          "h-9 w-9 border-muted transition-colors",
-                          showFilters && "bg-primary/10 text-primary"
-                        )}
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        <SlidersHorizontal className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">فیلترها</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </div>
-          </SheetHeader>
-
-          {/* Search */}
-          <div className="px-6 py-3 border-b bg-muted/20 shrink-0">
-            <div className="relative flex-1">
-              <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl p-0 overflow-hidden bg-gradient-to-b from-indigo-50/50 to-white dark:from-gray-900 dark:to-gray-950">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.100/20%),transparent_70%)] dark:bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.900/20%),transparent_70%)]" />
+        
+        <DialogHeader className="px-6 pt-6 pb-0 relative z-10">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="size-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+              <Pill className="size-4 text-indigo-600 dark:text-indigo-400" />
+            </span>
+            <DialogTitle className="text-xl">مدیریت مکمل‌ها و ویتامین‌ها</DialogTitle>
+          </div>
+          <DialogDescription className="text-gray-500 dark:text-gray-400">
+            انتخاب مکمل‌ها و ویتامین‌ها برای {studentName}
+          </DialogDescription>
+          
+          <div className="flex items-center gap-4 mt-6 mb-2">
+            <div className="flex-1 relative">
               <Input
-                placeholder="جستجو در مکمل‌ها و ویتامین‌ها..."
-                className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted"
+                placeholder="جستجو بر اساس نام یا دسته‌بندی..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className="pr-10 py-5 bg-white/60 dark:bg-gray-900/40 backdrop-blur-sm border-indigo-100 dark:border-indigo-900/50 focus-visible:ring-indigo-500/20"
               />
+              <Search className="absolute top-1/2 -translate-y-1/2 right-3 size-4 text-gray-400" />
             </div>
-          </div>
 
-          {/* Filters */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div 
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="flex-shrink-0 overflow-hidden bg-muted/10 border-b"
-              >
-                <div className="p-4 flex flex-col gap-3">
-                  <div>
-                    <h3 className="text-sm font-medium mb-2 text-foreground">فیلتر براساس دسته‌بندی</h3>
-                    <div className="flex flex-wrap gap-1.5">
-                      <Badge 
-                        variant={selectedCategory === "all" ? "default" : "outline"}
-                        className="cursor-pointer transition-all hover:bg-primary/10"
-                        onClick={() => setSelectedCategory("all")}
-                      >
-                        همه دسته‌بندی‌ها
-                      </Badge>
-                      {categories
-                        .filter(cat => cat.type === (activeTab === "supplements" ? "supplement" : "vitamin"))
-                        .map((category) => (
-                        <Badge 
-                          key={category.id}
-                          variant={selectedCategory === category.name ? "default" : "outline"}
-                          className="cursor-pointer transition-all hover:bg-primary/10"
-                          onClick={() => setSelectedCategory(category.name)}
-                        >
-                          {category.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Tabs and Content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <Tabs 
-              value={activeTab} 
-              onValueChange={(value) => setActiveTab(value as "supplements" | "vitamins")}
-              className="flex-1 flex flex-col overflow-hidden"
-            >
-              <div className="border-b bg-muted/10 shrink-0">
-                <TabsList className="h-11 bg-transparent p-1 gap-1 rounded-none border-b-0">
-                  <TabsTrigger 
-                    value="supplements"
-                    className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
-                  >
-                    مکمل‌ها
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="vitamins"
-                    className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
-                  >
-                    ویتامین‌ها
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              <TabsContent 
-                value={activeTab} 
-                className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full"
-                forceMount
-              >
-                <ScrollArea className="h-full w-full">
-                  {filteredItems.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-64 text-center p-4">
-                      <div className="w-16 h-16 bg-gradient-to-b from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
-                        <Pill className="h-8 w-8 text-violet-500 dark:text-violet-400" />
-                      </div>
-                      <h3 className="font-medium text-lg text-foreground">
-                        هیچ {activeTab === "supplements" ? "مکملی" : "ویتامینی"} یافت نشد
-                      </h3>
-                    </div>
-                  ) : viewMode === "grid" ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                      {filteredItems.map((item) => (
-                        <motion.div
-                          key={item.id}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.2 }}
-                          layout
-                        >
-                          <div
-                            className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${
-                              isSelected(item.id, item.type)
-                                ? "border-primary/30 bg-primary/5 dark:bg-primary/10"
-                                : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"
-                            }`}
-                            onClick={() => toggleItem(item.id, item.type)}
-                          >
-                            <div className="flex gap-3 items-start">
-                              <div
-                                className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${
-                                  isSelected(item.id, item.type)
-                                    ? "bg-primary"
-                                    : "border-2 border-muted-foreground/30"
-                                }`}
-                              >
-                                {isSelected(item.id, item.type) && (
-                                  <Check className="h-3 w-3 text-primary-foreground" />
-                                )}
-                              </div>
-                              <div className="space-y-2">
-                                <div>
-                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                                  <div className="flex flex-wrap gap-1.5 mt-1.5">
-                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
-                                      {item.category}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="space-y-1">
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{item.dosage}</span>
-                                  </div>
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="divide-y">
-                      {filteredItems.map((item) => (
-                        <motion.div
-                          key={item.id}
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <div
-                            className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${
-                              isSelected(item.id, item.type)
-                                ? "bg-primary/5 dark:bg-primary/10"
-                                : ""
-                            }`}
-                            onClick={() => toggleItem(item.id, item.type)}
-                          >
-                            <div className="flex gap-3">
-                              <div
-                                className={`w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors ${
-                                  isSelected(item.id, item.type)
-                                    ? "bg-primary"
-                                    : "border-2 border-muted-foreground/30"
-                                }`}
-                              >
-                                {isSelected(item.id, item.type) && (
-                                  <Check className="h-3 w-3 text-primary-foreground" />
-                                )}
-                              </div>
-                              
-                              <div className="flex-1">
-                                <div className="flex items-start justify-between">
-                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                                  <div className="flex gap-1.5">
-                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
-                                      {item.category}
-                                    </span>
-                                  </div>
-                                </div>
-                                
-                                <div className="flex gap-4 mt-1">
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{item.dosage}</span>
-                                  </div>
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-[400px]">
+              <TabsList className="grid grid-cols-2 bg-indigo-50/50 dark:bg-indigo-950/50 p-1 h-auto border border-indigo-100/50 dark:border-indigo-900/50">
+                <TabsTrigger 
+                  value="supplements" 
+                  className="py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-indigo-700 dark:data-[state=active]:text-indigo-300 data-[state=active]:shadow-sm relative"
+                >
+                  مکمل‌ها
+                  {selectedSupplements.length > 0 && (
+                    <Badge className="absolute -top-1.5 -left-1.5 size-5 p-0 flex items-center justify-center bg-indigo-500 text-white text-[10px]">
+                      {selectedSupplements.length}
+                    </Badge>
                   )}
-                </ScrollArea>
-              </TabsContent>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="vitamins" 
+                  className="py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-indigo-700 dark:data-[state=active]:text-indigo-300 data-[state=active]:shadow-sm relative"
+                >
+                  ویتامین‌ها
+                  {selectedVitamins.length > 0 && (
+                    <Badge className="absolute -top-1.5 -left-1.5 size-5 p-0 flex items-center justify-center bg-indigo-500 text-white text-[10px]">
+                      {selectedVitamins.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              </TabsList>
             </Tabs>
           </div>
+        </DialogHeader>
 
-          {/* Footer */}
-          <SheetFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row gap-2 justify-between">
+        <div className="p-6 relative">
+          <AnimatePresence mode="wait">
+            <TabsContent value="supplements" className="mt-0 relative">
+              {isLoading ? (
+                <div className="flex items-center justify-center h-64">
+                  <Loader2 className="size-8 text-indigo-500 animate-spin" />
+                </div>
+              ) : filteredSupplements.length > 0 ? (
+                <ScrollArea className="pr-4 h-[400px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredSupplements.map((supplement) => (
+                      renderSupplementCard(
+                        supplement,
+                        selectedSupplements.includes(supplement.id),
+                        () => toggleSupplement(supplement.id)
+                      )
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                renderEmptyState("supplements")
+              )}
+            </TabsContent>
+
+            <TabsContent value="vitamins" className="mt-0 relative">
+              {isLoading ? (
+                <div className="flex items-center justify-center h-64">
+                  <Loader2 className="size-8 text-indigo-500 animate-spin" />
+                </div>
+              ) : filteredVitamins.length > 0 ? (
+                <ScrollArea className="pr-4 h-[400px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredVitamins.map((vitamin) => (
+                      renderSupplementCard(
+                        vitamin,
+                        selectedVitamins.includes(vitamin.id),
+                        () => toggleVitamin(vitamin.id)
+                      )
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                renderEmptyState("vitamins")
+              )}
+            </TabsContent>
+          </AnimatePresence>
+        </div>
+
+        <DialogFooter className="px-6 py-4 bg-gray-50/80 dark:bg-gray-900/40 backdrop-blur-sm border-t border-gray-100 dark:border-gray-800">
+          <div className="flex justify-between items-center w-full">
             <div className="flex items-center gap-2">
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ 
-                  scale: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0.9, 
-                  opacity: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0 
-                }}
-                className="bg-gradient-to-r from-violet-500 to-purple-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                {toPersianNumbers(selectedSupplements.length + selectedVitamins.length)} مورد انتخاب شده
-              </motion.div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="size-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                      <Pill className="size-4 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>تعداد آیتم‌های انتخاب شده</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {activeTab === "supplements" 
+                  ? `${selectedSupplements.length} مکمل انتخاب شده` 
+                  : `${selectedVitamins.length} ویتامین انتخاب شده`}
+              </span>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="gap-2"
-              >
-                <X className="h-4 w-4" />
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 انصراف
               </Button>
-              <Button
+              <Button 
                 onClick={handleSave}
-                className="gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white border-0"
-                disabled={selectedSupplements.length + selectedVitamins.length === 0}
+                className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700"
               >
-                <Save className="h-4 w-4" />
-                ذخیره
+                ذخیره تغییرات
               </Button>
             </div>
-          </SheetFooter>
-        </div>
-      </SheetContent>
-    </Sheet>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
-}
+};

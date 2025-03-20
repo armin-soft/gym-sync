@@ -1,451 +1,592 @@
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
-import { TrainerProfile } from "@/types/trainer";
-import { generateStudentPDF, openPrintWindow } from "@/lib/utils/export";
-import { StudentSummary } from "./StudentSummary";
-import { ProfileWarning } from "./ProfileWarning";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileDown, FileText, Download, Dumbbell, Apple, Pill, UserRound, Printer } from "lucide-react";
+import { Student } from "@/components/students/StudentTypes";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentDownloadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  student: {
-    id: number;
-    name: string;
-    phone: string;
-    height: string;
-    weight: string;
-    image: string;
-    exercises?: number[];
-    meals?: number[];
-    supplements?: number[];
-    vitamins?: number[];
-    payment: string;
-  } | null;
+  student: Student | null;
   exercises: any[];
   meals: any[];
   supplements: any[];
   vitamins: any[];
 }
 
-export const StudentDownloadDialog = ({ 
-  open, 
-  onOpenChange, 
-  student, 
-  exercises, 
-  meals, 
-  supplements, 
-  vitamins 
-}: StudentDownloadDialogProps) => {
+export const StudentDownloadDialog: React.FC<StudentDownloadDialogProps> = ({
+  open,
+  onOpenChange,
+  student,
+  exercises,
+  meals,
+  supplements,
+  vitamins
+}) => {
   const { toast } = useToast();
-  const [trainerProfile, setTrainerProfile] = useState<TrainerProfile | null>(null);
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState({
+    info: true,
+    exercises: true,
+    diet: true,
+    supplements: true
+  });
+  const [activeTab, setActiveTab] = useState<string>("preview");
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isPrinting, setIsPrinting] = useState(false);
-  const [activeTab, setActiveTab] = useState("summary");
-  const [isSuccess, setIsSuccess] = useState<{download: boolean, print: boolean}>({download: false, print: false});
 
-  useEffect(() => {
-    try {
-      const savedProfile = localStorage.getItem('trainerProfile');
-      if (savedProfile) {
-        const profile = JSON.parse(savedProfile);
-        setTrainerProfile(profile);
-        
-        setIsProfileComplete(
-          !!profile && 
-          !!profile.gymName && profile.gymName.trim() !== '' && 
-          !!profile.gymAddress && profile.gymAddress.trim() !== ''
-        );
-      }
-    } catch (error) {
-      console.error("Error loading trainer profile:", error);
-    }
-  }, [open]);
+  if (!student) return null;
 
-  const resetSuccess = () => {
-    setTimeout(() => {
-      setIsSuccess({download: false, print: false});
-    }, 3000);
+  const studentExercises = exercises.filter(exercise => 
+    student.exercises?.includes(exercise.id) || 
+    student.exercisesDay1?.includes(exercise.id) ||
+    student.exercisesDay2?.includes(exercise.id) ||
+    student.exercisesDay3?.includes(exercise.id) ||
+    student.exercisesDay4?.includes(exercise.id)
+  );
+  
+  const studentMeals = meals.filter(meal => student.meals?.includes(meal.id));
+  
+  const studentSupplements = supplements.filter(
+    supplement => student.supplements?.includes(supplement.id)
+  );
+  
+  const studentVitamins = vitamins.filter(
+    vitamin => student.vitamins?.includes(vitamin.id)
+  );
+
+  const toggleOption = (option: keyof typeof selectedOptions) => {
+    setSelectedOptions(prev => ({
+      ...prev,
+      [option]: !prev[option]
+    }));
   };
 
   const handleDownload = async () => {
-    if (!student) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "اطلاعات شاگرد موجود نیست."
-      });
-      return;
-    }
-
-    if (!trainerProfile || !isProfileComplete) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "لطفاً ابتدا اطلاعات باشگاه خود را در بخش پروفایل تکمیل کنید."
-      });
-      return;
-    }
+    if (!student) return;
 
     try {
       setIsDownloading(true);
       
-      const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile);
+      const contentElement = document.getElementById('download-content');
+      if (!contentElement) return;
+
+      const canvas = await html2canvas(contentElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/png');
       
-      doc.save(`profile_${student.name}.pdf`);
+      // Create PDF
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
       
-      setIsSuccess(prev => ({...prev, download: true}));
-      resetSuccess();
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save(`برنامه_${student.name.replace(/\s+/g, '_')}.pdf`);
       
       toast({
         title: "دانلود موفق",
-        description: "فایل PDF با موفقیت دانلود شد."
+        description: "اطلاعات شاگرد با موفقیت دانلود شد"
       });
       
+      setIsDownloading(false);
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error("Error downloading PDF:", error);
       toast({
         variant: "destructive",
-        title: "خطا",
-        description: "در هنگام دانلود فایل PDF خطایی رخ داد."
+        title: "خطا در دانلود",
+        description: "مشکلی در دانلود اطلاعات پیش آمد. لطفا مجدد تلاش کنید."
       });
-    } finally {
       setIsDownloading(false);
     }
   };
 
-  const handlePrint = async () => {
-    if (!student) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "اطلاعات شاگرد موجود نیست."
-      });
-      return;
-    }
+  const renderPreviewContent = () => (
+    <div id="download-content" className="bg-white rounded-lg p-8 max-w-4xl mx-auto">
+      <div className="text-center mb-8 border-b border-gray-200 pb-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">برنامه اختصاصی {student.name}</h1>
+        <p className="text-gray-500">تهیه شده در تاریخ {new Date().toLocaleDateString('fa-IR')}</p>
+      </div>
 
-    if (!trainerProfile || !isProfileComplete) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "لطفاً ابتدا اطلاعات باشگاه خود را در بخش پروفایل تکمیل کنید."
-      });
-      return;
-    }
-
-    try {
-      setIsPrinting(true);
-      
-      const printWindow = openPrintWindow(student, exercises, meals, supplements, trainerProfile);
-      
-      if (!printWindow) {
-        toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "امکان باز کردن پنجره چاپ وجود ندارد."
-        });
-        return;
-      }
-
-      setIsSuccess(prev => ({...prev, print: true}));
-      resetSuccess();
-      
-      toast({
-        title: "آماده برای چاپ",
-        description: "صفحه چاپ با موفقیت آماده شد."
-      });
-    } catch (error) {
-      console.error("Error preparing print:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "در آماده‌سازی چاپ خطایی رخ داد."
-      });
-    } finally {
-      setIsPrinting(false);
-    }
-  };
-
-  const studentExercises = student?.exercises?.map(id => 
-    exercises.find(ex => ex.id === id)
-  ).filter(Boolean) || [];
-  
-  const studentMeals = student?.meals?.map(id => 
-    meals.find(meal => meal.id === id)
-  ).filter(Boolean) || [];
-  
-  const studentSupplements = student?.supplements?.map(id => 
-    supplements.find(sup => sup.id === id)
-  ).filter(Boolean) || [];
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-white dark:bg-gray-950 rounded-lg shadow-xl border-0">
-        <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
-          <DialogHeader className="p-6 pb-0">
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <FileText className="h-6 w-6 text-white" />
-              </div>
-              <span className="bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent font-bold">
-                خروجی و چاپ اطلاعات
-              </span>
-            </DialogTitle>
-            <DialogDescription className="text-base mt-2 text-gray-600 dark:text-gray-300">
-              دانلود و چاپ اطلاعات کامل شاگرد به همراه تمام برنامه‌ها با قالب‌بندی حرفه‌ای
-            </DialogDescription>
-          </DialogHeader>
-          
-          <Tabs 
-            defaultValue="summary" 
-            className="w-full px-6"
-            value={activeTab}
-            onValueChange={setActiveTab}
-          >
-            <TabsList className="grid grid-cols-2 w-full bg-indigo-50 dark:bg-indigo-950/50 rounded-full p-1 my-4">
-              <TabsTrigger 
-                value="summary" 
-                className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm"
-              >
-                خلاصه برنامه‌ها
-              </TabsTrigger>
-              <TabsTrigger 
-                value="preview" 
-                className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm"
-              >
-                پیش‌نمایش خروجی
-              </TabsTrigger>
-            </TabsList>
-            
-            <div className="overflow-y-auto max-h-[calc(80vh-180px)] p-6 pt-0">
-              <ProfileWarning isProfileComplete={isProfileComplete} className="mb-6" />
-              
-              <TabsContent value="summary" className="mt-0 space-y-4">
-                <StudentSummary 
-                  student={student} 
-                  exercises={exercises} 
-                  meals={meals} 
-                  supplements={supplements} 
-                />
-              </TabsContent>
-              
-              <TabsContent value="preview" className="mt-0">
-                <div className="flex flex-col space-y-6">
-                  <div className="rounded-xl border p-5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30">
-                    <h3 className="font-semibold text-lg mb-3 text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
-                      <div className="p-1.5 rounded-md bg-indigo-100 dark:bg-indigo-900">
-                        <FileCheck className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                      </div>
-                      پیش‌نمایش پرینت و PDF
-                    </h3>
-                    
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-5 border border-indigo-100 dark:border-indigo-900">
-                      {student && (
-                        <motion.div 
-                          className="space-y-5"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <div className="border-b border-gray-200 dark:border-gray-800 pb-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3 space-x-reverse">
-                                <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-800 flex-shrink-0">
-                                  <img 
-                                    src={student.image || "/placeholder.svg"} 
-                                    alt={student.name} 
-                                    className="h-full w-full object-cover"
-                                  />
-                                </div>
-                                <div>
-                                  <h3 className="font-bold text-xl text-gray-900 dark:text-white">{student.name}</h3>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    قد: {student.height} سانتی‌متر - وزن: {student.weight} کیلوگرم
-                                  </p>
-                                </div>
-                              </div>
-                              {trainerProfile && (
-                                <div className="text-left">
-                                  <p className="font-bold text-gray-900 dark:text-white">{trainerProfile.gymName}</p>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">{trainerProfile.fullName}</p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          
-                          {studentExercises.length > 0 && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.1 }}
-                            >
-                              <h4 className="text-lg font-medium mb-3 bg-gradient-to-r from-indigo-700 to-blue-600 dark:from-indigo-400 dark:to-blue-400 bg-clip-text text-transparent">برنامه تمرینی</h4>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                {studentExercises.slice(0, 4).map((exercise: any) => (
-                                  <div key={exercise.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex items-center gap-2">
-                                      <div className="bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1.5 flex-shrink-0">
-                                        <Check className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
-                                      </div>
-                                      {exercise.name}
-                                    </div>
-                                  </div>
-                                ))}
-                                {studentExercises.length > 4 && (
-                                  <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
-                                    <ChevronDown className="h-4 w-4" />
-                                    و {studentExercises.length - 4} مورد دیگر...
-                                  </div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                          
-                          {studentMeals.length > 0 && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.2 }}
-                            >
-                              <h4 className="text-lg font-medium mb-3 bg-gradient-to-r from-green-700 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">برنامه غذایی</h4>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                {studentMeals.slice(0, 4).map((meal: any) => (
-                                  <div key={meal.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex items-center gap-2">
-                                      <div className="bg-green-100 dark:bg-green-900/50 rounded-full p-1.5 flex-shrink-0">
-                                        <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
-                                      </div>
-                                      {meal.name}
-                                    </div>
-                                  </div>
-                                ))}
-                                {studentMeals.length > 4 && (
-                                  <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
-                                    <ChevronDown className="h-4 w-4" />
-                                    و {studentMeals.length - 4} مورد دیگر...
-                                  </div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                          
-                          {studentSupplements.length > 0 && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.3 }}
-                            >
-                              <h4 className="text-lg font-medium mb-3 bg-gradient-to-r from-purple-700 to-violet-600 dark:from-purple-400 dark:to-violet-400 bg-clip-text text-transparent">مکمل‌ها و ویتامین‌ها</h4>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                {studentSupplements.slice(0, 4).map((supplement: any) => (
-                                  <div key={supplement.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex items-center gap-2">
-                                      <div className="bg-purple-100 dark:bg-purple-900/50 rounded-full p-1.5 flex-shrink-0">
-                                        <Check className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-                                      </div>
-                                      {supplement.name}
-                                    </div>
-                                  </div>
-                                ))}
-                                {studentSupplements.length > 4 && (
-                                  <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
-                                    <ChevronDown className="h-4 w-4" />
-                                    و {studentSupplements.length - 4} مورد دیگر...
-                                  </div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                          
-                          <motion.div 
-                            className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.4 }}
-                          >
-                            این یک پیش‌نمایش از خروجی PDF و چاپ است. خروجی نهایی شامل تمامی جزئیات برنامه خواهد بود.
-                          </motion.div>
-                        </motion.div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
+      {selectedOptions.info && (
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <div className="size-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
+              <UserRound className="size-5 text-indigo-600" />
             </div>
-          </Tabs>
-        </div>
-        
-        <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50 to-indigo-50/30 dark:from-gray-900 dark:to-indigo-950/30 rounded-b-lg">
-          <div className="flex justify-between items-center">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-              className="gap-1 hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              <X className="h-4 w-4" />
-              بستن
-            </Button>
-            
-            <div className="flex gap-3">
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                <Button 
-                  onClick={handlePrint}
-                  className={`${
-                    isSuccess.print 
-                      ? "bg-green-600 hover:bg-green-700" 
-                      : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                  } text-white flex items-center gap-1 shadow-md hover:shadow-lg transition-all`}
-                  disabled={!isProfileComplete || isPrinting}
-                  size="sm"
-                >
-                  {isPrinting ? (
-                    <div className="h-4 w-4 border-2 border-white border-r-transparent rounded-full animate-spin ml-1"></div>
-                  ) : isSuccess.print ? (
-                    <CheckCheck size={16} />
-                  ) : (
-                    <Printer size={16} />
-                  )}
-                  {isPrinting ? "در حال آماده‌سازی..." : isSuccess.print ? "چاپ شد" : "چاپ"}
-                </Button>
-              </motion.div>
-              
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                <Button 
-                  onClick={handleDownload}
-                  className={`${
-                    isSuccess.download 
-                      ? "bg-green-600 hover:bg-green-700" 
-                      : "bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800"
-                  } text-white flex items-center gap-1 shadow-md hover:shadow-lg transition-all`}
-                  disabled={!isProfileComplete || isDownloading}
-                  size="sm"
-                >
-                  {isDownloading ? (
-                    <div className="h-4 w-4 border-2 border-white border-r-transparent rounded-full animate-spin ml-1"></div>
-                  ) : isSuccess.download ? (
-                    <CheckCheck size={16} />
-                  ) : (
-                    <Download size={16} />
-                  )}
-                  {isDownloading ? "در حال آماده‌سازی..." : isSuccess.download ? "دانلود شد" : "دانلود PDF"}
-                </Button>
-              </motion.div>
+            <h2 className="text-xl font-bold text-gray-800">اطلاعات شخصی</h2>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4">
+            <div className="flex flex-col">
+              <span className="text-gray-500 text-sm">نام و نام خانوادگی:</span>
+              <span className="font-medium">{student.name}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-gray-500 text-sm">شماره تماس:</span>
+              <span className="font-medium" dir="ltr">{toPersianNumbers(student.phone)}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-gray-500 text-sm">قد:</span>
+              <span className="font-medium">{toPersianNumbers(student.height)} سانتی‌متر</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-gray-500 text-sm">وزن:</span>
+              <span className="font-medium">{toPersianNumbers(student.weight)} کیلوگرم</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-gray-500 text-sm">مبلغ پرداختی:</span>
+              <span className="font-medium">{toPersianNumbers(student.payment)} تومان</span>
             </div>
           </div>
         </div>
+      )}
+
+      {selectedOptions.exercises && studentExercises.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <div className="size-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+              <Dumbbell className="size-5 text-blue-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">برنامه تمرینی</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {exercises
+              .filter(exercise => student.exercisesDay1?.includes(exercise.id))
+              .length > 0 && (
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h3 className="font-bold text-blue-800 mb-3 pb-2 border-b border-blue-200">روز اول</h3>
+                <div className="space-y-3">
+                  {exercises
+                    .filter(exercise => student.exercisesDay1?.includes(exercise.id))
+                    .map(exercise => (
+                      <div key={exercise.id} className="bg-white p-3 rounded-md shadow-sm">
+                        <div className="font-medium text-gray-800">{exercise.name}</div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {exercise.sets && exercise.reps && (
+                            <span>{toPersianNumbers(exercise.sets)} ست × {toPersianNumbers(exercise.reps)} تکرار</span>
+                          )}
+                          {exercise.description && (
+                            <p className="mt-1 text-xs text-gray-500">{exercise.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {exercises
+              .filter(exercise => student.exercisesDay2?.includes(exercise.id))
+              .length > 0 && (
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h3 className="font-bold text-blue-800 mb-3 pb-2 border-b border-blue-200">روز دوم</h3>
+                <div className="space-y-3">
+                  {exercises
+                    .filter(exercise => student.exercisesDay2?.includes(exercise.id))
+                    .map(exercise => (
+                      <div key={exercise.id} className="bg-white p-3 rounded-md shadow-sm">
+                        <div className="font-medium text-gray-800">{exercise.name}</div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {exercise.sets && exercise.reps && (
+                            <span>{toPersianNumbers(exercise.sets)} ست × {toPersianNumbers(exercise.reps)} تکرار</span>
+                          )}
+                          {exercise.description && (
+                            <p className="mt-1 text-xs text-gray-500">{exercise.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {exercises
+              .filter(exercise => student.exercisesDay3?.includes(exercise.id))
+              .length > 0 && (
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h3 className="font-bold text-blue-800 mb-3 pb-2 border-b border-blue-200">روز سوم</h3>
+                <div className="space-y-3">
+                  {exercises
+                    .filter(exercise => student.exercisesDay3?.includes(exercise.id))
+                    .map(exercise => (
+                      <div key={exercise.id} className="bg-white p-3 rounded-md shadow-sm">
+                        <div className="font-medium text-gray-800">{exercise.name}</div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {exercise.sets && exercise.reps && (
+                            <span>{toPersianNumbers(exercise.sets)} ست × {toPersianNumbers(exercise.reps)} تکرار</span>
+                          )}
+                          {exercise.description && (
+                            <p className="mt-1 text-xs text-gray-500">{exercise.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {exercises
+              .filter(exercise => student.exercisesDay4?.includes(exercise.id))
+              .length > 0 && (
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h3 className="font-bold text-blue-800 mb-3 pb-2 border-b border-blue-200">روز چهارم</h3>
+                <div className="space-y-3">
+                  {exercises
+                    .filter(exercise => student.exercisesDay4?.includes(exercise.id))
+                    .map(exercise => (
+                      <div key={exercise.id} className="bg-white p-3 rounded-md shadow-sm">
+                        <div className="font-medium text-gray-800">{exercise.name}</div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {exercise.sets && exercise.reps && (
+                            <span>{toPersianNumbers(exercise.sets)} ست × {toPersianNumbers(exercise.reps)} تکرار</span>
+                          )}
+                          {exercise.description && (
+                            <p className="mt-1 text-xs text-gray-500">{exercise.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+            
+            {exercises
+              .filter(exercise => student.exercises?.includes(exercise.id))
+              .length > 0 && (
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h3 className="font-bold text-blue-800 mb-3 pb-2 border-b border-blue-200">سایر تمرین‌ها</h3>
+                <div className="space-y-3">
+                  {exercises
+                    .filter(exercise => student.exercises?.includes(exercise.id))
+                    .map(exercise => (
+                      <div key={exercise.id} className="bg-white p-3 rounded-md shadow-sm">
+                        <div className="font-medium text-gray-800">{exercise.name}</div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {exercise.sets && exercise.reps && (
+                            <span>{toPersianNumbers(exercise.sets)} ست × {toPersianNumbers(exercise.reps)} تکرار</span>
+                          )}
+                          {exercise.description && (
+                            <p className="mt-1 text-xs text-gray-500">{exercise.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {selectedOptions.diet && studentMeals.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <div className="size-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+              <Apple className="size-5 text-green-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">برنامه غذایی</h2>
+          </div>
+
+          <div className="bg-green-50 rounded-lg p-4 space-y-4">
+            {studentMeals.map(meal => (
+              <div key={meal.id} className="bg-white p-4 rounded-md shadow-sm">
+                <h3 className="font-medium text-gray-800 border-b border-green-100 pb-2 mb-2">{meal.name}</h3>
+                <div className="text-sm text-gray-600">
+                  {meal.description && <p>{meal.description}</p>}
+                  {meal.calories && (
+                    <div className="mt-2 text-xs bg-green-50 inline-block px-2 py-1 rounded text-green-700">
+                      {toPersianNumbers(meal.calories)} کالری
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {selectedOptions.supplements && (studentSupplements.length > 0 || studentVitamins.length > 0) && (
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <div className="size-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+              <Pill className="size-5 text-purple-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">مکمل‌ها و ویتامین‌ها</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {studentSupplements.length > 0 && (
+              <div className="bg-purple-50 rounded-lg p-4">
+                <h3 className="font-bold text-purple-800 mb-3 pb-2 border-b border-purple-200">مکمل‌ها</h3>
+                <div className="space-y-3">
+                  {studentSupplements.map(supplement => (
+                    <div key={supplement.id} className="bg-white p-3 rounded-md shadow-sm">
+                      <div className="font-medium text-gray-800">{supplement.name}</div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        <span>دوز: {supplement.dosage}</span>
+                      </div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        <span>زمان مصرف: {supplement.timing}</span>
+                      </div>
+                      {supplement.description && (
+                        <p className="mt-1 text-xs text-gray-500">{supplement.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {studentVitamins.length > 0 && (
+              <div className="bg-purple-50 rounded-lg p-4">
+                <h3 className="font-bold text-purple-800 mb-3 pb-2 border-b border-purple-200">ویتامین‌ها</h3>
+                <div className="space-y-3">
+                  {studentVitamins.map(vitamin => (
+                    <div key={vitamin.id} className="bg-white p-3 rounded-md shadow-sm">
+                      <div className="font-medium text-gray-800">{vitamin.name}</div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        <span>دوز: {vitamin.dosage}</span>
+                      </div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        <span>زمان مصرف: {vitamin.timing}</span>
+                      </div>
+                      {vitamin.description && (
+                        <p className="mt-1 text-xs text-gray-500">{vitamin.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl p-0 overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.100/20%),transparent_70%)] dark:bg-[radial-gradient(ellipse_at_top,theme(colors.indigo.900/20%),transparent_70%)]" />
+        
+        <DialogHeader className="px-6 pt-6 pb-2 relative z-10">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="size-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+              <FileDown className="size-5 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <DialogTitle className="text-xl">دانلود اطلاعات شاگرد</DialogTitle>
+          </div>
+          <DialogDescription className="text-gray-500 dark:text-gray-400">
+            انتخاب کنید چه اطلاعاتی از {student.name} در خروجی گنجانده شود
+          </DialogDescription>
+          
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
+            <TabsList className="bg-indigo-50/50 dark:bg-indigo-950/50 p-1 h-auto border border-indigo-100/50 dark:border-indigo-900/50">
+              <TabsTrigger 
+                value="options" 
+                className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-indigo-700 dark:data-[state=active]:text-indigo-300 data-[state=active]:shadow-sm rounded-md"
+              >
+                <div className="flex items-center gap-2">
+                  <FileText className="size-4" />
+                  <span>تنظیمات خروجی</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="preview" 
+                className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-indigo-700 dark:data-[state=active]:text-indigo-300 data-[state=active]:shadow-sm rounded-md"
+              >
+                <div className="flex items-center gap-2">
+                  <Printer className="size-4" />
+                  <span>پیش‌نمایش</span>
+                </div>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </DialogHeader>
+
+        <div className="relative min-h-[500px] max-h-[70vh]">
+          <TabsContent value="options" className="flex-grow mt-0 p-6">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-6"
+            >
+              <Card className="p-4 border-indigo-100 dark:border-indigo-800">
+                <div className="flex items-start space-x-2 space-x-reverse">
+                  <Checkbox 
+                    id="info" 
+                    checked={selectedOptions.info}
+                    onCheckedChange={() => toggleOption('info')}
+                    className="mt-1 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                  />
+                  <div className="flex-1">
+                    <label
+                      htmlFor="info"
+                      className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2"
+                    >
+                      <UserRound className="size-5 text-indigo-600 dark:text-indigo-400" />
+                      اطلاعات شخصی
+                    </label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      نام، شماره تماس، قد، وزن و مبلغ پرداختی
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className={`p-4 border-blue-100 dark:border-blue-800/70 ${studentExercises.length === 0 ? 'opacity-60' : ''}`}>
+                <div className="flex items-start space-x-2 space-x-reverse">
+                  <Checkbox 
+                    id="exercises" 
+                    checked={selectedOptions.exercises}
+                    onCheckedChange={() => toggleOption('exercises')}
+                    disabled={studentExercises.length === 0}
+                    className="mt-1 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                  />
+                  <div className="flex-1">
+                    <label
+                      htmlFor="exercises"
+                      className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2"
+                    >
+                      <Dumbbell className="size-5 text-blue-600 dark:text-blue-400" />
+                      برنامه تمرینی
+                    </label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {studentExercises.length > 0 
+                        ? `${toPersianNumbers(studentExercises.length)} تمرین به شاگرد اختصاص داده شده است` 
+                        : "هیچ تمرینی به شاگرد اختصاص داده نشده است"}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className={`p-4 border-green-100 dark:border-green-800/70 ${studentMeals.length === 0 ? 'opacity-60' : ''}`}>
+                <div className="flex items-start space-x-2 space-x-reverse">
+                  <Checkbox 
+                    id="diet" 
+                    checked={selectedOptions.diet}
+                    onCheckedChange={() => toggleOption('diet')}
+                    disabled={studentMeals.length === 0}
+                    className="mt-1 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                  />
+                  <div className="flex-1">
+                    <label
+                      htmlFor="diet"
+                      className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2"
+                    >
+                      <Apple className="size-5 text-green-600 dark:text-green-400" />
+                      برنامه غذایی
+                    </label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {studentMeals.length > 0 
+                        ? `${toPersianNumbers(studentMeals.length)} وعده غذایی به شاگرد اختصاص داده شده است` 
+                        : "هیچ وعده غذایی به شاگرد اختصاص داده نشده است"}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className={`p-4 border-purple-100 dark:border-purple-800/70 ${studentSupplements.length === 0 && studentVitamins.length === 0 ? 'opacity-60' : ''}`}>
+                <div className="flex items-start space-x-2 space-x-reverse">
+                  <Checkbox 
+                    id="supplements" 
+                    checked={selectedOptions.supplements}
+                    onCheckedChange={() => toggleOption('supplements')}
+                    disabled={studentSupplements.length === 0 && studentVitamins.length === 0}
+                    className="mt-1 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
+                  />
+                  <div className="flex-1">
+                    <label
+                      htmlFor="supplements"
+                      className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2"
+                    >
+                      <Pill className="size-5 text-purple-600 dark:text-purple-400" />
+                      مکمل‌ها و ویتامین‌ها
+                    </label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {studentSupplements.length > 0 || studentVitamins.length > 0
+                        ? `${toPersianNumbers(studentSupplements.length)} مکمل و ${toPersianNumbers(studentVitamins.length)} ویتامین به شاگرد اختصاص داده شده است` 
+                        : "هیچ مکمل یا ویتامینی به شاگرد اختصاص داده نشده است"}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          </TabsContent>
+          
+          <TabsContent value="preview" className="flex-grow mt-0 overflow-y-auto max-h-[70vh]">
+            <ScrollArea className="h-[70vh]">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="p-4 overflow-x-hidden"
+              >
+                {renderPreviewContent()}
+              </motion.div>
+            </ScrollArea>
+          </TabsContent>
+        </div>
+
+        <DialogFooter className="px-6 py-4 bg-gray-50/80 dark:bg-gray-900/40 backdrop-blur-sm border-t border-gray-100 dark:border-gray-800">
+          <div className="flex justify-between items-center w-full">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              تمامی اطلاعات به صورت فایل PDF ذخیره خواهد شد
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={handleDownload}
+                disabled={isDownloading || (
+                  (!selectedOptions.info && !selectedOptions.exercises && !selectedOptions.diet && !selectedOptions.supplements) ||
+                  (selectedOptions.exercises && studentExercises.length === 0) ||
+                  (selectedOptions.diet && studentMeals.length === 0) ||
+                  (selectedOptions.supplements && studentSupplements.length === 0 && studentVitamins.length === 0)
+                )}
+                className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700"
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> در حال آماده‌سازی...
+                  </>
+                ) : (
+                  <>
+                    <Download className="mr-2 h-4 w-4" /> دانلود اطلاعات
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
