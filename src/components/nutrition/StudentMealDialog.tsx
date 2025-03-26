@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -6,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Search, Save, X, Salad, Check, UtensilsCrossed, Apple, Sparkles, LayoutGrid, ListFilter, ArrowDownAZ, ArrowUpZA } from "lucide-react";
+import { Search, Save, X, Salad, Check, UtensilsCrossed, Apple, Sparkles, ListFilter, ArrowDownAZ, ArrowUpZA } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -48,7 +49,6 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   const [activeDay, setActiveDay] = useState<WeekDay | "all">("all");
   const [activeMealType, setActiveMealType] = useState<MealType | "all">("all");
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
@@ -215,9 +215,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
 
             <TabsContent value={activeDay === "all" ? "all" : activeDay.toString()} className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" dir="rtl">
               <StudentMealListWrapper 
-                viewMode={viewMode} 
                 maxHeight="calc(100vh - 220px)" 
-                setViewMode={setViewMode} 
                 toggleSortOrder={toggleSortOrder} 
                 sortOrder={sortOrder} 
                 showControls={true}
@@ -248,10 +246,10 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
                                             {getMealTypeIcon(type)}
                                             {type}
                                             <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
-                                              {typeMeals.length} مورد
+                                              {toPersianNumbers(typeMeals.length)} مورد
                                             </span>
                                           </h4>
-                                          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                          <div className="flex flex-col space-y-3">
                                             {typeMeals.map(meal => renderMealItem(meal))}
                                           </div>
                                         </div>;
@@ -264,7 +262,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
                         if (dayMeals.length === 0) return null;
                         return <div key={day} className="space-y-4">
                                   <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
-                                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                  <div className="flex flex-col space-y-3">
                                     {dayMeals.map(meal => renderMealItem(meal))}
                                   </div>
                                 </div>;
@@ -278,17 +276,17 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
                                     {getMealTypeIcon(type)}
                                     {type}
                                     <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
-                                      {typeMeals.length} مورد
+                                      {toPersianNumbers(typeMeals.length)} مورد
                                     </span>
                                   </h4>
-                                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                  <div className="flex flex-col space-y-3">
                                     {typeMeals.map(meal => renderMealItem(meal))}
                                   </div>
                                 </div>;
                       }) :
-                      <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
-                              {filteredMeals.map(meal => renderMealItem(meal))}
-                            </div>}
+                      <div className="flex flex-col space-y-3">
+                        {filteredMeals.map(meal => renderMealItem(meal))}
+                      </div>}
                   </div>
                 )}
               </StudentMealListWrapper>
