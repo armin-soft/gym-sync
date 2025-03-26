@@ -27,7 +27,7 @@ interface StudentMealListWrapperProps {
 const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "calc(100vh - 200px)",
+  maxHeight = "calc(100vh - 280px)", // Adjusted for better standard sizing
   viewMode = "list",
   setViewMode,
   toggleSortOrder,
@@ -36,7 +36,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
 }) => {
   return (
     <Card className={cn(
-      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white",
+      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md transition-all text-gray-900 dark:text-white overflow-hidden",
       className
     )}>
       {showControls && (
@@ -114,7 +114,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
           className={cn(
             "p-4 w-full", 
             viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3" 
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" 
               : "flex flex-col space-y-3"
           )}
         >

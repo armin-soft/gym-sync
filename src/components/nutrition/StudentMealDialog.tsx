@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { Meal, MealType, WeekDay } from "@/types/meal";
 import StudentMealListWrapper from "./StudentMealListWrapper";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
 interface StudentMealDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -23,7 +24,6 @@ interface StudentMealDialogProps {
   meals: Meal[];
 }
 
-// Define the meal type order
 const mealTypeOrder: Record<MealType, number> = {
   "صبحانه": 1,
   "میان وعده صبح": 2,
@@ -31,6 +31,7 @@ const mealTypeOrder: Record<MealType, number> = {
   "میان وعده عصر": 4,
   "شام": 5
 };
+
 export function StudentMealDialog({
   open,
   onOpenChange,
@@ -48,14 +49,11 @@ export function StudentMealDialog({
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  // Get unique days and meal types from meals
   const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
   const mealTypes = Array.from(new Set(meals.map(meal => meal.type))) as MealType[];
 
-  // Sort meal types in the correct order
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
 
-  // Sort days in the correct order
   const dayOrder: Record<WeekDay, number> = {
     "شنبه": 0,
     "یکشنبه": 1,
@@ -66,6 +64,7 @@ export function StudentMealDialog({
     "جمعه": 6
   };
   const sortedDays = [...days].sort((a, b) => dayOrder[a] - dayOrder[b]);
+
   useEffect(() => {
     let filtered = [...meals];
     if (searchQuery.trim() !== "") {
@@ -78,17 +77,13 @@ export function StudentMealDialog({
       filtered = filtered.filter(meal => meal.type === activeMealType);
     }
 
-    // Sort meals
     filtered.sort((a, b) => {
-      // First sort by day order
       const dayOrderDiff = dayOrder[a.day] - dayOrder[b.day];
       if (dayOrderDiff !== 0) return dayOrderDiff;
 
-      // Then sort by meal type if days are same
       const typeOrderDiff = mealTypeOrder[a.type] - mealTypeOrder[b.type];
       if (typeOrderDiff !== 0) return typeOrderDiff;
 
-      // Then sort by name if types are the same
       if (sortOrder === "asc") {
         return a.name.localeCompare(b.name);
       } else {
@@ -97,12 +92,15 @@ export function StudentMealDialog({
     });
     setFilteredMeals(filtered);
   }, [searchQuery, meals, activeDay, activeMealType, sortOrder]);
+
   const toggleMeal = (id: number) => {
     setSelectedMeals(prev => prev.includes(id) ? prev.filter(mealId => mealId !== id) : [...prev, id]);
   };
+
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
+
   const handleSave = () => {
     const success = onSave(selectedMeals);
     if (success) {
@@ -110,6 +108,7 @@ export function StudentMealDialog({
     }
     return success;
   };
+
   const getMealTypeColor = (type: MealType) => {
     switch (type) {
       case "صبحانه":
@@ -126,6 +125,7 @@ export function StudentMealDialog({
         return "text-gray-600 bg-gray-50 border-gray-200 dark:text-gray-400 dark:bg-gray-800/30 dark:border-gray-700";
     }
   };
+
   const getMealTypeIcon = (type: MealType) => {
     switch (type) {
       case "صبحانه":
@@ -142,13 +142,12 @@ export function StudentMealDialog({
         return <Salad className="h-3.5 w-3.5" />;
     }
   };
+
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
-        {/* Header */}
+      <DialogContent className="max-w-4xl w-full h-[90vh] max-h-[90vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-lg">
         <div className="px-6 py-4 border-b bg-white dark:bg-gray-800/50 shadow-sm shrink-0 text-right">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-md">
                   <Salad className="h-5 w-5 text-white" />
@@ -159,12 +158,9 @@ export function StudentMealDialog({
                 </div>
               </div>
             </div>
-            
-            
           </div>
         </div>
 
-        {/* Search */}
         <div className="px-6 py-3 border-b bg-muted/20 shrink-0">
           <div className="relative flex-1">
             <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -172,7 +168,6 @@ export function StudentMealDialog({
           </div>
         </div>
 
-        {/* Filters */}
         <Collapsible open={showFilters} onOpenChange={setShowFilters} className="w-full">
           <CollapsibleContent className="flex-shrink-0 bg-muted/10 border-b">
             <div className="p-4 flex flex-col gap-3" dir="rtl">
@@ -192,7 +187,6 @@ export function StudentMealDialog({
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Tabs and Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <Tabs value={activeDay === "all" ? "all" : activeDay} onValueChange={value => setActiveDay(value as WeekDay | "all")} className="flex-1 flex flex-col overflow-hidden" dir="rtl">
             <div className="border-b bg-muted/10 shrink-0">
@@ -209,82 +203,88 @@ export function StudentMealDialog({
             </div>
 
             <TabsContent value={activeDay === "all" ? "all" : activeDay.toString()} className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" dir="rtl">
-              <StudentMealListWrapper viewMode={viewMode} maxHeight="calc(100vh - 240px)" setViewMode={setViewMode} toggleSortOrder={toggleSortOrder} sortOrder={sortOrder} showControls={true}>
-                {filteredMeals.length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+              <StudentMealListWrapper 
+                viewMode={viewMode} 
+                maxHeight="calc(100vh - 320px)" 
+                setViewMode={setViewMode} 
+                toggleSortOrder={toggleSortOrder} 
+                sortOrder={sortOrder} 
+                showControls={true}
+              >
+                {filteredMeals.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-center p-4">
                     <div className="w-16 h-16 bg-gradient-to-b from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
                       <UtensilsCrossed className="h-8 w-8 text-green-500 dark:text-green-400" />
                     </div>
                     <h3 className="font-medium text-lg text-foreground">هیچ وعده غذایی یافت نشد</h3>
                     <p className="text-muted-foreground text-sm mt-2">برای افزودن وعده غذایی به صفحه مدیریت غذا مراجعه کنید</p>
-                  </div> : <div className="space-y-6">
+                  </div>
+                ) : (
+                  <div className="space-y-6">
                     {activeMealType === "all" && activeDay === "all" ?
-                // Group by day and then by meal type
-                sortedDays.map(day => {
-                  const dayMeals = filteredMeals.filter(meal => meal.day === day);
-                  if (dayMeals.length === 0) return null;
-                  return <div key={day} className="space-y-4">
-                            <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
-                            <div className="space-y-4">
-                              {sortedMealTypes.map(type => {
-                        const typeMeals = dayMeals.filter(meal => meal.type === type);
+                      sortedDays.map(day => {
+                        const dayMeals = filteredMeals.filter(meal => meal.day === day);
+                        if (dayMeals.length === 0) return null;
+                        return <div key={day} className="space-y-4">
+                                  <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
+                                  <div className="space-y-4">
+                                    {sortedMealTypes.map(type => {
+                              const typeMeals = dayMeals.filter(meal => meal.type === type);
+                              if (typeMeals.length === 0) return null;
+                              const typeColor = getMealTypeColor(type);
+                              return <div key={`${day}-${type}`} className="space-y-2">
+                                          <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
+                                            {getMealTypeIcon(type)}
+                                            {type}
+                                            <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
+                                              {typeMeals.length} مورد
+                                            </span>
+                                          </h4>
+                                          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                            {typeMeals.map(meal => renderMealItem(meal))}
+                                          </div>
+                                        </div>;
+                            })}
+                                  </div>
+                                </div>;
+                      }) : activeMealType !== "all" && activeDay === "all" ?
+                      sortedDays.map(day => {
+                        const dayMeals = filteredMeals.filter(meal => meal.day === day);
+                        if (dayMeals.length === 0) return null;
+                        return <div key={day} className="space-y-4">
+                                  <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
+                                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                    {dayMeals.map(meal => renderMealItem(meal))}
+                                  </div>
+                                </div>;
+                      }) : activeDay !== "all" && activeMealType === "all" ?
+                      sortedMealTypes.map(type => {
+                        const typeMeals = filteredMeals.filter(meal => meal.type === type);
                         if (typeMeals.length === 0) return null;
                         const typeColor = getMealTypeColor(type);
-                        return <div key={`${day}-${type}`} className="space-y-2">
-                                    <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
-                                      {getMealTypeIcon(type)}
-                                      {type}
-                                      <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
-                                        {typeMeals.length} مورد
-                                      </span>
-                                    </h4>
-                                    <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
-                                      {typeMeals.map(meal => renderMealItem(meal))}
-                                    </div>
-                                  </div>;
-                      })}
-                            </div>
-                          </div>;
-                }) : activeMealType !== "all" && activeDay === "all" ?
-                // Group by day for a specific meal type
-                sortedDays.map(day => {
-                  const dayMeals = filteredMeals.filter(meal => meal.day === day);
-                  if (dayMeals.length === 0) return null;
-                  return <div key={day} className="space-y-4">
-                            <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
-                            <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
-                              {dayMeals.map(meal => renderMealItem(meal))}
-                            </div>
-                          </div>;
-                }) : activeDay !== "all" && activeMealType === "all" ?
-                // Group by meal type for a specific day
-                sortedMealTypes.map(type => {
-                  const typeMeals = filteredMeals.filter(meal => meal.type === type);
-                  if (typeMeals.length === 0) return null;
-                  const typeColor = getMealTypeColor(type);
-                  return <div key={type} className="space-y-2">
-                            <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
-                              {getMealTypeIcon(type)}
-                              {type}
-                              <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
-                                {typeMeals.length} مورد
-                              </span>
-                            </h4>
-                            <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
-                              {typeMeals.map(meal => renderMealItem(meal))}
-                            </div>
-                          </div>;
-                }) :
-                // Just show the filtered meals when both day and meal type are selected
-                <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
-                        {filteredMeals.map(meal => renderMealItem(meal))}
-                      </div>}
-                  </div>}
+                        return <div key={type} className="space-y-2">
+                                  <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
+                                    {getMealTypeIcon(type)}
+                                    {type}
+                                    <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
+                                      {typeMeals.length} مورد
+                                    </span>
+                                  </h4>
+                                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                    {typeMeals.map(meal => renderMealItem(meal))}
+                                  </div>
+                                </div>;
+                      }) :
+                      <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                              {filteredMeals.map(meal => renderMealItem(meal))}
+                            </div>}
+                  </div>
+                )}
               </StudentMealListWrapper>
             </TabsContent>
           </Tabs>
         </div>
 
-        {/* Footer */}
         <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex justify-between text-right" dir="rtl">
           <div className="flex items-center gap-2">
             <motion.div initial={{
@@ -312,7 +312,6 @@ export function StudentMealDialog({
       </DialogContent>
     </Dialog>;
 
-  // Helper function to render a meal item - define inside component so it has access to component state
   function renderMealItem(meal: Meal) {
     return <motion.div key={meal.id} initial={{
       opacity: 0,
@@ -348,4 +347,5 @@ export function StudentMealDialog({
       </motion.div>;
   }
 }
+
 export default StudentMealDialog;
