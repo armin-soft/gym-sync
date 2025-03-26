@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { UtensilsCrossed } from "lucide-react";
@@ -40,6 +41,14 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   const [activeMealType, setActiveMealType] = useState<MealType | "all">("all");
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  // Reset selectedMeals when dialog is opened to ensure it has the latest initialMeals
+  React.useEffect(() => {
+    if (open) {
+      setSelectedMeals(initialMeals);
+      console.log("Dialog opened with initial meals:", initialMeals);
+    }
+  }, [open, initialMeals]);
 
   const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
   const mealTypes = Array.from(new Set(meals.map(meal => meal.type))) as MealType[];
@@ -80,6 +89,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
+        <DialogTitle className="sr-only">برنامه غذایی {studentName}</DialogTitle>
         <StudentMealHeader studentName={studentName} />
         <StudentMealSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
