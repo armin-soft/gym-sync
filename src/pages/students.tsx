@@ -43,9 +43,24 @@ const StudentsPage = () => {
     },
   });
 
+  // Force refresh when localStorage 'students' changes
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'students') {
+        setRefreshTrigger(prev => prev + 1);
+        console.log('Storage event detected, triggering refresh');
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Function to trigger refresh after saving
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
+    // Simulate a storage event to force refresh in other tabs
+    window.dispatchEvent(new StorageEvent('storage', { key: 'students' }));
   }, []);
 
   // Wrapper functions to trigger refresh after saving

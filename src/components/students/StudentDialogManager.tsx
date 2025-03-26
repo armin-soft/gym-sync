@@ -102,10 +102,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
       const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
       if (success && dayNumber === undefined) {
         setIsExerciseDialogOpen(false);
-        toast({
-          title: "برنامه تمرینی ذخیره شد",
-          description: "برنامه تمرینی با موفقیت برای شاگرد ذخیره شد."
-        });
       }
       return success;
     } catch (error) {
@@ -126,10 +122,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
       const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
       if (success) {
         setIsDietDialogOpen(false);
-        toast({
-          title: "برنامه غذایی ذخیره شد",
-          description: "برنامه غذایی با موفقیت برای شاگرد ذخیره شد."
-        });
       }
       return success;
     } catch (error) {
@@ -150,10 +142,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
       const success = onSaveSupplements(data, selectedStudentForSupplement.id);
       if (success) {
         setIsSupplementDialogOpen(false);
-        toast({
-          title: "مکمل‌ها و ویتامین‌ها ذخیره شدند",
-          description: "برنامه مکمل‌ها و ویتامین‌ها با موفقیت برای شاگرد ذخیره شد."
-        });
       }
       return success;
     } catch (error) {

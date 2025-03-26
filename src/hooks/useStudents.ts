@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
@@ -173,6 +174,7 @@ export const useStudents = () => {
       });
       
       setStudents(updatedStudents);
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
       
       const dayText = dayNumber 
         ? (dayNumber === 1 ? 'روز اول' : 
@@ -181,6 +183,11 @@ export const useStudents = () => {
         : '';
       
       console.log(`Successfully saved exercises for student ${studentId}, day ${dayNumber}:`, exerciseIds);
+      
+      toast({
+        title: "افزودن موفق",
+        description: `برنامه تمرینی ${dayText} با موفقیت به شاگرد اضافه شد`
+      });
       
       return true;
     } catch (error) {
@@ -206,6 +213,8 @@ export const useStudents = () => {
     });
     
     setStudents(updatedStudents);
+    localStorage.setItem('students', JSON.stringify(updatedStudents));
+    
     toast({
       title: "افزودن موفق",
       description: "برنامه غذایی با موفقیت به شاگرد اضافه شد"
@@ -226,6 +235,8 @@ export const useStudents = () => {
     });
     
     setStudents(updatedStudents);
+    localStorage.setItem('students', JSON.stringify(updatedStudents));
+    
     toast({
       title: "افزودن موفق",
       description: "مکمل‌ها و ویتامین‌ها با موفقیت به شاگرد اضافه شدند"
