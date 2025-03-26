@@ -93,13 +93,13 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
 
     // در نهایت دانش‌آموزان را مرتب می‌کنیم
     return filtered.sort((a, b) => {
-      let aValue = a[sortField];
-      let bValue = b[sortField];
+      let aValue: string | number = a[sortField];
+      let bValue: string | number = b[sortField];
 
       // اگر مقدار وزن یا قد باشد، آن را به عدد تبدیل می‌کنیم
       if (sortField === "weight" || sortField === "height") {
-        aValue = parseFloat(aValue) || 0;
-        bValue = parseFloat(bValue) || 0;
+        aValue = parseFloat(aValue as string) || 0;
+        bValue = parseFloat(bValue as string) || 0;
       }
 
       if (sortOrder === "asc") {
