@@ -148,9 +148,7 @@ export function StudentMealDialog({
         <div className="px-6 py-4 border-b bg-white dark:bg-gray-800/50 shadow-sm shrink-0 text-right">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-10 w-10 rounded-full">
-                <X className="h-5 w-5" />
-              </Button>
+              
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-md">
                   <Salad className="h-5 w-5 text-white" />
