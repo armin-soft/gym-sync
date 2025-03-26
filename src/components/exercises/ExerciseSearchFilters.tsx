@@ -79,9 +79,9 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
         
         {exerciseTypes.length > 0 && (
           <Select
-            value={selectedExerciseType || "all"}
+            value={selectedExerciseType || "all_types"}
             onValueChange={(value) => {
-              setSelectedExerciseType(value === "all" ? null : value);
+              setSelectedExerciseType(value === "all_types" ? null : value);
               setSelectedCategoryId(null);
             }}
           >
@@ -90,7 +90,7 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
               <SelectValue placeholder="نوع تمرین" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">همه انواع</SelectItem>
+              <SelectItem value="all_types">همه انواع</SelectItem>
               {exerciseTypes.map((type) => (
                 <SelectItem key={type} value={type}>{type}</SelectItem>
               ))}

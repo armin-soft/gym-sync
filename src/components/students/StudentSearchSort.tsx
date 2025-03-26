@@ -49,14 +49,14 @@ export const StudentSearchSort = ({
           <div className="flex flex-wrap gap-2">
             {exerciseTypes && exerciseTypes.length > 0 && setSelectedExerciseType && (
               <Select
-                value={selectedExerciseType || ""}
-                onValueChange={(value) => setSelectedExerciseType(value || null)}
+                value={selectedExerciseType || "all_types"}
+                onValueChange={(value) => setSelectedExerciseType(value === "all_types" ? null : value)}
               >
                 <SelectTrigger className="w-[140px] h-9">
                   <SelectValue placeholder="نوع تمرین" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">همه انواع</SelectItem>
+                  <SelectItem value="all_types">همه انواع</SelectItem>
                   {exerciseTypes.map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
@@ -68,14 +68,14 @@ export const StudentSearchSort = ({
 
             {filteredCategories.length > 0 && setSelectedCategory && (
               <Select
-                value={selectedCategory?.toString() || ""}
-                onValueChange={(value) => setSelectedCategory(value ? parseInt(value) : null)}
+                value={selectedCategory?.toString() || "all_categories"}
+                onValueChange={(value) => setSelectedCategory(value === "all_categories" ? null : parseInt(value))}
               >
                 <SelectTrigger className="w-[140px] h-9">
                   <SelectValue placeholder="دسته‌بندی" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">همه دسته‌ها</SelectItem>
+                  <SelectItem value="all_categories">همه دسته‌ها</SelectItem>
                   {filteredCategories.map((category) => (
                     <SelectItem key={category.id} value={category.id.toString()}>
                       {category.name}
