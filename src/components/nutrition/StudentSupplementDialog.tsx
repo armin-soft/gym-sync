@@ -48,7 +48,7 @@ export function StudentSupplementDialog({
   const [selectedSupplements, setSelectedSupplements] = useState<number[]>(initialSupplements);
   const [selectedVitamins, setSelectedVitamins] = useState<number[]>(initialVitamins);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredSupplements, setFilteredSupplements] = useState<Supplement[]>([]);
+  const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
   const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">("supplements");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -77,7 +77,7 @@ export function StudentSupplementDialog({
       filtered = filtered.filter(item => item.category === selectedCategory);
     }
 
-    setFilteredSupplements(filtered);
+    setFilteredItems(filtered);
   }, [searchQuery, supplements, activeTab, selectedCategory]);
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function StudentSupplementDialog({
     setSelectedCategory("all");
   }, [activeTab]);
 
-  const toggleSupplement = (id: number) => {
+  const toggleItem = (id: number) => {
     if (activeTab === "supplements") {
       setSelectedSupplements(prev =>
         prev.includes(id)
@@ -110,34 +110,25 @@ export function StudentSupplementDialog({
     if (success) {
       onOpenChange(false);
     }
+    
+    return success;
   };
 
   const isSelected = (id: number) => {
-    if (activeTab === "supplements") {
-      return selectedSupplements.includes(id);
-    } else {
-      return selectedVitamins.includes(id);
-    }
+    return activeTab === "supplements" 
+      ? selectedSupplements.includes(id)
+      : selectedVitamins.includes(id);
   };
 
-  const getTypeIcon = (type: 'supplement' | 'vitamin') => {
-    return type === 'supplement' ? <Pill className="h-4 w-4" /> : <FlaskConical className="h-4 w-4" />;
-  };
-
-  const getCurrentTitle = () => {
-    return activeTab === "supplements" ? "مکمل‌های ورزشی" : "ویتامین‌ها";
-  };
-
-  const supplementCategories = categories.filter(cat => cat.type === "supplement");
-  const vitaminCategories = categories.filter(cat => cat.type === "vitamin");
-  const relevantCategories = activeTab === "supplements" ? supplementCategories : vitaminCategories;
+  const relevantCategories = categories.filter(cat => 
+    cat.type === (activeTab === "supplements" ? "supplement" : "vitamin")
+  );
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent 
         side="right" 
         className="w-full p-0 sm:max-w-full flex flex-col border-0"
-        dir="rtl"
       >
         <div className="flex flex-col h-full overflow-hidden">
           {/* Header */}
@@ -153,17 +144,11 @@ export function StudentSupplementDialog({
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center shadow-md">
-                    {activeTab === "supplements" ? (
-                      <Pill className="h-5 w-5 text-white" />
-                    ) : (
-                      <FlaskConical className="h-5 w-5 text-white" />
-                    )}
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
+                    <Pill className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <SheetTitle className="text-lg font-bold text-foreground">
-                      {getCurrentTitle()}
-                    </SheetTitle>
+                    <SheetTitle className="text-lg font-bold text-foreground">مکمل‌ها و ویتامین‌ها</SheetTitle>
                     <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
                   </div>
                 </div>
@@ -241,36 +226,12 @@ export function StudentSupplementDialog({
             <div className="relative flex-1">
               <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="جستجو..."
+                placeholder="جستجو در مکمل‌ها و ویتامین‌ها..."
                 className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="border-b bg-muted/10 shrink-0">
-            <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1">
-              <TabsTrigger 
-                value="supplements"
-                onClick={() => setActiveTab("supplements")}
-                className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
-                data-state={activeTab === "supplements" ? "active" : "inactive"}
-              >
-                <Pill className="h-4 w-4 ml-2" />
-                مکمل‌ها
-              </TabsTrigger>
-              <TabsTrigger 
-                value="vitamins"
-                onClick={() => setActiveTab("vitamins")}
-                className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
-                data-state={activeTab === "vitamins" ? "active" : "inactive"}
-              >
-                <FlaskConical className="h-4 w-4 ml-2" />
-                ویتامین‌ها
-              </TabsTrigger>
-            </TabsList>
           </div>
 
           {/* Filters */}
@@ -311,170 +272,288 @@ export function StudentSupplementDialog({
             )}
           </AnimatePresence>
 
-          {/* Content */}
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full w-full">
-              {filteredSupplements.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-center p-4">
-                  <div className="w-16 h-16 bg-gradient-to-b from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
-                    {activeTab === "supplements" ? 
-                      <Pill className="h-8 w-8 text-purple-500 dark:text-purple-400" /> :
-                      <FlaskConical className="h-8 w-8 text-blue-500 dark:text-blue-400" />
-                    }
-                  </div>
-                  <h3 className="font-medium text-lg text-foreground">
-                    {activeTab === "supplements" ? "هیچ مکملی یافت نشد" : "هیچ ویتامینی یافت نشد"}
-                  </h3>
-                </div>
-              ) : viewMode === "grid" ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                  {filteredSupplements.map((item) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                      layout
-                    >
-                      <div
-                        className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${
-                          isSelected(item.id)
-                            ? "border-primary/30 bg-primary/5 dark:bg-primary/10"
-                            : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"
-                        }`}
-                        onClick={() => toggleSupplement(item.id)}
-                      >
-                        <div className="flex gap-3 items-start">
-                          <div
-                            className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${
-                              isSelected(item.id)
-                                ? "bg-primary"
-                                : "border-2 border-muted-foreground/30"
-                            }`}
-                          >
-                            {isSelected(item.id) && (
-                              <Check className="h-3 w-3 text-primary-foreground" />
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <div>
-                              <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                              <div className="flex flex-wrap gap-1.5 mt-1.5">
-                                <Badge 
-                                  variant="outline" 
-                                  className={cn(
-                                    "rounded-full flex items-center gap-1.5 px-2 font-normal",
-                                    item.type === "supplement" 
-                                      ? "border-purple-200 bg-purple-50/50 text-purple-700 dark:border-purple-800 dark:bg-purple-950/30 dark:text-purple-400" 
-                                      : "border-blue-200 bg-blue-50/50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-400"
-                                  )}
-                                >
-                                  {getTypeIcon(item.type)}
-                                  <span>{item.type === "supplement" ? "مکمل" : "ویتامین"}</span>
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className="bg-gray-50/50 border-gray-200 text-gray-700 dark:bg-gray-900/20 dark:border-gray-700 dark:text-gray-400 rounded-full text-xs font-normal"
-                                >
-                                  {item.category}
-                                </Badge>
-                              </div>
-                              {item.dosage && (
-                                <div className="flex items-center gap-2 mt-2">
-                                  <span className="text-xs font-medium text-muted-foreground">دوز:</span>
-                                  <span className="text-xs">{item.dosage}</span>
-                                </div>
-                              )}
-                              {item.timing && (
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-xs font-medium text-muted-foreground">زمان مصرف:</span>
-                                  <span className="text-xs">{item.timing}</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+          {/* Tabs and Content */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <Tabs 
+              value={activeTab} 
+              onValueChange={(value) => setActiveTab(value as "supplements" | "vitamins")}
+              className="flex-1 flex flex-col overflow-hidden"
+            >
+              <div className="border-b bg-muted/10 shrink-0">
+                <TabsList className="h-11 bg-transparent p-1 gap-1 rounded-none border-b-0">
+                  <TabsTrigger 
+                    value="supplements"
+                    className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                  >
+                    مکمل‌ها
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="vitamins"
+                    className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                  >
+                    ویتامین‌ها
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent 
+                value="supplements" 
+                className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full"
+              >
+                <ScrollArea className="h-full w-full">
+                  {filteredItems.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+                      <div className="w-16 h-16 bg-gradient-to-b from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                        <Pill className="h-8 w-8 text-violet-500 dark:text-violet-400" />
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                <div className="divide-y">
-                  {filteredSupplements.map((item) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div
-                        className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${
-                          isSelected(item.id)
-                            ? "bg-primary/5 dark:bg-primary/10"
-                            : ""
-                        }`}
-                        onClick={() => toggleSupplement(item.id)}
-                      >
-                        <div className="flex gap-3">
+                      <h3 className="font-medium text-lg text-foreground">
+                        هیچ مکملی یافت نشد
+                      </h3>
+                    </div>
+                  ) : viewMode === "grid" ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
+                      {filteredItems.map((item) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.2 }}
+                          layout
+                        >
                           <div
-                            className={`w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors ${
+                            className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${
                               isSelected(item.id)
-                                ? "bg-primary"
-                                : "border-2 border-muted-foreground/30"
+                                ? "border-primary/30 bg-primary/5 dark:bg-primary/10"
+                                : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"
                             }`}
+                            onClick={() => toggleItem(item.id)}
                           >
-                            {isSelected(item.id) && (
-                              <Check className="h-3 w-3 text-primary-foreground" />
-                            )}
-                          </div>
-                          
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                              <div className="flex gap-1.5">
-                                <Badge 
-                                  variant="outline" 
-                                  className={cn(
-                                    "rounded-full flex items-center gap-1.5 px-2 font-normal",
-                                    item.type === "supplement" 
-                                      ? "border-purple-200 bg-purple-50/50 text-purple-700 dark:border-purple-800 dark:bg-purple-950/30 dark:text-purple-400" 
-                                      : "border-blue-200 bg-blue-50/50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-400"
-                                  )}
-                                >
-                                  {getTypeIcon(item.type)}
-                                  <span>{item.type === "supplement" ? "مکمل" : "ویتامین"}</span>
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className="bg-gray-50/50 border-gray-200 text-gray-700 dark:bg-gray-900/20 dark:border-gray-700 dark:text-gray-400 rounded-full text-xs font-normal"
-                                >
-                                  {item.category}
-                                </Badge>
+                            <div className="flex gap-3 items-start">
+                              <div
+                                className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${
+                                  isSelected(item.id)
+                                    ? "bg-primary"
+                                    : "border-2 border-muted-foreground/30"
+                                }`}
+                              >
+                                {isSelected(item.id) && (
+                                  <Check className="h-3 w-3 text-primary-foreground" />
+                                )}
+                              </div>
+                              <div className="space-y-2">
+                                <div>
+                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
+                                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
+                                      {item.category}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">دوز مصرف:</span>
+                                    <span className="text-muted-foreground">{item.dosage}</span>
+                                  </div>
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">زمان مصرف:</span>
+                                    <span className="text-muted-foreground">{item.timing}</span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                            
-                            <div className="flex gap-4 mt-1">
-                              {item.dosage && (
-                                <div className="text-xs flex items-center gap-1">
-                                  <span className="font-medium text-foreground">دوز:</span>
-                                  <span className="text-muted-foreground">{item.dosage}</span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="divide-y">
+                      {filteredItems.map((item) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div
+                            className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${
+                              isSelected(item.id)
+                                ? "bg-primary/5 dark:bg-primary/10"
+                                : ""
+                            }`}
+                            onClick={() => toggleItem(item.id)}
+                          >
+                            <div className="flex gap-3">
+                              <div
+                                className={`w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors ${
+                                  isSelected(item.id)
+                                    ? "bg-primary"
+                                    : "border-2 border-muted-foreground/30"
+                                }`}
+                              >
+                                {isSelected(item.id) && (
+                                  <Check className="h-3 w-3 text-primary-foreground" />
+                                )}
+                              </div>
+                              
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between">
+                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
+                                  <div className="flex gap-1.5">
+                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800">
+                                      {item.category}
+                                    </span>
+                                  </div>
                                 </div>
-                              )}
-                              {item.timing && (
-                                <div className="text-xs flex items-center gap-1">
-                                  <span className="font-medium text-foreground">زمان مصرف:</span>
-                                  <span className="text-muted-foreground">{item.timing}</span>
+                                
+                                <div className="flex gap-4 mt-1">
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">دوز مصرف:</span>
+                                    <span className="text-muted-foreground">{item.dosage}</span>
+                                  </div>
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">زمان مصرف:</span>
+                                    <span className="text-muted-foreground">{item.timing}</span>
+                                  </div>
                                 </div>
-                              )}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent 
+                value="vitamins" 
+                className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full"
+              >
+                <ScrollArea className="h-full w-full">
+                  {filteredItems.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+                      <div className="w-16 h-16 bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                        <Pill className="h-8 w-8 text-blue-500 dark:text-blue-400" />
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
+                      <h3 className="font-medium text-lg text-foreground">
+                        هیچ ویتامینی یافت نشد
+                      </h3>
+                    </div>
+                  ) : viewMode === "grid" ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
+                      {filteredItems.map((item) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.2 }}
+                          layout
+                        >
+                          <div
+                            className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${
+                              isSelected(item.id)
+                                ? "border-primary/30 bg-primary/5 dark:bg-primary/10"
+                                : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"
+                            }`}
+                            onClick={() => toggleItem(item.id)}
+                          >
+                            <div className="flex gap-3 items-start">
+                              <div
+                                className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${
+                                  isSelected(item.id)
+                                    ? "bg-primary"
+                                    : "border-2 border-muted-foreground/30"
+                                }`}
+                              >
+                                {isSelected(item.id) && (
+                                  <Check className="h-3 w-3 text-primary-foreground" />
+                                )}
+                              </div>
+                              <div className="space-y-2">
+                                <div>
+                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
+                                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                                      {item.category}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">دوز مصرف:</span>
+                                    <span className="text-muted-foreground">{item.dosage}</span>
+                                  </div>
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">زمان مصرف:</span>
+                                    <span className="text-muted-foreground">{item.timing}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="divide-y">
+                      {filteredItems.map((item) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div
+                            className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${
+                              isSelected(item.id)
+                                ? "bg-primary/5 dark:bg-primary/10"
+                                : ""
+                            }`}
+                            onClick={() => toggleItem(item.id)}
+                          >
+                            <div className="flex gap-3">
+                              <div
+                                className={`w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors ${
+                                  isSelected(item.id)
+                                    ? "bg-primary"
+                                    : "border-2 border-muted-foreground/30"
+                                }`}
+                              >
+                                {isSelected(item.id) && (
+                                  <Check className="h-3 w-3 text-primary-foreground" />
+                                )}
+                              </div>
+                              
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between">
+                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
+                                  <div className="flex gap-1.5">
+                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                                      {item.category}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex gap-4 mt-1">
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">دوز مصرف:</span>
+                                    <span className="text-muted-foreground">{item.dosage}</span>
+                                  </div>
+                                  <div className="text-xs flex items-center gap-1">
+                                    <span className="font-medium text-foreground">زمان مصرف:</span>
+                                    <span className="text-muted-foreground">{item.timing}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Footer */}
@@ -483,51 +562,15 @@ export function StudentSupplementDialog({
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ 
-                  scale: (activeTab === "supplements" ? selectedSupplements.length : selectedVitamins.length) > 0 ? 1 : 0.9, 
-                  opacity: (activeTab === "supplements" ? selectedSupplements.length : selectedVitamins.length) > 0 ? 1 : 0 
+                  scale: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0.9, 
+                  opacity: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0 
                 }}
-                className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 text-white",
-                  activeTab === "supplements" 
-                    ? "bg-gradient-to-r from-purple-500 to-indigo-500" 
-                    : "bg-gradient-to-r from-blue-500 to-cyan-500"
-                )}
+                className="bg-gradient-to-r from-violet-500 to-purple-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                {activeTab === "supplements" 
-                  ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده`
-                  : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده`
-                }
+                <Plus className="h-3.5 w-3.5" />
+                {toPersianNumbers(selectedSupplements.length + selectedVitamins.length)} مورد انتخاب شده
               </motion.div>
-              
-              <AnimatePresence>
-                {((activeTab === "supplements" && selectedSupplements.length > 0) || 
-                  (activeTab === "vitamins" && selectedVitamins.length > 0)) && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs gap-1"
-                      onClick={() => {
-                        if (activeTab === "supplements") {
-                          setSelectedSupplements([]);
-                        } else {
-                          setSelectedVitamins([]);
-                        }
-                      }}
-                    >
-                      <X className="h-3 w-3" />
-                      پاک کردن انتخاب‌ها
-                    </Button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
-            
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -539,13 +582,8 @@ export function StudentSupplementDialog({
               </Button>
               <Button
                 onClick={handleSave}
-                className={cn(
-                  "gap-2 text-white border-0",
-                  activeTab === "supplements" 
-                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700" 
-                    : "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
-                )}
-                disabled={selectedSupplements.length === 0 && selectedVitamins.length === 0}
+                className="gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white border-0"
+                disabled={selectedSupplements.length + selectedVitamins.length === 0}
               >
                 <Save className="h-4 w-4" />
                 ذخیره
