@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface SupplementListProps {
   supplements: Supplement[];
