@@ -27,7 +27,7 @@ interface StudentMealListWrapperProps {
 const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "calc(100vh - 280px)", // Adjusted for better standard sizing
+  maxHeight = "calc(100vh - 280px)",
   viewMode = "list",
   setViewMode,
   toggleSortOrder,
@@ -35,8 +35,8 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   showControls = false
 }) => {
   return (
-    <Card className={cn(
-      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md transition-all text-gray-900 dark:text-white overflow-hidden",
+    <div className={cn(
+      "border-0 rounded-none bg-white/95 backdrop-blur-sm transition-all text-gray-900 dark:text-white overflow-hidden h-full",
       className
     )}>
       {showControls && (
@@ -108,20 +108,20 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
           )}
         </div>
       )}
-      <ScrollArea className="w-full overflow-visible" style={{ maxHeight }}>
+      <ScrollArea className="w-full h-full overflow-visible" style={{ maxHeight }}>
         <motion.div
           layout
           className={cn(
             "p-4 w-full", 
             viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" 
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" 
               : "flex flex-col space-y-3"
           )}
         >
           {children}
         </motion.div>
       </ScrollArea>
-    </Card>
+    </div>
   );
 };
 
