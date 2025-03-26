@@ -73,6 +73,39 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     day4: false
   });
 
+  // Auto-select category based on saved exercises
+  useEffect(() => {
+    if (open && !categoriesLoading && !exercisesLoading && categories.length > 0 && exercises.length > 0) {
+      // Get the active tab's selected exercises
+      let selectedExercises: number[] = [];
+      switch(activeTab) {
+        case "day1": selectedExercises = initialExercisesDay1; break;
+        case "day2": selectedExercises = initialExercisesDay2; break;
+        case "day3": selectedExercises = initialExercisesDay3; break;
+        case "day4": selectedExercises = initialExercisesDay4; break;
+        default: selectedExercises = initialExercises;
+      }
+      
+      // Find category of first selected exercise if there are any
+      if (selectedExercises.length > 0) {
+        const firstExerciseId = selectedExercises[0];
+        const firstExercise = exercises.find(ex => ex.id === firstExerciseId);
+        
+        if (firstExercise && firstExercise.categoryId) {
+          console.log("Auto-selecting category:", firstExercise.categoryId);
+          setSelectedCategoryId(firstExercise.categoryId);
+          
+          // Get exercise type for this category
+          const category = categories.find(cat => cat.id === firstExercise.categoryId);
+          if (category && category.type) {
+            console.log("Auto-selecting exercise type:", category.type);
+            setSelectedExerciseType(category.type);
+          }
+        }
+      }
+    }
+  }, [open, activeTab, categories, exercises, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, categoriesLoading, exercisesLoading]);
+
   useEffect(() => {
     // Reset saved state when dialog opens
     if (open) {
