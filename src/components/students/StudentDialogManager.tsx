@@ -176,6 +176,9 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     self.findIndex(t => t.name === value.name && t.type === value.type) === index
   );
 
+  // Extract vitamins from supplements array
+  const vitamins = supplements.filter(item => item.type === 'vitamin');
+
   return (
     <>
       <StudentDialog
@@ -222,8 +225,8 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         exercises={exercises}
         meals={meals}
         supplements={supplements}
+        vitamins={vitamins}
       />
     </>
   );
 });
-
