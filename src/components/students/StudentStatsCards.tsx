@@ -1,43 +1,48 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { UserRound, Trophy, Scale, Ruler, Wallet, DollarSign } from "lucide-react";
+import { UserRound, Trophy, Scale, Ruler, Wallet, DollarSign, Dumbbell } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
-
-interface Student {
-  id: number;
-  name: string;
-  phone: string;
-  height: string;
-  weight: string;
-  image: string;
-  payment?: string;
-  exercises?: number[];
-  meals?: number[];
-  supplements?: number[];
-  vitamins?: number[];
-}
+import { Student } from "@/components/students/StudentTypes";
 
 interface StudentStatsCardsProps {
   students: Student[];
 }
 
 export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
-  const averageWeight = Math.round(
-    students.reduce((acc, student) => acc + Number(student.weight), 0) /
+  // محاسبه میانگین وزن
+  const averageWeight = useMemo(() => Math.round(
+    students.reduce((acc, student) => acc + Number(student.weight || 0), 0) /
     (students.length || 1)
-  );
+  ), [students]);
 
-  const averageHeight = Math.round(
-    students.reduce((acc, student) => acc + Number(student.height), 0) /
+  // محاسبه میانگین قد
+  const averageHeight = useMemo(() => Math.round(
+    students.reduce((acc, student) => acc + Number(student.height || 0), 0) /
     (students.length || 1)
-  );
+  ), [students]);
 
-  // Calculate total payments
-  const totalPayments = students.reduce((acc, student) => {
+  // محاسبه تعداد کل تمرین‌های اختصاص داده شده به شاگردان
+  const totalExercises = useMemo(() => {
+    let count = 0;
+    students.forEach(student => {
+      // شمارش تمرین‌های عمومی
+      count += student.exercises?.length || 0;
+      
+      // شمارش تمرین‌های روزهای مختلف
+      count += student.exercisesDay1?.length || 0;
+      count += student.exercisesDay2?.length || 0;
+      count += student.exercisesDay3?.length || 0;
+      count += student.exercisesDay4?.length || 0;
+    });
+    return count;
+  }, [students]);
+
+  // محاسبه مجموع درآمد
+  const totalPayments = useMemo(() => students.reduce((acc, student) => {
     return acc + (student.payment ? Number(student.payment.replace(/,/g, '')) : 0);
-  }, 0);
+  }, 0), [students]);
 
   const formatCurrency = (amount: number) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -135,24 +140,21 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
       </motion.div>
       
       <motion.div variants={item}>
-        <Card className="p-6 backdrop-blur-xl bg-gradient-to-br from-white/80 to-blue-50/80 dark:from-slate-900/80 dark:to-blue-950/50 border-blue-100/30 dark:border-blue-900/30 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5 group">
+        <Card className="p-6 backdrop-blur-xl bg-gradient-to-br from-white/80 to-green-50/80 dark:from-slate-900/80 dark:to-green-950/50 border-green-100/30 dark:border-green-900/30 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/5 group">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/30 transition-all duration-300 group-hover:scale-105">
-              <Ruler className="h-7 w-7" />
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white shadow-lg shadow-green-500/20 group-hover:shadow-green-500/30 transition-all duration-300 group-hover:scale-105">
+              <Dumbbell className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-sm text-blue-600/70 dark:text-blue-400/70 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">میانگین قد</p>
-              <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-bold bg-gradient-to-br from-blue-700 to-blue-500 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent">
-                  {toPersianNumbers(averageHeight)}
-                </p>
-                <span className="text-xs text-blue-500 dark:text-blue-400">سانتی‌متر</span>
-              </div>
+              <p className="text-sm text-green-600/70 dark:text-green-400/70 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">تمرین‌های تخصیصی</p>
+              <p className="text-3xl font-bold bg-gradient-to-br from-green-700 to-green-500 dark:from-green-400 dark:to-green-300 bg-clip-text text-transparent">
+                {toPersianNumbers(totalExercises)}
+              </p>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-blue-100/30 dark:border-blue-800/30">
-            <p className="text-xs text-blue-500/70 dark:text-blue-400/70">
-              میانگین قد تمامی شاگردان
+          <div className="mt-4 pt-4 border-t border-green-100/30 dark:border-green-800/30">
+            <p className="text-xs text-green-500/70 dark:text-green-400/70">
+              تعداد کل تمرین‌های تخصیص داده شده
             </p>
           </div>
         </Card>
