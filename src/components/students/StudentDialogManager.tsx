@@ -1,13 +1,12 @@
-import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
 import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
-import { StudentSupplementDialog } from "@/components/students/StudentSupplementDialog";
+import { StudentSupplementDialog } from "@/components/nutrition/StudentSupplementDialog";
 import StudentMealDialog from "@/components/nutrition/StudentMealDialog";
 import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
-import { SupplementCategory } from "@/types/supplement";
 
 interface StudentDialogManagerProps {
   onSave: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => boolean;
@@ -48,20 +47,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
   const [selectedStudentForDiet, setSelectedStudentForDiet] = useState<Student | null>(null);
   const [selectedStudentForSupplement, setSelectedStudentForSupplement] = useState<Student | null>(null);
   const [selectedStudentForDownload, setSelectedStudentForDownload] = useState<Student | null>(null);
-  const [categories, setCategories] = useState<SupplementCategory[]>([]);
-
-  useEffect(() => {
-    try {
-      const savedCategories = localStorage.getItem("supplementCategories");
-      if (savedCategories) {
-        const parsedCategories = JSON.parse(savedCategories);
-        setCategories(Array.isArray(parsedCategories) ? parsedCategories : []);
-      }
-    } catch (error) {
-      console.error("Error loading supplement categories:", error);
-      setCategories([]);
-    }
-  }, []);
 
   const handleEdit = (student: Student) => {
     setSelectedStudent(student);
@@ -217,7 +202,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         initialSupplements={selectedStudentForSupplement?.supplements || []}
         initialVitamins={selectedStudentForSupplement?.vitamins || []}
         supplements={supplements}
-        categories={categories}
+        categories={[]}
       />
 
       <StudentDownloadDialog
