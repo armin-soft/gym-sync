@@ -30,21 +30,27 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     return Math.round(sum / studentsWithHeight.length);
   }, [students]);
 
-  // محاسبه تعداد دقیق تمرین‌های انتخاب شده برای تمام شاگردان (به صورت مستقل)
+  // محاسبه تعداد دقیق تمرین‌های انتخاب شده برای تمام شاگردان
   const totalExercises = useMemo(() => {
     let totalCount = 0;
     
-    // شمارش تمام تمرین‌های انتخاب شده برای هر شاگرد
     students.forEach(student => {
-      // جمع تمرین‌های روز اول تا چهارم و تمرین‌های عمومی
-      const studentExerciseCount = 
-        (student.exercisesDay1?.length || 0) + 
-        (student.exercisesDay2?.length || 0) + 
-        (student.exercisesDay3?.length || 0) + 
-        (student.exercisesDay4?.length || 0) + 
-        (student.exercises?.length || 0);
-      
-      totalCount += studentExerciseCount;
+      // بررسی و اضافه کردن تمرین‌ها فقط در صورت وجود آرایه مربوطه
+      if (Array.isArray(student.exercises)) {
+        totalCount += student.exercises.length;
+      }
+      if (Array.isArray(student.exercisesDay1)) {
+        totalCount += student.exercisesDay1.length;
+      }
+      if (Array.isArray(student.exercisesDay2)) {
+        totalCount += student.exercisesDay2.length;
+      }
+      if (Array.isArray(student.exercisesDay3)) {
+        totalCount += student.exercisesDay3.length;
+      }
+      if (Array.isArray(student.exercisesDay4)) {
+        totalCount += student.exercisesDay4.length;
+      }
     });
     
     return totalCount;

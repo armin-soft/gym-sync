@@ -91,12 +91,24 @@ export const StudentsTable = ({
   };
 
   const getExactExerciseCount = (student: Student): number => {
+    // Make sure we're only counting actual exercises without any additions
     let count = 0;
-    count += student.exercises?.length || 0;
-    count += student.exercisesDay1?.length || 0;
-    count += student.exercisesDay2?.length || 0;
-    count += student.exercisesDay3?.length || 0;
-    count += student.exercisesDay4?.length || 0;
+    // Only add length if the array exists and has elements
+    if (Array.isArray(student.exercises)) {
+      count += student.exercises.length;
+    }
+    if (Array.isArray(student.exercisesDay1)) {
+      count += student.exercisesDay1.length;
+    }
+    if (Array.isArray(student.exercisesDay2)) {
+      count += student.exercisesDay2.length;
+    }
+    if (Array.isArray(student.exercisesDay3)) {
+      count += student.exercisesDay3.length;
+    }
+    if (Array.isArray(student.exercisesDay4)) {
+      count += student.exercisesDay4.length;
+    }
     return count;
   };
 
