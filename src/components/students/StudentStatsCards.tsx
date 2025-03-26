@@ -1,4 +1,3 @@
-
 import React, { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { UserRound, Trophy, Scale, Ruler, Wallet, DollarSign, Dumbbell } from "lucide-react";
@@ -37,12 +36,15 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     
     // شمارش تمام تمرین‌های انتخاب شده برای هر شاگرد
     students.forEach(student => {
-      // شمارش تمرین‌ها بدون اضافه کردن مقدار اضافی
-      if (Array.isArray(student.exercisesDay1)) totalCount += student.exercisesDay1.length;
-      if (Array.isArray(student.exercisesDay2)) totalCount += student.exercisesDay2.length;
-      if (Array.isArray(student.exercisesDay3)) totalCount += student.exercisesDay3.length;
-      if (Array.isArray(student.exercisesDay4)) totalCount += student.exercisesDay4.length;
-      if (Array.isArray(student.exercises)) totalCount += student.exercises.length;
+      // جمع تمرین‌های روز اول تا چهارم و تمرین‌های عمومی
+      const studentExerciseCount = 
+        (student.exercisesDay1?.length || 0) + 
+        (student.exercisesDay2?.length || 0) + 
+        (student.exercisesDay3?.length || 0) + 
+        (student.exercisesDay4?.length || 0) + 
+        (student.exercises?.length || 0);
+      
+      totalCount += studentExerciseCount;
     });
     
     return totalCount;
@@ -172,7 +174,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
           </div>
           <div className="mt-4 pt-4 border-t border-green-100/30 dark:border-green-800/30">
             <p className="text-xs text-green-500/70 dark:text-green-400/70">
-              تعداد کل تمرین‌های انتخاب شده برای شاگردان
+              مجموع کل تمرین‌های انتخاب شده برای تمام شاگردان
             </p>
           </div>
         </Card>
