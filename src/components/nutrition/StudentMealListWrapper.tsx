@@ -39,6 +39,75 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
       "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white",
       className
     )}>
+      {showControls && (
+        <div className="flex items-center justify-end gap-2 p-3 bg-muted/20 border-b">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-8 w-8 p-0 border-muted",
+                    viewMode === "grid" && "bg-primary/10 text-primary border-primary/30"
+                  )}
+                  onClick={() => setViewMode?.("grid")}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p className="text-xs">نمایش شبکه‌ای</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-8 w-8 p-0 border-muted",
+                    viewMode === "list" && "bg-primary/10 text-primary border-primary/30"
+                  )}
+                  onClick={() => setViewMode?.("list")}
+                >
+                  <ListFilter className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p className="text-xs">نمایش لیستی</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {toggleSortOrder && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 w-8 p-0 border-muted"
+                    onClick={toggleSortOrder}
+                  >
+                    {sortOrder === "asc" ? (
+                      <ArrowDownAZ className="h-4 w-4" />
+                    ) : (
+                      <ArrowUpZA className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p className="text-xs">تغییر ترتیب</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+      )}
       <ScrollArea className="w-full" style={{ maxHeight }}>
         <motion.div
           layout

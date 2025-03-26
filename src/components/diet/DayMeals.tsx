@@ -6,6 +6,8 @@ import type { Meal, MealType } from "@/types/meal";
 import { motion } from "framer-motion";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface DayMealsProps {
   meals: Meal[];
@@ -94,7 +96,10 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: typeIndex * 0.05 }}
-            className="rounded-xl border border-border/50"
+            className={cn(
+              "rounded-xl border border-border/50 overflow-hidden",
+              styles.border
+            )}
             dir="rtl"
           >
             <div className={`p-4 ${styles.bg} rounded-t-xl border-b ${styles.border}`}>
@@ -105,9 +110,9 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                 <h3 className="text-base font-medium text-foreground/90">
                   {type}
                 </h3>
-                <div className="mr-2 px-2.5 py-0.5 rounded-full bg-background/50 text-xs font-medium">
+                <Badge variant="outline" className={cn("mr-2 bg-background/50", styles.border)}>
                   {toPersianNumbers(typeMeals.length)} مورد
-                </div>
+                </Badge>
               </div>
             </div>
 
@@ -151,8 +156,32 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                               </Button>
                             </div>
                           </div>
-                          <div className="mt-1 text-xs text-muted-foreground">
-                            {meal.day}
+                          {meal.description && (
+                            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                              {meal.description}
+                            </p>
+                          )}
+                          <div className="mt-2 pt-2 border-t border-dashed border-border/40 flex flex-wrap gap-2">
+                            {meal.calories && (
+                              <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900">
+                                کالری: {toPersianNumbers(meal.calories)}
+                              </Badge>
+                            )}
+                            {meal.protein && (
+                              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900">
+                                پروتئین: {toPersianNumbers(meal.protein)}
+                              </Badge>
+                            )}
+                            {meal.carbs && (
+                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900">
+                                کربوهیدرات: {toPersianNumbers(meal.carbs)}
+                              </Badge>
+                            )}
+                            {meal.fat && (
+                              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900">
+                                چربی: {toPersianNumbers(meal.fat)}
+                              </Badge>
+                            )}
                           </div>
                         </div>
                       </Card>

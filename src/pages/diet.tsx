@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft } from "lucide-react";
+import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowDownAZ, ArrowUpZA, LayoutGrid, ListFilter } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MealDialog } from "@/components/diet/MealDialog";
@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DayMeals } from "@/components/diet/DayMeals";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 const weekDays: WeekDay[] = ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج شنبه", "جمعه"];
 const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام"];
@@ -30,6 +32,8 @@ const DietPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   
   const saveMeals = (newMeals: Meal[]) => {
     try {
@@ -90,13 +94,37 @@ const DietPage = () => {
     setIsDialogOpen(false);
   };
 
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
+
+  // Filter meals based on search query
   const filteredMeals = meals.filter(
     (meal) =>
-      meal.name.includes(searchQuery) ||
-      meal.description.includes(searchQuery)
+      (meal.name.includes(searchQuery) ||
+       meal.description.includes(searchQuery))
   );
 
-  const dayMeals = filteredMeals.filter(meal => meal.day === selectedDay);
+  // Filter meals based on selected day and sort by type
+  const dayMeals = filteredMeals
+    .filter(meal => meal.day === selectedDay)
+    .sort((a, b) => {
+      // If sort order is descending, swap a and b
+      if (sortOrder === "desc") {
+        [a, b] = [b, a];
+      }
+      
+      // First, sort by meal type based on mealTypeOrder
+      const typeOrderA = mealTypes.indexOf(a.type);
+      const typeOrderB = mealTypes.indexOf(b.type);
+      
+      if (typeOrderA !== typeOrderB) {
+        return typeOrderA - typeOrderB;
+      }
+      
+      // If meal types are the same, sort by name
+      return a.name.localeCompare(b.name);
+    });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
@@ -143,6 +171,72 @@ const DietPage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+            </div>
+            
+            <div className="flex items-center gap-2 self-start">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={cn(
+                        "h-11 w-11 border-muted",
+                        viewMode === "grid" && "bg-primary/10 text-primary border-primary/30"
+                      )}
+                      onClick={() => setViewMode("grid")}
+                    >
+                      <LayoutGrid className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="text-xs">نمایش شبکه‌ای</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={cn(
+                        "h-11 w-11 border-muted",
+                        viewMode === "list" && "bg-primary/10 text-primary border-primary/30"
+                      )}
+                      onClick={() => setViewMode("list")}
+                    >
+                      <ListFilter className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="text-xs">نمایش لیستی</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-11 w-11 border-muted"
+                      onClick={toggleSortOrder}
+                    >
+                      {sortOrder === "asc" ? (
+                        <ArrowDownAZ className="h-5 w-5" />
+                      ) : (
+                        <ArrowUpZA className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="text-xs">تغییر ترتیب</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </motion.div>
         </div>
