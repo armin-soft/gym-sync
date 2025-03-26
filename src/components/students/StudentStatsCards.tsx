@@ -31,37 +31,20 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     return Math.round(sum / studentsWithHeight.length);
   }, [students]);
 
-  // محاسبه تعداد کل تمرین‌های اختصاص داده شده به شاگردان به صورت دقیق
+  // محاسبه تعداد کل تمرین‌های اختصاص داده شده به شاگردان
   const totalExercises = useMemo(() => {
-    // یک مجموعه برای ذخیره شناسه‌های منحصر به فرد تمرین‌ها ایجاد می‌کنیم
-    const uniqueExerciseIds = new Set<number>();
-    
+    let count = 0;
     students.forEach(student => {
-      // اضافه کردن تمرین‌های عمومی به مجموعه
-      if (Array.isArray(student.exercises)) {
-        student.exercises.forEach(id => uniqueExerciseIds.add(id));
-      }
+      // شمارش تمرین‌های عمومی
+      count += student.exercises?.length || 0;
       
-      // اضافه کردن تمرین‌های روزهای مختلف به مجموعه
-      if (Array.isArray(student.exercisesDay1)) {
-        student.exercisesDay1.forEach(id => uniqueExerciseIds.add(id));
-      }
-      
-      if (Array.isArray(student.exercisesDay2)) {
-        student.exercisesDay2.forEach(id => uniqueExerciseIds.add(id));
-      }
-      
-      if (Array.isArray(student.exercisesDay3)) {
-        student.exercisesDay3.forEach(id => uniqueExerciseIds.add(id));
-      }
-      
-      if (Array.isArray(student.exercisesDay4)) {
-        student.exercisesDay4.forEach(id => uniqueExerciseIds.add(id));
-      }
+      // شمارش تمرین‌های روزهای مختلف
+      count += student.exercisesDay1?.length || 0;
+      count += student.exercisesDay2?.length || 0;
+      count += student.exercisesDay3?.length || 0;
+      count += student.exercisesDay4?.length || 0;
     });
-    
-    // برگرداندن مجموع تعداد تمرین‌های تخصیص داده شده
-    return uniqueExerciseIds.size;
+    return count;
   }, [students]);
 
   // محاسبه مجموع درآمد با استفاده از داده‌های دقیق
@@ -188,7 +171,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
           </div>
           <div className="mt-4 pt-4 border-t border-green-100/30 dark:border-green-800/30">
             <p className="text-xs text-green-500/70 dark:text-green-400/70">
-              تعداد کل تمرین‌های منحصر به فرد تخصیص داده شده
+              تعداد کل تمرین‌های تخصیص داده شده
             </p>
           </div>
         </Card>
