@@ -1,12 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -129,102 +125,31 @@ export function StudentSupplementDialog({
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent 
-        side="right" 
-        className="w-full p-0 sm:max-w-full flex flex-col border-0"
-        dir="rtl"
-      >
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
         <div className="flex flex-col h-full overflow-hidden">
           {/* Header */}
-          <SheetHeader className="px-6 py-4 border-b bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm shrink-0">
-            <div className="flex items-center justify-between">
+          <div className="px-6 py-4 border-b bg-white dark:bg-gray-800/50 shadow-sm">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => onOpenChange(false)}
+                className="h-10 w-10 rounded-full"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
               <div className="flex items-center gap-3">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => onOpenChange(false)}
-                  className="h-10 w-10 rounded-full"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </Button>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
-                    <Pill className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <SheetTitle className="text-lg font-bold text-foreground">مکمل‌ها و ویتامین‌ها</SheetTitle>
-                    <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
-                  </div>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
+                  <Pill className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">مدیریت مکمل‌ها و ویتامین‌ها</h2>
+                  <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className={cn(
-                          "h-9 w-9 border-muted transition-colors",
-                          viewMode === "grid" && "bg-primary/10 text-primary"
-                        )}
-                        onClick={() => setViewMode("grid")}
-                      >
-                        <LayoutGrid className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">نمایش شبکه‌ای</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className={cn(
-                          "h-9 w-9 border-muted transition-colors",
-                          viewMode === "list" && "bg-primary/10 text-primary"
-                        )}
-                        onClick={() => setViewMode("list")}
-                      >
-                        <ListFilter className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">نمایش لیستی</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline" 
-                        size="icon"
-                        className={cn(
-                          "h-9 w-9 border-muted transition-colors",
-                          showFilters && "bg-primary/10 text-primary"
-                        )}
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        <SlidersHorizontal className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">فیلترها</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
             </div>
-          </SheetHeader>
+          </div>
 
           {/* Search */}
           <div className="px-6 py-3 border-b bg-muted/20 shrink-0">
@@ -436,7 +361,7 @@ export function StudentSupplementDialog({
           </div>
 
           {/* Footer */}
-          <SheetFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row gap-2 justify-between">
+          <div className="flex items-center justify-between p-4 border-t bg-white/80 dark:bg-gray-800/30 backdrop-blur-sm shrink-0">
             <div className="flex items-center gap-2">
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -468,9 +393,9 @@ export function StudentSupplementDialog({
                 ذخیره
               </Button>
             </div>
-          </SheetFooter>
+          </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
