@@ -11,17 +11,25 @@ interface StudentStatsCardsProps {
 }
 
 export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
-  // محاسبه میانگین وزن
-  const averageWeight = useMemo(() => Math.round(
-    students.reduce((acc, student) => acc + Number(student.weight || 0), 0) /
-    (students.length || 1)
-  ), [students]);
+  // محاسبه میانگین وزن با استفاده از داده‌های دقیق
+  const averageWeight = useMemo(() => {
+    // فقط دانش‌آموزانی که وزن آنها ثبت شده است را در نظر بگیریم
+    const studentsWithWeight = students.filter(student => student.weight && student.weight !== '');
+    if (studentsWithWeight.length === 0) return 0;
+    
+    const sum = studentsWithWeight.reduce((acc, student) => acc + Number(student.weight), 0);
+    return Math.round(sum / studentsWithWeight.length);
+  }, [students]);
 
-  // محاسبه میانگین قد
-  const averageHeight = useMemo(() => Math.round(
-    students.reduce((acc, student) => acc + Number(student.height || 0), 0) /
-    (students.length || 1)
-  ), [students]);
+  // محاسبه میانگین قد با استفاده از داده‌های دقیق
+  const averageHeight = useMemo(() => {
+    // فقط دانش‌آموزانی که قد آنها ثبت شده است را در نظر بگیریم
+    const studentsWithHeight = students.filter(student => student.height && student.height !== '');
+    if (studentsWithHeight.length === 0) return 0;
+    
+    const sum = studentsWithHeight.reduce((acc, student) => acc + Number(student.height), 0);
+    return Math.round(sum / studentsWithHeight.length);
+  }, [students]);
 
   // محاسبه تعداد کل تمرین‌های اختصاص داده شده به شاگردان
   const totalExercises = useMemo(() => {
@@ -39,10 +47,19 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     return count;
   }, [students]);
 
-  // محاسبه مجموع درآمد
-  const totalPayments = useMemo(() => students.reduce((acc, student) => {
-    return acc + (student.payment ? Number(student.payment.replace(/,/g, '')) : 0);
-  }, 0), [students]);
+  // محاسبه مجموع درآمد با استفاده از داده‌های دقیق
+  const totalPayments = useMemo(() => {
+    return students.reduce((acc, student) => {
+      // اگر پرداخت خالی یا نامعتبر باشد، صفر اضافه می‌کنیم
+      if (!student.payment) return acc;
+      
+      // حذف کاراکترهای غیر عدد مانند کاما
+      const numericValue = student.payment.replace(/[^\d]/g, '');
+      
+      // اگر مقدار عددی معتبر باشد آن را به مجموع اضافه می‌کنیم
+      return acc + (numericValue ? parseInt(numericValue) : 0);
+    }, 0);
+  }, [students]);
 
   const formatCurrency = (amount: number) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

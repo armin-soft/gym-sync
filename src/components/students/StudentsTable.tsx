@@ -90,6 +90,24 @@ export const StudentsTable = ({
     show: { opacity: 1, y: 0 }
   };
 
+  const getExactExerciseCount = (student: Student): number => {
+    let count = 0;
+    count += student.exercises?.length || 0;
+    count += student.exercisesDay1?.length || 0;
+    count += student.exercisesDay2?.length || 0;
+    count += student.exercisesDay3?.length || 0;
+    count += student.exercisesDay4?.length || 0;
+    return count;
+  };
+
+  const getExactMealCount = (student: Student): number => {
+    return student.meals?.length || 0;
+  };
+
+  const getExactSupplementCount = (student: Student): number => {
+    return (student.supplements?.length || 0) + (student.vitamins?.length || 0);
+  };
+
   if (showEmptyState) {
     return (
       <div className="h-[calc(100vh-20rem)] rounded-lg border border-indigo-100/40 dark:border-indigo-900/30">
@@ -230,19 +248,19 @@ export const StudentsTable = ({
                       <div className="flex items-center justify-center gap-3">
                         <div className="flex flex-col items-center">
                           <div className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 text-blue-800 dark:text-blue-300 font-medium size-7 flex items-center justify-center rounded-full text-xs shadow-sm">
-                            {toPersianNumbers(student.exercises?.length || 0)}
+                            {toPersianNumbers(getExactExerciseCount(student))}
                           </div>
                           <span className="text-xs text-blue-600 dark:text-blue-400 mt-1">تمرین</span>
                         </div>
                         <div className="flex flex-col items-center">
                           <div className="bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 text-green-800 dark:text-green-300 font-medium size-7 flex items-center justify-center rounded-full text-xs shadow-sm">
-                            {toPersianNumbers(student.meals?.length || 0)}
+                            {toPersianNumbers(getExactMealCount(student))}
                           </div>
                           <span className="text-xs text-green-600 dark:text-green-400 mt-1">غذا</span>
                         </div>
                         <div className="flex flex-col items-center">
                           <div className="bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-800/40 text-purple-800 dark:text-purple-300 font-medium size-7 flex items-center justify-center rounded-full text-xs shadow-sm">
-                            {toPersianNumbers((student.supplements?.length || 0) + (student.vitamins?.length || 0))}
+                            {toPersianNumbers(getExactSupplementCount(student))}
                           </div>
                           <span className="text-xs text-purple-600 dark:text-purple-400 mt-1">مکمل</span>
                         </div>
