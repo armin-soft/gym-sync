@@ -3,19 +3,15 @@ import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Search, UserRound, Scale, Ruler, ArrowUp, ArrowDown, Dumbbell, FolderTree, Filter } from "lucide-react";
+import { ListFilter, Search, UserRound, Scale, Ruler, ArrowUp, ArrowDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuGroup,
-  DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
 
 interface StudentSearchSortProps {
   searchQuery: string;
@@ -28,7 +24,7 @@ interface StudentSearchSortProps {
   selectedCategory?: number | null;
   setSelectedCategory?: (categoryId: number | null) => void;
   exerciseTypes?: string[];
-  categories?: ExerciseCategory[];
+  categories?: any[];
   showExerciseFilters?: boolean;
 }
 
@@ -38,55 +34,7 @@ export const StudentSearchSort = ({
   sortField,
   sortOrder,
   toggleSort,
-  selectedExerciseType,
-  setSelectedExerciseType,
-  selectedCategory,
-  setSelectedCategory,
-  exerciseTypes = [],
-  categories = [],
-  showExerciseFilters = false
 }: StudentSearchSortProps) => {
-  const [selectedType, setSelectedType] = useState<string | null>(selectedExerciseType || null);
-  const [filteredCategories, setFilteredCategories] = useState<ExerciseCategory[]>([]);
-
-  useEffect(() => {
-    if (selectedType && categories) {
-      setFilteredCategories(categories.filter(cat => cat.type === selectedType));
-    } else {
-      setFilteredCategories([]);
-    }
-  }, [selectedType, categories]);
-
-  useEffect(() => {
-    setSelectedType(selectedExerciseType || null);
-  }, [selectedExerciseType]);
-
-  const handleTypeSelect = (type: string) => {
-    setSelectedType(type);
-    if (setSelectedExerciseType) {
-      setSelectedExerciseType(type);
-    }
-    if (setSelectedCategory) {
-      setSelectedCategory(null);
-    }
-  };
-
-  const handleCategorySelect = (categoryId: number) => {
-    if (setSelectedCategory) {
-      setSelectedCategory(categoryId);
-    }
-  };
-
-  const handleClearFilters = () => {
-    setSelectedType(null);
-    if (setSelectedExerciseType) {
-      setSelectedExerciseType(null);
-    }
-    if (setSelectedCategory) {
-      setSelectedCategory(null);
-    }
-  };
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -111,84 +59,6 @@ export const StudentSearchSort = ({
       </Card>
       
       <div className="flex gap-2">
-        {showExerciseFilters && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                className="w-full sm:w-auto gap-2 h-[3.25rem] border-indigo-100 dark:border-indigo-900 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
-              >
-                <Filter className="h-4 w-4" />
-                فیلتر تمرین‌ها
-                {(selectedType || selectedCategory) && (
-                  <Badge className="ml-1 bg-indigo-500">فعال</Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-72 max-h-[400px] overflow-y-auto border-indigo-100 dark:border-indigo-900 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg">
-              <DropdownMenuLabel className="flex items-center gap-2">
-                <Dumbbell className="h-4 w-4 text-indigo-500" />
-                نوع تمرین
-              </DropdownMenuLabel>
-              
-              <DropdownMenuGroup>
-                {exerciseTypes.length === 0 ? (
-                  <DropdownMenuItem disabled className="text-muted-foreground opacity-50">
-                    هیچ نوع تمرینی یافت نشد
-                  </DropdownMenuItem>
-                ) : (
-                  exerciseTypes.map((type) => (
-                    <DropdownMenuItem 
-                      key={type}
-                      onClick={() => handleTypeSelect(type)}
-                      className={`gap-2 ${selectedType === type ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
-                    >
-                      <Dumbbell className="h-4 w-4" />
-                      <span>{type}</span>
-                    </DropdownMenuItem>
-                  ))
-                )}
-              </DropdownMenuGroup>
-              
-              {selectedType && filteredCategories.length > 0 && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel className="flex items-center gap-2">
-                    <FolderTree className="h-4 w-4 text-indigo-500" />
-                    دسته‌بندی‌ تمرین
-                  </DropdownMenuLabel>
-                  
-                  <DropdownMenuGroup>
-                    {filteredCategories.map((category) => (
-                      <DropdownMenuItem 
-                        key={category.id}
-                        onClick={() => handleCategorySelect(category.id)}
-                        className={`gap-2 ${selectedCategory === category.id ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
-                      >
-                        <FolderTree className="h-4 w-4" />
-                        <span>{category.name}</span>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </>
-              )}
-              
-              {(selectedType || selectedCategory) && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={handleClearFilters}
-                    className="gap-2 text-red-600 dark:text-red-400 font-medium"
-                  >
-                    <Filter className="h-4 w-4" />
-                    پاک کردن فیلترها
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 

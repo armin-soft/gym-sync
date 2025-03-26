@@ -27,22 +27,6 @@ const StudentsPage = () => {
     handleSaveSupplements
   } = useStudents();
 
-  const { data: exerciseTypes = [] } = useQuery({
-    queryKey: ["exerciseTypes"],
-    queryFn: () => {
-      const typesData = localStorage.getItem("exerciseTypes");
-      return typesData ? JSON.parse(typesData) : [];
-    },
-  });
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ["exerciseCategories"],
-    queryFn: () => {
-      const categoriesData = localStorage.getItem("exerciseCategories");
-      return categoriesData ? JSON.parse(categoriesData) : [];
-    },
-  });
-
   // Force refresh when localStorage 'students' changes
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
@@ -97,13 +81,9 @@ const StudentsPage = () => {
     sortOrder,
     sortField,
     toggleSort,
-    selectedExerciseType,
-    setSelectedExerciseType,
-    selectedCategory,
-    setSelectedCategory,
     sortedAndFilteredStudents,
     handleClearSearch
-  } = useStudentFiltering(students, exercises, categories);
+  } = useStudentFiltering(students, exercises);
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -122,13 +102,6 @@ const StudentsPage = () => {
             sortField={sortField}
             sortOrder={sortOrder}
             toggleSort={toggleSort}
-            selectedExerciseType={selectedExerciseType}
-            setSelectedExerciseType={setSelectedExerciseType}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            exerciseTypes={exerciseTypes}
-            categories={categories}
-            showExerciseFilters={true}
           />
         </div>
 
