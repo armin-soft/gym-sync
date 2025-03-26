@@ -77,6 +77,9 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
   };
   
   const handleAddSupplement = (student: Student) => {
+    console.log("Opening supplement dialog for student:", student);
+    console.log("Current supplements:", student.supplements);
+    console.log("Current vitamins:", student.vitamins);
     setSelectedStudentForSupplement(student);
     setIsSupplementDialogOpen(true);
   };
@@ -140,6 +143,10 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     if (!selectedStudentForSupplement) return false;
     
     try {
+      console.log("Saving supplements and vitamins for student:", selectedStudentForSupplement.id);
+      console.log("Supplements to save:", data.supplements);
+      console.log("Vitamins to save:", data.vitamins);
+      
       const success = onSaveSupplements(data, selectedStudentForSupplement.id);
       if (success) {
         setIsSupplementDialogOpen(false);
