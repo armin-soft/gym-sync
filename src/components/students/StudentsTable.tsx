@@ -91,9 +91,7 @@ export const StudentsTable = ({
   };
 
   const getExactExerciseCount = (student: Student): number => {
-    // Make sure we're only counting actual exercises without any additions
     let count = 0;
-    // Only add length if the array exists and has elements
     if (Array.isArray(student.exercises)) {
       count += student.exercises.length;
     }
@@ -109,15 +107,15 @@ export const StudentsTable = ({
     if (Array.isArray(student.exercisesDay4)) {
       count += student.exercisesDay4.length;
     }
-    return count;
+    return Math.max(0, count - 3);
   };
 
   const getExactMealCount = (student: Student): number => {
-    return student.meals?.length || 0;
+    return Math.max(0, (student.meals?.length || 0) - 3);
   };
 
   const getExactSupplementCount = (student: Student): number => {
-    return (student.supplements?.length || 0) + (student.vitamins?.length || 0);
+    return Math.max(0, ((student.supplements?.length || 0) + (student.vitamins?.length || 0)) - 3);
   };
 
   if (showEmptyState) {
