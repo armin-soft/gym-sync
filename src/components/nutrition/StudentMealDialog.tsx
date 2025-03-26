@@ -1,5 +1,8 @@
-
 import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -31,14 +34,14 @@ const mealTypeOrder: Record<MealType, number> = {
   "شام": 5
 };
 
-export function StudentMealDialog({
+const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   open,
   onOpenChange,
   studentName,
   onSave,
   initialMeals = [],
   meals = []
-}: StudentMealDialogProps) {
+}) => {
   const [selectedMeals, setSelectedMeals] = useState<number[]>(initialMeals);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
@@ -145,172 +148,180 @@ export function StudentMealDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col w-full h-full bg-background overflow-hidden">
-      <div className="px-6 py-4 border-b bg-white dark:bg-gray-800/50 shadow-sm shrink-0 text-right">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
+        <div className="px-6 py-4 border-b bg-white dark:bg-gray-800/50 shadow-sm shrink-0 text-right">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-md">
-                <Salad className="h-5 w-5 text-white" />
-              </div>
-              <div className="text-right">
-                <h2 className="text-lg font-bold text-foreground">مدیریت برنامه غذایی</h2>
-                <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-md">
+                  <Salad className="h-5 w-5 text-white" />
+                </div>
+                <div className="text-right">
+                  <h2 className="text-lg font-bold text-foreground">مدیریت برنامه غذایی</h2>
+                  <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="px-6 py-3 border-b bg-muted/20 shrink-0">
-        <div className="relative flex-1">
-          <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="جستجو در برنامه های غذایی..." className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted text-right" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} dir="rtl" />
+        <div className="px-6 py-3 border-b bg-muted/20 shrink-0">
+          <div className="relative flex-1">
+            <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input 
+              placeholder="جستجو در برنامه های غذایی..." 
+              className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted text-right" 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+              dir="rtl" 
+            />
+          </div>
         </div>
-      </div>
 
-      <Collapsible open={showFilters} onOpenChange={setShowFilters} className="w-full">
-        <CollapsibleContent className="flex-shrink-0 bg-muted/10 border-b">
-          <div className="p-4 flex flex-col gap-3" dir="rtl">
-            <div>
-              <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
-              <div className="flex flex-wrap gap-1.5">
-                <Badge variant={activeMealType === "all" ? "default" : "outline"} className="cursor-pointer transition-all hover:bg-primary/10" onClick={() => setActiveMealType("all")}>
-                  همه وعده‌ها
-                </Badge>
-                {sortedMealTypes.map(type => <Badge key={type} variant={activeMealType === type ? "default" : "outline"} className={`cursor-pointer transition-all hover:bg-primary/10 flex gap-1 items-center ${activeMealType === type ? '' : getMealTypeColor(type).split(' ')[0]}`} onClick={() => setActiveMealType(type)}>
-                    {getMealTypeIcon(type)}
-                    <span>{type}</span>
-                  </Badge>)}
+        <Collapsible open={showFilters} onOpenChange={setShowFilters} className="w-full">
+          <CollapsibleContent className="flex-shrink-0 bg-muted/10 border-b">
+            <div className="p-4 flex flex-col gap-3" dir="rtl">
+              <div>
+                <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant={activeMealType === "all" ? "default" : "outline"} className="cursor-pointer transition-all hover:bg-primary/10" onClick={() => setActiveMealType("all")}>
+                    همه وعده‌ها
+                  </Badge>
+                  {sortedMealTypes.map(type => <Badge key={type} variant={activeMealType === type ? "default" : "outline"} className={`cursor-pointer transition-all hover:bg-primary/10 flex gap-1 items-center ${activeMealType === type ? '' : getMealTypeColor(type).split(' ')[0]}`} onClick={() => setActiveMealType(type)}>
+                      {getMealTypeIcon(type)}
+                      <span>{type}</span>
+                    </Badge>)}
+                </div>
               </div>
             </div>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+          </CollapsibleContent>
+        </Collapsible>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Tabs value={activeDay === "all" ? "all" : activeDay} onValueChange={value => setActiveDay(value as WeekDay | "all")} className="flex-1 flex flex-col overflow-hidden" dir="rtl">
-          <div className="border-b bg-muted/10 shrink-0">
-            <ScrollArea className="w-full" orientation="horizontal">
-              <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1" dir="rtl">
-                <TabsTrigger value="all" className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200">
-                  همه روزها
-                </TabsTrigger>
-                {sortedDays.map(day => <TabsTrigger key={day} value={day} className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200">
-                    {day}
-                  </TabsTrigger>)}
-              </TabsList>
-            </ScrollArea>
-          </div>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Tabs value={activeDay === "all" ? "all" : activeDay} onValueChange={value => setActiveDay(value as WeekDay | "all")} className="flex-1 flex flex-col overflow-hidden" dir="rtl">
+            <div className="border-b bg-muted/10 shrink-0">
+              <ScrollArea className="w-full" orientation="horizontal">
+                <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1" dir="rtl">
+                  <TabsTrigger value="all" className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200">
+                    همه روزها
+                  </TabsTrigger>
+                  {sortedDays.map(day => <TabsTrigger key={day} value={day} className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200">
+                      {day}
+                    </TabsTrigger>)}
+                </TabsList>
+              </ScrollArea>
+            </div>
 
-          <TabsContent value={activeDay === "all" ? "all" : activeDay.toString()} className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" dir="rtl">
-            <StudentMealListWrapper 
-              viewMode={viewMode} 
-              maxHeight="calc(100vh - 220px)" 
-              setViewMode={setViewMode} 
-              toggleSortOrder={toggleSortOrder} 
-              sortOrder={sortOrder} 
-              showControls={true}
-            >
-              {filteredMeals.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-center p-4">
-                  <div className="w-16 h-16 bg-gradient-to-b from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
-                    <UtensilsCrossed className="h-8 w-8 text-green-500 dark:text-green-400" />
+            <TabsContent value={activeDay === "all" ? "all" : activeDay.toString()} className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" dir="rtl">
+              <StudentMealListWrapper 
+                viewMode={viewMode} 
+                maxHeight="calc(100vh - 220px)" 
+                setViewMode={setViewMode} 
+                toggleSortOrder={toggleSortOrder} 
+                sortOrder={sortOrder} 
+                showControls={true}
+              >
+                {filteredMeals.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+                    <div className="w-16 h-16 bg-gradient-to-b from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                      <UtensilsCrossed className="h-8 w-8 text-green-500 dark:text-green-400" />
+                    </div>
+                    <h3 className="font-medium text-lg text-foreground">هیچ وعده غذایی یافت نشد</h3>
+                    <p className="text-muted-foreground text-sm mt-2">برای افزودن وعده غذایی به صفحه مدیریت غذا مراجعه کنید</p>
                   </div>
-                  <h3 className="font-medium text-lg text-foreground">هیچ وعده غذایی یافت نشد</h3>
-                  <p className="text-muted-foreground text-sm mt-2">برای افزودن وعده غذایی به صفحه مدیریت غذا مراجعه کنید</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {activeMealType === "all" && activeDay === "all" ?
-                    sortedDays.map(day => {
-                      const dayMeals = filteredMeals.filter(meal => meal.day === day);
-                      if (dayMeals.length === 0) return null;
-                      return <div key={day} className="space-y-4">
-                                <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
-                                <div className="space-y-4">
-                                  {sortedMealTypes.map(type => {
-                            const typeMeals = dayMeals.filter(meal => meal.type === type);
-                            if (typeMeals.length === 0) return null;
-                            const typeColor = getMealTypeColor(type);
-                            return <div key={`${day}-${type}`} className="space-y-2">
-                                        <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
-                                          {getMealTypeIcon(type)}
-                                          {type}
-                                          <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
-                                            {typeMeals.length} مورد
-                                          </span>
-                                        </h4>
-                                        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
-                                          {typeMeals.map(meal => renderMealItem(meal))}
-                                        </div>
-                                      </div>;
-                          })}
-                                </div>
-                              </div>;
-                    }) : activeMealType !== "all" && activeDay === "all" ?
-                    sortedDays.map(day => {
-                      const dayMeals = filteredMeals.filter(meal => meal.day === day);
-                      if (dayMeals.length === 0) return null;
-                      return <div key={day} className="space-y-4">
-                                <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
-                                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
-                                  {dayMeals.map(meal => renderMealItem(meal))}
-                                </div>
-                              </div>;
-                    }) : activeDay !== "all" && activeMealType === "all" ?
-                    sortedMealTypes.map(type => {
-                      const typeMeals = filteredMeals.filter(meal => meal.type === type);
-                      if (typeMeals.length === 0) return null;
-                      const typeColor = getMealTypeColor(type);
-                      return <div key={type} className="space-y-2">
-                                <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
-                                  {getMealTypeIcon(type)}
-                                  {type}
-                                  <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
-                                    {typeMeals.length} مورد
-                                  </span>
-                                </h4>
-                                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
-                                  {typeMeals.map(meal => renderMealItem(meal))}
-                                </div>
-                              </div>;
-                    }) :
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
-                            {filteredMeals.map(meal => renderMealItem(meal))}
-                          </div>}
-                </div>
-              )}
-            </StudentMealListWrapper>
-          </TabsContent>
-        </Tabs>
-      </div>
+                ) : (
+                  <div className="space-y-6">
+                    {activeMealType === "all" && activeDay === "all" ?
+                      sortedDays.map(day => {
+                        const dayMeals = filteredMeals.filter(meal => meal.day === day);
+                        if (dayMeals.length === 0) return null;
+                        return <div key={day} className="space-y-4">
+                                  <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
+                                  <div className="space-y-4">
+                                    {sortedMealTypes.map(type => {
+                              const typeMeals = dayMeals.filter(meal => meal.type === type);
+                              if (typeMeals.length === 0) return null;
+                              const typeColor = getMealTypeColor(type);
+                              return <div key={`${day}-${type}`} className="space-y-2">
+                                          <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
+                                            {getMealTypeIcon(type)}
+                                            {type}
+                                            <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
+                                              {typeMeals.length} مورد
+                                            </span>
+                                          </h4>
+                                          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                            {typeMeals.map(meal => renderMealItem(meal))}
+                                          </div>
+                                        </div>;
+                            })}
+                                  </div>
+                                </div>;
+                      }) : activeMealType !== "all" && activeDay === "all" ?
+                      sortedDays.map(day => {
+                        const dayMeals = filteredMeals.filter(meal => meal.day === day);
+                        if (dayMeals.length === 0) return null;
+                        return <div key={day} className="space-y-4">
+                                  <h3 className="text-lg font-medium text-foreground/90 pb-2 border-b">{day}</h3>
+                                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                    {dayMeals.map(meal => renderMealItem(meal))}
+                                  </div>
+                                </div>;
+                      }) : activeDay !== "all" && activeMealType === "all" ?
+                      sortedMealTypes.map(type => {
+                        const typeMeals = filteredMeals.filter(meal => meal.type === type);
+                        if (typeMeals.length === 0) return null;
+                        const typeColor = getMealTypeColor(type);
+                        return <div key={type} className="space-y-2">
+                                  <h4 className={`text-sm font-medium flex items-center gap-1.5 ${typeColor.split(' ')[0]}`}>
+                                    {getMealTypeIcon(type)}
+                                    {type}
+                                    <span className="text-xs bg-background/50 px-2 py-0.5 rounded-full">
+                                      {typeMeals.length} مورد
+                                    </span>
+                                  </h4>
+                                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                                    {typeMeals.map(meal => renderMealItem(meal))}
+                                  </div>
+                                </div>;
+                      }) :
+                      <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3`}>
+                              {filteredMeals.map(meal => renderMealItem(meal))}
+                            </div>}
+                  </div>
+                )}
+              </StudentMealListWrapper>
+            </TabsContent>
+          </Tabs>
+        </div>
 
-      <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex justify-between text-right" dir="rtl">
-        <div className="flex items-center gap-2">
-          <motion.div initial={{
-          scale: 0.9,
-          opacity: 0
-        }} animate={{
-          scale: selectedMeals.length > 0 ? 1 : 0.9,
-          opacity: selectedMeals.length > 0 ? 1 : 0
-        }} className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5" />
-            {toPersianNumbers(selectedMeals.length)} وعده غذایی انتخاب شده
-          </motion.div>
+        <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex justify-between text-right" dir="rtl">
+          <div className="flex items-center gap-2">
+            <motion.div initial={{
+            scale: 0.9,
+            opacity: 0
+          }} animate={{
+            scale: selectedMeals.length > 0 ? 1 : 0.9,
+            opacity: selectedMeals.length > 0 ? 1 : 0
+          }} className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5" />
+              {toPersianNumbers(selectedMeals.length)} وعده غذایی انتخاب شده
+            </motion.div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)} className="gap-2">
+              <X className="h-4 w-4" />
+              انصراف
+            </Button>
+            <Button onClick={handleSave} className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0" disabled={selectedMeals.length === 0}>
+              <Save className="h-4 w-4" />
+              ذخیره برنامه غذایی
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="gap-2">
-            <X className="h-4 w-4" />
-            انصراف
-          </Button>
-          <Button onClick={handleSave} className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0" disabled={selectedMeals.length === 0}>
-            <Save className="h-4 w-4" />
-            ذخیره برنامه غذایی
-          </Button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 
   function renderMealItem(meal: Meal) {
@@ -347,6 +358,6 @@ export function StudentMealDialog({
         </div>
       </motion.div>;
   }
-}
+};
 
 export default StudentMealDialog;
