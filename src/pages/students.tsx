@@ -27,7 +27,7 @@ const StudentsPage = () => {
     handleSaveSupplements
   } = useStudents();
 
-  // Force refresh when localStorage 'students' changes
+  // تازه‌سازی هنگام تغییر localStorage
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'students') {
@@ -40,14 +40,31 @@ const StudentsPage = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Function to trigger refresh after saving
+  // دریافت نوع‌های تمرین و دسته‌بندی‌ها
+  const { data: exerciseTypes = [] } = useQuery({
+    queryKey: ["exerciseTypes"],
+    queryFn: () => {
+      const typesData = localStorage.getItem("exerciseTypes");
+      return typesData ? JSON.parse(typesData) : [];
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["exerciseCategories"],
+    queryFn: () => {
+      const categoriesData = localStorage.getItem("exerciseCategories");
+      return categoriesData ? JSON.parse(categoriesData) : [];
+    },
+  });
+
+  // تازه‌سازی بعد از ذخیره
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
-    // Simulate a storage event to force refresh in other tabs
+    // شبیه‌سازی یک رویداد ذخیره‌سازی برای تازه‌سازی در سایر تب‌ها
     window.dispatchEvent(new StorageEvent('storage', { key: 'students' }));
   }, []);
 
-  // Wrapper functions to trigger refresh after saving
+  // توابع پوشش‌دهنده برای تازه‌سازی بعد از ذخیره
   const handleSaveExercisesWithRefresh = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
     const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
     if (result) {
@@ -81,6 +98,10 @@ const StudentsPage = () => {
     sortOrder,
     sortField,
     toggleSort,
+    selectedExerciseType,
+    setSelectedExerciseType,
+    selectedCategory,
+    setSelectedCategory,
     sortedAndFilteredStudents,
     handleClearSearch
   } = useStudentFiltering(students, exercises);
@@ -102,6 +123,13 @@ const StudentsPage = () => {
             sortField={sortField}
             sortOrder={sortOrder}
             toggleSort={toggleSort}
+            selectedExerciseType={selectedExerciseType}
+            setSelectedExerciseType={setSelectedExerciseType}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            exerciseTypes={exerciseTypes}
+            categories={categories}
+            showExerciseFilters={true}
           />
         </div>
 
