@@ -1,4 +1,3 @@
-
 import React, { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { UserRound, Trophy, Scale, Ruler, Wallet, DollarSign, Dumbbell } from "lucide-react";
@@ -31,22 +30,24 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     return Math.round(sum / studentsWithHeight.length);
   }, [students]);
 
-  // محاسبه تعداد کل تمرین‌های اختصاص داده شده به شاگردان با شمارش دقیق
+  // محاسبه تعداد دقیق تمرین‌های انتخاب شده برای تمام شاگردان (به صورت مستقل)
   const totalExercises = useMemo(() => {
-    let count = 0;
+    let totalCount = 0;
     
+    // شمارش تمام تمرین‌های انتخاب شده برای هر شاگرد
     students.forEach(student => {
-      // شمارش تمرین‌های عمومی
-      count += student.exercises?.length || 0;
+      // جمع تمرین‌های روز اول تا چهارم و تمرین‌های عمومی
+      const studentExerciseCount = 
+        (student.exercisesDay1?.length || 0) + 
+        (student.exercisesDay2?.length || 0) + 
+        (student.exercisesDay3?.length || 0) + 
+        (student.exercisesDay4?.length || 0) + 
+        (student.exercises?.length || 0);
       
-      // شمارش تمرین‌های روزهای مختلف
-      count += student.exercisesDay1?.length || 0;
-      count += student.exercisesDay2?.length || 0;
-      count += student.exercisesDay3?.length || 0;
-      count += student.exercisesDay4?.length || 0;
+      totalCount += studentExerciseCount;
     });
     
-    return count;
+    return totalCount;
   }, [students]);
 
   // محاسبه مجموع درآمد با استفاده از داده‌های دقیق
@@ -173,7 +174,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
           </div>
           <div className="mt-4 pt-4 border-t border-green-100/30 dark:border-green-800/30">
             <p className="text-xs text-green-500/70 dark:text-green-400/70">
-              تعداد کل تمرین‌های تخصیص داده شده به شاگردان
+              مجموع کل تمرین‌های انتخاب شده برای تمام شاگردان
             </p>
           </div>
         </Card>
