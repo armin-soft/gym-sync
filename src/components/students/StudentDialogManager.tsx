@@ -1,3 +1,4 @@
+
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
@@ -164,6 +165,17 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     handleDownload
   }));
 
+  // Get supplement categories from the supplements array
+  const supplementCategories = Array.from(
+    new Set(supplements.map(item => ({
+      id: item.id,
+      name: item.category,
+      type: item.type
+    })))
+  ).filter((value, index, self) => 
+    self.findIndex(t => t.name === value.name && t.type === value.type) === index
+  );
+
   return (
     <>
       <StudentDialog
@@ -202,7 +214,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         initialSupplements={selectedStudentForSupplement?.supplements || []}
         initialVitamins={selectedStudentForSupplement?.vitamins || []}
         supplements={supplements}
-        categories={[]}
+        categories={supplementCategories}
       />
 
       <StudentDownloadDialog
