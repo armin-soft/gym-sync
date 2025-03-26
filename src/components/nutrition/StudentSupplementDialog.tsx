@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 import { Supplement, SupplementCategory } from "@/types/supplement";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
 interface StudentSupplementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -25,6 +27,7 @@ interface StudentSupplementDialogProps {
   supplements: Supplement[];
   categories: SupplementCategory[];
 }
+
 export function StudentSupplementDialog({
   open,
   onOpenChange,
@@ -43,31 +46,47 @@ export function StudentSupplementDialog({
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
   useEffect(() => {
     let filtered = supplements;
     if (searchQuery.trim() !== "") {
-      filtered = filtered.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.category.toLowerCase().includes(searchQuery.toLowerCase()) || item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase()) || item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase()));
+      filtered = filtered.filter(item => 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        item.category.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
+    
     if (activeTab === "supplements") {
       filtered = filtered.filter(item => item.type === "supplement");
     } else if (activeTab === "vitamins") {
       filtered = filtered.filter(item => item.type === "vitamin");
     }
+    
     if (selectedCategory !== "all") {
       filtered = filtered.filter(item => item.category === selectedCategory);
     }
+    
     setFilteredItems(filtered);
   }, [searchQuery, supplements, activeTab, selectedCategory]);
+
   useEffect(() => {
     setSelectedCategory("all");
   }, [activeTab]);
+
   const toggleItem = (id: number) => {
     if (activeTab === "supplements") {
-      setSelectedSupplements(prev => prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]);
+      setSelectedSupplements(prev => 
+        prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+      );
     } else {
-      setSelectedVitamins(prev => prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]);
+      setSelectedVitamins(prev => 
+        prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+      );
     }
   };
+
   const handleSave = () => {
     const success = onSave({
       supplements: selectedSupplements,
@@ -78,16 +97,21 @@ export function StudentSupplementDialog({
     }
     return success;
   };
+
   const isSelected = (id: number) => {
     return activeTab === "supplements" ? selectedSupplements.includes(id) : selectedVitamins.includes(id);
   };
-  const relevantCategories = categories.filter(cat => cat.type === (activeTab === "supplements" ? "supplement" : "vitamin"));
-  return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
+
+  const relevantCategories = categories.filter(cat => 
+    cat.type === (activeTab === "supplements" ? "supplement" : "vitamin")
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none" dir="rtl">
         <div className="px-6 py-4 border-b bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
                   <Pill className="h-5 w-5 text-white" />
@@ -145,72 +169,103 @@ export function StudentSupplementDialog({
         <div className="px-6 py-3 border-b bg-muted/20 shrink-0">
           <div className="relative flex-1">
             <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="جستجو در مکمل‌ها و ویتامین‌ها..." className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            <Input 
+              placeholder="جستجو در مکمل‌ها و ویتامین‌ها..." 
+              className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted" 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+            />
           </div>
         </div>
 
         <AnimatePresence>
-          {showFilters && <motion.div initial={{
-          height: 0,
-          opacity: 0
-        }} animate={{
-          height: 'auto',
-          opacity: 1
-        }} exit={{
-          height: 0,
-          opacity: 0
-        }} transition={{
-          duration: 0.2
-        }} className="flex-shrink-0 overflow-hidden bg-muted/10 border-b">
+          {showFilters && (
+            <motion.div 
+              initial={{height: 0, opacity: 0}}
+              animate={{height: 'auto', opacity: 1}}
+              exit={{height: 0, opacity: 0}}
+              transition={{duration: 0.2}}
+              className="flex-shrink-0 overflow-hidden bg-muted/10 border-b"
+            >
               <div className="p-4 flex flex-col gap-3">
                 <div>
                   <h3 className="text-sm font-medium mb-2 text-foreground">فیلتر براساس دسته‌بندی</h3>
                   <div className="flex flex-wrap gap-1.5">
-                    <Badge variant={selectedCategory === "all" ? "default" : "outline"} className="cursor-pointer transition-all hover:bg-primary/10" onClick={() => setSelectedCategory("all")}>
+                    <Badge 
+                      variant={selectedCategory === "all" ? "default" : "outline"} 
+                      className="cursor-pointer transition-all hover:bg-primary/10" 
+                      onClick={() => setSelectedCategory("all")}
+                    >
                       همه دسته‌بندی‌ها
                     </Badge>
-                    {relevantCategories.map(category => <Badge key={category.id} variant={selectedCategory === category.name ? "default" : "outline"} className="cursor-pointer transition-all hover:bg-primary/10" onClick={() => setSelectedCategory(category.name)}>
+                    {relevantCategories.map(category => (
+                      <Badge 
+                        key={category.id} 
+                        variant={selectedCategory === category.name ? "default" : "outline"} 
+                        className="cursor-pointer transition-all hover:bg-primary/10" 
+                        onClick={() => setSelectedCategory(category.name)}
+                      >
                         {category.name}
-                      </Badge>)}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               </div>
-            </motion.div>}
+            </motion.div>
+          )}
         </AnimatePresence>
 
         <div className="flex-1 flex flex-col overflow-hidden">
-          <Tabs value={activeTab} onValueChange={value => setActiveTab(value as "supplements" | "vitamins")} className="flex-1 flex flex-col overflow-hidden">
+          <Tabs 
+            value={activeTab} 
+            onValueChange={value => setActiveTab(value as "supplements" | "vitamins")} 
+            className="flex-1 flex flex-col overflow-hidden"
+          >
             <div className="border-b bg-muted/10 shrink-0">
               <TabsList className="h-11 bg-transparent p-1 gap-1 rounded-none border-b-0">
-                <TabsTrigger value="supplements" className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200">
+                <TabsTrigger 
+                  value="supplements" 
+                  className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                >
                   مکمل‌ها
                 </TabsTrigger>
-                <TabsTrigger value="vitamins" className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200">
+                <TabsTrigger 
+                  value="vitamins" 
+                  className="h-9 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                >
                   ویتامین‌ها
                 </TabsTrigger>
               </TabsList>
             </div>
 
-            <TabsContent value="supplements" className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full">
+            <TabsContent 
+              value="supplements" 
+              className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full"
+            >
               <ScrollArea className="h-full w-full">
-                {filteredItems.length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+                {filteredItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-center p-4">
                     <div className="w-16 h-16 bg-gradient-to-b from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
                       <Pill className="h-8 w-8 text-violet-500 dark:text-violet-400" />
                     </div>
                     <h3 className="font-medium text-lg text-foreground">
                       هیچ مکملی یافت نشد
                     </h3>
-                  </div> : viewMode === "grid" ? <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                    {filteredItems.map(item => <motion.div key={item.id} initial={{
-                  opacity: 0,
-                  scale: 0.95
-                }} animate={{
-                  opacity: 1,
-                  scale: 1
-                }} transition={{
-                  duration: 0.2
-                }} layout>
-                        <div className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${isSelected(item.id) ? "border-primary/30 bg-primary/5 dark:bg-primary/10" : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"}`} onClick={() => toggleItem(item.id)}>
+                  </div>
+                ) : viewMode === "grid" ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
+                    {filteredItems.map(item => (
+                      <motion.div 
+                        key={item.id} 
+                        initial={{opacity: 0, scale: 0.95}}
+                        animate={{opacity: 1, scale: 1}}
+                        transition={{duration: 0.2}}
+                        layout
+                      >
+                        <div 
+                          className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${isSelected(item.id) ? "border-primary/30 bg-primary/5 dark:bg-primary/10" : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"}`} 
+                          onClick={() => toggleItem(item.id)}
+                        >
                           <div className="flex gap-3 items-start">
                             <div className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${isSelected(item.id) ? "bg-primary" : "border-2 border-muted-foreground/30"}`}>
                               {isSelected(item.id) && <Check className="h-3 w-3 text-primary-foreground" />}
@@ -237,18 +292,22 @@ export function StudentSupplementDialog({
                             </div>
                           </div>
                         </div>
-                      </motion.div>)}
-                  </div> : <div className="divide-y">
-                    {filteredItems.map(item => <motion.div key={item.id} initial={{
-                  opacity: 0,
-                  y: 5
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  duration: 0.2
-                }}>
-                        <div className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${isSelected(item.id) ? "bg-primary/5 dark:bg-primary/10" : ""}`} onClick={() => toggleItem(item.id)}>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {filteredItems.map(item => (
+                      <motion.div 
+                        key={item.id} 
+                        initial={{opacity: 0, y: 5}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.2}}
+                      >
+                        <div 
+                          className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${isSelected(item.id) ? "bg-primary/5 dark:bg-primary/10" : ""}`} 
+                          onClick={() => toggleItem(item.id)}
+                        >
                           <div className="flex gap-3">
                             <div className={`w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors ${isSelected(item.id) ? "bg-primary" : "border-2 border-muted-foreground/30"}`}>
                               {isSelected(item.id) && <Check className="h-3 w-3 text-primary-foreground" />}
@@ -277,31 +336,41 @@ export function StudentSupplementDialog({
                             </div>
                           </div>
                         </div>
-                      </motion.div>)}
-                  </div>}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </TabsContent>
 
-            <TabsContent value="vitamins" className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full">
+            <TabsContent 
+              value="vitamins" 
+              className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full"
+            >
               <ScrollArea className="h-full w-full">
-                {filteredItems.length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+                {filteredItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-center p-4">
                     <div className="w-16 h-16 bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-full flex items-center justify-center mb-4 shadow-sm">
                       <Pill className="h-8 w-8 text-blue-500 dark:text-blue-400" />
                     </div>
                     <h3 className="font-medium text-lg text-foreground">
                       هیچ ویتامینی یافت نشد
                     </h3>
-                  </div> : viewMode === "grid" ? <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                    {filteredItems.map(item => <motion.div key={item.id} initial={{
-                  opacity: 0,
-                  scale: 0.95
-                }} animate={{
-                  opacity: 1,
-                  scale: 1
-                }} transition={{
-                  duration: 0.2
-                }} layout>
-                        <div className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${isSelected(item.id) ? "border-primary/30 bg-primary/5 dark:bg-primary/10" : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"}`} onClick={() => toggleItem(item.id)}>
+                  </div>
+                ) : viewMode === "grid" ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
+                    {filteredItems.map(item => (
+                      <motion.div 
+                        key={item.id} 
+                        initial={{opacity: 0, scale: 0.95}}
+                        animate={{opacity: 1, scale: 1}}
+                        transition={{duration: 0.2}}
+                        layout
+                      >
+                        <div 
+                          className={`p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow ${isSelected(item.id) ? "border-primary/30 bg-primary/5 dark:bg-primary/10" : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"}`} 
+                          onClick={() => toggleItem(item.id)}
+                        >
                           <div className="flex gap-3 items-start">
                             <div className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${isSelected(item.id) ? "bg-primary" : "border-2 border-muted-foreground/30"}`}>
                               {isSelected(item.id) && <Check className="h-3 w-3 text-primary-foreground" />}
@@ -328,18 +397,22 @@ export function StudentSupplementDialog({
                             </div>
                           </div>
                         </div>
-                      </motion.div>)}
-                  </div> : <div className="divide-y">
-                    {filteredItems.map(item => <motion.div key={item.id} initial={{
-                  opacity: 0,
-                  y: 5
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  duration: 0.2
-                }}>
-                        <div className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${isSelected(item.id) ? "bg-primary/5 dark:bg-primary/10" : ""}`} onClick={() => toggleItem(item.id)}>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {filteredItems.map(item => (
+                      <motion.div 
+                        key={item.id} 
+                        initial={{opacity: 0, y: 5}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.2}}
+                      >
+                        <div 
+                          className={`p-4 transition-all cursor-pointer hover:bg-muted/50 ${isSelected(item.id) ? "bg-primary/5 dark:bg-primary/10" : ""}`} 
+                          onClick={() => toggleItem(item.id)}
+                        >
                           <div className="flex gap-3">
                             <div className={`w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors ${isSelected(item.id) ? "bg-primary" : "border-2 border-muted-foreground/30"}`}>
                               {isSelected(item.id) && <Check className="h-3 w-3 text-primary-foreground" />}
@@ -368,8 +441,10 @@ export function StudentSupplementDialog({
                             </div>
                           </div>
                         </div>
-                      </motion.div>)}
-                  </div>}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </TabsContent>
           </Tabs>
@@ -377,13 +452,14 @@ export function StudentSupplementDialog({
 
         <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row gap-2 justify-between">
           <div className="flex items-center gap-2">
-            <motion.div initial={{
-            scale: 0.9,
-            opacity: 0
-          }} animate={{
-            scale: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0.9,
-            opacity: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0
-          }} className="bg-gradient-to-r from-violet-500 to-purple-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+            <motion.div 
+              initial={{scale: 0.9, opacity: 0}}
+              animate={{
+                scale: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0.9,
+                opacity: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0
+              }} 
+              className="bg-gradient-to-r from-violet-500 to-purple-500 text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
+            >
               <Plus className="h-3.5 w-3.5" />
               {toPersianNumbers(selectedSupplements.length + selectedVitamins.length)} مورد انتخاب شده
             </motion.div>
@@ -393,12 +469,17 @@ export function StudentSupplementDialog({
               <X className="h-4 w-4" />
               انصراف
             </Button>
-            <Button onClick={handleSave} className="gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white border-0" disabled={selectedSupplements.length + selectedVitamins.length === 0}>
+            <Button 
+              onClick={handleSave} 
+              className="gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white border-0" 
+              disabled={selectedSupplements.length + selectedVitamins.length === 0}
+            >
               <Save className="h-4 w-4" />
               ذخیره
             </Button>
           </div>
         </div>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 }

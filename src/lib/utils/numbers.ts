@@ -13,7 +13,8 @@ export function formatNumber(number: number | string): string {
   if (!number) return '';
   
   const numberString = number.toString();
-  return numberString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const formatted = numberString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return toPersianNumbers(formatted);
 }
 
 // Format price with Toman currency

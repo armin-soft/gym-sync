@@ -49,6 +49,7 @@ export const StudentSummary = ({
       variants={container}
       initial="hidden"
       animate="show"
+      dir="rtl"
     >
       <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl p-4 border border-indigo-100 dark:border-indigo-900/50">

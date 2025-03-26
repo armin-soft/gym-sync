@@ -128,7 +128,7 @@ export function StudentSupplementDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
+      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none" dir="rtl">
         <DialogHeader className="px-6 py-4 border-b bg-white dark:bg-gray-800/50 shadow-sm flex-row justify-between items-center">
           <div className="flex items-center gap-3">
             <Button 

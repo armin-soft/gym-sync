@@ -24,16 +24,16 @@ interface SupplementListProps {
 
 export const SupplementList = ({ supplements, onEdit, onDelete }: SupplementListProps) => {
   return (
-    <Card className="p-6 shadow-md border border-muted/40">
+    <Card className="p-6 shadow-md border border-muted/40" dir="rtl">
       <div className="relative w-full overflow-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40%]">نام مکمل</TableHead>
-              <TableHead>دسته‌بندی</TableHead>
-              <TableHead>دوز مصرف</TableHead>
-              <TableHead>زمان مصرف</TableHead>
-              <TableHead>نوع</TableHead>
+              <TableHead className="w-[40%] text-right">نام مکمل</TableHead>
+              <TableHead className="text-right">دسته‌بندی</TableHead>
+              <TableHead className="text-right">دوز مصرف</TableHead>
+              <TableHead className="text-right">زمان مصرف</TableHead>
+              <TableHead className="text-right">نوع</TableHead>
               <TableHead className="text-center">عملیات</TableHead>
             </TableRow>
           </TableHeader>
