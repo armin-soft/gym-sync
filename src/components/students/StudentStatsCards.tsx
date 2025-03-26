@@ -31,20 +31,23 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     return Math.round(sum / studentsWithHeight.length);
   }, [students]);
 
-  // محاسبه تعداد کل تمرین‌های اختصاص داده شده به شاگردان
+  // محاسبه تعداد کل تمرین‌های اختصاص داده شده به شاگردان (با اصلاح شمارش)
   const totalExercises = useMemo(() => {
-    let count = 0;
+    // استفاده از Set برای جلوگیری از شمارش تکراری تمرین‌ها
+    const uniqueExercises = new Set();
+    
     students.forEach(student => {
-      // شمارش تمرین‌های عمومی
-      count += student.exercises?.length || 0;
+      // افزودن تمرین‌های عمومی به مجموعه
+      student.exercises?.forEach(exerciseId => uniqueExercises.add(exerciseId));
       
-      // شمارش تمرین‌های روزهای مختلف
-      count += student.exercisesDay1?.length || 0;
-      count += student.exercisesDay2?.length || 0;
-      count += student.exercisesDay3?.length || 0;
-      count += student.exercisesDay4?.length || 0;
+      // افزودن تمرین‌های روزهای مختلف به مجموعه
+      student.exercisesDay1?.forEach(exerciseId => uniqueExercises.add(exerciseId));
+      student.exercisesDay2?.forEach(exerciseId => uniqueExercises.add(exerciseId));
+      student.exercisesDay3?.forEach(exerciseId => uniqueExercises.add(exerciseId));
+      student.exercisesDay4?.forEach(exerciseId => uniqueExercises.add(exerciseId));
     });
-    return count;
+    
+    return uniqueExercises.size;
   }, [students]);
 
   // محاسبه مجموع درآمد با استفاده از داده‌های دقیق
@@ -171,7 +174,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
           </div>
           <div className="mt-4 pt-4 border-t border-green-100/30 dark:border-green-800/30">
             <p className="text-xs text-green-500/70 dark:text-green-400/70">
-              تعداد کل تمرین‌های تخصیص داده شده
+              تعداد کل تمرین‌های منحصر به فرد در سیستم
             </p>
           </div>
         </Card>
