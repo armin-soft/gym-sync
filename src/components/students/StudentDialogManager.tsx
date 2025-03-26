@@ -1,4 +1,3 @@
-
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
@@ -23,9 +22,9 @@ export interface StudentDialogManagerRef {
   handleAdd: () => void;
   handleEdit: (student: Student) => void;
   handleAddExercise: (student: Student) => void;
-  handleAddDiet: (student: Student) => void;
-  handleAddSupplement: (student: Student) => void;
-  handleDownload: (student: Student) => void;
+  handleAddDiet: () => void;
+  handleAddSupplement: () => void;
+  handleDownload: () => void;
 }
 
 export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentDialogManagerProps>(({
@@ -172,20 +171,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     handleDownload
   }));
 
-  // Get supplement categories from the supplements array
-  const supplementCategories = Array.from(
-    new Set(supplements.map(item => ({
-      id: item.id,
-      name: item.category,
-      type: item.type
-    })))
-  ).filter((value, index, self) => 
-    self.findIndex(t => t.name === value.name && t.type === value.type) === index
-  );
-
-  // Extract vitamins from supplements array
-  const vitamins = supplements.filter(item => item.type === 'vitamin');
-
   return (
     <>
       <StudentDialog
@@ -232,7 +217,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         exercises={exercises}
         meals={meals}
         supplements={supplements}
-        vitamins={vitamins}
+        vitamins={supplements.filter(item => item.type === 'vitamin')}
       />
     </>
   );
