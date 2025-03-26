@@ -53,8 +53,8 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
       }
     });
     
-    // Subtract 3 from the total exercise count as requested
-    return Math.max(0, totalCount - 3);
+    // Subtract 3 from the total exercise count
+    return totalCount - 3;
   }, [students]);
 
   // محاسبه مجموع درآمد با استفاده از داده‌های دقیق
