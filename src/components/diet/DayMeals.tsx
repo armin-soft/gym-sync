@@ -19,7 +19,7 @@ interface DayMealsProps {
 // Define meal type order for consistent display
 const mealTypeOrder: Record<MealType, number> = {
   "صبحانه": 1,
-  "میان وعده صبح": 2,
+  "میان وعده صبح": 2, 
   "ناهار": 3,
   "میان وعده عصر": 4,
   "شام": 5
@@ -116,8 +116,8 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               </div>
             </div>
 
-            <ScrollArea className="w-full" dir="rtl">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+            <div className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                 {typeMeals.length > 0 ? (
                   typeMeals.map((meal, index) => (
                     <motion.div
@@ -130,9 +130,9 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                       }}
                     >
                       <Card 
-                        className={`group relative border ${styles.border} ${styles.hover} transition-all duration-300 hover:shadow-sm`}
+                        className={`group relative border ${styles.border} ${styles.hover} transition-all duration-300 hover:shadow-sm h-full`}
                       >
-                        <div className="p-4 text-right">
+                        <div className="p-3 text-right h-full flex flex-col">
                           <div className="flex items-start justify-between gap-2">
                             <h4 className="text-sm font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300">
                               {meal.name}
@@ -161,7 +161,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                               {meal.description}
                             </p>
                           )}
-                          <div className="mt-2 pt-2 border-t border-dashed border-border/40 flex flex-wrap gap-2">
+                          <div className="mt-2 pt-2 border-t border-dashed border-border/40 flex flex-wrap gap-1.5 mt-auto">
                             {meal.calories && (
                               <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900">
                                 کالری: {toPersianNumbers(meal.calories)}
@@ -190,7 +190,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                 ) : (
                   <div className="col-span-full">
                     <Card className="border-dashed">
-                      <div className="flex items-center justify-center gap-2 p-8 text-sm text-muted-foreground">
+                      <div className="flex items-center justify-center gap-2 p-6 text-sm text-muted-foreground">
                         <UtensilsCrossed className="w-4 h-4" />
                         هیچ وعده غذایی برای {type} ثبت نشده است
                       </div>
@@ -198,8 +198,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                   </div>
                 )}
               </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+            </div>
           </motion.div>
         );
       })}
