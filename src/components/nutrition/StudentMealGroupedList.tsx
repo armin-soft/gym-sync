@@ -40,9 +40,18 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
     );
   }
 
-  // Group meals by day
-  const mealsByDay: Record<WeekDay, Meal[]> = {};
+  // Group meals by day with proper initialization for all weekdays
+  const mealsByDay: Record<WeekDay, Meal[]> = {
+    "شنبه": [],
+    "یکشنبه": [],
+    "دوشنبه": [],
+    "سه شنبه": [],
+    "چهارشنبه": [],
+    "پنج شنبه": [],
+    "جمعه": []
+  };
   
+  // Fill with meals
   sortedDays.forEach(day => {
     mealsByDay[day] = filteredMeals.filter(meal => meal.day === day);
   });
@@ -71,7 +80,7 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
                     key={meal.id} 
                     meal={meal} 
                     isSelected={selectedMeals.includes(meal.id)} 
-                    toggleMeal={toggleMeal} 
+                    onToggle={toggleMeal} 
                   />
                 ))}
               </div>
@@ -115,7 +124,7 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
                           key={meal.id} 
                           meal={meal} 
                           isSelected={selectedMeals.includes(meal.id)} 
-                          toggleMeal={toggleMeal} 
+                          onToggle={toggleMeal} 
                         />
                       ))}
                     </div>
