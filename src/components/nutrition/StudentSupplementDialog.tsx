@@ -219,39 +219,37 @@ export function StudentSupplementDialog({
                 transition={{duration: 0.2}}
                 className="flex-shrink-0 overflow-hidden bg-muted/10 border-b"
               >
-                <div className="p-4">
-                  <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
-                    <div>
-                      <h3 className="text-sm font-medium mb-2 text-foreground">فیلتر براساس دسته‌بندی</h3>
-                      <div className="flex flex-wrap gap-1.5">
+                <div className="p-4 flex flex-col gap-3">
+                  <div>
+                    <h3 className="text-sm font-medium mb-2 text-foreground">فیلتر براساس دسته‌بندی</h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      <Badge 
+                        variant={selectedCategory === "all" ? "default" : "outline"} 
+                        className={cn(
+                          "cursor-pointer transition-all hover:bg-primary/10",
+                          activeTab === "supplements" 
+                            ? "data-[state=checked]:bg-violet-500 data-[state=checked]:hover:bg-violet-600" 
+                            : "data-[state=checked]:bg-blue-500 data-[state=checked]:hover:bg-blue-600"
+                        )}
+                        onClick={() => setSelectedCategory("all")}
+                      >
+                        همه دسته‌بندی‌ها
+                      </Badge>
+                      {relevantCategories.map(category => (
                         <Badge 
-                          variant={selectedCategory === "all" ? "default" : "outline"} 
+                          key={category.id} 
+                          variant={selectedCategory === category.name ? "default" : "outline"} 
                           className={cn(
                             "cursor-pointer transition-all hover:bg-primary/10",
                             activeTab === "supplements" 
                               ? "data-[state=checked]:bg-violet-500 data-[state=checked]:hover:bg-violet-600" 
                               : "data-[state=checked]:bg-blue-500 data-[state=checked]:hover:bg-blue-600"
                           )}
-                          onClick={() => setSelectedCategory("all")}
+                          onClick={() => setSelectedCategory(category.name)}
                         >
-                          همه دسته‌بندی‌ها
+                          {category.name}
                         </Badge>
-                        {relevantCategories.map(category => (
-                          <Badge 
-                            key={category.id} 
-                            variant={selectedCategory === category.name ? "default" : "outline"} 
-                            className={cn(
-                              "cursor-pointer transition-all hover:bg-primary/10",
-                              activeTab === "supplements" 
-                                ? "data-[state=checked]:bg-violet-500 data-[state=checked]:hover:bg-violet-600" 
-                                : "data-[state=checked]:bg-blue-500 data-[state=checked]:hover:bg-blue-600"
-                            )}
-                            onClick={() => setSelectedCategory(category.name)}
-                          >
-                            {category.name}
-                          </Badge>
-                        ))}
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -280,45 +278,43 @@ export function StudentSupplementDialog({
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.2}}
                       >
-                        <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
-                          <div 
-                            className={cn(
-                              "p-2 transition-all cursor-pointer hover:bg-muted/50 w-full rounded-lg",
+                        <div 
+                          className={cn(
+                            "p-4 transition-all cursor-pointer hover:bg-muted/50",
+                            isSelected(item.id) 
+                              ? "bg-violet-50 dark:bg-violet-900/20"
+                              : ""
+                          )}
+                          onClick={() => toggleItem(item.id)}
+                        >
+                          <div className="flex gap-3">
+                            <div className={cn(
+                              "w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors",
                               isSelected(item.id) 
-                                ? "bg-violet-50 dark:bg-violet-900/20"
-                                : ""
-                            )}
-                            onClick={() => toggleItem(item.id)}
-                          >
-                            <div className="flex gap-3">
-                              <div className={cn(
-                                "w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors",
-                                isSelected(item.id) 
-                                  ? "bg-violet-500"
-                                  : "border-2 border-muted-foreground/30"
-                              )}>
-                                {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
+                                ? "bg-violet-500"
+                                : "border-2 border-muted-foreground/30"
+                            )}>
+                              {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
+                            </div>
+                            
+                            <div className="flex-1">
+                              <div className="flex items-start justify-between">
+                                <h4 className="font-medium text-base text-foreground">{item.name}</h4>
+                                <div className="flex gap-1.5">
+                                  <span className="text-xs px-2 py-0.5 rounded-full border bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-400 border-violet-200 dark:border-violet-800">
+                                    {item.category}
+                                  </span>
+                                </div>
                               </div>
                               
-                              <div className="flex-1">
-                                <div className="flex items-start justify-between">
-                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                                  <div className="flex gap-1.5">
-                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-400 border-violet-200 dark:border-violet-800">
-                                      {item.category}
-                                    </span>
-                                  </div>
+                              <div className="flex gap-4 mt-1">
+                                <div className="text-xs flex items-center gap-1">
+                                  <span className="font-medium text-foreground">دوز مصرف:</span>
+                                  <span className="text-muted-foreground">{item.dosage}</span>
                                 </div>
-                                
-                                <div className="flex gap-4 mt-1">
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage)}</span>
-                                  </div>
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing}</span>
-                                  </div>
+                                <div className="text-xs flex items-center gap-1">
+                                  <span className="font-medium text-foreground">زمان مصرف:</span>
+                                  <span className="text-muted-foreground">{item.timing}</span>
                                 </div>
                               </div>
                             </div>
@@ -351,45 +347,43 @@ export function StudentSupplementDialog({
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.2}}
                       >
-                        <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
-                          <div 
-                            className={cn(
-                              "p-2 transition-all cursor-pointer hover:bg-muted/50 w-full rounded-lg",
+                        <div 
+                          className={cn(
+                            "p-4 transition-all cursor-pointer hover:bg-muted/50",
+                            isSelected(item.id) 
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : ""
+                          )}
+                          onClick={() => toggleItem(item.id)}
+                        >
+                          <div className="flex gap-3">
+                            <div className={cn(
+                              "w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors",
                               isSelected(item.id) 
-                                ? "bg-blue-50 dark:bg-blue-900/20"
-                                : ""
-                            )}
-                            onClick={() => toggleItem(item.id)}
-                          >
-                            <div className="flex gap-3">
-                              <div className={cn(
-                                "w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors",
-                                isSelected(item.id) 
-                                  ? "bg-blue-500"
-                                  : "border-2 border-muted-foreground/30"
-                              )}>
-                                {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
+                                ? "bg-blue-500"
+                                : "border-2 border-muted-foreground/30"
+                            )}>
+                              {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
+                            </div>
+                            
+                            <div className="flex-1">
+                              <div className="flex items-start justify-between">
+                                <h4 className="font-medium text-base text-foreground">{item.name}</h4>
+                                <div className="flex gap-1.5">
+                                  <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                                    {item.category}
+                                  </span>
+                                </div>
                               </div>
                               
-                              <div className="flex-1">
-                                <div className="flex items-start justify-between">
-                                  <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                                  <div className="flex gap-1.5">
-                                    <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                                      {item.category}
-                                    </span>
-                                  </div>
+                              <div className="flex gap-4 mt-1">
+                                <div className="text-xs flex items-center gap-1">
+                                  <span className="font-medium text-foreground">دوز مصرف:</span>
+                                  <span className="text-muted-foreground">{item.dosage}</span>
                                 </div>
-                                
-                                <div className="flex gap-4 mt-1">
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage)}</span>
-                                  </div>
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing}</span>
-                                  </div>
+                                <div className="text-xs flex items-center gap-1">
+                                  <span className="font-medium text-foreground">زمان مصرف:</span>
+                                  <span className="text-muted-foreground">{item.timing}</span>
                                 </div>
                               </div>
                             </div>

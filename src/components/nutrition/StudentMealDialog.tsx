@@ -6,9 +6,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { UtensilsCrossed } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Meal, MealType, WeekDay } from "@/types/meal";
+import StudentMealListWrapper from "./StudentMealListWrapper";
 import StudentMealHeader from "./StudentMealHeader";
 import StudentMealSearch from "./StudentMealSearch";
 import StudentMealFilters from "./StudentMealFilters";
@@ -48,15 +50,12 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     }
   }, [open, initialMeals]);
 
-  // Extract unique days and meal types from meals
-  const mealTypes = Array.from(new Set(meals.map(meal => meal.type))) as MealType[];
   const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
+  const mealTypes = Array.from(new Set(meals.map(meal => meal.type))) as MealType[];
 
-  // Sort days and meal types according to their natural order
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   const sortedDays = [...days].sort((a, b) => dayOrder[a] - dayOrder[b]);
 
-  // Apply filters and sorting
   const filteredMeals = useMealSorting({
     meals,
     searchQuery,
@@ -65,7 +64,6 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     sortOrder
   });
 
-  // Toggle meal selection
   const toggleMeal = (id: number) => {
     setSelectedMeals(prev => 
       prev.includes(id) 
@@ -74,12 +72,10 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     );
   };
 
-  // Toggle sorting order
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
-  // Handle save action
   const handleSave = () => {
     const success = onSave(selectedMeals);
     if (success) {
@@ -99,41 +95,73 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
 
         <Collapsible open={showFilters} onOpenChange={setShowFilters} className="w-full">
           <CollapsibleContent className="flex-shrink-0 bg-muted/10 border-b">
-            <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
-              <StudentMealFilters 
-                activeMealType={activeMealType}
-                setActiveMealType={setActiveMealType}
-                activeDay={activeDay}
-                setActiveDay={setActiveDay}
-                sortOrder={sortOrder}
-                toggleSortOrder={toggleSortOrder}
-                mealTypes={sortedMealTypes}
-                days={sortedDays}
-              />
-            </div>
+            <StudentMealFilters 
+              activeMealType={activeMealType}
+              setActiveMealType={setActiveMealType}
+              sortedMealTypes={sortedMealTypes}
+            />
           </CollapsibleContent>
         </Collapsible>
 
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full w-full">
-            <div className="p-4">
-              <StudentMealGroupedList 
-                meals={filteredMeals} 
-                selectedMeals={selectedMeals}
-                toggleMeal={toggleMeal}
-                activeMealType={activeMealType}
-                activeDay={activeDay}
-                sortOrder={sortOrder}
-              />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Tabs 
+            value={activeDay === "all" ? "all" : activeDay} 
+            onValueChange={value => setActiveDay(value as WeekDay | "all")} 
+            className="flex-1 flex flex-col overflow-hidden" 
+            dir="rtl"
+          >
+            <div className="border-b bg-muted/10 shrink-0">
+              <ScrollArea className="w-full" orientation="horizontal">
+                <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1" dir="rtl">
+                  <TabsTrigger 
+                    value="all" 
+                    className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                  >
+                    همه روزها
+                  </TabsTrigger>
+                  {sortedDays.map(day => (
+                    <TabsTrigger 
+                      key={day} 
+                      value={day} 
+                      className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                    >
+                      {day}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </ScrollArea>
             </div>
-          </ScrollArea>
+
+            <TabsContent 
+              value={activeDay === "all" ? "all" : activeDay.toString()} 
+              className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" 
+              dir="rtl"
+            >
+              <StudentMealListWrapper 
+                maxHeight="calc(100vh - 220px)" 
+                toggleSortOrder={toggleSortOrder} 
+                sortOrder={sortOrder} 
+                showControls={true}
+              >
+                <StudentMealGroupedList 
+                  filteredMeals={filteredMeals}
+                  selectedMeals={selectedMeals}
+                  toggleMeal={toggleMeal}
+                  activeDay={activeDay}
+                  activeMealType={activeMealType}
+                  sortedDays={sortedDays}
+                  sortedMealTypes={sortedMealTypes}
+                  dayOrder={dayOrder}
+                />
+              </StudentMealListWrapper>
+            </TabsContent>
+          </Tabs>
         </div>
 
         <StudentMealFooter 
           selectedMeals={selectedMeals} 
-          handleSave={handleSave} 
-          onOpenChange={onOpenChange}
-          meals={meals}
+          onSave={handleSave} 
+          onClose={() => onOpenChange(false)} 
         />
       </DialogContent>
     </Dialog>

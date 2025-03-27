@@ -6,26 +6,29 @@ import StudentMealItem from "./StudentMealItem";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { getMealTypeColor, getMealTypeIcon } from "./StudentMealFilters";
 import { Apple, Salad } from "lucide-react";
-import { mealTypeOrder, dayOrder } from "./useMealSorting";
 
 interface StudentMealGroupedListProps {
-  meals: Meal[];
+  filteredMeals: Meal[];
   selectedMeals: number[];
   toggleMeal: (id: number) => void;
-  activeMealType: MealType | "all";
   activeDay: WeekDay | "all";
-  sortOrder: "asc" | "desc";
+  activeMealType: MealType | "all";
+  sortedDays: WeekDay[];
+  sortedMealTypes: MealType[];
+  dayOrder: Record<WeekDay, number>;
 }
 
 const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
-  meals,
+  filteredMeals,
   selectedMeals,
   toggleMeal,
   activeDay,
   activeMealType,
-  sortOrder
+  sortedDays,
+  sortedMealTypes,
+  dayOrder
 }) => {
-  if (meals.length === 0) {
+  if (filteredMeals.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
         <Salad className="h-16 w-16 text-muted-foreground/50 mb-4" />
@@ -37,20 +40,20 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
     );
   }
 
-  // Get unique days from meals
-  const sortedDays = [...new Set(meals.map(meal => meal.day))]
-    .sort((a, b) => dayOrder[a] - dayOrder[b]);
-
-  // Get unique meal types from meals
-  const sortedMealTypes = [...new Set(meals.map(meal => meal.type))]
-    .sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
-
-  // Group meals by day with proper initialization for all weekdays in sorted order
-  const mealsByDay: Record<WeekDay, Meal[]> = {} as Record<WeekDay, Meal[]>;
+  // Group meals by day with proper initialization for all weekdays
+  const mealsByDay: Record<WeekDay, Meal[]> = {
+    "شنبه": [],
+    "یکشنبه": [],
+    "دوشنبه": [],
+    "سه شنبه": [],
+    "چهارشنبه": [],
+    "پنج شنبه": [],
+    "جمعه": []
+  };
   
   // Fill with meals
   sortedDays.forEach(day => {
-    mealsByDay[day] = meals.filter(meal => meal.day === day);
+    mealsByDay[day] = filteredMeals.filter(meal => meal.day === day);
   });
 
   // Show all meals if all days is selected
@@ -58,7 +61,7 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
     return (
       <div className="py-2">
         {sortedMealTypes.map(type => {
-          const mealsOfType = meals.filter(meal => meal.type === type);
+          const mealsOfType = filteredMeals.filter(meal => meal.type === type);
           
           if (mealsOfType.length === 0) return null;
           

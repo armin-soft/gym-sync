@@ -1,19 +1,13 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { MealType, WeekDay } from "@/types/meal";
-import { Apple, UtensilsCrossed, Salad, ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MealType } from "@/types/meal";
+import { Apple, UtensilsCrossed, Salad } from "lucide-react";
 
 interface StudentMealFiltersProps {
   activeMealType: MealType | "all";
   setActiveMealType: (type: MealType | "all") => void;
-  activeDay: WeekDay | "all";
-  setActiveDay: (day: WeekDay | "all") => void;
-  sortOrder: "asc" | "desc";
-  toggleSortOrder: () => void;
-  mealTypes: MealType[];
-  days: WeekDay[];
+  sortedMealTypes: MealType[];
 }
 
 export const getMealTypeColor = (type: MealType) => {
@@ -53,15 +47,10 @@ export const getMealTypeIcon = (type: MealType) => {
 const StudentMealFilters: React.FC<StudentMealFiltersProps> = ({
   activeMealType,
   setActiveMealType,
-  activeDay,
-  setActiveDay,
-  sortOrder,
-  toggleSortOrder,
-  mealTypes,
-  days
+  sortedMealTypes
 }) => {
   return (
-    <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm" dir="rtl">
+    <div className="p-4 flex flex-col gap-3" dir="rtl">
       <div>
         <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
         <div className="flex flex-wrap gap-1.5">
@@ -72,7 +61,7 @@ const StudentMealFilters: React.FC<StudentMealFiltersProps> = ({
           >
             همه وعده‌ها
           </Badge>
-          {mealTypes.map(type => (
+          {sortedMealTypes.map(type => (
             <Badge 
               key={type} 
               variant={activeMealType === type ? "default" : "outline"} 
@@ -84,41 +73,6 @@ const StudentMealFilters: React.FC<StudentMealFiltersProps> = ({
             </Badge>
           ))}
         </div>
-      </div>
-      
-      <div className="mt-2">
-        <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس روز هفته</h3>
-        <div className="flex flex-wrap gap-1.5">
-          <Badge 
-            variant={activeDay === "all" ? "default" : "outline"} 
-            className="cursor-pointer transition-all hover:bg-primary/10" 
-            onClick={() => setActiveDay("all")}
-          >
-            همه روزها
-          </Badge>
-          {days.map(day => (
-            <Badge 
-              key={day} 
-              variant={activeDay === day ? "default" : "outline"} 
-              className="cursor-pointer transition-all hover:bg-primary/10" 
-              onClick={() => setActiveDay(day)}
-            >
-              {day}
-            </Badge>
-          ))}
-        </div>
-      </div>
-      
-      <div className="mt-2 flex justify-end">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="flex items-center gap-1" 
-          onClick={toggleSortOrder}
-        >
-          <ArrowUpDown className="h-3.5 w-3.5" />
-          <span>مرتب‌سازی {sortOrder === "asc" ? "صعودی" : "نزولی"}</span>
-        </Button>
       </div>
     </div>
   );

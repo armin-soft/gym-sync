@@ -4,23 +4,20 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Save, X } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Meal } from "@/types/meal";
 
 interface StudentMealFooterProps {
   selectedMeals: number[];
-  handleSave: () => boolean;
-  onOpenChange: (open: boolean) => void;
-  meals: Meal[];
+  onSave: () => void;
+  onClose: () => void;
 }
 
 const StudentMealFooter: React.FC<StudentMealFooterProps> = ({
   selectedMeals,
-  handleSave,
-  onOpenChange,
-  meals
+  onSave,
+  onClose
 }) => {
   return (
-    <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm border-t p-4 mt-auto bg-muted/20 shrink-0" dir="rtl">
+    <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex justify-between text-right" dir="rtl">
       <div className="flex items-center gap-2">
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }} 
@@ -35,12 +32,12 @@ const StudentMealFooter: React.FC<StudentMealFooterProps> = ({
         </motion.div>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" onClick={() => onOpenChange(false)} className="gap-2">
+        <Button variant="outline" onClick={onClose} className="gap-2">
           <X className="h-4 w-4" />
           انصراف
         </Button>
         <Button 
-          onClick={handleSave} 
+          onClick={onSave} 
           className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0" 
           disabled={selectedMeals.length === 0}
         >
