@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Search, Save, X, Plus, Check, ChevronLeft, Pill, ListFilter, SlidersHorizontal, Beaker } from "lucide-react";
+import { Search, Save, X, Plus, Check, ChevronLeft, Pill, ListFilter, Beaker } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -45,7 +44,6 @@ export function StudentSupplementDialog({
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // Reset selected items and set to initial values when dialog is opened
   useEffect(() => {
     if (open) {
       console.log("Dialog opened with initialSupplements:", initialSupplements);
@@ -55,7 +53,6 @@ export function StudentSupplementDialog({
     }
   }, [open, initialSupplements, initialVitamins]);
 
-  // Load supplements from localStorage if not provided
   useEffect(() => {
     if (supplements.length === 0) {
       try {
@@ -72,7 +69,6 @@ export function StudentSupplementDialog({
     }
   }, [supplements, activeTab]);
 
-  // Filter items based on search, tab and category
   useEffect(() => {
     let filtered = supplements;
     if (searchQuery.trim() !== "") {
@@ -142,26 +138,6 @@ export function StudentSupplementDialog({
                   <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className={cn("h-9 w-9 border-muted transition-colors", showFilters && "bg-primary/10 text-primary")}
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        <SlidersHorizontal className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">فیلترها</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
             </div>
           </div>
 
@@ -190,37 +166,6 @@ export function StudentSupplementDialog({
               <Input placeholder={`جستجو در ${activeTab === "supplements" ? "مکمل‌ها" : "ویتامین‌ها"}...`} className="pl-3 pr-10 bg-background focus-visible:ring-primary/20 border-muted text-right" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
             </div>
           </div>
-
-          <AnimatePresence>
-            {showFilters && <motion.div initial={{
-            height: 0,
-            opacity: 0
-          }} animate={{
-            height: 'auto',
-            opacity: 1
-          }} exit={{
-            height: 0,
-            opacity: 0
-          }} transition={{
-            duration: 0.2
-          }} className="flex-shrink-0 overflow-hidden bg-muted/10 border-b">
-                <div className="p-4">
-                  <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
-                    <div>
-                      <h3 className="text-sm font-medium mb-2 text-foreground">فیلتر براساس دسته‌بندی</h3>
-                      <div className="flex flex-wrap gap-1.5">
-                        <Badge variant={selectedCategory === "all" ? "default" : "outline"} className={cn("cursor-pointer transition-all hover:bg-primary/10", activeTab === "supplements" ? "data-[state=checked]:bg-violet-500 data-[state=checked]:hover:bg-violet-600" : "data-[state=checked]:bg-blue-500 data-[state=checked]:hover:bg-blue-600")} onClick={() => setSelectedCategory("all")}>
-                          همه دسته‌بندی‌ها
-                        </Badge>
-                        {relevantCategories.map(category => <Badge key={category.id} variant={selectedCategory === category.name ? "default" : "outline"} className={cn("cursor-pointer transition-all hover:bg-primary/10", activeTab === "supplements" ? "data-[state=checked]:bg-violet-500 data-[state=checked]:hover:bg-violet-600" : "data-[state=checked]:bg-blue-500 data-[state=checked]:hover:bg-blue-600")} onClick={() => setSelectedCategory(category.name)}>
-                            {category.name}
-                          </Badge>)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>}
-          </AnimatePresence>
 
           <div className="flex-1 overflow-hidden">
             <TabsContent value="supplements" className="h-full">
