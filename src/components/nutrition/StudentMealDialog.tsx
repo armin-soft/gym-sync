@@ -6,11 +6,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { UtensilsCrossed } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Meal, MealType, WeekDay } from "@/types/meal";
-import StudentMealListWrapper from "./StudentMealListWrapper";
 import StudentMealHeader from "./StudentMealHeader";
 import StudentMealSearch from "./StudentMealSearch";
 import StudentMealFilters from "./StudentMealFilters";
@@ -50,12 +48,15 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     }
   }, [open, initialMeals]);
 
-  const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
+  // Extract unique days and meal types from meals
   const mealTypes = Array.from(new Set(meals.map(meal => meal.type))) as MealType[];
+  const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
 
+  // Sort days and meal types according to their natural order
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   const sortedDays = [...days].sort((a, b) => dayOrder[a] - dayOrder[b]);
 
+  // Apply filters and sorting
   const filteredMeals = useMealSorting({
     meals,
     searchQuery,
@@ -64,6 +65,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     sortOrder
   });
 
+  // Toggle meal selection
   const toggleMeal = (id: number) => {
     setSelectedMeals(prev => 
       prev.includes(id) 
@@ -72,10 +74,12 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     );
   };
 
+  // Toggle sorting order
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
+  // Handle save action
   const handleSave = () => {
     const success = onSave(selectedMeals);
     if (success) {
