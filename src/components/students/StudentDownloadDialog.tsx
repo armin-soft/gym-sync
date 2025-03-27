@@ -1,5 +1,6 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck, Database, Palette, Sparkles, Maximize2, Minimize2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface StudentDownloadDialogProps {
   open: boolean;
@@ -238,50 +238,8 @@ export const StudentDownloadDialog = ({
     setIsFullScreen(!isFullScreen);
   };
 
-  // Render based on fullscreen state
-  if (isFullScreen) {
-    return (
-      <Sheet 
-        open={open} 
-        onOpenChange={(newState) => {
-          if (!newState) setIsFullScreen(false);
-          onOpenChange(newState);
-        }}
-      >
-        <SheetContent 
-          className={cn(
-            "p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl w-full h-full",
-          )}
-          side="bottom"
-        >
-          {/* Sheet content */}
-          {renderDialogContent()}
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  return (
-    <Dialog 
-      open={open} 
-      onOpenChange={(newState) => {
-        if (!newState) setIsFullScreen(false);
-        onOpenChange(newState);
-      }}
-    >
-      <DialogContent 
-        className={cn(
-          "p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl sm:max-w-[650px] rounded-xl shadow-xl",
-        )}
-      >
-        {/* Dialog content */}
-        {renderDialogContent()}
-      </DialogContent>
-    </Dialog>
-  );
-
   // Helper function to render the dialog content
-  function renderDialogContent() {
+  const renderDialogContent = () => {
     return (
       <>
         <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
@@ -619,7 +577,12 @@ export const StudentDownloadDialog = ({
                 <span>{isDownloading ? 'در حال آماده‌سازی خروجی پی‌دی‌اف...' : 'در حال آماده‌سازی برای چاپ...'}</span>
                 <span className="persian-numbers">{toPersianNumbers(progress)}%</span>
               </div>
-              <Progress value={progress} className="h-2 bg-gray-200 dark:bg-gray-800" indicatorColor="bg-indigo-600 dark:bg-indigo-500" />
+              <Progress 
+                value={progress} 
+                className="h-2 bg-gray-200 dark:bg-gray-800" 
+                indicatorColor="bg-indigo-600 dark:bg-indigo-500" 
+                variant="gradient"
+              />
             </div>
           )}
           
@@ -689,10 +652,45 @@ export const StudentDownloadDialog = ({
         </div>
       </>
     );
+  };
+
+  // Render based on fullscreen state
+  if (isFullScreen) {
+    return (
+      <Sheet 
+        open={open} 
+        onOpenChange={(newState) => {
+          if (!newState) setIsFullScreen(false);
+          onOpenChange(newState);
+        }}
+      >
+        <SheetContent 
+          className="p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl w-full h-full"
+          side="bottom"
+        >
+          {renderDialogContent()}
+        </SheetContent>
+      </Sheet>
+    );
   }
+
+  return (
+    <Dialog 
+      open={open} 
+      onOpenChange={(newState) => {
+        if (!newState) setIsFullScreen(false);
+        onOpenChange(newState);
+      }}
+    >
+      <DialogContent 
+        className="p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl sm:max-w-[650px] rounded-xl shadow-xl"
+      >
+        {renderDialogContent()}
+      </DialogContent>
+    </Dialog>
+  );
 };
 
-// Helper function for combining class names
 function cn(...classes: any[]) {
   return classes.filter(Boolean).join(' ');
 }
