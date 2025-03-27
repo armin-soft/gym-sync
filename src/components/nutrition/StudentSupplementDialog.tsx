@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Search, Save, X, Plus, Check, ChevronLeft, Pill, LayoutGrid, ListFilter, SlidersHorizontal, Beaker } from "lucide-react";
+import { Search, Save, X, Plus, Check, ChevronLeft, Pill, ListFilter, SlidersHorizontal, Beaker } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +43,6 @@ export function StudentSupplementDialog({
   const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
   const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">("supplements");
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Load supplements from localStorage if not provided
@@ -167,32 +166,6 @@ export function StudentSupplementDialog({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className={cn("h-9 w-9 border-muted transition-colors", viewMode === "grid" && "bg-primary/10 text-primary")} onClick={() => setViewMode("grid")}>
-                        <LayoutGrid className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">نمایش شبکه‌ای</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className={cn("h-9 w-9 border-muted transition-colors", viewMode === "list" && "bg-primary/10 text-primary")} onClick={() => setViewMode("list")}>
-                        <ListFilter className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p className="text-xs font-medium">نمایش لیستی</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
                       <Button variant="outline" size="icon" className={cn("h-9 w-9 border-muted transition-colors", showFilters && "bg-primary/10 text-primary")} onClick={() => setShowFilters(!showFilters)}>
                         <SlidersHorizontal className="h-4 w-4" />
                       </Button>
@@ -296,59 +269,6 @@ export function StudentSupplementDialog({
                       هیچ مکملی یافت نشد
                     </h3>
                   </div>
-                ) : viewMode === "grid" ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                    {filteredItems.map(item => (
-                      <motion.div 
-                        key={item.id} 
-                        initial={{opacity: 0, scale: 0.95}}
-                        animate={{opacity: 1, scale: 1}}
-                        transition={{duration: 0.2}}
-                        layout
-                      >
-                        <div 
-                          className={cn(
-                            "p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow",
-                            isSelected(item.id) 
-                              ? "border-violet-300 bg-violet-50 dark:border-violet-700 dark:bg-violet-900/20"
-                              : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"
-                          )}
-                          onClick={() => toggleItem(item.id)}
-                        >
-                          <div className="flex gap-3 items-start">
-                            <div className={cn(
-                              "w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors",
-                              isSelected(item.id) 
-                                ? "bg-violet-500"
-                                : "border-2 border-muted-foreground/30"
-                            )}>
-                              {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
-                            </div>
-                            <div className="space-y-2">
-                              <div>
-                                <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                                  <span className="text-xs px-2 py-0.5 rounded-full border bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-400 border-violet-200 dark:border-violet-800">
-                                    {item.category}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="space-y-1">
-                                <div className="text-xs flex items-center gap-1">
-                                  <span className="font-medium text-foreground">دوز مصرف:</span>
-                                  <span className="text-muted-foreground">{item.dosage}</span>
-                                </div>
-                                <div className="text-xs flex items-center gap-1">
-                                  <span className="font-medium text-foreground">زمان مصرف:</span>
-                                  <span className="text-muted-foreground">{item.timing}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
                 ) : (
                   <div className="divide-y">
                     {filteredItems.map(item => (
@@ -417,59 +337,6 @@ export function StudentSupplementDialog({
                     <h3 className="font-medium text-lg text-foreground">
                       هیچ ویتامینی یافت نشد
                     </h3>
-                  </div>
-                ) : viewMode === "grid" ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                    {filteredItems.map(item => (
-                      <motion.div 
-                        key={item.id} 
-                        initial={{opacity: 0, scale: 0.95}}
-                        animate={{opacity: 1, scale: 1}}
-                        transition={{duration: 0.2}}
-                        layout
-                      >
-                        <div 
-                          className={cn(
-                            "p-4 rounded-xl border transition-all cursor-pointer shadow-sm hover:shadow",
-                            isSelected(item.id) 
-                              ? "border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20"
-                              : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"
-                          )}
-                          onClick={() => toggleItem(item.id)}
-                        >
-                          <div className="flex gap-3 items-start">
-                            <div className={cn(
-                              "w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors",
-                              isSelected(item.id) 
-                                ? "bg-blue-500"
-                                : "border-2 border-muted-foreground/30"
-                            )}>
-                              {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
-                            </div>
-                            <div className="space-y-2">
-                              <div>
-                                <h4 className="font-medium text-base text-foreground">{item.name}</h4>
-                                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                                  <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                                    {item.category}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="space-y-1">
-                                <div className="text-xs flex items-center gap-1">
-                                  <span className="font-medium text-foreground">دوز مصرف:</span>
-                                  <span className="text-muted-foreground">{item.dosage}</span>
-                                </div>
-                                <div className="text-xs flex items-center gap-1">
-                                  <span className="font-medium text-foreground">زمان مصرف:</span>
-                                  <span className="text-muted-foreground">{item.timing}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
                   </div>
                 ) : (
                   <div className="divide-y">
