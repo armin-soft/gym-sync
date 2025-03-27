@@ -22,9 +22,9 @@ export interface StudentDialogManagerRef {
   handleAdd: () => void;
   handleEdit: (student: Student) => void;
   handleAddExercise: (student: Student) => void;
-  handleAddDiet: () => void;
-  handleAddSupplement: () => void;
-  handleDownload: () => void;
+  handleAddDiet: (student: Student) => void;
+  handleAddSupplement: (student: Student) => void;
+  handleDownload: (student: Student) => void;
 }
 
 export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentDialogManagerProps>(({
