@@ -20,7 +20,7 @@ const StudentMealFooter: React.FC<StudentMealFooterProps> = ({
   meals
 }) => {
   return (
-    <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex justify-between text-right" dir="rtl">
+    <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm border-t p-4 mt-auto bg-muted/20 shrink-0" dir="rtl">
       <div className="flex items-center gap-2">
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }} 

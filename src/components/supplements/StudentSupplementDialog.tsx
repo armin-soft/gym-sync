@@ -23,6 +23,8 @@ interface StudentSupplementDialogProps {
   }) => boolean;
   initialSupplements: number[];
   initialVitamins: number[];
+  supplements?: any[];
+  categories?: any[];
 }
 
 export function StudentSupplementDialog({
@@ -31,7 +33,9 @@ export function StudentSupplementDialog({
   studentName,
   onSave,
   initialSupplements = [],
-  initialVitamins = []
+  initialVitamins = [],
+  supplements: propSupplements,
+  categories: propCategories
 }: StudentSupplementDialogProps) {
   const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
   const [selectedVitamins, setSelectedVitamins] = useState<number[]>([]);
@@ -51,28 +55,38 @@ export function StudentSupplementDialog({
     }
   }, [open, initialSupplements, initialVitamins]);
 
-  // Load supplements and categories from localStorage
+  // Load supplements and categories from localStorage or props
   useEffect(() => {
     try {
-      // Load supplements
-      const savedSupplements = localStorage.getItem("supplements");
-      if (savedSupplements) {
-        const parsedSupplements = JSON.parse(savedSupplements);
-        setSupplements(Array.isArray(parsedSupplements) ? parsedSupplements : []);
+      // First check if we have supplements from props
+      if (propSupplements && propSupplements.length > 0) {
+        setSupplements(propSupplements);
+      } else {
+        // Fallback to localStorage
+        const savedSupplements = localStorage.getItem("supplements");
+        if (savedSupplements) {
+          const parsedSupplements = JSON.parse(savedSupplements);
+          setSupplements(Array.isArray(parsedSupplements) ? parsedSupplements : []);
+        }
       }
 
-      // Load categories
-      const savedCategories = localStorage.getItem("supplementCategories");
-      if (savedCategories) {
-        const parsedCategories = JSON.parse(savedCategories);
-        setCategories(Array.isArray(parsedCategories) ? parsedCategories : []);
+      // First check if we have categories from props
+      if (propCategories && propCategories.length > 0) {
+        setCategories(propCategories);
+      } else {
+        // Fallback to localStorage
+        const savedCategories = localStorage.getItem("supplementCategories");
+        if (savedCategories) {
+          const parsedCategories = JSON.parse(savedCategories);
+          setCategories(Array.isArray(parsedCategories) ? parsedCategories : []);
+        }
       }
     } catch (error) {
       console.error("Error loading data:", error);
       setSupplements([]);
       setCategories([]);
     }
-  }, []);
+  }, [propSupplements, propCategories]);
 
   // Filter items based on search, tab and category
   useEffect(() => {
@@ -411,7 +425,7 @@ export function StudentSupplementDialog({
             </div>
 
             {/* Footer */}
-            <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex items-center justify-between">
+            <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm border-t mt-auto bg-muted/20 shrink-0">
               <div className="flex items-center gap-2">
                 <motion.div 
                   initial={{scale: 0.9, opacity: 0}}

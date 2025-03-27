@@ -61,7 +61,7 @@ const StudentMealFilters: React.FC<StudentMealFiltersProps> = ({
   days
 }) => {
   return (
-    <div className="p-4 flex flex-col gap-3 mb-4 rounded-xl bg-white border border-gray-100 shadow-sm" dir="rtl">
+    <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm" dir="rtl">
       <div>
         <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
         <div className="flex flex-wrap gap-1.5">
