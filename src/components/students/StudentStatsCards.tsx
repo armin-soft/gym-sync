@@ -1,3 +1,4 @@
+
 import React, { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { UserRound, Trophy, Scale, Ruler, Wallet, DollarSign, Dumbbell } from "lucide-react";
@@ -30,7 +31,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     return Math.round(sum / studentsWithHeight.length);
   }, [students]);
 
-  // محاسبه تعداد دقیق تمرین‌های انتخاب شده برای تمام شاگردان
+  // محاسبه دقیق تعداد تمرین‌های انتخاب شده برای تمام شاگردان
   const totalExercises = useMemo(() => {
     let totalCount = 0;
     
@@ -53,8 +54,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
       }
     });
     
-    // Subtract 3 from the total exercise count
-    return totalCount - 3;
+    return totalCount;
   }, [students]);
 
   // محاسبه مجموع درآمد با استفاده از داده‌های دقیق

@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from "react";
 import type { DashboardStats } from "@/types/dashboard";
-import { isValidPrice } from "@/utils/validation";
 
 export const useDashboardStats = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -33,19 +32,43 @@ export const useDashboardStats = () => {
       const exercises = cachedExercises ? JSON.parse(cachedExercises) : [];
       const trainerProfile = cachedTrainerProfile ? JSON.parse(cachedTrainerProfile) : {};
       
-      // محاسبه آمار در یک پیمایش
+      // محاسبه دقیق آمار
       let totalProgress = 0;
       let studentsWithMeals = 0;
       let studentsWithSupplements = 0;
+      let totalExercisesCount = 0;
 
       students.forEach((student: any) => {
         totalProgress += (student.progress || 0);
         
-        if (meals.some((meal: any) => meal.studentId === student.id)) {
+        // بررسی دقیق دانش‌آموزان دارای برنامه غذایی
+        const studentMeals = meals.filter((meal: any) => meal.studentId === student.id);
+        if (studentMeals.length > 0) {
           studentsWithMeals++;
         }
-        if (supplements.some((supplement: any) => supplement.studentId === student.id)) {
+        
+        // بررسی دقیق دانش‌آموزان دارای مکمل و ویتامین
+        const studentSupplements = supplements.filter((supplement: any) => supplement.studentId === student.id);
+        if (studentSupplements.length > 0) {
           studentsWithSupplements++;
+        }
+        
+        // محاسبه دقیق تعداد تمرین‌های اختصاص داده شده
+        const studentExercises = exercises.filter((exercise: any) => exercise.studentId === student.id);
+        totalExercisesCount += studentExercises.length;
+        
+        // بررسی تمرین‌های روزانه
+        if (Array.isArray(student.exercisesDay1)) {
+          totalExercisesCount += student.exercisesDay1.length;
+        }
+        if (Array.isArray(student.exercisesDay2)) {
+          totalExercisesCount += student.exercisesDay2.length;
+        }
+        if (Array.isArray(student.exercisesDay3)) {
+          totalExercisesCount += student.exercisesDay3.length;
+        }
+        if (Array.isArray(student.exercisesDay4)) {
+          totalExercisesCount += student.exercisesDay4.length;
         }
       });
 

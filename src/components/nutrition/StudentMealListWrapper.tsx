@@ -1,3 +1,4 @@
+
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
@@ -27,7 +28,18 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-8 w-8" 
+                  onClick={toggleSortOrder}
+                >
+                  {sortOrder === "asc" ? (
+                    <ArrowDownAZ className="h-4 w-4" />
+                  ) : (
+                    <ArrowUpZA className="h-4 w-4" />
+                  )}
+                </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 <p className="text-xs">تغییر ترتیب</p>
