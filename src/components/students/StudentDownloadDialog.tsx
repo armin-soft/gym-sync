@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { 
@@ -56,7 +55,7 @@ export const StudentDownloadDialog = ({
   const [activeTab, setActiveTab] = useState("summary");
   const [isSuccess, setIsSuccess] = useState<{download: boolean, print: boolean}>({download: false, print: false});
   const [progressValue, setProgressValue] = useState(0);
-  const [currentDate] = useState(formatPersianDateForFilename(false, true));
+  const [currentDate] = useState(formatPersianDateForFilename());
 
   useEffect(() => {
     try {
@@ -123,7 +122,6 @@ export const StudentDownloadDialog = ({
     try {
       setIsDownloading(true);
       
-      // Simulate processing time
       await new Promise(resolve => setTimeout(resolve, 800));
       
       const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile);
@@ -174,7 +172,6 @@ export const StudentDownloadDialog = ({
     try {
       setIsPrinting(true);
       
-      // Simulate processing time
       await new Promise(resolve => setTimeout(resolve, 800));
       
       const printWindow = openPrintWindow(student, exercises, meals, supplements, trainerProfile);
@@ -221,33 +218,28 @@ export const StudentDownloadDialog = ({
     supplements.find(sup => sup.id === id)
   ).filter(Boolean) || [];
 
-  // Calculate data completeness
   const calculateCompleteness = () => {
     if (!student) return 0;
     
     let score = 0;
     let totalItems = 5; // Basic profile items
     
-    // Basic info
     if (student.name) score++;
     if (student.phone) score++;
     if (student.height) score++;
     if (student.weight) score++;
     if (student.payment) score++;
     
-    // Exercise plans
     if (studentExercises.length > 0) {
       score += 1;
       totalItems += 1;
     }
     
-    // Meal plans
     if (studentMeals.length > 0) {
       score += 1;
       totalItems += 1;
     }
     
-    // Supplements
     if (studentSupplements.length > 0) {
       score += 1;
       totalItems += 1;
