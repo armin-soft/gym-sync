@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck, Database, Palette, Sparkles } from "lucide-react";
+import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck, Database, Palette, Sparkles, Maximize2, Minimize2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { TrainerProfile } from "@/types/trainer";
@@ -11,6 +11,8 @@ import { ProfileWarning } from "./ProfileWarning";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface StudentDownloadDialogProps {
   open: boolean;
@@ -52,6 +54,7 @@ export const StudentDownloadDialog = ({
   const [isSuccess, setIsSuccess] = useState<{download: boolean, print: boolean}>({download: false, print: false});
   const [progress, setProgress] = useState(0);
   const [exportStyle, setExportStyle] = useState<"modern" | "classic" | "minimal">("modern");
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -133,12 +136,18 @@ export const StudentDownloadDialog = ({
       setIsDownloading(true);
       simulateProgress('download');
       
-      const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile);
-      doc.save(`profile_${student.name}.pdf`);
+      // Use the selected style for PDF generation
+      const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile, exportStyle);
+      
+      // Create Persian filename with current date
+      const persianDate = new Date().toLocaleDateString('fa-IR').replace(/\//g, '-');
+      const fileName = `برنامه_${student.name}_${persianDate}.pdf`;
+      
+      doc.save(fileName);
       
       toast({
         title: "دانلود موفق",
-        description: "فایل PDF با موفقیت دانلود شد."
+        description: "فایل پی‌دی‌اف با موفقیت دانلود شد."
       });
       
     } catch (error) {
@@ -149,7 +158,7 @@ export const StudentDownloadDialog = ({
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "در هنگام دانلود فایل PDF خطایی رخ داد."
+        description: "در هنگام دانلود فایل پی‌دی‌اف خطایی رخ داد."
       });
     }
   };
@@ -177,7 +186,8 @@ export const StudentDownloadDialog = ({
       setIsPrinting(true);
       simulateProgress('print');
       
-      const printWindow = openPrintWindow(student, exercises, meals, supplements, trainerProfile);
+      // Use the selected style for print window
+      const printWindow = openPrintWindow(student, exercises, meals, supplements, trainerProfile, exportStyle);
       
       if (!printWindow) {
         setIsPrinting(false);
@@ -224,19 +234,51 @@ export const StudentDownloadDialog = ({
     vitamins.find(vitamin => vitamin.id === id)
   ).filter(Boolean) || [];
 
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen);
+  };
+
+  const DialogComponent = isFullScreen ? Sheet : Dialog;
+  const DialogContentComponent = isFullScreen ? SheetContent : DialogContent;
+
+  // Dialog or Sheet based on fullscreen state
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-white dark:bg-gray-950 rounded-xl shadow-xl border-0">
+    <DialogComponent 
+      open={open} 
+      onOpenChange={(newState) => {
+        // Reset fullscreen when closing
+        if (!newState) setIsFullScreen(false);
+        onOpenChange(newState);
+      }}
+    >
+      <DialogContentComponent 
+        className={cn(
+          "p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl",
+          isFullScreen ? "w-full h-full" : "sm:max-w-[650px] rounded-xl shadow-xl"
+        )}
+        side={isFullScreen ? "bottom" : undefined}
+      >
         <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
           <DialogHeader className="p-6 pb-0">
-            <DialogTitle className="flex items-center gap-3 text-2xl">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-                <FileText className="h-6 w-6 text-white" />
-              </div>
-              <span className="bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent font-bold">
-                خروجی و چاپ اطلاعات
-              </span>
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-3 text-2xl">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                  <FileText className="h-6 w-6 text-white" />
+                </div>
+                <span className="bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent font-bold">
+                  خروجی و چاپ اطلاعات
+                </span>
+              </DialogTitle>
+              
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={toggleFullScreen}
+                className="ml-2"
+              >
+                {isFullScreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
+              </Button>
+            </div>
             <DialogDescription className="text-base mt-2 text-gray-600 dark:text-gray-300">
               دانلود و چاپ اطلاعات کامل شاگرد به همراه تمام برنامه‌ها با قالب‌بندی حرفه‌ای
             </DialogDescription>
@@ -278,7 +320,7 @@ export const StudentDownloadDialog = ({
               </TabsTrigger>
             </TabsList>
             
-            <div className="overflow-y-auto max-h-[calc(80vh-180px)]">
+            <div className={`overflow-y-auto ${isFullScreen ? "max-h-[calc(100vh-180px)]" : "max-h-[calc(80vh-180px)]"}`}>
               <AnimatePresence mode="wait">
                 {!isProfileComplete && (
                   <motion.div 
@@ -340,8 +382,8 @@ export const StudentDownloadDialog = ({
                                 </div>
                                 <div>
                                   <h3 className="font-bold text-xl text-gray-900 dark:text-white">{student.name}</h3>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    قد: {student.height} سانتی‌متر - وزن: {student.weight} کیلوگرم
+                                  <p className="text-sm text-gray-500 dark:text-gray-400 persian-numbers">
+                                    قد: {toPersianNumbers(student.height)} سانتی‌متر - وزن: {toPersianNumbers(student.weight)} کیلوگرم
                                   </p>
                                 </div>
                               </div>
@@ -375,7 +417,7 @@ export const StudentDownloadDialog = ({
                                 {studentExercises.length > 4 && (
                                   <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
                                     <ChevronDown className="h-4 w-4" />
-                                    و {studentExercises.length - 4} مورد دیگر...
+                                    و <span className="persian-numbers">{toPersianNumbers(studentExercises.length - 4)}</span> مورد دیگر...
                                   </div>
                                 )}
                               </div>
@@ -403,7 +445,7 @@ export const StudentDownloadDialog = ({
                                 {studentMeals.length > 4 && (
                                   <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
                                     <ChevronDown className="h-4 w-4" />
-                                    و {studentMeals.length - 4} مورد دیگر...
+                                    و <span className="persian-numbers">{toPersianNumbers(studentMeals.length - 4)}</span> مورد دیگر...
                                   </div>
                                 )}
                               </div>
@@ -436,7 +478,7 @@ export const StudentDownloadDialog = ({
                                 {(studentSupplements.length + studentVitamins.length) > 4 && (
                                   <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
                                     <ChevronDown className="h-4 w-4" />
-                                    و {studentSupplements.length + studentVitamins.length - 4} مورد دیگر...
+                                    و <span className="persian-numbers">{toPersianNumbers(studentSupplements.length + studentVitamins.length - 4)}</span> مورد دیگر...
                                   </div>
                                 )}
                               </div>
@@ -449,7 +491,7 @@ export const StudentDownloadDialog = ({
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.4 }}
                           >
-                            این یک پیش‌نمایش از خروجی PDF و چاپ است. خروجی نهایی شامل تمامی جزئیات برنامه خواهد بود.
+                            این یک پیش‌نمایش از خروجی پی‌دی‌اف و چاپ است. خروجی نهایی شامل تمامی جزئیات برنامه خواهد بود.
                           </motion.div>
                         </motion.div>
                       )}
@@ -548,8 +590,8 @@ export const StudentDownloadDialog = ({
           {(isDownloading || isPrinting) && (
             <div className="mb-4">
               <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-                <span>{isDownloading ? 'در حال آماده‌سازی خروجی PDF...' : 'در حال آماده‌سازی برای چاپ...'}</span>
-                <span>{progress}%</span>
+                <span>{isDownloading ? 'در حال آماده‌سازی خروجی پی‌دی‌اف...' : 'در حال آماده‌سازی برای چاپ...'}</span>
+                <span className="persian-numbers">{toPersianNumbers(progress)}%</span>
               </div>
               <Progress value={progress} className="h-2 bg-gray-200 dark:bg-gray-800" indicatorColor="bg-indigo-600 dark:bg-indigo-500" />
             </div>
@@ -613,13 +655,18 @@ export const StudentDownloadDialog = ({
                   ) : (
                     <Download size={16} />
                   )}
-                  {isDownloading ? "در حال آماده‌سازی..." : isSuccess.download ? "دانلود شد" : "دانلود PDF"}
+                  {isDownloading ? "در حال آماده‌سازی..." : isSuccess.download ? "دانلود شد" : "دانلود پی‌دی‌اف"}
                 </Button>
               </motion.div>
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </DialogContentComponent>
+    </DialogComponent>
   );
 };
+
+// Helper function for combining class names
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(' ');
+}

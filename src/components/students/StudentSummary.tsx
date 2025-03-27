@@ -69,7 +69,7 @@ export const StudentSummary = ({
             </div>
             <div className="text-sm font-medium text-blue-700 dark:text-blue-400">شماره موبایل:</div>
           </div>
-          <div className="text-base text-slate-700 dark:text-slate-300 font-medium pr-11" dir="ltr">
+          <div className="text-base text-slate-700 dark:text-slate-300 font-medium pr-11 persian-numbers">
             {student?.phone ? toPersianNumbers(student.phone) : '-'}
           </div>
         </div>
@@ -81,8 +81,8 @@ export const StudentSummary = ({
             </div>
             <div className="text-sm font-medium text-purple-700 dark:text-purple-400">قد:</div>
           </div>
-          <div className="text-base text-slate-700 dark:text-slate-300 font-medium pr-11">
-            {student?.height ? toPersianNumbers(student.height) : '-'}
+          <div className="text-base text-slate-700 dark:text-slate-300 font-medium pr-11 persian-numbers">
+            {student?.height ? toPersianNumbers(student.height) : '-'} سانتی‌متر
           </div>
         </div>
         
@@ -93,8 +93,8 @@ export const StudentSummary = ({
             </div>
             <div className="text-sm font-medium text-teal-700 dark:text-teal-400">وزن:</div>
           </div>
-          <div className="text-base text-slate-700 dark:text-slate-300 font-medium pr-11">
-            {student?.weight ? toPersianNumbers(student.weight) : '-'}
+          <div className="text-base text-slate-700 dark:text-slate-300 font-medium pr-11 persian-numbers">
+            {student?.weight ? toPersianNumbers(student.weight) : '-'} کیلوگرم
           </div>
         </div>
       </motion.div>

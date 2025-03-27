@@ -1,8 +1,8 @@
-
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Student, Exercise, Meal, Supplement } from '@/components/students/StudentTypes';
 import { TrainerProfile } from '@/types/trainer';
+import { toPersianNumbers } from './numbers';
 
 const FONT_SIZE = 12;
 const LINE_HEIGHT = 1.15;
@@ -29,16 +29,37 @@ export const generateStudentPDF = (
   exercises: Exercise[], 
   meals: Meal[], 
   supplements: Supplement[],
-  trainerProfile: TrainerProfile
+  trainerProfile: TrainerProfile,
+  exportStyle: "modern" | "classic" | "minimal" = "modern"
 ) => {
   const doc = createDoc();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   
+  // Apply styling based on exportStyle
+  const styleConfig = getStyleConfig(exportStyle);
+  
   // Add header with gym and trainer info
   let currentY = MARGIN;
   doc.setFontSize(16);
   doc.setFont('IRANSans', 'bold');
+  
+  // Add gym logo/header based on style
+  if (exportStyle === "modern") {
+    // Modern style with gradient header
+    doc.setFillColor(...styleConfig.headerBgColor);
+    doc.rect(0, 0, pageWidth, 30, 'F');
+    doc.setTextColor(...styleConfig.headerTextColor);
+  } else if (exportStyle === "classic") {
+    // Classic style with border
+    doc.setDrawColor(...styleConfig.borderColor);
+    doc.setLineWidth(0.5);
+    doc.rect(MARGIN-5, MARGIN-5, pageWidth-2*(MARGIN-5), 25, 'S');
+    doc.setTextColor(...styleConfig.headerTextColor);
+  } else {
+    // Minimal style - just text
+    doc.setTextColor(...styleConfig.headerTextColor);
+  }
   
   // Add gym name
   const gymText = trainerProfile.gymName || 'باشگاه';
@@ -58,19 +79,33 @@ export const generateStudentPDF = (
     currentY += 10;
   }
   
+  // Reset text color after header
+  doc.setTextColor(0, 0, 0);
+  
   // Add dividing line
-  doc.setDrawColor(100, 100, 100);
-  doc.line(MARGIN, currentY, pageWidth - MARGIN, currentY);
+  if (exportStyle !== "minimal") {
+    doc.setDrawColor(...styleConfig.dividerColor);
+    doc.setLineWidth(styleConfig.dividerWidth);
+    doc.line(MARGIN, currentY, pageWidth - MARGIN, currentY);
+  }
   currentY += 10;
 
   // Add student info header
   doc.setFontSize(14);
   doc.setFont('IRANSans', 'bold');
+  
+  if (exportStyle === "modern") {
+    doc.setTextColor(...styleConfig.sectionTitleColor);
+  }
+  
   const headerText = 'مشخصات فردی شاگرد';
   const headerWidth = doc.getTextWidth(headerText);
   const headerX = (pageWidth - headerWidth) / 2;
   doc.text(headerText, headerX, currentY);
   currentY += 10;
+
+  // Reset color
+  doc.setTextColor(0, 0, 0);
 
   // Add student info
   const lineHeight = 7;
@@ -89,11 +124,12 @@ export const generateStudentPDF = (
     currentY += lineHeight;
   };
 
+  // Convert numbers to Persian and add units
   addInfoLine('نام و نام خانوادگی', student.name || 'وارد نشده');
-  addInfoLine('شماره تلفن', student.phone || 'وارد نشده');
-  addInfoLine('قد', student.height ? `${student.height} cm` : 'وارد نشده');
-  addInfoLine('وزن', student.weight ? `${student.weight} kg` : 'وارد نشده');
-  addInfoLine('مبلغ برنامه', student.payment ? `${student.payment} تومان` : 'وارد نشده');
+  addInfoLine('شماره تلفن', student.phone ? toPersianNumbers(student.phone) : 'وارد نشده');
+  addInfoLine('قد', student.height ? `${toPersianNumbers(student.height)} سانتی‌متر` : 'وارد نشده');
+  addInfoLine('وزن', student.weight ? `${toPersianNumbers(student.weight)} کیلوگرم` : 'وارد نشده');
+  addInfoLine('مبلغ برنامه', student.payment ? `${toPersianNumbers(student.payment)} تومان` : 'وارد نشده');
 
   // Add exercises table
   currentY += 10;
@@ -105,11 +141,19 @@ export const generateStudentPDF = (
     
     doc.setFontSize(FONT_SIZE);
     doc.setFont('IRANSans', 'bold');
+    
+    if (exportStyle === "modern") {
+      doc.setTextColor(...styleConfig.sectionTitleColor);
+    }
+    
     const exercisesHeaderText = 'برنامه تمرینی';
     const exercisesHeaderWidth = doc.getTextWidth(exercisesHeaderText);
     const exercisesHeaderX = (pageWidth - exercisesHeaderWidth) / 2;
     doc.text(exercisesHeaderText, exercisesHeaderX, currentY);
 
+    // Reset color
+    doc.setTextColor(0, 0, 0);
+    
     currentY += 10;
 
     // Fix setGlobalAlpha issues by using setFillColor with RGBA values
@@ -128,18 +172,18 @@ export const generateStudentPDF = (
       useCss: true,
       styles: {
         font: 'IRANSans',
-        fontSize: 9,
+        fontSize: styleConfig.tableFontSize,
         textColor: [0, 0, 0],
-        lineColor: [0, 0, 0],
-        lineWidth: 0.2,
-        cellPadding: 4,
+        lineColor: styleConfig.tableLineColor,
+        lineWidth: styleConfig.tableLineWidth,
+        cellPadding: styleConfig.tableCellPadding,
         overflow: 'linebreak',
         halign: 'right',
         valign: 'middle',
         fontStyle: 'normal'
       },
       headStyles: {
-        fillColor: [220, 220, 220],
+        fillColor: styleConfig.tableHeaderFillColor,
         textColor: [0, 0, 0],
         fontStyle: 'bold',
         halign: 'center'
@@ -167,11 +211,19 @@ export const generateStudentPDF = (
     
     doc.setFontSize(FONT_SIZE);
     doc.setFont('IRANSans', 'bold');
+    
+    if (exportStyle === "modern") {
+      doc.setTextColor(...styleConfig.sectionTitleColor);
+    }
+    
     const mealsHeaderText = 'برنامه غذایی';
     const mealsHeaderWidth = doc.getTextWidth(mealsHeaderText);
     const mealsHeaderX = (pageWidth - mealsHeaderWidth) / 2;
     doc.text(mealsHeaderText, mealsHeaderX, currentY);
 
+    // Reset color
+    doc.setTextColor(0, 0, 0);
+    
     currentY += 10;
 
     // Add meals table
@@ -187,18 +239,18 @@ export const generateStudentPDF = (
       useCss: true,
       styles: {
         font: 'IRANSans',
-        fontSize: 9,
+        fontSize: styleConfig.tableFontSize,
         textColor: [0, 0, 0],
-        lineColor: [0, 0, 0],
-        lineWidth: 0.2,
-        cellPadding: 4,
+        lineColor: styleConfig.tableLineColor,
+        lineWidth: styleConfig.tableLineWidth,
+        cellPadding: styleConfig.tableCellPadding,
         overflow: 'linebreak',
         halign: 'right',
         valign: 'middle',
         fontStyle: 'normal'
       },
       headStyles: {
-        fillColor: [220, 220, 220],
+        fillColor: styleConfig.tableHeaderFillColor,
         textColor: [0, 0, 0],
         fontStyle: 'bold',
         halign: 'center'
@@ -226,11 +278,19 @@ export const generateStudentPDF = (
     
     doc.setFontSize(FONT_SIZE);
     doc.setFont('IRANSans', 'bold');
+    
+    if (exportStyle === "modern") {
+      doc.setTextColor(...styleConfig.sectionTitleColor);
+    }
+    
     const supplementsHeaderText = 'مکمل‌ها و ویتامین‌ها';
     const supplementsHeaderWidth = doc.getTextWidth(supplementsHeaderText);
     const supplementsHeaderX = (pageWidth - supplementsHeaderWidth) / 2;
     doc.text(supplementsHeaderText, supplementsHeaderX, currentY);
 
+    // Reset color
+    doc.setTextColor(0, 0, 0);
+    
     currentY += 10;
 
     // Add supplements table
@@ -247,18 +307,18 @@ export const generateStudentPDF = (
       useCss: true,
       styles: {
         font: 'IRANSans',
-        fontSize: 9,
+        fontSize: styleConfig.tableFontSize,
         textColor: [0, 0, 0],
-        lineColor: [0, 0, 0],
-        lineWidth: 0.2,
-        cellPadding: 4,
+        lineColor: styleConfig.tableLineColor,
+        lineWidth: styleConfig.tableLineWidth,
+        cellPadding: styleConfig.tableCellPadding,
         overflow: 'linebreak',
         halign: 'right',
         valign: 'middle',
         fontStyle: 'normal'
       },
       headStyles: {
-        fillColor: [220, 220, 220],
+        fillColor: styleConfig.tableHeaderFillColor,
         textColor: [0, 0, 0],
         fontStyle: 'bold',
         halign: 'center'
@@ -279,7 +339,7 @@ export const generateStudentPDF = (
     
     let contactInfo = '';
     if (trainerProfile.gymAddress) contactInfo += `آدرس: ${trainerProfile.gymAddress} `;
-    if (trainerProfile.phone) contactInfo += `تلفن: ${trainerProfile.phone}`;
+    if (trainerProfile.phone) contactInfo += `تلفن: ${toPersianNumbers(trainerProfile.phone)}`;
     
     const contactWidth = doc.getTextWidth(contactInfo);
     const contactX = (pageWidth - contactWidth) / 2;
@@ -295,7 +355,8 @@ export const openPrintWindow = (
   exercises: Exercise[], 
   meals: Meal[], 
   supplements: Supplement[],
-  trainerProfile: TrainerProfile
+  trainerProfile: TrainerProfile,
+  exportStyle: "modern" | "classic" | "minimal" = "modern"
 ) => {
   const printWindow = window.open('', '_blank');
   
@@ -315,6 +376,9 @@ export const openPrintWindow = (
   const studentSupplements = student.supplements?.map(id => 
     supplements.find(sup => sup.id === id)
   ).filter(Boolean) || [];
+  
+  // Get style-specific CSS classes
+  const styleClasses = getPrintStyleClasses(exportStyle);
   
   printWindow.document.write(`
     <!DOCTYPE html>
@@ -337,24 +401,34 @@ export const openPrintWindow = (
           padding: 20px;
           max-width: 800px;
           margin: 0 auto;
+          ${styleClasses.body}
+        }
+        .persian-numbers {
+          -moz-font-feature-settings: "ss01";
+          -webkit-font-feature-settings: "ss01";
+          font-feature-settings: "ss01";
         }
         .header {
           text-align: center;
           margin-bottom: 30px;
           padding-bottom: 10px;
           border-bottom: 1px solid #ccc;
+          ${styleClasses.header}
         }
         .gym-name {
           font-size: 24px;
           font-weight: bold;
           margin-bottom: 5px;
+          ${styleClasses.gymName}
         }
         .trainer-name {
           font-size: 16px;
           color: #666;
+          ${styleClasses.trainerName}
         }
         .section {
           margin-bottom: 30px;
+          ${styleClasses.section}
         }
         .section-title {
           font-size: 18px;
@@ -362,36 +436,44 @@ export const openPrintWindow = (
           margin-bottom: 15px;
           border-bottom: 1px solid #eee;
           padding-bottom: 5px;
+          ${styleClasses.sectionTitle}
         }
         .info-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
+          ${styleClasses.infoGrid}
         }
         .info-item {
           margin-bottom: 5px;
+          ${styleClasses.infoItem}
         }
         .info-label {
           font-weight: bold;
           display: inline-block;
           min-width: 120px;
+          ${styleClasses.infoLabel}
         }
         table {
           width: 100%;
           border-collapse: collapse;
           margin-top: 10px;
+          ${styleClasses.table}
         }
         th, td {
           border: 1px solid #ddd;
           padding: 8px;
           text-align: right;
+          ${styleClasses.tableCell}
         }
         th {
           background-color: #f2f2f2;
           font-weight: bold;
+          ${styleClasses.tableHeader}
         }
         tr:nth-child(even) {
           background-color: #f9f9f9;
+          ${styleClasses.tableRowEven}
         }
         .footer {
           margin-top: 40px;
@@ -400,6 +482,7 @@ export const openPrintWindow = (
           color: #666;
           padding-top: 10px;
           border-top: 1px solid #eee;
+          ${styleClasses.footer}
         }
         @media print {
           body {
@@ -438,10 +521,10 @@ export const openPrintWindow = (
         <div class="section-title">مشخصات فردی شاگرد</div>
         <div class="info-grid">
           <div class="info-item"><span class="info-label">نام و نام خانوادگی:</span> ${student.name || 'وارد نشده'}</div>
-          <div class="info-item"><span class="info-label">شماره تلفن:</span> ${student.phone || 'وارد نشده'}</div>
-          <div class="info-item"><span class="info-label">قد:</span> ${student.height ? `${student.height} سانتی‌متر` : 'وارد نشده'}</div>
-          <div class="info-item"><span class="info-label">وزن:</span> ${student.weight ? `${student.weight} کیلوگرم` : 'وارد نشده'}</div>
-          <div class="info-item"><span class="info-label">مبلغ برنامه:</span> ${student.payment ? `${student.payment} تومان` : 'وارد نشده'}</div>
+          <div class="info-item"><span class="info-label">شماره تلفن:</span> <span class="persian-numbers">${student.phone ? toPersianNumbers(student.phone) : 'وارد نشده'}</span></div>
+          <div class="info-item"><span class="info-label">قد:</span> <span class="persian-numbers">${student.height ? `${toPersianNumbers(student.height)} سانتی‌متر` : 'وارد نشده'}</span></div>
+          <div class="info-item"><span class="info-label">وزن:</span> <span class="persian-numbers">${student.weight ? `${toPersianNumbers(student.weight)} کیلوگرم` : 'وارد نشده'}</span></div>
+          <div class="info-item"><span class="info-label">مبلغ برنامه:</span> <span class="persian-numbers">${student.payment ? `${toPersianNumbers(student.payment)} تومان` : 'وارد نشده'}</span></div>
         </div>
       </div>
       
@@ -460,7 +543,7 @@ export const openPrintWindow = (
           <tbody>
             ${studentExercises.map((exercise: any, index: number) => `
               <tr>
-                <td>${index + 1}</td>
+                <td class="persian-numbers">${toPersianNumbers(index + 1)}</td>
                 <td>${exercise.name}</td>
                 <td>${exercise.category || ''}</td>
                 <td>${exercise.description || ''}</td>
@@ -486,7 +569,7 @@ export const openPrintWindow = (
           <tbody>
             ${studentMeals.map((meal: any, index: number) => `
               <tr>
-                <td>${index + 1}</td>
+                <td class="persian-numbers">${toPersianNumbers(index + 1)}</td>
                 <td>${meal.name}</td>
                 <td>${meal.category || ''}</td>
                 <td>${meal.description || ''}</td>
@@ -513,7 +596,7 @@ export const openPrintWindow = (
           <tbody>
             ${studentSupplements.map((supplement: any, index: number) => `
               <tr>
-                <td>${index + 1}</td>
+                <td class="persian-numbers">${toPersianNumbers(index + 1)}</td>
                 <td>${supplement.name}</td>
                 <td>${supplement.type || ''}</td>
                 <td>${supplement.dosage || ''}</td>
@@ -527,7 +610,7 @@ export const openPrintWindow = (
       
       <div class="footer">
         ${trainerProfile.gymAddress ? `آدرس: ${trainerProfile.gymAddress}` : ''}
-        ${trainerProfile.phone ? ` | تلفن: ${trainerProfile.phone}` : ''}
+        ${trainerProfile.phone ? ` | تلفن: <span class="persian-numbers">${toPersianNumbers(trainerProfile.phone)}</span>` : ''}
       </div>
     </body>
     </html>
@@ -536,6 +619,111 @@ export const openPrintWindow = (
   printWindow.document.close();
   return printWindow;
 };
+
+// Helper function to get style configuration based on export style
+function getStyleConfig(exportStyle: "modern" | "classic" | "minimal") {
+  switch(exportStyle) {
+    case "modern":
+      return {
+        headerBgColor: [100, 100, 255, 0.7],  // RGBA for modern gradient header
+        headerTextColor: [255, 255, 255],
+        dividerColor: [100, 100, 255],
+        dividerWidth: 0.5,
+        sectionTitleColor: [100, 100, 255],
+        tableHeaderFillColor: [220, 230, 255],
+        tableLineColor: [50, 100, 200],
+        tableLineWidth: 0.2,
+        tableFontSize: 9,
+        tableCellPadding: 4
+      };
+    case "classic":
+      return {
+        headerBgColor: [255, 255, 255],
+        headerTextColor: [0, 0, 0],
+        borderColor: [0, 0, 0],
+        dividerColor: [0, 0, 0],
+        dividerWidth: 0.5,
+        sectionTitleColor: [0, 0, 0],
+        tableHeaderFillColor: [240, 240, 240],
+        tableLineColor: [0, 0, 0],
+        tableLineWidth: 0.2,
+        tableFontSize: 10,
+        tableCellPadding: 5
+      };
+    case "minimal":
+    default:
+      return {
+        headerBgColor: [255, 255, 255],
+        headerTextColor: [0, 0, 0],
+        dividerColor: [200, 200, 200],
+        dividerWidth: 0.2,
+        sectionTitleColor: [0, 0, 0],
+        tableHeaderFillColor: [245, 245, 245],
+        tableLineColor: [200, 200, 200],
+        tableLineWidth: 0.1,
+        tableFontSize: 8,
+        tableCellPadding: 3
+      };
+  }
+}
+
+// Helper function to get print window style classes based on export style
+function getPrintStyleClasses(exportStyle: "modern" | "classic" | "minimal") {
+  switch(exportStyle) {
+    case "modern":
+      return {
+        body: 'background-color: #fafbff;',
+        header: 'background: linear-gradient(135deg, #6464ff, #8a64ff); padding: 20px; color: white; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);',
+        gymName: 'color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);',
+        trainerName: 'color: rgba(255,255,255,0.9);',
+        section: 'background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);',
+        sectionTitle: 'color: #5050ff; border-bottom: 2px solid #e0e0ff;',
+        infoGrid: 'background: #f8f9ff; border-radius: 8px; padding: 10px;',
+        infoItem: 'padding: 5px; border-bottom: 1px solid #eef0ff;',
+        infoLabel: 'color: #5050ff;',
+        table: 'border-radius: 5px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);',
+        tableHeader: 'background: linear-gradient(to right, #e0e5ff, #d0d8ff); color: #4040cc;',
+        tableCell: 'border: 1px solid #e0e5ff;',
+        tableRowEven: 'background-color: #f5f7ff;',
+        footer: 'color: #8888aa; border-top: 1px solid #e0e5ff;'
+      };
+    case "classic":
+      return {
+        body: 'background-color: #fff; font-family: serif;',
+        header: 'border: 2px solid #000; padding: 15px;',
+        gymName: 'font-family: serif; letter-spacing: 1px;',
+        trainerName: 'font-style: italic;',
+        section: 'margin-bottom: 30px; border: 1px solid #ddd;',
+        sectionTitle: 'font-family: serif; text-align: center; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #000;',
+        infoGrid: '',
+        infoItem: 'padding: 5px; border-bottom: 1px solid #eee;',
+        infoLabel: 'text-transform: uppercase; letter-spacing: 0.5px;',
+        table: 'border: 2px solid #000;',
+        tableHeader: 'background-color: #eee; border: 1px solid #000;',
+        tableCell: 'border: 1px solid #000;',
+        tableRowEven: 'background-color: #f5f5f5;',
+        footer: 'font-style: italic; border-top: 2px solid #000;'
+      };
+    case "minimal":
+    default:
+      return {
+        body: 'background-color: #fff; color: #333;',
+        header: 'padding: 10px; border-bottom: 1px solid #eee;',
+        gymName: '',
+        trainerName: '',
+        section: '',
+        sectionTitle: 'font-size: 16px; color: #555;',
+        infoGrid: '',
+        infoItem: '',
+        infoLabel: '',
+        table: 'border: 1px solid #eee;',
+        tableHeader: 'background-color: #f9f9f9; font-weight: normal;',
+        tableCell: 'border: 1px solid #eee;',
+        tableRowEven: 'background-color: #fcfcfc;',
+        footer: 'color: #999; font-size: 11px;'
+      };
+  }
+}
 
 // The original exportPDF function - keeping for backward compatibility
 const exportPDF = async (student: Student) => {
@@ -568,10 +756,10 @@ const exportPDF = async (student: Student) => {
   };
 
   addInfoLine('نام و نام خانوادگی', student.name || 'وارد نشده');
-  addInfoLine('شماره تلفن', student.phone || 'وارد نشده');
-  addInfoLine('قد', student.height ? `${student.height} cm` : 'وارد نشده');
-  addInfoLine('وزن', student.weight ? `${student.weight} kg` : 'وارد نشده');
-  addInfoLine('مبلغ برنامه', student.payment ? `${student.payment} تومان` : 'وارد نشده');
+  addInfoLine('شماره تلفن', student.phone ? toPersianNumbers(student.phone) : 'وارد نشده');
+  addInfoLine('قد', student.height ? `${toPersianNumbers(student.height)} سانتی‌متر` : 'وارد نشده');
+  addInfoLine('وزن', student.weight ? `${toPersianNumbers(student.weight)} کیلوگرم` : 'وارد نشده');
+  addInfoLine('مبلغ برنامه', student.payment ? `${toPersianNumbers(student.payment)} تومان` : 'وارد نشده');
 
   // Add exercises table
   currentY += 10;
@@ -625,8 +813,12 @@ const exportPDF = async (student: Student) => {
     });
   }
 
-  // Save the PDF
-  doc.save(`${student.name}.pdf`);
+  // Create Persian filename with current date
+  const persianDate = new Date().toLocaleDateString('fa-IR').replace(/\//g, '-');
+  const fileName = `برنامه_${student.name}_${persianDate}.pdf`;
+  
+  // Save the PDF with Persian name
+  doc.save(fileName);
   
   return doc;
 };
