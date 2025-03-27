@@ -175,6 +175,9 @@ export const StudentSummary = ({
                     <Pill className="size-3 text-purple-600 dark:text-purple-400" />
                   </div>
                   <span>{item.name}</span>
+                  <span className="text-xs text-purple-600 dark:text-purple-400 mr-auto bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded-full">
+                    {item.type === 'supplement' ? 'مکمل' : 'ویتامین'}
+                  </span>
                 </li>
               ))}
           </ul>
