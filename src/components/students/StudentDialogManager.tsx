@@ -1,8 +1,9 @@
+
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
 import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
-import { StudentSupplementDialog } from "@/components/supplements/StudentSupplementDialog";
+import { StudentSupplementDialog } from "@/components/nutrition/StudentSupplementDialog";
 import StudentMealDialog from "@/components/nutrition/StudentMealDialog";
 import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
 import { Student } from "@/components/students/StudentTypes";
@@ -208,6 +209,8 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         onSave={handleSaveSupplementsWrapper}
         initialSupplements={selectedStudentForSupplement?.supplements || []}
         initialVitamins={selectedStudentForSupplement?.vitamins || []}
+        supplements={supplements}
+        categories={[]}
       />
 
       <StudentDownloadDialog
