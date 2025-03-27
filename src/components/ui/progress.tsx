@@ -1,20 +1,16 @@
 
 import * as React from "react"
+
 import { cn } from "@/lib/utils"
 
 interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: number
   max?: number
   indicatorColor?: string
-  showValue?: boolean
-  size?: "sm" | "md" | "lg"
-  animated?: boolean
 }
 
 const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
-  ({ className, value, max = 100, indicatorColor, showValue = false, size = "md", animated = false, ...props }, ref) => {
-    const percentage = value ? Math.round((value / max) * 100) : 0;
-    
+  ({ className, value, max = 100, indicatorColor, ...props }, ref) => {
     return (
       <div
         ref={ref}
@@ -23,35 +19,17 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
         aria-valuemax={max}
         aria-valuenow={value}
         className={cn(
-          "relative overflow-hidden rounded-full bg-primary/10",
-          {
-            "h-1.5": size === "sm",
-            "h-2.5": size === "md",
-            "h-3.5": size === "lg",
-          },
-          "w-full",
+          "relative h-2 w-full overflow-hidden rounded-full bg-primary/10",
           className
         )}
         {...props}
       >
         <div
-          className={cn(
-            "h-full w-full flex-1 bg-primary transition-all",
-            {
-              "animate-pulse": animated && percentage < 100,
-            },
-            indicatorColor
-          )}
+          className={cn("h-full w-full flex-1 bg-primary transition-all", indicatorColor)}
           style={{
-            transform: `translateX(${value ? 100 - percentage : 100}%)`,
+            transform: `translateX(${value ? 100 - (value / max) * 100 : 0}%)`,
           }}
         />
-        
-        {showValue && (
-          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-white">
-            {percentage}%
-          </span>
-        )}
       </div>
     )
   }
