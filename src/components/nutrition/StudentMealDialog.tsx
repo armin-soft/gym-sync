@@ -95,73 +95,41 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
 
         <Collapsible open={showFilters} onOpenChange={setShowFilters} className="w-full">
           <CollapsibleContent className="flex-shrink-0 bg-muted/10 border-b">
-            <StudentMealFilters 
-              activeMealType={activeMealType}
-              setActiveMealType={setActiveMealType}
-              sortedMealTypes={sortedMealTypes}
-            />
+            <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
+              <StudentMealFilters 
+                activeMealType={activeMealType}
+                setActiveMealType={setActiveMealType}
+                activeDay={activeDay}
+                setActiveDay={setActiveDay}
+                sortOrder={sortOrder}
+                toggleSortOrder={toggleSortOrder}
+                mealTypes={sortedMealTypes}
+                days={sortedDays}
+              />
+            </div>
           </CollapsibleContent>
         </Collapsible>
 
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Tabs 
-            value={activeDay === "all" ? "all" : activeDay} 
-            onValueChange={value => setActiveDay(value as WeekDay | "all")} 
-            className="flex-1 flex flex-col overflow-hidden" 
-            dir="rtl"
-          >
-            <div className="border-b bg-muted/10 shrink-0">
-              <ScrollArea className="w-full" orientation="horizontal">
-                <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1" dir="rtl">
-                  <TabsTrigger 
-                    value="all" 
-                    className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
-                  >
-                    همه روزها
-                  </TabsTrigger>
-                  {sortedDays.map(day => (
-                    <TabsTrigger 
-                      key={day} 
-                      value={day} 
-                      className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
-                    >
-                      {day}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </ScrollArea>
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full w-full">
+            <div className="p-4">
+              <StudentMealGroupedList 
+                meals={filteredMeals} 
+                selectedMeals={selectedMeals}
+                toggleMeal={toggleMeal}
+                activeMealType={activeMealType}
+                activeDay={activeDay}
+                sortOrder={sortOrder}
+              />
             </div>
-
-            <TabsContent 
-              value={activeDay === "all" ? "all" : activeDay.toString()} 
-              className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" 
-              dir="rtl"
-            >
-              <StudentMealListWrapper 
-                maxHeight="calc(100vh - 220px)" 
-                toggleSortOrder={toggleSortOrder} 
-                sortOrder={sortOrder} 
-                showControls={true}
-              >
-                <StudentMealGroupedList 
-                  filteredMeals={filteredMeals}
-                  selectedMeals={selectedMeals}
-                  toggleMeal={toggleMeal}
-                  activeDay={activeDay}
-                  activeMealType={activeMealType}
-                  sortedDays={sortedDays}
-                  sortedMealTypes={sortedMealTypes}
-                  dayOrder={dayOrder}
-                />
-              </StudentMealListWrapper>
-            </TabsContent>
-          </Tabs>
+          </ScrollArea>
         </div>
 
         <StudentMealFooter 
           selectedMeals={selectedMeals} 
-          onSave={handleSave} 
-          onClose={() => onOpenChange(false)} 
+          handleSave={handleSave} 
+          onOpenChange={onOpenChange}
+          meals={meals}
         />
       </DialogContent>
     </Dialog>
