@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck } from "lucide-react";
+import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck, Database, Palette, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { TrainerProfile } from "@/types/trainer";
@@ -9,7 +9,8 @@ import { generateStudentPDF, openPrintWindow } from "@/lib/utils/export";
 import { StudentSummary } from "./StudentSummary";
 import { ProfileWarning } from "./ProfileWarning";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Progress } from "@/components/ui/progress";
 
 interface StudentDownloadDialogProps {
   open: boolean;
@@ -49,22 +50,31 @@ export const StudentDownloadDialog = ({
   const [isPrinting, setIsPrinting] = useState(false);
   const [activeTab, setActiveTab] = useState("summary");
   const [isSuccess, setIsSuccess] = useState<{download: boolean, print: boolean}>({download: false, print: false});
+  const [progress, setProgress] = useState(0);
+  const [exportStyle, setExportStyle] = useState<"modern" | "classic" | "minimal">("modern");
 
   useEffect(() => {
-    try {
-      const savedProfile = localStorage.getItem('trainerProfile');
-      if (savedProfile) {
-        const profile = JSON.parse(savedProfile);
-        setTrainerProfile(profile);
-        
-        setIsProfileComplete(
-          !!profile && 
-          !!profile.gymName && profile.gymName.trim() !== '' && 
-          !!profile.gymAddress && profile.gymAddress.trim() !== ''
-        );
+    if (open) {
+      try {
+        const savedProfile = localStorage.getItem('trainerProfile');
+        if (savedProfile) {
+          const profile = JSON.parse(savedProfile);
+          setTrainerProfile(profile);
+          
+          setIsProfileComplete(
+            !!profile && 
+            !!profile.gymName && profile.gymName.trim() !== '' && 
+            !!profile.gymAddress && profile.gymAddress.trim() !== ''
+          );
+        }
+      } catch (error) {
+        console.error("Error loading trainer profile:", error);
       }
-    } catch (error) {
-      console.error("Error loading trainer profile:", error);
+      
+      // Reset states when dialog opens
+      setProgress(0);
+      setIsSuccess({download: false, print: false});
+      setActiveTab("summary");
     }
   }, [open]);
 
@@ -72,6 +82,32 @@ export const StudentDownloadDialog = ({
     setTimeout(() => {
       setIsSuccess({download: false, print: false});
     }, 3000);
+  };
+
+  const simulateProgress = (type: 'download' | 'print') => {
+    setProgress(0);
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 50);
+    
+    setTimeout(() => {
+      clearInterval(interval);
+      setProgress(100);
+      if (type === 'download') {
+        setIsDownloading(false);
+        setIsSuccess(prev => ({...prev, download: true}));
+      } else {
+        setIsPrinting(false);
+        setIsSuccess(prev => ({...prev, print: true}));
+      }
+      resetSuccess();
+    }, 1200);
   };
 
   const handleDownload = async () => {
@@ -95,13 +131,10 @@ export const StudentDownloadDialog = ({
 
     try {
       setIsDownloading(true);
+      simulateProgress('download');
       
       const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile);
-      
       doc.save(`profile_${student.name}.pdf`);
-      
-      setIsSuccess(prev => ({...prev, download: true}));
-      resetSuccess();
       
       toast({
         title: "دانلود موفق",
@@ -110,13 +143,14 @@ export const StudentDownloadDialog = ({
       
     } catch (error) {
       console.error("Error generating PDF:", error);
+      setIsDownloading(false);
+      setProgress(0);
+      
       toast({
         variant: "destructive",
         title: "خطا",
         description: "در هنگام دانلود فایل PDF خطایی رخ داد."
       });
-    } finally {
-      setIsDownloading(false);
     }
   };
 
@@ -141,10 +175,14 @@ export const StudentDownloadDialog = ({
 
     try {
       setIsPrinting(true);
+      simulateProgress('print');
       
       const printWindow = openPrintWindow(student, exercises, meals, supplements, trainerProfile);
       
       if (!printWindow) {
+        setIsPrinting(false);
+        setProgress(0);
+        
         toast({
           variant: "destructive",
           title: "خطا",
@@ -152,9 +190,6 @@ export const StudentDownloadDialog = ({
         });
         return;
       }
-
-      setIsSuccess(prev => ({...prev, print: true}));
-      resetSuccess();
       
       toast({
         title: "آماده برای چاپ",
@@ -162,13 +197,14 @@ export const StudentDownloadDialog = ({
       });
     } catch (error) {
       console.error("Error preparing print:", error);
+      setIsPrinting(false);
+      setProgress(0);
+      
       toast({
         variant: "destructive",
         title: "خطا",
         description: "در آماده‌سازی چاپ خطایی رخ داد."
       });
-    } finally {
-      setIsPrinting(false);
     }
   };
 
@@ -184,13 +220,17 @@ export const StudentDownloadDialog = ({
     supplements.find(sup => sup.id === id)
   ).filter(Boolean) || [];
 
+  const studentVitamins = student?.vitamins?.map(id => 
+    vitamins.find(vitamin => vitamin.id === id)
+  ).filter(Boolean) || [];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-white dark:bg-gray-950 rounded-lg shadow-xl border-0">
+      <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden bg-white dark:bg-gray-950 rounded-xl shadow-xl border-0">
         <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
           <DialogHeader className="p-6 pb-0">
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <DialogTitle className="flex items-center gap-3 text-2xl">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
                 <FileText className="h-6 w-6 text-white" />
               </div>
               <span className="bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent font-bold">
@@ -208,25 +248,51 @@ export const StudentDownloadDialog = ({
             value={activeTab}
             onValueChange={setActiveTab}
           >
-            <TabsList className="grid grid-cols-2 w-full bg-indigo-50 dark:bg-indigo-950/50 rounded-full p-1 my-4">
+            <TabsList className="grid grid-cols-3 w-full bg-indigo-50 dark:bg-indigo-950/50 rounded-full p-1 my-4 shadow-sm">
               <TabsTrigger 
                 value="summary" 
-                className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm"
+                className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm transition-all duration-200"
               >
-                خلاصه برنامه‌ها
+                <span className="flex items-center gap-1.5">
+                  <Database className="h-3.5 w-3.5" />
+                  داده‌های برنامه
+                </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="preview" 
-                className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm"
+                className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm transition-all duration-200"
               >
-                پیش‌نمایش خروجی
+                <span className="flex items-center gap-1.5">
+                  <FileCheck className="h-3.5 w-3.5" />
+                  پیش‌نمایش خروجی
+                </span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="style" 
+                className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm transition-all duration-200"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Palette className="h-3.5 w-3.5" />
+                  سبک خروجی
+                </span>
               </TabsTrigger>
             </TabsList>
             
-            <div className="overflow-y-auto max-h-[calc(80vh-180px)] p-6 pt-0">
-              <ProfileWarning isProfileComplete={isProfileComplete} className="mb-6" />
+            <div className="overflow-y-auto max-h-[calc(80vh-180px)]">
+              <AnimatePresence mode="wait">
+                {!isProfileComplete && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mb-6 px-6"
+                  >
+                    <ProfileWarning isProfileComplete={isProfileComplete} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
               
-              <TabsContent value="summary" className="mt-0 space-y-4">
+              <TabsContent value="summary" className="mt-0 p-6 pt-0">
                 <StudentSummary 
                   student={student} 
                   exercises={exercises} 
@@ -235,17 +301,26 @@ export const StudentDownloadDialog = ({
                 />
               </TabsContent>
               
-              <TabsContent value="preview" className="mt-0">
+              <TabsContent value="preview" className="mt-0 p-6 pt-0">
                 <div className="flex flex-col space-y-6">
-                  <div className="rounded-xl border p-5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30">
+                  <motion.div 
+                    className="rounded-xl border p-5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
                     <h3 className="font-semibold text-lg mb-3 text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
-                      <div className="p-1.5 rounded-md bg-indigo-100 dark:bg-indigo-900">
+                      <div className="p-1.5 rounded-md bg-indigo-100 dark:bg-indigo-900 shadow-sm">
                         <FileCheck className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       </div>
-                      پیش‌نمایش پرینت و PDF
+                      پیش‌نمایش قالب {
+                        exportStyle === 'modern' ? 'مدرن' : 
+                        exportStyle === 'classic' ? 'کلاسیک' : 
+                        'مینیمال'
+                      }
                     </h3>
                     
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-5 border border-indigo-100 dark:border-indigo-900">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-5 border border-indigo-100 dark:border-indigo-900">
                       {student && (
                         <motion.div 
                           className="space-y-5"
@@ -256,7 +331,7 @@ export const StudentDownloadDialog = ({
                           <div className="border-b border-gray-200 dark:border-gray-800 pb-4">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-3 space-x-reverse">
-                                <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-800 flex-shrink-0">
+                                <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-800 flex-shrink-0 shadow-md">
                                   <img 
                                     src={student.image || "/placeholder.svg"} 
                                     alt={student.name} 
@@ -335,7 +410,7 @@ export const StudentDownloadDialog = ({
                             </motion.div>
                           )}
                           
-                          {studentSupplements.length > 0 && (
+                          {(studentSupplements.length > 0 || studentVitamins.length > 0) && (
                             <motion.div
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
@@ -343,20 +418,25 @@ export const StudentDownloadDialog = ({
                             >
                               <h4 className="text-lg font-medium mb-3 bg-gradient-to-r from-purple-700 to-violet-600 dark:from-purple-400 dark:to-violet-400 bg-clip-text text-transparent">مکمل‌ها و ویتامین‌ها</h4>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                {studentSupplements.slice(0, 4).map((supplement: any) => (
-                                  <div key={supplement.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex items-center gap-2">
-                                      <div className="bg-purple-100 dark:bg-purple-900/50 rounded-full p-1.5 flex-shrink-0">
-                                        <Check className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                {[...studentSupplements, ...studentVitamins].slice(0, 4).map((item: any) => (
+                                  <div key={item.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="flex items-center gap-2 justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <div className="bg-purple-100 dark:bg-purple-900/50 rounded-full p-1.5 flex-shrink-0">
+                                          <Check className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                        </div>
+                                        {item.name}
                                       </div>
-                                      {supplement.name}
+                                      <span className="text-xs bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full">
+                                        {item.type === 'supplement' ? 'مکمل' : 'ویتامین'}
+                                      </span>
                                     </div>
                                   </div>
                                 ))}
-                                {studentSupplements.length > 4 && (
+                                {(studentSupplements.length + studentVitamins.length) > 4 && (
                                   <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
                                     <ChevronDown className="h-4 w-4" />
-                                    و {studentSupplements.length - 4} مورد دیگر...
+                                    و {studentSupplements.length + studentVitamins.length - 4} مورد دیگر...
                                   </div>
                                 )}
                               </div>
@@ -374,20 +454,113 @@ export const StudentDownloadDialog = ({
                         </motion.div>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
+              </TabsContent>
+              
+              <TabsContent value="style" className="mt-0 p-6 pt-0">
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-xl border p-5 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30"
+                >
+                  <h3 className="font-semibold text-lg mb-4 text-purple-800 dark:text-purple-300 flex items-center gap-2">
+                    <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900">
+                      <Palette className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    انتخاب قالب خروجی
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`bg-white dark:bg-gray-900 rounded-xl p-4 border cursor-pointer transition-all shadow-sm ${exportStyle === 'modern' ? 'border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-200 dark:ring-indigo-800/30' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800/50'}`}
+                      onClick={() => setExportStyle('modern')}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-medium text-gray-900 dark:text-gray-100">قالب مدرن</h4>
+                        {exportStyle === 'modern' && (
+                          <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1">
+                            <CheckCheck className="h-4 w-4" />
+                          </span>
+                        )}
+                      </div>
+                      <div className="h-24 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/20 dark:to-violet-900/20 rounded-lg flex items-center justify-center">
+                        <Sparkles className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        طراحی متریال با استفاده از رنگ‌های متنوع و گرادیان‌ها همراه با نمودارهای کاربردی
+                      </p>
+                    </motion.div>
+                    
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`bg-white dark:bg-gray-900 rounded-xl p-4 border cursor-pointer transition-all shadow-sm ${exportStyle === 'classic' ? 'border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-200 dark:ring-indigo-800/30' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800/50'}`}
+                      onClick={() => setExportStyle('classic')}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-medium text-gray-900 dark:text-gray-100">قالب کلاسیک</h4>
+                        {exportStyle === 'classic' && (
+                          <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1">
+                            <CheckCheck className="h-4 w-4" />
+                          </span>
+                        )}
+                      </div>
+                      <div className="h-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900/20 dark:to-blue-900/20 rounded-lg flex items-center justify-center">
+                        <FileText className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        طراحی رسمی و حرفه‌ای با فونت‌های سریف و خطوط واضح برای استفاده در محیط‌های آموزشی
+                      </p>
+                    </motion.div>
+                    
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`bg-white dark:bg-gray-900 rounded-xl p-4 border cursor-pointer transition-all shadow-sm ${exportStyle === 'minimal' ? 'border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-200 dark:ring-indigo-800/30' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800/50'}`}
+                      onClick={() => setExportStyle('minimal')}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-medium text-gray-900 dark:text-gray-100">قالب مینیمال</h4>
+                        {exportStyle === 'minimal' && (
+                          <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1">
+                            <CheckCheck className="h-4 w-4" />
+                          </span>
+                        )}
+                      </div>
+                      <div className="h-24 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 rounded-lg flex items-center justify-center">
+                        <FileCheck className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        طراحی ساده و کاربردی با حداقل عناصر تزئینی، مناسب برای چاپ و مصرف کمتر جوهر
+                      </p>
+                    </motion.div>
+                  </div>
+                </motion.div>
               </TabsContent>
             </div>
           </Tabs>
         </div>
         
         <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50 to-indigo-50/30 dark:from-gray-900 dark:to-indigo-950/30 rounded-b-lg">
+          {(isDownloading || isPrinting) && (
+            <div className="mb-4">
+              <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+                <span>{isDownloading ? 'در حال آماده‌سازی خروجی PDF...' : 'در حال آماده‌سازی برای چاپ...'}</span>
+                <span>{progress}%</span>
+              </div>
+              <Progress value={progress} className="h-2 bg-gray-200 dark:bg-gray-800" indicatorColor="bg-indigo-600 dark:bg-indigo-500" />
+            </div>
+          )}
+          
           <div className="flex justify-between items-center">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onOpenChange(false)}
-              className="gap-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="gap-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <X className="h-4 w-4" />
               بستن
@@ -404,8 +577,8 @@ export const StudentDownloadDialog = ({
                     isSuccess.print 
                       ? "bg-green-600 hover:bg-green-700" 
                       : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                  } text-white flex items-center gap-1 shadow-md hover:shadow-lg transition-all`}
-                  disabled={!isProfileComplete || isPrinting}
+                  } text-white flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all`}
+                  disabled={!isProfileComplete || isPrinting || isDownloading}
                   size="sm"
                 >
                   {isPrinting ? (
@@ -429,8 +602,8 @@ export const StudentDownloadDialog = ({
                     isSuccess.download 
                       ? "bg-green-600 hover:bg-green-700" 
                       : "bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800"
-                  } text-white flex items-center gap-1 shadow-md hover:shadow-lg transition-all`}
-                  disabled={!isProfileComplete || isDownloading}
+                  } text-white flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all`}
+                  disabled={!isProfileComplete || isDownloading || isPrinting}
                   size="sm"
                 >
                   {isDownloading ? (
