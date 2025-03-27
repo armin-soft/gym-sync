@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Supplement, SupplementCategory } from "@/types/supplement";
+
 interface StudentSupplementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -24,6 +26,7 @@ interface StudentSupplementDialogProps {
   supplements?: Supplement[];
   categories?: SupplementCategory[];
 }
+
 export function StudentSupplementDialog({
   open,
   onOpenChange,
@@ -34,13 +37,23 @@ export function StudentSupplementDialog({
   supplements = [],
   categories = []
 }: StudentSupplementDialogProps) {
-  const [selectedSupplements, setSelectedSupplements] = useState<number[]>(initialSupplements);
-  const [selectedVitamins, setSelectedVitamins] = useState<number[]>(initialVitamins);
+  const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
+  const [selectedVitamins, setSelectedVitamins] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
   const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">("supplements");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  // Reset selected items and set to initial values when dialog is opened
+  useEffect(() => {
+    if (open) {
+      console.log("Dialog opened with initialSupplements:", initialSupplements);
+      console.log("Dialog opened with initialVitamins:", initialVitamins);
+      setSelectedSupplements([...initialSupplements]);
+      setSelectedVitamins([...initialVitamins]);
+    }
+  }, [open, initialSupplements, initialVitamins]);
 
   // Load supplements from localStorage if not provided
   useEffect(() => {
@@ -63,7 +76,10 @@ export function StudentSupplementDialog({
   useEffect(() => {
     let filtered = supplements;
     if (searchQuery.trim() !== "") {
-      filtered = filtered.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.category.toLowerCase().includes(searchQuery.toLowerCase()) || item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase()) || item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase()));
+      filtered = filtered.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                        item.category.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                        (item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase())) || 
+                                        (item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase())));
     }
     if (activeTab === "supplements") {
       filtered = filtered.filter(item => item.type === "supplement");
@@ -75,9 +91,11 @@ export function StudentSupplementDialog({
     }
     setFilteredItems(filtered);
   }, [searchQuery, supplements, activeTab, selectedCategory]);
+
   useEffect(() => {
     setSelectedCategory("all");
   }, [activeTab]);
+
   const toggleItem = (id: number) => {
     if (activeTab === "supplements") {
       setSelectedSupplements(prev => prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]);
@@ -85,21 +103,30 @@ export function StudentSupplementDialog({
       setSelectedVitamins(prev => prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]);
     }
   };
+
   const handleSave = () => {
+    console.log("Saving supplements:", selectedSupplements);
+    console.log("Saving vitamins:", selectedVitamins);
+    
     const success = onSave({
       supplements: selectedSupplements,
       vitamins: selectedVitamins
     });
+    
     if (success) {
       onOpenChange(false);
     }
     return success;
   };
+
   const isSelected = (id: number) => {
     return activeTab === "supplements" ? selectedSupplements.includes(id) : selectedVitamins.includes(id);
   };
+
   const relevantCategories = categories.filter(cat => cat.type === (activeTab === "supplements" ? "supplement" : "vitamin"));
-  return <Dialog open={open} onOpenChange={onOpenChange}>
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] md:max-w-[100vw] lg:max-w-[100vw] xl:max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none shadow-xl" dir="rtl">
         <Tabs value={activeTab} onValueChange={value => setActiveTab(value as "supplements" | "vitamins")} className="flex flex-col h-full w-full">
           <div className="px-6 py-4 border-b bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm shrink-0">
@@ -120,7 +147,14 @@ export function StudentSupplementDialog({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className={cn("h-9 w-9 border-muted transition-colors", showFilters && "bg-primary/10 text-primary")}
+                        onClick={() => setShowFilters(!showFilters)}
+                      >
+                        <SlidersHorizontal className="h-4 w-4" />
+                      </Button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
                       <p className="text-xs font-medium">فیلترها</p>
@@ -133,11 +167,17 @@ export function StudentSupplementDialog({
 
           <div className="border-b bg-muted/10 shrink-0">
             <TabsList className="h-11 bg-transparent p-1 gap-1 rounded-none border-b-0">
-              <TabsTrigger value="supplements" className="h-9 rounded-md data-[state=active]:bg-violet-50 data-[state=active]:text-violet-600 dark:data-[state=active]:bg-violet-900/20 dark:data-[state=active]:text-violet-400 data-[state=active]:shadow-none transition-colors duration-200">
+              <TabsTrigger 
+                value="supplements" 
+                className="h-9 rounded-md data-[state=active]:bg-violet-50 data-[state=active]:text-violet-600 dark:data-[state=active]:bg-violet-900/20 dark:data-[state=active]:text-violet-400 data-[state=active]:shadow-none transition-colors duration-200"
+              >
                 <Beaker className="w-4 h-4 ml-2" />
                 مکمل‌ها
               </TabsTrigger>
-              <TabsTrigger value="vitamins" className="h-9 rounded-md data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 dark:data-[state=active]:bg-blue-900/20 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-none transition-colors duration-200">
+              <TabsTrigger 
+                value="vitamins" 
+                className="h-9 rounded-md data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 dark:data-[state=active]:bg-blue-900/20 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-none transition-colors duration-200"
+              >
                 <Pill className="w-4 h-4 ml-2" />
                 ویتامین‌ها
               </TabsTrigger>
@@ -312,7 +352,7 @@ export function StudentSupplementDialog({
                 <X className="h-4 w-4" />
                 انصراف
               </Button>
-              <Button onClick={handleSave} className={cn("gap-2 text-white border-0", activeTab === "supplements" ? "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700" : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700")} disabled={selectedSupplements.length + selectedVitamins.length === 0}>
+              <Button onClick={handleSave} className={cn("gap-2 text-white border-0", activeTab === "supplements" ? "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700" : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700")} disabled={activeTab === "supplements" ? selectedSupplements.length === 0 : selectedVitamins.length === 0}>
                 <Save className="h-4 w-4" />
                 ذخیره
               </Button>
@@ -320,5 +360,6 @@ export function StudentSupplementDialog({
           </div>
         </Tabs>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 }
