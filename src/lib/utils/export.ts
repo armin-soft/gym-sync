@@ -1,3 +1,4 @@
+
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Student, Exercise, Meal, Supplement } from '@/components/students/StudentTypes';
@@ -47,18 +48,18 @@ export const generateStudentPDF = (
   // Add gym logo/header based on style
   if (exportStyle === "modern") {
     // Modern style with gradient header
-    doc.setFillColor(...styleConfig.headerBgColor);
+    doc.setFillColor(styleConfig.headerBgColor[0], styleConfig.headerBgColor[1], styleConfig.headerBgColor[2], styleConfig.headerBgColor[3]);
     doc.rect(0, 0, pageWidth, 30, 'F');
-    doc.setTextColor(...styleConfig.headerTextColor);
+    doc.setTextColor(styleConfig.headerTextColor[0], styleConfig.headerTextColor[1], styleConfig.headerTextColor[2]);
   } else if (exportStyle === "classic") {
     // Classic style with border
-    doc.setDrawColor(...styleConfig.borderColor);
+    doc.setDrawColor(styleConfig.borderColor[0], styleConfig.borderColor[1], styleConfig.borderColor[2]);
     doc.setLineWidth(0.5);
     doc.rect(MARGIN-5, MARGIN-5, pageWidth-2*(MARGIN-5), 25, 'S');
-    doc.setTextColor(...styleConfig.headerTextColor);
+    doc.setTextColor(styleConfig.headerTextColor[0], styleConfig.headerTextColor[1], styleConfig.headerTextColor[2]);
   } else {
     // Minimal style - just text
-    doc.setTextColor(...styleConfig.headerTextColor);
+    doc.setTextColor(styleConfig.headerTextColor[0], styleConfig.headerTextColor[1], styleConfig.headerTextColor[2]);
   }
   
   // Add gym name
@@ -84,7 +85,7 @@ export const generateStudentPDF = (
   
   // Add dividing line
   if (exportStyle !== "minimal") {
-    doc.setDrawColor(...styleConfig.dividerColor);
+    doc.setDrawColor(styleConfig.dividerColor[0], styleConfig.dividerColor[1], styleConfig.dividerColor[2]);
     doc.setLineWidth(styleConfig.dividerWidth);
     doc.line(MARGIN, currentY, pageWidth - MARGIN, currentY);
   }
@@ -95,7 +96,7 @@ export const generateStudentPDF = (
   doc.setFont('IRANSans', 'bold');
   
   if (exportStyle === "modern") {
-    doc.setTextColor(...styleConfig.sectionTitleColor);
+    doc.setTextColor(styleConfig.sectionTitleColor[0], styleConfig.sectionTitleColor[1], styleConfig.sectionTitleColor[2]);
   }
   
   const headerText = 'مشخصات فردی شاگرد';
@@ -143,7 +144,7 @@ export const generateStudentPDF = (
     doc.setFont('IRANSans', 'bold');
     
     if (exportStyle === "modern") {
-      doc.setTextColor(...styleConfig.sectionTitleColor);
+      doc.setTextColor(styleConfig.sectionTitleColor[0], styleConfig.sectionTitleColor[1], styleConfig.sectionTitleColor[2]);
     }
     
     const exercisesHeaderText = 'برنامه تمرینی';
@@ -174,7 +175,7 @@ export const generateStudentPDF = (
         font: 'IRANSans',
         fontSize: styleConfig.tableFontSize,
         textColor: [0, 0, 0],
-        lineColor: styleConfig.tableLineColor,
+        lineColor: [styleConfig.tableLineColor[0], styleConfig.tableLineColor[1], styleConfig.tableLineColor[2]],
         lineWidth: styleConfig.tableLineWidth,
         cellPadding: styleConfig.tableCellPadding,
         overflow: 'linebreak',
@@ -183,7 +184,7 @@ export const generateStudentPDF = (
         fontStyle: 'normal'
       },
       headStyles: {
-        fillColor: styleConfig.tableHeaderFillColor,
+        fillColor: [styleConfig.tableHeaderFillColor[0], styleConfig.tableHeaderFillColor[1], styleConfig.tableHeaderFillColor[2]],
         textColor: [0, 0, 0],
         fontStyle: 'bold',
         halign: 'center'
@@ -213,7 +214,7 @@ export const generateStudentPDF = (
     doc.setFont('IRANSans', 'bold');
     
     if (exportStyle === "modern") {
-      doc.setTextColor(...styleConfig.sectionTitleColor);
+      doc.setTextColor(styleConfig.sectionTitleColor[0], styleConfig.sectionTitleColor[1], styleConfig.sectionTitleColor[2]);
     }
     
     const mealsHeaderText = 'برنامه غذایی';
@@ -241,7 +242,7 @@ export const generateStudentPDF = (
         font: 'IRANSans',
         fontSize: styleConfig.tableFontSize,
         textColor: [0, 0, 0],
-        lineColor: styleConfig.tableLineColor,
+        lineColor: [styleConfig.tableLineColor[0], styleConfig.tableLineColor[1], styleConfig.tableLineColor[2]],
         lineWidth: styleConfig.tableLineWidth,
         cellPadding: styleConfig.tableCellPadding,
         overflow: 'linebreak',
@@ -250,7 +251,7 @@ export const generateStudentPDF = (
         fontStyle: 'normal'
       },
       headStyles: {
-        fillColor: styleConfig.tableHeaderFillColor,
+        fillColor: [styleConfig.tableHeaderFillColor[0], styleConfig.tableHeaderFillColor[1], styleConfig.tableHeaderFillColor[2]],
         textColor: [0, 0, 0],
         fontStyle: 'bold',
         halign: 'center'
@@ -280,7 +281,7 @@ export const generateStudentPDF = (
     doc.setFont('IRANSans', 'bold');
     
     if (exportStyle === "modern") {
-      doc.setTextColor(...styleConfig.sectionTitleColor);
+      doc.setTextColor(styleConfig.sectionTitleColor[0], styleConfig.sectionTitleColor[1], styleConfig.sectionTitleColor[2]);
     }
     
     const supplementsHeaderText = 'مکمل‌ها و ویتامین‌ها';
@@ -309,7 +310,7 @@ export const generateStudentPDF = (
         font: 'IRANSans',
         fontSize: styleConfig.tableFontSize,
         textColor: [0, 0, 0],
-        lineColor: styleConfig.tableLineColor,
+        lineColor: [styleConfig.tableLineColor[0], styleConfig.tableLineColor[1], styleConfig.tableLineColor[2]],
         lineWidth: styleConfig.tableLineWidth,
         cellPadding: styleConfig.tableCellPadding,
         overflow: 'linebreak',
@@ -318,7 +319,7 @@ export const generateStudentPDF = (
         fontStyle: 'normal'
       },
       headStyles: {
-        fillColor: styleConfig.tableHeaderFillColor,
+        fillColor: [styleConfig.tableHeaderFillColor[0], styleConfig.tableHeaderFillColor[1], styleConfig.tableHeaderFillColor[2]],
         textColor: [0, 0, 0],
         fontStyle: 'bold',
         halign: 'center'
@@ -625,27 +626,28 @@ function getStyleConfig(exportStyle: "modern" | "classic" | "minimal") {
   switch(exportStyle) {
     case "modern":
       return {
-        headerBgColor: [100, 100, 255, 0.7],  // RGBA for modern gradient header
-        headerTextColor: [255, 255, 255],
-        dividerColor: [100, 100, 255],
+        headerBgColor: [100, 100, 255, 0.7] as [number, number, number, number],  // RGBA for modern gradient header
+        headerTextColor: [255, 255, 255] as [number, number, number],
+        dividerColor: [100, 100, 255] as [number, number, number],
         dividerWidth: 0.5,
-        sectionTitleColor: [100, 100, 255],
-        tableHeaderFillColor: [220, 230, 255],
-        tableLineColor: [50, 100, 200],
+        sectionTitleColor: [100, 100, 255] as [number, number, number],
+        tableHeaderFillColor: [220, 230, 255] as [number, number, number],
+        tableLineColor: [50, 100, 200] as [number, number, number],
         tableLineWidth: 0.2,
         tableFontSize: 9,
-        tableCellPadding: 4
+        tableCellPadding: 4,
+        borderColor: [100, 100, 255] as [number, number, number]
       };
     case "classic":
       return {
-        headerBgColor: [255, 255, 255],
-        headerTextColor: [0, 0, 0],
-        borderColor: [0, 0, 0],
-        dividerColor: [0, 0, 0],
+        headerBgColor: [255, 255, 255, 1] as [number, number, number, number],
+        headerTextColor: [0, 0, 0] as [number, number, number],
+        borderColor: [0, 0, 0] as [number, number, number],
+        dividerColor: [0, 0, 0] as [number, number, number],
         dividerWidth: 0.5,
-        sectionTitleColor: [0, 0, 0],
-        tableHeaderFillColor: [240, 240, 240],
-        tableLineColor: [0, 0, 0],
+        sectionTitleColor: [0, 0, 0] as [number, number, number],
+        tableHeaderFillColor: [240, 240, 240] as [number, number, number],
+        tableLineColor: [0, 0, 0] as [number, number, number],
         tableLineWidth: 0.2,
         tableFontSize: 10,
         tableCellPadding: 5
@@ -653,16 +655,17 @@ function getStyleConfig(exportStyle: "modern" | "classic" | "minimal") {
     case "minimal":
     default:
       return {
-        headerBgColor: [255, 255, 255],
-        headerTextColor: [0, 0, 0],
-        dividerColor: [200, 200, 200],
+        headerBgColor: [255, 255, 255, 1] as [number, number, number, number],
+        headerTextColor: [0, 0, 0] as [number, number, number],
+        dividerColor: [200, 200, 200] as [number, number, number],
         dividerWidth: 0.2,
-        sectionTitleColor: [0, 0, 0],
-        tableHeaderFillColor: [245, 245, 245],
-        tableLineColor: [200, 200, 200],
+        sectionTitleColor: [0, 0, 0] as [number, number, number],
+        tableHeaderFillColor: [245, 245, 245] as [number, number, number],
+        tableLineColor: [200, 200, 200] as [number, number, number],
         tableLineWidth: 0.1,
         tableFontSize: 8,
-        tableCellPadding: 3
+        tableCellPadding: 3,
+        borderColor: [200, 200, 200] as [number, number, number]
       };
   }
 }

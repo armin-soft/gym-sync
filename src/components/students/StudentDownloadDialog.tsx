@@ -238,26 +238,52 @@ export const StudentDownloadDialog = ({
     setIsFullScreen(!isFullScreen);
   };
 
-  const DialogComponent = isFullScreen ? Sheet : Dialog;
-  const DialogContentComponent = isFullScreen ? SheetContent : DialogContent;
+  // Render based on fullscreen state
+  if (isFullScreen) {
+    return (
+      <Sheet 
+        open={open} 
+        onOpenChange={(newState) => {
+          if (!newState) setIsFullScreen(false);
+          onOpenChange(newState);
+        }}
+      >
+        <SheetContent 
+          className={cn(
+            "p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl w-full h-full",
+          )}
+          side="bottom"
+        >
+          {/* Sheet content */}
+          {renderDialogContent()}
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
-  // Dialog or Sheet based on fullscreen state
   return (
-    <DialogComponent 
+    <Dialog 
       open={open} 
       onOpenChange={(newState) => {
-        // Reset fullscreen when closing
         if (!newState) setIsFullScreen(false);
         onOpenChange(newState);
       }}
     >
-      <DialogContentComponent 
+      <DialogContent 
         className={cn(
-          "p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl",
-          isFullScreen ? "w-full h-full" : "sm:max-w-[650px] rounded-xl shadow-xl"
+          "p-0 overflow-hidden bg-white dark:bg-gray-950 border-0 rtl sm:max-w-[650px] rounded-xl shadow-xl",
         )}
-        side={isFullScreen ? "bottom" : undefined}
       >
+        {/* Dialog content */}
+        {renderDialogContent()}
+      </DialogContent>
+    </Dialog>
+  );
+
+  // Helper function to render the dialog content
+  function renderDialogContent() {
+    return (
+      <>
         <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
           <DialogHeader className="p-6 pb-0">
             <div className="flex items-center justify-between">
@@ -661,9 +687,9 @@ export const StudentDownloadDialog = ({
             </div>
           </div>
         </div>
-      </DialogContentComponent>
-    </DialogComponent>
-  );
+      </>
+    );
+  }
 };
 
 // Helper function for combining class names
