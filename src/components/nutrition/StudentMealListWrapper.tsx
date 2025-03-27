@@ -4,9 +4,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { ListFilter, ArrowDownAZ, ArrowUpZA } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 interface StudentMealListWrapperProps {
   children: React.ReactNode;
   className?: string;
@@ -15,6 +16,7 @@ interface StudentMealListWrapperProps {
   sortOrder?: "asc" | "desc";
   showControls?: boolean;
 }
+
 const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   children,
   className = "",
@@ -25,27 +27,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
 }) => {
   return <div className={cn("border-0 rounded-none bg-white/95 backdrop-blur-sm transition-all text-gray-900 dark:text-white overflow-hidden h-full", className)}>
       {showControls && <div className="flex items-center justify-end gap-2 p-3 bg-muted/20 border-b">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-8 w-8" 
-                  onClick={toggleSortOrder}
-                >
-                  {sortOrder === "asc" ? (
-                    <ArrowDownAZ className="h-4 w-4" />
-                  ) : (
-                    <ArrowUpZA className="h-4 w-4" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p className="text-xs">تغییر ترتیب</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {/* Sort button removed */}
         </div>}
       <ScrollArea className="w-full h-full overflow-visible" style={{
       maxHeight
@@ -56,4 +38,5 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
       </ScrollArea>
     </div>;
 };
+
 export default StudentMealListWrapper;
