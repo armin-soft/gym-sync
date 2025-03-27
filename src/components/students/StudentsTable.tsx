@@ -107,15 +107,17 @@ export const StudentsTable = ({
     if (Array.isArray(student.exercisesDay4)) {
       count += student.exercisesDay4.length;
     }
-    return Math.max(0, count - 3);
+    return count;
   };
 
   const getExactMealCount = (student: Student): number => {
-    return Math.max(0, (student.meals?.length || 0) - 3);
+    return Array.isArray(student.meals) ? student.meals.length : 0;
   };
 
   const getExactSupplementCount = (student: Student): number => {
-    return Math.max(0, ((student.supplements?.length || 0) + (student.vitamins?.length || 0)) - 3);
+    const supplementCount = Array.isArray(student.supplements) ? student.supplements.length : 0;
+    const vitaminCount = Array.isArray(student.vitamins) ? student.vitamins.length : 0;
+    return supplementCount + vitaminCount;
   };
 
   if (showEmptyState) {
