@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { PrintExportModal, PrintExportOptions } from "@/components/ui/PrintExportModal";
-import { Download, Printer, FileDown } from "lucide-react";
+import { Download, Printer, FileDown, Share2 } from "lucide-react";
 import { generateOutput } from "@/utils/pdf-export";
+import { cn } from "@/lib/utils";
 
 interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   contentId?: string;
@@ -12,9 +13,8 @@ interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   previewImageUrl?: string;
   documentType: "student" | "workout" | "diet" | "supplement";
   filename?: string;
-  buttonVariant?: "icon" | "text" | "icon-text";
+  buttonDisplay?: "primary" | "minimal" | "icon-only";
   showPrintOnly?: boolean;
-  variant?: ButtonProps["variant"]; // Standard button variants from shadcn/ui
 }
 
 export const PrintExportButton = ({
@@ -24,10 +24,10 @@ export const PrintExportButton = ({
   previewImageUrl,
   documentType,
   filename = "export",
-  buttonVariant = "icon-text",
-  variant = "outline",
+  buttonDisplay = "primary",
   showPrintOnly = false,
   className,
+  variant,
   ...buttonProps
 }: PrintExportButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,48 +40,78 @@ export const PrintExportButton = ({
     });
   };
 
-  // Render button based on variant
+  // تعیین variant مناسب براساس buttonDisplay
+  const getButtonVariant = (): ButtonProps["variant"] => {
+    if (variant) return variant;
+    
+    switch (buttonDisplay) {
+      case "primary": return "default";
+      case "minimal": return "outline";
+      case "icon-only": return "ghost";
+      default: return "outline";
+    }
+  };
+
+  // رندر کردن دکمه با توجه به نوع نمایش
   const renderButton = () => {
-    switch (buttonVariant) {
-      case "icon":
+    const buttonVariant = getButtonVariant();
+    
+    switch (buttonDisplay) {
+      case "icon-only":
         return (
           <Button
             size="icon"
-            variant={variant}
+            variant={buttonVariant}
             onClick={() => setIsModalOpen(true)}
-            className={className}
+            className={cn("rounded-full transition-all duration-300 hover:shadow-md", className)}
             {...buttonProps}
           >
             {showPrintOnly ? <Printer className="h-4 w-4" /> : <FileDown className="h-4 w-4" />}
           </Button>
         );
-      case "text":
+        
+      case "minimal":
         return (
           <Button
-            variant={variant}
+            variant={buttonVariant}
             onClick={() => setIsModalOpen(true)}
-            className={className}
-            {...buttonProps}
-          >
-            {showPrintOnly ? "پرینت" : "خروجی"}
-          </Button>
-        );
-      case "icon-text":
-      default:
-        return (
-          <Button
-            variant={variant}
-            onClick={() => setIsModalOpen(true)}
-            className={`group flex items-center gap-2 transition-all duration-300 ${className}`}
+            className={cn("h-9 px-3 rounded-lg transition-all duration-300", className)}
             {...buttonProps}
           >
             {showPrintOnly ? (
-              <Printer className="h-4 w-4 transition-transform group-hover:scale-110" />
+              <Printer className="h-3.5 w-3.5 ml-1" />
             ) : (
-              <FileDown className="h-4 w-4 transition-transform group-hover:scale-110" />
+              <FileDown className="h-3.5 w-3.5 ml-1" />
             )}
-            <span className="transition-transform group-hover:translate-x-0.5">
-              {showPrintOnly ? "پرینت" : "خروجی و پرینت"}
+            <span className="text-xs font-medium">
+              {showPrintOnly ? "پرینت" : "خروجی"}
+            </span>
+          </Button>
+        );
+        
+      case "primary":
+      default:
+        return (
+          <Button
+            variant={buttonVariant}
+            onClick={() => setIsModalOpen(true)}
+            className={cn(
+              "group flex items-center gap-2 px-4 py-2 rounded-xl shadow-sm border border-primary/10",
+              "bg-gradient-to-r from-indigo-500/90 to-blue-500/90 text-white hover:from-indigo-600/90 hover:to-blue-600/90",
+              "transition-all duration-300 hover:shadow-md hover:shadow-primary/10", 
+              className
+            )}
+            {...buttonProps}
+          >
+            <div className="rounded-full bg-white/20 p-1 backdrop-blur-sm">
+              {showPrintOnly ? (
+                <Printer className="h-4 w-4 transition-transform group-hover:scale-110" />
+              ) : (
+                <Share2 className="h-4 w-4 transition-transform group-hover:scale-110" />
+              )}
+            </div>
+            <span className="transition-transform group-hover:translate-x-0.5 font-medium">
+              {showPrintOnly ? "پرینت سند" : "خروجی و پرینت"}
             </span>
           </Button>
         );

@@ -10,6 +10,9 @@ import { StudentDialogManager, StudentDialogManagerRef } from "@/components/stud
 import { useStudents } from "@/hooks/useStudents";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
+import { Users } from "lucide-react";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
@@ -107,61 +110,61 @@ const StudentsPage = () => {
   } = useStudentFiltering(students, exercises);
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
+    <PageContainer withBackground>
+      <PageHeader 
+        title="مدیریت شاگردان" 
+        description="در این بخش می‌توانید شاگردان خود را مدیریت کنید و برنامه‌های تمرینی و غذایی آن‌ها را تنظیم نمایید."
+        icon={Users}
+        actions={
+          <div className="flex gap-2">
+            <StudentSearchSort 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              sortField={sortField}
+              sortOrder={sortOrder}
+              toggleSort={toggleSort}
+              selectedExerciseType={selectedExerciseType}
+              setSelectedExerciseType={setSelectedExerciseType}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              exerciseTypes={exerciseTypes}
+              categories={categories}
+              showExerciseFilters={true}
+            />
+          </div>
+        }
+      />
       
-      <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
-        <div className="flex flex-col space-y-6">
-          <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
-          
-          <StudentStatsCards students={students} />
-          
-          <StudentSearchSort 
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            toggleSort={toggleSort}
-            selectedExerciseType={selectedExerciseType}
-            setSelectedExerciseType={setSelectedExerciseType}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            exerciseTypes={exerciseTypes}
-            categories={categories}
-            showExerciseFilters={true}
-          />
-        </div>
-
-        <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-white/60">
-          <StudentsTable 
-            students={students}
-            sortedAndFilteredStudents={sortedAndFilteredStudents}
-            searchQuery={searchQuery}
-            refreshTrigger={refreshTrigger}
-            onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
-            onDelete={handleDelete}
-            onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
-            onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
-            onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
-            onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
-            onAddStudent={() => dialogManagerRef.current?.handleAdd()}
-            onClearSearch={handleClearSearch}
-          />
-        </Card>
-
-        <StudentDialogManager
-          ref={dialogManagerRef}
-          onSave={handleSave}
-          onSaveExercises={handleSaveExercisesWithRefresh}
-          onSaveDiet={handleSaveDietWithRefresh}
-          onSaveSupplements={handleSaveSupplementsWithRefresh}
-          exercises={exercises}
-          meals={meals}
-          supplements={supplements}
+      <StudentStatsCards students={students} />
+      
+      <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-white/60">
+        <StudentsTable 
+          students={students}
+          sortedAndFilteredStudents={sortedAndFilteredStudents}
+          searchQuery={searchQuery}
+          refreshTrigger={refreshTrigger}
+          onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
+          onDelete={handleDelete}
+          onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
+          onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
+          onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
+          onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
+          onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+          onClearSearch={handleClearSearch}
         />
-      </div>
-    </div>
+      </Card>
+
+      <StudentDialogManager
+        ref={dialogManagerRef}
+        onSave={handleSave}
+        onSaveExercises={handleSaveExercisesWithRefresh}
+        onSaveDiet={handleSaveDietWithRefresh}
+        onSaveSupplements={handleSaveSupplementsWithRefresh}
+        exercises={exercises}
+        meals={meals}
+        supplements={supplements}
+      />
+    </PageContainer>
   );
 };
 
