@@ -5,15 +5,16 @@ import { PrintExportModal, PrintExportOptions } from "@/components/ui/PrintExpor
 import { Download, Printer } from "lucide-react";
 import { generateOutput } from "@/utils/pdf-export";
 
-interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
+interface PrintExportButtonProps extends Omit<ButtonProps, "onClick" | "variant"> {
   contentId?: string;
   title: string;
   description?: string;
   previewImageUrl?: string;
   documentType: "student" | "workout" | "diet" | "supplement";
   filename?: string;
-  variant?: "icon" | "text" | "icon-text";
+  buttonVariant?: "icon" | "text" | "icon-text";
   showPrintOnly?: boolean;
+  variant?: ButtonProps["variant"]; // Allow standard button variants
 }
 
 export const PrintExportButton = ({
@@ -23,7 +24,8 @@ export const PrintExportButton = ({
   previewImageUrl,
   documentType,
   filename = "export",
-  variant = "icon-text",
+  buttonVariant = "icon-text",
+  variant = "outline",
   showPrintOnly = false,
   className,
   ...buttonProps
@@ -40,12 +42,12 @@ export const PrintExportButton = ({
 
   // Render button based on variant
   const renderButton = () => {
-    switch (variant) {
+    switch (buttonVariant) {
       case "icon":
         return (
           <Button
             size="icon"
-            variant="outline"
+            variant={variant}
             onClick={() => setIsModalOpen(true)}
             className={className}
             {...buttonProps}
@@ -56,7 +58,7 @@ export const PrintExportButton = ({
       case "text":
         return (
           <Button
-            variant="outline"
+            variant={variant}
             onClick={() => setIsModalOpen(true)}
             className={className}
             {...buttonProps}
@@ -68,7 +70,7 @@ export const PrintExportButton = ({
       default:
         return (
           <Button
-            variant="outline"
+            variant={variant}
             onClick={() => setIsModalOpen(true)}
             className={`flex items-center gap-2 ${className}`}
             {...buttonProps}
