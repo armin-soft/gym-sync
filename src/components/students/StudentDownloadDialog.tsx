@@ -232,38 +232,40 @@ export const StudentDownloadDialog = ({
     vitamins.find(vitamin => vitamin.id === id)
   ).filter(Boolean) || [];
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] w-full h-[90vh] max-h-[90vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-lg">
-        {/* Header */}
-        <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-                <FileText className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-                  خروجی و چاپ اطلاعات
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  دانلود و چاپ اطلاعات کامل شاگرد به همراه تمام برنامه‌ها با قالب‌بندی حرفه‌ای
-                </p>
-              </div>
-            </div>
-            
-            <Button 
-              variant="ghost"
-              size="icon"
-              onClick={() => onOpenChange(false)}
-              className="h-10 w-10 rounded-full"
-            >
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+  if (!open) return null;
 
-        {/* Main Content */}
+  return (
+    <div className="fixed inset-0 z-50 bg-background overflow-hidden flex flex-col" dir="rtl">
+      {/* Header */}
+      <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+              <FileText className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+                خروجی و چاپ اطلاعات
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                دانلود و چاپ اطلاعات کامل شاگرد به همراه تمام برنامه‌ها با قالب‌بندی حرفه‌ای
+              </p>
+            </div>
+          </div>
+          
+          <Button 
+            variant="ghost"
+            size="icon"
+            onClick={() => onOpenChange(false)}
+            className="h-10 w-10 rounded-full"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
         <StudentExerciseListWrapper className="relative">
           <Tabs 
             value={activeTab} 
@@ -294,7 +296,7 @@ export const StudentDownloadDialog = ({
               </TabsTrigger>
             </TabsList>
 
-            <div className="mt-6">
+            <div className="mt-6 px-6">
               <TabsContent value="summary" className="space-y-6">
                 <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
                   <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
@@ -609,7 +611,7 @@ export const StudentDownloadDialog = ({
             </div>
           </Tabs>
         </StudentExerciseListWrapper>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
