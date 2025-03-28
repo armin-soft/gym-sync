@@ -40,7 +40,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
             className={cn(
               "h-full w-full flex-1 transition-all duration-300 ease-in-out",
               variant === "gradient" 
-                ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-purple-600" 
+                ? "bg-gradient-to-r from-indigo-500 to-purple-600" 
                 : "bg-primary",
               indicatorColor
             )}

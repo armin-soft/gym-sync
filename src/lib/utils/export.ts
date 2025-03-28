@@ -1,3 +1,4 @@
+
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Student, Exercise, Meal, Supplement } from '@/components/students/StudentTypes';
