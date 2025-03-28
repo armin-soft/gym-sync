@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { PrintExportModal, PrintExportOptions } from "@/components/ui/PrintExportModal";
-import { Download, Printer, FileDown, Share2 } from "lucide-react";
+import { Download, Printer, FileDown, Share2, FileText } from "lucide-react";
 import { generateOutput } from "@/utils/pdf-export";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   filename?: string;
   buttonDisplay?: "primary" | "minimal" | "icon-only";
   showPrintOnly?: boolean;
+  includeFull?: boolean;  // New prop to include full trainer profile and student management data
 }
 
 export const PrintExportButton = ({
@@ -26,6 +27,7 @@ export const PrintExportButton = ({
   filename = "export",
   buttonDisplay = "primary",
   showPrintOnly = false,
+  includeFull = true,  // Default to true to include comprehensive data
   className,
   variant,
   ...buttonProps
@@ -36,7 +38,8 @@ export const PrintExportButton = ({
     return generateOutput({
       ...options,
       contentId,
-      filename
+      filename,
+      includeFull
     });
   };
 
@@ -111,7 +114,7 @@ export const PrintExportButton = ({
               )}
             </div>
             <span className="transition-transform group-hover:translate-x-0.5 font-medium">
-              {showPrintOnly ? "پرینت سند" : "خروجی و پرینت"}
+              {showPrintOnly ? "پرینت کامل" : "خروجی و پرینت"}
             </span>
           </Button>
         );
@@ -130,6 +133,7 @@ export const PrintExportButton = ({
         description={description}
         previewImageUrl={previewImageUrl}
         documentType={documentType}
+        includeFull={includeFull}
       />
     </>
   );

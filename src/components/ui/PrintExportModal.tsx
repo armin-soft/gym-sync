@@ -9,11 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Loader2, Printer, FileText, FileDown, Settings, ArrowLeft, ArrowRight, 
   Download, Check, Share2, Copy, Sparkles, Globe, ChevronLeft, ChevronRight,
-  Image, Camera, PanelRight, PanelLeft, Palette, ZoomIn, QrCode, Receipt, Layers
+  Image, Camera, PanelRight, PanelLeft, Palette, ZoomIn, QrCode, Receipt, Layers,
+  User, Users, ClipboardList, CalendarDays, Activity, Utensils, Pill
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,7 @@ interface PrintExportModalProps {
   description?: string;
   previewImageUrl?: string;
   documentType: "student" | "workout" | "diet" | "supplement";
+  includeFull?: boolean;
 }
 
 export interface PrintExportOptions {
@@ -36,6 +38,10 @@ export interface PrintExportOptions {
   includeFooter: boolean;
   includeLogo: boolean;
   orientation: "portrait" | "landscape";
+  includeTrainerProfile?: boolean;
+  includeExerciseManagement?: boolean;
+  includeDietManagement?: boolean;
+  includeSupplementManagement?: boolean;
 }
 
 export const PrintExportModal = ({
@@ -45,7 +51,8 @@ export const PrintExportModal = ({
   title,
   description,
   previewImageUrl,
-  documentType
+  documentType,
+  includeFull = true
 }: PrintExportModalProps) => {
   const { toast } = useToast();
   const [isExporting, setIsExporting] = useState(false);
@@ -61,7 +68,11 @@ export const PrintExportModal = ({
     includeHeader: true,
     includeFooter: true,
     includeLogo: true,
-    orientation: "portrait"
+    orientation: "portrait",
+    includeTrainerProfile: includeFull,
+    includeExerciseManagement: includeFull,
+    includeDietManagement: includeFull,
+    includeSupplementManagement: includeFull
   });
 
   const handleExport = async () => {
@@ -192,6 +203,36 @@ export const PrintExportModal = ({
                         {exportOptions.orientation === "portrait" ? "عمودی" : "افقی"}
                       </div>
                     </div>
+                    
+                    {/* نمایش میزان محتوا */}
+                    {includeFull && (
+                      <div className="absolute top-10 right-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg px-2 py-1 text-xs font-medium border shadow-sm flex flex-col gap-1">
+                        {exportOptions.includeTrainerProfile && (
+                          <div className="flex items-center gap-1.5 text-[10px]">
+                            <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                            <span>پروفایل مربی</span>
+                          </div>
+                        )}
+                        {exportOptions.includeExerciseManagement && (
+                          <div className="flex items-center gap-1.5 text-[10px]">
+                            <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                            <span>مدیریت تمرین‌ها</span>
+                          </div>
+                        )}
+                        {exportOptions.includeDietManagement && (
+                          <div className="flex items-center gap-1.5 text-[10px]">
+                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                            <span>مدیریت تغذیه</span>
+                          </div>
+                        )}
+                        {exportOptions.includeSupplementManagement && (
+                          <div className="flex items-center gap-1.5 text-[10px]">
+                            <div className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                            <span>مدیریت مکمل‌ها</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                     
                     {/* تنظیم بزرگنمایی */}
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium border shadow-sm">
@@ -462,6 +503,86 @@ export const PrintExportModal = ({
                         </button>
                       </div>
                     </div>
+                    
+                    {/* محتوای گزارش */}
+                    {includeFull && (
+                      <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl border p-4 mt-6 space-y-4">
+                        <h3 className="text-sm font-medium flex items-center gap-2">
+                          <ClipboardList className="h-4 w-4 text-purple-500" />
+                          <span>محتوای گزارش</span>
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 gap-2">
+                          <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-3 rounded-xl border">
+                            <Label htmlFor="includeTrainerProfile" className="flex items-center gap-2 cursor-pointer">
+                              <div className="h-8 w-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                                <User className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+                              </div>
+                              <div>
+                                <span className="font-medium">پروفایل مربی</span>
+                                <p className="text-xs text-muted-foreground mt-0.5">اطلاعات شخصی و اطلاعات باشگاه</p>
+                              </div>
+                            </Label>
+                            <Switch
+                              id="includeTrainerProfile"
+                              checked={exportOptions.includeTrainerProfile}
+                              onCheckedChange={(checked) => setExportOptions({...exportOptions, includeTrainerProfile: checked})}
+                            />
+                          </div>
+                          
+                          <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-3 rounded-xl border">
+                            <Label htmlFor="includeExerciseManagement" className="flex items-center gap-2 cursor-pointer">
+                              <div className="h-8 w-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                                <Activity className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                              </div>
+                              <div>
+                                <span className="font-medium">مدیریت تمرین‌ها</span>
+                                <p className="text-xs text-muted-foreground mt-0.5">برنامه تمرینی شاگرد</p>
+                              </div>
+                            </Label>
+                            <Switch
+                              id="includeExerciseManagement"
+                              checked={exportOptions.includeExerciseManagement}
+                              onCheckedChange={(checked) => setExportOptions({...exportOptions, includeExerciseManagement: checked})}
+                            />
+                          </div>
+                          
+                          <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-3 rounded-xl border">
+                            <Label htmlFor="includeDietManagement" className="flex items-center gap-2 cursor-pointer">
+                              <div className="h-8 w-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                                <Utensils className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                              </div>
+                              <div>
+                                <span className="font-medium">مدیریت تغذیه</span>
+                                <p className="text-xs text-muted-foreground mt-0.5">برنامه غذایی شاگرد</p>
+                              </div>
+                            </Label>
+                            <Switch
+                              id="includeDietManagement"
+                              checked={exportOptions.includeDietManagement}
+                              onCheckedChange={(checked) => setExportOptions({...exportOptions, includeDietManagement: checked})}
+                            />
+                          </div>
+                          
+                          <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-3 rounded-xl border">
+                            <Label htmlFor="includeSupplementManagement" className="flex items-center gap-2 cursor-pointer">
+                              <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                <Pill className="h-4 w-4 text-purple-500 dark:text-purple-400" />
+                              </div>
+                              <div>
+                                <span className="font-medium">مدیریت مکمل‌ها</span>
+                                <p className="text-xs text-muted-foreground mt-0.5">برنامه مکمل و ویتامین شاگرد</p>
+                              </div>
+                            </Label>
+                            <Switch
+                              id="includeSupplementManagement"
+                              checked={exportOptions.includeSupplementManagement}
+                              onCheckedChange={(checked) => setExportOptions({...exportOptions, includeSupplementManagement: checked})}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     
                     <div className="flex items-center justify-end mt-6">
                       <Button 
