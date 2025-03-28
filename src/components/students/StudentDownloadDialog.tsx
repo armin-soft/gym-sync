@@ -1,5 +1,4 @@
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck, Database, Palette, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -256,407 +255,363 @@ export const StudentDownloadDialog = ({
           </div>
           
           <Button 
-            variant="ghost" 
+            variant="ghost"
             size="icon"
             onClick={() => onOpenChange(false)}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="h-10 w-10 rounded-full"
           >
             <X className="h-5 w-5" />
           </Button>
         </div>
-        
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto p-6">
         <Tabs 
-          defaultValue="summary" 
-          className="w-full px-6"
-          value={activeTab}
+          value={activeTab} 
           onValueChange={setActiveTab}
+          className="w-full"
         >
-          <TabsList className="grid grid-cols-3 w-full bg-indigo-50 dark:bg-indigo-950/50 rounded-full p-1 my-4 shadow-sm">
+          <TabsList className="w-full justify-start h-12 bg-muted/30 p-1 gap-1">
             <TabsTrigger 
               value="summary" 
-              className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm transition-all duration-200"
+              className="flex items-center gap-2 data-[state=active]:bg-background"
             >
-              <span className="flex items-center gap-1.5">
-                <Database className="h-3.5 w-3.5" />
-                داده‌های برنامه
-              </span>
+              <FileCheck className="h-4 w-4" />
+              خلاصه اطلاعات
             </TabsTrigger>
             <TabsTrigger 
-              value="preview" 
-              className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm transition-all duration-200"
+              value="export" 
+              className="flex items-center gap-2 data-[state=active]:bg-background"
             >
-              <span className="flex items-center gap-1.5">
-                <FileCheck className="h-3.5 w-3.5" />
-                پیش‌نمایش خروجی
-              </span>
+              <Download className="h-4 w-4" />
+              دانلود
             </TabsTrigger>
             <TabsTrigger 
-              value="style" 
-              className="rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm transition-all duration-200"
+              value="print" 
+              className="flex items-center gap-2 data-[state=active]:bg-background"
             >
-              <span className="flex items-center gap-1.5">
-                <Palette className="h-3.5 w-3.5" />
-                سبک خروجی
-              </span>
+              <Printer className="h-4 w-4" />
+              چاپ
             </TabsTrigger>
           </TabsList>
-        </Tabs>
-      </div>
-      
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6">
-        <AnimatePresence mode="wait">
-          {!isProfileComplete && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="mb-6"
-            >
-              <ProfileWarning isProfileComplete={isProfileComplete} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        <TabsContent value="summary" className="mt-0 pb-24">
-          <StudentExerciseListWrapper>
-            <StudentSummary 
-              student={student} 
-              exercises={exercises} 
-              meals={meals} 
-              supplements={supplements}
-              vitamins={vitamins}
-            />
-          </StudentExerciseListWrapper>
-        </TabsContent>
-        
-        <TabsContent value="preview" className="mt-0 pb-24">
-          <StudentExerciseListWrapper>
-            <div className="flex flex-col space-y-6">
-              <motion.div 
-                className="rounded-xl border p-5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <h3 className="font-semibold text-lg mb-3 text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
-                  <div className="p-1.5 rounded-md bg-indigo-100 dark:bg-indigo-900 shadow-sm">
-                    <FileCheck className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  پیش‌نمایش قالب {
-                    exportStyle === 'modern' ? 'مدرن' : 
-                    exportStyle === 'classic' ? 'کلاسیک' : 
-                    'مینیمال'
-                  }
-                </h3>
+
+          <div className="mt-6">
+            <TabsContent value="summary" className="space-y-6">
+              <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <FileCheck className="h-5 w-5 text-indigo-600" />
+                  خلاصه اطلاعات شاگرد
+                </h2>
+                <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
+                {/* Pass only props that StudentSummary expects */}
+                {student && <StudentSummary 
+                  student={student} 
+                  exercises={exercises} 
+                  meals={meals} 
+                  supplements={supplements} 
+                />}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="export" className="space-y-6">
+              <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Download className="h-5 w-5 text-indigo-600" />
+                  دانلود فایل PDF
+                </h2>
+                <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
                 
-                <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-5 border border-indigo-100 dark:border-indigo-900">
-                  {student && (
-                    <motion.div 
-                      className="space-y-5"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <div className="border-b border-gray-200 dark:border-gray-800 pb-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3 space-x-reverse">
-                            <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-800 flex-shrink-0 shadow-md">
-                              <img 
-                                src={student.image || "/placeholder.svg"} 
-                                alt={student.name} 
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <h3 className="font-bold text-xl text-gray-900 dark:text-white">{student.name}</h3>
-                              <p className="text-sm text-gray-500 dark:text-gray-400 persian-numbers">
-                                قد: {toPersianNumbers(student.height)} سانتی‌متر - وزن: {toPersianNumbers(student.weight)} کیلوگرم
-                              </p>
-                            </div>
-                          </div>
-                          {trainerProfile && (
-                            <div className="text-left">
-                              <p className="font-bold text-gray-900 dark:text-white">{trainerProfile.gymName}</p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">{trainerProfile.fullName}</p>
+                <div className="space-y-4">
+                  <div className="bg-muted/20 rounded-lg p-4 border">
+                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                      <Palette className="h-4 w-4 text-indigo-500" />
+                      انتخاب قالب
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div 
+                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                          exportStyle === "modern"
+                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => setExportStyle("modern")}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">مدرن</span>
+                          {exportStyle === "modern" && (
+                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                              <Check className="h-3 w-3 text-white" />
                             </div>
                           )}
                         </div>
+                        <p className="text-xs text-muted-foreground">قالب مدرن با طراحی متریال دیزاین و رنگ‌های متنوع</p>
                       </div>
-                      
-                      {studentExercises.length > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 }}
-                        >
-                          <h4 className="text-lg font-medium mb-3 bg-gradient-to-r from-indigo-700 to-blue-600 dark:from-indigo-400 dark:to-blue-400 bg-clip-text text-transparent">برنامه تمرینی</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {studentExercises.slice(0, 4).map((exercise: any) => (
-                              <div key={exercise.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="flex items-center gap-2">
-                                  <div className="bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1.5 flex-shrink-0">
-                                    <Check className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
-                                  </div>
-                                  {exercise.name}
-                                </div>
-                              </div>
-                            ))}
-                            {studentExercises.length > 4 && (
-                              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
-                                <ChevronDown className="h-4 w-4" />
-                                و <span className="persian-numbers">{toPersianNumbers(studentExercises.length - 4)}</span> مورد دیگر...
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                      
-                      {studentMeals.length > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                        >
-                          <h4 className="text-lg font-medium mb-3 bg-gradient-to-r from-green-700 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">برنامه غذایی</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {studentMeals.slice(0, 4).map((meal: any) => (
-                              <div key={meal.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="flex items-center gap-2">
-                                  <div className="bg-green-100 dark:bg-green-900/50 rounded-full p-1.5 flex-shrink-0">
-                                    <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
-                                  </div>
-                                  {meal.name}
-                                </div>
-                              </div>
-                            ))}
-                            {studentMeals.length > 4 && (
-                              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
-                                <ChevronDown className="h-4 w-4" />
-                                و <span className="persian-numbers">{toPersianNumbers(studentMeals.length - 4)}</span> مورد دیگر...
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                      
-                      {(studentSupplements.length > 0 || studentVitamins.length > 0) && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3 }}
-                        >
-                          <h4 className="text-lg font-medium mb-3 bg-gradient-to-r from-purple-700 to-violet-600 dark:from-purple-400 dark:to-violet-400 bg-clip-text text-transparent">مکمل‌ها و ویتامین‌ها</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {[...studentSupplements, ...studentVitamins].slice(0, 4).map((item: any) => (
-                              <div key={item.id} className="border border-gray-200 dark:border-gray-800 rounded-lg p-3 text-sm bg-white/50 dark:bg-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="flex items-center gap-2 justify-between">
-                                  <div className="flex items-center gap-2">
-                                    <div className="bg-purple-100 dark:bg-purple-900/50 rounded-full p-1.5 flex-shrink-0">
-                                      <Check className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-                                    </div>
-                                    {item.name}
-                                  </div>
-                                  <span className="text-xs bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full">
-                                    {item.type === 'supplement' ? 'مکمل' : 'ویتامین'}
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                            {(studentSupplements.length + studentVitamins.length) > 4 && (
-                              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 text-sm text-gray-500 flex items-center justify-center gap-2">
-                                <ChevronDown className="h-4 w-4" />
-                                و <span className="persian-numbers">{toPersianNumbers(studentSupplements.length + studentVitamins.length - 4)}</span> مورد دیگر...
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                      
-                      <motion.div 
-                        className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
+                      <div 
+                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                          exportStyle === "classic"
+                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => setExportStyle("classic")}
                       >
-                        این یک پیش‌نمایش از خروجی پی‌دی‌اف و چاپ است. خروجی نهایی شامل تمامی جزئیات برنامه خواهد بود.
-                      </motion.div>
-                    </motion.div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">کلاسیک</span>
+                          {exportStyle === "classic" && (
+                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                              <Check className="h-3 w-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">قالب کلاسیک با طراحی ساده و رسمی برای محیط‌های آموزشی</p>
+                      </div>
+                      <div 
+                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                          exportStyle === "minimal"
+                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => setExportStyle("minimal")}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">مینیمال</span>
+                          {exportStyle === "minimal" && (
+                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                              <Check className="h-3 w-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">قالب ساده و مینیمال با تمرکز بر محتوا و حداقل عناصر گرافیکی</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-muted/20 rounded-lg p-4 border">
+                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                      <Database className="h-4 w-4 text-indigo-500" />
+                      اطلاعات مورد استفاده
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">برنامه تمرینی</span>
+                          <div className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentExercises.length)} تمرین
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">برنامه غذایی</span>
+                          <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentMeals.length)} وعده
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">مکمل‌ها</span>
+                          <div className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentSupplements.length)} مکمل
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">ویتامین‌ها</span>
+                          <div className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentVitamins.length)} ویتامین
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={handleDownload} 
+                    disabled={isDownloading || !isProfileComplete || !student}
+                    className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white gap-2"
+                  >
+                    {isDownloading ? (
+                      <>
+                        <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full"></div>
+                        در حال آماده‌سازی فایل...
+                      </>
+                    ) : isSuccess.download ? (
+                      <>
+                        <CheckCheck className="h-5 w-5" />
+                        دانلود با موفقیت انجام شد
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-5 w-5" />
+                        دانلود فایل PDF
+                      </>
+                    )}
+                  </Button>
+                  
+                  {isDownloading && (
+                    <div className="space-y-2">
+                      <Progress value={progress} className="h-2" />
+                      <p className="text-xs text-center text-muted-foreground">
+                        {toPersianNumbers(progress)}٪ تکمیل شده
+                      </p>
+                    </div>
                   )}
                 </div>
-              </motion.div>
-            </div>
-          </StudentExerciseListWrapper>
-        </TabsContent>
-        
-        <TabsContent value="style" className="mt-0 pb-24">
-          <StudentExerciseListWrapper>
-            <motion.div 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl border p-5 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30"
-            >
-              <h3 className="font-semibold text-lg mb-4 text-purple-800 dark:text-purple-300 flex items-center gap-2">
-                <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900">
-                  <Palette className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                </div>
-                انتخاب قالب خروجی
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <motion.div 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`bg-white dark:bg-gray-900 rounded-xl p-4 border cursor-pointer transition-all shadow-sm ${exportStyle === 'modern' ? 'border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-200 dark:ring-indigo-800/30' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800/50'}`}
-                  onClick={() => setExportStyle('modern')}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100">قالب مدرن</h4>
-                    {exportStyle === 'modern' && (
-                      <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1">
-                        <CheckCheck className="h-4 w-4" />
-                      </span>
-                    )}
-                  </div>
-                  <div className="h-24 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/20 dark:to-violet-900/20 rounded-lg flex items-center justify-center">
-                    <Sparkles className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    طراحی متریال با استفاده از رنگ‌های متنوع و گرادیان‌ها همراه با نمودارهای کاربردی
-                  </p>
-                </motion.div>
-                
-                <motion.div 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`bg-white dark:bg-gray-900 rounded-xl p-4 border cursor-pointer transition-all shadow-sm ${exportStyle === 'classic' ? 'border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-200 dark:ring-indigo-800/30' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800/50'}`}
-                  onClick={() => setExportStyle('classic')}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100">قالب کلاسیک</h4>
-                    {exportStyle === 'classic' && (
-                      <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1">
-                        <CheckCheck className="h-4 w-4" />
-                      </span>
-                    )}
-                  </div>
-                  <div className="h-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900/20 dark:to-blue-900/20 rounded-lg flex items-center justify-center">
-                    <FileText className="h-5 w-5 text-blue-500 dark:text-blue-400" />
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    طراحی رسمی و حرفه‌ای با فونت‌های سریف و خطوط واضح برای استفاده در محیط‌های آموزشی
-                  </p>
-                </motion.div>
-                
-                <motion.div 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`bg-white dark:bg-gray-900 rounded-xl p-4 border cursor-pointer transition-all shadow-sm ${exportStyle === 'minimal' ? 'border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-200 dark:ring-indigo-800/30' : 'border-gray-200 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800/50'}`}
-                  onClick={() => setExportStyle('minimal')}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100">قالب مینیمال</h4>
-                    {exportStyle === 'minimal' && (
-                      <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/50 rounded-full p-1">
-                        <CheckCheck className="h-4 w-4" />
-                      </span>
-                    )}
-                  </div>
-                  <div className="h-24 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/40 dark:to-gray-800/40 rounded-lg flex items-center justify-center">
-                    <FileCheck className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    طراحی ساده و کاربردی با حداقل عناصر تزئینی، مناسب برای چاپ و مصرف کمتر جوهر
-                  </p>
-                </motion.div>
               </div>
-            </motion.div>
-          </StudentExerciseListWrapper>
-        </TabsContent>
-      </div>
-      
-      {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 p-5 border-t border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50 to-indigo-50/30 dark:from-gray-900 dark:to-indigo-950/30 shadow-md z-20">
-        {(isDownloading || isPrinting) && (
-          <div className="mb-4">
-            <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-              <span>{isDownloading ? 'در حال آماده‌سازی خروجی پی‌دی‌اف...' : 'در حال آماده‌سازی برای چاپ...'}</span>
-              <span className="persian-numbers">{toPersianNumbers(progress)}%</span>
-            </div>
-            <Progress 
-              value={progress} 
-              className="h-2 bg-gray-200 dark:bg-gray-800" 
-              indicatorColor="bg-indigo-600 dark:bg-indigo-500" 
-              variant="gradient"
-            />
+            </TabsContent>
+
+            <TabsContent value="print" className="space-y-6">
+              <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Printer className="h-5 w-5 text-indigo-600" />
+                  چاپ برنامه
+                </h2>
+                <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
+                
+                <div className="space-y-4">
+                  <div className="bg-muted/20 rounded-lg p-4 border">
+                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                      <Palette className="h-4 w-4 text-indigo-500" />
+                      انتخاب قالب چاپ
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div 
+                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                          exportStyle === "modern"
+                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => setExportStyle("modern")}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">مدرن</span>
+                          {exportStyle === "modern" && (
+                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                              <Check className="h-3 w-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">قالب مدرن با طراحی متریال دیزاین و رنگ‌های متنوع</p>
+                      </div>
+                      <div 
+                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                          exportStyle === "classic"
+                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => setExportStyle("classic")}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">کلاسیک</span>
+                          {exportStyle === "classic" && (
+                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                              <Check className="h-3 w-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">قالب کلاسیک با طراحی ساده و رسمی برای محیط‌های آموزشی</p>
+                      </div>
+                      <div 
+                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                          exportStyle === "minimal"
+                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => setExportStyle("minimal")}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">مینیمال</span>
+                          {exportStyle === "minimal" && (
+                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                              <Check className="h-3 w-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">قالب ساده و مینیمال با تمرکز بر محتوا و حداقل عناصر گرافیکی</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-muted/20 rounded-lg p-4 border">
+                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                      <Database className="h-4 w-4 text-indigo-500" />
+                      اطلاعات مورد استفاده
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">برنامه تمرینی</span>
+                          <div className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentExercises.length)} تمرین
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">برنامه غذایی</span>
+                          <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentMeals.length)} وعده
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">مکمل‌ها</span>
+                          <div className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentSupplements.length)} مکمل
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border rounded-lg p-3 bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">ویتامین‌ها</span>
+                          <div className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full">
+                            {toPersianNumbers(studentVitamins.length)} ویتامین
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button
+                    onClick={handlePrint}
+                    disabled={isPrinting || !isProfileComplete || !student}
+                    className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white gap-2"
+                  >
+                    {isPrinting ? (
+                      <>
+                        <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full"></div>
+                        در حال آماده‌سازی چاپ...
+                      </>
+                    ) : isSuccess.print ? (
+                      <>
+                        <CheckCheck className="h-5 w-5" />
+                        آماده‌سازی چاپ با موفقیت انجام شد
+                      </>
+                    ) : (
+                      <>
+                        <Printer className="h-5 w-5" />
+                        پیش‌نمایش و چاپ
+                      </>
+                    )}
+                  </Button>
+                  
+                  {isPrinting && (
+                    <div className="space-y-2">
+                      <Progress value={progress} className="h-2" />
+                      <p className="text-xs text-center text-muted-foreground">
+                        {toPersianNumbers(progress)}٪ تکمیل شده
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </TabsContent>
           </div>
-        )}
-        
-        <div className="flex justify-between items-center">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="gap-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            <X className="h-4 w-4" />
-            بستن
-          </Button>
-          
-          <div className="flex gap-3">
-            <motion.div
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <Button 
-                onClick={handlePrint}
-                className={`${
-                  isSuccess.print 
-                    ? "bg-green-600 hover:bg-green-700" 
-                    : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                } text-white flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all`}
-                disabled={!isProfileComplete || isPrinting || isDownloading}
-              >
-                {isPrinting ? (
-                  <div className="h-4 w-4 border-2 border-white border-r-transparent rounded-full animate-spin ml-1"></div>
-                ) : isSuccess.print ? (
-                  <CheckCheck size={16} />
-                ) : (
-                  <Printer size={16} />
-                )}
-                {isPrinting ? "در حال آماده‌سازی..." : isSuccess.print ? "چاپ شد" : "چاپ"}
-              </Button>
-            </motion.div>
-            
-            <motion.div
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <Button 
-                onClick={handleDownload}
-                className={`${
-                  isSuccess.download 
-                    ? "bg-green-600 hover:bg-green-700" 
-                    : "bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800"
-                } text-white flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all`}
-                disabled={!isProfileComplete || isDownloading || isPrinting}
-              >
-                {isDownloading ? (
-                  <div className="h-4 w-4 border-2 border-white border-r-transparent rounded-full animate-spin ml-1"></div>
-                ) : isSuccess.download ? (
-                  <CheckCheck size={16} />
-                ) : (
-                  <Download size={16} />
-                )}
-                {isDownloading ? "در حال آماده‌سازی..." : isSuccess.download ? "دانلود شد" : "دانلود پی‌دی‌اف"}
-              </Button>
-            </motion.div>
-          </div>
-        </div>
+        </Tabs>
       </div>
     </div>
   );
 };
-
-function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(' ');
-}
