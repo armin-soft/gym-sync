@@ -1,10 +1,10 @@
 
 interface ProfileWarningProps {
-  isProfileComplete: boolean;
+  isProfileComplete?: boolean;
   className?: string;
 }
 
-export const ProfileWarning = ({ isProfileComplete, className = "" }: ProfileWarningProps) => {
+export const ProfileWarning = ({ isProfileComplete = false, className = "" }: ProfileWarningProps) => {
   if (isProfileComplete) return null;
   
   return (

@@ -1,4 +1,3 @@
-
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { UserRound, Ruler, Weight, Phone, Dumbbell, Apple, Pill } from "lucide-react";
 import { motion } from "framer-motion";
@@ -18,13 +17,15 @@ interface StudentSummaryProps {
   exercises: any[];
   meals: any[];
   supplements: any[];
+  vitamins: any[];
 }
 
 export const StudentSummary = ({ 
   student, 
   exercises, 
   meals, 
-  supplements 
+  supplements,
+  vitamins 
 }: StudentSummaryProps) => {
   if (!student) return null;
   

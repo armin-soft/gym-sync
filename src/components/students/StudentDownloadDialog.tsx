@@ -136,7 +136,7 @@ export const StudentDownloadDialog = ({
       setIsDownloading(true);
       simulateProgress('download');
       
-      // Use the selected style for PDF generation
+      // Use the selected style for PDF generation - fixing argument count
       const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile, exportStyle);
       
       // Create Persian filename with current date
@@ -262,7 +262,7 @@ export const StudentDownloadDialog = ({
                   
                   <TabsContent value="summary" className="p-6 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border rounded-xl shadow-sm">
                     {!isProfileComplete ? (
-                      <ProfileWarning />
+                      <ProfileWarning isProfileComplete={isProfileComplete} />
                     ) : (
                       <StudentSummary 
                         student={student} 
@@ -276,7 +276,7 @@ export const StudentDownloadDialog = ({
                   
                   <TabsContent value="preview" className="p-6 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border rounded-xl shadow-sm">
                     {!isProfileComplete ? (
-                      <ProfileWarning />
+                      <ProfileWarning isProfileComplete={isProfileComplete} />
                     ) : (
                       <div className="w-full h-96 flex items-center justify-center bg-muted/20 rounded-lg border-2 border-dashed">
                         <div className="text-center">
@@ -544,7 +544,7 @@ export const StudentDownloadDialog = ({
                 
                 <TabsContent value="summary" className="p-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border rounded-lg shadow-sm">
                   {!isProfileComplete ? (
-                    <ProfileWarning />
+                    <ProfileWarning isProfileComplete={isProfileComplete} />
                   ) : (
                     <StudentSummary 
                       student={student} 
@@ -558,7 +558,7 @@ export const StudentDownloadDialog = ({
                 
                 <TabsContent value="preview" className="p-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border rounded-lg shadow-sm">
                   {!isProfileComplete ? (
-                    <ProfileWarning />
+                    <ProfileWarning isProfileComplete={isProfileComplete} />
                   ) : (
                     <div className="w-full h-72 flex items-center justify-center bg-muted/20 rounded-lg border-2 border-dashed">
                       <div className="text-center">

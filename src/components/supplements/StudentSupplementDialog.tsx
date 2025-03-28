@@ -136,6 +136,13 @@ export function StudentSupplementDialog({
     cat.type === (activeTab === "supplements" ? "supplement" : "vitamin")
   );
 
+  // Type-safe handler for tab changing
+  const handleTabChange = (value: string) => {
+    if (value === "supplements" || value === "vitamins") {
+      setActiveTab(value);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] xl:max-w-[75vw] w-full h-[90vh] max-h-[90vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-xl shadow-xl" dir="rtl">
@@ -206,7 +213,7 @@ export function StudentSupplementDialog({
         <div className="flex flex-col h-full overflow-hidden">
           {/* Tabs */}
           <div className="border-b bg-muted/10 shrink-0">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className="h-11 bg-transparent p-1 gap-1 rounded-none border-b-0">
                 <TabsTrigger 
                   value="supplements" 
