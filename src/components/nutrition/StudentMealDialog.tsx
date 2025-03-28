@@ -133,7 +133,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
             </div>
 
             <TabsContent 
-              value={activeDay === "all" ? "all" : activeDay.toString()} 
+              value="all" 
               className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" 
               dir="rtl"
             >
@@ -155,6 +155,33 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
                 />
               </StudentMealListWrapper>
             </TabsContent>
+
+            {sortedDays.map(day => (
+              <TabsContent 
+                key={day}
+                value={day} 
+                className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full" 
+                dir="rtl"
+              >
+                <StudentMealListWrapper 
+                  maxHeight="calc(100vh - 220px)" 
+                  toggleSortOrder={toggleSortOrder} 
+                  sortOrder={sortOrder} 
+                  showControls={true}
+                >
+                  <StudentMealGroupedList 
+                    filteredMeals={filteredMeals}
+                    selectedMeals={selectedMeals}
+                    toggleMeal={toggleMeal}
+                    activeDay={activeDay}
+                    activeMealType={activeMealType}
+                    sortedDays={sortedDays}
+                    sortedMealTypes={sortedMealTypes}
+                    dayOrder={dayOrder}
+                  />
+                </StudentMealListWrapper>
+              </TabsContent>
+            ))}
           </Tabs>
         </div>
 
