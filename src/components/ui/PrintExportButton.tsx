@@ -43,7 +43,7 @@ export const PrintExportButton = ({
     });
   };
 
-  // تعیین variant مناسب براساس buttonDisplay
+  // Get appropriate variant based on buttonDisplay
   const getButtonVariant = (): ButtonProps["variant"] => {
     if (variant) return variant;
     
@@ -55,7 +55,7 @@ export const PrintExportButton = ({
     }
   };
 
-  // رندر کردن دکمه با توجه به نوع نمایش
+  // Render button based on display type
   const renderButton = () => {
     const buttonVariant = getButtonVariant();
     
@@ -100,7 +100,7 @@ export const PrintExportButton = ({
             onClick={() => setIsModalOpen(true)}
             className={cn(
               "group flex items-center gap-2 px-4 py-2 rounded-xl shadow-sm border border-primary/10",
-              "bg-gradient-to-r from-indigo-500/90 to-blue-500/90 text-white hover:from-indigo-600/90 hover:to-blue-600/90",
+              "bg-gradient-to-r from-purple-500/90 to-blue-500/90 text-white hover:from-purple-600/90 hover:to-blue-600/90",
               "transition-all duration-300 hover:shadow-md hover:shadow-primary/10", 
               className
             )}

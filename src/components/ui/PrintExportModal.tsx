@@ -135,7 +135,7 @@ export const PrintExportModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden p-0 gap-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 border-none">
         <div className="flex h-full">
-          {/* سایدبار راست - پیش‌نمایش */}
+          {/* Right sidebar - Preview */}
           <AnimatePresence mode="wait">
             {currentTab === "preview" && (
               <motion.div 
@@ -175,7 +175,7 @@ export const PrintExportModal = ({
                       </div>
                     )}
                     
-                    {/* نمایش اندازه و جهت کاغذ */}
+                    {/* Paper size and orientation badge */}
                     <div className="absolute top-3 right-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium border shadow-sm">
                       <div className="flex items-center gap-1.5">
                         <div 
@@ -204,7 +204,7 @@ export const PrintExportModal = ({
                       </div>
                     </div>
                     
-                    {/* نمایش میزان محتوا */}
+                    {/* Content section badges */}
                     {includeFull && (
                       <div className="absolute top-10 right-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg px-2 py-1 text-xs font-medium border shadow-sm flex flex-col gap-1">
                         {exportOptions.includeTrainerProfile && (
@@ -234,7 +234,7 @@ export const PrintExportModal = ({
                       </div>
                     )}
                     
-                    {/* تنظیم بزرگنمایی */}
+                    {/* Zoom controls */}
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium border shadow-sm">
                       <div className="flex items-center gap-2">
                         <Button 
@@ -301,9 +301,9 @@ export const PrintExportModal = ({
             )}
           </AnimatePresence>
           
-          {/* بخش اصلی محتوا */}
+          {/* Main content */}
           <div className="flex-1 flex flex-col h-full">
-            {/* هدر */}
+            {/* Header */}
             <div className="border-b p-6 pb-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={cn(
@@ -339,7 +339,7 @@ export const PrintExportModal = ({
               </Button>
             </div>
           
-            {/* محتوای اصلی */}
+            {/* Main content */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentTab}
@@ -351,7 +351,7 @@ export const PrintExportModal = ({
               >
                 {currentTab === "preview" && (
                   <div className="space-y-6">
-                    {/* نمایش موبایل */}
+                    {/* Mobile preview */}
                     <div className="md:hidden">
                       <div className={cn(
                         "relative mx-auto w-full max-w-[250px] aspect-[1/1.414] rounded-xl overflow-hidden border shadow-lg",
@@ -504,7 +504,7 @@ export const PrintExportModal = ({
                       </div>
                     </div>
                     
-                    {/* محتوای گزارش */}
+                    {/* Report content */}
                     {includeFull && (
                       <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl border p-4 mt-6 space-y-4">
                         <h3 className="text-sm font-medium flex items-center gap-2">
@@ -859,7 +859,7 @@ export const PrintExportModal = ({
               </motion.div>
             </AnimatePresence>
             
-            {/* فوتر موبایل */}
+            {/* Mobile footer */}
             <div className="border-t p-4 md:hidden">
               <Button 
                 onClick={handleExport} 

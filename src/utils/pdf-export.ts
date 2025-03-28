@@ -365,7 +365,7 @@ function injectTrainerProfileData(contentElement: HTMLElement): void {
     // Add a modern divider
     const divider = document.createElement("div");
     divider.style.height = "5px";
-    divider.style.background = "linear-gradient(to right, #4f46e5, #3b82f6)";
+    divider.style.background = "linear-gradient(to right, #8b5cf6, #3b82f6)";
     divider.style.borderRadius = "2.5px";
     divider.style.margin = "25px 0";
     contentElement.insertBefore(divider, trainerSection.nextSibling);
