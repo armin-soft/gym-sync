@@ -2,10 +2,12 @@
 import { PrintExportOptions } from "@/components/ui/PrintExportModal";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { generateDocumentId } from "@/lib/utils/ids";
 
 export interface ExportDataOptions extends PrintExportOptions {
   filename?: string;
   contentId?: string;
+  documentId?: string;
 }
 
 /**
@@ -23,7 +25,8 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
       includeFooter, 
       includeLogo,
       filename = "export", 
-      contentId 
+      contentId,
+      documentId = generateDocumentId() 
     } = options;
 
     // Get content to export
@@ -41,6 +44,7 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
     exportContainer.style.position = "absolute";
     exportContainer.style.left = "-9999px";
     exportContainer.style.top = "-9999px";
+    exportContainer.setAttribute("data-document-id", documentId);
     
     // Apply necessary styles for printing or PDF export
     const contentClone = exportContainer.firstChild as HTMLElement;
@@ -52,9 +56,11 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
           ? "148mm" 
           : "215.9mm"; // Letter size
       
-      contentClone.style.padding = "10mm";
+      contentClone.style.padding = "15mm";
       contentClone.style.backgroundColor = "white";
       contentClone.style.boxSizing = "border-box";
+      contentClone.style.borderRadius = "0";
+      contentClone.style.overflow = "hidden";
       
       // Handle orientation
       if (orientation === "landscape") {
@@ -63,7 +69,7 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
         
         // Swap width and height for landscape
         const tempWidth = contentClone.style.width;
-        contentClone.style.width = contentClone.style.height;
+        contentClone.style.width = contentClone.style.height || "297mm";
         contentClone.style.height = tempWidth;
       }
       
@@ -87,6 +93,16 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
       logoElements.forEach(logo => {
         (logo as HTMLElement).style.display = includeLogo ? "block" : "none";
       });
+      
+      // Add document ID watermark (very light)
+      const watermarkDiv = document.createElement("div");
+      watermarkDiv.style.position = "absolute";
+      watermarkDiv.style.bottom = "5mm";
+      watermarkDiv.style.right = "5mm";
+      watermarkDiv.style.fontSize = "8px";
+      watermarkDiv.style.color = "rgba(0,0,0,0.15)";
+      watermarkDiv.textContent = documentId;
+      contentClone.appendChild(watermarkDiv);
     }
 
     // Append to the document for rendering
@@ -99,6 +115,7 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
         logging: false,
         useCORS: true,
         allowTaint: true,
+        backgroundColor: "#FFFFFF",
       });
 
       // Create PDF with proper dimensions
@@ -120,6 +137,15 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
       
       pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
       
+      // Add metadata to PDF
+      pdf.setProperties({
+        title: filename,
+        subject: "Generated Document",
+        author: "Fitness App",
+        keywords: "pdf, export, document",
+        creator: "Fitness App PDF Generator",
+      });
+      
       // Download PDF
       pdf.save(`${filename}.pdf`);
     } else if (format === "print") {
@@ -128,35 +154,44 @@ export async function generateOutput(options: ExportDataOptions): Promise<void> 
       if (printWindow) {
         printWindow.document.open();
         printWindow.document.write(`
-          <html>
+          <html dir="rtl">
             <head>
-              <title>پرینت</title>
+              <title>پرینت ${filename}</title>
               <style>
                 @media print {
                   body {
                     margin: 0;
                     padding: 0;
+                    direction: rtl;
                   }
                   * {
                     -webkit-print-color-adjust: exact !important;
                     color-adjust: exact !important;
                     print-color-adjust: exact !important;
                   }
+                  @page {
+                    size: ${paperSize} ${orientation};
+                    margin: 0;
+                  }
+                }
+                body {
+                  direction: rtl;
+                  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 }
               </style>
             </head>
             <body>
               ${contentClone.outerHTML}
+              <script>
+                setTimeout(() => {
+                  window.print();
+                  setTimeout(() => window.close(), 500);
+                }, 500);
+              </script>
             </body>
           </html>
         `);
         printWindow.document.close();
-        
-        // Give time for styles to apply
-        setTimeout(() => {
-          printWindow.print();
-          printWindow.close();
-        }, 500);
       }
     }
 

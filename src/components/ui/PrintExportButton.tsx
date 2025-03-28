@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { PrintExportModal, PrintExportOptions } from "@/components/ui/PrintExportModal";
-import { Download, Printer } from "lucide-react";
+import { Download, Printer, FileDown } from "lucide-react";
 import { generateOutput } from "@/utils/pdf-export";
 
-interface PrintExportButtonProps extends Omit<ButtonProps, "onClick" | "variant"> {
+interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   contentId?: string;
   title: string;
   description?: string;
@@ -14,7 +14,7 @@ interface PrintExportButtonProps extends Omit<ButtonProps, "onClick" | "variant"
   filename?: string;
   buttonVariant?: "icon" | "text" | "icon-text";
   showPrintOnly?: boolean;
-  variant?: ButtonProps["variant"]; // Allow standard button variants
+  variant?: ButtonProps["variant"]; // Standard button variants from shadcn/ui
 }
 
 export const PrintExportButton = ({
@@ -52,7 +52,7 @@ export const PrintExportButton = ({
             className={className}
             {...buttonProps}
           >
-            {showPrintOnly ? <Printer className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+            {showPrintOnly ? <Printer className="h-4 w-4" /> : <FileDown className="h-4 w-4" />}
           </Button>
         );
       case "text":
@@ -72,11 +72,17 @@ export const PrintExportButton = ({
           <Button
             variant={variant}
             onClick={() => setIsModalOpen(true)}
-            className={`flex items-center gap-2 ${className}`}
+            className={`group flex items-center gap-2 transition-all duration-300 ${className}`}
             {...buttonProps}
           >
-            {showPrintOnly ? <Printer className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-            {showPrintOnly ? "پرینت" : "خروجی و پرینت"}
+            {showPrintOnly ? (
+              <Printer className="h-4 w-4 transition-transform group-hover:scale-110" />
+            ) : (
+              <FileDown className="h-4 w-4 transition-transform group-hover:scale-110" />
+            )}
+            <span className="transition-transform group-hover:translate-x-0.5">
+              {showPrintOnly ? "پرینت" : "خروجی و پرینت"}
+            </span>
           </Button>
         );
     }
