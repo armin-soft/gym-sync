@@ -1,16 +1,16 @@
 
 import { Button } from "@/components/ui/button";
-import { Download, Printer, FileText, FileCheck, X, Check, ChevronDown, CheckCheck, Database, Palette, Sparkles } from "lucide-react";
+import { Download, Printer, FileText, X, Check, Palette, Database } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { TrainerProfile } from "@/types/trainer";
 import { generateStudentPDF, openPrintWindow } from "@/lib/utils/export";
 import { StudentSummary } from "./StudentSummary";
 import { ProfileWarning } from "./ProfileWarning";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion, AnimatePresence } from "framer-motion";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { StudentExerciseListWrapper } from "../exercises/StudentExerciseListWrapper";
 
 interface StudentDownloadDialogProps {
@@ -232,386 +232,384 @@ export const StudentDownloadDialog = ({
     vitamins.find(vitamin => vitamin.id === id)
   ).filter(Boolean) || [];
 
-  // Full screen dialog content
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 overflow-hidden rtl flex flex-col">
-      {/* Header */}
-      <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-              <FileText className="h-6 w-6 text-white" />
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[95vw] w-full h-[90vh] max-h-[90vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-lg">
+        {/* Header */}
+        <div className="sticky top-0 z-20 bg-gradient-to-b from-white to-white/95 dark:from-gray-950 dark:to-gray-950/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                <FileText className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  خروجی و چاپ اطلاعات
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  دانلود و چاپ اطلاعات کامل شاگرد به همراه تمام برنامه‌ها با قالب‌بندی حرفه‌ای
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-                خروجی و چاپ اطلاعات
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                دانلود و چاپ اطلاعات کامل شاگرد به همراه تمام برنامه‌ها با قالب‌بندی حرفه‌ای
-              </p>
-            </div>
+            
+            <Button 
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
+              className="h-10 w-10 rounded-full"
+            >
+              <X className="h-5 w-5" />
+            </Button>
           </div>
-          
-          <Button 
-            variant="ghost"
-            size="icon"
-            onClick={() => onOpenChange(false)}
-            className="h-10 w-10 rounded-full"
-          >
-            <X className="h-5 w-5" />
-          </Button>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto p-6">
-        <Tabs 
-          value={activeTab} 
-          onValueChange={setActiveTab}
-          className="w-full"
-        >
-          <TabsList className="w-full justify-start h-12 bg-muted/30 p-1 gap-1">
-            <TabsTrigger 
-              value="summary" 
-              className="flex items-center gap-2 data-[state=active]:bg-background"
-            >
-              <FileCheck className="h-4 w-4" />
-              خلاصه اطلاعات
-            </TabsTrigger>
-            <TabsTrigger 
-              value="export" 
-              className="flex items-center gap-2 data-[state=active]:bg-background"
-            >
-              <Download className="h-4 w-4" />
-              دانلود
-            </TabsTrigger>
-            <TabsTrigger 
-              value="print" 
-              className="flex items-center gap-2 data-[state=active]:bg-background"
-            >
-              <Printer className="h-4 w-4" />
-              چاپ
-            </TabsTrigger>
-          </TabsList>
+        {/* Main Content */}
+        <StudentExerciseListWrapper className="relative">
+          <Tabs 
+            value={activeTab} 
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
+            <TabsList className="w-full justify-start h-12 bg-muted/30 p-1 gap-1">
+              <TabsTrigger 
+                value="summary" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <FileText className="h-4 w-4" />
+                خلاصه اطلاعات
+              </TabsTrigger>
+              <TabsTrigger 
+                value="export" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <Download className="h-4 w-4" />
+                دانلود
+              </TabsTrigger>
+              <TabsTrigger 
+                value="print" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <Printer className="h-4 w-4" />
+                چاپ
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="mt-6">
-            <TabsContent value="summary" className="space-y-6">
-              <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <FileCheck className="h-5 w-5 text-indigo-600" />
-                  خلاصه اطلاعات شاگرد
-                </h2>
-                <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
-                {/* Pass only props that StudentSummary expects */}
-                {student && <StudentSummary 
-                  student={student} 
-                  exercises={exercises} 
-                  meals={meals} 
-                  supplements={supplements} 
-                />}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="export" className="space-y-6">
-              <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <Download className="h-5 w-5 text-indigo-600" />
-                  دانلود فایل PDF
-                </h2>
-                <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
-                
-                <div className="space-y-4">
-                  <div className="bg-muted/20 rounded-lg p-4 border">
-                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
-                      <Palette className="h-4 w-4 text-indigo-500" />
-                      انتخاب قالب
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div 
-                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                          exportStyle === "modern"
-                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
-                            : "hover:bg-muted/50"
-                        }`}
-                        onClick={() => setExportStyle("modern")}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium">مدرن</span>
-                          {exportStyle === "modern" && (
-                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">قالب مدرن با طراحی متریال دیزاین و رنگ‌های متنوع</p>
-                      </div>
-                      <div 
-                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                          exportStyle === "classic"
-                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
-                            : "hover:bg-muted/50"
-                        }`}
-                        onClick={() => setExportStyle("classic")}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium">کلاسیک</span>
-                          {exportStyle === "classic" && (
-                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">قالب کلاسیک با طراحی ساده و رسمی برای محیط‌های آموزشی</p>
-                      </div>
-                      <div 
-                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                          exportStyle === "minimal"
-                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
-                            : "hover:bg-muted/50"
-                        }`}
-                        onClick={() => setExportStyle("minimal")}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium">مینیمال</span>
-                          {exportStyle === "minimal" && (
-                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">قالب ساده و مینیمال با تمرکز بر محتوا و حداقل عناصر گرافیکی</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-muted/20 rounded-lg p-4 border">
-                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
-                      <Database className="h-4 w-4 text-indigo-500" />
-                      اطلاعات مورد استفاده
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">برنامه تمرینی</span>
-                          <div className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentExercises.length)} تمرین
-                          </div>
-                        </div>
-                      </div>
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">برنامه غذایی</span>
-                          <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentMeals.length)} وعده
-                          </div>
-                        </div>
-                      </div>
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">مکمل‌ها</span>
-                          <div className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentSupplements.length)} مکمل
-                          </div>
-                        </div>
-                      </div>
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">ویتامین‌ها</span>
-                          <div className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentVitamins.length)} ویتامین
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={handleDownload} 
-                    disabled={isDownloading || !isProfileComplete || !student}
-                    className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white gap-2"
-                  >
-                    {isDownloading ? (
-                      <>
-                        <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full"></div>
-                        در حال آماده‌سازی فایل...
-                      </>
-                    ) : isSuccess.download ? (
-                      <>
-                        <CheckCheck className="h-5 w-5" />
-                        دانلود با موفقیت انجام شد
-                      </>
-                    ) : (
-                      <>
-                        <Download className="h-5 w-5" />
-                        دانلود فایل PDF
-                      </>
-                    )}
-                  </Button>
-                  
-                  {isDownloading && (
-                    <div className="space-y-2">
-                      <Progress value={progress} className="h-2" />
-                      <p className="text-xs text-center text-muted-foreground">
-                        {toPersianNumbers(progress)}٪ تکمیل شده
-                      </p>
-                    </div>
-                  )}
+            <div className="mt-6">
+              <TabsContent value="summary" className="space-y-6">
+                <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-indigo-600" />
+                    خلاصه اطلاعات شاگرد
+                  </h2>
+                  <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
+                  {student && <StudentSummary 
+                    student={student} 
+                    exercises={exercises} 
+                    meals={meals} 
+                    supplements={supplements} 
+                  />}
                 </div>
-              </div>
-            </TabsContent>
+              </TabsContent>
 
-            <TabsContent value="print" className="space-y-6">
-              <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <Printer className="h-5 w-5 text-indigo-600" />
-                  چاپ برنامه
-                </h2>
-                <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
-                
-                <div className="space-y-4">
-                  <div className="bg-muted/20 rounded-lg p-4 border">
-                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
-                      <Palette className="h-4 w-4 text-indigo-500" />
-                      انتخاب قالب چاپ
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div 
-                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                          exportStyle === "modern"
-                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
-                            : "hover:bg-muted/50"
-                        }`}
-                        onClick={() => setExportStyle("modern")}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium">مدرن</span>
-                          {exportStyle === "modern" && (
-                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">قالب مدرن با طراحی متریال دیزاین و رنگ‌های متنوع</p>
-                      </div>
-                      <div 
-                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                          exportStyle === "classic"
-                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
-                            : "hover:bg-muted/50"
-                        }`}
-                        onClick={() => setExportStyle("classic")}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium">کلاسیک</span>
-                          {exportStyle === "classic" && (
-                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">قالب کلاسیک با طراحی ساده و رسمی برای محیط‌های آموزشی</p>
-                      </div>
-                      <div 
-                        className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                          exportStyle === "minimal"
-                            ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
-                            : "hover:bg-muted/50"
-                        }`}
-                        onClick={() => setExportStyle("minimal")}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-medium">مینیمال</span>
-                          {exportStyle === "minimal" && (
-                            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                              <Check className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">قالب ساده و مینیمال با تمرکز بر محتوا و حداقل عناصر گرافیکی</p>
-                      </div>
-                    </div>
-                  </div>
+              <TabsContent value="export" className="space-y-6">
+                <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Download className="h-5 w-5 text-indigo-600" />
+                    دانلود فایل PDF
+                  </h2>
+                  <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
                   
-                  <div className="bg-muted/20 rounded-lg p-4 border">
-                    <h3 className="text-base font-medium mb-2 flex items-center gap-2">
-                      <Database className="h-4 w-4 text-indigo-500" />
-                      اطلاعات مورد استفاده
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">برنامه تمرینی</span>
-                          <div className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentExercises.length)} تمرین
+                  <div className="space-y-4">
+                    <div className="bg-muted/20 rounded-lg p-4 border">
+                      <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                        <Palette className="h-4 w-4 text-indigo-500" />
+                        انتخاب قالب
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                            exportStyle === "modern"
+                              ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setExportStyle("modern")}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">مدرن</span>
+                            {exportStyle === "modern" && (
+                              <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
                           </div>
+                          <p className="text-xs text-muted-foreground">قالب مدرن با طراحی متریال دیزاین و رنگ‌های متنوع</p>
                         </div>
-                      </div>
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">برنامه غذایی</span>
-                          <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentMeals.length)} وعده
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                            exportStyle === "classic"
+                              ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setExportStyle("classic")}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">کلاسیک</span>
+                            {exportStyle === "classic" && (
+                              <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
                           </div>
+                          <p className="text-xs text-muted-foreground">قالب کلاسیک با طراحی ساده و رسمی برای محیط‌های آموزشی</p>
                         </div>
-                      </div>
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">مکمل‌ها</span>
-                          <div className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentSupplements.length)} مکمل
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                            exportStyle === "minimal"
+                              ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setExportStyle("minimal")}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">مینیمال</span>
+                            {exportStyle === "minimal" && (
+                              <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      </div>
-                      <div className="border rounded-lg p-3 bg-muted/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">ویتامین‌ها</span>
-                          <div className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full">
-                            {toPersianNumbers(studentVitamins.length)} ویتامین
-                          </div>
+                          <p className="text-xs text-muted-foreground">قالب ساده و مینیمال با تمرکز بر محتوا و حداقل عناصر گرافیکی</p>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <Button
-                    onClick={handlePrint}
-                    disabled={isPrinting || !isProfileComplete || !student}
-                    className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white gap-2"
-                  >
-                    {isPrinting ? (
-                      <>
-                        <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full"></div>
-                        در حال آماده‌سازی چاپ...
-                      </>
-                    ) : isSuccess.print ? (
-                      <>
-                        <CheckCheck className="h-5 w-5" />
-                        آماده‌سازی چاپ با موفقیت انجام شد
-                      </>
-                    ) : (
-                      <>
-                        <Printer className="h-5 w-5" />
-                        پیش‌نمایش و چاپ
-                      </>
+                    
+                    <div className="bg-muted/20 rounded-lg p-4 border">
+                      <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                        <Database className="h-4 w-4 text-indigo-500" />
+                        اطلاعات مورد استفاده
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">برنامه تمرینی</span>
+                            <div className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentExercises.length)} تمرین
+                            </div>
+                          </div>
+                        </div>
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">برنامه غذایی</span>
+                            <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentMeals.length)} وعده
+                            </div>
+                          </div>
+                        </div>
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">مکمل‌ها</span>
+                            <div className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentSupplements.length)} مکمل
+                            </div>
+                          </div>
+                        </div>
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">ویتامین‌ها</span>
+                            <div className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentVitamins.length)} ویتامین
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      onClick={handleDownload} 
+                      disabled={isDownloading || !isProfileComplete || !student}
+                      className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white gap-2"
+                    >
+                      {isDownloading ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full"></div>
+                          در حال آماده‌سازی فایل...
+                        </>
+                      ) : isSuccess.download ? (
+                        <>
+                          <Check className="h-5 w-5" />
+                          دانلود با موفقیت انجام شد
+                        </>
+                      ) : (
+                        <>
+                          <Download className="h-5 w-5" />
+                          دانلود فایل PDF
+                        </>
+                      )}
+                    </Button>
+                    
+                    {isDownloading && (
+                      <div className="space-y-2">
+                        <Progress value={progress} className="h-2" />
+                        <p className="text-xs text-center text-muted-foreground">
+                          {toPersianNumbers(progress)}٪ تکمیل شده
+                        </p>
+                      </div>
                     )}
-                  </Button>
-                  
-                  {isPrinting && (
-                    <div className="space-y-2">
-                      <Progress value={progress} className="h-2" />
-                      <p className="text-xs text-center text-muted-foreground">
-                        {toPersianNumbers(progress)}٪ تکمیل شده
-                      </p>
-                    </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </TabsContent>
-          </div>
-        </Tabs>
-      </div>
-    </div>
+              </TabsContent>
+
+              <TabsContent value="print" className="space-y-6">
+                <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm p-6">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Printer className="h-5 w-5 text-indigo-600" />
+                    چاپ برنامه
+                  </h2>
+                  <ProfileWarning isProfileComplete={isProfileComplete} className="mb-4" />
+                  
+                  <div className="space-y-4">
+                    <div className="bg-muted/20 rounded-lg p-4 border">
+                      <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                        <Palette className="h-4 w-4 text-indigo-500" />
+                        انتخاب قالب چاپ
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                            exportStyle === "modern"
+                              ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setExportStyle("modern")}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">مدرن</span>
+                            {exportStyle === "modern" && (
+                              <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">قالب مدرن با طراحی متریال دیزاین و رنگ‌های متنوع</p>
+                        </div>
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                            exportStyle === "classic"
+                              ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setExportStyle("classic")}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">کلاسیک</span>
+                            {exportStyle === "classic" && (
+                              <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">قالب کلاسیک با طراحی ساده و رسمی برای محیط‌های آموزشی</p>
+                        </div>
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                            exportStyle === "minimal"
+                              ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setExportStyle("minimal")}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">مینیمال</span>
+                            {exportStyle === "minimal" && (
+                              <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">قالب ساده و مینیمال با تمرکز بر محتوا و حداقل عناصر گرافیکی</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-muted/20 rounded-lg p-4 border">
+                      <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                        <Database className="h-4 w-4 text-indigo-500" />
+                        اطلاعات مورد استفاده
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">برنامه تمرینی</span>
+                            <div className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentExercises.length)} تمرین
+                            </div>
+                          </div>
+                        </div>
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">برنامه غذایی</span>
+                            <div className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentMeals.length)} وعده
+                            </div>
+                          </div>
+                        </div>
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">مکمل‌ها</span>
+                            <div className="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentSupplements.length)} مکمل
+                            </div>
+                          </div>
+                        </div>
+                        <div className="border rounded-lg p-3 bg-muted/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">ویتامین‌ها</span>
+                            <div className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full">
+                              {toPersianNumbers(studentVitamins.length)} ویتامین
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button
+                      onClick={handlePrint}
+                      disabled={isPrinting || !isProfileComplete || !student}
+                      className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white gap-2"
+                    >
+                      {isPrinting ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full"></div>
+                          در حال آماده‌سازی چاپ...
+                        </>
+                      ) : isSuccess.print ? (
+                        <>
+                          <Check className="h-5 w-5" />
+                          آماده‌سازی چاپ با موفقیت انجام شد
+                        </>
+                      ) : (
+                        <>
+                          <Printer className="h-5 w-5" />
+                          پیش‌نمایش و چاپ
+                        </>
+                      )}
+                    </Button>
+                    
+                    {isPrinting && (
+                      <div className="space-y-2">
+                        <Progress value={progress} className="h-2" />
+                        <p className="text-xs text-center text-muted-foreground">
+                          {toPersianNumbers(progress)}٪ تکمیل شده
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+            </div>
+          </Tabs>
+        </StudentExerciseListWrapper>
+      </DialogContent>
+    </Dialog>
   );
 };
