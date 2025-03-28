@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -136,10 +135,8 @@ export const StudentDownloadDialog = ({
       setIsDownloading(true);
       simulateProgress('download');
       
-      // Use the selected style for PDF generation - fixing argument count
       const doc = generateStudentPDF(student, exercises, meals, supplements, trainerProfile, exportStyle);
       
-      // Create Persian filename with current date
       const persianDate = new Date().toLocaleDateString('fa-IR').replace(/\//g, '-');
       const fileName = `برنامه_${student.name}_${persianDate}.pdf`;
       
@@ -186,8 +183,7 @@ export const StudentDownloadDialog = ({
       setIsPrinting(true);
       simulateProgress('print');
       
-      // Generate PDF and open print window
-      openPrintWindow(student, exercises, meals, supplements, vitamins, trainerProfile, exportStyle);
+      openPrintWindow(student, exercises, meals, supplements, trainerProfile, exportStyle);
       
       toast({
         title: "چاپ",
