@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Search, UserRound, UsersRound, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface EmptyStudentStateProps {
+export interface EmptyStudentStateProps {
   isSearching: boolean;
   onAddStudent: () => void;
   onClearSearch: () => void;

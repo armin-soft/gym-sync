@@ -31,10 +31,12 @@ import {
   Dumbbell, 
   Apple, 
   Download, 
-  Pills, 
+  Pill, 
   Check, 
   Users, 
-  AlertCircle 
+  AlertCircle,
+  RulerSquare,
+  Scale as WeightScale
 } from "lucide-react";
 import { EmptyStudentState } from "@/components/students/EmptyStudentState";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
@@ -103,7 +105,7 @@ export const StudentsTable = ({
 
   // If there are no students, show empty state
   if (students.length === 0) {
-    return <EmptyStudentState onAdd={onAddStudent} />;
+    return <EmptyStudentState isSearching={false} onAddStudent={onAddStudent} onClearSearch={onClearSearch} />;
   }
 
   // If there are no filtered students, show "no results found"
@@ -242,7 +244,7 @@ export const StudentsTable = ({
                             <span>تنظیم برنامه غذایی</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => onAddSupplement(student)} className="gap-2 cursor-pointer">
-                            <Pills className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                            <Pill className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                             <span>تنظیم مکمل‌ها</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => onDownload(student)} className="gap-2 cursor-pointer">
@@ -292,11 +294,11 @@ export const StudentsTable = ({
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 text-center">{toPersianNumbers(student.phone)}</p>
                     <div className="flex items-center gap-3 mt-1">
                       <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400 text-sm">
-                        <Scale className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                        <WeightScale className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                         <span>{toPersianNumbers(student.weight)} کیلوگرم</span>
                       </div>
                       <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400 text-sm">
-                        <Ruler className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                        <RulerSquare className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                         <span>{toPersianNumbers(student.height)} سانتی‌متر</span>
                       </div>
                     </div>
@@ -361,7 +363,7 @@ export const StudentsTable = ({
                           <span>تنظیم برنامه غذایی</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onAddSupplement(student)} className="gap-2 cursor-pointer">
-                          <Pills className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+                          <Pill className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                           <span>تنظیم مکمل‌ها</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onDownload(student)} className="gap-2 cursor-pointer">
