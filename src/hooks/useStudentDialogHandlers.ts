@@ -34,9 +34,18 @@ export const useStudentDialogHandlers = ({
   const { toast } = useToast();
 
   const handleSaveWrapper = (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">) => {
-    const success = onSave(data, selectedStudent);
-    if (success) {
-      setIsDialogOpen(false);
+    try {
+      const success = onSave(data, selectedStudent);
+      if (success) {
+        setIsDialogOpen(false);
+      }
+    } catch (error) {
+      console.error("Error saving student:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی اطلاعات دانش‌آموز پیش آمد. لطفا مجدد تلاش کنید."
+      });
     }
   };
 
@@ -44,6 +53,10 @@ export const useStudentDialogHandlers = ({
     if (!selectedStudentForExercise) return false;
     
     try {
+      console.log("Saving exercises for student:", selectedStudentForExercise.id);
+      console.log("Exercise IDs:", exerciseIds);
+      console.log("Day number:", dayNumber);
+      
       const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
       if (success && dayNumber === undefined) {
         setIsExerciseDialogOpen(false);
@@ -64,6 +77,9 @@ export const useStudentDialogHandlers = ({
     if (!selectedStudentForDiet) return false;
     
     try {
+      console.log("Saving diet for student:", selectedStudentForDiet.id);
+      console.log("Meal IDs:", mealIds);
+      
       const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
       if (success) {
         setIsDietDialogOpen(false);
