@@ -1,180 +1,281 @@
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Card } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { StudentsHeader } from "@/components/students/StudentsHeader";
-import { StudentStatsCards } from "@/components/students/StudentStatsCards";
-import { StudentSearchSort } from "@/components/students/StudentSearchSort";
-import { StudentsTable } from "@/components/students/StudentsTable";
-import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
-import { useStudents } from "@/hooks/useStudents";
-import { useStudentFiltering } from "@/hooks/useStudentFiltering";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StudentTable } from "@/components/students/StudentTable";
+import { StudentDialog } from "@/components/StudentDialog";
 import { Student } from "@/components/students/StudentTypes";
-import { generateId } from "@/lib/utils/ids"; // Fixed import to use the correct function name
+import { motion } from "framer-motion";
+import { successToast, errorToast } from "@/components/ui/notification-toast";
+import { UserPlus2, Search, UserRound, History } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-// Define the StudentFormData type that was missing
-type StudentFormData = Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">;
+export default function Students() {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [showNewStudentDialog, setShowNewStudentDialog] = useState(false);
+  const [studentToEdit, setStudentToEdit] = useState<Student | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
 
-const StudentsPage = () => {
-  const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  
-  const {
-    students,
-    exercises,
-    meals,
-    supplements,
-    handleDelete,
-    handleSave,
-    handleSaveExercises,
-    handleSaveDiet,
-    handleSaveSupplements
-  } = useStudents();
-
-  // تازه‌سازی هنگام تغییر localStorage
+  // Load students from localStorage on component mount
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'students') {
-        setRefreshTrigger(prev => prev + 1);
-        console.log('Storage event detected, triggering refresh');
+    loadStudents();
+  }, []);
+
+  // Filter students based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredStudents(students);
+    } else {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      const filtered = students.filter(
+        (student) =>
+          student.name.toLowerCase().includes(lowercasedQuery) ||
+          student.phone.toLowerCase().includes(lowercasedQuery)
+      );
+      setFilteredStudents(filtered);
+    }
+  }, [searchQuery, students]);
+
+  const loadStudents = () => {
+    try {
+      const savedStudents = localStorage.getItem("students");
+      if (savedStudents) {
+        const parsedStudents = JSON.parse(savedStudents);
+        setStudents(parsedStudents);
+        setFilteredStudents(parsedStudents);
       }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
-  // دریافت نوع‌های تمرین و دسته‌بندی‌ها
-  const { data: exerciseTypes = [] } = useQuery({
-    queryKey: ["exerciseTypes"],
-    queryFn: () => {
-      const typesData = localStorage.getItem("exerciseTypes");
-      return typesData ? JSON.parse(typesData) : [];
-    },
-  });
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ["exerciseCategories"],
-    queryFn: () => {
-      const categoriesData = localStorage.getItem("exerciseCategories");
-      return categoriesData ? JSON.parse(categoriesData) : [];
-    },
-  });
-
-  // تازه‌سازی بعد از ذخیره
-  const triggerRefresh = useCallback(() => {
-    setRefreshTrigger(prev => prev + 1);
-    // شبیه‌سازی یک رویداد ذخیره‌سازی برای تازه‌سازی در سایر تب‌ها
-    window.dispatchEvent(new StorageEvent('storage', { key: 'students' }));
-  }, []);
-
-  // توابع پوشش‌دهنده برای تازه‌سازی بعد از ذخیره
-  const handleSaveExercisesWithRefresh = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
-    const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
-    if (result) {
-      console.log(`Exercise saved for day ${dayNumber}, triggering refresh`);
-      triggerRefresh();
+    } catch (error) {
+      console.error("Error loading students:", error);
+      errorToast("خطا در بارگذاری اطلاعات", "مشکلی در بارگذاری لیست شاگردان رخ داده است");
     }
-    return result;
-  }, [handleSaveExercises, triggerRefresh]);
-
-  const handleSaveDietWithRefresh = useCallback((mealIds: number[], studentId: number) => {
-    const result = handleSaveDiet(mealIds, studentId);
-    if (result) {
-      console.log('Diet saved, triggering refresh');
-      triggerRefresh();
-    }
-    return result;
-  }, [handleSaveDiet, triggerRefresh]);
-
-  const handleSaveSupplementsWithRefresh = useCallback((data: {supplements: number[], vitamins: number[]}, studentId: number) => {
-    const result = handleSaveSupplements(data, studentId);
-    if (result) {
-      console.log('Supplements saved, triggering refresh');
-      triggerRefresh();
-    }
-    return result;
-  }, [handleSaveSupplements, triggerRefresh]);
-
-  const {
-    searchQuery,
-    setSearchQuery,
-    sortOrder,
-    sortField,
-    toggleSort,
-    selectedExerciseType,
-    setSelectedExerciseType,
-    selectedCategory,
-    setSelectedCategory,
-    sortedAndFilteredStudents,
-    handleClearSearch
-  } = useStudentFiltering(students, exercises);
-
-  // Remove references to lastUpdated property which doesn't exist on Student type
-  const sortByDate = (a: Student, b: Student) => {
-    return a.id > b.id ? -1 : 1; // Using id as a proxy for creation date ordering
   };
 
-  // Get latest students for quick actions
-  const latestStudents = [...students].sort(sortByDate).slice(0, 5);
+  const handleAddStudent = (data: any) => {
+    try {
+      const newStudent: Student = {
+        id: Date.now(),
+        name: data.name,
+        phone: data.phone,
+        height: data.height,
+        weight: data.weight,
+        image: data.image,
+        payment: data.payment || "",
+        exercises: [],
+        meals: [],
+        supplements: [],
+        progress: 0,
+      };
+
+      const updatedStudents = [...students, newStudent];
+      setStudents(updatedStudents);
+      localStorage.setItem("students", JSON.stringify(updatedStudents));
+      
+      setShowNewStudentDialog(false);
+      successToast("شاگرد جدید افزوده شد", "اطلاعات شاگرد با موفقیت ثبت شد");
+    } catch (error) {
+      console.error("Error adding student:", error);
+      errorToast("خطا در ثبت اطلاعات", "مشکلی در ثبت اطلاعات شاگرد رخ داده است");
+    }
+  };
+
+  const handleEditStudent = (data: any) => {
+    try {
+      if (!studentToEdit) return;
+      
+      const updatedStudents = students.map((student) =>
+        student.id === studentToEdit.id
+          ? {
+              ...student,
+              name: data.name,
+              phone: data.phone,
+              height: data.height,
+              weight: data.weight,
+              image: data.image,
+              payment: data.payment || "",
+            }
+          : student
+      );
+      
+      setStudents(updatedStudents);
+      localStorage.setItem("students", JSON.stringify(updatedStudents));
+      
+      setStudentToEdit(undefined);
+      successToast("اطلاعات بروزرسانی شد", "اطلاعات شاگرد با موفقیت بروزرسانی شد");
+    } catch (error) {
+      console.error("Error updating student:", error);
+      errorToast("خطا در بروزرسانی", "مشکلی در بروزرسانی اطلاعات شاگرد رخ داده است");
+    }
+  };
+
+  const handleDeleteConfirm = () => {
+    try {
+      if (studentToDelete === null) return;
+      
+      const updatedStudents = students.filter((student) => student.id !== studentToDelete);
+      setStudents(updatedStudents);
+      localStorage.setItem("students", JSON.stringify(updatedStudents));
+      
+      setShowDeleteDialog(false);
+      setStudentToDelete(null);
+      successToast("حذف شاگرد", "شاگرد با موفقیت حذف شد");
+    } catch (error) {
+      console.error("Error deleting student:", error);
+      errorToast("خطا در حذف شاگرد", "مشکلی در حذف شاگرد رخ داده است");
+    }
+  };
+
+  const handleEditClick = (student: Student) => {
+    setStudentToEdit(student);
+  };
+
+  const handleDeleteClick = (studentId: number) => {
+    setStudentToDelete(studentId);
+    setShowDeleteDialog(true);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
-      
-      <div className="container mx-auto py-8 relative z-10 space-y-8 px-4">
-        <div className="flex flex-col space-y-6">
-          <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
-          
-          <StudentStatsCards students={students} />
-          
-          <StudentSearchSort 
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            toggleSort={toggleSort}
-            selectedExerciseType={selectedExerciseType}
-            setSelectedExerciseType={setSelectedExerciseType}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            exerciseTypes={exerciseTypes}
-            categories={categories}
-            showExerciseFilters={true}
-          />
-        </div>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      <motion.div variants={itemVariants}>
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">مدیریت شاگردان</h1>
+        <p className="text-muted-foreground">
+          در این بخش می‌توانید شاگردان خود را مدیریت کنید
+        </p>
+      </motion.div>
 
-        <Card className="backdrop-blur-xl bg-white/50 border-primary/10 overflow-hidden transition-all duration-300 hover:shadow-lg hover:bg-white/60">
-          <StudentsTable 
-            students={students}
-            sortedAndFilteredStudents={sortedAndFilteredStudents}
-            searchQuery={searchQuery}
-            refreshTrigger={refreshTrigger}
-            onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
-            onDelete={handleDelete}
-            onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
-            onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
-            onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
-            onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
-            onAddStudent={() => dialogManagerRef.current?.handleAdd()}
-            onClearSearch={handleClearSearch}
-          />
-        </Card>
+      <Tabs defaultValue="all" className="w-full">
+        <motion.div 
+          variants={itemVariants}
+          className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"
+        >
+          <TabsList className="h-10">
+            <TabsTrigger value="all" className="gap-2">
+              <UserRound className="h-4 w-4" />
+              همه شاگردان
+            </TabsTrigger>
+            <TabsTrigger value="history" className="gap-2">
+              <History className="h-4 w-4" />
+              تاریخچه
+            </TabsTrigger>
+          </TabsList>
 
-        <StudentDialogManager
-          ref={dialogManagerRef}
-          onSave={handleSave}
-          onSaveExercises={handleSaveExercisesWithRefresh}
-          onSaveDiet={handleSaveDietWithRefresh}
-          onSaveSupplements={handleSaveSupplementsWithRefresh}
-          exercises={exercises}
-          meals={meals}
-          supplements={supplements}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative">
+              <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="جستجو در بین شاگردان..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-3 pr-10 md:w-80"
+              />
+            </div>
+            <Button 
+              onClick={() => setShowNewStudentDialog(true)}
+              className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            >
+              <UserPlus2 className="h-4 w-4" />
+              افزودن شاگرد جدید
+            </Button>
+          </div>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <TabsContent value="all" className="m-0 pt-6">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle>لیست شاگردان</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <StudentTable 
+                  students={filteredStudents}
+                  onEdit={handleEditClick}
+                  onDelete={handleDeleteClick}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="history" className="m-0 pt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>تاریخچه شاگردان</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-center h-40 text-muted-foreground">
+                  این بخش در آینده فعال خواهد شد
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </motion.div>
+      </Tabs>
+
+      {/* Dialog for adding/editing students */}
+      {(showNewStudentDialog || studentToEdit) && (
+        <StudentDialog
+          isOpen={showNewStudentDialog || !!studentToEdit}
+          onClose={() => {
+            setShowNewStudentDialog(false);
+            setStudentToEdit(undefined);
+          }}
+          onSave={studentToEdit ? handleEditStudent : handleAddStudent}
+          student={studentToEdit}
         />
-      </div>
-    </div>
-  );
-};
+      )}
 
-export default StudentsPage;
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>آیا از حذف این شاگرد مطمئن هستید؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              این عملیات غیرقابل بازگشت است. اطلاعات این شاگرد به طور کامل حذف خواهد شد.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              حذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </motion.div>
+  );
+}
