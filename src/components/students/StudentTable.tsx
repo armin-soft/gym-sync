@@ -26,11 +26,22 @@ interface StudentTableProps {
   students: Student[];
   onEdit: (student: Student) => void;
   onDelete: (studentId: number) => void;
+  onAddExercise?: (student: Student) => void;
+  onAddDiet?: (student: Student) => void;
+  onAddSupplement?: (student: Student) => void;
+  onDownload?: (student: Student) => void;
 }
 
-export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) => {
-  // We'll remove the openMenuId state to prevent UI freezing
-  // and use Radix UI's built-in state management instead
+export const StudentTable = ({ 
+  students, 
+  onEdit, 
+  onDelete, 
+  onAddExercise, 
+  onAddDiet, 
+  onAddSupplement, 
+  onDownload
+}: StudentTableProps) => {
+  // We'll use Radix UI's built-in state management for dropdowns
 
   return (
     <div className="rounded-md border">
@@ -131,46 +142,59 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           <Edit className="h-4 w-4" />
                           <span>ویرایش اطلاعات</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Placeholder for future functionality
-                          }}
-                        >
-                          <Clipboard className="h-4 w-4" />
-                          <span>پرینت برنامه</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Placeholder for future functionality
-                          }}
-                        >
-                          <Dumbbell className="h-4 w-4" />
-                          <span>تمرین</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Placeholder for future functionality
-                          }}
-                        >
-                          <UtensilsCrossed className="h-4 w-4" />
-                          <span>برنامه غذایی</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Placeholder for future functionality
-                          }}
-                        >
-                          <Pill className="h-4 w-4" />
-                          <span>مکمل و ویتامین</span>
-                        </DropdownMenuItem>
+                        
+                        {onDownload && (
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDownload(student);
+                            }}
+                          >
+                            <Clipboard className="h-4 w-4" />
+                            <span>پرینت برنامه</span>
+                          </DropdownMenuItem>
+                        )}
+                        
+                        {onAddExercise && (
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAddExercise(student);
+                            }}
+                          >
+                            <Dumbbell className="h-4 w-4" />
+                            <span>تمرین</span>
+                          </DropdownMenuItem>
+                        )}
+                        
+                        {onAddDiet && (
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAddDiet(student);
+                            }}
+                          >
+                            <UtensilsCrossed className="h-4 w-4" />
+                            <span>برنامه غذایی</span>
+                          </DropdownMenuItem>
+                        )}
+                        
+                        {onAddSupplement && (
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAddSupplement(student);
+                            }}
+                          >
+                            <Pill className="h-4 w-4" />
+                            <span>مکمل و ویتامین</span>
+                          </DropdownMenuItem>
+                        )}
+                        
                         <DropdownMenuItem 
                           className="flex items-center gap-2 text-red-600 cursor-pointer"
                           onClick={() => {
