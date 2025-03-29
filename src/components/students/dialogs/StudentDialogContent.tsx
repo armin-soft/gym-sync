@@ -83,7 +83,6 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         studentName={selectedStudentForDiet?.name || ""}
         onSave={handleSaveDietWrapper}
         initialMeals={selectedStudentForDiet?.meals || []}
-        meals={meals}
       />
 
       <StudentSupplementDialog
