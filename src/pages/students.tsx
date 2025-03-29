@@ -44,6 +44,23 @@ const StudentsPage = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
+  // دریافت نوع‌های تمرین و دسته‌بندی‌ها
+  const { data: exerciseTypes = [] } = useQuery({
+    queryKey: ["exerciseTypes"],
+    queryFn: () => {
+      const typesData = localStorage.getItem("exerciseTypes");
+      return typesData ? JSON.parse(typesData) : [];
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["exerciseCategories"],
+    queryFn: () => {
+      const categoriesData = localStorage.getItem("exerciseCategories");
+      return categoriesData ? JSON.parse(categoriesData) : [];
+    },
+  });
+
   // تازه‌سازی بعد از ذخیره
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
@@ -85,6 +102,10 @@ const StudentsPage = () => {
     sortOrder,
     sortField,
     toggleSort,
+    selectedExerciseType,
+    setSelectedExerciseType,
+    selectedCategory,
+    setSelectedCategory,
     sortedAndFilteredStudents,
     handleClearSearch
   } = useStudentFiltering(students, exercises);
@@ -102,7 +123,13 @@ const StudentsPage = () => {
           sortField={sortField}
           sortOrder={sortOrder}
           toggleSort={toggleSort}
-          showExerciseFilters={false}
+          selectedExerciseType={selectedExerciseType}
+          setSelectedExerciseType={setSelectedExerciseType}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          exerciseTypes={exerciseTypes}
+          categories={categories}
+          showExerciseFilters={true}
         />
         
         <motion.div

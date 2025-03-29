@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ListFilter, UserRound, Scale, Ruler, ArrowUp, ArrowDown } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { StudentSortProps } from "./StudentSearchSortTypes";
+import { cn } from "@/lib/utils";
 
 export const StudentSort = ({
   sortField,
@@ -16,58 +17,64 @@ export const StudentSort = ({
   toggleSort,
 }: StudentSortProps) => {
   return (
-    <div className="flex gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="w-full sm:w-auto gap-2 h-[3.25rem] border-indigo-100 dark:border-indigo-900 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
-          >
-            <ListFilter className="h-4 w-4" />
-            مرتب‌سازی
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-52 border-indigo-100 dark:border-indigo-900 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg">
-          <DropdownMenuItem 
-            onClick={() => toggleSort("name")}
-            className={`gap-2 ${sortField === "name" ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
-          >
-            <UserRound className="h-4 w-4" />
-            <span>بر اساس نام</span>
-            {sortField === "name" && (
-              <div className="mr-auto size-5 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
-                {sortOrder === "asc" ? <ArrowUp className="h-3 w-3 text-indigo-700 dark:text-indigo-300" /> : <ArrowDown className="h-3 w-3 text-indigo-700 dark:text-indigo-300" />}
-              </div>
-            )}
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem 
-            onClick={() => toggleSort("weight")}
-            className={`gap-2 ${sortField === "weight" ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
-          >
-            <Scale className="h-4 w-4" />
-            <span>بر اساس وزن</span>
-            {sortField === "weight" && (
-              <div className="mr-auto size-5 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
-                {sortOrder === "asc" ? <ArrowUp className="h-3 w-3 text-indigo-700 dark:text-indigo-300" /> : <ArrowDown className="h-3 w-3 text-indigo-700 dark:text-indigo-300" />}
-              </div>
-            )}
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem 
-            onClick={() => toggleSort("height")}
-            className={`gap-2 ${sortField === "height" ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
-          >
-            <Ruler className="h-4 w-4" />
-            <span>بر اساس قد</span>
-            {sortField === "height" && (
-              <div className="mr-auto size-5 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
-                {sortOrder === "asc" ? <ArrowUp className="h-3 w-3 text-indigo-700 dark:text-indigo-300" /> : <ArrowDown className="h-3 w-3 text-indigo-700 dark:text-indigo-300" />}
-              </div>
-            )}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          variant="outline" 
+          className={cn(
+            "h-full md:w-auto gap-2 py-2.5 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800 hover:border-indigo-500 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-gray-900",
+            sortField && "border-indigo-500 dark:border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-900/20"
+          )}
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          <span className="font-medium">مرتب‌سازی</span>
+          {sortField && (
+            <span className="flex items-center gap-1 text-xs bg-indigo-100/80 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full">
+              {sortField === "name" ? "نام" : sortField === "weight" ? "وزن" : "قد"}
+              <span className="size-3.5 flex items-center justify-center">
+                {sortOrder === "asc" ? "↑" : "↓"}
+              </span>
+            </span>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56 border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+        <DropdownMenuItem 
+          onClick={() => toggleSort("name")}
+          className={`gap-2 ${sortField === "name" ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
+        >
+          <span>بر اساس نام</span>
+          {sortField === "name" && (
+            <div className="ml-auto size-5 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
+              {sortOrder === "asc" ? "↑" : "↓"}
+            </div>
+          )}
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem 
+          onClick={() => toggleSort("weight")}
+          className={`gap-2 ${sortField === "weight" ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
+        >
+          <span>بر اساس وزن</span>
+          {sortField === "weight" && (
+            <div className="ml-auto size-5 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
+              {sortOrder === "asc" ? "↑" : "↓"}
+            </div>
+          )}
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem 
+          onClick={() => toggleSort("height")}
+          className={`gap-2 ${sortField === "height" ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
+        >
+          <span>بر اساس قد</span>
+          {sortField === "height" && (
+            <div className="ml-auto size-5 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
+              {sortOrder === "asc" ? "↑" : "↓"}
+            </div>
+          )}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
