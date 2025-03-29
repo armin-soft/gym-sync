@@ -3,13 +3,12 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, SlidersHorizontal, Filter, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { StudentSearchSortProps } from "./search-sort/StudentSearchSortTypes";
@@ -21,16 +20,8 @@ export const StudentSearchSort = ({
   sortField,
   sortOrder,
   toggleSort,
-  selectedExerciseType,
-  setSelectedExerciseType,
-  selectedCategory,
-  setSelectedCategory,
-  exerciseTypes = [],
-  categories = [],
   showExerciseFilters = false,
 }: StudentSearchSortProps) => {
-  const hasFilters = selectedExerciseType || selectedCategory !== null;
-  
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -122,86 +113,6 @@ export const StudentSearchSort = ({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
-            {showExerciseFilters && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className={cn(
-                      "h-full md:w-auto gap-2 py-2.5 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800 hover:border-indigo-500 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-gray-900",
-                      hasFilters && "border-indigo-500 dark:border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-900/20"
-                    )}
-                  >
-                    <Filter className="h-4 w-4" />
-                    <span className="font-medium">فیلتر</span>
-                    {hasFilters && (
-                      <span className="flex items-center justify-center size-5 text-xs bg-indigo-100/80 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-full">
-                        {(selectedExerciseType ? 1 : 0) + (selectedCategory !== null ? 1 : 0)}
-                      </span>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
-                  {exerciseTypes.length > 0 && (
-                    <>
-                      <div className="px-2 py-1.5 text-xs text-gray-500 dark:text-gray-400 font-medium">نوع تمرین</div>
-                      {exerciseTypes.map((type: any) => (
-                        <DropdownMenuItem 
-                          key={type.id}
-                          onClick={() => setSelectedExerciseType(selectedExerciseType === type.name ? null : type.name)}
-                          className={`gap-2 ${selectedExerciseType === type.name ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
-                        >
-                          <span>{type.name}</span>
-                          {selectedExerciseType === type.name && (
-                            <div className="ml-auto size-4 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
-                              ✓
-                            </div>
-                          )}
-                        </DropdownMenuItem>
-                      ))}
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  
-                  {categories.length > 0 && (
-                    <>
-                      <div className="px-2 py-1.5 text-xs text-gray-500 dark:text-gray-400 font-medium">دسته بندی</div>
-                      {categories.map((category: any) => (
-                        <DropdownMenuItem 
-                          key={category.id}
-                          onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-                          className={`gap-2 ${selectedCategory === category.id ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : ''}`}
-                        >
-                          <span>{category.name}</span>
-                          {selectedCategory === category.id && (
-                            <div className="ml-auto size-4 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-800">
-                              ✓
-                            </div>
-                          )}
-                        </DropdownMenuItem>
-                      ))}
-                    </>
-                  )}
-                  
-                  {hasFilters && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        onClick={() => {
-                          setSelectedExerciseType(null);
-                          setSelectedCategory(null);
-                        }}
-                        className="gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      >
-                        <X className="h-4 w-4" />
-                        <span>حذف همه فیلترها</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
           </div>
         </div>
       </Card>

@@ -1,23 +1,15 @@
 
-import { MutableRefObject } from "react";
-
-export interface StudentSearchProps {
+export interface StudentSearchSortProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-}
-
-export interface StudentSortProps {
   sortField: "name" | "weight" | "height";
   sortOrder: "asc" | "desc";
   toggleSort: (field: "name" | "weight" | "height") => void;
-}
-
-export interface StudentSearchSortProps extends StudentSearchProps, StudentSortProps {
-  selectedExerciseType?: string;
+  selectedExerciseType?: string | null;
   setSelectedExerciseType?: (type: string | null) => void;
   selectedCategory?: number | null;
-  setSelectedCategory?: (categoryId: number | null) => void;
-  exerciseTypes?: string[];
+  setSelectedCategory?: (id: number | null) => void;
+  exerciseTypes?: any[];
   categories?: any[];
   showExerciseFilters?: boolean;
 }

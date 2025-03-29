@@ -12,7 +12,7 @@ import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, ListFilter, Table as TableIcon, Grid3X3 } from "lucide-react";
+import { Users, Grid3X3, Table as TableIcon } from "lucide-react";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
@@ -43,23 +43,6 @@ const StudentsPage = () => {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
-
-  // دریافت نوع‌های تمرین و دسته‌بندی‌ها
-  const { data: exerciseTypes = [] } = useQuery({
-    queryKey: ["exerciseTypes"],
-    queryFn: () => {
-      const typesData = localStorage.getItem("exerciseTypes");
-      return typesData ? JSON.parse(typesData) : [];
-    },
-  });
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ["exerciseCategories"],
-    queryFn: () => {
-      const categoriesData = localStorage.getItem("exerciseCategories");
-      return categoriesData ? JSON.parse(categoriesData) : [];
-    },
-  });
 
   // تازه‌سازی بعد از ذخیره
   const triggerRefresh = useCallback(() => {
@@ -102,10 +85,6 @@ const StudentsPage = () => {
     sortOrder,
     sortField,
     toggleSort,
-    selectedExerciseType,
-    setSelectedExerciseType,
-    selectedCategory,
-    setSelectedCategory,
     sortedAndFilteredStudents,
     handleClearSearch
   } = useStudentFiltering(students, exercises);
@@ -123,13 +102,7 @@ const StudentsPage = () => {
           sortField={sortField}
           sortOrder={sortOrder}
           toggleSort={toggleSort}
-          selectedExerciseType={selectedExerciseType}
-          setSelectedExerciseType={setSelectedExerciseType}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          exerciseTypes={exerciseTypes}
-          categories={categories}
-          showExerciseFilters={true}
+          showExerciseFilters={false}
         />
         
         <motion.div

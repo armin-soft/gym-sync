@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Table, 
@@ -104,7 +105,7 @@ export const StudentsTable = ({
 
   // If there are no students, show empty state
   if (students.length === 0) {
-    return <EmptyStudentState isSearching={false} onAddStudent={onAddStudent} onClearSearch={onClearSearch} />;
+    return <EmptyStudentState onAddStudent={onAddStudent} onClearSearch={onClearSearch} isSearching={false} />;
   }
 
   // If there are no filtered students, show "no results found"
@@ -124,6 +125,27 @@ export const StudentsTable = ({
     );
   }
 
+  // Helper function to count total exercises
+  const countExercises = (student: Student) => {
+    return (
+      (student.exercises?.length || 0) +
+      (student.exercisesDay1?.length || 0) +
+      (student.exercisesDay2?.length || 0) +
+      (student.exercisesDay3?.length || 0) +
+      (student.exercisesDay4?.length || 0)
+    );
+  };
+
+  // Helper function to count total meals
+  const countMeals = (student: Student) => {
+    return student.meals?.length || 0;
+  };
+
+  // Helper function to count total supplements
+  const countSupplements = (student: Student) => {
+    return (student.supplements?.length || 0) + (student.vitamins?.length || 0);
+  };
+
   return (
     <div>
       {viewMode === "table" ? (
@@ -136,7 +158,9 @@ export const StudentsTable = ({
                 <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300">قد</TableHead>
                 <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300">وزن</TableHead>
                 <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300">وضعیت پرداخت</TableHead>
-                <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300">تعداد تمرین</TableHead>
+                <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300">تمرین‌ها</TableHead>
+                <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300">غذاها</TableHead>
+                <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300">مکمل‌ها</TableHead>
                 <TableHead className="text-right font-semibold text-gray-700 dark:text-gray-300">عملیات</TableHead>
               </TableRow>
             </TableHeader>
@@ -194,15 +218,19 @@ export const StudentsTable = ({
                   <TableCell className="text-center">
                     <div className="inline-flex items-center text-gray-600 dark:text-gray-400 gap-1">
                       <Dumbbell className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                      <span>
-                        {toPersianNumbers(
-                          (student.exercises?.length || 0) +
-                          (student.exercisesDay1?.length || 0) +
-                          (student.exercisesDay2?.length || 0) +
-                          (student.exercisesDay3?.length || 0) +
-                          (student.exercisesDay4?.length || 0)
-                        )}
-                      </span>
+                      <span>{toPersianNumbers(countExercises(student))}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="inline-flex items-center text-gray-600 dark:text-gray-400 gap-1">
+                      <Apple className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                      <span>{toPersianNumbers(countMeals(student))}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="inline-flex items-center text-gray-600 dark:text-gray-400 gap-1">
+                      <Pill className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+                      <span>{toPersianNumbers(countSupplements(student))}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -305,30 +333,33 @@ export const StudentsTable = ({
                 </div>
                 
                 <div className="p-5 flex flex-col flex-grow">
-                  <div className="grid grid-cols-2 gap-2 mb-4">
+                  <div className="grid grid-cols-3 gap-2 mb-4">
                     <div className="rounded-lg bg-gray-50 dark:bg-gray-900/30 p-2 flex flex-col items-center">
                       <p className="text-xs text-gray-500 dark:text-gray-400">تمرین‌ها</p>
-                      <p className="text-lg font-semibold text-indigo-600 dark:text-indigo-400">
-                        {toPersianNumbers(
-                          (student.exercises?.length || 0) +
-                          (student.exercisesDay1?.length || 0) +
-                          (student.exercisesDay2?.length || 0) +
-                          (student.exercisesDay3?.length || 0) +
-                          (student.exercisesDay4?.length || 0)
-                        )}
-                      </p>
+                      <div className="flex items-center text-indigo-600 dark:text-indigo-400">
+                        <Dumbbell className="h-3 w-3 mr-1" />
+                        <p className="text-lg font-semibold">
+                          {toPersianNumbers(countExercises(student))}
+                        </p>
+                      </div>
                     </div>
                     <div className="rounded-lg bg-gray-50 dark:bg-gray-900/30 p-2 flex flex-col items-center">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">پرداخت</p>
-                      {student.payment ? (
-                        <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 leading-relaxed">
-                          {toPersianNumbers(student.payment.substring(0, 5))}...
+                      <p className="text-xs text-gray-500 dark:text-gray-400">غذاها</p>
+                      <div className="flex items-center text-green-600 dark:text-green-400">
+                        <Apple className="h-3 w-3 mr-1" />
+                        <p className="text-lg font-semibold">
+                          {toPersianNumbers(countMeals(student))}
                         </p>
-                      ) : (
-                        <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">
-                          بدون پرداخت
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 dark:bg-gray-900/30 p-2 flex flex-col items-center">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">مکمل‌ها</p>
+                      <div className="flex items-center text-amber-600 dark:text-amber-400">
+                        <Pill className="h-3 w-3 mr-1" />
+                        <p className="text-lg font-semibold">
+                          {toPersianNumbers(countSupplements(student))}
                         </p>
-                      )}
+                      </div>
                     </div>
                   </div>
                   
