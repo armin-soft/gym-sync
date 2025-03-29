@@ -83,6 +83,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         studentName={selectedStudentForDiet?.name || ""}
         onSave={handleSaveDietWrapper}
         initialMeals={selectedStudentForDiet?.meals || []}
+        meals={meals}
       />
 
       <StudentSupplementDialog
@@ -98,7 +99,11 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
       <StudentDownloadDialog
         open={isDownloadDialogOpen}
         onOpenChange={setIsDownloadDialogOpen}
-        student={selectedStudentForDownload}
+        student={selectedStudentForDownload ? {
+          ...selectedStudentForDownload,
+          // Ensure payment is not undefined to satisfy the type requirement
+          payment: selectedStudentForDownload.payment || ''
+        } : null}
         exercises={exercises}
         meals={meals}
         supplements={supplements}
