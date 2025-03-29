@@ -29,7 +29,8 @@ interface StudentTableProps {
 }
 
 export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) => {
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  // We'll remove the openMenuId state to prevent UI freezing
+  // and use Radix UI's built-in state management instead
 
   return (
     <div className="rounded-md border">
@@ -105,25 +106,26 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end">
-                    <DropdownMenu
-                      open={openMenuId === student.id}
-                      onOpenChange={(open) => {
-                        setOpenMenuId(open ? student.id : null);
-                      }}
-                    >
+                    <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={(e) => {
-                          e.stopPropagation();
-                        }}>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 z-50 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                      <DropdownMenuContent
+                        align="end" 
+                        className="w-48 z-50 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+                      >
                         <DropdownMenuItem 
                           className="flex items-center gap-2 cursor-pointer"
                           onClick={() => {
                             onEdit(student);
-                            setOpenMenuId(null);
                           }}
                         >
                           <Edit className="h-4 w-4" />
@@ -134,7 +136,6 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           onClick={(e) => {
                             e.stopPropagation();
                             // Placeholder for future functionality
-                            setOpenMenuId(null);
                           }}
                         >
                           <Clipboard className="h-4 w-4" />
@@ -145,7 +146,6 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           onClick={(e) => {
                             e.stopPropagation();
                             // Placeholder for future functionality
-                            setOpenMenuId(null);
                           }}
                         >
                           <Dumbbell className="h-4 w-4" />
@@ -156,7 +156,6 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           onClick={(e) => {
                             e.stopPropagation();
                             // Placeholder for future functionality
-                            setOpenMenuId(null);
                           }}
                         >
                           <UtensilsCrossed className="h-4 w-4" />
@@ -167,7 +166,6 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           onClick={(e) => {
                             e.stopPropagation();
                             // Placeholder for future functionality
-                            setOpenMenuId(null);
                           }}
                         >
                           <Pill className="h-4 w-4" />
@@ -177,7 +175,6 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           className="flex items-center gap-2 text-red-600 cursor-pointer"
                           onClick={() => {
                             onDelete(student.id);
-                            setOpenMenuId(null);
                           }}
                         >
                           <Trash2 className="h-4 w-4" />
