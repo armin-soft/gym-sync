@@ -7,7 +7,7 @@ import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentSearchSort } from "@/components/students/StudentSearchSort";
 import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
-import { useStudents } from "@/hooks/useStudents";
+import { useStudents } from "@/hooks/students"; // Updated import path
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
