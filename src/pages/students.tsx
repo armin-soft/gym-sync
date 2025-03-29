@@ -99,6 +99,10 @@ const StudentsPage = () => {
         <StudentSearchSort 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          sortField={sortField}
+          sortOrder={sortOrder}
+          toggleSort={toggleSort}
+          showExerciseFilters={false}
         />
         
         <motion.div
