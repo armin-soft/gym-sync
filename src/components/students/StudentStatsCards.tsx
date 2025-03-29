@@ -1,7 +1,6 @@
 
 import React, { useMemo } from "react";
-import { Card } from "@/components/ui/card";
-import { UserRound, Trophy, Scale, Ruler, Wallet, DollarSign, Dumbbell } from "lucide-react";
+import { UserRound, Trophy, Scale, Ruler, DollarSign, Dumbbell } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
@@ -75,117 +74,117 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
-  };
-
   return (
-    <motion.div 
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-      variants={container}
-      initial="hidden"
-      animate="show"
-    >
-      <motion.div variants={item}>
-        <Card className="p-6 backdrop-blur-xl bg-gradient-to-br from-white/80 to-indigo-50/80 dark:from-slate-900/80 dark:to-indigo-950/50 border-indigo-100/30 dark:border-indigo-900/30 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5 group">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/30 transition-all duration-300 group-hover:scale-105">
-              <UserRound className="h-7 w-7" />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+      {/* تعداد شاگردان */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="group"
+      >
+        <div className="h-full rounded-3xl bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950/40 dark:to-violet-900/20 p-6 border border-violet-200/50 dark:border-violet-800/30 hover:shadow-lg hover:shadow-violet-200/20 dark:hover:shadow-violet-800/10 transition-all duration-300 relative overflow-hidden flex flex-col">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-violet-400/20 to-violet-300/5 dark:from-violet-600/10 dark:to-violet-500/5 blur-2xl rounded-full -mr-16 -mt-16"></div>
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/30 transition-all duration-300 group-hover:scale-105">
+              <UserRound className="h-8 w-8" strokeWidth={1.5} />
             </div>
-            <div>
-              <p className="text-sm text-indigo-600/70 dark:text-indigo-400/70 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">تعداد شاگردان</p>
-              <p className="text-3xl font-bold bg-gradient-to-br from-indigo-700 to-indigo-500 dark:from-indigo-400 dark:to-indigo-300 bg-clip-text text-transparent">
-                {toPersianNumbers(students.length)}
-              </p>
-            </div>
+            <span className="text-5xl font-bold text-violet-950 dark:text-violet-100">
+              {toPersianNumbers(students.length)}
+            </span>
           </div>
-          <div className="mt-4 pt-4 border-t border-indigo-100/30 dark:border-indigo-800/30">
-            <p className="text-xs text-indigo-500/70 dark:text-indigo-400/70">
+          <div className="flex flex-col mt-auto">
+            <h3 className="text-lg font-semibold text-violet-700 dark:text-violet-300 mb-1">تعداد شاگردان</h3>
+            <p className="text-sm text-violet-600/70 dark:text-violet-400/70">
               تعداد کل شاگردان ثبت شده در سیستم
             </p>
           </div>
-        </Card>
+        </div>
       </motion.div>
-      
-      <motion.div variants={item}>
-        <Card className="p-6 backdrop-blur-xl bg-gradient-to-br from-white/80 to-amber-50/80 dark:from-slate-900/80 dark:to-amber-950/50 border-amber-100/30 dark:border-amber-900/30 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/5 group">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20 group-hover:shadow-amber-500/30 transition-all duration-300 group-hover:scale-105">
-              <DollarSign className="h-7 w-7" />
+
+      {/* مجموع درآمد */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className="group"
+      >
+        <div className="h-full rounded-3xl bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-950/40 dark:to-teal-900/20 p-6 border border-emerald-200/50 dark:border-emerald-800/30 hover:shadow-lg hover:shadow-emerald-200/20 dark:hover:shadow-emerald-800/10 transition-all duration-300 relative overflow-hidden flex flex-col">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-emerald-300/5 dark:from-emerald-600/10 dark:to-emerald-500/5 blur-2xl rounded-full -mr-16 -mt-16"></div>
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/30 transition-all duration-300 group-hover:scale-105">
+              <DollarSign className="h-8 w-8" strokeWidth={1.5} />
             </div>
-            <div>
-              <p className="text-sm text-amber-600/70 dark:text-amber-400/70 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">مجموع درآمد</p>
-              <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-bold bg-gradient-to-br from-amber-700 to-amber-500 dark:from-amber-400 dark:to-amber-300 bg-clip-text text-transparent">
-                  {toPersianNumbers(formatCurrency(totalPayments))}
-                </p>
-                <span className="text-xs text-amber-500 dark:text-amber-400">تومان</span>
-              </div>
+            <div className="flex flex-col items-end">
+              <span className="text-4xl font-bold text-emerald-950 dark:text-emerald-100">
+                {toPersianNumbers(formatCurrency(totalPayments))}
+              </span>
+              <span className="text-xs text-emerald-700 dark:text-emerald-400 mt-1">تومان</span>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-amber-100/30 dark:border-amber-800/30">
-            <p className="text-xs text-amber-500/70 dark:text-amber-400/70">
+          <div className="flex flex-col mt-auto">
+            <h3 className="text-lg font-semibold text-emerald-700 dark:text-emerald-300 mb-1">مجموع درآمد</h3>
+            <p className="text-sm text-emerald-600/70 dark:text-emerald-400/70">
               مجموع کل درآمد از شاگردان
             </p>
           </div>
-        </Card>
+        </div>
       </motion.div>
-      
-      <motion.div variants={item}>
-        <Card className="p-6 backdrop-blur-xl bg-gradient-to-br from-white/80 to-purple-50/80 dark:from-slate-900/80 dark:to-purple-950/50 border-purple-100/30 dark:border-purple-900/30 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/5 group">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/30 transition-all duration-300 group-hover:scale-105">
-              <Scale className="h-7 w-7" />
+
+      {/* میانگین وزن */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+        className="group"
+      >
+        <div className="h-full rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/40 dark:to-indigo-900/20 p-6 border border-blue-200/50 dark:border-blue-800/30 hover:shadow-lg hover:shadow-blue-200/20 dark:hover:shadow-blue-800/10 transition-all duration-300 relative overflow-hidden flex flex-col">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-blue-300/5 dark:from-blue-600/10 dark:to-blue-500/5 blur-2xl rounded-full -mr-16 -mt-16"></div>
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/30 transition-all duration-300 group-hover:scale-105">
+              <Scale className="h-8 w-8" strokeWidth={1.5} />
             </div>
-            <div>
-              <p className="text-sm text-purple-600/70 dark:text-purple-400/70 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">میانگین وزن</p>
-              <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-bold bg-gradient-to-br from-purple-700 to-purple-500 dark:from-purple-400 dark:to-purple-300 bg-clip-text text-transparent">
-                  {toPersianNumbers(averageWeight)}
-                </p>
-                <span className="text-xs text-purple-500 dark:text-purple-400">کیلوگرم</span>
-              </div>
+            <div className="flex flex-col items-end">
+              <span className="text-4xl font-bold text-blue-950 dark:text-blue-100">
+                {toPersianNumbers(averageWeight)}
+              </span>
+              <span className="text-xs text-blue-700 dark:text-blue-400 mt-1">کیلوگرم</span>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-purple-100/30 dark:border-purple-800/30">
-            <p className="text-xs text-purple-500/70 dark:text-purple-400/70">
+          <div className="flex flex-col mt-auto">
+            <h3 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-1">میانگین وزن</h3>
+            <p className="text-sm text-blue-600/70 dark:text-blue-400/70">
               میانگین وزن تمامی شاگردان
             </p>
           </div>
-        </Card>
+        </div>
       </motion.div>
-      
-      <motion.div variants={item}>
-        <Card className="p-6 backdrop-blur-xl bg-gradient-to-br from-white/80 to-green-50/80 dark:from-slate-900/80 dark:to-green-950/50 border-green-100/30 dark:border-green-900/30 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/5 group">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white shadow-lg shadow-green-500/20 group-hover:shadow-green-500/30 transition-all duration-300 group-hover:scale-105">
-              <Dumbbell className="h-7 w-7" />
+
+      {/* تمرین‌های تخصیصی */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="group"
+      >
+        <div className="h-full rounded-3xl bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950/40 dark:to-orange-900/20 p-6 border border-amber-200/50 dark:border-amber-800/30 hover:shadow-lg hover:shadow-amber-200/20 dark:hover:shadow-amber-800/10 transition-all duration-300 relative overflow-hidden flex flex-col">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-amber-300/5 dark:from-amber-600/10 dark:to-amber-500/5 blur-2xl rounded-full -mr-16 -mt-16"></div>
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20 group-hover:shadow-amber-500/30 transition-all duration-300 group-hover:scale-105">
+              <Dumbbell className="h-8 w-8" strokeWidth={1.5} />
             </div>
-            <div>
-              <p className="text-sm text-green-600/70 dark:text-green-400/70 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">تمرین‌های تخصیصی</p>
-              <p className="text-3xl font-bold bg-gradient-to-br from-green-700 to-green-500 dark:from-green-400 dark:to-green-300 bg-clip-text text-transparent">
-                {toPersianNumbers(totalExercises)}
-              </p>
-            </div>
+            <span className="text-5xl font-bold text-amber-950 dark:text-amber-100">
+              {toPersianNumbers(totalExercises)}
+            </span>
           </div>
-          <div className="mt-4 pt-4 border-t border-green-100/30 dark:border-green-800/30">
-            <p className="text-xs text-green-500/70 dark:text-green-400/70">
+          <div className="flex flex-col mt-auto">
+            <h3 className="text-lg font-semibold text-amber-700 dark:text-amber-300 mb-1">تمرین‌های تخصیصی</h3>
+            <p className="text-sm text-amber-600/70 dark:text-amber-400/70">
               مجموع کل تمرین‌های انتخاب شده برای تمام شاگردان
             </p>
           </div>
-        </Card>
+        </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
