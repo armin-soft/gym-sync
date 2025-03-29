@@ -77,7 +77,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         initialExercisesDay4={selectedStudentForExercise?.exercisesDay4 || []}
       />
       
-      <StudentMealDialog
+      <StudentDietDialog
         open={isDietDialogOpen}
         onOpenChange={setIsDietDialogOpen}
         studentName={selectedStudentForDiet?.name || ""}
