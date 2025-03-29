@@ -212,8 +212,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
 
-  if (!open) return null;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
