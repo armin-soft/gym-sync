@@ -90,6 +90,12 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
     show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
   };
 
+  // Check if students array is empty, display default values if it is
+  const displayTotalStudents = students.length || 0;
+  const displayTotalPayments = students.length > 0 ? totalPayments : 0;
+  const displayAverageWeight = students.length > 0 ? averageWeight : 0;
+  const displayTotalExercises = students.length > 0 ? totalExercises : 0;
+
   return (
     <motion.div 
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
@@ -106,7 +112,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
             <div>
               <p className="text-sm text-indigo-600/70 dark:text-indigo-400/70 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">تعداد شاگردان</p>
               <p className="text-3xl font-bold bg-gradient-to-br from-indigo-700 to-indigo-500 dark:from-indigo-400 dark:to-indigo-300 bg-clip-text text-transparent">
-                {toPersianNumbers(students.length)}
+                {toPersianNumbers(displayTotalStudents)}
               </p>
             </div>
           </div>
@@ -128,7 +134,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
               <p className="text-sm text-amber-600/70 dark:text-amber-400/70 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">مجموع درآمد</p>
               <div className="flex items-baseline gap-1">
                 <p className="text-3xl font-bold bg-gradient-to-br from-amber-700 to-amber-500 dark:from-amber-400 dark:to-amber-300 bg-clip-text text-transparent">
-                  {toPersianNumbers(formatCurrency(totalPayments))}
+                  {toPersianNumbers(formatCurrency(displayTotalPayments))}
                 </p>
                 <span className="text-xs text-amber-500 dark:text-amber-400">تومان</span>
               </div>
@@ -152,7 +158,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
               <p className="text-sm text-purple-600/70 dark:text-purple-400/70 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">میانگین وزن</p>
               <div className="flex items-baseline gap-1">
                 <p className="text-3xl font-bold bg-gradient-to-br from-purple-700 to-purple-500 dark:from-purple-400 dark:to-purple-300 bg-clip-text text-transparent">
-                  {toPersianNumbers(averageWeight)}
+                  {toPersianNumbers(displayAverageWeight)}
                 </p>
                 <span className="text-xs text-purple-500 dark:text-purple-400">کیلوگرم</span>
               </div>
@@ -175,7 +181,7 @@ export const StudentStatsCards = ({ students }: StudentStatsCardsProps) => {
             <div>
               <p className="text-sm text-green-600/70 dark:text-green-400/70 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">تمرین‌های تخصیصی</p>
               <p className="text-3xl font-bold bg-gradient-to-br from-green-700 to-green-500 dark:from-green-400 dark:to-green-300 bg-clip-text text-transparent">
-                {toPersianNumbers(totalExercises)}
+                {toPersianNumbers(displayTotalExercises)}
               </p>
             </div>
           </div>
