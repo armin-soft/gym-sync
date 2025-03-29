@@ -65,47 +65,57 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         student={selectedStudent}
       />
 
-      <StudentExerciseDialog
-        open={isExerciseDialogOpen}
-        onOpenChange={setIsExerciseDialogOpen}
-        studentName={selectedStudentForExercise?.name || ""}
-        onSave={handleSaveExercisesWrapper}
-        initialExercises={selectedStudentForExercise?.exercises || []}
-        initialExercisesDay1={selectedStudentForExercise?.exercisesDay1 || []}
-        initialExercisesDay2={selectedStudentForExercise?.exercisesDay2 || []}
-        initialExercisesDay3={selectedStudentForExercise?.exercisesDay3 || []}
-        initialExercisesDay4={selectedStudentForExercise?.exercisesDay4 || []}
-      />
+      {selectedStudentForExercise && (
+        <StudentExerciseDialog
+          open={isExerciseDialogOpen}
+          onOpenChange={setIsExerciseDialogOpen}
+          studentName={selectedStudentForExercise.name || ""}
+          onSave={handleSaveExercisesWrapper}
+          initialExercises={selectedStudentForExercise.exercises || []}
+          initialExercisesDay1={selectedStudentForExercise.exercisesDay1 || []}
+          initialExercisesDay2={selectedStudentForExercise.exercisesDay2 || []}
+          initialExercisesDay3={selectedStudentForExercise.exercisesDay3 || []}
+          initialExercisesDay4={selectedStudentForExercise.exercisesDay4 || []}
+        />
+      )}
       
-      <StudentDietDialog
-        open={isDietDialogOpen}
-        onOpenChange={setIsDietDialogOpen}
-        studentName={selectedStudentForDiet?.name || ""}
-        onSave={handleSaveDietWrapper}
-        initialMeals={selectedStudentForDiet?.meals || []}
-        meals={meals}
-      />
+      {selectedStudentForDiet && (
+        <StudentDietDialog
+          open={isDietDialogOpen}
+          onOpenChange={setIsDietDialogOpen}
+          studentName={selectedStudentForDiet.name || ""}
+          onSave={handleSaveDietWrapper}
+          initialMeals={selectedStudentForDiet.meals || []}
+          meals={meals}
+        />
+      )}
 
-      <StudentSupplementDialog
-        open={isSupplementDialogOpen}
-        onOpenChange={setIsSupplementDialogOpen}
-        studentName={selectedStudentForSupplement?.name || ""}
-        onSave={handleSaveSupplementsWrapper}
-        initialSupplements={selectedStudentForSupplement?.supplements || []}
-        initialVitamins={selectedStudentForSupplement?.vitamins || []}
-        supplements={supplements}
-        categories={[]}
-      />
+      {selectedStudentForSupplement && (
+        <StudentSupplementDialog
+          open={isSupplementDialogOpen}
+          onOpenChange={setIsSupplementDialogOpen}
+          studentName={selectedStudentForSupplement.name || ""}
+          onSave={handleSaveSupplementsWrapper}
+          initialSupplements={selectedStudentForSupplement.supplements || []}
+          initialVitamins={selectedStudentForSupplement.vitamins || []}
+          supplements={supplements}
+        />
+      )}
 
-      <StudentDownloadDialog
-        open={isDownloadDialogOpen}
-        onOpenChange={setIsDownloadDialogOpen}
-        student={selectedStudentForDownload}
-        exercises={exercises}
-        meals={meals}
-        supplements={supplements}
-        vitamins={supplements.filter(item => item.type === 'vitamin')}
-      />
+      {selectedStudentForDownload && (
+        <StudentDownloadDialog
+          open={isDownloadDialogOpen}
+          onOpenChange={setIsDownloadDialogOpen}
+          student={{
+            ...selectedStudentForDownload,
+            payment: selectedStudentForDownload.payment || ''
+          }}
+          exercises={exercises}
+          meals={meals}
+          supplements={supplements}
+          vitamins={supplements.filter(item => item.type === 'vitamin')}
+        />
+      )}
     </>
   );
 };
