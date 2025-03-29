@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -44,7 +45,7 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   // Reset selectedMeals when dialog is opened to ensure it has the latest initialMeals
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
       setSelectedMeals(initialMeals);
       console.log("Dialog opened with initial meals:", initialMeals);
@@ -84,14 +85,19 @@ export const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
     }
     return success;
   };
-
+  
   if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
-        <DialogTitle className="sr-only">برنامه غذایی {studentName}</DialogTitle>
-        <StudentMealHeader studentName={studentName} />
+        <DialogHeader className="px-4 py-3 border-b">
+          <DialogTitle className="flex items-center gap-2">
+            <UtensilsCrossed className="h-5 w-5 text-primary" />
+            برنامه غذایی {studentName}
+          </DialogTitle>
+        </DialogHeader>
+        
         <StudentMealSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
         <Collapsible open={showFilters} onOpenChange={setShowFilters} className="w-full">

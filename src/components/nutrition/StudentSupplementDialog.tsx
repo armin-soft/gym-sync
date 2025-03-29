@@ -75,6 +75,8 @@ export const StudentSupplementDialog: React.FC<StudentSupplementDialogProps> = (
     }
   };
 
+  if (!open) return null;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
