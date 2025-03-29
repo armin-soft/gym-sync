@@ -27,11 +27,13 @@ export const useStudentDialogs = () => {
   };
 
   const handleAddExercise = (student: Student) => {
+    console.log("Opening exercise dialog for student:", student);
     setSelectedStudentForExercise(student);
     setIsExerciseDialogOpen(true);
   };
   
   const handleAddDiet = (student: Student) => {
+    console.log("Opening diet dialog for student:", student);
     setSelectedStudentForDiet(student);
     setIsDietDialogOpen(true);
   };

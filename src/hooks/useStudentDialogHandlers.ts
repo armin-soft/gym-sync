@@ -34,6 +34,7 @@ export const useStudentDialogHandlers = ({
   const { toast } = useToast();
 
   const handleSaveWrapper = (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">) => {
+    console.log("Saving student data:", data);
     const success = onSave(data, selectedStudent);
     if (success) {
       setIsDialogOpen(false);
@@ -41,9 +42,13 @@ export const useStudentDialogHandlers = ({
   };
 
   const handleSaveExercisesWrapper = (exerciseIds: number[], dayNumber?: number): boolean => {
-    if (!selectedStudentForExercise) return false;
+    if (!selectedStudentForExercise) {
+      console.error("No student selected for exercises");
+      return false;
+    }
     
     try {
+      console.log(`Saving exercises for day ${dayNumber}:`, exerciseIds);
       const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
       if (success && dayNumber === undefined) {
         setIsExerciseDialogOpen(false);
@@ -61,9 +66,13 @@ export const useStudentDialogHandlers = ({
   };
   
   const handleSaveDietWrapper = (mealIds: number[]): boolean => {
-    if (!selectedStudentForDiet) return false;
+    if (!selectedStudentForDiet) {
+      console.error("No student selected for diet");
+      return false;
+    }
     
     try {
+      console.log("Saving diet:", mealIds);
       const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
       if (success) {
         setIsDietDialogOpen(false);
@@ -81,7 +90,10 @@ export const useStudentDialogHandlers = ({
   };
   
   const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}): boolean => {
-    if (!selectedStudentForSupplement) return false;
+    if (!selectedStudentForSupplement) {
+      console.error("No student selected for supplements");
+      return false;
+    }
     
     try {
       console.log("Saving supplements and vitamins for student:", selectedStudentForSupplement.id);
