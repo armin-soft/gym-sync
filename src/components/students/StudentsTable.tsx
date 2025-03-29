@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Table, 
@@ -35,8 +34,8 @@ import {
   Check, 
   Users, 
   AlertCircle,
-  RulerSquare,
-  Scale as WeightScale
+  Ruler,
+  Scale
 } from "lucide-react";
 import { EmptyStudentState } from "@/components/students/EmptyStudentState";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
@@ -294,11 +293,11 @@ export const StudentsTable = ({
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 text-center">{toPersianNumbers(student.phone)}</p>
                     <div className="flex items-center gap-3 mt-1">
                       <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400 text-sm">
-                        <WeightScale className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                        <Scale className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                         <span>{toPersianNumbers(student.weight)} کیلوگرم</span>
                       </div>
                       <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400 text-sm">
-                        <RulerSquare className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
+                        <Ruler className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                         <span>{toPersianNumbers(student.height)} سانتی‌متر</span>
                       </div>
                     </div>
