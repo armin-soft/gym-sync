@@ -71,9 +71,9 @@ async function generateFavicons() {
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(path.join(outputDir, fileName), buffer);
     
-    // Generate favicon.ico (use the 32px version)
+    // Generate custom-favicon.ico (instead of directly overwriting favicon.ico)
     if (size === 32) {
-      fs.copyFileSync(path.join(outputDir, `favicon-${size}.png`), path.join(outputDir, 'favicon.ico'));
+      fs.copyFileSync(path.join(outputDir, `favicon-${size}.png`), path.join(outputDir, 'custom-favicon.ico'));
     }
   }
   
