@@ -6,7 +6,6 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   const toggleSort = (field: "name" | "weight" | "height") => {
@@ -20,43 +19,24 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
 
   const handleClearSearch = () => {
     setSearchQuery("");
-    setSelectedExerciseType(null);
     setSelectedCategory(null);
   };
 
   // کوئری جستجو و مرتب‌سازی دانشجویان
   const sortedAndFilteredStudents = useMemo(() => {
-    // ابتدا دانشجویان را بر اساس نوع تمرین و دسته‌بندی فیلتر می‌کنیم
+    // ابتدا دانشجویان را بر اساس دسته‌بندی فیلتر می‌کنیم
     let filtered = [...students];
 
-    // اگر فیلتر نوع تمرین یا دسته‌بندی انتخاب شده باشد
-    if (selectedExerciseType || selectedCategory !== null) {
+    // اگر فیلتر دسته‌بندی انتخاب شده باشد
+    if (selectedCategory !== null) {
       // دریافت شناسه‌های تمرین مطابق با فیلترها
       let filteredExerciseIds: number[] = [];
       
       if (exercises && exercises.length > 0) {
         // اگر دسته‌بندی انتخاب شده باشد، فقط تمرین‌های آن دسته را گرفته
-        if (selectedCategory !== null) {
-          filteredExerciseIds = exercises
-            .filter(ex => ex.categoryId === selectedCategory)
-            .map(ex => ex.id);
-        } 
-        // اگر فقط نوع تمرین انتخاب شده باشد، همه تمرین‌های آن نوع را می‌گیریم
-        else if (selectedExerciseType) {
-          // لازم است کمی بیشتر روی این قسمت کار کنیم چون exercises دسته‌بندی ندارد
-          // اینجا باید با دریافت دسته‌بندی‌های مرتبط با نوع انتخاب شده، تمرین‌های مرتبط را پیدا کنیم
-          const categoriesData = localStorage.getItem("exerciseCategories");
-          if (categoriesData) {
-            const categories = JSON.parse(categoriesData);
-            const categoryIdsOfType = categories
-              .filter((cat: any) => cat.type === selectedExerciseType)
-              .map((cat: any) => cat.id);
-              
-            filteredExerciseIds = exercises
-              .filter(ex => categoryIdsOfType.includes(ex.categoryId))
-              .map(ex => ex.id);
-          }
-        }
+        filteredExerciseIds = exercises
+          .filter(ex => ex.categoryId === selectedCategory)
+          .map(ex => ex.id);
       }
 
       // فیلتر دانشجویان بر اساس شناسه‌های تمرین (همه روزها چک شوند)
@@ -114,7 +94,6 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
     searchQuery,
     sortField,
     sortOrder,
-    selectedExerciseType,
     selectedCategory
   ]);
 
@@ -124,8 +103,6 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
     sortField,
     sortOrder,
     toggleSort,
-    selectedExerciseType,
-    setSelectedExerciseType,
     selectedCategory,
     setSelectedCategory,
     sortedAndFilteredStudents,

@@ -13,11 +13,8 @@ export const StudentSearchSort = ({
   sortField,
   sortOrder,
   toggleSort,
-  selectedExerciseType,
-  setSelectedExerciseType,
   selectedCategory,
   setSelectedCategory,
-  exerciseTypes,
   categories,
   showExerciseFilters = false,
 }: StudentSearchSortProps) => {
@@ -38,13 +35,10 @@ export const StudentSearchSort = ({
           </div>
           
           <div className="flex items-center gap-2 ms-auto flex-wrap">
-            {showExerciseFilters && selectedExerciseType !== undefined && exerciseTypes && categories && (
+            {showExerciseFilters && selectedCategory !== undefined && categories && (
               <StudentFilters 
-                selectedExerciseType={selectedExerciseType}
-                setSelectedExerciseType={setSelectedExerciseType!}
                 selectedCategory={selectedCategory!}
                 setSelectedCategory={setSelectedCategory!}
-                exerciseTypes={exerciseTypes}
                 categories={categories}
               />
             )}
