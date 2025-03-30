@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Motion from "@/components/ui/Motion";
 
 // CSS class mapping for different status types
 const statusConfig = {
