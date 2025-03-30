@@ -10,7 +10,7 @@ interface AuthWrapperProps {
   children: React.ReactNode;
 }
 
-const AuthWrapper = ({ children }: AuthWrapperProps) => {
+export const AuthWrapper = ({ children }: AuthWrapperProps) => {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
 
@@ -94,5 +94,3 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
   // If authenticated, show the main content
   return <AuthenticatedContent>{children}</AuthenticatedContent>;
 };
-
-export default AuthWrapper;
