@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Check, Coffee, Utensils } from "lucide-react";
 import { MealType } from "@/types/meal";

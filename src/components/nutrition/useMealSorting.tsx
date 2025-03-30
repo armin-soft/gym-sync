@@ -7,7 +7,8 @@ export const mealTypeOrder: Record<MealType, number> = {
   "میان وعده صبح": 2,
   "ناهار": 3,
   "میان وعده عصر": 4,
-  "شام": 5
+  "شام": 5,
+  "میان وعده": 6
 };
 
 export const dayOrder: Record<WeekDay, number> = {
@@ -61,8 +62,10 @@ export const useMealSorting = ({
     // Sort the filtered meals
     filtered.sort((a, b) => {
       // First sort by day
-      const dayOrderDiff = dayOrder[a.day] - dayOrder[b.day];
-      if (dayOrderDiff !== 0) return dayOrderDiff;
+      if (a.day && b.day) {
+        const dayOrderDiff = dayOrder[a.day] - dayOrder[b.day];
+        if (dayOrderDiff !== 0) return dayOrderDiff;
+      }
 
       // Then sort by meal type
       const typeOrderDiff = mealTypeOrder[a.type] - mealTypeOrder[b.type];

@@ -1,5 +1,5 @@
 
-import { Student } from "@/components/Students/StudentTypes";
+import { Student } from "@/components/students/StudentTypes";
 
 export const filterStudents = (students: Student[], query: string): Student[] => {
   if (!query.trim()) return students;

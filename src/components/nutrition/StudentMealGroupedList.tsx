@@ -80,7 +80,8 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
                     key={meal.id} 
                     meal={meal} 
                     isSelected={selectedMeals.includes(meal.id)} 
-                    onToggle={toggleMeal} 
+                    onSelect={() => toggleMeal(meal.id)}
+                    onToggle={toggleMeal}
                   />
                 ))}
               </div>
@@ -124,7 +125,8 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
                           key={meal.id} 
                           meal={meal} 
                           isSelected={selectedMeals.includes(meal.id)} 
-                          onToggle={toggleMeal} 
+                          onSelect={() => toggleMeal(meal.id)}
+                          onToggle={toggleMeal}
                         />
                       ))}
                     </div>

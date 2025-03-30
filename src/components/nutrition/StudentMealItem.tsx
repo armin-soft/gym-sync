@@ -10,13 +10,23 @@ interface StudentMealItemProps {
   meal: Meal;
   isSelected: boolean;
   onSelect: (meal: Meal) => void;
+  onToggle?: (id: number) => void; // Add this to make it compatible with both implementations
 }
 
 const StudentMealItem: React.FC<StudentMealItemProps> = ({
   meal,
   isSelected,
-  onSelect
+  onSelect,
+  onToggle
 }) => {
+  const handleClick = () => {
+    if (onToggle) {
+      onToggle(meal.id);
+    } else {
+      onSelect(meal);
+    }
+  };
+
   return (
     <motion.div
       layout
@@ -27,7 +37,7 @@ const StudentMealItem: React.FC<StudentMealItemProps> = ({
         "relative p-3 rounded-lg cursor-pointer transition-all border border-transparent hover:border-indigo-200 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/10",
         isSelected && "border-indigo-200 bg-indigo-50/50 dark:border-indigo-800/60 dark:bg-indigo-950/20"
       )}
-      onClick={() => onSelect(meal)}
+      onClick={handleClick}
     >
       <div className="flex justify-between items-start">
         <div className="flex-1">

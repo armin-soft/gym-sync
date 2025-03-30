@@ -9,4 +9,8 @@ export interface Meal {
   description?: string;
   type: MealType;
   day?: WeekDay;
+  calories?: string;
+  protein?: string;
+  carbs?: string;
+  fat?: string;
 }

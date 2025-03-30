@@ -22,7 +22,8 @@ const mealTypeOrder: Record<MealType, number> = {
   "میان وعده صبح": 2, 
   "ناهار": 3,
   "میان وعده عصر": 4,
-  "شام": 5
+  "شام": 5,
+  "میان وعده": 6
 };
 
 const getMealTypeIcon = (type: MealType) => {
@@ -37,6 +38,8 @@ const getMealTypeIcon = (type: MealType) => {
       return <Apple className="w-5 h-5" />;
     case "شام":
       return <Moon className="w-5 h-5" />;
+    case "میان وعده":
+      return <Cookie className="w-5 h-5" />;
   }
 };
 
@@ -77,6 +80,13 @@ const getMealTypeStyle = (type: MealType) => {
         hover: "hover:border-blue-500/40",
         bg: "bg-blue-500/5"
       };
+    case "میان وعده":
+      return {
+        icon: "text-purple-500",
+        border: "border-purple-500/20",
+        hover: "hover:border-purple-500/40",
+        bg: "bg-purple-500/5"
+      };
   }
 };
 
@@ -98,19 +108,19 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
             transition={{ duration: 0.2, delay: typeIndex * 0.05 }}
             className={cn(
               "rounded-xl border border-border/50 overflow-hidden",
-              styles.border
+              styles?.border
             )}
             dir="rtl"
           >
-            <div className={`p-4 ${styles.bg} rounded-t-xl border-b ${styles.border}`}>
+            <div className={`p-4 ${styles?.bg} rounded-t-xl border-b ${styles?.border}`}>
               <div className="flex items-center gap-2">
-                <div className={`${styles.icon}`}>
+                <div className={`${styles?.icon}`}>
                   {getMealTypeIcon(type)}
                 </div>
                 <h3 className="text-base font-medium text-foreground/90">
                   {type}
                 </h3>
-                <Badge variant="outline" className={cn("mr-2 bg-background/50", styles.border)}>
+                <Badge variant="outline" className={cn("mr-2 bg-background/50", styles?.border)}>
                   {toPersianNumbers(typeMeals.length)} مورد
                 </Badge>
               </div>
@@ -130,7 +140,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                       }}
                     >
                       <Card 
-                        className={`group relative border ${styles.border} ${styles.hover} transition-all duration-300 hover:shadow-sm h-full`}
+                        className={`group relative border ${styles?.border} ${styles?.hover} transition-all duration-300 hover:shadow-sm h-full`}
                       >
                         <div className="p-3 text-right h-full flex flex-col">
                           <div className="flex items-start justify-between gap-2">
@@ -173,12 +183,12 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                               </Badge>
                             )}
                             {meal.carbs && (
-                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900">
+                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800">
                                 کربوهیدرات: {toPersianNumbers(meal.carbs)}
                               </Badge>
                             )}
                             {meal.fat && (
-                              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900">
+                              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800">
                                 چربی: {toPersianNumbers(meal.fat)}
                               </Badge>
                             )}
@@ -188,13 +198,8 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                     </motion.div>
                   ))
                 ) : (
-                  <div className="col-span-full">
-                    <Card className="border-dashed">
-                      <div className="flex items-center justify-center gap-2 p-6 text-sm text-muted-foreground">
-                        <UtensilsCrossed className="w-4 h-4" />
-                        هیچ وعده غذایی برای {type} ثبت نشده است
-                      </div>
-                    </Card>
+                  <div className="col-span-full text-center py-6 text-muted-foreground">
+                    هیچ موردی یافت نشد
                   </div>
                 )}
               </div>

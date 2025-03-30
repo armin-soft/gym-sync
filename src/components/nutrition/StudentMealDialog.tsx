@@ -24,7 +24,6 @@ interface StudentMealDialogProps {
   studentName: string;
   onSave: (mealIds: number[]) => boolean;
   initialMeals: number[];
-  // Removing meals prop from the interface since StudentDietDialog doesn't expect it
 }
 
 const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
@@ -40,6 +39,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   const [activeMealType, setActiveMealType] = useState<MealType | "all">("all");
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [selectedType, setSelectedType] = useState<MealType | null>(null);
 
   // Get meals data from localStorage if not provided as a prop
   const [mealsData, setMealsData] = useState<Meal[]>([]);
@@ -63,8 +63,21 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   const days = Array.from(new Set(mealsData.map(meal => meal.day))) as WeekDay[];
   const mealTypes = Array.from(new Set(mealsData.map(meal => meal.type))) as MealType[];
 
-  const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
-  const sortedDays = [...days].sort((a, b) => dayOrder[a] - dayOrder[b]);
+  const sortedMealTypes = [...mealTypes].sort((a, b) => 
+    (mealTypeOrder[a] || 99) - (mealTypeOrder[b] || 99)
+  );
+  const sortedDays = [...days].sort((a, b) => 
+    (dayOrder[a] || 99) - (dayOrder[b] || 99)
+  );
+
+  // Update activeMealType when selectedType changes
+  React.useEffect(() => {
+    if (selectedType) {
+      setActiveMealType(selectedType);
+    } else {
+      setActiveMealType("all");
+    }
+  }, [selectedType]);
 
   const filteredMeals = useMealSorting({
     meals: mealsData,
@@ -106,9 +119,8 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
         <Collapsible open={showFilters} onOpenChange={setShowFilters} className="w-full">
           <CollapsibleContent className="flex-shrink-0 bg-muted/10 border-b">
             <StudentMealFilters 
-              activeMealType={activeMealType}
-              setActiveMealType={setActiveMealType}
-              sortedMealTypes={sortedMealTypes}
+              selectedType={selectedType}
+              onSelectType={setSelectedType}
             />
           </CollapsibleContent>
         </Collapsible>
