@@ -54,7 +54,13 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       }
     };
     
-    checkAuth();
+    // نمایش صفحه بارگذاری برای مدت مشخص
+    const timer = setTimeout(() => {
+      checkAuth();
+      setLoading(false);
+    }, 1500); // تاخیر قابل تنظیم برای نمایش بهتر صفحه بارگذاری
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const handleLoginSuccess = (rememberMe: boolean = false) => {
@@ -75,13 +81,9 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
     );
   };
 
-  const handleLoadingComplete = () => {
-    setLoading(false);
-  };
-
   // If still loading, show the loading screen
   if (loading) {
-    return <LoadingScreen onLoadingComplete={handleLoadingComplete} />;
+    return <LoadingScreen onLoadingComplete={() => {}} />;
   }
 
   // If not authenticated, show the login form

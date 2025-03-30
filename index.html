@@ -7,10 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     
     <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/png" href="./Assets/Image/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./Assets/Image/favicon-32.png" />
-    <link rel="apple-touch-icon" href="./Assets/Image/logo.png" />
-    <link rel="mask-icon" href="./Assets/Image/logo.png" color="#7c3aed" />
+    <link rel="icon" type="image/png" href="./Assets/Image/Favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./Assets/Image/Favicon-32.png" />
+    <link rel="apple-touch-icon" href="./Assets/Image/Logo.png" />
+    <link rel="mask-icon" href="./Assets/Image/Logo.png" color="#7c3aed" />
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json" />
@@ -51,7 +51,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
     
     <!-- Preload Critical Assets -->
-    <link rel="preload" href="./Assets/Image/logo.png" as="image" type="image/png" />
+    <link rel="preload" href="./Assets/Image/Logo.png" as="image" type="image/png" />
     
     <!-- Ensure proper base path for service worker -->
     <script>
@@ -136,35 +136,6 @@
   </head>
   <body class="persian-numbers">
     <div id="root"></div>
-    
-    <!-- App Loading Indicator (shown until React loads) -->
-    <div id="app-loader" style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background-color: #f9fafb; z-index: 9999; transition: opacity 0.3s ease-out;">
-      <div style="text-align: center;">
-        <div style="width: 50px; height: 50px; border: 3px solid #e0e0e0; border-radius: 50%; border-top-color: #7c3aed; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-        <p style="margin-top: 20px; font-family: 'Vazirmatn', sans-serif; color: #6b7280;">در حال بارگذاری...</p>
-      </div>
-    </div>
-    
-    <style>
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    </style>
-    
-    <script>
-      // Hide loading indicator when app is loaded
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          const loader = document.getElementById('app-loader');
-          if (loader) {
-            loader.style.opacity = '0';
-            setTimeout(function() {
-              loader.style.display = 'none';
-            }, 300);
-          }
-        }, 500);
-      });
-    </script>
     
     <!-- GPT Engineer Script (required for "Select" feature) -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>

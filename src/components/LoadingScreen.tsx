@@ -7,7 +7,7 @@ import { Loader } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
 
 interface LoadingScreenProps {
-  onLoadingComplete: () => void;
+  onLoadingComplete?: () => void;
 }
 
 export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
@@ -59,7 +59,9 @@ export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
             } else {
               // Loading complete
               setTimeout(() => {
-                onLoadingComplete();
+                if (onLoadingComplete) {
+                  onLoadingComplete();
+                }
               }, 500);
             }
           } else {
