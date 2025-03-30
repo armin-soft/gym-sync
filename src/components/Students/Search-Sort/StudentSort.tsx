@@ -63,7 +63,7 @@ export const StudentSort = ({
           {getSortIcon(sortField)}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56" dir="rtl">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>مرتب‌سازی بر اساس</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => toggleSort("name")} className="flex items-center cursor-pointer">

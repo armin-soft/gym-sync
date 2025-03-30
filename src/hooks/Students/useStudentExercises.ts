@@ -1,25 +1,29 @@
-
-import { useToast } from "@/hooks/use-toast";
-import { Student } from "@/components/students/StudentTypes";
+import { Student } from '@/components/students/StudentTypes';
+import { useToast } from '@/hooks/use-toast';
 import { Dispatch, SetStateAction } from 'react';
 
-export const useStudentSupplements = (
+export const useStudentExercises = (
   students: Student[], 
   setStudents: Dispatch<SetStateAction<Student[]>>
 ) => {
   const { toast } = useToast();
   
-  const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}, studentId: number) => {
+  const handleSaveExercises = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
     try {
-      console.log(`Saving supplements for student ${studentId}:`, data);
+      console.log(`Saving exercises for student ${studentId} day ${dayNumber || 'general'}:`, exerciseIds);
       
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
-          const updatedStudent = {
-            ...student,
-            supplements: data.supplements,
-            vitamins: data.vitamins
-          };
+          const updatedStudent = { ...student };
+          
+          // If dayNumber is provided, update the specific day's exercises
+          if (dayNumber !== undefined) {
+            const dayKey = `exercisesDay${dayNumber}` as keyof typeof updatedStudent;
+            updatedStudent[dayKey] = exerciseIds as any;
+          } else {
+            // Otherwise update the general exercises
+            updatedStudent.exercises = exerciseIds;
+          }
           
           // Calculate progress
           let progressCount = 0;
@@ -43,19 +47,19 @@ export const useStudentSupplements = (
       
       toast({
         title: "افزودن موفق",
-        description: "برنامه مکمل و ویتامین با موفقیت به شاگرد اضافه شد"
+        description: "برنامه تمرینی با موفقیت به شاگرد اضافه شد"
       });
       return true;
     } catch (error) {
-      console.error("Error saving supplements:", error);
+      console.error("Error saving exercises:", error);
       toast({
         variant: "destructive",
         title: "خطا در ذخیره‌سازی",
-        description: "مشکلی در ذخیره‌سازی برنامه مکمل و ویتامین پیش آمد. لطفا مجدد تلاش کنید."
+        description: "مشکلی در ذخیره‌سازی برنامه تمرینی پیش آمد. لطفا مجدد تلاش کنید."
       });
       return false;
     }
   };
 
-  return { handleSaveSupplements };
+  return { handleSaveExercises };
 };

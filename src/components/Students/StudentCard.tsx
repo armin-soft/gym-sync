@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Student } from "./StudentTypes";
+import { Student } from "@/components/students/StudentTypes"; // Updated import path
 import { 
   MoreVertical, 
   Edit, 
@@ -128,7 +128,7 @@ export const StudentCard = ({
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56" dir="rtl">
+            <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem onClick={onEdit} className="gap-2 cursor-pointer">
                 <Edit className="h-4 w-4" />
                 <span>ویرایش اطلاعات</span>

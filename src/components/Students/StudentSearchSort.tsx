@@ -1,10 +1,10 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Card } from "@/components/UI/Card";
-import { StudentSearchSortProps } from "./Search-Sort/StudentSearchSortTypes";
-import { StudentSearch } from "./Search-Sort/StudentSearch";
-import { StudentSort } from "./Search-Sort/StudentSort";
+import { Card } from "@/components/ui/card";
+import { StudentSearchSortProps } from "@/components/students/search-sort/StudentSearchSortTypes";
+import { StudentSearch } from "@/components/students/search-sort/StudentSearch";
+import { StudentSort } from "@/components/students/search-sort/StudentSort";
 
 export const StudentSearchSort = ({
   searchQuery,
