@@ -5,8 +5,11 @@ export interface StudentSearchSortProps {
   sortField: "name" | "weight" | "height";
   sortOrder: "asc" | "desc";
   toggleSort: (field: "name" | "weight" | "height") => void;
+  selectedExerciseType?: string | null;
+  setSelectedExerciseType?: (type: string | null) => void;
   selectedCategory?: number | null;
   setSelectedCategory?: (id: number | null) => void;
+  exerciseTypes?: any[];
   categories?: any[];
   showExerciseFilters?: boolean;
 }
@@ -23,14 +26,25 @@ export interface StudentSortProps {
   toggleSort: (field: "name" | "weight" | "height") => void;
 }
 
+// Add interfaces for exercise filters
+export interface ExerciseTypeFilterProps {
+  selectedExerciseType: string | null;
+  setSelectedExerciseType: (type: string | null) => void;
+  exerciseTypes: any[];
+}
+
 export interface CategoryFilterProps {
   selectedCategory: number | null;
   setSelectedCategory: (id: number | null) => void;
   categories: any[];
+  selectedExerciseType: string | null;
 }
 
 export interface StudentFiltersProps {
+  selectedExerciseType: string | null;
+  setSelectedExerciseType: (type: string | null) => void;
   selectedCategory: number | null;
   setSelectedCategory: (id: number | null) => void;
+  exerciseTypes: any[];
   categories: any[];
 }
