@@ -18,6 +18,7 @@ import BackupPage from "@/pages/backup";
 // Create a client
 const queryClient = new QueryClient();
 
+// This file is not currently being used in the app, but we'll update it for consistency
 export const AppRoutes = () => {
   return (
     <QueryClientProvider client={queryClient}>

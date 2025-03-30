@@ -53,6 +53,26 @@
     <!-- Preload Critical Assets -->
     <link rel="preload" href="./logo.png" as="image" type="image/png" />
     
+    <!-- Ensure proper base path for service worker -->
+    <script>
+      // Get the base path for the application
+      const getBasePath = () => {
+        const path = window.location.pathname;
+        const pathSegments = path.split('/').filter(segment => segment !== '');
+        
+        // If deployed in a subdirectory, use it as the base
+        if (pathSegments.length > 0 && !['Coach-Profile', 'Students', 'Exercise-Movements', 
+            'Diet-Plan', 'Supplements-Vitamins', 'Reports', 'Backup-Restore', 'About'].includes(pathSegments[0])) {
+          return '/' + pathSegments[0] + '/';
+        }
+        
+        return '/';
+      };
+      
+      // Set a global variable for the base path that can be used by other scripts
+      window.BASE_PATH = getBasePath();
+    </script>
+    
     <!-- Script for Dynamic Title -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -134,11 +154,12 @@
     <!-- Application Scripts -->
     <script type="module" src="./src/main.tsx"></script>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration with proper base path -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+          const swPath = window.BASE_PATH ? window.BASE_PATH + 'service-worker.js' : './service-worker.js';
+          navigator.serviceWorker.register(swPath).then(function(registration) {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, function(err) {
             console.log('ServiceWorker registration failed: ', err);
