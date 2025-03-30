@@ -83,7 +83,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         studentName={selectedStudentForDiet?.name || ""}
         onSave={handleSaveDietWrapper}
         initialMeals={selectedStudentForDiet?.meals || []}
-        meals={meals}
+        // Remove the meals prop since it doesn't exist in StudentDietDialogProps
       />
 
       <StudentSupplementDialog

@@ -24,7 +24,7 @@ interface StudentMealDialogProps {
   studentName: string;
   onSave: (mealIds: number[]) => boolean;
   initialMeals: number[];
-  meals: Meal[];
+  // Removing meals prop from the interface since StudentDietDialog doesn't expect it
 }
 
 const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
@@ -33,7 +33,6 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   studentName,
   onSave,
   initialMeals = [],
-  meals = []
 }) => {
   const [selectedMeals, setSelectedMeals] = useState<number[]>(initialMeals);
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,6 +40,17 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   const [activeMealType, setActiveMealType] = useState<MealType | "all">("all");
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  // Get meals data from localStorage if not provided as a prop
+  const [mealsData, setMealsData] = useState<Meal[]>([]);
+  
+  // Load meals from localStorage on component mount
+  React.useEffect(() => {
+    const savedMeals = localStorage.getItem('meals');
+    if (savedMeals) {
+      setMealsData(JSON.parse(savedMeals));
+    }
+  }, []);
 
   // Reset selectedMeals when dialog is opened to ensure it has the latest initialMeals
   React.useEffect(() => {
@@ -50,14 +60,14 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     }
   }, [open, initialMeals]);
 
-  const days = Array.from(new Set(meals.map(meal => meal.day))) as WeekDay[];
-  const mealTypes = Array.from(new Set(meals.map(meal => meal.type))) as MealType[];
+  const days = Array.from(new Set(mealsData.map(meal => meal.day))) as WeekDay[];
+  const mealTypes = Array.from(new Set(mealsData.map(meal => meal.type))) as MealType[];
 
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   const sortedDays = [...days].sort((a, b) => dayOrder[a] - dayOrder[b]);
 
   const filteredMeals = useMealSorting({
-    meals,
+    meals: mealsData,
     searchQuery,
     activeDay,
     activeMealType,

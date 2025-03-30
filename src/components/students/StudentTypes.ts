@@ -17,3 +17,31 @@ export interface Student {
   vitamins?: number[];
   progress?: number;
 }
+
+// Adding missing types needed by export.ts
+export interface Exercise {
+  id: number;
+  name: string;
+  category?: string;
+  description?: string;
+  type?: string;
+}
+
+export interface Meal {
+  id: number;
+  name: string;
+  category?: string;
+  description?: string;
+  type?: string;
+  day?: string;
+}
+
+export interface Supplement {
+  id: number;
+  name: string;
+  type: string;
+  dosage?: string;
+  timing?: string;
+  category?: string;
+  description?: string;
+}
