@@ -27,16 +27,16 @@ export default defineConfig(({ mode }) => ({
       output: {
         // Define directory structure for assets
         assetFileNames: (assetInfo) => {
-          const extType = assetInfo.name.split('.').at(1);
+          const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
           
           // Images
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-            return 'assets/images/[name]-[hash].[ext]';
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
+            return 'assets/Images/[name]-[hash].[ext]';
           }
           
           // CSS files
-          if (/css/i.test(extType)) {
-            return 'assets/styles/[name]-[hash].[ext]';
+          if (/css/i.test(extType || '')) {
+            return 'assets/Styles/[name]-[hash].[ext]';
           }
           
           // Default for other assets
@@ -44,23 +44,24 @@ export default defineConfig(({ mode }) => ({
         },
         
         // Define directory structure for JS chunks
-        chunkFileNames: 'assets/scripts/[name]-chunk-[hash].js',
-        entryFileNames: 'assets/scripts/[name]-bundle-[hash].js',
+        chunkFileNames: 'assets/Scripts/[name]-Chunk-[hash].js',
+        entryFileNames: 'assets/Scripts/[name]-Bundle-[hash].js',
         
         // Make filenames more descriptive
         manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-ui': [
+          'Vendor-React': ['react', 'react-dom'],
+          'Vendor-Ui': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
             '@radix-ui/react-tabs',
             '@radix-ui/react-toast'
           ],
-          'vendor-charts': ['recharts'],
-          'vendor-utils': ['date-fns', 'clsx', 'zod'],
-          'vendor-pdf': ['jspdf', 'jspdf-autotable', 'html2canvas']
+          'Vendor-Charts': ['recharts'],
+          'Vendor-Utils': ['date-fns', 'clsx', 'zod'],
+          'Vendor-Pdf': ['jspdf', 'jspdf-autotable', 'html2canvas']
         }
       }
     }
   }
 }));
+
