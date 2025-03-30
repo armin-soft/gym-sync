@@ -25,27 +25,27 @@ export default defineConfig(({ mode }) => ({
     assetsDir: 'Assets',
     rollupOptions: {
       output: {
-        // Define directory structure for assets
+        // Define directory structure for assets without hash
         assetFileNames: (assetInfo) => {
           const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
           
           // Images
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
-            return 'Assets/Image/[name]-[hash].[ext]';
+            return 'Assets/Image/[name].[ext]';
           }
           
           // CSS files
           if (/css/i.test(extType || '')) {
-            return 'Assets/Style/[name]-[hash].[ext]';
+            return 'Assets/Style/[name].[ext]';
           }
           
           // Default for other assets
-          return 'Assets/[name]-[hash].[ext]';
+          return 'Assets/[name].[ext]';
         },
         
-        // Define directory structure for JS chunks
-        chunkFileNames: 'Assets/Script/[name]-Chunk-[hash].js',
-        entryFileNames: 'Assets/Script/[name]-Bundle-[hash].js',
+        // Define directory structure for JS chunks without hash
+        chunkFileNames: 'Assets/Script/[name]-Chunk.js',
+        entryFileNames: 'Assets/Script/[name]-Bundle.js',
         
         // Make filenames more descriptive
         manualChunks: {
@@ -64,4 +64,3 @@ export default defineConfig(({ mode }) => ({
     }
   }
 }));
-
