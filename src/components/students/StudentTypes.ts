@@ -6,7 +6,7 @@ export interface Student {
   height: string;
   weight: string;
   image: string;
-  payment?: string;
+  payment: string; // Changed from optional to required to match expected type
   exercises?: number[];
   exercisesDay1?: number[];
   exercisesDay2?: number[];
