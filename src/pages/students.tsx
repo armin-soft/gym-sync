@@ -9,6 +9,8 @@ import { useStudents } from "@/hooks/students"; // Updated import path
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
+import { Card } from "@/components/ui/card";
+import { StudentSearch } from "@/components/students/search-sort/StudentSearch";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
@@ -90,6 +92,22 @@ const StudentsPage = () => {
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
         
         <StudentStatsCards students={students} />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mb-8"
+        >
+          <Card className="backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border border-gray-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all duration-300 p-4">
+            <div className="relative">
+              <StudentSearch 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            </div>
+          </Card>
+        </motion.div>
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}
