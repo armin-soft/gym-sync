@@ -10,18 +10,6 @@ export const useStudentExercises = (
   
   const handleSaveExercises = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
     try {
-      if (!Array.isArray(exerciseIds)) {
-        console.error("Invalid exerciseIds:", exerciseIds);
-        toast({
-          variant: "destructive",
-          title: "خطا در ذخیره‌سازی",
-          description: "داده‌های تمرین نامعتبر هستند. لطفا مجدد تلاش کنید."
-        });
-        return false;
-      }
-      
-      console.log(`Saving exercises for student ${studentId}, day ${dayNumber || 'general'}:`, exerciseIds);
-      
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
           if (!dayNumber) {
