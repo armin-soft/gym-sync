@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
+import { StudentSearchSort } from "@/components/students/StudentSearchSort";
 import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; // Updated import path
@@ -93,6 +94,14 @@ const StudentsPage = () => {
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
         
         <StudentStatsCards students={students} />
+        
+        <StudentSearchSort 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          sortField={sortField}
+          sortOrder={sortOrder}
+          toggleSort={toggleSort}
+        />
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}
