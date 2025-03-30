@@ -50,7 +50,25 @@ export const useStudentDialogHandlers = ({
   };
 
   const handleSaveExercisesWrapper = (exerciseIds: number[], dayNumber?: number): boolean => {
-    if (!selectedStudentForExercise) return false;
+    if (!selectedStudentForExercise) {
+      console.error("No student selected for exercise");
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "هیچ شاگردی انتخاب نشده است."
+      });
+      return false;
+    }
+    
+    if (!Array.isArray(exerciseIds)) {
+      console.error("Invalid exerciseIds:", exerciseIds);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "داده‌های تمرین نامعتبر هستند."
+      });
+      return false;
+    }
     
     try {
       console.log("Saving exercises for student:", selectedStudentForExercise.id);
@@ -74,7 +92,25 @@ export const useStudentDialogHandlers = ({
   };
   
   const handleSaveDietWrapper = (mealIds: number[]): boolean => {
-    if (!selectedStudentForDiet) return false;
+    if (!selectedStudentForDiet) {
+      console.error("No student selected for diet");
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "هیچ شاگردی انتخاب نشده است."
+      });
+      return false;
+    }
+    
+    if (!Array.isArray(mealIds)) {
+      console.error("Invalid mealIds:", mealIds);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "داده‌های غذایی نامعتبر هستند."
+      });
+      return false;
+    }
     
     try {
       console.log("Saving diet for student:", selectedStudentForDiet.id);
@@ -97,7 +133,25 @@ export const useStudentDialogHandlers = ({
   };
   
   const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}): boolean => {
-    if (!selectedStudentForSupplement) return false;
+    if (!selectedStudentForSupplement) {
+      console.error("No student selected for supplements");
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "هیچ شاگردی انتخاب نشده است."
+      });
+      return false;
+    }
+    
+    if (!data || !Array.isArray(data.supplements) || !Array.isArray(data.vitamins)) {
+      console.error("Invalid supplement data:", data);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره‌سازی",
+        description: "داده‌های مکمل‌ها نامعتبر هستند."
+      });
+      return false;
+    }
     
     try {
       console.log("Saving supplements and vitamins for student:", selectedStudentForSupplement.id);

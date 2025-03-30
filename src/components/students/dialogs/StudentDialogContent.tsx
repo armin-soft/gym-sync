@@ -56,6 +56,12 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
   meals,
   supplements
 }) => {
+  // گرفتن مقادیر اولیه با اطمینان از معتبر بودن داده‌ها
+  const getInitialExercises = (student: Student | null, field: keyof Pick<Student, "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4">) => {
+    if (!student) return [];
+    return Array.isArray(student[field]) ? student[field] as number[] : [];
+  };
+
   return (
     <>
       <StudentDialog
@@ -65,47 +71,55 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         student={selectedStudent}
       />
 
-      <StudentExerciseDialog
-        open={isExerciseDialogOpen}
-        onOpenChange={setIsExerciseDialogOpen}
-        studentName={selectedStudentForExercise?.name || ""}
-        onSave={handleSaveExercisesWrapper}
-        initialExercises={selectedStudentForExercise?.exercises || []}
-        initialExercisesDay1={selectedStudentForExercise?.exercisesDay1 || []}
-        initialExercisesDay2={selectedStudentForExercise?.exercisesDay2 || []}
-        initialExercisesDay3={selectedStudentForExercise?.exercisesDay3 || []}
-        initialExercisesDay4={selectedStudentForExercise?.exercisesDay4 || []}
-      />
+      {selectedStudentForExercise && (
+        <StudentExerciseDialog
+          open={isExerciseDialogOpen}
+          onOpenChange={setIsExerciseDialogOpen}
+          studentName={selectedStudentForExercise?.name || ""}
+          onSave={handleSaveExercisesWrapper}
+          initialExercises={getInitialExercises(selectedStudentForExercise, "exercises")}
+          initialExercisesDay1={getInitialExercises(selectedStudentForExercise, "exercisesDay1")}
+          initialExercisesDay2={getInitialExercises(selectedStudentForExercise, "exercisesDay2")}
+          initialExercisesDay3={getInitialExercises(selectedStudentForExercise, "exercisesDay3")}
+          initialExercisesDay4={getInitialExercises(selectedStudentForExercise, "exercisesDay4")}
+        />
+      )}
       
-      <StudentDietDialog
-        open={isDietDialogOpen}
-        onOpenChange={setIsDietDialogOpen}
-        studentName={selectedStudentForDiet?.name || ""}
-        onSave={handleSaveDietWrapper}
-        initialMeals={selectedStudentForDiet?.meals || []}
-        meals={meals}
-      />
+      {selectedStudentForDiet && (
+        <StudentDietDialog
+          open={isDietDialogOpen}
+          onOpenChange={setIsDietDialogOpen}
+          studentName={selectedStudentForDiet?.name || ""}
+          onSave={handleSaveDietWrapper}
+          initialMeals={Array.isArray(selectedStudentForDiet?.meals) ? selectedStudentForDiet.meals : []}
+          meals={meals}
+        />
+      )}
 
-      <StudentSupplementDialog
-        open={isSupplementDialogOpen}
-        onOpenChange={setIsSupplementDialogOpen}
-        studentName={selectedStudentForSupplement?.name || ""}
-        onSave={handleSaveSupplementsWrapper}
-        initialSupplements={selectedStudentForSupplement?.supplements || []}
-        initialVitamins={selectedStudentForSupplement?.vitamins || []}
-        supplements={supplements}
-        categories={[]}
-      />
+      {selectedStudentForSupplement && (
+        <StudentSupplementDialog
+          open={isSupplementDialogOpen}
+          onOpenChange={setIsSupplementDialogOpen}
+          studentName={selectedStudentForSupplement?.name || ""}
+          onSave={handleSaveSupplementsWrapper}
+          initialSupplements={Array.isArray(selectedStudentForSupplement?.supplements) ? selectedStudentForSupplement.supplements : []}
+          initialVitamins={Array.isArray(selectedStudentForSupplement?.vitamins) ? selectedStudentForSupplement.vitamins : []}
+          supplements={supplements}
+          categories={[]}
+        />
+      )}
 
-      <StudentDownloadDialog
-        open={isDownloadDialogOpen}
-        onOpenChange={setIsDownloadDialogOpen}
-        student={selectedStudentForDownload}
-        exercises={exercises}
-        meals={meals}
-        supplements={supplements}
-        vitamins={supplements.filter(item => item.type === 'vitamin')}
-      />
+      {selectedStudentForDownload && (
+        <StudentDownloadDialog
+          open={isDownloadDialogOpen}
+          onOpenChange={setIsDownloadDialogOpen}
+          student={selectedStudentForDownload}
+          exercises={exercises}
+          meals={meals}
+          supplements={supplements}
+          vitamins={supplements.filter(item => item.type === 'vitamin')}
+        />
+      )}
     </>
   );
 };
