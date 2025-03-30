@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
-import { AuthWrapper } from "@/components/AuthWrapper";
+import AuthWrapper from "@/components/AuthWrapper";
 import Index from "@/pages/Index";
 import TrainerProfile from "@/pages/trainer";
 import Students from "@/pages/students";
