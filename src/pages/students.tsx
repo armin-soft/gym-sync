@@ -3,20 +3,16 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
-import { StudentSearchSort } from "@/components/students/StudentSearchSort";
 import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; // Updated import path
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
-import { Grid3X3, Table as TableIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   
   const {
     students,
@@ -95,43 +91,12 @@ const StudentsPage = () => {
         
         <StudentStatsCards students={students} />
         
-        <StudentSearchSort 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          sortField={sortField}
-          sortOrder={sortOrder}
-          toggleSort={toggleSort}
-        />
-        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           className="rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300"
         >
-          <div className="border-b border-gray-200/70 dark:border-gray-800/70 px-6 py-4 flex items-center justify-end flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <div className="bg-gray-100/70 dark:bg-gray-800/70 p-1 rounded-lg flex">
-                <Button 
-                  onClick={() => setViewMode("table")} 
-                  className={`p-2 rounded-md transition-all ${viewMode === "table" ? "bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"}`}
-                  variant="ghost"
-                  size="icon"
-                >
-                  <TableIcon className="h-5 w-5" />
-                </Button>
-                <Button 
-                  onClick={() => setViewMode("grid")} 
-                  className={`p-2 rounded-md transition-all ${viewMode === "grid" ? "bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400" : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"}`}
-                  variant="ghost"
-                  size="icon"
-                >
-                  <Grid3X3 className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-            
           <StudentsTable 
             students={students}
             sortedAndFilteredStudents={sortedAndFilteredStudents}
@@ -145,7 +110,7 @@ const StudentsPage = () => {
             onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
-            viewMode={viewMode}
+            viewMode="table"
           />
         </motion.div>
 
