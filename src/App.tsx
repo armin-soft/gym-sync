@@ -1,10 +1,9 @@
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import Index from "@/pages/Index";
-import NotFound from "@/pages/NotFound";
 import TrainerProfile from "@/pages/trainer";
 import Students from "@/pages/students";
 import ExerciseMovements from "@/pages/exercises";
@@ -69,7 +68,8 @@ function App() {
               <Route path="/Reports" element={<Reports />} />
               <Route path="/Backup-Restore" element={<BackupRestore />} />
               <Route path="/About" element={<About />} />
-              <Route path="*" element={<NotFound />} />
+              {/* Redirect all non-matching routes to the dashboard */}
+              <Route path="*" element={<Navigate replace to="/" />} />
             </Route>
           </Routes>
         </AuthWrapper>

@@ -1,5 +1,5 @@
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -12,7 +12,6 @@ import Diet from "@/pages/diet";
 import Supplements from "@/pages/supplements";
 import Reports from "@/pages/reports";
 import About from "@/pages/about";
-import NotFound from "@/pages/NotFound";
 import BackupPage from "@/pages/backup";
 
 // Create a client
@@ -45,7 +44,8 @@ export const AppRoutes = () => {
           <Route path="/Reports" element={<Reports />} />
           <Route path="/Backup-Restore" element={<BackupPage />} />
           <Route path="/About" element={<About />} />
-          <Route path="*" element={<NotFound />} />
+          {/* Redirect all non-matching routes to the dashboard */}
+          <Route path="*" element={<Navigate replace to="/" />} />
         </Route>
       </Routes>
     </QueryClientProvider>
