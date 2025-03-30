@@ -24,25 +24,37 @@ import { Edit, Trash2, MoreVertical, User, Clipboard, Dumbbell, UtensilsCrossed,
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 
-interface StudentTableProps {
+interface StudentsTableProps {
   students: Student[];
+  sortedAndFilteredStudents: Student[];
+  searchQuery: string;
+  refreshTrigger: number;
   onEdit: (student: Student) => void;
   onDelete: (studentId: number) => void;
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
   onDownload: (student: Student) => void;
+  onAddStudent: () => void;
+  onClearSearch: () => void;
+  viewMode: "table" | "grid";
 }
 
-export const StudentTable = ({ 
+export const StudentsTable = ({ 
   students, 
+  sortedAndFilteredStudents,
+  searchQuery,
+  refreshTrigger,
   onEdit, 
   onDelete,
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  onDownload
-}: StudentTableProps) => {
+  onDownload,
+  onAddStudent,
+  onClearSearch,
+  viewMode
+}: StudentsTableProps) => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [hoveredRowId, setHoveredRowId] = useState<number | null>(null);
 
@@ -63,7 +75,12 @@ export const StudentTable = ({
     }
   };
 
+  // Use the calculated progress from the student object if available, otherwise calculate it here
   const getCompletionPercentage = (student: Student) => {
+    if (typeof student.progress === 'number') {
+      return student.progress;
+    }
+    
     let total = 0;
     let completed = 0;
     
@@ -86,6 +103,152 @@ export const StudentTable = ({
     return Math.round((completed / total) * 100);
   };
 
+  if (viewMode === "grid") {
+    return (
+      <div className="p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {sortedAndFilteredStudents.length === 0 ? (
+            <div className="col-span-full">
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <User className="h-12 w-12 mb-4 opacity-40" />
+                <p className="font-medium text-lg">هیچ شاگردی یافت نشد</p>
+                {searchQuery ? (
+                  <div className="mt-4">
+                    <Button variant="outline" onClick={onClearSearch}>
+                      پاک کردن جستجو
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    <Button onClick={onAddStudent}>
+                      افزودن شاگرد جدید
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            sortedAndFilteredStudents.map((student, index) => (
+              <motion.div
+                key={student.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: index * 0.05 }}
+                className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
+              >
+                <div className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <Avatar className="h-16 w-16 border-2 border-white shadow-sm">
+                      <AvatarImage src={student.image} alt={student.name} />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xl font-semibold">
+                        {student.name[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="font-semibold text-lg mb-1">{student.name}</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 dir-ltr text-right">
+                        {toPersianNumbers(student.phone)}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">قد</p>
+                      <p className="font-medium">{toPersianNumbers(student.height)} سانتی‌متر</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">وزن</p>
+                      <p className="font-medium">{toPersianNumbers(student.weight)} کیلوگرم</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">پیشرفت برنامه</span>
+                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                        {toPersianNumbers(getCompletionPercentage(student))}٪
+                      </span>
+                    </div>
+                    <Progress value={getCompletionPercentage(student)} className="h-2" />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    {getStatusBadge(student)}
+                    
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                        onClick={() => onEdit(student)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+                        onClick={() => onAddExercise(student)}
+                      >
+                        <Dumbbell className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-slate-500 hover:text-green-600 dark:text-slate-400 dark:hover:text-green-400"
+                        onClick={() => onAddDiet(student)}
+                      >
+                        <UtensilsCrossed className="h-4 w-4" />
+                      </Button>
+                      
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 z-50 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={() => onAddSupplement(student)}
+                          >
+                            <Pill className="h-4 w-4" />
+                            <span>مکمل و ویتامین</span>
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={() => onDownload(student)}
+                          >
+                            <Download className="h-4 w-4" />
+                            <span>دانلود برنامه</span>
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuSeparator />
+                          
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 text-red-600 cursor-pointer hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                            onClick={() => onDelete(student.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span>حذف</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-950 shadow-sm">
       <Table>
@@ -102,18 +265,26 @@ export const StudentTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {students.length === 0 ? (
+          {sortedAndFilteredStudents.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className="h-32 text-center">
                 <div className="flex flex-col items-center justify-center text-muted-foreground">
                   <User className="h-8 w-8 mb-2 opacity-40" />
                   <p className="font-medium">هیچ شاگردی یافت نشد</p>
-                  <p className="text-sm mt-1">برای افزودن شاگرد جدید، از دکمه بالا استفاده کنید</p>
+                  {searchQuery ? (
+                    <div className="mt-4">
+                      <Button variant="outline" onClick={onClearSearch}>
+                        پاک کردن جستجو
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="text-sm mt-1">برای افزودن شاگرد جدید، از دکمه بالا استفاده کنید</p>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
           ) : (
-            students.map((student, index) => (
+            sortedAndFilteredStudents.map((student, index) => (
               <motion.tr
                 key={student.id}
                 initial={{ opacity: 0, y: 10 }}
