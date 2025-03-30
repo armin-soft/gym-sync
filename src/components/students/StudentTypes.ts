@@ -24,6 +24,7 @@ export interface Exercise {
   type?: string;
   category?: string;
   description?: string;
+  categoryId?: number;
 }
 
 export interface Meal {

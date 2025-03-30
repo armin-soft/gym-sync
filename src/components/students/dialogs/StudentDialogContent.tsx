@@ -65,7 +65,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         student={selectedStudent}
       />
 
-      {selectedStudentForExercise && (
+      {isExerciseDialogOpen && selectedStudentForExercise && (
         <StudentExerciseDialog
           open={isExerciseDialogOpen}
           onOpenChange={setIsExerciseDialogOpen}
@@ -76,21 +76,23 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
           initialExercisesDay2={selectedStudentForExercise.exercisesDay2 || []}
           initialExercisesDay3={selectedStudentForExercise.exercisesDay3 || []}
           initialExercisesDay4={selectedStudentForExercise.exercisesDay4 || []}
+          exercises={exercises || []}
+          categories={[]}
         />
       )}
       
-      {selectedStudentForDiet && (
+      {isDietDialogOpen && selectedStudentForDiet && (
         <StudentDietDialog
           open={isDietDialogOpen}
           onOpenChange={setIsDietDialogOpen}
           studentName={selectedStudentForDiet.name || ""}
           onSave={handleSaveDietWrapper}
           initialMeals={selectedStudentForDiet.meals || []}
-          meals={meals}
+          meals={meals || []}
         />
       )}
 
-      {selectedStudentForSupplement && (
+      {isSupplementDialogOpen && selectedStudentForSupplement && (
         <StudentSupplementDialog
           open={isSupplementDialogOpen}
           onOpenChange={setIsSupplementDialogOpen}
@@ -98,11 +100,11 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
           onSave={handleSaveSupplementsWrapper}
           initialSupplements={selectedStudentForSupplement.supplements || []}
           initialVitamins={selectedStudentForSupplement.vitamins || []}
-          supplements={supplements}
+          supplements={supplements || []}
         />
       )}
 
-      {selectedStudentForDownload && (
+      {isDownloadDialogOpen && selectedStudentForDownload && (
         <StudentDownloadDialog
           open={isDownloadDialogOpen}
           onOpenChange={setIsDownloadDialogOpen}
@@ -110,10 +112,10 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
             ...selectedStudentForDownload,
             payment: selectedStudentForDownload.payment || ''
           }}
-          exercises={exercises}
-          meals={meals}
-          supplements={supplements}
-          vitamins={supplements.filter(item => item.type === 'vitamin')}
+          exercises={exercises || []}
+          meals={meals || []}
+          supplements={supplements || []}
+          vitamins={(supplements || []).filter(item => item.type === 'vitamin')}
         />
       )}
     </>

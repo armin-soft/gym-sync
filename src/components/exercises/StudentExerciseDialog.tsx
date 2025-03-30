@@ -14,17 +14,20 @@ import ExerciseDialogHeader from "./ExerciseDialogHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 
 interface StudentExerciseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
   onSave: (exerciseIds: number[], dayNumber?: number) => boolean;
-  initialExercises?: number[];
-  initialExercisesDay1?: number[];
-  initialExercisesDay2?: number[];
-  initialExercisesDay3?: number[];
-  initialExercisesDay4?: number[];
+  initialExercises: number[];
+  initialExercisesDay1: number[];
+  initialExercisesDay2: number[];
+  initialExercisesDay3: number[];
+  initialExercisesDay4: number[];
+  exercises: Exercise[];
+  categories: ExerciseCategory[];
 }
 
 const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
@@ -37,35 +40,41 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay2 = [],
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
+  exercises = [],
 }) => {
   const { toast } = useToast();
-  const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
-    queryKey: ["exercises"],
-    queryFn: () => {
-      const exercisesData = localStorage.getItem("exercises");
-      return exercisesData ? JSON.parse(exercisesData) : [];
-    },
-  });
-
+  
+  // فچ کردن دسته‌بندی‌ها از localStorage
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["exerciseCategories"],
     queryFn: () => {
-      const categoriesData = localStorage.getItem("exerciseCategories");
-      return categoriesData ? JSON.parse(categoriesData) : [];
+      try {
+        const categoriesData = localStorage.getItem("exerciseCategories");
+        return categoriesData ? JSON.parse(categoriesData) : [];
+      } catch(error) {
+        console.error("Error loading exercise categories:", error);
+        return [];
+      }
     },
   });
 
+  // فچ کردن انواع تمرین از localStorage
   const { data: exerciseTypes = [], isLoading: typesLoading } = useQuery({
     queryKey: ["exerciseTypes"],
     queryFn: () => {
-      const typesData = localStorage.getItem("exerciseTypes");
-      return typesData ? JSON.parse(typesData) : [];
+      try {
+        const typesData = localStorage.getItem("exerciseTypes");
+        return typesData ? JSON.parse(typesData) : [];
+      } catch(error) {
+        console.error("Error loading exercise types:", error);
+        return [];
+      }
     },
   });
 
   const [activeTab, setActiveTab] = useState<string>("day1");
   
-  // Track if exercises have been saved for each day
+  // پیگیری وضعیت ذخیره‌سازی هر روز
   const [savedState, setSavedState] = useState({
     day1: false,
     day2: false,
@@ -73,10 +82,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     day4: false
   });
 
-  // Auto-select category based on saved exercises
+  // تنظیم دسته‌بندی براساس تمرین‌های ذخیره شده
   useEffect(() => {
-    if (open && !categoriesLoading && !exercisesLoading && categories.length > 0 && exercises.length > 0) {
-      // Get the active tab's selected exercises
+    if (open && !categoriesLoading && categories.length > 0 && exercises.length > 0) {
+      // بررسی تمرین‌های انتخاب شده در تب فعال
       let selectedExercises: number[] = [];
       switch(activeTab) {
         case "day1": selectedExercises = initialExercisesDay1; break;
@@ -86,28 +95,26 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         default: selectedExercises = initialExercises;
       }
       
-      // Find category of first selected exercise if there are any
+      // یافتن دسته‌بندی اولین تمرین انتخاب شده (اگر وجود دارد)
       if (selectedExercises.length > 0) {
         const firstExerciseId = selectedExercises[0];
         const firstExercise = exercises.find(ex => ex.id === firstExerciseId);
         
         if (firstExercise && firstExercise.categoryId) {
-          console.log("Auto-selecting category:", firstExercise.categoryId);
           setSelectedCategoryId(firstExercise.categoryId);
           
-          // Get exercise type for this category
+          // یافتن نوع تمرین برای این دسته‌بندی
           const category = categories.find(cat => cat.id === firstExercise.categoryId);
           if (category && category.type) {
-            console.log("Auto-selecting exercise type:", category.type);
             setSelectedExerciseType(category.type);
           }
         }
       }
     }
-  }, [open, activeTab, categories, exercises, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, categoriesLoading, exercisesLoading]);
+  }, [open, activeTab, categories, exercises, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, categoriesLoading]);
 
+  // ریست کردن وضعیت ذخیره‌سازی هنگام باز شدن دیالوگ
   useEffect(() => {
-    // Reset saved state when dialog opens
     if (open) {
       setSavedState({
         day1: false,
@@ -151,6 +158,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     handleClearSearch,
   } = useExerciseFiltering(exercises, categories);
 
+  // گرفتن تمرین‌های انتخاب شده برای تب فعال
   const getActiveTabSelectedExercises = () => {
     switch(activeTab) {
       case "day1": return selectedExercisesDay1;
@@ -161,6 +169,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
+  // ذخیره‌سازی تمرین‌ها
   const handleSave = () => {
     const selectedExercises = getActiveTabSelectedExercises();
     const dayNumber = parseInt(activeTab.replace("day", ""));
@@ -169,7 +178,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       const success = onSave(selectedExercises, dayNumber);
       
       if (success) {
-        // Update saved state for the current tab
+        // بروزرسانی وضعیت ذخیره‌سازی برای تب فعلی
         setSavedState(prev => ({
           ...prev,
           [activeTab]: true
@@ -182,13 +191,13 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                          dayNumber === 3 ? 'روز سوم' : 'روز چهارم'} با موفقیت ذخیره شدند`,
         });
         
-        // Automatically switch to the next day tab if not on day4
+        // تغییر خودکار به تب روز بعدی (اگر در روز چهارم نیستیم)
         if (activeTab !== "day4") {
           const nextTab = `day${dayNumber + 1}`;
           setActiveTab(nextTab);
         } else {
-          // If all days have been saved, close the dialog
-          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true; // day4 is saved now
+          // اگر همه روزها ذخیره شده‌اند، دیالوگ را ببند
+          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true;
           if (allSaved) {
             onOpenChange(false);
           }
@@ -206,12 +215,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
+  // wrapper برای ذخیره‌سازی تمرین‌ها
   const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
     return onSave(exerciseIds, dayNumber);
   };
 
-  const isLoading = exercisesLoading || categoriesLoading || typesLoading;
+  const isLoading = categoriesLoading || typesLoading;
 
+  // اگر دیالوگ باز نیست، چیزی نمایش نده
   if (!open) return null;
 
   return (
