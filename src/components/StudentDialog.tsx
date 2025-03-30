@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,6 +15,7 @@ import { Camera, UserRound, Phone, Ruler, Weight, Save, X, Coins } from "lucide-
 import { useRef, useState, useEffect } from "react";
 import { isValidPrice } from "@/utils/validation";
 import { Student } from "@/components/students/StudentTypes";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface StudentDialogProps {
   isOpen: boolean;
@@ -152,187 +154,241 @@ export const StudentDialog = ({
     return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
+  const dialogVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        duration: 0.3,
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.95,
+      transition: { duration: 0.2 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        damping: 20
+      }
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {student ? (
-              <>
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <UserRound className="h-4 w-4 text-blue-600" />
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
+        <AnimatePresence mode="wait">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={dialogVariants}
+            className="relative"
+          >
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-indigo-500 to-violet-600 -z-10" />
+            
+            <DialogHeader className="pt-8 pb-4 px-6 text-white">
+              <motion.div variants={itemVariants} className="mb-10">
+                <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+                  {student ? (
+                    <>
+                      <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <UserRound className="h-4 w-4 text-white" />
+                      </div>
+                      <span>ویرایش شاگرد</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <UserRound className="h-4 w-4 text-white" />
+                      </div>
+                      <span>افزودن شاگرد جدید</span>
+                    </>
+                  )}
+                </DialogTitle>
+                <DialogDescription className="text-white/80 mt-2">
+                  اطلاعات شاگرد را وارد کنید
+                </DialogDescription>
+              </motion.div>
+            </DialogHeader>
+            
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-t-3xl px-6 pt-6 pb-6 shadow-[0_-40px_80px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_-40px_80px_-15px_rgba(0,0,0,0.5)] space-y-6">
+              <div className="flex justify-center -mt-16 mb-6">
+                <motion.div 
+                  variants={itemVariants} 
+                  className="relative group"
+                >
+                  <div className="relative">
+                    <img
+                      src={formData.image}
+                      alt="تصویر پروفایل"
+                      className={`w-24 h-24 rounded-full object-cover ring-4 ${
+                        errors.image 
+                          ? "ring-red-200 border-red-500" 
+                          : "ring-white dark:ring-slate-800"
+                      } bg-white dark:bg-slate-800 shadow-xl transition-transform duration-300 group-hover:scale-105 z-10`}
+                    />
+                    <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20" />
+                  </div>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="secondary"
+                    className="absolute bottom-0 right-0 h-8 w-8 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30"
+                    onClick={handleImageClick}
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                  
+                  <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-lg scale-90 -z-10" />
+                </motion.div>
+              </div>
+              
+              <motion.div variants={itemVariants} className="space-y-4">
+                <div>
+                  <Label className="flex items-center gap-2 mb-2">
+                    <UserRound className="h-4 w-4 text-indigo-500" />
+                    نام و نام خانوادگی
+                  </Label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => {
+                      setFormData({ ...formData, name: e.target.value });
+                      validateField("name", e.target.value);
+                    }}
+                    className={`${errors.name ? "border-red-500 focus-visible:ring-red-400" : "focus-visible:ring-indigo-400"} bg-slate-50 dark:bg-slate-800/50`}
+                    placeholder="نام و نام خانوادگی را وارد کنید"
+                  />
+                  {errors.name && (
+                    <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                  )}
                 </div>
-                <span>ویرایش شاگرد</span>
-              </>
-            ) : (
-              <>
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <UserRound className="h-4 w-4 text-green-600" />
+
+                <div>
+                  <Label className="flex items-center gap-2 mb-2">
+                    <Phone className="h-4 w-4 text-indigo-500" />
+                    شماره موبایل
+                  </Label>
+                  <Input
+                    dir="ltr"
+                    className={`text-left ${errors.phone ? "border-red-500 focus-visible:ring-red-400" : "focus-visible:ring-indigo-400"} bg-slate-50 dark:bg-slate-800/50`}
+                    value={toPersianNumbers(formData.phone)}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                      setFormData({ ...formData, phone: value });
+                      validateField("phone", value);
+                    }}
+                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                  />
+                  {errors.phone && (
+                    <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+                  )}
                 </div>
-                <span>افزودن شاگرد جدید</span>
-              </>
-            )}
-          </DialogTitle>
-          <DialogDescription>
-            اطلاعات شاگرد را وارد کنید
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          <div className="flex justify-center">
-            <div className="relative group">
-              <div className="relative">
-                <img
-                  src={formData.image}
-                  alt="تصویر پروفایل"
-                  className={`w-24 h-24 rounded-full object-cover ring-4 ${
-                    errors.image 
-                      ? "ring-red-200 border-red-500" 
-                      : "ring-white"
-                  } shadow-xl transition-transform duration-300 group-hover:scale-105`}
-                />
-                <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-              <Button
-                type="button"
-                size="icon"
-                variant="secondary"
-                className="absolute bottom-0 right-0 h-8 w-8 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                onClick={handleImageClick}
-              >
-                <Camera className="h-4 w-4" />
-              </Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </div>
-          </div>
-          {errors.image && (
-            <p className="text-sm text-red-500 text-center">{errors.image}</p>
-          )}
 
-          <div className="space-y-4">
-            <div>
-              <Label className="flex items-center gap-2">
-                <UserRound className="h-4 w-4 text-muted-foreground" />
-                نام و نام خانوادگی
-              </Label>
-              <Input
-                value={formData.name}
-                onChange={(e) => {
-                  setFormData({ ...formData, name: e.target.value });
-                  validateField("name", e.target.value);
-                }}
-                className={errors.name ? "border-red-500" : ""}
-                placeholder="نام و نام خانوادگی را وارد کنید"
-              />
-              {errors.name && (
-                <p className="text-sm text-red-500 mt-1">{errors.name}</p>
-              )}
-            </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="flex items-center gap-2 mb-2">
+                      <Ruler className="h-4 w-4 text-indigo-500" />
+                      قد (سانتی متر)
+                    </Label>
+                    <Input
+                      dir="ltr"
+                      className={`text-left ${errors.height ? "border-red-500 focus-visible:ring-red-400" : "focus-visible:ring-indigo-400"} bg-slate-50 dark:bg-slate-800/50`}
+                      value={toPersianNumbers(formData.height)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                        setFormData({ ...formData, height: value });
+                        validateField("height", value);
+                      }}
+                      placeholder="۱۷۵"
+                    />
+                    {errors.height && (
+                      <p className="text-sm text-red-500 mt-1">{errors.height}</p>
+                    )}
+                  </div>
 
-            <div>
-              <Label className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                شماره موبایل
-              </Label>
-              <Input
-                dir="ltr"
-                className={`text-left ${errors.phone ? "border-red-500" : ""}`}
-                value={toPersianNumbers(formData.phone)}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                  setFormData({ ...formData, phone: value });
-                  validateField("phone", value);
-                }}
-                placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-              />
-              {errors.phone && (
-                <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
-              )}
-            </div>
+                  <div>
+                    <Label className="flex items-center gap-2 mb-2">
+                      <Weight className="h-4 w-4 text-indigo-500" />
+                      وزن (کیلوگرم)
+                    </Label>
+                    <Input
+                      dir="ltr"
+                      className={`text-left ${errors.weight ? "border-red-500 focus-visible:ring-red-400" : "focus-visible:ring-indigo-400"} bg-slate-50 dark:bg-slate-800/50`}
+                      value={toPersianNumbers(formData.weight)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                        setFormData({ ...formData, weight: value });
+                        validateField("weight", value);
+                      }}
+                      placeholder="۷۵"
+                    />
+                    {errors.weight && (
+                      <p className="text-sm text-red-500 mt-1">{errors.weight}</p>
+                    )}
+                  </div>
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="flex items-center gap-2">
-                  <Ruler className="h-4 w-4 text-muted-foreground" />
-                  قد (سانتی متر)
-                </Label>
-                <Input
-                  dir="ltr"
-                  className={`text-left ${errors.height ? "border-red-500" : ""}`}
-                  value={toPersianNumbers(formData.height)}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    setFormData({ ...formData, height: value });
-                    validateField("height", value);
-                  }}
-                  placeholder="۱۷۵"
-                />
-                {errors.height && (
-                  <p className="text-sm text-red-500 mt-1">{errors.height}</p>
-                )}
-              </div>
+                <div>
+                  <Label className="flex items-center gap-2 mb-2">
+                    <Coins className="h-4 w-4 text-indigo-500" />
+                    <span>مبلغ (تومان)</span>
+                  </Label>
+                  <Input
+                    dir="ltr"
+                    className={`text-left ${errors.payment ? "border-red-500 focus-visible:ring-red-400" : "focus-visible:ring-indigo-400"} bg-slate-50 dark:bg-slate-800/50`}
+                    value={toPersianNumbers(formatPayment(formData.payment || ''))}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).replace(/\D/g, '');
+                      setFormData({ ...formData, payment: value });
+                      validateField("payment", value);
+                    }}
+                    placeholder="۵۰۰,۰۰۰"
+                  />
+                  {errors.payment && (
+                    <p className="text-sm text-red-500 mt-1">{errors.payment}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان</p>
+                </div>
+              </motion.div>
 
-              <div>
-                <Label className="flex items-center gap-2">
-                  <Weight className="h-4 w-4 text-muted-foreground" />
-                  وزن (کیلوگرم)
-                </Label>
-                <Input
-                  dir="ltr"
-                  className={`text-left ${errors.weight ? "border-red-500" : ""}`}
-                  value={toPersianNumbers(formData.weight)}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    setFormData({ ...formData, weight: value });
-                    validateField("weight", value);
-                  }}
-                  placeholder="۷۵"
-                />
-                {errors.weight && (
-                  <p className="text-sm text-red-500 mt-1">{errors.weight}</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <Label className="flex items-center gap-2">
-                <Coins className="h-4 w-4 text-muted-foreground" />
-                <span>مبلغ (تومان)</span>
-              </Label>
-              <Input
-                dir="ltr"
-                className={`text-left ${errors.payment ? "border-red-500" : ""}`}
-                value={toPersianNumbers(formatPayment(formData.payment || ''))}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).replace(/\D/g, '');
-                  setFormData({ ...formData, payment: value });
-                  validateField("payment", value);
-                }}
-                placeholder="۵۰۰,۰۰۰"
-              />
-              {errors.payment && (
-                <p className="text-sm text-red-500 mt-1">{errors.payment}</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان</p>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="gap-2">
-              <X className="h-4 w-4" />
-              انصراف
-            </Button>
-            <Button type="submit" className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-              <Save className="h-4 w-4" />
-              ذخیره
-            </Button>
-          </div>
-        </form>
+              <motion.div variants={itemVariants} className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={onClose} className="gap-2">
+                  <X className="h-4 w-4" />
+                  انصراف
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
+                >
+                  <Save className="h-4 w-4" />
+                  ذخیره
+                </Button>
+              </motion.div>
+            </form>
+          </motion.div>
+        </AnimatePresence>
       </DialogContent>
     </Dialog>
   );
