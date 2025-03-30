@@ -1,8 +1,11 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { MealType } from "@/types/meal";
-import { Apple, UtensilsCrossed, Salad } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Apple, UtensilsCrossed, Salad, Coffee, Pizza } from "lucide-react";
+
+// Define the MealType type more strictly
+export type MealType = "صبحانه" | "میان وعده صبح" | "ناهار" | "میان وعده عصر" | "شام";
 
 interface StudentMealFiltersProps {
   activeMealType: MealType | "all";
@@ -10,7 +13,7 @@ interface StudentMealFiltersProps {
   sortedMealTypes: MealType[];
 }
 
-export const getMealTypeColor = (type: MealType) => {
+export const getMealTypeColor = (type: MealType): string => {
   switch (type) {
     case "صبحانه":
       return "text-amber-600 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-950/30 dark:border-amber-800";
@@ -30,7 +33,7 @@ export const getMealTypeColor = (type: MealType) => {
 export const getMealTypeIcon = (type: MealType) => {
   switch (type) {
     case "صبحانه":
-      return <Apple className="h-3.5 w-3.5" />;
+      return <Coffee className="h-3.5 w-3.5" />;
     case "میان وعده صبح":
       return <Apple className="h-3.5 w-3.5" />;
     case "ناهار":

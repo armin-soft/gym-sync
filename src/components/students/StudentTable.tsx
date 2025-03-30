@@ -26,9 +26,21 @@ interface StudentTableProps {
   students: Student[];
   onEdit: (student: Student) => void;
   onDelete: (studentId: number) => void;
+  onAddExercise: (student: Student) => void;
+  onAddDiet: (student: Student) => void;
+  onAddSupplement: (student: Student) => void;
+  isProfileComplete: boolean;
 }
 
-export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) => {
+export const StudentTable = ({ 
+  students, 
+  onEdit, 
+  onDelete,
+  onAddExercise,
+  onAddDiet,
+  onAddSupplement,
+  isProfileComplete
+}: StudentTableProps) => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   return (
@@ -144,7 +156,7 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           className="flex items-center gap-2 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Placeholder for future functionality
+                            onAddExercise(student);
                             setOpenMenuId(null);
                           }}
                         >
@@ -155,7 +167,7 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           className="flex items-center gap-2 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Placeholder for future functionality
+                            onAddDiet(student);
                             setOpenMenuId(null);
                           }}
                         >
@@ -166,7 +178,7 @@ export const StudentTable = ({ students, onEdit, onDelete }: StudentTableProps) 
                           className="flex items-center gap-2 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Placeholder for future functionality
+                            onAddSupplement(student);
                             setOpenMenuId(null);
                           }}
                         >

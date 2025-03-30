@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Meal, MealType } from "@/types/meal";
-import { getMealTypeColor, getMealTypeIcon } from "./StudentMealFilters";
+import { getMealTypeColor, getMealTypeIcon } from "@/components/nutrition/StudentMealFilters";
 
 interface StudentMealItemProps {
   meal: Meal;

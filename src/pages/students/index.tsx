@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/components/ui/use-toast";
-import { StudentSearchSort } from "@/components/Students/StudentSearchSort";
-import { StudentsViewToggle } from "@/components/Students/StudentsViewToggle";
-import { StudentStatsCards } from "@/components/Students/StudentStatsCards";
-import { ProfileWarning } from "@/components/Students/ProfileWarning";
-import { StudentCard } from "@/components/Students/StudentCard";
-import { StudentTable } from "@/components/Students/StudentTable";
-import { EmptyStudentState } from "@/components/Students/EmptyStudentState";
-import { Student } from "@/components/Students/StudentTypes";
-import { StudentDialogManagerWrapper } from "@/components/Students/StudentDialogManagerWrapper";
+import { StudentSearchSort } from "@/components/students/StudentSearchSort";
+import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
+import { StudentStatsCards } from "@/components/students/StudentStatsCards";
+import { ProfileWarning } from "@/components/students/ProfileWarning";
+import { StudentCard } from "@/components/students/StudentCard";
+import { StudentTable } from "@/components/students/StudentTable";
+import { EmptyStudentState } from "@/components/students/EmptyStudentState";
+import { Student } from "@/components/students/StudentTypes";
+import { StudentDialogManagerWrapper } from "@/components/students/StudentDialogManagerWrapper";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Plus, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -184,7 +184,7 @@ const Students = () => {
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
             const dayKey = `exercisesDay${dayNumber}` as keyof typeof updatedStudent;
-            updatedStudent[dayKey] = exerciseIds as any;
+            updatedStudent[dayKey] = exerciseIds as unknown as never;
           } else {
             // Otherwise update the general exercises
             updatedStudent.exercises = exerciseIds;

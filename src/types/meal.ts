@@ -5,11 +5,8 @@ export type WeekDay = "شنبه" | "یکشنبه" | "دوشنبه" | "سه شن�
 export interface Meal {
   id: number;
   name: string;
-  description: string;
+  category?: string;
+  description?: string;
   type: MealType;
-  day: WeekDay;
-  calories?: number;
-  protein?: number;
-  carbs?: number;
-  fat?: number;
+  day?: WeekDay;
 }
