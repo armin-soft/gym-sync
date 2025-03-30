@@ -56,6 +56,29 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
   meals,
   supplements
 }) => {
+  // Safely get exercise data
+  const getStudentExercises = (student: Student | null) => {
+    if (!student) return {
+      exercises: [],
+      exercisesDay1: [],
+      exercisesDay2: [],
+      exercisesDay3: [],
+      exercisesDay4: []
+    };
+    
+    return {
+      exercises: student.exercises || [],
+      exercisesDay1: student.exercisesDay1 || [],
+      exercisesDay2: student.exercisesDay2 || [],
+      exercisesDay3: student.exercisesDay3 || [],
+      exercisesDay4: student.exercisesDay4 || []
+    };
+  };
+  
+  // If exercise dialog is open and we have a selected student
+  const showExerciseDialog = isExerciseDialogOpen && selectedStudentForExercise;
+  const studentExercises = getStudentExercises(selectedStudentForExercise);
+  
   return (
     <>
       <StudentDialog
@@ -65,17 +88,17 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         student={selectedStudent}
       />
 
-      {isExerciseDialogOpen && selectedStudentForExercise && (
+      {showExerciseDialog && (
         <StudentExerciseDialog
           open={isExerciseDialogOpen}
           onOpenChange={setIsExerciseDialogOpen}
-          studentName={selectedStudentForExercise.name || ""}
+          studentName={selectedStudentForExercise?.name || ""}
           onSave={handleSaveExercisesWrapper}
-          initialExercises={selectedStudentForExercise.exercises || []}
-          initialExercisesDay1={selectedStudentForExercise.exercisesDay1 || []}
-          initialExercisesDay2={selectedStudentForExercise.exercisesDay2 || []}
-          initialExercisesDay3={selectedStudentForExercise.exercisesDay3 || []}
-          initialExercisesDay4={selectedStudentForExercise.exercisesDay4 || []}
+          initialExercises={studentExercises.exercises}
+          initialExercisesDay1={studentExercises.exercisesDay1}
+          initialExercisesDay2={studentExercises.exercisesDay2}
+          initialExercisesDay3={studentExercises.exercisesDay3}
+          initialExercisesDay4={studentExercises.exercisesDay4}
           exercises={exercises || []}
           categories={[]}
         />
