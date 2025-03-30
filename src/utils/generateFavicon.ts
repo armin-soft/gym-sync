@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 
 const sizes = [16, 32, 48, 64, 96, 128, 192, 256, 512];
-const outputDir = path.join(__dirname, '../../public');
+const outputDir = path.join(__dirname, '../../public/Assets/Image');
 
 async function generateFavicons() {
   // Create output directory if it doesn't exist
@@ -47,14 +47,14 @@ async function generateFavicons() {
     ctx.arc(size / 2, size / 2, size * 0.42, 0, Math.PI * 2);
     ctx.stroke();
     
-    // Save as PNG
-    const fileName = size === 512 ? 'logo-512.png' : size === 192 ? 'logo.png' : `favicon-${size}.png`;
+    // Save as PNG with capitalized filenames
+    const fileName = size === 512 ? 'Logo-512.png' : size === 192 ? 'Logo.png' : `Favicon-${size}.png`;
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(path.join(outputDir, fileName), buffer);
     
     // Generate custom-favicon.ico (instead of directly overwriting favicon.ico)
     if (size === 32) {
-      fs.copyFileSync(path.join(outputDir, `favicon-${size}.png`), path.join(outputDir, 'custom-favicon.ico'));
+      fs.copyFileSync(path.join(outputDir, `Favicon-${size}.png`), path.join(outputDir, 'Custom-Favicon.ico'));
     }
   }
   
