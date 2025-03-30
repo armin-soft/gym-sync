@@ -10,61 +10,43 @@ export const useStudentExercises = (
   
   const handleSaveExercises = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
     try {
-      // Validation checks
-      if (!Array.isArray(exerciseIds)) {
-        console.error("Invalid exerciseIds format:", exerciseIds);
-        toast({
-          variant: "destructive",
-          title: "خطا در ذخیره‌سازی",
-          description: "فرمت داده‌های تمرین معتبر نیست"
-        });
-        return false;
-      }
-      
-      if (!studentId) {
-        console.error("Invalid studentId:", studentId);
-        toast({
-          variant: "destructive",
-          title: "خطا در ذخیره‌سازی",
-          description: "شناسه شاگرد معتبر نیست"
-        });
-        return false;
-      }
-      
-      // Create a deep copy of students to avoid reference issues
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
-          const updatedStudent = { ...student };
-          
           if (!dayNumber) {
-            updatedStudent.exercises = [...exerciseIds];
-            return updatedStudent;
+            return {
+              ...student,
+              exercises: exerciseIds
+            };
           }
           
           switch (dayNumber) {
             case 1:
-              updatedStudent.exercisesDay1 = [...exerciseIds];
-              break;
+              return {
+                ...student,
+                exercisesDay1: exerciseIds
+              };
             case 2:
-              updatedStudent.exercisesDay2 = [...exerciseIds];
-              break;
+              return {
+                ...student,
+                exercisesDay2: exerciseIds
+              };
             case 3:
-              updatedStudent.exercisesDay3 = [...exerciseIds];
-              break;
+              return {
+                ...student,
+                exercisesDay3: exerciseIds
+              };
             case 4:
-              updatedStudent.exercisesDay4 = [...exerciseIds];
-              break;
+              return {
+                ...student,
+                exercisesDay4: exerciseIds
+              };
             default:
-              // No change if dayNumber is invalid
-              break;
+              return student;
           }
-          
-          return updatedStudent;
         }
         return student;
       });
       
-      // Update state and localStorage
       setStudents(updatedStudents);
       localStorage.setItem('students', JSON.stringify(updatedStudents));
       

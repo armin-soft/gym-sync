@@ -50,31 +50,17 @@ export const useStudentDialogHandlers = ({
   };
 
   const handleSaveExercisesWrapper = (exerciseIds: number[], dayNumber?: number): boolean => {
-    if (!selectedStudentForExercise) {
-      console.error("No student selected for exercise");
-      toast({
-        variant: "destructive",
-        title: "خطا در ذخیره‌سازی",
-        description: "شاگردی برای ذخیره‌سازی تمرین‌ها انتخاب نشده است."
-      });
-      return false;
-    }
+    if (!selectedStudentForExercise) return false;
     
     try {
-      // Ensure exerciseIds is a valid array
-      const validExerciseIds = Array.isArray(exerciseIds) ? exerciseIds : [];
-      
       console.log("Saving exercises for student:", selectedStudentForExercise.id);
-      console.log("Exercise IDs:", validExerciseIds);
+      console.log("Exercise IDs:", exerciseIds);
       console.log("Day number:", dayNumber);
       
-      const success = onSaveExercises(validExerciseIds, selectedStudentForExercise.id, dayNumber);
-      
-      // Only close the dialog if we're not saving for a specific day or if success is false
+      const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
       if (success && dayNumber === undefined) {
         setIsExerciseDialogOpen(false);
       }
-      
       return success;
     } catch (error) {
       console.error("Error saving exercises:", error);
@@ -88,24 +74,13 @@ export const useStudentDialogHandlers = ({
   };
   
   const handleSaveDietWrapper = (mealIds: number[]): boolean => {
-    if (!selectedStudentForDiet) {
-      console.error("No student selected for diet");
-      toast({
-        variant: "destructive",
-        title: "خطا در ذخیره‌سازی",
-        description: "شاگردی برای ذخیره‌سازی برنامه غذایی انتخاب نشده است."
-      });
-      return false;
-    }
+    if (!selectedStudentForDiet) return false;
     
     try {
-      // Ensure mealIds is a valid array
-      const validMealIds = Array.isArray(mealIds) ? mealIds : [];
-      
       console.log("Saving diet for student:", selectedStudentForDiet.id);
-      console.log("Meal IDs:", validMealIds);
+      console.log("Meal IDs:", mealIds);
       
-      const success = onSaveDiet(validMealIds, selectedStudentForDiet.id);
+      const success = onSaveDiet(mealIds, selectedStudentForDiet.id);
       if (success) {
         setIsDietDialogOpen(false);
       }
@@ -122,28 +97,14 @@ export const useStudentDialogHandlers = ({
   };
   
   const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}): boolean => {
-    if (!selectedStudentForSupplement) {
-      console.error("No student selected for supplements");
-      toast({
-        variant: "destructive",
-        title: "خطا در ذخیره‌سازی",
-        description: "شاگردی برای ذخیره‌سازی مکمل‌ها انتخاب نشده است."
-      });
-      return false;
-    }
+    if (!selectedStudentForSupplement) return false;
     
     try {
-      // Ensure supplements and vitamins are valid arrays
-      const validData = {
-        supplements: Array.isArray(data.supplements) ? data.supplements : [],
-        vitamins: Array.isArray(data.vitamins) ? data.vitamins : []
-      };
-      
       console.log("Saving supplements and vitamins for student:", selectedStudentForSupplement.id);
-      console.log("Supplements to save:", validData.supplements);
-      console.log("Vitamins to save:", validData.vitamins);
+      console.log("Supplements to save:", data.supplements);
+      console.log("Vitamins to save:", data.vitamins);
       
-      const success = onSaveSupplements(validData, selectedStudentForSupplement.id);
+      const success = onSaveSupplements(data, selectedStudentForSupplement.id);
       if (success) {
         setIsSupplementDialogOpen(false);
       }
