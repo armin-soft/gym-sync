@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { StudentSearchSortProps } from "./search-sort/StudentSearchSortTypes";
 import { StudentSearch } from "./search-sort/StudentSearch";
 import { StudentSort } from "./search-sort/StudentSort";
-import { StudentFilters } from "./search-sort/StudentFilters";
 
 export const StudentSearchSort = ({
   searchQuery,
@@ -13,10 +12,6 @@ export const StudentSearchSort = ({
   sortField,
   sortOrder,
   toggleSort,
-  selectedCategory,
-  setSelectedCategory,
-  categories,
-  showExerciseFilters = false,
 }: StudentSearchSortProps) => {
   return (
     <motion.div 
@@ -34,15 +29,7 @@ export const StudentSearchSort = ({
             />
           </div>
           
-          <div className="flex items-center gap-2 ms-auto flex-wrap">
-            {showExerciseFilters && selectedCategory !== undefined && categories && (
-              <StudentFilters 
-                selectedCategory={selectedCategory!}
-                setSelectedCategory={setSelectedCategory!}
-                categories={categories}
-              />
-            )}
-            
+          <div className="flex items-center gap-2 ms-auto">
             <StudentSort 
               sortField={sortField}
               sortOrder={sortOrder}

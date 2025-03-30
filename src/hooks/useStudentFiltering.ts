@@ -1,12 +1,11 @@
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Student } from "@/components/students/StudentTypes";
 
-export const useStudentFiltering = (students: Student[], exercises: any[]) => {
+export const useStudentFiltering = (students: Student[]) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   const toggleSort = (field: "name" | "weight" | "height") => {
     if (field === sortField) {
@@ -19,49 +18,13 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
 
   const handleClearSearch = () => {
     setSearchQuery("");
-    setSelectedCategory(null);
   };
 
-  // کوئری جستجو و مرتب‌سازی دانشجویان
+  // Filter and sort students
   const sortedAndFilteredStudents = useMemo(() => {
-    // ابتدا دانشجویان را بر اساس دسته‌بندی فیلتر می‌کنیم
     let filtered = [...students];
 
-    // اگر فیلتر دسته‌بندی انتخاب شده باشد
-    if (selectedCategory !== null) {
-      // دریافت شناسه‌های تمرین مطابق با فیلترها
-      let filteredExerciseIds: number[] = [];
-      
-      if (exercises && exercises.length > 0) {
-        // اگر دسته‌بندی انتخاب شده باشد، فقط تمرین‌های آن دسته را گرفته
-        filteredExerciseIds = exercises
-          .filter(ex => ex.categoryId === selectedCategory)
-          .map(ex => ex.id);
-      }
-
-      // فیلتر دانشجویان بر اساس شناسه‌های تمرین (همه روزها چک شوند)
-      filtered = filtered.filter(student => {
-        // اگر شناسه‌های تمرین وجود داشته باشد، بررسی می‌کنیم
-        if (filteredExerciseIds.length > 0) {
-          const hasMatchingExercises = 
-            // چک کردن تمرین‌های عمومی
-            (student.exercises && student.exercises.some(id => filteredExerciseIds.includes(id))) ||
-            // چک کردن تمرین‌های روز اول
-            (student.exercisesDay1 && student.exercisesDay1.some(id => filteredExerciseIds.includes(id))) ||
-            // چک کردن تمرین‌های روز دوم
-            (student.exercisesDay2 && student.exercisesDay2.some(id => filteredExerciseIds.includes(id))) ||
-            // چک کردن تمرین‌های روز سوم
-            (student.exercisesDay3 && student.exercisesDay3.some(id => filteredExerciseIds.includes(id))) ||
-            // چک کردن تمرین‌های روز چهارم
-            (student.exercisesDay4 && student.exercisesDay4.some(id => filteredExerciseIds.includes(id)));
-          
-          return hasMatchingExercises;
-        }
-        return true;
-      });
-    }
-
-    // سپس بر اساس عبارت جستجو فیلتر می‌کنیم
+    // Filter by search query
     if (searchQuery.trim()) {
       const normalizedQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -71,12 +34,12 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
       );
     }
 
-    // در نهایت دانش‌آموزان را مرتب می‌کنیم
+    // Sort students
     return filtered.sort((a, b) => {
       let aValue: string | number = a[sortField];
       let bValue: string | number = b[sortField];
 
-      // اگر مقدار وزن یا قد باشد، آن را به عدد تبدیل می‌کنیم
+      // Convert to numbers for weight and height
       if (sortField === "weight" || sortField === "height") {
         aValue = parseFloat(aValue as string) || 0;
         bValue = parseFloat(bValue as string) || 0;
@@ -90,11 +53,9 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
     });
   }, [
     students,
-    exercises,
     searchQuery,
     sortField,
-    sortOrder,
-    selectedCategory
+    sortOrder
   ]);
 
   return {
@@ -103,8 +64,6 @@ export const useStudentFiltering = (students: Student[], exercises: any[]) => {
     sortField,
     sortOrder,
     toggleSort,
-    selectedCategory,
-    setSelectedCategory,
     sortedAndFilteredStudents,
     handleClearSearch
   };

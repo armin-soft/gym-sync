@@ -5,10 +5,6 @@ export interface StudentSearchSortProps {
   sortField: "name" | "weight" | "height";
   sortOrder: "asc" | "desc";
   toggleSort: (field: "name" | "weight" | "height") => void;
-  selectedCategory?: number | null;
-  setSelectedCategory?: (id: number | null) => void;
-  categories?: any[];
-  showExerciseFilters?: boolean;
 }
 
 // Add these two separate interfaces for the individual components
@@ -21,16 +17,4 @@ export interface StudentSortProps {
   sortField: "name" | "weight" | "height";
   sortOrder: "asc" | "desc";
   toggleSort: (field: "name" | "weight" | "height") => void;
-}
-
-export interface CategoryFilterProps {
-  selectedCategory: number | null;
-  setSelectedCategory: (id: number | null) => void;
-  categories: any[];
-}
-
-export interface StudentFiltersProps {
-  selectedCategory: number | null;
-  setSelectedCategory: (id: number | null) => void;
-  categories: any[];
 }

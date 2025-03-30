@@ -1,6 +1,5 @@
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
@@ -31,7 +30,7 @@ const StudentsPage = () => {
     handleSaveSupplements
   } = useStudents();
 
-  // تازه‌سازی هنگام تغییر localStorage
+  // Refresh when localStorage changes
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'students') {
@@ -44,23 +43,14 @@ const StudentsPage = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // دریافت دسته‌بندی‌ها
-  const { data: categories = [] } = useQuery({
-    queryKey: ["exerciseCategories"],
-    queryFn: () => {
-      const categoriesData = localStorage.getItem("exerciseCategories");
-      return categoriesData ? JSON.parse(categoriesData) : [];
-    },
-  });
-
-  // تازه‌سازی بعد از ذخیره
+  // Refresh after save
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
-    // شبیه‌سازی یک رویداد ذخیره‌سازی برای تازه‌سازی در سایر تب‌ها
+    // Simulate a storage event to refresh other tabs
     window.dispatchEvent(new StorageEvent('storage', { key: 'students' }));
   }, []);
 
-  // توابع پوشش‌دهنده برای تازه‌سازی بعد از ذخیره
+  // Wrapper functions to refresh after save
   const handleSaveExercisesWithRefresh = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
     const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
     if (result) {
@@ -94,11 +84,9 @@ const StudentsPage = () => {
     sortOrder,
     sortField,
     toggleSort,
-    selectedCategory,
-    setSelectedCategory,
     sortedAndFilteredStudents,
     handleClearSearch
-  } = useStudentFiltering(students, exercises);
+  } = useStudentFiltering(students);
 
   return (
     <PageContainer withBackground>
@@ -113,10 +101,6 @@ const StudentsPage = () => {
           sortField={sortField}
           sortOrder={sortOrder}
           toggleSort={toggleSort}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          categories={categories}
-          showExerciseFilters={true}
         />
         
         <motion.div
