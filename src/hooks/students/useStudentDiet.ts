@@ -14,9 +14,22 @@ export const useStudentDiet = (
       
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
+          // Calculate progress
+          let progressCount = 0;
+          if (student.exercises?.length) progressCount++;
+          if (student.exercisesDay1?.length || student.exercisesDay2?.length || 
+              student.exercisesDay3?.length || student.exercisesDay4?.length) {
+            progressCount++;
+          }
+          if (mealIds.length) progressCount++;
+          if (student.supplements?.length || student.vitamins?.length) progressCount++;
+          
+          const progress = Math.round((progressCount / 4) * 100);
+          
           return {
             ...student,
-            meals: mealIds
+            meals: mealIds,
+            progress
           };
         }
         return student;

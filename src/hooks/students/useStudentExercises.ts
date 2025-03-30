@@ -1,53 +1,55 @@
-
-import { useToast } from "@/hooks/use-toast";
-import { Student } from "@/components/students/StudentTypes";
+import { Student } from '@/components/students/StudentTypes';
+import { useToast } from '@/hooks/use-toast';
+import { Dispatch, SetStateAction } from 'react';
 
 export const useStudentExercises = (
   students: Student[], 
-  setStudents: React.Dispatch<React.SetStateAction<Student[]>>
+  setStudents: Dispatch<SetStateAction<Student[]>>
 ) => {
   const { toast } = useToast();
   
   const handleSaveExercises = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
     try {
+      console.log(`Saving exercises for student ${studentId} day ${dayNumber || 'general'}:`, exerciseIds);
+      
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
-          if (!dayNumber) {
-            return {
-              ...student,
-              exercises: exerciseIds,
-              progress: calculateProgress(student, { exerciseUpdated: true })
-            };
+          const updatedStudent = { ...student };
+          
+          // If dayNumber is provided, update the specific day's exercises
+          if (dayNumber !== undefined) {
+            switch(dayNumber) {
+              case 1:
+                updatedStudent.exercisesDay1 = exerciseIds;
+                break;
+              case 2:
+                updatedStudent.exercisesDay2 = exerciseIds;
+                break;
+              case 3:
+                updatedStudent.exercisesDay3 = exerciseIds;
+                break;
+              case 4:
+                updatedStudent.exercisesDay4 = exerciseIds;
+                break;
+            }
+          } else {
+            // Otherwise update the general exercises
+            updatedStudent.exercises = exerciseIds;
           }
           
-          switch (dayNumber) {
-            case 1:
-              return {
-                ...student,
-                exercisesDay1: exerciseIds,
-                progress: calculateProgress(student, { exerciseUpdated: true })
-              };
-            case 2:
-              return {
-                ...student,
-                exercisesDay2: exerciseIds,
-                progress: calculateProgress(student, { exerciseUpdated: true })
-              };
-            case 3:
-              return {
-                ...student,
-                exercisesDay3: exerciseIds,
-                progress: calculateProgress(student, { exerciseUpdated: true })
-              };
-            case 4:
-              return {
-                ...student,
-                exercisesDay4: exerciseIds,
-                progress: calculateProgress(student, { exerciseUpdated: true })
-              };
-            default:
-              return student;
+          // Calculate progress
+          let progressCount = 0;
+          if (updatedStudent.exercises?.length) progressCount++;
+          if (updatedStudent.exercisesDay1?.length || updatedStudent.exercisesDay2?.length || 
+              updatedStudent.exercisesDay3?.length || updatedStudent.exercisesDay4?.length) {
+            progressCount++;
           }
+          if (updatedStudent.meals?.length) progressCount++;
+          if (updatedStudent.supplements?.length || updatedStudent.vitamins?.length) progressCount++;
+          
+          updatedStudent.progress = Math.round((progressCount / 4) * 100);
+          
+          return updatedStudent;
         }
         return student;
       });
@@ -55,58 +57,21 @@ export const useStudentExercises = (
       setStudents(updatedStudents);
       localStorage.setItem('students', JSON.stringify(updatedStudents));
       
-      const dayText = dayNumber 
-        ? (dayNumber === 1 ? 'روز اول' : 
-           dayNumber === 2 ? 'روز دوم' : 
-           dayNumber === 3 ? 'روز سوم' : 'روز چهارم') 
-        : '';
-      
-      console.log(`Successfully saved exercises for student ${studentId}, day ${dayNumber}:`, exerciseIds);
-      
       toast({
         title: "افزودن موفق",
-        description: `برنامه تمرینی ${dayText} با موفقیت به شاگرد اضافه شد`
+        description: "برنامه تمرینی با موفقیت به شاگرد اضافه شد"
       });
-      
       return true;
     } catch (error) {
       console.error("Error saving exercises:", error);
       toast({
         variant: "destructive",
         title: "خطا در ذخیره‌سازی",
-        description: "مشکلی در ذخیره‌سازی تمرین‌ها پیش آمد. لطفا مجدد تلاش کنید."
+        description: "مشکلی در ذخیره‌سازی برنامه تمرینی پیش آمد. لطفا مجدد تلاش کنید."
       });
       return false;
     }
   };
 
-  // Calculate progress for student
-  const calculateProgress = (student: Student, updates: { 
-    exerciseUpdated?: boolean, 
-    mealUpdated?: boolean, 
-    supplementUpdated?: boolean 
-  } = {}) => {
-    let total = 0;
-    let completed = 0;
-    
-    // Check exercises
-    total += 1;
-    if (updates.exerciseUpdated || student.exercises?.length || student.exercisesDay1?.length || 
-        student.exercisesDay2?.length || student.exercisesDay3?.length || 
-        student.exercisesDay4?.length) {
-      completed += 1;
-    }
-    
-    // Check meals
-    total += 1;
-    if (updates.mealUpdated || student.meals?.length) completed += 1;
-    
-    // Check supplements
-    total += 1;
-    if (updates.supplementUpdated || student.supplements?.length || student.vitamins?.length) completed += 1;
-    
-    return Math.round((completed / total) * 100);
-  };
-
-  return { handleSaveExercises, calculateProgress };
+  return { handleSaveExercises };
 };

@@ -30,7 +30,6 @@ const Students = () => {
   const dialogRef = useRef<any>(null);
 
   useEffect(() => {
-    // Check if trainer profile is complete
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
@@ -41,7 +40,6 @@ const Students = () => {
       }
     }
     
-    // Load students from localStorage
     const savedStudents = localStorage.getItem('students');
     
     if (savedStudents) {
@@ -50,11 +48,9 @@ const Students = () => {
         setStudents(parsedStudents);
       } catch (error) {
         console.error('Error loading students from localStorage:', error);
-        // If there's an error, start with an empty array
         setStudents([]);
       }
     } else {
-      // If no students exist, initialize with empty array
       setStudents([]);
     }
     
@@ -62,7 +58,6 @@ const Students = () => {
   }, []);
 
   useEffect(() => {
-    // Save students to localStorage whenever it changes
     if (!loading) {
       localStorage.setItem('students', JSON.stringify(students));
     }
@@ -116,7 +111,6 @@ const Students = () => {
   const handleSave = (data: any, selectedStudent?: Student) => {
     try {
       if (selectedStudent) {
-        // Editing existing student
         const updatedStudents = students.map(student => 
           student.id === selectedStudent.id 
             ? { ...student, ...data } 
@@ -128,7 +122,6 @@ const Students = () => {
           description: `اطلاعات ${data.name} با موفقیت بروزرسانی شد`,
         });
       } else {
-        // Adding new student
         const newStudent: Student = {
           id: Date.now(),
           ...data,
@@ -181,16 +174,13 @@ const Students = () => {
         if (student.id === studentId) {
           const updatedStudent = { ...student };
           
-          // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
             const dayKey = `exercisesDay${dayNumber}` as keyof typeof updatedStudent;
             updatedStudent[dayKey] = exerciseIds as unknown as never;
           } else {
-            // Otherwise update the general exercises
             updatedStudent.exercises = exerciseIds;
           }
           
-          // Calculate progress
           let progressCount = 0;
           if (updatedStudent.exercises?.length) progressCount++;
           if (updatedStudent.exercisesDay1?.length || updatedStudent.exercisesDay2?.length || 
@@ -232,7 +222,6 @@ const Students = () => {
         if (student.id === studentId) {
           const updatedStudent = { ...student, meals: mealIds };
           
-          // Calculate progress
           let progressCount = 0;
           if (updatedStudent.exercises?.length) progressCount++;
           if (updatedStudent.exercisesDay1?.length || updatedStudent.exercisesDay2?.length || 
@@ -278,7 +267,6 @@ const Students = () => {
             vitamins: data.vitamins
           };
           
-          // Calculate progress
           let progressCount = 0;
           if (updatedStudent.exercises?.length) progressCount++;
           if (updatedStudent.exercisesDay1?.length || updatedStudent.exercisesDay2?.length || 
@@ -313,8 +301,7 @@ const Students = () => {
       return false;
     }
   };
-  
-  // Filter and sort the students based on the current search query, sort field, and sort order
+
   const filteredStudents = filterStudents(students, searchQuery);
   const sortedStudents = sortStudents(filteredStudents, sortField, sortOrder);
 
@@ -329,7 +316,7 @@ const Students = () => {
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">شاگردان</h1>
           <p className="text-muted-foreground">
-            مدیریت و پیگیری پیشرفت شاگردان باشگاه
+            مدیریت و پیگیری پیشرفت شاگردان با��گاه
           </p>
         </div>
         

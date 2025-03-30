@@ -1,53 +1,76 @@
 
 import React from "react";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
-import { Meal, MealType } from "@/types/meal";
-import { getMealTypeColor, getMealTypeIcon } from "@/components/nutrition/StudentMealFilters";
+import { CheckCircle2 } from "lucide-react";
+import { getMealTypeColor, getMealTypeIcon } from "./StudentMealFilters";
+import { Meal } from "@/types/meal";
 
 interface StudentMealItemProps {
   meal: Meal;
   isSelected: boolean;
-  onToggle: (id: number) => void;
+  onSelect: (meal: Meal) => void;
 }
 
-const StudentMealItem: React.FC<StudentMealItemProps> = ({ 
-  meal, 
-  isSelected, 
-  onToggle 
+const StudentMealItem: React.FC<StudentMealItemProps> = ({
+  meal,
+  isSelected,
+  onSelect
 }) => {
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
+    <motion.div
       layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      className={cn(
+        "relative p-3 rounded-lg cursor-pointer transition-all border border-transparent hover:border-indigo-200 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/10",
+        isSelected && "border-indigo-200 bg-indigo-50/50 dark:border-indigo-800/60 dark:bg-indigo-950/20"
+      )}
+      onClick={() => onSelect(meal)}
     >
-      <div 
-        className={`p-4 rounded-xl border shadow-sm hover:shadow transition-all cursor-pointer text-right
-          ${isSelected ? "border-primary/30 bg-primary/5 dark:bg-primary/10" : "border-border hover:border-primary/20 bg-card hover:bg-muted/50"}`} 
-        onClick={() => onToggle(meal.id)} 
-        dir="rtl"
-      >
-        <div className="flex gap-3 items-start">
-          <div className={`w-5 h-5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-colors ${isSelected ? "bg-primary" : "border-2 border-muted-foreground/30"}`}>
-            {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
-          </div>
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <h3 className="font-medium text-base text-gray-900 dark:text-white mb-1">
+            {meal.name}
+          </h3>
           
-          <div className="space-y-2 text-right flex-1">
-            <div>
-              <h4 className="font-medium text-base text-foreground">{meal.name}</h4>
-              <div className="flex flex-wrap gap-1.5 mt-1.5">
-                <span className={`text-xs px-2 py-0.5 rounded-full border flex items-center gap-1 ${getMealTypeColor(meal.type)}`}>
-                  {getMealTypeIcon(meal.type)}
-                  <span>{meal.type}</span>
-                </span>
+          {meal.description && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              {meal.description}
+            </p>
+          )}
+          
+          <div className="flex flex-wrap gap-2 mt-2">
+            {meal.type && (
+              <div className={cn(
+                "px-2.5 py-1 rounded-full text-xs font-medium border flex items-center",
+                getMealTypeColor(meal.type)
+              )}>
+                {getMealTypeIcon(meal.type)}
+                <span>{meal.type}</span>
               </div>
-              
-              {meal.description && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{meal.description}</p>}
-            </div>
+            )}
+            
+            {meal.category && (
+              <div className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 border border-gray-200 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
+                {meal.category}
+              </div>
+            )}
+
+            {meal.day && (
+              <div className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 border border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300">
+                {meal.day}
+              </div>
+            )}
           </div>
         </div>
+        
+        {isSelected && (
+          <div className="absolute top-3 left-3">
+            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500" />
+          </div>
+        )}
       </div>
     </motion.div>
   );

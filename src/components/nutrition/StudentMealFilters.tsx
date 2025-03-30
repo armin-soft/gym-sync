@@ -1,82 +1,84 @@
 
-import React from "react";
-import { Badge } from "@/components/ui/badge";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Apple, UtensilsCrossed, Salad, Coffee, Pizza } from "lucide-react";
-
-// Define the MealType type more strictly
-export type MealType = "صبحانه" | "میان وعده صبح" | "ناهار" | "میان وعده عصر" | "شام";
+import { Check, Coffee, Utensils } from "lucide-react";
+import { MealType } from "@/types/meal";
+import { cn } from "@/lib/utils";
 
 interface StudentMealFiltersProps {
-  activeMealType: MealType | "all";
-  setActiveMealType: (type: MealType | "all") => void;
-  sortedMealTypes: MealType[];
+  selectedType: MealType | null;
+  onSelectType: (type: MealType | null) => void;
 }
 
-export const getMealTypeColor = (type: MealType): string => {
+// Helper functions that need to be exported
+export const getMealTypeColor = (type: MealType) => {
   switch (type) {
     case "صبحانه":
-      return "text-amber-600 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-950/30 dark:border-amber-800";
+      return "bg-blue-100 border-blue-200 text-blue-700 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-400";
     case "میان وعده صبح":
-      return "text-orange-600 bg-orange-50 border-orange-200 dark:text-orange-400 dark:bg-orange-950/30 dark:border-orange-800";
+      return "bg-teal-100 border-teal-200 text-teal-700 dark:bg-teal-950/40 dark:border-teal-800 dark:text-teal-400";
     case "ناهار":
-      return "text-green-600 bg-green-50 border-green-200 dark:text-green-400 dark:bg-green-950/30 dark:border-green-800";
+      return "bg-amber-100 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-400";
     case "میان وعده عصر":
-      return "text-red-600 bg-red-50 border-red-200 dark:text-red-400 dark:bg-red-950/30 dark:border-red-800";
+      return "bg-purple-100 border-purple-200 text-purple-700 dark:bg-purple-950/40 dark:border-purple-800 dark:text-purple-400";
     case "شام":
-      return "text-blue-600 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-950/30 dark:border-blue-800";
+      return "bg-indigo-100 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-400";
+    case "میان وعده":
+      return "bg-green-100 border-green-200 text-green-700 dark:bg-green-950/40 dark:border-green-800 dark:text-green-400";
     default:
-      return "text-gray-600 bg-gray-50 border-gray-200 dark:text-gray-400 dark:bg-gray-800/30 dark:border-gray-700";
+      return "bg-gray-100 border-gray-200 text-gray-700 dark:bg-gray-800/40 dark:border-gray-700 dark:text-gray-400";
   }
 };
 
 export const getMealTypeIcon = (type: MealType) => {
   switch (type) {
     case "صبحانه":
-      return <Coffee className="h-3.5 w-3.5" />;
+      return <Coffee className="h-4 w-4 mr-1.5" />;
     case "میان وعده صبح":
-      return <Apple className="h-3.5 w-3.5" />;
+      return <Coffee className="h-4 w-4 mr-1.5" />;
     case "ناهار":
-      return <UtensilsCrossed className="h-3.5 w-3.5" />;
+      return <Utensils className="h-4 w-4 mr-1.5" />;
     case "میان وعده عصر":
-      return <Apple className="h-3.5 w-3.5" />;
+      return <Coffee className="h-4 w-4 mr-1.5" />;
     case "شام":
-      return <UtensilsCrossed className="h-3.5 w-3.5" />;
+      return <Utensils className="h-4 w-4 mr-1.5" />;
+    case "میان وعده":
+      return <Coffee className="h-4 w-4 mr-1.5" />;
     default:
-      return <Salad className="h-3.5 w-3.5" />;
+      return <Coffee className="h-4 w-4 mr-1.5" />;
   }
 };
 
-const StudentMealFilters: React.FC<StudentMealFiltersProps> = ({
-  activeMealType,
-  setActiveMealType,
-  sortedMealTypes
+export const StudentMealFilters: React.FC<StudentMealFiltersProps> = ({
+  selectedType,
+  onSelectType,
 }) => {
+  const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام", "میان وعده"];
+
   return (
-    <div className="p-4 flex flex-col gap-3" dir="rtl">
-      <div>
-        <h3 className="text-sm font-medium mb-2 text-foreground text-right">فیلتر بر اساس نوع وعده</h3>
-        <div className="flex flex-wrap gap-1.5">
-          <Badge 
-            variant={activeMealType === "all" ? "default" : "outline"} 
-            className="cursor-pointer transition-all hover:bg-primary/10" 
-            onClick={() => setActiveMealType("all")}
-          >
-            همه وعده‌ها
-          </Badge>
-          {sortedMealTypes.map(type => (
-            <Badge 
-              key={type} 
-              variant={activeMealType === type ? "default" : "outline"} 
-              className={`cursor-pointer transition-all hover:bg-primary/10 flex gap-1 items-center ${activeMealType === type ? '' : getMealTypeColor(type).split(' ')[0]}`} 
-              onClick={() => setActiveMealType(type)}
-            >
-              {getMealTypeIcon(type)}
-              <span>{type}</span>
-            </Badge>
-          ))}
-        </div>
-      </div>
+    <div className="flex flex-wrap gap-1.5 pb-3">
+      {mealTypes.map((type) => (
+        <Button
+          key={type}
+          variant="outline"
+          size="sm"
+          className={cn(
+            "h-9 border px-3 text-xs font-medium rounded-full transition-all",
+            selectedType === type
+              ? getMealTypeColor(type)
+              : "hover:bg-gray-50 dark:hover:bg-gray-800/60"
+          )}
+          onClick={() => onSelectType(selectedType === type ? null : type)}
+        >
+          <span className="flex items-center">
+            {getMealTypeIcon(type)}
+            <span>{type}</span>
+            {selectedType === type && (
+              <Check className="ml-1.5 h-3.5 w-3.5" />
+            )}
+          </span>
+        </Button>
+      ))}
     </div>
   );
 };

@@ -1,10 +1,11 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { Student } from "@/components/students/StudentTypes";
+import { Dispatch, SetStateAction } from 'react';
 
 export const useStudentSupplements = (
   students: Student[], 
-  setStudents: React.Dispatch<React.SetStateAction<Student[]>>
+  setStudents: Dispatch<SetStateAction<Student[]>>
 ) => {
   const { toast } = useToast();
   
@@ -14,10 +15,23 @@ export const useStudentSupplements = (
       
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
+          // Calculate progress
+          let progressCount = 0;
+          if (student.exercises?.length) progressCount++;
+          if (student.exercisesDay1?.length || student.exercisesDay2?.length || 
+              student.exercisesDay3?.length || student.exercisesDay4?.length) {
+            progressCount++;
+          }
+          if (student.meals?.length) progressCount++;
+          if (data.supplements.length || data.vitamins.length) progressCount++;
+          
+          const progress = Math.round((progressCount / 4) * 100);
+          
           return {
             ...student,
             supplements: data.supplements,
-            vitamins: data.vitamins
+            vitamins: data.vitamins,
+            progress
           };
         }
         return student;
@@ -28,7 +42,7 @@ export const useStudentSupplements = (
       
       toast({
         title: "افزودن موفق",
-        description: "مکمل‌ها و ویتامین‌ها با موفقیت به شاگرد اضافه شدند"
+        description: "برنامه مکمل و ویتامین با موفقیت به شاگرد اضافه شد"
       });
       return true;
     } catch (error) {
@@ -36,7 +50,7 @@ export const useStudentSupplements = (
       toast({
         variant: "destructive",
         title: "خطا در ذخیره‌سازی",
-        description: "مشکلی در ذخیره‌سازی مکمل‌ها و ویتامین‌ها پیش آمد. لطفا مجدد تلاش کنید."
+        description: "مشکلی در ذخیره‌سازی برنامه مکمل و ویتامین پیش آمد. لطفا مجدد تلاش کنید."
       });
       return false;
     }
