@@ -1,8 +1,7 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Student } from "./StudentTypes";
-import { Users, UserCheck, UserClock, Award } from "lucide-react";
+import { Users, Clock, UserCheck, Award } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentStatsCardsProps {
@@ -60,7 +59,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       id: "active",
       title: "شاگردان در حال کار",
       value: activeStudents,
-      icon: UserClock,
+      icon: Clock,
       color: "from-amber-500 to-orange-500",
       shadowColor: "shadow-amber-500/25",
       bgLight: "bg-amber-50",
