@@ -15,7 +15,8 @@ export const useStudentExercises = (
           if (!dayNumber) {
             return {
               ...student,
-              exercises: exerciseIds
+              exercises: exerciseIds,
+              progress: calculateProgress(student, { exerciseUpdated: true })
             };
           }
           
@@ -23,22 +24,26 @@ export const useStudentExercises = (
             case 1:
               return {
                 ...student,
-                exercisesDay1: exerciseIds
+                exercisesDay1: exerciseIds,
+                progress: calculateProgress(student, { exerciseUpdated: true })
               };
             case 2:
               return {
                 ...student,
-                exercisesDay2: exerciseIds
+                exercisesDay2: exerciseIds,
+                progress: calculateProgress(student, { exerciseUpdated: true })
               };
             case 3:
               return {
                 ...student,
-                exercisesDay3: exerciseIds
+                exercisesDay3: exerciseIds,
+                progress: calculateProgress(student, { exerciseUpdated: true })
               };
             case 4:
               return {
                 ...student,
-                exercisesDay4: exerciseIds
+                exercisesDay4: exerciseIds,
+                progress: calculateProgress(student, { exerciseUpdated: true })
               };
             default:
               return student;
@@ -75,5 +80,33 @@ export const useStudentExercises = (
     }
   };
 
-  return { handleSaveExercises };
+  // Calculate progress for student
+  const calculateProgress = (student: Student, updates: { 
+    exerciseUpdated?: boolean, 
+    mealUpdated?: boolean, 
+    supplementUpdated?: boolean 
+  } = {}) => {
+    let total = 0;
+    let completed = 0;
+    
+    // Check exercises
+    total += 1;
+    if (updates.exerciseUpdated || student.exercises?.length || student.exercisesDay1?.length || 
+        student.exercisesDay2?.length || student.exercisesDay3?.length || 
+        student.exercisesDay4?.length) {
+      completed += 1;
+    }
+    
+    // Check meals
+    total += 1;
+    if (updates.mealUpdated || student.meals?.length) completed += 1;
+    
+    // Check supplements
+    total += 1;
+    if (updates.supplementUpdated || student.supplements?.length || student.vitamins?.length) completed += 1;
+    
+    return Math.round((completed / total) * 100);
+  };
+
+  return { handleSaveExercises, calculateProgress };
 };

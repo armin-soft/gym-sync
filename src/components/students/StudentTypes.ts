@@ -7,8 +7,13 @@ export interface Student {
   weight: string;
   image: string;
   payment?: string;
-  exercises?: any[];
-  meals?: any[];
-  supplements?: any[];
+  exercises?: number[];
+  exercisesDay1?: number[];
+  exercisesDay2?: number[];
+  exercisesDay3?: number[];
+  exercisesDay4?: number[];
+  meals?: number[];
+  supplements?: number[];
+  vitamins?: number[];
   progress?: number;
 }
