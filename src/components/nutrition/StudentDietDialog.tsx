@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Sheet,
@@ -28,6 +27,7 @@ interface StudentDietDialogProps {
   studentName: string;
   onSave: (mealIds: number[]) => boolean;
   initialMeals: number[];
+  meals: any[];
 }
 
 interface Meal {
@@ -66,10 +66,11 @@ export function StudentDietDialog({
   studentName,
   onSave,
   initialMeals = [],
+  meals = [],
 }: StudentDietDialogProps) {
   const [selectedMeals, setSelectedMeals] = useState<number[]>(initialMeals);
   const [searchQuery, setSearchQuery] = useState("");
-  const [meals, setMeals] = useState<Meal[]>([]);
+  const [mealsData, setMealsData] = useState<Meal[]>([]);
   const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
   const [currentDay, setCurrentDay] = useState<string | "all">("all");
   const [currentType, setCurrentType] = useState<string | "all">("all");
@@ -81,34 +82,38 @@ export function StudentDietDialog({
 
   useEffect(() => {
     try {
-      const savedMeals = localStorage.getItem("meals");
-      if (savedMeals) {
-        const parsedMeals = JSON.parse(savedMeals);
-        setMeals(Array.isArray(parsedMeals) ? parsedMeals : []);
+      if (Array.isArray(meals) && meals.length > 0) {
+        setMealsData(meals);
+      } else {
+        const savedMeals = localStorage.getItem("meals");
+        if (savedMeals) {
+          const parsedMeals = JSON.parse(savedMeals);
+          setMealsData(Array.isArray(parsedMeals) ? parsedMeals : []);
+        }
       }
     } catch (error) {
       console.error("Error loading meals:", error);
-      setMeals([]);
+      setMealsData([]);
     }
-  }, []);
+  }, [meals]);
 
   useEffect(() => {
-    const mealsWithDays = meals.filter(meal => meal.day);
+    const mealsWithDays = mealsData.filter(meal => meal.day);
     const uniqueDays = mealsWithDays.length > 0 
       ? Array.from(new Set(mealsWithDays.map(meal => meal.day)))
       : defaultDays;
     
-    const mealsWithTypes = meals.filter(meal => meal.type);
+    const mealsWithTypes = mealsData.filter(meal => meal.type);
     const uniqueTypes = mealsWithTypes.length > 0
       ? Array.from(new Set(mealsWithTypes.map(meal => meal.type)))
       : defaultMealTypes;
     
     setDays(uniqueDays);
     setTypes(uniqueTypes);
-  }, [meals]);
+  }, [mealsData]);
 
   useEffect(() => {
-    let filtered = meals;
+    let filtered = mealsData;
     
     if (searchQuery.trim() !== "") {
       filtered = filtered.filter(
@@ -126,7 +131,7 @@ export function StudentDietDialog({
     }
 
     setFilteredMeals(filtered);
-  }, [searchQuery, meals, activeTab, currentType]);
+  }, [searchQuery, mealsData, activeTab, currentType]);
 
   const toggleMeal = (mealId: number) => {
     setSelectedMeals((prev) =>
@@ -172,7 +177,6 @@ export function StudentDietDialog({
         dir="rtl"
       >
         <div className="flex flex-col h-full overflow-hidden">
-          {/* Header */}
           <SheetHeader className="px-6 py-4 border-b bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -262,7 +266,6 @@ export function StudentDietDialog({
             </div>
           </SheetHeader>
 
-          {/* Search */}
           <div className="px-6 py-3 border-b bg-muted/20 shrink-0">
             <div className="relative flex-1">
               <Search className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -275,7 +278,6 @@ export function StudentDietDialog({
             </div>
           </div>
 
-          {/* Filters */}
           <AnimatePresence>
             {showFilters && (
               <motion.div 
@@ -316,7 +318,6 @@ export function StudentDietDialog({
             )}
           </AnimatePresence>
 
-          {/* Tabs and Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
             <Tabs 
               value={activeTab} 
@@ -519,7 +520,6 @@ export function StudentDietDialog({
             </Tabs>
           </div>
 
-          {/* Footer */}
           <SheetFooter className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex-row gap-2 justify-between">
             <div className="flex items-center gap-2">
               <motion.div 

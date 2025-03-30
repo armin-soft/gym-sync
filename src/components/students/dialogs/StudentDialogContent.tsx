@@ -113,7 +113,10 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         <StudentDownloadDialog
           open={isDownloadDialogOpen}
           onOpenChange={setIsDownloadDialogOpen}
-          student={selectedStudentForDownload}
+          student={{
+            ...selectedStudentForDownload,
+            payment: selectedStudentForDownload.payment || ''  // Ensure payment is never undefined
+          }}
           exercises={exercises}
           meals={meals}
           supplements={supplements}
