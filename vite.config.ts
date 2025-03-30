@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
+    assetsDir: 'Assets',
     rollupOptions: {
       output: {
         // Define directory structure for assets
@@ -31,21 +31,21 @@ export default defineConfig(({ mode }) => ({
           
           // Images
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
-            return 'assets/Images/[name]-[hash].[ext]';
+            return 'Assets/Image/[name]-[hash].[ext]';
           }
           
           // CSS files
           if (/css/i.test(extType || '')) {
-            return 'assets/Styles/[name]-[hash].[ext]';
+            return 'Assets/Style/[name]-[hash].[ext]';
           }
           
           // Default for other assets
-          return 'assets/[name]-[hash].[ext]';
+          return 'Assets/[name]-[hash].[ext]';
         },
         
         // Define directory structure for JS chunks
-        chunkFileNames: 'assets/Scripts/[name]-Chunk-[hash].js',
-        entryFileNames: 'assets/Scripts/[name]-Bundle-[hash].js',
+        chunkFileNames: 'Assets/Script/[name]-Chunk-[hash].js',
+        entryFileNames: 'Assets/Script/[name]-Bundle-[hash].js',
         
         // Make filenames more descriptive
         manualChunks: {
