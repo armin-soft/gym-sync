@@ -23,48 +23,29 @@ async function generateFavicons() {
     const canvas = createCanvas(size, size);
     const ctx = canvas.getContext('2d');
     
-    // Fill background
-    ctx.fillStyle = '#7c3aed'; // Primary color
+    // Fill background with gradient
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#7c3aed'); // Purple
+    gradient.addColorStop(1, '#4f46e5'); // Indigo
+    
+    ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
     ctx.fill();
     
-    // Draw weight icon (simplified for canvas)
+    // Draw stylized GS letters for Gym Sync
     ctx.fillStyle = '#ffffff';
-    const iconSize = size * 0.6;
-    const x = (size - iconSize) / 2;
-    const y = (size - iconSize) / 2;
+    ctx.font = `bold ${size * 0.4}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('GS', size / 2, size / 2);
     
-    // Draw a dumbbell shape
-    const barWidth = iconSize * 0.2;
-    const barHeight = iconSize * 0.6;
-    const weightSize = iconSize * 0.3;
-    
-    // Draw the bar
-    ctx.fillRect(
-      x + (iconSize - barWidth) / 2,
-      y + (iconSize - barHeight) / 2,
-      barWidth,
-      barHeight
-    );
-    
-    // Draw the weights
+    // Add a circular border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.lineWidth = size * 0.05;
     ctx.beginPath();
-    ctx.arc(
-      x + iconSize / 2,
-      y + iconSize * 0.25,
-      weightSize / 2,
-      0,
-      Math.PI * 2
-    );
-    ctx.arc(
-      x + iconSize / 2,
-      y + iconSize * 0.75,
-      weightSize / 2,
-      0,
-      Math.PI * 2
-    );
-    ctx.fill();
+    ctx.arc(size / 2, size / 2, size * 0.42, 0, Math.PI * 2);
+    ctx.stroke();
     
     // Save as PNG
     const fileName = size === 512 ? 'logo-512.png' : size === 192 ? 'logo.png' : `favicon-${size}.png`;

@@ -1,13 +1,26 @@
 
 {
-  "name": "مدیریت برنامه فیکس",
-  "short_name": "فیکس",
-  "description": "سیستم مدیریت برنامه تمرینی فیکس",
+  "name": "مدیریت برنامه و",
+  "short_name": "Gym Sync",
+  "description": "سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان",
+  "version": "1.0.0",
+  "developer": {
+    "name": "آرمین سافت",
+    "name_en": "ARMIN-SOFT",
+    "website": "https://arminsoft.ir"
+  },
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "background_color": "#7c3aed",
   "theme_color": "#7c3aed",
+  "categories": ["fitness", "health", "sports"],
   "icons": [
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
     {
       "src": "/logo.png",
       "sizes": "192x192",
@@ -18,5 +31,27 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "شاگردان",
+      "url": "/Students",
+      "icons": [{ "src": "/favicon-32.png", "sizes": "32x32" }]
+    },
+    {
+      "name": "برنامه‌های تمرینی",
+      "url": "/Exercise-Movements",
+      "icons": [{ "src": "/favicon-32.png", "sizes": "32x32" }]
+    }
+  ],
+  "dir": "rtl",
+  "lang": "fa",
+  "prefer_related_applications": false
 }
