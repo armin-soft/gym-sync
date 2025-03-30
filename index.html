@@ -3,22 +3,58 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/custom-favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title id="page-title">مدیریت برنامه</title>
-    <meta name="description" content="سیستم مدیریت برنامه تمرینی Gym Sync" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" href="./favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
+    <link rel="apple-touch-icon" href="./logo.png" />
+    <link rel="mask-icon" href="./logo.png" color="#7c3aed" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#7c3aed" />
+    
+    <!-- SEO Meta Tags -->
+    <title id="page-title">مدیریت برنامه تمرینی</title>
+    <meta name="description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
     <meta name="author" content="ARMIN-SOFT" />
+    <meta name="keywords" content="مدیریت, برنامه تمرینی, باشگاه, مربی, رژیم غذایی, ورزش, فیتنس" />
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="مدیریت برنامه تمرینی Gym Sync" />
+    <meta property="og:description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
+    <meta property="og:image" content="./logo.png" />
+    <meta property="og:url" content="https://gym-sync.arminsoft.ir" />
+    <meta property="og:site_name" content="Gym Sync" />
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="مدیریت برنامه تمرینی Gym Sync" />
+    <meta name="twitter:description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
+    <meta name="twitter:image" content="./logo.png" />
+    
+    <!-- Mobile App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Gym Sync" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Preconnect to External Resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Font Loading -->
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Update OG image to use the management app logo -->
-    <meta property="og:image" content="/logo.png" />
-    <!-- Add Apple touch icon for iOS devices -->
-    <link rel="apple-touch-icon" href="/logo.png">
-    <!-- Add manifest file for PWA support -->
-    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="./logo.png" as="image" type="image/png" />
+    
+    <!-- Script for Dynamic Title -->
     <script>
-      // Dynamic title update based on gym name from trainer profile
       document.addEventListener('DOMContentLoaded', function() {
         try {
           const savedProfile = localStorage.getItem('trainerProfile');
@@ -27,6 +63,11 @@
             if (profile.gymName) {
               document.title = 'مدیریت برنامه ' + profile.gymName;
               document.getElementById('page-title').textContent = document.title;
+              
+              // Update meta tags with gym name
+              document.querySelector('meta[property="og:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
+              document.querySelector('meta[name="twitter:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
+              document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', profile.gymName);
             }
           }
         } catch (error) {
@@ -41,6 +82,11 @@
               if (profile && profile.gymName) {
                 document.title = 'مدیریت برنامه ' + profile.gymName;
                 document.getElementById('page-title').textContent = document.title;
+                
+                // Update meta tags with gym name
+                document.querySelector('meta[property="og:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
+                document.querySelector('meta[name="twitter:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
+                document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', profile.gymName);
               }
             } catch (error) {
               console.error('Error updating page title on storage change:', error);
@@ -52,7 +98,53 @@
   </head>
   <body class="persian-numbers">
     <div id="root"></div>
+    
+    <!-- App Loading Indicator (shown until React loads) -->
+    <div id="app-loader" style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background-color: #f9fafb; z-index: 9999; transition: opacity 0.3s ease-out;">
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border: 3px solid #e0e0e0; border-radius: 50%; border-top-color: #7c3aed; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+        <p style="margin-top: 20px; font-family: 'Vazirmatn', sans-serif; color: #6b7280;">در حال بارگذاری...</p>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <script>
+      // Hide loading indicator when app is loaded
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loader = document.getElementById('app-loader');
+          if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(function() {
+              loader.style.display = 'none';
+            }, 300);
+          }
+        }, 500);
+      });
+    </script>
+    
+    <!-- GPT Engineer Script (required for "Select" feature) -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Application Scripts -->
+    <script type="module" src="./src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
