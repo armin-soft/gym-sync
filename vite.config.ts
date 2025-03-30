@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => ({
         assetFileNames: (assetInfo) => {
           const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
           
-          // Images
+          // Images - ensure all images go to Assets/Image
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
             return 'Assets/Image/[name].[ext]';
           }
