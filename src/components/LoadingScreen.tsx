@@ -6,11 +6,7 @@ import { motion } from "framer-motion";
 import { Loader } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
 
-interface LoadingScreenProps {
-  onLoadingComplete?: () => void;
-}
-
-export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
+export const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
   const [gymName, setGymName] = useState("");
   
@@ -56,13 +52,6 @@ export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
             
             if (currentStep < steps.length) {
               timer = setTimeout(updateProgress, 100);
-            } else {
-              // Loading complete
-              setTimeout(() => {
-                if (onLoadingComplete) {
-                  onLoadingComplete();
-                }
-              }, 500);
             }
           } else {
             setProgress(Math.round(currentValue));
@@ -77,7 +66,7 @@ export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [onLoadingComplete]);
+  }, []);
   
   return (
     <motion.div 

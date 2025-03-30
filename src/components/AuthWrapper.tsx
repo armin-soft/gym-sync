@@ -83,7 +83,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
 
   // If still loading, show the loading screen
   if (loading) {
-    return <LoadingScreen onLoadingComplete={() => {}} />;
+    return <LoadingScreen />;
   }
 
   // If not authenticated, show the login form

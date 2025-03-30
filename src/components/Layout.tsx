@@ -1,19 +1,13 @@
+
 import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
-import { Spinner } from "./ui/spinner";
+import { LoadingScreen } from "./LoadingScreen";
 import { Outlet } from "react-router-dom";
 import { AppIcon } from "./ui/app-icon";
 import { Toaster } from "@/components/ui/toaster";
 
-const LoadingFallback = () => (
-  <div className="flex h-[80vh] items-center justify-center">
-    <div className="text-center space-y-4">
-      <Spinner size="lg" className="mx-auto" />
-      <p className="text-muted-foreground animate-pulse">در حال بارگذاری...</p>
-    </div>
-  </div>
-);
+const LoadingFallback = () => <LoadingScreen />;
 
 export const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
