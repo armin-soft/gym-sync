@@ -55,22 +55,40 @@
     
     <!-- Ensure proper base path for service worker -->
     <script>
-      // Get the base path for the application
+      // Define app routes for comparison
+      const APP_ROUTES = [
+        "Coach-Profile", 
+        "Students", 
+        "Exercise-Movements",
+        "Diet-Plan", 
+        "Supplements-Vitamins", 
+        "Reports",
+        "Backup-Restore", 
+        "About"
+      ];
+      
+      // Get the base path for the application - improved to be more robust
       const getBasePath = () => {
         const path = window.location.pathname;
         const pathSegments = path.split('/').filter(segment => segment !== '');
         
-        // If deployed in a subdirectory, use it as the base
-        if (pathSegments.length > 0 && !['Coach-Profile', 'Students', 'Exercise-Movements', 
-            'Diet-Plan', 'Supplements-Vitamins', 'Reports', 'Backup-Restore', 'About'].includes(pathSegments[0])) {
-          return '/' + pathSegments[0] + '/';
+        // If there are no segments, we're at the root
+        if (pathSegments.length === 0) {
+          return '/';
         }
         
-        return '/';
+        // Check if the first segment is one of our app routes
+        if (APP_ROUTES.includes(pathSegments[0])) {
+          return '/'; // We're not in a subdirectory
+        }
+        
+        // We are in a subdirectory, return it with slashes
+        return '/' + pathSegments[0] + '/';
       };
       
       // Set a global variable for the base path that can be used by other scripts
       window.BASE_PATH = getBasePath();
+      console.log("Base path detected:", window.BASE_PATH);
     </script>
     
     <!-- Script for Dynamic Title -->
@@ -159,6 +177,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
           const swPath = window.BASE_PATH ? window.BASE_PATH + 'service-worker.js' : './service-worker.js';
+          console.log("Registering service worker at path:", swPath);
           navigator.serviceWorker.register(swPath).then(function(registration) {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, function(err) {

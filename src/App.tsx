@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -18,33 +19,38 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // Create a new query client instance
 const queryClient = new QueryClient();
 
-// Function to determine the base URL from the current path
+// Define app routes for easier comparison
+const APP_ROUTES = [
+  "Coach-Profile", 
+  "Students", 
+  "Exercise-Movements",
+  "Diet-Plan",
+  "Supplements-Vitamins",
+  "Reports",
+  "Backup-Restore",
+  "About"
+];
+
+// Function to determine the base URL from the current path - improved to handle any subdirectory name
 const getBasename = () => {
   // Get the current URL path
   const path = window.location.pathname;
   
-  // Extract the base directory from the path (everything before the app routes)
-  // For example, if deployed at /Gym-Sync/, this will return /Gym-Sync
-  const match = path.match(/^(\/[^/]+)/);
+  // Split the path into segments and filter out empty strings
+  const segments = path.split('/').filter(segment => segment !== '');
   
-  // If there's a match and it's not one of our app routes, use it as the base
-  // Otherwise, use '/'
-  const appRoutes = [
-    "/Coach-Profile", 
-    "/Students", 
-    "/Exercise-Movements",
-    "/Diet-Plan",
-    "/Supplements-Vitamins",
-    "/Reports",
-    "/Backup-Restore",
-    "/About"
-  ];
-  
-  if (match && !appRoutes.some(route => match[0].startsWith(route))) {
-    return match[0];
+  // If there are no segments, we're at the root
+  if (segments.length === 0) {
+    return '/';
   }
   
-  return '/';
+  // Check if the first segment is one of our app routes
+  if (APP_ROUTES.includes(segments[0])) {
+    return '/'; // We're not in a subdirectory
+  }
+  
+  // We are in a subdirectory, so return it with slashes
+  return '/' + segments[0] + '/';
 };
 
 function App() {

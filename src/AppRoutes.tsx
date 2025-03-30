@@ -18,6 +18,18 @@ import BackupPage from "@/pages/backup";
 // Create a client
 const queryClient = new QueryClient();
 
+// Define app routes for consistency with App.tsx
+const APP_ROUTES = [
+  "Coach-Profile", 
+  "Students", 
+  "Exercise-Movements",
+  "Diet-Plan",
+  "Supplements-Vitamins",
+  "Reports",
+  "Backup-Restore",
+  "About"
+];
+
 // This file is not currently being used in the app, but we'll update it for consistency
 export const AppRoutes = () => {
   return (
