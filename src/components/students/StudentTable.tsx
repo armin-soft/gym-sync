@@ -13,13 +13,33 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Student } from "./StudentTypes";
-import { Edit, Trash2, MoreVertical, User, Clipboard, Dumbbell, UtensilsCrossed, Pill } from "lucide-react";
+import { getStudentProgress, getProgressColor } from "@/utils/studentUtils";
+import { 
+  Edit, 
+  Trash2, 
+  MoreVertical, 
+  User, 
+  Clipboard, 
+  Dumbbell, 
+  UtensilsCrossed, 
+  Pill, 
+  Download,
+  ChevronRight,
+  PlusCircle,
+  UserCog,
+  BookMedical,
+  FileEdit
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 interface StudentTableProps {
@@ -42,6 +62,7 @@ export const StudentTable = ({
   isProfileComplete
 }: StudentTableProps) => {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [hoveredRowId, setHoveredRowId] = useState<number | null>(null);
 
   return (
     <div className="rounded-md border">
@@ -77,16 +98,18 @@ export const StudentTable = ({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: index * 0.05 }}
-                className="transition-colors hover:bg-muted/50"
+                className={`transition-all duration-300 ${hoveredRowId === student.id ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : 'hover:bg-muted/50'}`}
+                onMouseEnter={() => setHoveredRowId(student.id)}
+                onMouseLeave={() => setHoveredRowId(null)}
               >
                 <TableCell className="font-medium">
                   {toPersianNumbers(index + 1)}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="h-8 w-8 transition-transform duration-300 hover:scale-110">
                       <AvatarImage src={student.image} alt={student.name} />
-                      <AvatarFallback>{student.name[0]}</AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white">{student.name[0]}</AvatarFallback>
                     </Avatar>
                     <span>{student.name}</span>
                   </div>
@@ -116,7 +139,60 @@ export const StudentTable = ({
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <div className="flex justify-end">
+                  <div className="flex justify-end items-center space-x-1 space-x-reverse">
+                    {/* Progress indicator visible on hover */}
+                    {hoveredRowId === student.id && (
+                      <motion.div 
+                        initial={{ opacity: 0, width: 0 }} 
+                        animate={{ opacity: 1, width: 'auto' }} 
+                        className="mr-2 flex items-center gap-2"
+                      >
+                        <Progress 
+                          value={getStudentProgress(student)} 
+                          className="h-2 w-16 bg-slate-100" 
+                          indicatorClassName={getProgressColor(getStudentProgress(student))}
+                          showAnimation={getStudentProgress(student) >= 100}
+                        />
+                        <span className="text-xs font-medium text-slate-500">
+                          {toPersianNumbers(getStudentProgress(student))}٪
+                        </span>
+                      </motion.div>
+                    )}
+                  
+                    {/* Quick action buttons */}
+                    <div className={`transition-opacity duration-300 flex gap-1 ${hoveredRowId === student.id ? 'opacity-100' : 'opacity-0'}`}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-full text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700"
+                        onClick={() => onAddExercise(student)}
+                        title="افزودن تمرین"
+                      >
+                        <Dumbbell className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-full text-green-600 hover:bg-green-100 hover:text-green-700"
+                        onClick={() => onAddDiet(student)}
+                        title="افزودن برنامه غذایی"
+                      >
+                        <UtensilsCrossed className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-full text-purple-600 hover:bg-purple-100 hover:text-purple-700"
+                        onClick={() => onAddSupplement(student)}
+                        title="افزودن مکمل"
+                      >
+                        <Pill className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    {/* Main dropdown menu */}
                     <DropdownMenu
                       open={openMenuId === student.id}
                       onOpenChange={(open) => {
@@ -124,76 +200,147 @@ export const StudentTable = ({
                       }}
                     >
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={(e) => {
-                          e.stopPropagation();
-                        }}>
+                        <Button 
+                          variant={hoveredRowId === student.id ? "secondary" : "ghost"} 
+                          size="icon" 
+                          className={`h-9 w-9 rounded-full transition-all duration-300 ${
+                            hoveredRowId === student.id ? 'shadow-sm' : ''
+                          }`} 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 z-50 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+                      <DropdownMenuContent 
+                        align="end" 
+                        className="w-56 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-slate-200 dark:border-slate-800 shadow-xl rounded-xl p-1 animate-in zoom-in-90 duration-100"
+                      >
+                        <DropdownMenuLabel className="text-xs text-slate-500 dark:text-slate-400 px-2 pb-1">
+                          گزینه‌های شاگرد
+                        </DropdownMenuLabel>
+                        
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800"
+                            onClick={() => {
+                              onEdit(student);
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
+                              <UserCog className="h-4 w-4" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm">ویرایش اطلاعات</span>
+                              <span className="text-xs text-slate-500 dark:text-slate-400">تغییر مشخصات شاگرد</span>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-600 ml-auto" />
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAddExercise(student);
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
+                              <Dumbbell className="h-4 w-4" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm">برنامه تمرینی</span>
+                              <span className="text-xs text-slate-500 dark:text-slate-400">افزودن یا ویرایش تمرین‌ها</span>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-600 ml-auto" />
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAddDiet(student);
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                              <UtensilsCrossed className="h-4 w-4" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm">برنامه غذایی</span>
+                              <span className="text-xs text-slate-500 dark:text-slate-400">افزودن یا ویرایش برنامه غذایی</span>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-600 ml-auto" />
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAddSupplement(student);
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400">
+                              <Pill className="h-4 w-4" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm">مکمل و ویتامین</span>
+                              <span className="text-xs text-slate-500 dark:text-slate-400">افزودن یا ویرایش مکمل‌ها</span>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-600 ml-auto" />
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        
+                        <DropdownMenuSeparator className="my-1 bg-slate-200/70 dark:bg-slate-700/70" />
+                        
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Placeholder for future print functionality
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                              <Clipboard className="h-4 w-4" />
+                            </div>
+                            <span className="text-sm">پرینت برنامه</span>
+                            <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-600 ml-auto" />
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Placeholder for future download functionality
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                              <Download className="h-4 w-4" />
+                            </div>
+                            <span className="text-sm">دانلود برنامه</span>
+                            <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-600 ml-auto" />
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        
+                        <DropdownMenuSeparator className="my-1 bg-slate-200/70 dark:bg-slate-700/70" />
+                        
                         <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={() => {
-                            onEdit(student);
-                            setOpenMenuId(null);
-                          }}
-                        >
-                          <Edit className="h-4 w-4" />
-                          <span>ویرایش اطلاعات</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Placeholder for future functionality
-                            setOpenMenuId(null);
-                          }}
-                        >
-                          <Clipboard className="h-4 w-4" />
-                          <span>پرینت برنامه</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAddExercise(student);
-                            setOpenMenuId(null);
-                          }}
-                        >
-                          <Dumbbell className="h-4 w-4" />
-                          <span>تمرین</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAddDiet(student);
-                            setOpenMenuId(null);
-                          }}
-                        >
-                          <UtensilsCrossed className="h-4 w-4" />
-                          <span>برنامه غذایی</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAddSupplement(student);
-                            setOpenMenuId(null);
-                          }}
-                        >
-                          <Pill className="h-4 w-4" />
-                          <span>مکمل و ویتامین</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="flex items-center gap-2 text-red-600 cursor-pointer"
+                          className="flex items-center gap-2 cursor-pointer rounded-lg text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/30"
                           onClick={() => {
                             onDelete(student.id);
                             setOpenMenuId(null);
                           }}
                         >
-                          <Trash2 className="h-4 w-4" />
-                          <span>حذف</span>
+                          <div className="h-8 w-8 flex items-center justify-center rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
+                            <Trash2 className="h-4 w-4" />
+                          </div>
+                          <span className="font-medium">حذف شاگرد</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
