@@ -32,18 +32,21 @@ export const GlassmorphicCard = ({
     ? "" 
     : "border border-white/20 dark:border-slate-700/30";
 
+  // Explicitly create a safe props object for AnimatedContainer
+  const animatedContainerProps = {
+    delay,
+    className: cn(
+      baseStyles,
+      variantStyles[variant],
+      borderStyles,
+      "rounded-2xl",
+      className
+    ),
+    ...props
+  };
+
   return (
-    <AnimatedContainer 
-      delay={delay} 
-      className={cn(
-        baseStyles,
-        variantStyles[variant],
-        borderStyles,
-        "rounded-2xl",
-        className
-      )} 
-      {...props}
-    >
+    <AnimatedContainer {...animatedContainerProps}>
       {children}
     </AnimatedContainer>
   );

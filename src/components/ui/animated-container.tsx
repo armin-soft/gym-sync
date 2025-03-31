@@ -3,8 +3,8 @@ import React from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// Create a type that omits conflicting properties
-export interface AnimatedContainerProps extends Omit<HTMLMotionProps<"div">, "animate" | "initial" | "exit" | "transition"> {
+// Create a type that extends HTMLMotionProps but handles HTML attributes correctly
+export interface AnimatedContainerProps extends HTMLMotionProps<"div"> {
   children: React.ReactNode;
   delay?: number;
   direction?: "up" | "down" | "left" | "right";
