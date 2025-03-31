@@ -1,5 +1,5 @@
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, lazy, memo } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { LoadingScreen } from "./LoadingScreen";
@@ -7,31 +7,35 @@ import { Outlet } from "react-router-dom";
 import { AppIcon } from "./ui/app-icon";
 import { Toaster } from "@/components/ui/toaster";
 
-const LoadingFallback = () => <LoadingScreen />;
+const LoadingFallback = memo(() => <LoadingScreen />);
 
-export const Layout = () => {
+// Using memo to prevent unnecessary re-renders
+export const Layout = memo(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
   
   const loadGymName = () => {
-    const savedProfile = localStorage.getItem('trainerProfile');
-    if (savedProfile) {
-      try {
+    try {
+      const savedProfile = localStorage.getItem('trainerProfile');
+      if (savedProfile) {
         const profile = JSON.parse(savedProfile);
         if (profile.gymName) {
           setGymName(profile.gymName);
         }
-      } catch (error) {
-        console.error('Error loading gym name from localStorage:', error);
       }
+    } catch (error) {
+      console.error('Error loading gym name from localStorage:', error);
     }
   };
   
+  // Use effect with empty dependency array to run only once on mount
   useEffect(() => {
     loadGymName();
     
-    const handleStorageChange = () => {
-      loadGymName();
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'trainerProfile') {
+        loadGymName();
+      }
     };
     
     window.addEventListener('storage', handleStorageChange);
@@ -43,7 +47,8 @@ export const Layout = () => {
 
   return (
     <div className="min-h-screen h-screen w-screen overflow-hidden bg-background persian-numbers" dir="rtl">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      {/* Only render sidebar when open for better performance */}
+      {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       
       <Toaster />
       
@@ -53,6 +58,7 @@ export const Layout = () => {
             <button
               onClick={() => setSidebarOpen(true)}
               className="mr-2 rounded-md p-2 hover:bg-accent"
+              aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -75,4 +81,4 @@ export const Layout = () => {
       </div>
     </div>
   );
-}
+});

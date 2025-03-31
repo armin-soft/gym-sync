@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Meal, MealType, WeekDay } from "@/types/meal";
 
 export const mealTypeOrder: Record<MealType, number> = {
@@ -38,49 +38,45 @@ export const useMealSorting = ({
 }: UseMealSortingParams) => {
   const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
 
-  useEffect(() => {
-    let filtered = [...meals];
-    
-    // Apply search filter
-    if (searchQuery.trim() !== "") {
-      filtered = filtered.filter(meal => 
-        meal.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (meal.description && meal.description.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
+  // Optimize sorting logic with memoization
+  const processedMeals = useMemo(() => {
+    // Apply search filter - with memoized dependency on searchQuery
+    const searchLower = searchQuery.trim().toLowerCase();
+    const filtered = searchLower === "" 
+      ? meals 
+      : meals.filter(meal => 
+          meal.name.toLowerCase().includes(searchLower) || 
+          (meal.description && meal.description.toLowerCase().includes(searchLower))
+        );
     
     // Apply day filter
-    if (activeDay !== "all") {
-      filtered = filtered.filter(meal => meal.day === activeDay);
-    }
+    const dayFiltered = activeDay === "all" 
+      ? filtered 
+      : filtered.filter(meal => meal.day === activeDay);
     
     // Apply meal type filter
-    if (activeMealType !== "all") {
-      filtered = filtered.filter(meal => meal.type === activeMealType);
-    }
-
-    // Sort the filtered meals
-    filtered.sort((a, b) => {
-      // First sort by day
-      if (a.day && b.day) {
-        const dayOrderDiff = dayOrder[a.day] - dayOrder[b.day];
-        if (dayOrderDiff !== 0) return dayOrderDiff;
-      }
-
-      // Then sort by meal type
-      const typeOrderDiff = mealTypeOrder[a.type] - mealTypeOrder[b.type];
-      if (typeOrderDiff !== 0) return typeOrderDiff;
-
-      // Finally sort by name
-      if (sortOrder === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
+    const typeFiltered = activeMealType === "all" 
+      ? dayFiltered 
+      : dayFiltered.filter(meal => meal.type === activeMealType);
     
-    setFilteredMeals(filtered);
-  }, [searchQuery, meals, activeDay, activeMealType, sortOrder]);
+    // Pre-compute sorting keys for better performance
+    const mealsWithSortKey = typeFiltered.map(meal => ({
+      ...meal,
+      // Create a composite sort key
+      sortKey: `${meal.day ? String(dayOrder[meal.day]).padStart(2, '0') : '99'}${
+        String(mealTypeOrder[meal.type]).padStart(2, '0')
+      }${sortOrder === "asc" ? meal.name : String.fromCharCode(65535 - meal.name.charCodeAt(0))}`
+    }));
+    
+    // Sort using the pre-computed key
+    return mealsWithSortKey.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+    
+  }, [meals, searchQuery, activeDay, activeMealType, sortOrder]);
+  
+  // Update state with memoized result
+  useEffect(() => {
+    setFilteredMeals(processedMeals.map(({sortKey, ...meal}) => meal));
+  }, [processedMeals]);
 
   return filteredMeals;
 };
