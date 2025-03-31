@@ -20,63 +20,55 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     assetsDir: 'Assets',
-    minify: 'terser', // Use more aggressive minification
+    minify: 'terser', 
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console logs in production
+        drop_console: true,
         drop_debugger: true
       }
     },
-    sourcemap: false, // Disable sourcemaps for production
-    chunkSizeWarningLimit: 1000, // Increase the warning limit
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        // Define directory structure for assets with proper capitalized names
         assetFileNames: (assetInfo) => {
           const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
           
-          // Images - ensure all images go to Assets/Image with proper capitalization
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
-            return 'Assets/Image/[name].[hash].[ext]'; // Add hash for better caching
+            return 'Assets/Images/[name].[ext]';
           }
           
-          // CSS files - capitalize first letter
           if (/css/i.test(extType || '')) {
-            return 'Assets/Style/Style.[hash].[ext]'; // Add hash for better caching
+            return 'Assets/Styles/[name].[ext]';
           }
           
-          // Default for other assets
-          return 'Assets/[name].[hash].[ext]';
+          return 'Assets/[name].[ext]';
         },
         
-        // Define directory structure for JS chunks with proper capitalization
-        chunkFileNames: 'Assets/Script/[name]-Bundle.[hash].js',
-        entryFileNames: 'Assets/Script/Main-Bundle.[hash].js',
+        chunkFileNames: 'Assets/Scripts/[name].js',
+        entryFileNames: 'Assets/Scripts/Main.js',
         
-        // Make filenames more descriptive with proper capitalization
         manualChunks: (id) => {
-          // Optimize chunk splitting for better performance
           if (id.includes('node_modules')) {
             if (id.includes('react') || id.includes('react-dom')) {
-              return 'Vendor-React';
+              return 'VendorReact';
             }
             if (id.includes('@radix-ui')) {
-              return 'Vendor-Ui';
+              return 'VendorUi';
             }
             if (id.includes('recharts')) {
-              return 'Vendor-Charts';
+              return 'VendorCharts';
             }
             if (id.includes('date-fns') || id.includes('clsx') || id.includes('zod')) {
-              return 'Vendor-Utils';
+              return 'VendorUtils';
             }
             if (id.includes('jspdf') || id.includes('html2canvas')) {
-              return 'Vendor-Pdf';
+              return 'VendorPdf';
             }
             if (id.includes('framer-motion')) {
-              return 'Vendor-Animation';
+              return 'VendorAnimation';
             }
-            // Group remaining node_modules
-            return 'Vendor-Other';
+            return 'VendorOther';
           }
         }
       }
