@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Table,
@@ -37,7 +36,6 @@ import {
   ChevronRight,
   PlusCircle,
   UserCog,
-  BookMedical,
   FileEdit
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -140,7 +138,6 @@ export const StudentTable = ({
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end items-center space-x-1 space-x-reverse">
-                    {/* Progress indicator visible on hover */}
                     {hoveredRowId === student.id && (
                       <motion.div 
                         initial={{ opacity: 0, width: 0 }} 
@@ -159,7 +156,6 @@ export const StudentTable = ({
                       </motion.div>
                     )}
                   
-                    {/* Quick action buttons */}
                     <div className={`transition-opacity duration-300 flex gap-1 ${hoveredRowId === student.id ? 'opacity-100' : 'opacity-0'}`}>
                       <Button
                         variant="ghost"
@@ -192,7 +188,6 @@ export const StudentTable = ({
                       </Button>
                     </div>
 
-                    {/* Main dropdown menu */}
                     <DropdownMenu
                       open={openMenuId === student.id}
                       onOpenChange={(open) => {
