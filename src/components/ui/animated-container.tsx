@@ -1,9 +1,10 @@
 
 import React from "react";
-import { motion, MotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface AnimatedContainerProps extends React.HTMLAttributes<HTMLDivElement>, MotionProps {
+// Create a type that omits conflicting properties
+export interface AnimatedContainerProps extends Omit<HTMLMotionProps<"div">, "animate" | "initial" | "exit" | "transition"> {
   children: React.ReactNode;
   delay?: number;
   direction?: "up" | "down" | "left" | "right";
@@ -11,14 +12,14 @@ interface AnimatedContainerProps extends React.HTMLAttributes<HTMLDivElement>, M
   className?: string;
 }
 
-export const AnimatedContainer = ({
+export const AnimatedContainer: React.FC<AnimatedContainerProps> = ({
   children,
   delay = 0,
   direction = "up",
   duration = 0.5,
   className,
   ...props
-}: AnimatedContainerProps) => {
+}) => {
   // Map direction to x and y values
   const getDirectionOffset = () => {
     switch (direction) {
