@@ -34,5 +34,60 @@ styleEl.textContent = `
 `;
 document.head.appendChild(styleEl);
 
+// Generate dynamic favicon to replace the protected one
+const generateDynamicFavicon = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 32;
+  canvas.height = 32;
+  const ctx = canvas.getContext('2d');
+  
+  if (ctx) {
+    // Fill background with gradient
+    const gradient = ctx.createLinearGradient(0, 0, 32, 32);
+    gradient.addColorStop(0, '#7c3aed'); // Purple
+    gradient.addColorStop(1, '#4f46e5'); // Indigo
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(16, 16, 16, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Draw stylized GS letters for Gym Sync
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('GS', 16, 16);
+    
+    // Add a circular border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(16, 16, 13.4, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Create a link element for the favicon
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = canvas.toDataURL('image/png');
+    
+    // Remove any existing favicon links
+    const existingLinks = document.querySelectorAll('link[rel="icon"]');
+    existingLinks.forEach(link => link.remove());
+    
+    // Add the new favicon link to the document head
+    document.head.appendChild(link);
+    
+    // Also set apple-touch-icon
+    const appleLink = document.createElement('link');
+    appleLink.rel = 'apple-touch-icon';
+    appleLink.href = canvas.toDataURL('image/png');
+    document.head.appendChild(appleLink);
+  }
+};
+
+// Call to generate the dynamic favicon
+generateDynamicFavicon();
+
 // Directly render the main application without the initial loading spinner
 root.render(<App />);

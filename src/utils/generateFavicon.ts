@@ -47,18 +47,18 @@ async function generateFavicons() {
     ctx.arc(size / 2, size / 2, size * 0.42, 0, Math.PI * 2);
     ctx.stroke();
     
-    // Save as PNG with capitalized filenames
-    const fileName = size === 512 ? 'Logo-512.png' : size === 192 ? 'Logo.png' : `Favicon-${size}.png`;
+    // Save as PNG with capitalized filenames and Custom- prefix
+    const fileName = size === 512 ? 'Custom-Logo-512.png' : size === 192 ? 'Custom-Logo.png' : `Custom-Favicon-${size}.png`;
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(path.join(outputDir, fileName), buffer);
     
     // Generate custom-favicon.ico (instead of directly overwriting favicon.ico)
     if (size === 32) {
-      fs.copyFileSync(path.join(outputDir, `Favicon-${size}.png`), path.join(outputDir, 'Custom-Favicon.ico'));
+      fs.copyFileSync(path.join(outputDir, `Custom-Favicon-${size}.png`), path.join(outputDir, 'Custom-Favicon.ico'));
     }
   }
   
-  console.log('Favicon files generated successfully!');
+  console.log('Custom favicon files generated successfully!');
 }
 
 // Run the function if this file is executed directly

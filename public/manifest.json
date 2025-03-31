@@ -1,22 +1,22 @@
 
 {
-  "name": "Gym Sync",
-  "short_name": "GymSync",
-  "description": "سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#7c3aed",
-  "icons": [
+  "Name": "Gym Sync",
+  "Short_name": "GymSync",
+  "Description": "سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان",
+  "Start_url": "./",
+  "Display": "standalone",
+  "Background_color": "#ffffff",
+  "Theme_color": "#7c3aed",
+  "Icons": [
     {
-      "src": "./Assets/Image/Favicon-32.png",
-      "sizes": "32x32",
-      "type": "image/png"
+      "Src": "./Assets/Image/Custom-Favicon.ico",
+      "Sizes": "32x32",
+      "Type": "image/x-icon"
     },
     {
-      "src": "./Assets/Image/Logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "Src": "./Assets/Image/Custom-Logo.png",
+      "Sizes": "192x192",
+      "Type": "image/png"
     }
   ]
 }

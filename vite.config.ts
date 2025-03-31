@@ -25,29 +25,29 @@ export default defineConfig(({ mode }) => ({
     assetsDir: 'Assets',
     rollupOptions: {
       output: {
-        // Define directory structure for assets without hash
+        // Define directory structure for assets with proper capitalized names
         assetFileNames: (assetInfo) => {
           const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
           
-          // Images - ensure all images go to Assets/Image
+          // Images - ensure all images go to Assets/Image with proper capitalization
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
             return 'Assets/Image/[name].[ext]';
           }
           
-          // CSS files
+          // CSS files - capitalize first letter
           if (/css/i.test(extType || '')) {
-            return 'Assets/Style/[name].[ext]';
+            return 'Assets/Style/Style.[ext]';
           }
           
           // Default for other assets
           return 'Assets/[name].[ext]';
         },
         
-        // Define directory structure for JS chunks without hash
-        chunkFileNames: 'Assets/Script/[name]-Chunk.js',
-        entryFileNames: 'Assets/Script/[name]-Bundle.js',
+        // Define directory structure for JS chunks with proper capitalization
+        chunkFileNames: 'Assets/Script/[name]-Bundle.js',
+        entryFileNames: 'Assets/Script/Main-Bundle.js',
         
-        // Make filenames more descriptive
+        // Make filenames more descriptive with proper capitalization
         manualChunks: {
           'Vendor-React': ['react', 'react-dom'],
           'Vendor-Ui': [

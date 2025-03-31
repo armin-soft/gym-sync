@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
   <head>
@@ -6,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     
-    <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/png" href="./Assets/Image/Favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./Assets/Image/Favicon-32.png" />
-    <link rel="apple-touch-icon" href="./Assets/Image/Logo.png" />
-    <link rel="mask-icon" href="./Assets/Image/Logo.png" color="#7c3aed" />
+    <!-- Default favicon will be replaced by dynamic one in main.tsx -->
+    <link rel="icon" href="favicon.ico" />
     
-    <!-- PWA Manifest -->
+    <!-- PWA Manifest with new capitalized properties -->
     <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#7c3aed" />
     
@@ -26,7 +22,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="مدیریت برنامه تمرینی Gym Sync" />
     <meta property="og:description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
-    <meta property="og:image" content="./og-image.png" />
+    <meta property="og:image" content="./Assets/Image/Custom-Logo.png" />
     <meta property="og:url" content="https://gym-sync.arminsoft.ir" />
     <meta property="og:site_name" content="Gym Sync" />
     
@@ -34,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="مدیریت برنامه تمرینی Gym Sync" />
     <meta name="twitter:description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
-    <meta name="twitter:image" content="./og-image.png" />
+    <meta name="twitter:image" content="./Assets/Image/Custom-Logo.png" />
     
     <!-- Mobile App Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -50,10 +46,7 @@
     <!-- Font Loading -->
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
     
-    <!-- Preload Critical Assets -->
-    <link rel="preload" href="./Assets/Image/Logo.png" as="image" type="image/png" />
-    
-    <!-- Ensure proper base path for service worker -->
+    <!-- Script for Dynamic Title -->
     <script>
       // Define app routes for comparison
       const APP_ROUTES = [
