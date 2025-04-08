@@ -140,7 +140,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     to={item.href}
                     onClick={onClose}
                     className={cn(
-                      "group flex items-center rounded-lg px-3 py-2 transition-all duration-200",
+                      "group flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200",
                       "hover:bg-accent/50 active:scale-[0.98]",
                       isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
                     )}
