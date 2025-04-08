@@ -1,7 +1,6 @@
 
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { ListFilter } from "lucide-react";
