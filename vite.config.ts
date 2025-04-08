@@ -59,18 +59,18 @@ export default defineConfig(({ mode }) => {
             const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
             
             if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
-              return './Assets/Image/[name].[ext]';
+              return 'Assets/Image/[name].[ext]';
             }
             
             if (/css/i.test(extType || '')) {
-              return './Assets/Styles/[name].[ext]';
+              return 'Assets/Styles/[name].[ext]';
             }
             
-            return './Assets/[name].[ext]';
+            return 'Assets/[name].[ext]';
           },
           
-          chunkFileNames: './Assets/Scripts/[name].js',
-          entryFileNames: './Assets/Scripts/Main.js',
+          chunkFileNames: 'Assets/Scripts/[name].js',
+          entryFileNames: 'Assets/Scripts/Main.js',
           
           manualChunks: {
             'React': ['react', 'react-dom'],
