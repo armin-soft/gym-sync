@@ -76,13 +76,21 @@ export default defineConfig(({ mode }) => {
             'Animation': ['framer-motion'],
             'Charts': ['recharts'],
             'PDF': ['jspdf', 'html2canvas', 'jspdf-autotable'],
-            'UI': ['@radix-ui'],
+            'UI': ['@radix-ui/react-accordion', '@radix-ui/react-alert-dialog', '@radix-ui/react-aspect-ratio', 
+                  '@radix-ui/react-avatar', '@radix-ui/react-checkbox', '@radix-ui/react-collapsible', 
+                  '@radix-ui/react-context-menu', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu',
+                  '@radix-ui/react-hover-card', '@radix-ui/react-label', '@radix-ui/react-menubar',
+                  '@radix-ui/react-navigation-menu', '@radix-ui/react-popover', '@radix-ui/react-progress',
+                  '@radix-ui/react-radio-group', '@radix-ui/react-scroll-area', '@radix-ui/react-select',
+                  '@radix-ui/react-separator', '@radix-ui/react-slider', '@radix-ui/react-slot',
+                  '@radix-ui/react-switch', '@radix-ui/react-tabs', '@radix-ui/react-toast',
+                  '@radix-ui/react-toggle', '@radix-ui/react-toggle-group', '@radix-ui/react-tooltip'],
             'Other': ['date-fns', 'clsx', 'zod']
           }
         }
       }
     },
-    // Copy manifest and service worker to dist during build
-    publicDir: false, // Disable automatic copying from public folder
+    // Make sure Vite can handle static assets properly
+    publicDir: 'public',
   };
 });
