@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowDownAZ, ArrowUpZA, LayoutGrid, ListFilter } from "lucide-react";
 import { useState } from "react";
@@ -121,11 +122,11 @@ const DietPage = () => {
     });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
+    <div className="min-h-screen h-full w-full overflow-auto bg-gradient-to-b from-background via-background to-muted/20">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="container mx-auto py-6 space-y-6 px-4 sm:px-6"
+        className="h-full w-full py-6 space-y-6 px-4 sm:px-6"
       >
         <div className="flex flex-col space-y-4">
           <motion.div 
@@ -235,8 +236,8 @@ const DietPage = () => {
           </motion.div>
         </div>
 
-        <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500">
-          <ScrollArea className="h-[calc(100vh-14rem)]">
+        <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-180px)]">
+          <ScrollArea className="h-full w-full">
             <div className="p-6">
               <Tabs defaultValue="شنبه" value={selectedDay} onValueChange={(value) => setSelectedDay(value as WeekDay)} className="w-full">
                 <div className="bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 pb-4">

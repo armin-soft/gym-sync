@@ -38,7 +38,7 @@ export const EmptyState = ({ onAdd }: EmptyStateProps) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="h-full min-h-[80vh] flex flex-col items-center justify-center text-center rounded-2xl border-2 border-dashed border-muted bg-muted/30"
+      className="h-full min-h-[90vh] flex flex-col items-center justify-center text-center rounded-2xl border-2 border-dashed border-muted bg-muted/30 w-full"
     >
       <motion.div 
         variants={itemVariants}

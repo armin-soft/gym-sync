@@ -15,7 +15,7 @@ export const PageContainer = ({
 }: PageContainerProps) => {
   return (
     <div className={cn(
-      "w-full h-full min-h-full pb-0",
+      "w-full h-full min-h-screen pb-0",
       withBackground && "relative",
       className
     )}>

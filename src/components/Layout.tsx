@@ -113,7 +113,7 @@ export const Layout = memo(() => {
           </div>
         </motion.header>
         
-        <main className="flex-1 overflow-auto w-full h-full">
+        <main className="flex-1 overflow-hidden w-full h-full">
           <div className="w-full h-full">
             <Suspense fallback={<LoadingFallback />}>
               <Outlet />
