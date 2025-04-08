@@ -62,10 +62,12 @@ export const EmptyState = ({ onAdd }: EmptyStateProps) => {
         <Button 
           onClick={onAdd}
           size="lg"
-          className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md shadow-primary/20"
+          className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md shadow-primary/20 relative overflow-hidden group"
         >
-          <UserPlus className="h-5 w-5" />
-          <span>افزودن شاگرد جدید</span>
+          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-700 to-violet-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+          <UserPlus className="h-5 w-5 relative z-10" />
+          <span className="relative z-10">افزودن شاگرد جدید</span>
+          <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
         </Button>
       </motion.div>
     </motion.div>

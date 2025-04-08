@@ -76,9 +76,10 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150"
+                  className="h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150 relative overflow-hidden group"
                 >
-                  <MoreVertical className="h-4 w-4" />
+                  <span className="absolute inset-0 bg-indigo-100 dark:bg-indigo-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full scale-0 group-hover:scale-100 transition-transform"></span>
+                  <MoreVertical className="h-4 w-4 relative z-10 text-slate-600 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200" />
                   <span className="sr-only">باز کردن منو</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -93,13 +94,13 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                 
                 <DropdownMenuItem 
                   onClick={onEdit} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 group/item"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover/item:bg-blue-200 dark:group-hover/item:bg-blue-800/50 transition-all duration-200">
                     <Edit className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span>ویرایش اطلاعات</span>
+                    <span className="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors duration-200">ویرایش اطلاعات</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">تغییر مشخصات شاگرد</span>
                   </div>
                 </DropdownMenuItem>
@@ -107,13 +108,13 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                 <DropdownMenuItem 
                   onClick={onAddExercise} 
                   disabled={!isProfileComplete} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover/item:bg-indigo-200 dark:group-hover/item:bg-indigo-800/50 transition-all duration-200">
                     <Dumbbell className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span>برنامه تمرینی</span>
+                    <span className="group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400 transition-colors duration-200">برنامه تمرینی</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">تنظیم حرکات ورزشی</span>
                   </div>
                 </DropdownMenuItem>
@@ -121,13 +122,13 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                 <DropdownMenuItem 
                   onClick={onAddDiet} 
                   disabled={!isProfileComplete} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 group-hover/item:bg-green-200 dark:group-hover/item:bg-green-800/50 transition-all duration-200">
                     <UtensilsCrossed className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span>برنامه غذایی</span>
+                    <span className="group-hover/item:text-green-600 dark:group-hover/item:text-green-400 transition-colors duration-200">برنامه غذایی</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">تنظیم وعده‌های غذایی</span>
                   </div>
                 </DropdownMenuItem>
@@ -135,13 +136,13 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                 <DropdownMenuItem 
                   onClick={onAddSupplement} 
                   disabled={!isProfileComplete} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover/item:bg-purple-200 dark:group-hover/item:bg-purple-800/50 transition-all duration-200">
                     <Pill className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span>مکمل و ویتامین</span>
+                    <span className="group-hover/item:text-purple-600 dark:group-hover/item:text-purple-400 transition-colors duration-200">مکمل و ویتامین</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">تنظیم مکمل‌های ورزشی</span>
                   </div>
                 </DropdownMenuItem>
@@ -150,26 +151,26 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                 
                 <DropdownMenuItem 
                   disabled={!isProfileComplete} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover/item:bg-amber-200 dark:group-hover/item:bg-amber-800/50 transition-all duration-200">
                     <Download className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span>دانلود برنامه</span>
+                    <span className="group-hover/item:text-amber-600 dark:group-hover/item:text-amber-400 transition-colors duration-200">دانلود برنامه</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">دریافت فایل PDF برنامه</span>
                   </div>
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem 
                   disabled={!isProfileComplete} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover/item:bg-cyan-200 dark:group-hover/item:bg-cyan-800/50 transition-all duration-200">
                     <Clipboard className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span>پرینت برنامه</span>
+                    <span className="group-hover/item:text-cyan-600 dark:group-hover/item:text-cyan-400 transition-colors duration-200">پرینت برنامه</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400">آماده‌سازی برای چاپ</span>
                   </div>
                 </DropdownMenuItem>
@@ -178,13 +179,13 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                 
                 <DropdownMenuItem 
                   onClick={onDelete} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-rose-600 dark:text-rose-500 focus:bg-rose-50 dark:focus:bg-rose-900/20 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-rose-600 dark:text-rose-500 focus:bg-rose-50 dark:focus:bg-rose-900/20 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all duration-200 group/item"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400 group-hover/item:bg-rose-200 dark:group-hover/item:bg-rose-800/50 transition-all duration-200">
                     <Trash2 className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span>حذف شاگرد</span>
+                    <span className="group-hover/item:text-rose-700 dark:group-hover/item:text-rose-300 transition-colors duration-200">حذف شاگرد</span>
                     <span className="text-xs text-rose-500/70 dark:text-rose-400/70">حذف کامل اطلاعات</span>
                   </div>
                 </DropdownMenuItem>
