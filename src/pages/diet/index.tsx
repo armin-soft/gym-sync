@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -73,7 +74,9 @@ const Index = () => {
       });
     } else {
       // Adding new meal
-      const newMeal: Meal = { id: uuidv4(), ...data };
+      // Use a numeric ID instead of a string from uuid
+      const newId = Math.max(0, ...meals.map(meal => typeof meal.id === 'number' ? meal.id : 0)) + 1;
+      const newMeal: Meal = { id: newId, ...data };
       setMeals([...meals, newMeal]);
       toast({
         title: "افزودن موفق",

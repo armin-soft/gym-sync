@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowDownAZ, ArrowUpZA, LayoutGrid, ListFilter } from "lucide-react";
 import { useState } from "react";
@@ -98,23 +97,19 @@ const DietPage = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
-  // Filter meals based on search query
   const filteredMeals = meals.filter(
     (meal) =>
       (meal.name.includes(searchQuery) ||
        meal.description.includes(searchQuery))
   );
 
-  // Filter meals based on selected day and sort by type
   const dayMeals = filteredMeals
     .filter(meal => meal.day === selectedDay)
     .sort((a, b) => {
-      // If sort order is descending, swap a and b
       if (sortOrder === "desc") {
         [a, b] = [b, a];
       }
       
-      // First, sort by meal type based on mealTypeOrder
       const typeOrderA = mealTypes.indexOf(a.type);
       const typeOrderB = mealTypes.indexOf(b.type);
       
@@ -122,7 +117,6 @@ const DietPage = () => {
         return typeOrderA - typeOrderB;
       }
       
-      // If meal types are the same, sort by name
       return a.name.localeCompare(b.name);
     });
 
@@ -291,7 +285,7 @@ const DietPage = () => {
 
         <MealDialog
           open={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
+          onOpenChange={setIsDialogOpen}
           onSave={handleSave}
           meal={selectedMeal}
           mealTypes={mealTypes}
