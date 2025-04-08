@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Edit, Trash2, Dumbbell, UtensilsCrossed, Pill, Clipboard, User } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Dumbbell, UtensilsCrossed, Pill, Clipboard, User, Download } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentCardProps {
@@ -70,39 +70,120 @@ export const StudentCard: React.FC<StudentCardProps> = ({
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150"
+                >
                   <MoreVertical className="h-4 w-4" />
+                  <span className="sr-only">باز کردن منو</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={onEdit} className="cursor-pointer">
-                  <Edit className="mr-2 h-4 w-4" />
-                  <span>ویرایش اطلاعات</span>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-56 p-2 rounded-xl border-slate-200 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-xl dark:shadow-black/20 animate-in zoom-in-90 duration-100"
+              >
+                <div className="px-2 py-1.5 mb-1">
+                  <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">عملیات</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">مدیریت اطلاعات شاگرد</p>
+                </div>
+                
+                <DropdownMenuItem 
+                  onClick={onEdit} 
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <Edit className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>ویرایش اطلاعات</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">تغییر مشخصات شاگرد</span>
+                  </div>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={onAddExercise} disabled={!isProfileComplete} className="cursor-pointer">
-                  <Dumbbell className="mr-2 h-4 w-4" />
-                  <span>برنامه تمرینی</span>
+                <DropdownMenuItem 
+                  onClick={onAddExercise} 
+                  disabled={!isProfileComplete} 
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <Dumbbell className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>برنامه تمرینی</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">تنظیم حرکات ورزشی</span>
+                  </div>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={onAddDiet} disabled={!isProfileComplete} className="cursor-pointer">
-                  <UtensilsCrossed className="mr-2 h-4 w-4" />
-                  <span>برنامه غذایی</span>
+                <DropdownMenuItem 
+                  onClick={onAddDiet} 
+                  disabled={!isProfileComplete} 
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+                    <UtensilsCrossed className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>برنامه غذایی</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">تنظیم وعده‌های غذایی</span>
+                  </div>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={onAddSupplement} disabled={!isProfileComplete} className="cursor-pointer">
-                  <Pill className="mr-2 h-4 w-4" />
-                  <span>مکمل و ویتامین</span>
+                <DropdownMenuItem 
+                  onClick={onAddSupplement} 
+                  disabled={!isProfileComplete} 
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <Pill className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>مکمل و ویتامین</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">تنظیم مکمل‌های ورزشی</span>
+                  </div>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem disabled={!isProfileComplete} className="cursor-pointer">
-                  <Clipboard className="mr-2 h-4 w-4" />
-                  <span>پرینت برنامه</span>
+                <div className="h-px bg-slate-200 dark:bg-slate-700/50 my-2 mx-1"></div>
+                
+                <DropdownMenuItem 
+                  disabled={!isProfileComplete} 
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                    <Download className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>دانلود برنامه</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">دریافت فایل PDF برنامه</span>
+                  </div>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={onDelete} className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  <span>حذف</span>
+                <DropdownMenuItem 
+                  disabled={!isProfileComplete} 
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                    <Clipboard className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>پرینت برنامه</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">آماده‌سازی برای چاپ</span>
+                  </div>
+                </DropdownMenuItem>
+                
+                <div className="h-px bg-slate-200 dark:bg-slate-700/50 my-2 mx-1"></div>
+                
+                <DropdownMenuItem 
+                  onClick={onDelete} 
+                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-rose-600 dark:text-rose-500 focus:bg-rose-50 dark:focus:bg-rose-900/20 hover:bg-rose-50 dark:hover:bg-rose-900/20"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                    <Trash2 className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>حذف شاگرد</span>
+                    <span className="text-xs text-rose-500/70 dark:text-rose-400/70">حذف کامل اطلاعات</span>
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
