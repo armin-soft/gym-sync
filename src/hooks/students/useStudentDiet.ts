@@ -26,16 +26,22 @@ export const useStudentDiet = (
           
           const progress = Math.round((progressCount / 4) * 100);
           
+          // Create a new object to ensure React detects the change
           return {
             ...student,
-            meals: mealIds,
+            meals: [...mealIds], // Create a new array to ensure React detects the change
             progress
           };
         }
         return student;
       });
       
+      console.log("Updated students:", updatedStudents);
+      
+      // Update state
       setStudents(updatedStudents);
+      
+      // Ensure we're saving to localStorage correctly
       localStorage.setItem('students', JSON.stringify(updatedStudents));
       
       toast({

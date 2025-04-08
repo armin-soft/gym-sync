@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Sheet,
@@ -67,7 +66,7 @@ export function StudentDietDialog({
   onSave,
   initialMeals = [],
 }: StudentDietDialogProps) {
-  const [selectedMeals, setSelectedMeals] = useState<number[]>(initialMeals);
+  const [selectedMeals, setSelectedMeals] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [meals, setMeals] = useState<Meal[]>([]);
   const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
@@ -78,6 +77,13 @@ export function StudentDietDialog({
   const [activeTab, setActiveTab] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  useEffect(() => {
+    if (open) {
+      console.log("StudentDietDialog opened with initialMeals:", initialMeals);
+      setSelectedMeals(initialMeals || []);
+    }
+  }, [open, initialMeals]);
 
   useEffect(() => {
     try {
@@ -129,15 +135,24 @@ export function StudentDietDialog({
   }, [searchQuery, meals, activeTab, currentType]);
 
   const toggleMeal = (mealId: number) => {
-    setSelectedMeals((prev) =>
-      prev.includes(mealId)
+    setSelectedMeals((prev) => {
+      const isSelected = prev.includes(mealId);
+      const newSelection = isSelected
         ? prev.filter((id) => id !== mealId)
-        : [...prev, mealId]
-    );
+        : [...prev, mealId];
+      console.log(`Toggling meal ${mealId}, now selected: ${!isSelected}`, newSelection);
+      return newSelection;
+    });
   };
 
   const handleSave = () => {
-    onSave(selectedMeals);
+    console.log("Attempting to save meals in StudentDietDialog:", selectedMeals);
+    const success = onSave(selectedMeals);
+    console.log("Save result:", success);
+    if (success) {
+      onOpenChange(false);
+    }
+    return success;
   };
 
   const getMealTypeColor = (type: string) => {

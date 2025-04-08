@@ -39,6 +39,9 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   
   const progressColor = getProgressColor(student.progress || 0);
   
+  // Add some debugging to see what's happening with the meal data
+  console.log(`StudentCard for ${student.name}, meals:`, student.meals);
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
