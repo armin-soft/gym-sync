@@ -1,8 +1,8 @@
 
 {
   "name": "Gym Sync - مدیریت برنامه‌های ورزشی",
-  "short_name": "Gym Sync",
-  "description": "اپلیکیشن مدیریت مربی و برنامه‌های ورزشی",
+  "short_name": "GymSync",
+  "description": "سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
