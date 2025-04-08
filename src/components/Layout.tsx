@@ -1,3 +1,4 @@
+
 import { useState, useEffect, Suspense, lazy, memo } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu, X, Bell, User } from "lucide-react";
@@ -118,10 +119,6 @@ export const Layout = memo(() => {
               </div>
               
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon" className="text-muted-foreground rounded-full">
-                  <Bell className="h-5 w-5" />
-                </Button>
-                
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="gap-2 rounded-full pr-2.5 pl-3.5 border border-muted hover:bg-accent">

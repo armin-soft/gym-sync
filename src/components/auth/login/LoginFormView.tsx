@@ -122,7 +122,7 @@ export const LoginFormView = ({
               transition: { delay: 0.4, duration: 0.5 }
             }}
           >
-            برای دسترسی به پنل، وارد حساب کاربری خود شوید
+            مربی عزیز، لطفا با ایمیل و رمز عبور خود وارد شوید
           </motion.p>
         </motion.div>
       </div>
