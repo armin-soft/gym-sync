@@ -32,18 +32,18 @@ const mealFormSchema = z.object({
   description: z.string(),
 }).required();
 
-interface MealDialogProps {
+export interface MealDialogProps {
   open: boolean;
-  onClose: () => void;
-  onSave: (data: Omit<Meal, "id">) => void;
-  meal?: Meal;
+  onOpenChange: (open: boolean) => void; // Changed from onClose to onOpenChange
+  onSave: (data: Omit<Meal, "id">) => boolean | void;
+  meal?: Meal | null; // Changed from Meal to Meal | null for better compatibility
   mealTypes: MealType[];
   weekDays: WeekDay[];
 }
 
 export const MealDialog = ({
   open,
-  onClose,
+  onOpenChange, // Renamed from onClose to match the prop interface
   onSave,
   meal,
   mealTypes,
@@ -85,11 +85,11 @@ export const MealDialog = ({
       description: data.description
     });
     form.reset();
-    onClose();
+    onOpenChange(false); // Changed from onClose to onOpenChange
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] p-0" dir="rtl">
         <DialogHeader className="p-6 pb-4 bg-gradient-to-b from-muted/50 to-transparent">
           <DialogTitle className="flex items-center gap-2 text-lg">
@@ -185,7 +185,7 @@ export const MealDialog = ({
               <Button
                 type="button"
                 variant="ghost"
-                onClick={onClose}
+                onClick={() => onOpenChange(false)} // Changed from onClose to onOpenChange
                 className="gap-2 hover:bg-red-500/10 hover:text-red-500"
               >
                 <X className="w-4 h-4" />

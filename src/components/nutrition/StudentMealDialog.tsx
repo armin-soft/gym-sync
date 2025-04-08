@@ -67,6 +67,8 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   const sortedMealTypes = [...mealTypes].sort((a, b) => 
     (mealTypeOrder[a] || 99) - (mealTypeOrder[b] || 99)
   );
+  
+  // Sort days in Persian order (Saturday to Friday)
   const sortedDays = [...days].sort((a, b) => 
     (dayOrder[a] || 99) - (dayOrder[b] || 99)
   );
