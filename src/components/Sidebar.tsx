@@ -12,6 +12,7 @@ import {
   Pill,
   LineChart,
   HelpCircle,
+  Menu,
   Database
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -25,7 +26,7 @@ interface SidebarProps {
 interface SidebarItem {
   title: string;
   href: string;
-  icon: React.ElementRef;
+  icon: React.ElementType;
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -116,8 +117,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         <div className="flex h-full flex-col">
           <div className="p-4 border-b bg-background/50 backdrop-blur-sm">
-            <div className="flex items-center">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
+                <div className="rounded-lg bg-primary/10 p-2">
+                  <Menu className="h-5 w-5 text-primary" />
+                </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{gymName}</p>
                 </div>
@@ -136,7 +140,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     to={item.href}
                     onClick={onClose}
                     className={cn(
-                      "group flex items-center rounded-lg px-3 py-2 transition-all duration-200",
+                      "group flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200",
                       "hover:bg-accent/50 active:scale-[0.98]",
                       isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
                     )}
