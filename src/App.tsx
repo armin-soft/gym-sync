@@ -30,7 +30,7 @@ const APP_ROUTES = [
   "About"
 ];
 
-// Function to determine the base URL from the current path - improved to handle any subdirectory name
+// Fixed function to determine the base URL - removed leading dot from paths
 const getBasename = () => {
   // Get the current URL path
   const path = window.location.pathname;
@@ -40,16 +40,16 @@ const getBasename = () => {
   
   // If there are no segments, we're at the root
   if (segments.length === 0) {
-    return './';
+    return '/';
   }
   
   // Check if the first segment is one of our app routes
   if (APP_ROUTES.includes(segments[0])) {
-    return './'; // We're not in a subdirectory
+    return '/'; // We're not in a subdirectory
   }
   
   // We are in a subdirectory, so return it with slashes
-  return './' + segments[0] + '/';
+  return '/' + segments[0] + '/';
 };
 
 function App() {
@@ -59,17 +59,17 @@ function App() {
         <AuthWrapper>
           <Routes>
             <Route element={<Layout />}>
-              <Route path="./" element={<Index />} />
-              <Route path="./Coach-Profile" element={<TrainerProfile />} />
-              <Route path="./Students" element={<Students />} />
-              <Route path="./Exercise-Movements" element={<ExerciseMovements />} />
-              <Route path="./Diet-Plan" element={<DietPlan />} />
-              <Route path="./Supplements-Vitamins" element={<SupplementsVitamins />} />
-              <Route path="./Reports" element={<Reports />} />
-              <Route path="./Backup-Restore" element={<BackupRestore />} />
-              <Route path="./About" element={<About />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/Coach-Profile" element={<TrainerProfile />} />
+              <Route path="/Students" element={<Students />} />
+              <Route path="/Exercise-Movements" element={<ExerciseMovements />} />
+              <Route path="/Diet-Plan" element={<DietPlan />} />
+              <Route path="/Supplements-Vitamins" element={<SupplementsVitamins />} />
+              <Route path="/Reports" element={<Reports />} />
+              <Route path="/Backup-Restore" element={<BackupRestore />} />
+              <Route path="/About" element={<About />} />
               {/* Redirect all non-matching routes to the dashboard */}
-              <Route path="*" element={<Navigate replace to="./" />} />
+              <Route path="*" element={<Navigate replace to="/" />} />
             </Route>
           </Routes>
         </AuthWrapper>
