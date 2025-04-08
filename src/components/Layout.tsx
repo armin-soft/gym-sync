@@ -1,4 +1,3 @@
-
 import { useState, useEffect, Suspense, lazy, memo } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu, X, Bell, User } from "lucide-react";
@@ -53,7 +52,6 @@ export const Layout = memo(() => {
     }
   };
   
-  // Use effect with empty dependency array to run only once on mount
   useEffect(() => {
     loadProfile();
     
@@ -85,8 +83,7 @@ export const Layout = memo(() => {
   };
 
   return (
-    <div className="min-h-screen h-screen w-screen overflow-hidden bg-background persian-numbers" dir="rtl">
-      {/* Only render sidebar when open for better performance */}
+    <div className="min-h-screen h-screen w-full overflow-hidden bg-background persian-numbers" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       
       <Toaster />
@@ -102,7 +99,7 @@ export const Layout = memo(() => {
               : "bg-background"
           }`}
         >
-          <div className="container mx-auto px-4">
+          <div className="w-full px-4">
             <div className="w-full flex h-14 items-center justify-between">
               <div className="flex items-center">
                 <button
@@ -168,8 +165,8 @@ export const Layout = memo(() => {
           </div>
         </motion.header>
         
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto py-6 px-4">
+        <main className="flex-1 overflow-auto w-full">
+          <div className="w-full h-full py-6 px-4">
             <Suspense fallback={<LoadingFallback />}>
               <Outlet />
             </Suspense>

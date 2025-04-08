@@ -15,7 +15,7 @@ export const PageContainer = ({
 }: PageContainerProps) => {
   return (
     <div className={cn(
-      "container mx-auto px-4 pb-12 space-y-6",
+      "w-full px-4 pb-10 space-y-6",
       withBackground && "relative",
       className
     )}>
