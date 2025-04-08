@@ -340,12 +340,12 @@ export function StudentDietDialog({
               className="flex-1 flex flex-col overflow-hidden"
               dir="rtl"
             >
-              <div className="border-b bg-muted/10 shrink-0">
+              <div className="border-b bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm shadow-sm sticky top-0 z-10 shrink-0">
                 <ScrollArea className="w-full" orientation="horizontal">
-                  <TabsList className="h-11 w-full justify-end bg-transparent p-0 ml-1" dir="rtl">
+                  <TabsList className="h-14 w-full justify-center bg-transparent p-1 rounded-none">
                     <TabsTrigger 
                       value="all"
-                      className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                      className="h-12 rounded-lg border border-transparent px-6 py-3 font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-primary/20 transition-all duration-200"
                     >
                       همه روزها
                     </TabsTrigger>
@@ -353,7 +353,7 @@ export function StudentDietDialog({
                       <TabsTrigger 
                         key={day}
                         value={day}
-                        className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
+                        className="h-12 rounded-lg border border-transparent px-6 py-3 font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-primary/20 transition-all duration-200"
                       >
                         {day}
                       </TabsTrigger>
