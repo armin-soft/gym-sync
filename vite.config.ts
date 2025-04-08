@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => ({
           const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
           
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType || '')) {
-            return 'Assets/Images/[name].[ext]';
+            return 'Assets/Image/[name].[ext]';
           }
           
           if (/css/i.test(extType || '')) {
@@ -45,31 +45,16 @@ export default defineConfig(({ mode }) => ({
           return 'Assets/[name].[ext]';
         },
         
-        chunkFileNames: 'Assets/Scripts/[name].[hash].js',
-        entryFileNames: 'Assets/Scripts/Main.[hash].js',
+        chunkFileNames: 'Assets/Scripts/[name].js',
+        entryFileNames: 'Assets/Scripts/Main.js',
         
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'VendorReact';
-            }
-            if (id.includes('@radix-ui')) {
-              return 'VendorUi';
-            }
-            if (id.includes('recharts')) {
-              return 'VendorCharts';
-            }
-            if (id.includes('date-fns') || id.includes('clsx') || id.includes('zod')) {
-              return 'VendorUtils';
-            }
-            if (id.includes('jspdf') || id.includes('html2canvas')) {
-              return 'VendorPdf';
-            }
-            if (id.includes('framer-motion')) {
-              return 'VendorAnimation';
-            }
-            return 'VendorOther';
-          }
+        manualChunks: {
+          'React': ['react', 'react-dom'],
+          'Animation': ['framer-motion'],
+          'Charts': ['recharts'],
+          'PDF': ['jspdf', 'html2canvas', 'jspdf-autotable'],
+          'UI': ['@radix-ui'],
+          'Other': ['date-fns', 'clsx', 'zod']
         }
       }
     }
