@@ -117,9 +117,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         <div className="flex h-full flex-col">
           <div className="p-4 border-b bg-background/50 backdrop-blur-sm">
-            <div className="flex items-center">
-              <div>
-                <p className="text-xs text-muted-foreground">{gymName}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="rounded-lg bg-primary/10 p-2">
+                  <Menu className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">{gymName}</p>
+                </div>
               </div>
             </div>
           </div>
