@@ -5,13 +5,13 @@ const RUNTIME = 'runtime';
 
 // Assets to pre-cache
 const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/Manifest.json',
-  '/Assets/Image/Pattern.svg',
-  '/Assets/Image/Place-Holder.svg',
-  '/Assets/Image/C-32.png',
-  '/Assets/Image/Logo.png'
+  './',
+  './index.html',
+  './Manifest.json',
+  './Assets/Image/Pattern.svg',
+  './Assets/Image/Place-Holder.svg',
+  './Assets/Image/C-32.png',
+  './Assets/Image/Logo.png'
 ];
 
 // Install event - precache assets

@@ -24,14 +24,14 @@ export const getBasePath = (): string => {
   
   // If there are no segments, we're at the root
   if (segments.length === 0) {
-    return '/';
+    return './';
   }
   
   // Check if the first segment is one of our app routes
   if (APP_ROUTES.includes(segments[0])) {
-    return '/'; // We're not in a subdirectory
+    return './'; // We're not in a subdirectory
   }
   
   // We are in a subdirectory, return it with slashes
-  return '/' + segments[0] + '/';
+  return './' + segments[0] + '/';
 };
