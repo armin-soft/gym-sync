@@ -297,7 +297,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       
                       <div className="relative flex items-center">
                         <div className={cn(
-                          "flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center mr-2.5",
+                          "flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center mr-3.5",
                           isActive 
                             ? "bg-white/20 text-white" 
                             : "bg-muted-foreground/10 text-muted-foreground"

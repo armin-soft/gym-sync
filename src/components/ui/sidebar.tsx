@@ -110,7 +110,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
                     )}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       <div className={cn(
                         "rounded-md p-1 transition-colors duration-200",
                         isActive ? "bg-primary/20" : "bg-muted group-hover:bg-primary/10"
