@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ExerciseViewControls } from "./ExerciseViewControls";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StudentExerciseListWrapperProps {
   children: React.ReactNode;
@@ -20,16 +21,19 @@ interface StudentExerciseListWrapperProps {
 export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProps> = ({
   children,
   className = "",
-  maxHeight = "70vh",
+  maxHeight = "100%",
   viewMode = "list",
   setViewMode,
   toggleSortOrder,
   sortOrder = "asc",
   showControls = false
 }) => {
+  const isMobile = useIsMobile();
+  const calculatedMaxHeight = isMobile ? "calc(100vh - 180px)" : "calc(100vh - 120px)";
+
   return (
     <Card className={cn(
-      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white",
+      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white h-full",
       className
     )}>
       {showControls && setViewMode && toggleSortOrder && (
@@ -42,7 +46,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
           />
         </div>
       )}
-      <ScrollArea className="w-full overflow-auto" style={{ maxHeight }}>
+      <ScrollArea className="w-full overflow-auto" style={{ height: calculatedMaxHeight }}>
         <motion.div
           layout
           className={cn(

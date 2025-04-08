@@ -1,5 +1,6 @@
 
 import { Card } from "@/components/ui/card";
+import { PageContainer } from "@/components/ui/page-container";
 import {
   Users,
   Activity,
@@ -111,63 +112,29 @@ const AboutPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4">
-      <div className="text-center space-y-4 mb-12">
-        <h1 className="text-4xl font-bold tracking-tight">
-          <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            امکانات اصلی سیستم
-          </span>
-        </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          سیستم مدیریت باشگاه با امکانات پیشرفته و کاربردی برای مدیریت بهتر شاگردان و برنامه های تمرینی
-        </p>
-      </div>
+    <PageContainer withBackground className="min-h-screen">
+      <div className="py-6 px-4 w-full h-full">
+        <div className="text-center space-y-4 mb-8">
+          <h1 className="text-4xl font-bold tracking-tight">
+            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              امکانات اصلی سیستم
+            </span>
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            سیستم مدیریت باشگاه با امکانات پیشرفته و کاربردی برای مدیریت بهتر شاگردان و برنامه های تمرینی
+          </p>
+        </div>
 
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-      >
-        {features.map((feature) => (
-          <motion.div key={feature.title} variants={item}>
-            <Card className="relative overflow-hidden p-6 hover:shadow-lg transition-shadow duration-300 group">
-              <div className={`p-3 rounded-xl ${feature.color} w-fit mb-4`}>
-                <feature.icon className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                {feature.title}
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                {feature.description}
-              </p>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      <div className="mt-16 text-center space-y-4 mb-12">
-        <h2 className="text-3xl font-bold tracking-tight">
-          <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            جزئیات بیشتر
-          </span>
-        </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          امکانات پیشرفته و کاربردی بیشتر برای مدیریت بهتر باشگاه
-        </p>
-      </div>
-
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-      >
-        {additionalFeatures.map((feature) => (
-          <motion.div key={feature.title} variants={item}>
-            <Card className="relative group hover:shadow-lg transition-all duration-300 overflow-hidden">
-              <div className="p-6">
-                <div className={`p-3 rounded-xl ${feature.color} w-fit mb-4 group-hover:scale-110 transition-transform duration-300`}>
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+        >
+          {features.map((feature) => (
+            <motion.div key={feature.title} variants={item}>
+              <Card className="relative overflow-hidden p-6 hover:shadow-lg transition-shadow duration-300 group">
+                <div className={`p-3 rounded-xl ${feature.color} w-fit mb-4`}>
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
@@ -176,13 +143,49 @@ const AboutPage = () => {
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   {feature.description}
                 </p>
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <div className="mt-12 text-center space-y-4 mb-8">
+          <h2 className="text-3xl font-bold tracking-tight">
+            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              جزئیات بیشتر
+            </span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            امکانات پیشرفته و کاربردی بیشتر برای مدیریت بهتر باشگاه
+          </p>
+        </div>
+
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 pb-6"
+        >
+          {additionalFeatures.map((feature) => (
+            <motion.div key={feature.title} variants={item}>
+              <Card className="relative group hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <div className="p-6">
+                  <div className={`p-3 rounded-xl ${feature.color} w-fit mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </PageContainer>
   );
 };
 

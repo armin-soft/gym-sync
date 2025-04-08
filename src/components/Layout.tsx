@@ -109,14 +109,12 @@ export const Layout = memo(() => {
                   </h1>
                 </div>
               </div>
-              
-              {/* The user dropdown menu that was here has been removed */}
             </div>
           </div>
         </motion.header>
         
-        <main className="flex-1 overflow-auto w-full">
-          <div className="w-full h-full py-6 px-4">
+        <main className="flex-1 overflow-auto w-full h-full">
+          <div className="w-full h-full">
             <Suspense fallback={<LoadingFallback />}>
               <Outlet />
             </Suspense>
