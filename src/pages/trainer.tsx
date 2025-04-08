@@ -7,6 +7,7 @@ import type { TrainerProfile } from "@/types/trainer";
 import { defaultProfile } from "@/types/trainer";
 import { ProfileImage } from "@/components/trainer/ProfileImage";
 import { ProfileForm } from "@/components/trainer/ProfileForm";
+import { PageContainer } from "@/components/ui/page-container";
 
 const TrainerProfile = () => {
   const { toast } = useToast();
@@ -97,13 +98,9 @@ const TrainerProfile = () => {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50" />
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5" />
-      
+    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
       <motion.div 
-        className="container mx-auto py-8 relative z-10 space-y-8 px-4"
+        className="w-full h-full container mx-auto py-8 relative z-10 space-y-8 px-4"
         variants={stagger}
         initial="initial"
         animate="animate"
@@ -180,7 +177,7 @@ const TrainerProfile = () => {
           </motion.div>
         </motion.div>
       </motion.div>
-    </div>
+    </PageContainer>
   );
 };
 

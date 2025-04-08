@@ -92,8 +92,8 @@ const StudentsPage = () => {
   } = useStudentFiltering(students);
 
   return (
-    <PageContainer withBackground>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
+    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
+      <div className="w-full h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
         
         <StudentStatsCards students={students} />

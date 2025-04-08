@@ -23,6 +23,7 @@ import { StatCard } from "@/components/reports/StatCard";
 import { MonthlyDataChart } from "@/components/reports/MonthlyDataChart";
 import { IncomeChart } from "@/components/reports/IncomeChart";
 import { ActivitiesChart } from "@/components/reports/ActivitiesChart";
+import { PageContainer } from "@/components/ui/page-container";
 
 interface MonthlyData {
   name: string;
@@ -87,12 +88,12 @@ const Reports = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-[50vh] items-center justify-center">
+      <PageContainer withBackground className="w-full h-full min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
           <p className="text-muted-foreground animate-pulse">در حال بارگذاری گزارشات...</p>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -187,84 +188,86 @@ const Reports = () => {
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <div className="space-y-1">
-        <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          گزارشات و آمار
-        </h2>
-        <p className="text-muted-foreground">
-          در این بخش می‌توانید آمار و گزارشات دقیق باشگاه را مشاهده کنید
-        </p>
+    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
+      <div className="w-full h-full container mx-auto py-6 space-y-8 px-4">
+        <div className="space-y-1">
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            گزارشات و آمار
+          </h2>
+          <p className="text-muted-foreground">
+            در این بخش می‌توانید آمار و گزارشات دقیق باشگاه را مشاهده کنید
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {stats.map((stat, index) => (
+            <StatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              growth={stat.growth}
+              icon={stat.icon}
+              color={stat.color}
+              bgLight={stat.bgLight}
+              textColor={stat.textColor}
+              format={stat.format}
+              index={index}
+            />
+          ))}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {nutritionStats.map((stat, index) => (
+            <StatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              growth={stat.growth}
+              icon={stat.icon}
+              color={stat.color}
+              bgLight={stat.bgLight}
+              textColor={stat.textColor}
+              index={index + 3}
+            />
+          ))}
+        </div>
+
+        <Tabs defaultValue="overview" className="space-y-6" onValueChange={handleTabChange}>
+          <TabsList className="bg-white border">
+            <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-gray-100">
+              <ChartBarIcon className="w-4 h-4" />
+              نمای کلی
+            </TabsTrigger>
+            <TabsTrigger value="income" className="gap-2 data-[state=active]:bg-gray-100">
+              <Wallet className="w-4 h-4" />
+              درآمد
+            </TabsTrigger>
+            <TabsTrigger value="activities" className="gap-2 data-[state=active]:bg-gray-100">
+              <ChartPieIcon className="w-4 h-4" />
+              فعالیت‌ها
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <MonthlyDataChart 
+              data={expandedData} 
+              chartConfig={chartConfig} 
+            />
+          </TabsContent>
+
+          <TabsContent value="income" className="space-y-6">
+            <IncomeChart data={expandedData} />
+          </TabsContent>
+
+          <TabsContent value="activities" className="space-y-6">
+            <ActivitiesChart 
+              data={expandedData} 
+              chartConfig={chartConfig} 
+            />
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {stats.map((stat, index) => (
-          <StatCard
-            key={stat.title}
-            title={stat.title}
-            value={stat.value}
-            growth={stat.growth}
-            icon={stat.icon}
-            color={stat.color}
-            bgLight={stat.bgLight}
-            textColor={stat.textColor}
-            format={stat.format}
-            index={index}
-          />
-        ))}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        {nutritionStats.map((stat, index) => (
-          <StatCard
-            key={stat.title}
-            title={stat.title}
-            value={stat.value}
-            growth={stat.growth}
-            icon={stat.icon}
-            color={stat.color}
-            bgLight={stat.bgLight}
-            textColor={stat.textColor}
-            index={index + 3}
-          />
-        ))}
-      </div>
-
-      <Tabs defaultValue="overview" className="space-y-6" onValueChange={handleTabChange}>
-        <TabsList className="bg-white border">
-          <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-gray-100">
-            <ChartBarIcon className="w-4 h-4" />
-            نمای کلی
-          </TabsTrigger>
-          <TabsTrigger value="income" className="gap-2 data-[state=active]:bg-gray-100">
-            <Wallet className="w-4 h-4" />
-            درآمد
-          </TabsTrigger>
-          <TabsTrigger value="activities" className="gap-2 data-[state=active]:bg-gray-100">
-            <ChartPieIcon className="w-4 h-4" />
-            فعالیت‌ها
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <MonthlyDataChart 
-            data={expandedData} 
-            chartConfig={chartConfig} 
-          />
-        </TabsContent>
-
-        <TabsContent value="income" className="space-y-6">
-          <IncomeChart data={expandedData} />
-        </TabsContent>
-
-        <TabsContent value="activities" className="space-y-6">
-          <ActivitiesChart 
-            data={expandedData} 
-            chartConfig={chartConfig} 
-          />
-        </TabsContent>
-      </Tabs>
-    </div>
+    </PageContainer>
   );
 };
 

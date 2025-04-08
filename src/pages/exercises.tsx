@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { 
   Plus, 
@@ -29,6 +28,7 @@ import { CategoryTable } from "@/components/exercises/CategoryTable";
 import { ExerciseTypes } from "@/components/exercises/ExerciseTypes";
 import { TypeDialog } from "@/components/exercises/TypeDialog";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { PageContainer } from "@/components/ui/page-container";
 
 const ExercisesPage = () => {
   const { toast } = useToast();
@@ -242,8 +242,8 @@ const ExercisesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto py-10 space-y-12">
+    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
+      <div className="w-full h-full container mx-auto py-10 space-y-12 px-4">
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
@@ -436,7 +436,7 @@ const ExercisesPage = () => {
           onSave={handleExerciseSave}
         />
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
