@@ -12,7 +12,6 @@ import {
   Pill,
   LineChart,
   HelpCircle,
-  Menu,
   Database
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -120,7 +119,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="rounded-lg bg-primary/10 p-2">
-                  <Menu className="h-5 w-5 text-primary" />
+                  {/* Menu icon removed from here */}
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{gymName}</p>
