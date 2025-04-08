@@ -27,6 +27,7 @@ interface PrintExportModalProps {
   previewImageUrl?: string;
   documentType: "student" | "workout" | "diet" | "supplement";
   includeFull?: boolean;
+  className?: string; // Added className prop
 }
 
 export interface PrintExportOptions {
@@ -52,7 +53,8 @@ export const PrintExportModal = ({
   description,
   previewImageUrl,
   documentType,
-  includeFull = true
+  includeFull = true,
+  className
 }: PrintExportModalProps) => {
   const { toast } = useToast();
   const [isExporting, setIsExporting] = useState(false);
@@ -133,7 +135,7 @@ export const PrintExportModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden p-0 gap-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 border-none">
+      <DialogContent className={cn("sm:max-w-[900px] max-h-[90vh] overflow-hidden p-0 gap-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 border-none", className)}>
         <div className="flex h-full">
           {/* Right sidebar - Preview */}
           <AnimatePresence mode="wait">
