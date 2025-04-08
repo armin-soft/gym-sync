@@ -1,0 +1,57 @@
+
+/* Main Menu Styles */
+.main-menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+  background-color: rgba(var(--color-primary), 0.1);
+}
+
+.menu-item.active {
+  background-color: rgba(var(--color-primary), 0.15);
+  color: rgb(var(--color-primary));
+}
+
+.menu-icon {
+  margin-right: 0.75rem;
+}
+
+.menu-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Mobile Menu Styles */
+@media (max-width: 768px) {
+  .main-menu {
+    flex-direction: row;
+    justify-content: space-around;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .menu-item {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+  
+  .menu-icon {
+    margin-right: 0;
+    margin-bottom: 0.25rem;
+  }
+  
+  .menu-text {
+    font-size: 0.75rem;
+  }
+}

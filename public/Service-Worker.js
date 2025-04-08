@@ -7,11 +7,11 @@ const RUNTIME = 'runtime';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json',
-  '/pattern.svg',
-  '/Assets/Images/Placeholder.svg',
-  '/favicon-32.png',
-  '/logo.png'
+  '/Manifest.json',
+  '/Assets/Image/Pattern.svg',
+  '/Assets/Image/Place-Holder.svg',
+  '/Assets/Image/C-32.png',
+  '/Assets/Image/Logo.png'
 ];
 
 // Install event - precache assets
