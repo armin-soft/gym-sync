@@ -3,153 +3,25 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    
-    <!-- Default favicon will be replaced by dynamic one in main.tsx -->
-    <link rel="icon" href="favicon.ico" />
-    
-    <!-- PWA Manifest with capitalized filename -->
-    <link rel="manifest" href="./Manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران" />
     <meta name="theme-color" content="#7c3aed" />
-    
-    <!-- SEO Meta Tags -->
-    <title id="page-title">مدیریت برنامه تمرینی</title>
-    <meta name="description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
-    <meta name="author" content="ARMIN-SOFT" />
-    <meta name="keywords" content="مدیریت, برنامه تمرینی, باشگاه, مربی, رژیم غذایی, ورزش, فیتنس" />
-    
-    <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="مدیریت برنامه تمرینی Gym Sync" />
-    <meta property="og:description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
-    <meta property="og:image" content="./Assets/Image/Custom-Logo.png" />
-    <meta property="og:url" content="https://gym-sync.arminsoft.ir" />
-    <meta property="og:site_name" content="Gym Sync" />
-    
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="مدیریت برنامه تمرینی Gym Sync" />
-    <meta name="twitter:description" content="سیستم هوشمند مدیریت برنامه تمرینی و رژیم غذایی برای باشگاه‌های ورزشی و مربیان" />
-    <meta name="twitter:image" content="./Assets/Image/Custom-Logo.png" />
-    
-    <!-- Mobile App Meta Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <title>Gym Sync - مدیریت برنامه</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Gym Sync" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="format-detection" content="telephone=no" />
-    
-    <!-- Preconnect to External Resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Font Loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-    
-    <!-- Script for Dynamic Title -->
-    <script>
-      // Define app routes for comparison
-      const APP_ROUTES = [
-        "Coach-Profile", 
-        "Students", 
-        "Exercise-Movements",
-        "Diet-Plan", 
-        "Supplements-Vitamins", 
-        "Reports",
-        "Backup-Restore", 
-        "About"
-      ];
-      
-      // Get the base path for the application - improved to be more robust
-      const getBasePath = () => {
-        const path = window.location.pathname;
-        const pathSegments = path.split('/').filter(segment => segment !== '');
-        
-        // If there are no segments, we're at the root
-        if (pathSegments.length === 0) {
-          return '/';
-        }
-        
-        // Check if the first segment is one of our app routes
-        if (APP_ROUTES.includes(pathSegments[0])) {
-          return '/'; // We're not in a subdirectory
-        }
-        
-        // We are in a subdirectory, return it with slashes
-        return '/' + pathSegments[0] + '/';
-      };
-      
-      // Set a global variable for the base path that can be used by other scripts
-      window.BASE_PATH = getBasePath();
-      console.log("Base path detected:", window.BASE_PATH);
-    </script>
-    
-    <!-- Script for Dynamic Title -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        try {
-          const savedProfile = localStorage.getItem('trainerProfile');
-          if (savedProfile) {
-            const profile = JSON.parse(savedProfile);
-            if (profile.gymName) {
-              document.title = 'مدیریت برنامه ' + profile.gymName;
-              document.getElementById('page-title').textContent = document.title;
-              
-              // Update meta tags with gym name
-              document.querySelector('meta[property="og:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
-              document.querySelector('meta[name="twitter:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
-              document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', profile.gymName);
-            }
-          }
-        } catch (error) {
-          console.error('Error updating page title:', error);
-        }
-        
-        // Listen for profile updates
-        window.addEventListener('storage', function(e) {
-          if (e.key === 'trainerProfile') {
-            try {
-              const profile = JSON.parse(e.newValue);
-              if (profile && profile.gymName) {
-                document.title = 'مدیریت برنامه ' + profile.gymName;
-                document.getElementById('page-title').textContent = document.title;
-                
-                // Update meta tags with gym name
-                document.querySelector('meta[property="og:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
-                document.querySelector('meta[name="twitter:title"]').setAttribute('content', 'مدیریت برنامه ' + profile.gymName);
-                document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', profile.gymName);
-              }
-            } catch (error) {
-              console.error('Error updating page title on storage change:', error);
-            }
-          }
-        });
-      });
-    </script>
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </head>
-  <body class="persian-numbers">
+  <body>
     <div id="root"></div>
-    
-    <!-- GPT Engineer Script (required for "Select" feature) -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    
-    <!-- Application Scripts -->
-    <script type="module" src="./src/main.tsx"></script>
-    
-    <!-- Service Worker Registration with proper base path -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          const swPath = window.BASE_PATH ? window.BASE_PATH + 'service-worker.js' : './service-worker.js';
-          console.log("Registering service worker at path:", swPath);
-          navigator.serviceWorker.register(swPath).then(function(registration) {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          }, function(err) {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-        });
-      }
-    </script>
+    <script type="module" src="/src/main.tsx"></script>
+    <noscript>برای استفاده از این برنامه، لطفا جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
   </body>
 </html>

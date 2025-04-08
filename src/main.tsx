@@ -99,18 +99,18 @@ document.head.appendChild(styleEl);
 // Call to generate the dynamic favicon
 generateDynamicFavicon();
 
-// Use requestIdleCallback or setTimeout to delay non-critical operations
-const runNonCriticalTasks = () => {
-  // Here you can put non-critical initialization code
-  console.log('Gym-Sync initialized');
-};
+// Register service worker for PWA support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered with scope:', registration.scope);
+      })
+      .catch(error => {
+        console.error('Service Worker registration failed: ', error);
+      });
+  });
+}
 
 // Directly render the main application without the initial loading spinner
 root.render(<App />);
-
-// Run non-critical tasks after rendering
-if (window.requestIdleCallback) {
-  window.requestIdleCallback(runNonCriticalTasks);
-} else {
-  setTimeout(runNonCriticalTasks, 500);
-}

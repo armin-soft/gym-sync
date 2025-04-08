@@ -23,11 +23,11 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser', 
     terserOptions: {
       compress: {
-        drop_console: true,
-        drop_debugger: true
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production'
       }
     },
-    sourcemap: false,
+    sourcemap: mode !== 'production',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
@@ -45,8 +45,8 @@ export default defineConfig(({ mode }) => ({
           return 'Assets/[name].[ext]';
         },
         
-        chunkFileNames: 'Assets/Scripts/[name].js',
-        entryFileNames: 'Assets/Scripts/Main.js',
+        chunkFileNames: 'Assets/Scripts/[name].[hash].js',
+        entryFileNames: 'Assets/Scripts/Main.[hash].js',
         
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
