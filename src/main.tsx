@@ -12,6 +12,21 @@ if (!container) {
 
 const root = createRoot(container);
 
+// Update page title based on gym name
+const updatePageTitle = () => {
+  try {
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      const profile = JSON.parse(savedProfile);
+      if (profile.gymName) {
+        document.title = `Gym Sync - مدیریت برنامه ${profile.gymName}`;
+      }
+    }
+  } catch (error) {
+    console.error('Error updating page title:', error);
+  }
+};
+
 // Generate dynamic favicon to replace the protected one
 const generateDynamicFavicon = () => {
   try {
@@ -31,9 +46,9 @@ const generateDynamicFavicon = () => {
       ctx.arc(16, 16, 16, 0, Math.PI * 2);
       ctx.fill();
       
-      // Draw stylized GS letters for Gym Sync
+      // Draw stylized GS letters for Gym Sync in white
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 13px Arial';
+      ctx.font = 'bold 14px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('GS', 16, 16);
@@ -96,13 +111,21 @@ styleEl.textContent = `
 `;
 document.head.appendChild(styleEl);
 
-// Call to generate the dynamic favicon
+// Update the page title and generate the favicon
+updatePageTitle();
 generateDynamicFavicon();
+
+// Listen for storage changes to update title when gym name is updated
+window.addEventListener('storage', (e) => {
+  if (e.key === 'trainerProfile') {
+    updatePageTitle();
+  }
+});
 
 // Register service worker for PWA support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('/Service-Worker.js')
       .then(registration => {
         console.log('Service Worker registered with scope:', registration.scope);
       })
