@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -42,10 +41,8 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [selectedType, setSelectedType] = useState<MealType | null>(null);
 
-  // Get meals data from localStorage if not provided as a prop
   const [mealsData, setMealsData] = useState<Meal[]>([]);
   
-  // Load meals from localStorage on component mount
   React.useEffect(() => {
     const savedMeals = localStorage.getItem('meals');
     if (savedMeals) {
@@ -53,7 +50,6 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     }
   }, []);
 
-  // Reset selectedMeals when dialog is opened to ensure it has the latest initialMeals
   React.useEffect(() => {
     if (open) {
       setSelectedMeals(initialMeals);
@@ -68,12 +64,10 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
     (mealTypeOrder[a] || 99) - (mealTypeOrder[b] || 99)
   );
   
-  // Sort days in Persian order (Saturday to Friday)
   const sortedDays = [...days].sort((a, b) => 
     (dayOrder[a] || 99) - (dayOrder[b] || 99)
   );
 
-  // Update activeMealType when selectedType changes
   React.useEffect(() => {
     if (selectedType) {
       setActiveMealType(selectedType);
@@ -141,7 +135,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
           >
             <div className="border-b bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm sticky top-0 z-10 shrink-0">
               <ScrollArea className="w-full" orientation="horizontal">
-                <TabsList className="h-14 w-full justify-center bg-transparent p-1 rounded-none shadow-sm">
+                <TabsList className="h-14 w-full justify-end bg-transparent p-1 pr-4 rounded-none shadow-sm">
                   <TabsTrigger 
                     value="all" 
                     className="h-12 rounded-lg border border-transparent px-6 py-3 font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-primary/20 transition-all duration-200"
