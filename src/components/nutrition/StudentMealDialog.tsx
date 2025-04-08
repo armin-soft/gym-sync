@@ -141,7 +141,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
           >
             <div className="border-b bg-muted/10 shrink-0">
               <ScrollArea className="w-full" orientation="horizontal">
-                <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1" dir="rtl">
+                <TabsList className="h-11 w-full justify-end bg-transparent p-0 ml-1" dir="rtl">
                   <TabsTrigger 
                     value="all" 
                     className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"

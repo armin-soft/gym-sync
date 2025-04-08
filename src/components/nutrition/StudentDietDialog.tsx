@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Sheet,
@@ -337,10 +338,11 @@ export function StudentDietDialog({
               value={activeTab} 
               onValueChange={setActiveTab}
               className="flex-1 flex flex-col overflow-hidden"
+              dir="rtl"
             >
               <div className="border-b bg-muted/10 shrink-0">
                 <ScrollArea className="w-full" orientation="horizontal">
-                  <TabsList className="h-11 w-full justify-start bg-transparent p-0 mr-1">
+                  <TabsList className="h-11 w-full justify-end bg-transparent p-0 ml-1" dir="rtl">
                     <TabsTrigger 
                       value="all"
                       className="h-11 rounded-none border-b-2 border-transparent px-4 data-[state=active]:border-primary data-[state=active]:bg-muted/30 data-[state=active]:text-primary data-[state=active]:shadow-none transition-colors duration-200"
@@ -364,6 +366,7 @@ export function StudentDietDialog({
                 value={activeTab} 
                 className="flex-1 overflow-hidden m-0 p-0 outline-none data-[state=active]:h-full"
                 forceMount
+                dir="rtl"
               >
                 <ScrollArea className="h-full w-full">
                   {filteredMeals.length === 0 ? (
@@ -572,4 +575,4 @@ export function StudentDietDialog({
       </SheetContent>
     </Sheet>
   );
-}
+};
