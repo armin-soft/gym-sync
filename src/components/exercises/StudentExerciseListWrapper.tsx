@@ -29,11 +29,11 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
   showControls = false
 }) => {
   const isMobile = useIsMobile();
-  const calculatedMaxHeight = isMobile ? "calc(100vh - 180px)" : "calc(100vh - 120px)";
+  const calculatedMaxHeight = isMobile ? "calc(100vh - 160px)" : "calc(100vh - 100px)";
 
   return (
     <Card className={cn(
-      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white h-full w-full",
+      "border border-slate-200 rounded-xl bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg transition-all text-gray-900 dark:text-white w-full h-full flex flex-col",
       className
     )}>
       {showControls && setViewMode && toggleSortOrder && (
@@ -46,11 +46,11 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
           />
         </div>
       )}
-      <ScrollArea className="w-full overflow-auto" style={{ height: calculatedMaxHeight }}>
+      <ScrollArea className="w-full h-full overflow-auto flex-1" style={{ height: calculatedMaxHeight }}>
         <motion.div
           layout
           className={cn(
-            "p-4 w-full", 
+            "p-4 w-full h-full", 
             viewMode === "grid" 
               ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3" 
               : "flex flex-col space-y-3"

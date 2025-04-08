@@ -196,7 +196,7 @@ const BackupPage = () => {
 
   return (
     <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full container mx-auto py-8 space-y-8 px-4">
+      <div className="w-full h-full flex flex-col py-8 space-y-8 px-4 md:px-6 lg:px-8">
         <div className="space-y-1.5">
           <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             پشتیبان‌گیری و بازیابی
@@ -206,7 +206,7 @@ const BackupPage = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="backup" className="space-y-6">
+        <Tabs defaultValue="backup" className="space-y-6 flex-1">
           <TabsList className="bg-muted/50 p-1">
             <TabsTrigger value="backup" className="data-[state=active]:bg-background rounded-lg flex gap-2">
               <Download className="h-4 w-4" />
@@ -218,9 +218,9 @@ const BackupPage = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="backup" className="space-y-6">
-            <Card className="p-6 bg-gradient-to-br from-teal-50 via-white to-blue-50 dark:from-teal-950 dark:via-gray-900 dark:to-blue-950 border-teal-100 dark:border-teal-900">
-              <div className="flex flex-col space-y-6">
+          <TabsContent value="backup" className="space-y-6 h-full">
+            <Card className="p-6 bg-gradient-to-br from-teal-50 via-white to-blue-50 dark:from-teal-950 dark:via-gray-900 dark:to-blue-950 border-teal-100 dark:border-teal-900 h-full">
+              <div className="flex flex-col space-y-6 h-full">
                 <div className="flex items-center gap-4">
                   <div className="bg-teal-100 dark:bg-teal-900 p-4 rounded-xl">
                     <Database className="w-8 h-8 text-teal-600 dark:text-teal-400" />
@@ -233,8 +233,8 @@ const BackupPage = () => {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+                <div className="grid md:grid-cols-2 gap-4 flex-1">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm h-full">
                     <h4 className="text-sm font-medium text-muted-foreground mb-2">داده‌های موجود برای پشتیبان‌گیری:</h4>
                     <ul className="space-y-2">
                       <li className="flex items-center justify-between">
@@ -260,7 +260,7 @@ const BackupPage = () => {
                     </ul>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm h-full">
                     <h4 className="text-sm font-medium text-muted-foreground mb-2">اقدامات:</h4>
                     <div className="mt-4">
                       <Button 
@@ -300,9 +300,9 @@ const BackupPage = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="restore" className="space-y-6">
-            <Card className="p-6 bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-indigo-950 dark:via-gray-900 dark:to-purple-950 border-indigo-100 dark:border-indigo-900">
-              <div className="flex flex-col space-y-6">
+          <TabsContent value="restore" className="space-y-6 h-full">
+            <Card className="p-6 bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-indigo-950 dark:via-gray-900 dark:to-purple-950 border-indigo-100 dark:border-indigo-900 h-full">
+              <div className="flex flex-col space-y-6 h-full">
                 <div className="flex items-center gap-4">
                   <div className="bg-indigo-100 dark:bg-indigo-900 p-4 rounded-xl">
                     <ShieldCheck className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
@@ -315,8 +315,8 @@ const BackupPage = () => {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+                <div className="grid md:grid-cols-2 gap-4 flex-1">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm h-full">
                     <h4 className="text-sm font-medium text-muted-foreground mb-2">راهنمای بازیابی:</h4>
                     <ul className="space-y-2">
                       <li className="flex items-center justify-between">
@@ -342,7 +342,7 @@ const BackupPage = () => {
                     </Alert>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm h-full">
                     <h4 className="text-sm font-medium text-muted-foreground mb-2">آپلود فایل پشتیبان:</h4>
                     <div className="mt-4">
                       <input

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { 
   Plus, 
@@ -243,7 +244,7 @@ const ExercisesPage = () => {
 
   return (
     <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full container mx-auto py-10 space-y-12 px-4">
+      <div className="w-full h-full flex flex-col py-10 space-y-12 px-4 md:px-6 lg:px-8">
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
@@ -301,7 +302,7 @@ const ExercisesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-8">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-8 flex-shrink-0">
           <ExerciseTypes
             types={exerciseTypes}
             selectedType={selectedType}
@@ -313,7 +314,7 @@ const ExercisesPage = () => {
         </div>
 
         {exerciseTypes.length > 0 && (
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8 flex-1">
             <CategoryTable 
               categories={filteredCategories}
               onAdd={() => {

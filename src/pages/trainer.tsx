@@ -100,7 +100,7 @@ const TrainerProfile = () => {
   return (
     <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
       <motion.div 
-        className="w-full h-full container mx-auto py-8 relative z-10 space-y-8 px-4"
+        className="w-full h-full flex flex-col mx-auto py-8 space-y-8 px-4 md:px-6 lg:px-8"
         variants={stagger}
         initial="initial"
         animate="animate"
@@ -130,7 +130,7 @@ const TrainerProfile = () => {
         </motion.div>
 
         <motion.div 
-          className="grid lg:grid-cols-[300px_1fr] gap-8"
+          className="grid lg:grid-cols-[300px_1fr] gap-8 flex-1"
           variants={stagger}
         >
           <motion.div 
@@ -162,7 +162,7 @@ const TrainerProfile = () => {
             </div>
           </motion.div>
 
-          <motion.div variants={fadeIn}>
+          <motion.div variants={fadeIn} className="flex-1">
             <ProfileForm
               profile={profile}
               onUpdate={handleUpdate}

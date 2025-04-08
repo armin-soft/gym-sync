@@ -189,7 +189,7 @@ const Reports = () => {
 
   return (
     <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full container mx-auto py-6 space-y-8 px-4">
+      <div className="w-full h-full flex flex-col py-6 space-y-8 px-4 md:px-6 lg:px-8">
         <div className="space-y-1">
           <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             گزارشات و آمار
@@ -232,7 +232,7 @@ const Reports = () => {
           ))}
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6" onValueChange={handleTabChange}>
+        <Tabs defaultValue="overview" className="space-y-6 flex-1" onValueChange={handleTabChange}>
           <TabsList className="bg-white border">
             <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-gray-100">
               <ChartBarIcon className="w-4 h-4" />
@@ -248,18 +248,18 @@ const Reports = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-6 h-full">
             <MonthlyDataChart 
               data={expandedData} 
               chartConfig={chartConfig} 
             />
           </TabsContent>
 
-          <TabsContent value="income" className="space-y-6">
+          <TabsContent value="income" className="space-y-6 h-full">
             <IncomeChart data={expandedData} />
           </TabsContent>
 
-          <TabsContent value="activities" className="space-y-6">
+          <TabsContent value="activities" className="space-y-6 h-full">
             <ActivitiesChart 
               data={expandedData} 
               chartConfig={chartConfig} 

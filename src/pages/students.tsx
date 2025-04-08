@@ -93,12 +93,12 @@ const StudentsPage = () => {
 
   return (
     <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
+      <div className="w-full h-full flex flex-col mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
         
         <StudentStatsCards students={students} />
         
-        <Tabs defaultValue="all" className="w-full mt-6">
+        <Tabs defaultValue="all" className="w-full mt-6 flex-1 flex flex-col">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <TabsList className="h-12 p-1">
               <TabsTrigger value="all" className="gap-2 h-10 px-6">
@@ -146,7 +146,7 @@ const StudentsPage = () => {
             </div>
           </div>
           
-          <TabsContent value="all">
+          <TabsContent value="all" className="flex-1 flex flex-col">
             <AnimatePresence mode="wait">
               <motion.div
                 key={viewMode}
@@ -154,7 +154,7 @@ const StudentsPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300"
+                className="rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300 flex-1"
               >
                 <StudentsTable 
                   students={students}
@@ -175,9 +175,9 @@ const StudentsPage = () => {
             </AnimatePresence>
           </TabsContent>
           
-          <TabsContent value="history">
-            <Card className="backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 p-8 rounded-3xl">
-              <div className="flex flex-col items-center justify-center py-12 text-center">
+          <TabsContent value="history" className="flex-1">
+            <Card className="backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 p-8 rounded-3xl h-full">
+              <div className="flex flex-col items-center justify-center py-12 text-center h-full">
                 <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
                   <History className="h-8 w-8 text-gray-400" />
                 </div>

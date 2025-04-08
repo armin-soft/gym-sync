@@ -16,6 +16,7 @@ interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   buttonDisplay?: "primary" | "minimal" | "icon-only";
   showPrintOnly?: boolean;
   includeFull?: boolean;  // New prop to include full trainer profile and student management data
+  className?: string;
 }
 
 export const PrintExportButton = ({
@@ -134,6 +135,7 @@ export const PrintExportButton = ({
         previewImageUrl={previewImageUrl}
         documentType={documentType}
         includeFull={includeFull}
+        className="w-full h-full max-w-screen max-h-screen"
       />
     </>
   );
