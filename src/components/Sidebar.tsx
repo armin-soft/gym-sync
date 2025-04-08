@@ -13,7 +13,6 @@ import {
   LineChart,
   HelpCircle,
   Menu,
-  ChevronLeft,
   Database
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -155,12 +154,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       </div>
                       <span className="text-sm font-medium">{item.title}</span>
                     </div>
-                    <ChevronLeft className={cn(
-                      "h-4 w-4 opacity-0 transition-all duration-200",
-                      "group-hover:opacity-100 group-hover:translate-x-0",
-                      "group-hover:text-primary",
-                      isActive ? "opacity-100 text-primary" : "-translate-x-2"
-                    )} />
                   </Link>
                 );
               })}
