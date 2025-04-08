@@ -12,15 +12,7 @@ import {
   SheetTrigger 
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
 
 const LoadingFallback = memo(() => <LoadingScreen />);
@@ -118,46 +110,7 @@ export const Layout = memo(() => {
                 </div>
               </div>
               
-              <div className="flex items-center gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2 rounded-full pr-2.5 pl-3.5 border border-muted hover:bg-accent">
-                      <Avatar className="h-6 w-6 mr-1">
-                        {trainerProfile.image ? (
-                          <AvatarImage src={trainerProfile.image} alt={trainerProfile.name} />
-                        ) : (
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            {trainerProfile.name.slice(0, 2)}
-                          </AvatarFallback>
-                        )}
-                      </Avatar>
-                      <span className="font-medium text-sm hidden md:inline-block">{trainerProfile.name}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <div className="flex items-center justify-start gap-2 p-2">
-                      <div className="flex-shrink-0 rounded-full bg-primary/10 p-1">
-                        <User className="h-4 w-4 text-primary" />
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-sm font-medium">{trainerProfile.name}</p>
-                        <p className="text-xs text-muted-foreground">مربی</p>
-                      </div>
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to="/Coach-Profile" className="cursor-pointer">پروفایل مربی</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/About" className="cursor-pointer">درباره برنامه</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
-                      خروج از حساب کاربری
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+              {/* The user dropdown menu that was here has been removed */}
             </div>
           </div>
         </motion.header>
