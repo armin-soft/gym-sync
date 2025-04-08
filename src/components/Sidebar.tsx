@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -57,8 +56,6 @@ const sidebarItems: SidebarItem[] = [
     description: "مدیریت ورزشکاران",
     href: "/Students",
     icon: Users,
-    badge: "جدید",
-    badgeColor: "bg-emerald-500"
   },
   {
     title: "حرکات تمرینی",
@@ -151,11 +148,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       description: "شما با موفقیت از سیستم خارج شدید",
     });
     
-    // Reload the page to go back to login
     window.location.reload();
   };
 
-  // Animation variants
   const sidebarVariants = {
     open: { 
       opacity: 1, 
@@ -187,7 +182,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         className="w-[320px] p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
       >
         <div className="flex h-full flex-col overflow-hidden">
-          {/* Header with user profile */}
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -244,12 +238,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           </motion.div>
           
-          {/* Separator with gym name */}
           <div className="px-4 py-3 border-b bg-muted/30">
             <h4 className="text-sm font-medium text-center text-muted-foreground">{gymName}</h4>
           </div>
           
-          {/* Scrollable navigation area */}
           <ScrollArea className="flex-1">
             <motion.div 
               variants={sidebarVariants}
@@ -278,12 +270,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                           : "hover:bg-muted"
                       )}
                     >
-                      {/* Background gradient for active item */}
                       {isActive && (
                         <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 opacity-80"></div>
                       )}
                       
-                      {/* Background hover effect */}
                       <AnimatePresence>
                         {isHovered && !isActive && (
                           <motion.div 
@@ -342,7 +332,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </motion.div>
           </ScrollArea>
           
-          {/* Footer with version info */}
           <div className="p-4 border-t">
             <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
               <div className="flex-shrink-0 rounded-full bg-primary/10 p-2.5">
@@ -350,10 +339,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{gymName}</span>
-                <div className="flex items-center text-xs text-muted-foreground">
+                <div className="text-xs text-muted-foreground">
                   <span>نسخه ۱.۰.۰</span>
-                  <span className="inline-block mx-1.5 w-1 h-1 rounded-full bg-muted-foreground/50"></span>
-                  <span>۱۴۰۳</span>
                 </div>
               </div>
             </div>
