@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Bookmark } from "lucide-react";
+import { Weight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AppIconProps {
@@ -27,7 +27,7 @@ export const AppIcon = ({
       size === "sm" ? "p-1.5" : size === "md" ? "p-2" : size === "lg" ? "p-3" : "p-4",
       className
     )}>
-      <Bookmark className={cn(
+      <Weight className={cn(
         sizeClasses[size],
         "text-primary",
         animated && "animate-pulse"
