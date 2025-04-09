@@ -82,7 +82,6 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    // Fix: publicDir should be a string or false, not an object
-    publicDir: 'public',
+    // Removed publicDir option
   };
 });

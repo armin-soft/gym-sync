@@ -7,7 +7,7 @@ const RUNTIME = 'runtime';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/Manifest.json',
+  '/Assets/Manifest.json',
   '/Assets/Image/Pattern.svg',
   '/Assets/Image/Place-Holder.svg',
   '/Assets/Image/C-32.png',

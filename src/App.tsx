@@ -14,6 +14,7 @@ import About from "@/pages/about";
 import BackupRestore from "@/pages/backup";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
@@ -53,6 +54,21 @@ const getBasename = () => {
 };
 
 function App() {
+  // Register service worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/Assets/Service-Worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(error => {
+            console.log('ServiceWorker registration failed: ', error);
+          });
+      });
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter basename={getBasename()}>
