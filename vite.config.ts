@@ -82,7 +82,10 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    // Make sure Vite can handle static assets properly
-    publicDir: 'public',
+    // Update the publicDir option to customize how public assets are processed
+    publicDir: {
+      dir: 'public',
+      copyBase: false
+    },
   };
 });
