@@ -22,7 +22,8 @@ self.addEventListener('install', event => {
         const baseUrl = self.registration.scope;
         // Add all assets with the correct base path
         return cache.addAll(PRECACHE_ASSETS.map(url => {
-          return new URL(url, baseUrl).href;
+          // Ensure we don't double up on slashes
+          return new URL(url.replace(/^\.\//, ''), baseUrl).href;
         }));
       })
       .then(() => self.skipWaiting())

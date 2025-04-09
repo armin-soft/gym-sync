@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Users, Clock, Sun, Crown, TrendingUp, Activity } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard";
+import { getAssetPath } from "@/utils/basePath";
 
 interface HeroSectionProps {
   stats: DashboardStats;
@@ -18,6 +19,8 @@ interface HeroSectionProps {
 }
 
 export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionProps) => {
+  const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
+  
   const quickStats = [
     { 
       title: "شاگردان", 
@@ -47,7 +50,7 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-700 via-violet-700 to-purple-700 p-6 md:p-8 text-white shadow-lg">
-      <div className="absolute inset-0 bg-[url(/pattern.svg)] opacity-10" />
+      <div className={`absolute inset-0 bg-[url('${patternUrl}')] opacity-10`} />
       <div className="absolute -bottom-5 -left-5 w-40 h-40 blur-3xl rounded-full bg-pink-600/30" />
       <div className="absolute -top-10 -right-10 w-40 h-40 blur-3xl rounded-full bg-indigo-600/30" />
       

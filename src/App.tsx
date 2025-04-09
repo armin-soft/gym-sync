@@ -26,14 +26,34 @@ function App() {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         const basePath = getBasePath();
-        const serviceWorkerPath = `${basePath}Assets/Service-Worker.js`.replace(/\/\//g, '/');
         
-        navigator.serviceWorker.register(serviceWorkerPath)
+        // Try both possible service worker locations
+        const serviceWorkerPaths = [
+          `${basePath}Service-Worker.js`,
+          `${basePath}Assets/Service-Worker.js`
+        ];
+        
+        // Clean each path to prevent double slashes
+        const cleanPaths = serviceWorkerPaths.map(path => 
+          path.replace(/([^:])\/+/g, '$1/')
+        );
+        
+        // Try to register the first service worker, fall back to the second if it fails
+        navigator.serviceWorker.register(cleanPaths[0])
           .then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           })
           .catch(error => {
-            console.log('ServiceWorker registration failed: ', error);
+            console.log('First ServiceWorker registration failed, trying alternative: ', error);
+            
+            // Try the second path as fallback
+            navigator.serviceWorker.register(cleanPaths[1])
+              .then(registration => {
+                console.log('Alternative ServiceWorker registration successful with scope: ', registration.scope);
+              })
+              .catch(fallbackError => {
+                console.log('All ServiceWorker registration attempts failed: ', fallbackError);
+              });
           });
       });
     }

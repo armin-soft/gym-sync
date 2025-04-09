@@ -12,11 +12,17 @@ export function getBasePath(): string {
   const scriptTags = document.getElementsByTagName('script');
   for (let i = 0; i < scriptTags.length; i++) {
     const src = scriptTags[i].getAttribute('src') || '';
-    if (src.includes('main.tsx') || src.includes('main.js')) {
+    if (src.includes('Main.js') || src.includes('main.tsx') || src.includes('main.js')) {
       // Extract directory path from script src
       const pathParts = src.split('/');
-      // Remove the filename
+      // Remove the filename and Assets/Scripts part if present
       pathParts.pop();
+      if (pathParts.length > 0 && pathParts[pathParts.length - 1] === 'Scripts') {
+        pathParts.pop();
+      }
+      if (pathParts.length > 0 && pathParts[pathParts.length - 1] === 'Assets') {
+        pathParts.pop();
+      }
       // Join the parts back together and add a trailing slash
       return pathParts.join('/') + '/';
     }
@@ -40,5 +46,12 @@ export function getAssetPath(assetPath: string): string {
   const basePath = getBasePath();
   // Remove any leading slash from asset path to avoid double slashes
   const cleanAssetPath = assetPath.startsWith('/') ? assetPath.substring(1) : assetPath;
-  return `${basePath}${cleanAssetPath}`;
+  
+  // Create a clean path by ensuring we don't have duplicate slashes
+  const cleanedPath = `${basePath}${cleanAssetPath}`.replace(/([^:])\/+/g, '$1/');
+  
+  // For debugging
+  console.log(`Asset path resolved: ${cleanedPath} from ${basePath} and ${assetPath}`);
+  
+  return cleanedPath;
 }
