@@ -54,7 +54,6 @@ export default defineConfig(({ mode }) => {
       sourcemap: mode !== 'production',
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
-        external: [/^@radix-ui($|\/)/, /^@tanstack\/react-query($|\/)/],
         output: {
           assetFileNames: (assetInfo) => {
             const extType = assetInfo.name?.split('.').pop()?.toLowerCase();
