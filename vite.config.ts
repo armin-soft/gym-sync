@@ -82,10 +82,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    // Update the publicDir option to customize how public assets are processed
-    publicDir: {
-      dir: 'public',
-      copyBase: false
-    },
+    // Fix: publicDir should be a string or false, not an object
+    publicDir: 'public',
   };
 });
