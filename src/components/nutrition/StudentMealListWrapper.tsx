@@ -32,9 +32,8 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
         </div>
       )}
       <ScrollArea 
-        className="w-full h-full" 
+        className="w-full h-full overflow-visible" 
         style={{ maxHeight }}
-        orientation="both"
       >
         <motion.div 
           layout 
