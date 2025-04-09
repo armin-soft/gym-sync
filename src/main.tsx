@@ -20,7 +20,7 @@ const updatePageTitle = () => {
     if (savedProfile) {
       const profile = JSON.parse(savedProfile);
       if (profile.gymName) {
-        document.title = `Gym Sync - مدیریت برنامه ${profile.gymName}`;
+        document.title = `مدیریت برنامه ${profile.gymName}`;
       }
     }
   } catch (error) {
