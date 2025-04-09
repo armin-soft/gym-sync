@@ -15,6 +15,7 @@ import { Plus, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { filterStudents, sortStudents } from "@/utils/studentUtils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Students = () => {
   const { toast } = useToast();
@@ -306,7 +307,7 @@ const Students = () => {
   const sortedStudents = sortStudents(filteredStudents, sortField, sortOrder);
 
   return (
-    <div className="container px-0 md:px-4">
+    <div className="container px-0 md:px-4 flex flex-col h-[calc(100vh-4rem)]">
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -316,7 +317,7 @@ const Students = () => {
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">شاگردان</h1>
           <p className="text-muted-foreground">
-            مدیریت و پیگیری پیشرفت شاگردان با��گاه
+            مدیریت و پیگیری پیشرفت شاگردان باگاه
           </p>
         </div>
         
@@ -383,65 +384,67 @@ const Students = () => {
       
       <StudentStatsCards students={students} />
       
-      {students.length === 0 ? (
-        <EmptyStudentState 
-          isSearching={searchQuery.length > 0} 
-          onAddStudent={handleAdd} 
-          onClearSearch={() => setSearchQuery("")}
-        />
-      ) : filteredStudents.length === 0 ? (
-        <EmptyStudentState 
-          isSearching={true} 
-          onAddStudent={handleAdd} 
-          onClearSearch={() => setSearchQuery("")}
-        />
-      ) : (
-        <div className="mt-8">
-          <AnimatePresence mode="wait">
-            {viewMode === "grid" ? (
-              <motion.div 
-                key="grid"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
-                {sortedStudents.map(student => (
-                  <StudentCard 
-                    key={student.id}
-                    student={student}
-                    onEdit={() => handleEdit(student)}
-                    onDelete={() => handleDelete(student.id)}
-                    onAddExercise={() => handleAddExercise(student)}
-                    onAddDiet={() => handleAddDiet(student)}
-                    onAddSupplement={() => handleAddSupplement(student)}
+      <ScrollArea className="flex-1 w-full mt-8">
+        {students.length === 0 ? (
+          <EmptyStudentState 
+            isSearching={searchQuery.length > 0} 
+            onAddStudent={handleAdd} 
+            onClearSearch={() => setSearchQuery("")}
+          />
+        ) : filteredStudents.length === 0 ? (
+          <EmptyStudentState 
+            isSearching={true} 
+            onAddStudent={handleAdd} 
+            onClearSearch={() => setSearchQuery("")}
+          />
+        ) : (
+          <div className="pr-2">
+            <AnimatePresence mode="wait">
+              {viewMode === "grid" ? (
+                <motion.div 
+                  key="grid"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                  {sortedStudents.map(student => (
+                    <StudentCard 
+                      key={student.id}
+                      student={student}
+                      onEdit={() => handleEdit(student)}
+                      onDelete={() => handleDelete(student.id)}
+                      onAddExercise={() => handleAddExercise(student)}
+                      onAddDiet={() => handleAddDiet(student)}
+                      onAddSupplement={() => handleAddSupplement(student)}
+                      isProfileComplete={isProfileComplete}
+                    />
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="table"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <StudentTable 
+                    students={sortedStudents}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onAddExercise={handleAddExercise}
+                    onAddDiet={handleAddDiet}
+                    onAddSupplement={handleAddSupplement}
                     isProfileComplete={isProfileComplete}
                   />
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="table"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <StudentTable 
-                  students={sortedStudents}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onAddExercise={handleAddExercise}
-                  onAddDiet={handleAddDiet}
-                  onAddSupplement={handleAddSupplement}
-                  isProfileComplete={isProfileComplete}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+      </ScrollArea>
       
       <StudentDialogManagerWrapper
         ref={dialogRef}
