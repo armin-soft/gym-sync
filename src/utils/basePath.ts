@@ -32,6 +32,15 @@ export const getBasePath = (): string => {
     return '/'; // We're not in a subdirectory
   }
   
-  // We are in a subdirectory, return it with slashes
-  return '/' + segments[0] + '/';
+  // We might be in a subdirectory
+  // Find the index of the first segment that matches our app routes, if any
+  const appRouteIndex = segments.findIndex(segment => APP_ROUTES.includes(segment));
+  
+  if (appRouteIndex === -1) {
+    // No app routes found, assume the whole path is a subdirectory
+    return '/' + segments.join('/') + '/';
+  } else {
+    // We found an app route, so the subdirectory is everything before that
+    return '/' + segments.slice(0, appRouteIndex).join('/') + '/';
+  }
 };

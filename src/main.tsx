@@ -2,6 +2,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { getBasePath } from './utils/basePath.ts'
 
 // Get container and create root once
 const container = document.getElementById('root');
@@ -122,18 +123,8 @@ window.addEventListener('storage', (e) => {
   }
 });
 
-// Register service worker for PWA support
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./Service-Worker.js')
-      .then(registration => {
-        console.log('Service Worker registered with scope:', registration.scope);
-      })
-      .catch(error => {
-        console.error('Service Worker registration failed: ', error);
-      });
-  });
-}
+// We don't register the service worker here anymore, it's done in App.tsx
+// to ensure proper path handling with the subdirectory
 
 // Directly render the main application without the initial loading spinner
 root.render(<App />);

@@ -34,6 +34,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
     ],
+    base: './', // Use relative paths
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -82,6 +83,5 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    // Removed publicDir option
   };
 });

@@ -15,50 +15,20 @@ import BackupRestore from "@/pages/backup";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { getBasePath } from "@/utils/basePath";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
 
-// Define app routes for easier comparison
-const APP_ROUTES = [
-  "Coach-Profile", 
-  "Students", 
-  "Exercise-Movements",
-  "Diet-Plan",
-  "Supplements-Vitamins",
-  "Reports",
-  "Backup-Restore",
-  "About"
-];
-
-// Fixed function to determine the base URL - removed leading dot from paths
-const getBasename = () => {
-  // Get the current URL path
-  const path = window.location.pathname;
-  
-  // Split the path into segments and filter out empty strings
-  const segments = path.split('/').filter(segment => segment !== '');
-  
-  // If there are no segments, we're at the root
-  if (segments.length === 0) {
-    return '/';
-  }
-  
-  // Check if the first segment is one of our app routes
-  if (APP_ROUTES.includes(segments[0])) {
-    return '/'; // We're not in a subdirectory
-  }
-  
-  // We are in a subdirectory, so return it with slashes
-  return '/' + segments[0] + '/';
-};
-
 function App() {
-  // Register service worker
+  // Register service worker with the correct path
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/Assets/Service-Worker.js')
+        const basePath = getBasePath();
+        const serviceWorkerPath = `${basePath}Assets/Service-Worker.js`.replace('//', '/');
+        
+        navigator.serviceWorker.register(serviceWorkerPath)
           .then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           })
@@ -71,7 +41,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={getBasename()}>
+      <BrowserRouter basename={getBasePath().replace(/\/$/, '')}>
         <AuthWrapper>
           <Routes>
             <Route element={<Layout />}>
