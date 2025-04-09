@@ -1,46 +1,44 @@
 
-// Define app routes for comparison
-export const APP_ROUTES = [
-  "Coach-Profile", 
-  "Students", 
-  "Exercise-Movements",
-  "Diet-Plan",
-  "Supplements-Vitamins",
-  "Reports",
-  "Backup-Restore",
-  "About"
-];
-
 /**
- * Determines the base path of the application, accounting for subdirectory deployment
- * Useful for routing and asset paths
+ * Gets the base path for the application based on the current window location
+ * Works for any deployment path including subdirectories
  */
-export const getBasePath = (): string => {
-  // Get the current URL path
-  const path = window.location.pathname;
-  
-  // Split the path into segments and filter out empty strings
-  const segments = path.split('/').filter(segment => segment !== '');
-  
-  // If there are no segments, we're at the root
-  if (segments.length === 0) {
+export function getBasePath(): string {
+  if (typeof window === 'undefined') {
     return '/';
   }
   
-  // Check if the first segment is one of our app routes
-  if (APP_ROUTES.includes(segments[0])) {
-    return '/'; // We're not in a subdirectory
+  // Extract the path from the script tag that loaded the application
+  const scriptTags = document.getElementsByTagName('script');
+  for (let i = 0; i < scriptTags.length; i++) {
+    const src = scriptTags[i].getAttribute('src') || '';
+    if (src.includes('main.tsx') || src.includes('main.js')) {
+      // Extract directory path from script src
+      const pathParts = src.split('/');
+      // Remove the filename
+      pathParts.pop();
+      // Join the parts back together and add a trailing slash
+      return pathParts.join('/') + '/';
+    }
   }
   
-  // We might be in a subdirectory
-  // Find the index of the first segment that matches our app routes, if any
-  const appRouteIndex = segments.findIndex(segment => APP_ROUTES.includes(segment));
-  
-  if (appRouteIndex === -1) {
-    // No app routes found, assume the whole path is a subdirectory
-    return '/' + segments.join('/') + '/';
-  } else {
-    // We found an app route, so the subdirectory is everything before that
-    return '/' + segments.slice(0, appRouteIndex).join('/') + '/';
+  // Fallback to the pathname from the URL
+  const path = window.location.pathname;
+  // Get the path up to the last directory
+  const lastSlashIndex = path.lastIndexOf('/');
+  if (lastSlashIndex === -1) {
+    return '/';
   }
-};
+  
+  return path.substring(0, lastSlashIndex + 1);
+}
+
+/**
+ * Gets the full URL for an asset based on the base path
+ */
+export function getAssetPath(assetPath: string): string {
+  const basePath = getBasePath();
+  // Remove any leading slash from asset path to avoid double slashes
+  const cleanAssetPath = assetPath.startsWith('/') ? assetPath.substring(1) : assetPath;
+  return `${basePath}${cleanAssetPath}`;
+}

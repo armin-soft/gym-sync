@@ -5,15 +5,11 @@ const RUNTIME = 'runtime';
 
 // Get the base path for the app - important for subdirectory deployments
 self.addEventListener('install', event => {
-  // Determine base path from service worker scope
-  const basePath = new URL(self.registration.scope).pathname;
-
-  // Assets to pre-cache, adjusted for the base path
+  // Assets to pre-cache, adjusted for any base path
   const PRECACHE_ASSETS = [
     './',
     './index.html',
     './Assets/Manifest.json',
-    './Assets/Styles/index.css',
     './Assets/Scripts/Main.js',
     './Assets/Scripts/React.js',
     './Assets/Scripts/Animation.js',
@@ -25,8 +21,10 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
+        // Get the scope - this handles any deployment path
+        const baseUrl = self.registration.scope;
         return cache.addAll(PRECACHE_ASSETS.map(url => {
-          return new URL(url, self.registration.scope).href;
+          return new URL(url, baseUrl).href;
         }));
       })
       .then(() => self.skipWaiting())

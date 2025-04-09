@@ -3,23 +3,27 @@
 const CACHE_NAME = 'gym-sync-cache-v1';
 const RUNTIME = 'runtime';
 
-// Assets to pre-cache
-const PRECACHE_ASSETS = [
-  './',
-  './index.html',
-  './Manifest.json',
-  './Assets/Image/Pattern.svg',
-  './Assets/Image/Place-Holder.svg',
-  './Assets/Image/C-32.png',
-  './Assets/Image/Logo.png'
-];
-
-// Install event - precache assets
+// Install event - precache assets with dynamic base path detection
 self.addEventListener('install', event => {
+  const PRECACHE_ASSETS = [
+    './',
+    './index.html',
+    './Manifest.json',
+    './Assets/Image/Pattern.svg',
+    './Assets/Image/Place-Holder.svg',
+    './Assets/Image/C-32.png',
+    './Assets/Image/Logo.png'
+  ];
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        return cache.addAll(PRECACHE_ASSETS);
+        // Get the scope - this handles any deployment path
+        const baseUrl = self.registration.scope;
+        // Add all assets with the correct base path
+        return cache.addAll(PRECACHE_ASSETS.map(url => {
+          return new URL(url, baseUrl).href;
+        }));
       })
       .then(() => self.skipWaiting())
   );

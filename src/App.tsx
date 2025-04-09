@@ -26,7 +26,7 @@ function App() {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         const basePath = getBasePath();
-        const serviceWorkerPath = `${basePath}Assets/Service-Worker.js`.replace('//', '/');
+        const serviceWorkerPath = `${basePath}Assets/Service-Worker.js`.replace(/\/\//g, '/');
         
         navigator.serviceWorker.register(serviceWorkerPath)
           .then(registration => {
@@ -41,7 +41,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={getBasePath().replace(/\/$/, '')}>
+      <BrowserRouter basename="">
         <AuthWrapper>
           <Routes>
             <Route element={<Layout />}>
