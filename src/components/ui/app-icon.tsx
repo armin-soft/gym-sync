@@ -1,37 +1,32 @@
 
-import React from "react";
-import { Weight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AppIconProps {
-  size?: "sm" | "md" | "lg" | "xl";
-  className?: string;
+  size?: "sm" | "md" | "lg";
   animated?: boolean;
 }
 
-export const AppIcon = ({ 
-  size = "md", 
-  className, 
-  animated = false 
-}: AppIconProps) => {
-  const sizeClasses = {
-    sm: "h-6 w-6",
-    md: "h-8 w-8",
-    lg: "h-12 w-12",
-    xl: "h-16 w-16"
-  };
-
+export function AppIcon({ size = "md", animated = false }: AppIconProps) {
   return (
-    <div className={cn(
-      "relative flex items-center justify-center rounded-full bg-primary/10 p-2",
-      size === "sm" ? "p-1.5" : size === "md" ? "p-2" : size === "lg" ? "p-3" : "p-4",
-      className
-    )}>
-      <Weight className={cn(
-        sizeClasses[size],
-        "text-primary",
+    <div
+      className={cn(
+        "relative flex items-center justify-center rounded-xl bg-white",
+        size === "sm" && "h-8 w-8",
+        size === "md" && "h-12 w-12",
+        size === "lg" && "h-16 w-16",
         animated && "animate-pulse"
-      )} />
+      )}
+    >
+      <img
+        src="/Assets/Image/Logo.png"
+        alt="لوگوی برنامه"
+        className={cn(
+          "rounded-xl",
+          size === "sm" && "h-6 w-6",
+          size === "md" && "h-10 w-10",
+          size === "lg" && "h-14 w-14"
+        )}
+      />
     </div>
   );
-};
+}
