@@ -4,8 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentsTable } from "@/components/students/StudentsTable";
+import { StudentHistory } from "@/components/students/StudentHistory";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
-import { useStudents } from "@/hooks/students"; // Updated import path
+import { useStudents } from "@/hooks/students"; 
+import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
@@ -19,7 +21,7 @@ import { Button } from "@/components/ui/button";
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+  const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   
   const {
     students,
@@ -32,13 +34,14 @@ const StudentsPage = () => {
     handleSaveDiet,
     handleSaveSupplements
   } = useStudents();
+  
+  const { historyEntries, addHistoryEntry } = useStudentHistory();
 
   // Refresh when localStorage changes
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'students') {
         setRefreshTrigger(prev => prev + 1);
-        console.log('Storage event detected, triggering refresh');
       }
     };
     
@@ -53,33 +56,102 @@ const StudentsPage = () => {
     window.dispatchEvent(new StorageEvent('storage', { key: 'students' }));
   }, []);
 
-  // Wrapper functions to refresh after save
-  const handleSaveExercisesWithRefresh = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
+  // Enhanced save handlers with history tracking
+  const handleSaveWithHistory = useCallback((data: any, selectedStudent?: Student) => {
+    const result = handleSave(data, selectedStudent);
+    
+    if (result) {
+      if (selectedStudent) {
+        addHistoryEntry(
+          {...selectedStudent, ...data}, 
+          'edit', 
+          `اطلاعات ${data.name || selectedStudent.name} به‌روزرسانی شد`
+        );
+      } else {
+        addHistoryEntry(
+          {...data, id: Date.now()}, 
+          'edit', 
+          `شاگرد جدید ${data.name} اضافه شد`
+        );
+      }
+      
+      triggerRefresh();
+    }
+    
+    return result;
+  }, [handleSave, addHistoryEntry, triggerRefresh]);
+
+  const handleSaveExercisesWithHistory = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
     const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
+    
     if (result) {
-      console.log(`Exercise saved for day ${dayNumber}, triggering refresh`);
+      const student = students.find(s => s.id === studentId);
+      if (student) {
+        const dayText = dayNumber ? ` برای روز ${dayNumber}` : '';
+        addHistoryEntry(
+          student, 
+          'exercise',
+          `برنامه تمرینی${dayText} برای ${student.name} بروزرسانی شد`
+        );
+      }
+      
       triggerRefresh();
     }
+    
     return result;
-  }, [handleSaveExercises, triggerRefresh]);
+  }, [handleSaveExercises, students, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveDietWithRefresh = useCallback((mealIds: number[], studentId: number) => {
+  const handleSaveDietWithHistory = useCallback((mealIds: number[], studentId: number) => {
     const result = handleSaveDiet(mealIds, studentId);
+    
     if (result) {
-      console.log('Diet saved, triggering refresh');
+      const student = students.find(s => s.id === studentId);
+      if (student) {
+        addHistoryEntry(
+          student, 
+          'diet',
+          `برنامه غذایی برای ${student.name} بروزرسانی شد`
+        );
+      }
+      
       triggerRefresh();
     }
+    
     return result;
-  }, [handleSaveDiet, triggerRefresh]);
+  }, [handleSaveDiet, students, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveSupplementsWithRefresh = useCallback((data: {supplements: number[], vitamins: number[]}, studentId: number) => {
+  const handleSaveSupplementsWithHistory = useCallback((data: {supplements: number[], vitamins: number[]}, studentId: number) => {
     const result = handleSaveSupplements(data, studentId);
+    
     if (result) {
-      console.log('Supplements saved, triggering refresh');
+      const student = students.find(s => s.id === studentId);
+      if (student) {
+        addHistoryEntry(
+          student, 
+          'supplement',
+          `برنامه مکمل و ویتامین برای ${student.name} بروزرسانی شد`
+        );
+      }
+      
       triggerRefresh();
     }
+    
     return result;
-  }, [handleSaveSupplements, triggerRefresh]);
+  }, [handleSaveSupplements, students, addHistoryEntry, triggerRefresh]);
+  
+  const handleDeleteWithHistory = useCallback((studentId: number) => {
+    const student = students.find(s => s.id === studentId);
+    if (student) {
+      addHistoryEntry(
+        student, 
+        'edit',
+        `شاگرد ${student.name} حذف شد`
+      );
+    }
+    
+    handleDelete(studentId);
+    triggerRefresh();
+  }, [handleDelete, students, addHistoryEntry, triggerRefresh]);
 
   const {
     searchQuery,
@@ -146,7 +218,7 @@ const StudentsPage = () => {
             </div>
           </div>
           
-          <TabsContent value="all" className="flex-1 flex flex-col">
+          <TabsContent value="all" className="flex-1 flex flex-col w-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={viewMode}
@@ -154,7 +226,7 @@ const StudentsPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300 flex-1"
+                className="rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300 flex-1 w-full"
               >
                 <StudentsTable 
                   students={students}
@@ -162,7 +234,7 @@ const StudentsPage = () => {
                   searchQuery={searchQuery}
                   refreshTrigger={refreshTrigger}
                   onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
-                  onDelete={handleDelete}
+                  onDelete={handleDeleteWithHistory}
                   onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
                   onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
                   onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
@@ -176,26 +248,19 @@ const StudentsPage = () => {
           </TabsContent>
           
           <TabsContent value="history" className="flex-1">
-            <Card className="backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 p-8 rounded-3xl h-full">
-              <div className="flex flex-col items-center justify-center py-12 text-center h-full">
-                <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                  <History className="h-8 w-8 text-gray-400" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">تاریخچه شاگردان</h3>
-                <p className="text-muted-foreground max-w-md">
-                  این بخش در آینده فعال خواهد شد و شما می‌توانید تاریخچه تمام شاگردان و فعالیت‌های آنها را مشاهده کنید.
-                </p>
-              </div>
-            </Card>
+            <StudentHistory 
+              students={students} 
+              historyEntries={historyEntries} 
+            />
           </TabsContent>
         </Tabs>
 
         <StudentDialogManager
           ref={dialogManagerRef}
-          onSave={handleSave}
-          onSaveExercises={handleSaveExercisesWithRefresh}
-          onSaveDiet={handleSaveDietWithRefresh}
-          onSaveSupplements={handleSaveSupplementsWithRefresh}
+          onSave={handleSaveWithHistory}
+          onSaveExercises={handleSaveExercisesWithHistory}
+          onSaveDiet={handleSaveDietWithHistory}
+          onSaveSupplements={handleSaveSupplementsWithHistory}
           exercises={exercises}
           meals={meals}
           supplements={supplements}
