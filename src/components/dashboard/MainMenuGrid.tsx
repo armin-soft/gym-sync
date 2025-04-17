@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -63,13 +62,6 @@ export const MainMenuGrid = () => {
       href: '/Backup-Restore', 
       color: "from-cyan-600 to-cyan-400",
       bgColor: "bg-gradient-to-br from-cyan-50 to-sky-50 dark:from-cyan-900/20 dark:to-sky-900/20"
-    },
-    { 
-      title: "درباره", 
-      icon: HelpCircle, 
-      href: '/About', 
-      color: "from-gray-600 to-gray-400",
-      bgColor: "bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20"
     }
   ];
 

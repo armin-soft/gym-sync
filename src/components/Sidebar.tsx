@@ -87,12 +87,6 @@ const sidebarItems: SidebarItem[] = [
     href: "/Backup-Restore",
     icon: Database,
   },
-  {
-    title: "درباره",
-    description: "اطلاعات نرم‌افزار",
-    href: "/About",
-    icon: HelpCircle,
-  },
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {

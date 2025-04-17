@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -10,7 +9,6 @@ import ExerciseMovements from "@/pages/exercises";
 import DietPlan from "@/pages/diet";
 import SupplementsVitamins from "@/pages/supplements";
 import Reports from "@/pages/reports";
-import About from "@/pages/about";
 import BackupRestore from "@/pages/backup";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -73,8 +71,6 @@ function App() {
               <Route path="/Supplements-Vitamins" element={<SupplementsVitamins />} />
               <Route path="/Reports" element={<Reports />} />
               <Route path="/Backup-Restore" element={<BackupRestore />} />
-              <Route path="/About" element={<About />} />
-              {/* Redirect all non-matching routes to the dashboard */}
               <Route path="*" element={<Navigate replace to="/" />} />
             </Route>
           </Routes>
