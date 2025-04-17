@@ -56,6 +56,35 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
   meals,
   supplements
 }) => {
+  // اطمینان حاصل کنیم که داده‌ها از localStorage بارگذاری شوند اگر به عنوان پراپ ارسال نشده‌اند
+  const [localSupplements, setLocalSupplements] = React.useState(supplements);
+  const [localCategories, setLocalCategories] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (!supplements || supplements.length === 0) {
+      try {
+        const savedSupplements = localStorage.getItem('supplements');
+        const savedCategories = localStorage.getItem('supplementCategories');
+        
+        if (savedSupplements) {
+          const parsedSupplements = JSON.parse(savedSupplements);
+          console.log("Loaded supplements from localStorage in DialogContent:", parsedSupplements);
+          setLocalSupplements(parsedSupplements);
+        }
+        
+        if (savedCategories) {
+          const parsedCategories = JSON.parse(savedCategories);
+          console.log("Loaded categories from localStorage in DialogContent:", parsedCategories);
+          setLocalCategories(parsedCategories);
+        }
+      } catch (error) {
+        console.error("Error loading supplements from localStorage in DialogContent:", error);
+      }
+    } else {
+      setLocalSupplements(supplements);
+    }
+  }, [supplements]);
+
   return (
     <>
       <StudentDialog
@@ -83,7 +112,6 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         studentName={selectedStudentForDiet?.name || ""}
         onSave={handleSaveDietWrapper}
         initialMeals={selectedStudentForDiet?.meals || []}
-        // Remove the meals prop since it doesn't exist in StudentDietDialogProps
       />
 
       <StudentSupplementDialog
@@ -93,8 +121,8 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         onSave={handleSaveSupplementsWrapper}
         initialSupplements={selectedStudentForSupplement?.supplements || []}
         initialVitamins={selectedStudentForSupplement?.vitamins || []}
-        supplements={supplements}
-        categories={[]}
+        supplements={localSupplements}
+        categories={localCategories}
       />
 
       <StudentDownloadDialog
@@ -103,8 +131,8 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         student={selectedStudentForDownload}
         exercises={exercises}
         meals={meals}
-        supplements={supplements}
-        vitamins={supplements.filter(item => item.type === 'vitamin')}
+        supplements={localSupplements}
+        vitamins={localSupplements.filter(item => item.type === 'vitamin')}
       />
     </>
   );

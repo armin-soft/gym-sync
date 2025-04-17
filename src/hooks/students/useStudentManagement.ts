@@ -32,8 +32,9 @@ export const useStudentManagement = () => {
         Promise.resolve(safeJSONParse(localStorage.getItem('students'))),
         Promise.resolve(safeJSONParse(localStorage.getItem('exercises'))),
         Promise.resolve(safeJSONParse(localStorage.getItem('meals'))),
-        Promise.resolve(safeJSONParse(localStorage.getItem('supplements')))
-      ]).then(([studentsData, exercisesData, mealsData, supplementsData]) => {
+        Promise.resolve(safeJSONParse(localStorage.getItem('supplements'))),
+        Promise.resolve(safeJSONParse(localStorage.getItem('supplementCategories')))
+      ]).then(([studentsData, exercisesData, mealsData, supplementsData, supplementCategoriesData]) => {
         // Process students data
         if (Array.isArray(studentsData)) {
           const processedStudents = studentsData.map((student: any) => ({
@@ -59,7 +60,21 @@ export const useStudentManagement = () => {
         
         if (Array.isArray(exercisesData)) setExercises(exercisesData);
         if (Array.isArray(mealsData)) setMeals(mealsData);
-        if (Array.isArray(supplementsData)) setSupplements(supplementsData);
+        
+        // Make sure supplements are properly loaded
+        if (Array.isArray(supplementsData)) {
+          console.log('Loaded supplements from localStorage:', supplementsData);
+          setSupplements(supplementsData);
+          // Also save to localStorage to ensure consistency
+          localStorage.setItem('supplements', JSON.stringify(supplementsData));
+        }
+        
+        // Ensure supplementCategories exist in localStorage
+        if (Array.isArray(supplementCategoriesData) && supplementCategoriesData.length > 0) {
+          console.log('Loaded supplement categories from localStorage:', supplementCategoriesData);
+          // Save to localStorage to ensure consistency
+          localStorage.setItem('supplementCategories', JSON.stringify(supplementCategoriesData));
+        }
         
         setIsInitialized(true);
       });
@@ -83,6 +98,18 @@ export const useStudentManagement = () => {
     
     return () => clearTimeout(saveTimeout);
   }, [students, isInitialized]);
+
+  // Save supplements to localStorage whenever they change
+  useEffect(() => {
+    if (!isInitialized || supplements.length === 0) return;
+    
+    const saveTimeout = setTimeout(() => {
+      console.log('Saving supplements to localStorage:', supplements);
+      localStorage.setItem('supplements', JSON.stringify(supplements));
+    }, 300); // Debounce saves by 300ms
+    
+    return () => clearTimeout(saveTimeout);
+  }, [supplements, isInitialized]);
 
   // Optimized delete function
   const handleDelete = useCallback((id: number) => {
@@ -151,6 +178,7 @@ export const useStudentManagement = () => {
     meals, 
     supplements,
     setStudents,
+    setSupplements,  // اضافه کردن این تابع برای دسترسی به تغییر مکمل‌ها
     handleDelete,
     handleSave
   };
