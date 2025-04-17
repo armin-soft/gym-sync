@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -43,63 +44,85 @@ export function StudentSupplementDialog({
   const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">("supplements");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [allSupplements, setAllSupplements] = useState<Supplement[]>([]);
 
+  // وقتی دیالوگ باز می‌شود، مقادیر اولیه را تنظیم کن
   useEffect(() => {
     if (open) {
       console.log("Dialog opened with initialSupplements:", initialSupplements);
       console.log("Dialog opened with initialVitamins:", initialVitamins);
       setSelectedSupplements([...initialSupplements]);
       setSelectedVitamins([...initialVitamins]);
-    }
-  }, [open, initialSupplements, initialVitamins]);
-
-  useEffect(() => {
-    if (supplements.length === 0) {
-      try {
-        const savedSupplements = localStorage.getItem("supplements");
-        if (savedSupplements) {
-          const parsedSupplements = JSON.parse(savedSupplements);
-          setFilteredItems(parsedSupplements.filter((item: Supplement) => activeTab === "supplements" ? item.type === "supplement" : item.type === "vitamin"));
+      
+      // بارگذاری مکمل‌ها از localStorage اگر به عنوان prop ارسال نشده باشند
+      if (supplements.length === 0) {
+        try {
+          const savedSupplements = localStorage.getItem("supplements");
+          if (savedSupplements) {
+            const parsedSupplements = JSON.parse(savedSupplements);
+            setAllSupplements(parsedSupplements);
+            console.log("Loaded supplements from localStorage:", parsedSupplements);
+          }
+        } catch (error) {
+          console.error("Error loading supplements from localStorage:", error);
         }
-      } catch (error) {
-        console.error("Error loading supplements from localStorage:", error);
+      } else {
+        setAllSupplements(supplements);
       }
-    } else {
-      setFilteredItems(supplements.filter(item => activeTab === "supplements" ? item.type === "supplement" : item.type === "vitamin"));
     }
-  }, [supplements, activeTab]);
+  }, [open, initialSupplements, initialVitamins, supplements]);
 
+  // فیلتر کردن آیتم‌ها بر اساس تب فعال و جستجو
   useEffect(() => {
-    let filtered = supplements;
+    // استفاده از آرایه بارگذاری شده از localStorage یا آرایه ارسال شده به عنوان prop
+    const supplementsToFilter = allSupplements.length > 0 ? allSupplements : supplements;
+    
+    let filtered = [...supplementsToFilter];
+    console.log("Filtering from supplements:", filtered);
+    
+    // فیلتر بر اساس عبارت جستجو
     if (searchQuery.trim() !== "") {
-      filtered = filtered.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                        item.category.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                        (item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase())) || 
-                                        (item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase())));
+      filtered = filtered.filter(item => 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase())) || 
+        (item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase())) || 
+        (item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
     }
-    if (activeTab === "supplements") {
-      filtered = filtered.filter(item => item.type === "supplement");
-    } else {
-      filtered = filtered.filter(item => item.type === "vitamin");
-    }
+    
+    // فیلتر بر اساس نوع (مکمل یا ویتامین)
+    filtered = filtered.filter(item => 
+      activeTab === "supplements" ? item.type === "supplement" : item.type === "vitamin"
+    );
+    
+    // فیلتر بر اساس دسته‌بندی
     if (selectedCategory !== "all") {
       filtered = filtered.filter(item => item.category === selectedCategory);
     }
+    
+    console.log(`Filtered ${filtered.length} items for tab: ${activeTab}`);
     setFilteredItems(filtered);
-  }, [searchQuery, supplements, activeTab, selectedCategory]);
+  }, [searchQuery, supplements, activeTab, selectedCategory, allSupplements]);
 
+  // تغییر دسته‌بندی انتخابی هنگام تغییر تب
   useEffect(() => {
     setSelectedCategory("all");
   }, [activeTab]);
 
+  // اضافه یا حذف آیتم از لیست انتخابی
   const toggleItem = (id: number) => {
     if (activeTab === "supplements") {
-      setSelectedSupplements(prev => prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]);
+      setSelectedSupplements(prev => 
+        prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+      );
     } else {
-      setSelectedVitamins(prev => prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]);
+      setSelectedVitamins(prev => 
+        prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+      );
     }
   };
 
+  // ذخیره تغییرات
   const handleSave = () => {
     console.log("Saving supplements:", selectedSupplements);
     console.log("Saving vitamins:", selectedVitamins);
@@ -115,15 +138,25 @@ export function StudentSupplementDialog({
     return success;
   };
 
+  // بررسی اینکه آیا آیتم انتخاب شده است
   const isSelected = (id: number) => {
-    return activeTab === "supplements" ? selectedSupplements.includes(id) : selectedVitamins.includes(id);
+    return activeTab === "supplements" 
+      ? selectedSupplements.includes(id) 
+      : selectedVitamins.includes(id);
   };
 
-  const relevantCategories = categories.filter(cat => cat.type === (activeTab === "supplements" ? "supplement" : "vitamin"));
+  // دسته‌بندی‌های مربوط به تب فعال
+  const relevantCategories = categories.filter(cat => 
+    cat.type === (activeTab === "supplements" ? "supplement" : "vitamin")
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] md:max-w-[100vw] lg:max-w-[100vw] xl:max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none shadow-xl" dir="rtl">
+        {/* عناصر مخفی برای دسترسی‌پذیری */}
+        <DialogTitle className="sr-only">انتخاب مکمل و ویتامین برای {studentName}</DialogTitle>
+        <DialogDescription className="sr-only">در این بخش می‌توانید مکمل‌ها و ویتامین‌های مورد نیاز را برای شاگرد انتخاب کنید</DialogDescription>
+        
         <Tabs value={activeTab} onValueChange={value => setActiveTab(value as "supplements" | "vitamins")} className="flex flex-col h-full w-full">
           <div className="px-6 py-4 border-b bg-gradient-to-b from-background/80 to-background/60 backdrop-blur-sm shrink-0">
             <div className="flex items-center justify-between">
@@ -170,27 +203,37 @@ export function StudentSupplementDialog({
           <div className="flex-1 overflow-hidden">
             <TabsContent value="supplements" className="h-full">
               <ScrollArea className="h-full w-full">
-                {filteredItems.length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+                {filteredItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-center p-4">
                     <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 shadow-sm bg-gradient-to-b from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900">
                       <Beaker className="h-8 w-8 text-violet-500 dark:text-violet-400" />
                     </div>
                     <h3 className="font-medium text-lg text-foreground">
                       هیچ مکملی یافت نشد
                     </h3>
-                  </div> : <div className="divide-y">
-                    {filteredItems.map(item => <motion.div key={item.id} initial={{
-                  opacity: 0,
-                  y: 5
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  duration: 0.2
-                }}>
+                  </div>
+                ) : (
+                  <div className="divide-y p-4">
+                    {filteredItems.map(item => (
+                      <motion.div 
+                        key={item.id} 
+                        initial={{ opacity: 0, y: 5 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        transition={{ duration: 0.2 }}
+                      >
                         <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
-                          <div className={cn("p-2 transition-all cursor-pointer hover:bg-muted/50 w-full rounded-lg", isSelected(item.id) ? "bg-violet-50 dark:bg-violet-900/20" : "")} onClick={() => toggleItem(item.id)}>
+                          <div 
+                            className={cn(
+                              "p-2 transition-all cursor-pointer hover:bg-muted/50 w-full rounded-lg", 
+                              isSelected(item.id) ? "bg-violet-50 dark:bg-violet-900/20" : ""
+                            )} 
+                            onClick={() => toggleItem(item.id)}
+                          >
                             <div className="flex gap-3">
-                              <div className={cn("w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors", isSelected(item.id) ? "bg-violet-500" : "border-2 border-muted-foreground/30")}>
+                              <div className={cn(
+                                "w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors", 
+                                isSelected(item.id) ? "bg-violet-500" : "border-2 border-muted-foreground/30"
+                              )}>
                                 {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
                               </div>
                               
@@ -207,45 +250,57 @@ export function StudentSupplementDialog({
                                 <div className="flex gap-4 mt-1">
                                   <div className="text-xs flex items-center gap-1">
                                     <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage)}</span>
+                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage || "")}</span>
                                   </div>
                                   <div className="text-xs flex items-center gap-1">
                                     <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing}</span>
+                                    <span className="text-muted-foreground">{item.timing || ""}</span>
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </motion.div>)}
-                  </div>}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </TabsContent>
 
             <TabsContent value="vitamins" className="h-full">
               <ScrollArea className="h-full w-full">
-                {filteredItems.length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+                {filteredItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-center p-4">
                     <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 shadow-sm bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
                       <Pill className="h-8 w-8 text-blue-500 dark:text-blue-400" />
                     </div>
                     <h3 className="font-medium text-lg text-foreground">
                       هیچ ویتامینی یافت نشد
                     </h3>
-                  </div> : <div className="divide-y">
-                    {filteredItems.map(item => <motion.div key={item.id} initial={{
-                  opacity: 0,
-                  y: 5
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  duration: 0.2
-                }}>
+                  </div>
+                ) : (
+                  <div className="divide-y p-4">
+                    {filteredItems.map(item => (
+                      <motion.div 
+                        key={item.id} 
+                        initial={{ opacity: 0, y: 5 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        transition={{ duration: 0.2 }}
+                      >
                         <div className="mb-4 p-3 rounded-xl flex flex-wrap gap-2 justify-between items-center bg-white border border-gray-100 shadow-sm">
-                          <div className={cn("p-2 transition-all cursor-pointer hover:bg-muted/50 w-full rounded-lg", isSelected(item.id) ? "bg-blue-50 dark:bg-blue-900/20" : "")} onClick={() => toggleItem(item.id)}>
+                          <div 
+                            className={cn(
+                              "p-2 transition-all cursor-pointer hover:bg-muted/50 w-full rounded-lg", 
+                              isSelected(item.id) ? "bg-blue-50 dark:bg-blue-900/20" : ""
+                            )} 
+                            onClick={() => toggleItem(item.id)}
+                          >
                             <div className="flex gap-3">
-                              <div className={cn("w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors", isSelected(item.id) ? "bg-blue-500" : "border-2 border-muted-foreground/30")}>
+                              <div className={cn(
+                                "w-5 h-5 rounded-full mt-1.5 flex-shrink-0 flex items-center justify-center transition-colors", 
+                                isSelected(item.id) ? "bg-blue-500" : "border-2 border-muted-foreground/30"
+                              )}>
                                 {isSelected(item.id) && <Check className="h-3 w-3 text-white" />}
                               </div>
                               
@@ -262,32 +317,40 @@ export function StudentSupplementDialog({
                                 <div className="flex gap-4 mt-1">
                                   <div className="text-xs flex items-center gap-1">
                                     <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage)}</span>
+                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage || "")}</span>
                                   </div>
                                   <div className="text-xs flex items-center gap-1">
                                     <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing}</span>
+                                    <span className="text-muted-foreground">{item.timing || ""}</span>
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </motion.div>)}
-                  </div>}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </TabsContent>
           </div>
           
           <div className="border-t p-4 mt-auto bg-muted/20 shrink-0 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <motion.div initial={{
-              scale: 0.9,
-              opacity: 0
-            }} animate={{
-              scale: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0.9,
-              opacity: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0
-            }} className={cn("px-3 py-1.5 rounded-full text-xs font-medium text-white flex items-center gap-1.5", activeTab === "supplements" ? "bg-gradient-to-r from-violet-500 to-purple-500" : "bg-gradient-to-r from-blue-500 to-indigo-500")}>
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ 
+                  scale: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0.9,
+                  opacity: selectedSupplements.length + selectedVitamins.length > 0 ? 1 : 0
+                }} 
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-xs font-medium text-white flex items-center gap-1.5", 
+                  activeTab === "supplements" 
+                    ? "bg-gradient-to-r from-violet-500 to-purple-500" 
+                    : "bg-gradient-to-r from-blue-500 to-indigo-500"
+                )}
+              >
                 <Plus className="h-3.5 w-3.5" />
                 {toPersianNumbers(activeTab === "supplements" ? selectedSupplements.length : selectedVitamins.length)} {activeTab === "supplements" ? "مکمل" : "ویتامین"} انتخاب شده
               </motion.div>
@@ -297,7 +360,16 @@ export function StudentSupplementDialog({
                 <X className="h-4 w-4" />
                 انصراف
               </Button>
-              <Button onClick={handleSave} className={cn("gap-2 text-white border-0", activeTab === "supplements" ? "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700" : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700")} disabled={activeTab === "supplements" ? selectedSupplements.length === 0 : selectedVitamins.length === 0}>
+              <Button 
+                onClick={handleSave} 
+                className={cn(
+                  "gap-2 text-white border-0", 
+                  activeTab === "supplements" 
+                    ? "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700" 
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                )} 
+                disabled={activeTab === "supplements" ? selectedSupplements.length === 0 : selectedVitamins.length === 0}
+              >
                 <Save className="h-4 w-4" />
                 ذخیره
               </Button>

@@ -65,14 +65,19 @@ const SupplementsPage = () => {
         const savedSupplements = localStorage.getItem('supplements');
         const savedCategories = localStorage.getItem('supplementCategories');
 
+        console.log("Loaded supplements from localStorage:", savedSupplements);
+        console.log("Loaded categories from localStorage:", savedCategories);
+
         if (savedSupplements) {
           const parsedSupplements = JSON.parse(savedSupplements);
           setSupplements(parsedSupplements);
+          console.log("Parsed supplements:", parsedSupplements);
         }
 
         if (savedCategories) {
           const parsedCategories = JSON.parse(savedCategories);
           setCategories(parsedCategories);
+          console.log("Parsed categories:", parsedCategories);
           
           const relevantCategories = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
           if (relevantCategories.length > 0) {
@@ -94,7 +99,7 @@ const SupplementsPage = () => {
     };
 
     loadData();
-  }, [activeTab]);
+  }, [activeTab, toast]);
 
   useEffect(() => {
     localStorage.setItem('supplements', JSON.stringify(supplements));
@@ -179,12 +184,24 @@ const SupplementsPage = () => {
     setCategoryDialogOpen(false);
   };
 
+  // فیلتر کردن مکمل‌ها بر اساس نوع (مکمل یا ویتامین) و دسته‌بندی انتخاب شده
   const filteredSupplements = supplements.filter((s) => {
     const typeMatch = s.type === activeTab;
-    const categoryMatch = !selectedCategory || s.category === selectedCategory;
-    return typeMatch && categoryMatch;
+    
+    // اگر هیچ دسته‌بندی انتخاب نشده، همه مکمل‌های مربوط به تب فعال را نمایش بده
+    if (!selectedCategory) {
+      return typeMatch;
+    }
+    
+    // در غیر این صورت، فقط مکمل‌های مربوط به دسته‌بندی انتخاب شده را نمایش بده
+    return typeMatch && s.category === selectedCategory;
   });
 
+  console.log("Filtered supplements:", filteredSupplements);
+  console.log("Active tab:", activeTab);
+  console.log("Selected category:", selectedCategory);
+
+  // دسته‌بندی‌های مرتبط با تب فعال (مکمل یا ویتامین)
   const relevantCategories = categories.filter(c => c.type === activeTab);
 
   return (
