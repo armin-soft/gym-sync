@@ -73,12 +73,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       localStorage.setItem("rememberMeExpiry", expiryDate.toString());
     }
 
-    // Show success notification
-    const profile = JSON.parse(localStorage.getItem('trainerProfile') || '{}');
-    successToast(
-      "ورود موفقیت‌آمیز",
-      `${profile.name || 'کاربر'} عزیز، خوش آمدید`
-    );
+    // نمایش پیغام موفقیت در کامپوننت LoginForm انجام می‌شود، اینجا نیازی به تکرار نیست
   };
 
   // If still loading, show the loading screen
