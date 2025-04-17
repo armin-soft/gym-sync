@@ -1,3 +1,4 @@
+
 import { toPersianNumbers } from './numbers';
 
 function getPersianMonth(month: number): string {
@@ -14,10 +15,7 @@ function getPersianMonth(month: number): string {
 // Utility function to convert Gregorian to Jalali (Persian) calendar
 function gregorianToJalali(year: number, month: number, day: number): { jYear: number, jMonth: number, jDay: number } {
   const persianMonthOffset = 621;
-  let jYear = year - persianMonthOffset;
-  let jMonth = month;
-  let jDay = day;
-
+  
   const g_days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   const j_days_in_month = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30];
 
@@ -42,22 +40,27 @@ function gregorianToJalali(year: number, month: number, day: number): { jYear: n
   let j_np = Math.floor(j_days / 12053);
   j_days %= 12053;
 
-  let jYear = 979 + 33 * j_np + 4 * Math.floor(j_days / 1461);
+  let jalaliYear = 979 + 33 * j_np + 4 * Math.floor(j_days / 1461);
   j_days %= 1461;
 
   if (j_days >= 366) {
-    jYear += Math.floor((j_days - 366) / 365);
+    jalaliYear += Math.floor((j_days - 366) / 365);
     j_days = (j_days - 366) % 365;
   }
 
+  let jalaliMonth = 0;
   for (let i = 0; i < 11 && j_days >= j_days_in_month[i]; ++i) {
     j_days -= j_days_in_month[i];
+    jalaliMonth++;
   }
+  jalaliMonth++;
+
+  let jalaliDay = j_days + 1;
 
   return {
-    jYear: jYear,
-    jMonth: (j_days_in_month.findIndex((d, index) => j_days < d) + 1),
-    jDay: j_days + 1
+    jYear: jalaliYear,
+    jMonth: jalaliMonth,
+    jDay: jalaliDay
   };
 }
 
