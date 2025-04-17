@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,17 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
@@ -55,7 +64,6 @@ const BackupPage = () => {
   const [selectedBackupFormat, setSelectedBackupFormat] = useState("json");
   const [backupNote, setBackupNote] = useState("");
 
-  // List of all localStorage keys we want to backup
   const dataKeys = [
     'students',
     'exercises',
@@ -69,7 +77,6 @@ const BackupPage = () => {
     'prevMonthSupplements'
   ];
 
-  // Generate mock backup history on component mount
   useEffect(() => {
     const mockHistory = [
       { date: "۱۴۰۴/۰۱/۲۵ - ۱۵:۳۰", size: "۲۵۰ کیلوبایت" },
@@ -85,7 +92,6 @@ const BackupPage = () => {
       const backupData: Record<string, any> = {};
       const stats: Record<string, number> = {};
       
-      // Add metadata
       backupData["__metadata"] = {
         createdAt: new Date().toISOString(),
         note: backupNote,
@@ -94,7 +100,6 @@ const BackupPage = () => {
         encrypted: backupEncryption
       };
       
-      // Collect all data from localStorage
       dataKeys.forEach(key => {
         const data = localStorage.getItem(key);
         if (data) {
@@ -102,7 +107,6 @@ const BackupPage = () => {
             const parsedData = JSON.parse(data);
             backupData[key] = parsedData;
             
-            // Calculate stats for arrays
             if (Array.isArray(parsedData)) {
               stats[key] = parsedData.length;
             } else {
@@ -121,16 +125,12 @@ const BackupPage = () => {
       
       let backupString = JSON.stringify(backupData, null, 2);
       
-      // In real implementation, encryption and compression would be handled here
       if (backupEncryption && encryptionKey) {
-        // Simulating encryption (In a real app, use a proper encryption library)
         console.log("Encrypting backup with key:", encryptionKey);
       }
       
-      // Create filename with Persian date format
       const filename = `backup_${formatPersianDateForFilename()}.${selectedBackupFormat}`;
       
-      // Create download file
       const blob = new Blob([backupString], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -144,14 +144,12 @@ const BackupPage = () => {
       setBackupStats(stats);
       setIsLoading(false);
       
-      // Update backup history
       const newBackup = {
         date: new Date().toLocaleDateString('fa-IR') + " - " + new Date().toLocaleTimeString('fa-IR'),
         size: Math.round(backupString.length / 1024) + " کیلوبایت"
       };
       setBackupHistory(prev => [newBackup, ...prev]);
 
-      // Clear backup note
       setBackupNote("");
       
       toast({
@@ -184,9 +182,7 @@ const BackupPage = () => {
         const content = e.target?.result as string;
         let backupData;
         
-        // Handle encrypted backups in a real implementation
         if (backupEncryption && encryptionKey) {
-          // Decrypt would be implemented here
           console.log("Decrypting backup with key:", encryptionKey);
           backupData = JSON.parse(content);
         } else {
@@ -195,21 +191,17 @@ const BackupPage = () => {
         
         const stats: Record<string, number> = {};
         
-        // Verify backup file structure
         if (!backupData || typeof backupData !== 'object') {
           throw new Error("فایل پشتیبان معتبر نیست");
         }
         
-        // Restore data to localStorage
         dataKeys.forEach(key => {
           if (key in backupData) {
             const dataToStore = backupData[key];
             
-            // Skip null values (missing data)
             if (dataToStore !== null) {
               localStorage.setItem(key, JSON.stringify(dataToStore));
               
-              // Calculate stats for arrays
               if (Array.isArray(dataToStore)) {
                 stats[key] = dataToStore.length;
               } else {
@@ -221,7 +213,6 @@ const BackupPage = () => {
           }
         });
         
-        // Trigger storage event for components to reload
         window.dispatchEvent(new Event('storage'));
         
         setRestoreStats(stats);
@@ -347,10 +338,8 @@ const BackupPage = () => {
               </TabsTrigger>
             </TabsList>
 
-            {/* Backup Tab */}
             <TabsContent value="backup" className="space-y-6 h-full">
               <div className="grid md:grid-cols-2 gap-6">
-                {/* Backup Info Card */}
                 <Card className="p-6 overflow-hidden relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/80 via-white to-blue-50/80 dark:from-indigo-950/50 dark:via-gray-900 dark:to-blue-950/50 -z-10" />
                   <div className="absolute inset-0 bg-[url('/Assets/Image/Pattern.svg')] opacity-10 -z-10" />
@@ -498,7 +487,6 @@ const BackupPage = () => {
                   </div>
                 </Card>
                 
-                {/* Backup Info Cards */}
                 <div className="space-y-6">
                   <Card className="p-6 overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-50/80 via-white to-pink-50/80 dark:from-purple-950/50 dark:via-gray-900 dark:to-pink-950/50 -z-10" />
@@ -594,7 +582,6 @@ const BackupPage = () => {
               </div>
             </TabsContent>
 
-            {/* Restore Tab */}
             <TabsContent value="restore" className="space-y-6 h-full">
               <Card className="p-6 overflow-hidden relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/80 dark:from-indigo-950/50 dark:via-gray-900 dark:to-purple-950/50 -z-10" />
@@ -755,7 +742,6 @@ const BackupPage = () => {
               </Card>
             </TabsContent>
 
-            {/* History Tab */}
             <TabsContent value="history" className="h-full">
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -812,7 +798,6 @@ const BackupPage = () => {
               </Card>
             </TabsContent>
 
-            {/* Settings Tab */}
             <TabsContent value="settings" className="h-full">
               <Card className="p-6">
                 <h3 className="text-lg font-semibold flex items-center gap-2 mb-6">
