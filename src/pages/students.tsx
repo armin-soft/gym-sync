@@ -15,15 +15,17 @@ import { Card } from "@/components/ui/card";
 import { StudentSearch } from "@/components/students/search-sort/StudentSearch";
 import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { TabsList, TabsTrigger, Tabs, TabsContent } from "@/components/ui/tabs";
-import { UserRound, History, FilterX } from "lucide-react";
+import { UserRound, History, FilterX, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   
   const {
     students,
@@ -34,10 +36,27 @@ const StudentsPage = () => {
     handleSave,
     handleSaveExercises,
     handleSaveDiet,
-    handleSaveSupplements
+    handleSaveSupplements,
+    generateMockData
   } = useStudents();
   
   const { historyEntries, addHistoryEntry } = useStudentHistory();
+
+  // Check if data is empty and show a notification
+  useEffect(() => {
+    const isEmpty = 
+      (exercises.length === 0 || supplements.length === 0 || meals.length === 0) && 
+      localStorage.getItem('dataNotificationShown') !== 'true';
+    
+    if (isEmpty) {
+      toast({
+        title: "داده‌های نمایشی وجود ندارد",
+        description: "برای نمایش بهتر برنامه می‌توانید داده‌های نمایشی را ایجاد کنید.",
+        duration: 7000,
+      });
+      localStorage.setItem('dataNotificationShown', 'true');
+    }
+  }, [exercises.length, supplements.length, meals.length, toast]);
 
   // Refresh when localStorage changes
   useEffect(() => {
@@ -169,6 +188,27 @@ const StudentsPage = () => {
     <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
       <div className="w-full h-full flex flex-col mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
+        
+        {(exercises.length === 0 || supplements.length === 0 || meals.length === 0) && (
+          <div className="mb-6">
+            <Card className="backdrop-blur-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/30 p-4 flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-amber-800 dark:text-amber-400">داده‌های نمایشی</h3>
+                <p className="text-sm text-amber-700/80 dark:text-amber-300/80 mt-1">
+                  برای مشاهده بهتر قابلیت‌های برنامه، می‌توانید داده‌های نمایشی را ایجاد کنید.
+                </p>
+              </div>
+              <Button 
+                variant="default"
+                className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+                onClick={generateMockData}
+              >
+                <Database className="h-4 w-4" />
+                ایجاد داده‌های نمایشی
+              </Button>
+            </Card>
+          </div>
+        )}
         
         <StudentStatsCards students={students} />
         
