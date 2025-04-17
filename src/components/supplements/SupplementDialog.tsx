@@ -31,7 +31,6 @@ import {
   FlaskConical, 
   Pill, 
   ListTodo,
-  Clock, 
   Save,
   X
 } from "lucide-react";
@@ -39,8 +38,6 @@ import {
 const supplementFormSchema = z.object({
   name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
   category: z.string().min(1, "انتخاب دسته بندی الزامی است"),
-  dosage: z.string().min(1, "مقدار مصرف نمی تواند خالی باشد"),
-  timing: z.string().min(1, "زمان مصرف نمی تواند خالی باشد"),
 });
 
 interface SupplementDialogProps {
@@ -67,8 +64,6 @@ export const SupplementDialog = ({
     defaultValues: defaultValues || {
       name: "",
       category: "",
-      dosage: "",
-      timing: "",
     },
   });
 
@@ -77,8 +72,6 @@ export const SupplementDialog = ({
       form.reset({
         name: "",
         category: "",
-        dosage: "",
-        timing: "",
       });
     } else if (defaultValues) {
       form.reset(defaultValues);
@@ -88,13 +81,9 @@ export const SupplementDialog = ({
   const placeholders = {
     supplement: {
       name: "نام مکمل را وارد کنید (مثال: کراتین مونوهیدرات)",
-      dosage: "مقدار مصرف را وارد کنید (مثال: ۵ گرم)",
-      timing: "زمان مصرف را وارد کنید (مثال: قبل و بعد از تمرین)",
     },
     vitamin: {
       name: "نام ویتامین را وارد کنید (مثال: ویتامین D3)",
-      dosage: "مقدار مصرف را وارد کنید (مثال: ۱۰۰۰ واحد)",
-      timing: "زمان مصرف را وارد کنید (مثال: صبح با صبحانه)",
     }
   };
 
@@ -173,50 +162,6 @@ export const SupplementDialog = ({
                 </FormItem>
               )}
             />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="dosage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-purple-500" />
-                      مقدار مصرف
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder={currentPlaceholders.dosage}
-                        className="border-purple-200 focus-visible:ring-purple-500"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="timing"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-purple-500" />
-                      زمان مصرف
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder={currentPlaceholders.timing}
-                        className="border-purple-200 focus-visible:ring-purple-500"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
             <div className="flex justify-end gap-2">
               <Button

@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Edit, Trash2, Info, Clock, Weight, FileText } from "lucide-react";
+import { Edit, Trash2, Info, FileText } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -105,14 +105,6 @@ export const SupplementList = ({
                 </div>
 
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Weight className="h-4 w-4 text-purple-500 shrink-0" />
-                    <span className="line-clamp-1">مقدار مصرف: {toPersianNumbers(supplement.dosage)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Clock className="h-4 w-4 text-purple-500 shrink-0" />
-                    <span className="line-clamp-1">زمان مصرف: {supplement.timing}</span>
-                  </div>
                   {supplement.description && (
                     <div className="flex items-start gap-2 text-gray-600">
                       <FileText className="h-4 w-4 text-purple-500 shrink-0 mt-1" />

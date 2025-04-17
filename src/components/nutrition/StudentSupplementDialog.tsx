@@ -84,9 +84,7 @@ export function StudentSupplementDialog({
     if (searchQuery.trim() !== "") {
       filtered = filtered.filter(item => 
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase())) || 
-        (item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase())) || 
-        (item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase()))
+        (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
     
@@ -246,17 +244,6 @@ export function StudentSupplementDialog({
                                     </span>
                                   </div>
                                 </div>
-                                
-                                <div className="flex gap-4 mt-1">
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage || "")}</span>
-                                  </div>
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing || ""}</span>
-                                  </div>
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -311,17 +298,6 @@ export function StudentSupplementDialog({
                                     <span className="text-xs px-2 py-0.5 rounded-full border bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200 dark:border-blue-800">
                                       {item.category}
                                     </span>
-                                  </div>
-                                </div>
-                                
-                                <div className="flex gap-4 mt-1">
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">دوز مصرف:</span>
-                                    <span className="text-muted-foreground">{toPersianNumbers(item.dosage || "")}</span>
-                                  </div>
-                                  <div className="text-xs flex items-center gap-1">
-                                    <span className="font-medium text-foreground">زمان مصرف:</span>
-                                    <span className="text-muted-foreground">{item.timing || ""}</span>
                                   </div>
                                 </div>
                               </div>

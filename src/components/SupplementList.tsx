@@ -9,10 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash2, Pill, Clock, Layers } from "lucide-react";
+import { Edit, Trash2, Pill, Layers } from "lucide-react";
 import { Supplement } from "@/types/supplement";
 import { Badge } from "@/components/ui/badge";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +30,6 @@ export const SupplementList = ({ supplements, onEdit, onDelete }: SupplementList
             <TableRow>
               <TableHead className="w-[40%] text-right">نام مکمل</TableHead>
               <TableHead className="text-right">دسته‌بندی</TableHead>
-              <TableHead className="text-right">دوز مصرف</TableHead>
-              <TableHead className="text-right">زمان مصرف</TableHead>
               <TableHead className="text-right">نوع</TableHead>
               <TableHead className="text-center">عملیات</TableHead>
             </TableRow>
@@ -40,7 +37,7 @@ export const SupplementList = ({ supplements, onEdit, onDelete }: SupplementList
           <TableBody>
             {supplements.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center">
+                <TableCell colSpan={4} className="h-32 text-center">
                   <div className="flex flex-col items-center justify-center text-muted-foreground">
                     <Pill className="h-8 w-8 mb-2 opacity-40" />
                     <p className="font-medium">هیچ موردی یافت نشد</p>
@@ -85,17 +82,6 @@ export const SupplementList = ({ supplements, onEdit, onDelete }: SupplementList
                     >
                       {supplement.category}
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-muted-foreground">{supplement.dosage}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span>{supplement.timing}</span>
-                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge 
