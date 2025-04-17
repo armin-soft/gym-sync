@@ -14,53 +14,46 @@ function getPersianMonth(month: number): string {
 
 // Utility function to convert Gregorian to Jalali (Persian) calendar
 function gregorianToJalali(year: number, month: number, day: number): { jYear: number, jMonth: number, jDay: number } {
-  const persianMonthOffset = 621;
+  // This algorithm is a standard conversion from Gregorian to Jalali (Persian) calendar
+  const gregorianMonths = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+  const gregorianLeapYears = year > 1600 ? 
+    Math.floor((year - 1600) / 4) - Math.floor((year - 1600) / 100) + Math.floor((year - 1600) / 400) : 
+    0;
+    
+  const gregorianLeapDays = year > 1583 ? gregorianLeapYears : 0;
+  const daysDiff = (365 * (year - 1600)) + gregorianLeapDays + gregorianMonths[month - 1] + day - 1;
   
-  const g_days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  const j_days_in_month = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30];
-
-  // Adjust for leap years
-  if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
-    g_days_in_month[1] = 29;
+  let jalaliYear, jalaliMonth, jalaliDay;
+  
+  if (daysDiff <= 79) {
+    jalaliYear = 982;
+    jalaliMonth = ((daysDiff + 7) / 31) + 1;
+    jalaliDay = ((daysDiff + 7) % 31) + 1;
+  } else {
+    jalaliYear = 983 + 33 * Math.floor(daysDiff / 12053);
+    let remaining = daysDiff % 12053;
+    
+    jalaliYear += 4 * Math.floor(remaining / 1461);
+    remaining %= 1461;
+    
+    if (remaining > 365) {
+      jalaliYear += Math.floor((remaining - 1) / 365);
+      remaining = (remaining - 1) % 365;
+    }
+    
+    if (remaining < 186) {
+      jalaliMonth = Math.floor(remaining / 31) + 1;
+      jalaliDay = (remaining % 31) + 1;
+    } else {
+      jalaliMonth = Math.floor((remaining - 186) / 30) + 7;
+      jalaliDay = ((remaining - 186) % 30) + 1;
+    }
   }
-
-  let gy = year - 1600;
-  let gm = month - 1;
-  let gd = day - 1;
-
-  let g_days = 365 * gy + Math.floor((gy + 3) / 4) - Math.floor((gy + 99) / 100) + Math.floor((gy + 399) / 400);
-
-  for (let i = 0; i < gm; ++i) {
-    g_days += g_days_in_month[i];
-  }
-  g_days += gd;
-
-  let j_days = g_days - 79;
-
-  let j_np = Math.floor(j_days / 12053);
-  j_days %= 12053;
-
-  let jalaliYear = 979 + 33 * j_np + 4 * Math.floor(j_days / 1461);
-  j_days %= 1461;
-
-  if (j_days >= 366) {
-    jalaliYear += Math.floor((j_days - 366) / 365);
-    j_days = (j_days - 366) % 365;
-  }
-
-  let jalaliMonth = 0;
-  for (let i = 0; i < 11 && j_days >= j_days_in_month[i]; ++i) {
-    j_days -= j_days_in_month[i];
-    jalaliMonth++;
-  }
-  jalaliMonth++;
-
-  let jalaliDay = j_days + 1;
-
+  
   return {
     jYear: jalaliYear,
-    jMonth: jalaliMonth,
-    jDay: jalaliDay
+    jMonth: Math.floor(jalaliMonth),
+    jDay: Math.floor(jalaliDay)
   };
 }
 
@@ -120,21 +113,14 @@ export function getCurrentPersianDate(withTime: boolean = false): string {
   const month = now.getMonth() + 1;
   const day = now.getDate();
   
-  // Calculate Persian year (simplified)
-  const isPreviousPersianYear = month <= 3;
-  const persianYear = year - 621 - (isPreviousPersianYear ? 1 : 0);
-  
-  // Convert month (simplified)
-  let persianMonth = month + 3;
-  if (persianMonth > 12) {
-    persianMonth -= 12;
-  }
+  // Convert to Persian date using our custom function
+  const { jYear, jMonth, jDay } = gregorianToJalali(year, month, day);
   
   // Get Persian month name
-  const persianMonthName = getPersianMonth(persianMonth);
+  const persianMonthName = getPersianMonth(jMonth);
   
   // Format date
-  let result = `${toPersianNumbers(day)} ${persianMonthName} ${toPersianNumbers(persianYear)}`;
+  let result = `${toPersianNumbers(jDay)} ${persianMonthName} ${toPersianNumbers(jYear)}`;
   
   // Add time if requested
   if (withTime) {
