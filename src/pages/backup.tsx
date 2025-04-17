@@ -7,15 +7,13 @@ import {
   Download, 
   Upload, 
   Database, 
-  ArrowDown, 
-  ArrowUp, 
   ShieldCheck, 
   AlertCircle,
   Check,
   X,
   FileJson,
   History,
-  Settings as SettingsIcon,
+  Settings,
   Calendar,
   RefreshCcw,
   Clock,
@@ -441,7 +439,7 @@ const BackupPage = () => {
               تاریخچه
             </TabsTrigger>
             <TabsTrigger value="settings" className="data-[state=active]:bg-background rounded-lg flex gap-2">
-              <SettingsIcon className="h-4 w-4" />
+              <Settings className="h-4 w-4" />
               تنظیمات
             </TabsTrigger>
           </TabsList>
@@ -998,7 +996,7 @@ const BackupPage = () => {
               <div className="flex flex-col space-y-6 h-full">
                 <div className="flex items-center gap-4">
                   <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-xl">
-                    <SettingsIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                    <Settings className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">تنظیمات پشتیبان‌گیری</h3>
