@@ -1,0 +1,24 @@
+
+@layer base {
+  /* تنظیمات دکمه‌ها */
+  button {
+    @apply text-sm md:text-base rounded-md transition-all duration-200;
+  }
+}
+
+@layer components {
+  /* دکمه‌های پاسخگو */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md
+           transition-colors duration-200 ease-in-out
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .btn-secondary {
+    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+}

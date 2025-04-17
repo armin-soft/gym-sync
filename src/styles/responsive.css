@@ -1,0 +1,15 @@
+
+@layer components {
+  /* کامپوننت‌های پاسخگو specifically for responsive design */
+  .responsive-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .responsive-grid {
+    @apply grid gap-4 sm:gap-6 lg:gap-8;
+  }
+
+  .responsive-flex {
+    @apply flex flex-col sm:flex-row;
+  }
+}

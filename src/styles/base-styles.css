@@ -1,0 +1,20 @@
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body, #root {
+    @apply h-full w-full overflow-hidden;
+  }
+  
+  html {
+    font-family: "Vazirmatn", sans-serif;
+    direction: rtl;
+    @apply text-base antialiased;
+  }
+  
+  body {
+    @apply bg-background text-foreground min-h-screen h-full;
+  }
+}
