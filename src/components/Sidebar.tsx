@@ -13,7 +13,6 @@ import {
   LineChart,
   HelpCircle,
   Database,
-  LogOut,
   ChevronLeft,
   Settings,
   Menu
@@ -220,15 +219,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     <Settings className="h-3.5 w-3.5 ml-1.5" />
                     پروفایل
                   </Link>
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="rounded-full text-xs bg-white/10 border-white/20 hover:bg-white/20 text-white"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-3.5 w-3.5 ml-1.5" />
-                  خروج
                 </Button>
               </div>
             </div>
