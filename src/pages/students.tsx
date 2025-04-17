@@ -17,11 +17,13 @@ import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { TabsList, TabsTrigger, Tabs, TabsContent } from "@/components/ui/tabs";
 import { UserRound, History, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
+  const isMobile = useIsMobile();
   
   const {
     students,
