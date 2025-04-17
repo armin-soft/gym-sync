@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Link, useLocation } from "react-router-dom";
@@ -17,6 +18,7 @@ import {
   Settings,
   Menu
 } from "lucide-react";
+import manifestData from "@/Manifest.json";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -334,7 +336,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{gymName}</span>
                 <div className="text-xs text-muted-foreground">
-                  <span>نسخه ۱.۰.۰</span>
+                  <span>نسخه {toPersianNumbers(manifestData.version || "1.0.0")}</span>
                 </div>
               </div>
             </div>
