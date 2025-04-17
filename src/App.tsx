@@ -1,5 +1,5 @@
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/AuthWrapper";
@@ -61,24 +61,26 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthWrapper>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/Coach-Profile" element={<TrainerProfile />} />
-            <Route path="/Students" element={<Students />} />
-            <Route path="/Exercise-Movements" element={<ExerciseMovements />} />
-            <Route path="/Diet-Plan" element={<DietPlan />} />
-            <Route path="/Supplements-Vitamins" element={<SupplementsVitamins />} />
-            <Route path="/Reports" element={<Reports />} />
-            <Route path="/Backup-Restore" element={<BackupRestore />} />
-            <Route path="/About" element={<About />} />
-            {/* Redirect all non-matching routes to the dashboard */}
-            <Route path="*" element={<Navigate replace to="/" />} />
-          </Route>
-        </Routes>
-      </AuthWrapper>
-      <Toaster />
+      <BrowserRouter basename="">
+        <AuthWrapper>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/Coach-Profile" element={<TrainerProfile />} />
+              <Route path="/Students" element={<Students />} />
+              <Route path="/Exercise-Movements" element={<ExerciseMovements />} />
+              <Route path="/Diet-Plan" element={<DietPlan />} />
+              <Route path="/Supplements-Vitamins" element={<SupplementsVitamins />} />
+              <Route path="/Reports" element={<Reports />} />
+              <Route path="/Backup-Restore" element={<BackupRestore />} />
+              <Route path="/About" element={<About />} />
+              {/* Redirect all non-matching routes to the dashboard */}
+              <Route path="*" element={<Navigate replace to="/" />} />
+            </Route>
+          </Routes>
+        </AuthWrapper>
+        <Toaster />
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }

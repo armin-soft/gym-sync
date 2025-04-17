@@ -97,28 +97,14 @@ export const useStudentDialogHandlers = ({
   };
   
   const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}): boolean => {
-    if (!selectedStudentForSupplement) {
-      console.error("No student selected for supplements");
-      return false;
-    }
+    if (!selectedStudentForSupplement) return false;
     
     try {
       console.log("Saving supplements and vitamins for student:", selectedStudentForSupplement.id);
       console.log("Supplements to save:", data.supplements);
       console.log("Vitamins to save:", data.vitamins);
       
-      // Make sure the arrays are defined
-      const supplementsToSave = Array.isArray(data.supplements) ? data.supplements : [];
-      const vitaminsToSave = Array.isArray(data.vitamins) ? data.vitamins : [];
-      
-      const success = onSaveSupplements(
-        { 
-          supplements: supplementsToSave, 
-          vitamins: vitaminsToSave 
-        }, 
-        selectedStudentForSupplement.id
-      );
-      
+      const success = onSaveSupplements(data, selectedStudentForSupplement.id);
       if (success) {
         setIsSupplementDialogOpen(false);
       }

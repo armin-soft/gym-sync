@@ -3,7 +3,6 @@ import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StudentMealListWrapperProps {
   children: React.ReactNode;
@@ -17,14 +16,11 @@ interface StudentMealListWrapperProps {
 const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
   children,
   className = "",
-  maxHeight,
+  maxHeight = "calc(100vh - 280px)",
   toggleSortOrder,
   sortOrder = "asc",
   showControls = false
 }) => {
-  const isMobile = useIsMobile();
-  const calculatedMaxHeight = maxHeight || (isMobile ? "calc(100vh - 280px)" : "calc(100vh - 220px)");
-  
   return (
     <div className={cn("border-0 rounded-none bg-white/95 backdrop-blur-sm transition-all text-gray-900 dark:text-white overflow-hidden h-full w-full", className)}>
       {showControls && (
@@ -34,7 +30,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
       )}
       <ScrollArea 
         className="w-full h-full" 
-        style={{ maxHeight: calculatedMaxHeight }}
+        style={{ maxHeight }}
         orientation="both"
       >
         <motion.div 
