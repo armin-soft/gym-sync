@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { StudentSearchSort } from "@/components/students/StudentSearchSort";
 import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
@@ -15,7 +16,6 @@ import { Plus, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { filterStudents, sortStudents } from "@/utils/studentUtils";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Students = () => {
   const { toast } = useToast();
