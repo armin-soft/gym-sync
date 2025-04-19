@@ -3,17 +3,15 @@ import { useStudentManagement } from './useStudentManagement';
 import { useStudentExercises } from './useStudentExercises';
 import { useStudentDiet } from './useStudentDiet';
 import { useStudentSupplements } from './useStudentSupplements';
+import { useStudentData } from '@/hooks/useStudentData';
 
 export const useStudents = () => {
+  const { students, setStudents } = useStudentData();
+  
   const { 
-    students, 
-    exercises, 
-    meals, 
-    supplements, 
-    setStudents, 
     handleDelete, 
     handleSave 
-  } = useStudentManagement();
+  } = useStudentManagement(() => {});
 
   const { handleSaveExercises } = useStudentExercises(students, setStudents);
   const { handleSaveDiet } = useStudentDiet(students, setStudents);
@@ -21,9 +19,9 @@ export const useStudents = () => {
 
   return {
     students,
-    exercises,
-    meals,
-    supplements,
+    exercises: [],
+    meals: [],
+    supplements: [],
     handleDelete,
     handleSave,
     handleSaveExercises,
