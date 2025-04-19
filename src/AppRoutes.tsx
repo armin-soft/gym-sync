@@ -13,16 +13,14 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
-      <Route path="/students/*" element={<Students />} />
+      <Route path="/students" element={<Students />} />
       <Route path="/exercises/*" element={<Exercises />} />
       <Route path="/diet/*" element={<Diet />} />
       <Route path="/supplements/*" element={<Supplements />} />
       <Route path="/trainer/*" element={<Trainer />} />
       <Route path="/reports/*" element={<Reports />} />
-      {/* About route has been removed */}
     </Routes>
   );
 };
 
 export default AppRoutes;
-

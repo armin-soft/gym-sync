@@ -1,11 +1,12 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+
+import React, { useRef, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentHistory } from "@/components/students/StudentHistory";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
-import { useStudents } from "@/hooks/students"; 
+import { useStudents } from "@/hooks/useStudents"; 
 import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
@@ -74,6 +75,20 @@ const StudentsPage = () => {
     return result;
   }, [handleSave, addHistoryEntry, triggerRefresh]);
 
+  const handleDeleteWithHistory = useCallback((studentId: number) => {
+    const student = students.find(s => s.id === studentId);
+    if (student) {
+      addHistoryEntry(
+        student, 
+        'edit',
+        `شاگرد ${student.name} حذف شد`
+      );
+    }
+    
+    handleDelete(studentId);
+    triggerRefresh();
+  }, [handleDelete, students, addHistoryEntry, triggerRefresh]);
+
   const handleSaveExercisesWithHistory = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
     const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
     
@@ -131,27 +146,10 @@ const StudentsPage = () => {
     
     return result;
   }, [handleSaveSupplements, students, addHistoryEntry, triggerRefresh]);
-  
-  const handleDeleteWithHistory = useCallback((studentId: number) => {
-    const student = students.find(s => s.id === studentId);
-    if (student) {
-      addHistoryEntry(
-        student, 
-        'edit',
-        `شاگرد ${student.name} حذف شد`
-      );
-    }
-    
-    handleDelete(studentId);
-    triggerRefresh();
-  }, [handleDelete, students, addHistoryEntry, triggerRefresh]);
 
   const {
     searchQuery,
     setSearchQuery,
-    sortOrder,
-    sortField,
-    toggleSort,
     sortedAndFilteredStudents,
     handleClearSearch
   } = useStudentFiltering(students);
@@ -220,12 +218,12 @@ const StudentsPage = () => {
                   sortedAndFilteredStudents={sortedAndFilteredStudents}
                   searchQuery={searchQuery}
                   refreshTrigger={refreshTrigger}
-                  onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
+                  onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
                   onDelete={handleDeleteWithHistory}
-                  onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
-                  onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
-                  onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
-                  onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
+                  onAddExercise={(student) => dialogManagerRef.current?.handleAddExercise(student)}
+                  onAddDiet={(student) => dialogManagerRef.current?.handleAddDiet(student)}
+                  onAddSupplement={(student) => dialogManagerRef.current?.handleAddSupplement(student)}
+                  onDownload={(student) => dialogManagerRef.current?.handleDownload(student)}
                   onAddStudent={() => dialogManagerRef.current?.handleAdd()}
                   onClearSearch={handleClearSearch}
                 />
