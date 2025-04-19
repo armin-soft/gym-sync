@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -16,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { getStudentProgress, getProgressColor } from "@/utils/studentUtils";
 import { Edit, Trash2, MoreVertical, User, Clipboard, Dumbbell, 
   UtensilsCrossed, Pill, Download, Filter, ArrowUpRight, 
   Search, Users, EyeOff, UserPlus, SlidersHorizontal
