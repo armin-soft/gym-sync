@@ -3,10 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { StudentSearchSort } from "@/components/students/StudentSearchSort";
-import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
-import { StudentCard } from "@/components/students/StudentCard";
 import { StudentTable } from "@/components/students/StudentTable";
 import { EmptyStudentState } from "@/components/students/EmptyStudentState";
 import { Student } from "@/components/students/StudentTypes";
@@ -22,7 +20,6 @@ const Students = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -332,8 +329,6 @@ const Students = () => {
             فیلترها
           </Button>
           
-          <StudentsViewToggle viewMode={viewMode} onChange={setViewMode} />
-          
           <Button
             onClick={handleAdd}
             className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
@@ -400,47 +395,22 @@ const Students = () => {
         ) : (
           <div className="pr-2">
             <AnimatePresence mode="wait">
-              {viewMode === "grid" ? (
-                <motion.div 
-                  key="grid"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                  {sortedStudents.map(student => (
-                    <StudentCard 
-                      key={student.id}
-                      student={student}
-                      onEdit={() => handleEdit(student)}
-                      onDelete={() => handleDelete(student.id)}
-                      onAddExercise={() => handleAddExercise(student)}
-                      onAddDiet={() => handleAddDiet(student)}
-                      onAddSupplement={() => handleAddSupplement(student)}
-                      isProfileComplete={isProfileComplete}
-                    />
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div 
-                  key="table"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <StudentTable 
-                    students={sortedStudents}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    onAddExercise={handleAddExercise}
-                    onAddDiet={handleAddDiet}
-                    onAddSupplement={handleAddSupplement}
-                    isProfileComplete={isProfileComplete}
-                  />
-                </motion.div>
-              )}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <StudentTable 
+                  students={sortedStudents}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onAddExercise={handleAddExercise}
+                  onAddDiet={handleAddDiet}
+                  onAddSupplement={handleAddSupplement}
+                  isProfileComplete={isProfileComplete}
+                />
+              </motion.div>
             </AnimatePresence>
           </div>
         )}
