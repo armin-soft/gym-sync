@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
@@ -7,59 +7,22 @@ import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
 import { StudentTable } from "@/components/students/StudentTable";
 import { EmptyStudentState } from "@/components/students/EmptyStudentState";
-import { Student } from "@/components/students/StudentTypes";
 import { StudentDialogManagerWrapper } from "@/components/students/StudentDialogManagerWrapper";
-import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Plus, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Student } from "@/components/students/StudentTypes";
 import { Card } from "@/components/ui/card";
 import { filterStudents, sortStudents } from "@/utils/studentUtils";
+import { useStudentData } from "@/hooks/useStudentData";
+import { StudentHeader } from "@/components/students/StudentHeader";
 
 const Students = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [students, setStudents] = useState<Student[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
-  
   const dialogRef = useRef<any>(null);
-
-  useEffect(() => {
-    const savedProfile = localStorage.getItem('trainerProfile');
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        setIsProfileComplete(Boolean(profile.name && profile.gymName && profile.phone));
-      } catch (error) {
-        console.error('Error checking profile completeness:', error);
-      }
-    }
-    
-    const savedStudents = localStorage.getItem('students');
-    
-    if (savedStudents) {
-      try {
-        const parsedStudents = JSON.parse(savedStudents);
-        setStudents(parsedStudents);
-      } catch (error) {
-        console.error('Error loading students from localStorage:', error);
-        setStudents([]);
-      }
-    } else {
-      setStudents([]);
-    }
-    
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      localStorage.setItem('students', JSON.stringify(students));
-    }
-  }, [students, loading]);
+  
+  const { students, setStudents, loading, isProfileComplete } = useStudentData();
 
   const toggleSort = (field: "name" | "weight" | "height") => {
     if (sortField === field) {
@@ -305,39 +268,11 @@ const Students = () => {
 
   return (
     <div className="container px-0 md:px-4 flex flex-col h-[calc(100vh-4rem)]">
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
-      >
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">شاگردان</h1>
-          <p className="text-muted-foreground">
-            مدیریت و پیگیری پیشرفت شاگردان باگاه
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="lg:hidden"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            فیلترها
-          </Button>
-          
-          <Button
-            onClick={handleAdd}
-            className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
-          >
-            <Plus className="h-4 w-4" />
-            <span>افزودن شاگرد</span>
-          </Button>
-        </div>
-      </motion.div>
+      <StudentHeader 
+        onAddStudent={() => dialogRef.current?.handleAdd()}
+        showFilters={showFilters}
+        onToggleFilters={() => setShowFilters(!showFilters)}
+      />
       
       <AnimatePresence>
         {showFilters && (
@@ -383,13 +318,13 @@ const Students = () => {
         {students.length === 0 ? (
           <EmptyStudentState 
             isSearching={searchQuery.length > 0} 
-            onAddStudent={handleAdd} 
+            onAddStudent={() => dialogRef.current?.handleAdd()} 
             onClearSearch={() => setSearchQuery("")}
           />
         ) : filteredStudents.length === 0 ? (
           <EmptyStudentState 
             isSearching={true} 
-            onAddStudent={handleAdd} 
+            onAddStudent={() => dialogRef.current?.handleAdd()} 
             onClearSearch={() => setSearchQuery("")}
           />
         ) : (
