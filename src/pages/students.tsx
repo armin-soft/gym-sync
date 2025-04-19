@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
@@ -13,7 +12,6 @@ import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { Card } from "@/components/ui/card";
 import { StudentSearch } from "@/components/students/search-sort/StudentSearch";
-import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { TabsList, TabsTrigger, Tabs, TabsContent } from "@/components/ui/tabs";
 import { UserRound, History, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +19,6 @@ import { Button } from "@/components/ui/button";
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   
   const {
     students,
@@ -37,7 +34,6 @@ const StudentsPage = () => {
   
   const { historyEntries, addHistoryEntry } = useStudentHistory();
 
-  // Refresh when localStorage changes
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'students') {
@@ -49,14 +45,11 @@ const StudentsPage = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Refresh after save
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
-    // Simulate a storage event to refresh other tabs
     window.dispatchEvent(new StorageEvent('storage', { key: 'students' }));
   }, []);
 
-  // Enhanced save handlers with history tracking
   const handleSaveWithHistory = useCallback((data: any, selectedStudent?: Student) => {
     const result = handleSave(data, selectedStudent);
     
@@ -210,18 +203,12 @@ const StudentsPage = () => {
                   </div>
                 </Card>
               </motion.div>
-              
-              <StudentsViewToggle 
-                viewMode={viewMode} 
-                onChange={setViewMode} 
-              />
             </div>
           </div>
           
           <TabsContent value="all" className="flex-1 flex flex-col w-full">
             <AnimatePresence mode="wait">
               <motion.div
-                key={viewMode}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -241,7 +228,6 @@ const StudentsPage = () => {
                   onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
                   onAddStudent={() => dialogManagerRef.current?.handleAdd()}
                   onClearSearch={handleClearSearch}
-                  viewMode={viewMode}
                 />
               </motion.div>
             </AnimatePresence>

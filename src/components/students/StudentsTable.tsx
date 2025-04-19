@@ -1,3 +1,4 @@
+
 import { Student } from "./StudentTypes";
 import { StudentTableView } from "./table-view/StudentTableView";
 
@@ -14,7 +15,6 @@ interface StudentsTableProps {
   onDownload: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
-  viewMode: "table" | "grid";
   isProfileComplete?: boolean;
 }
 
@@ -29,14 +29,8 @@ export const StudentsTable = ({
   onAddSupplement,
   onAddStudent,
   onClearSearch,
-  viewMode,
   isProfileComplete = true,
 }: StudentsTableProps) => {
-  if (viewMode === "grid") {
-    // Grid view will be implemented in a separate component
-    return null;
-  }
-
   return (
     <StudentTableView
       students={students}
