@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { StudentExerciseDialog } from '@/components/exercises/StudentExerciseDialog';
+import StudentExerciseDialog from '@/components/exercises/StudentExerciseDialog';
 import { ExerciseTabContent } from '@/components/exercises/ExerciseTabContent';
 import { useStudents } from '@/hooks/useStudents';
 
