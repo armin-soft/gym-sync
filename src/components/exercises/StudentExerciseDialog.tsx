@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -7,13 +7,11 @@ import {
 } from "@/components/ui/dialog";
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
-import { ExerciseSearchFilters } from "./ExerciseSearchFilters";
-import ExerciseDayTabs from "./ExerciseDayTabs";
-import ExerciseDialogFooter from "./ExerciseDialogFooter";
-import ExerciseDialogHeader from "./ExerciseDialogHeader";
-import { AnimatePresence, motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import ExerciseDialogHeader from "./ExerciseDialogHeader";
+import ExerciseDialogFooter from "./ExerciseDialogFooter";
+import { ExerciseDialogContent } from "./dialogs/ExerciseDialogContent";
+import { useExerciseDialogState } from "./dialogs/use-exercise-dialog-state";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -39,6 +37,15 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay4 = [],
 }) => {
   const { toast } = useToast();
+  
+  const {
+    activeTab,
+    setActiveTab,
+    savedState,
+    setSavedState,
+    getActiveTabSelectedExercises
+  } = useExerciseDialogState(open, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4);
+
   const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
@@ -62,61 +69,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       return typesData ? JSON.parse(typesData) : [];
     },
   });
-
-  const [activeTab, setActiveTab] = useState<string>("day1");
-  
-  // Track if exercises have been saved for each day
-  const [savedState, setSavedState] = useState({
-    day1: false,
-    day2: false,
-    day3: false,
-    day4: false
-  });
-
-  // Auto-select category based on saved exercises
-  useEffect(() => {
-    if (open && !categoriesLoading && !exercisesLoading && categories.length > 0 && exercises.length > 0) {
-      // Get the active tab's selected exercises
-      let selectedExercises: number[] = [];
-      switch(activeTab) {
-        case "day1": selectedExercises = initialExercisesDay1; break;
-        case "day2": selectedExercises = initialExercisesDay2; break;
-        case "day3": selectedExercises = initialExercisesDay3; break;
-        case "day4": selectedExercises = initialExercisesDay4; break;
-        default: selectedExercises = initialExercises;
-      }
-      
-      // Find category of first selected exercise if there are any
-      if (selectedExercises.length > 0) {
-        const firstExerciseId = selectedExercises[0];
-        const firstExercise = exercises.find(ex => ex.id === firstExerciseId);
-        
-        if (firstExercise && firstExercise.categoryId) {
-          console.log("Auto-selecting category:", firstExercise.categoryId);
-          setSelectedCategoryId(firstExercise.categoryId);
-          
-          // Get exercise type for this category
-          const category = categories.find(cat => cat.id === firstExercise.categoryId);
-          if (category && category.type) {
-            console.log("Auto-selecting exercise type:", category.type);
-            setSelectedExerciseType(category.type);
-          }
-        }
-      }
-    }
-  }, [open, activeTab, categories, exercises, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, categoriesLoading, exercisesLoading]);
-
-  useEffect(() => {
-    // Reset saved state when dialog opens
-    if (open) {
-      setSavedState({
-        day1: false,
-        day2: false,
-        day3: false,
-        day4: false
-      });
-    }
-  }, [open]);
 
   const {
     selectedExercisesDay1,
@@ -151,25 +103,19 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     handleClearSearch,
   } = useExerciseFiltering(exercises, categories);
 
-  const getActiveTabSelectedExercises = () => {
-    switch(activeTab) {
-      case "day1": return selectedExercisesDay1;
-      case "day2": return selectedExercisesDay2;
-      case "day3": return selectedExercisesDay3;
-      case "day4": return selectedExercisesDay4;
-      default: return [];
-    }
-  };
-
   const handleSave = () => {
-    const selectedExercises = getActiveTabSelectedExercises();
+    const selectedExercises = getActiveTabSelectedExercises(
+      selectedExercisesDay1,
+      selectedExercisesDay2,
+      selectedExercisesDay3,
+      selectedExercisesDay4
+    );
     const dayNumber = parseInt(activeTab.replace("day", ""));
     
     try {
       const success = onSave(selectedExercises, dayNumber);
       
       if (success) {
-        // Update saved state for the current tab
         setSavedState(prev => ({
           ...prev,
           [activeTab]: true
@@ -182,13 +128,11 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                          dayNumber === 3 ? 'روز سوم' : 'روز چهارم'} با موفقیت ذخیره شدند`,
         });
         
-        // Automatically switch to the next day tab if not on day4
         if (activeTab !== "day4") {
           const nextTab = `day${dayNumber + 1}`;
           setActiveTab(nextTab);
         } else {
-          // If all days have been saved, close the dialog
-          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true; // day4 is saved now
+          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true;
           if (allSaved) {
             onOpenChange(false);
           }
@@ -206,10 +150,6 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
-    return onSave(exerciseIds, dayNumber);
-  };
-
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
 
   return (
@@ -217,62 +157,44 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
         <ExerciseDialogHeader studentName={studentName} />
 
-        {isLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <Loader2 className="h-12 w-12 text-primary animate-spin" />
-          </div>
-        ) : (
-          <AnimatePresence mode="wait">
-            <motion.div
-              initial={{ opacity: 0.5, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0.5, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-col flex-1 overflow-hidden"
-            >
-              <ExerciseSearchFilters
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                selectedExerciseType={selectedExerciseType}
-                setSelectedExerciseType={setSelectedExerciseType}
-                selectedCategoryId={selectedCategoryId}
-                setSelectedCategoryId={setSelectedCategoryId}
-                exerciseTypes={exerciseTypes}
-                categories={categories}
-                filteredCategories={filteredCategories}
-                handleClearSearch={handleClearSearch}
-                toggleSortOrder={toggleSortOrder}
-                sortOrder={sortOrder}
-              />
-
-              <ExerciseDayTabs 
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                selectedExercisesDay1={selectedExercisesDay1}
-                selectedExercisesDay2={selectedExercisesDay2}
-                selectedExercisesDay3={selectedExercisesDay3}
-                selectedExercisesDay4={selectedExercisesDay4}
-                toggleExerciseDay1={toggleExerciseDay1}
-                toggleExerciseDay2={toggleExerciseDay2}
-                toggleExerciseDay3={toggleExerciseDay3}
-                toggleExerciseDay4={toggleExerciseDay4}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-                filteredExercises={filteredExercises}
-                categories={categories}
-                handleClearSearch={handleClearSearch}
-                handleSaveExercises={handleSaveExercises}
-                selectedCategoryId={selectedCategoryId}
-                toggleSortOrder={toggleSortOrder}
-                sortOrder={sortOrder}
-              />
-            </motion.div>
-          </AnimatePresence>
-        )}
+        <ExerciseDialogContent
+          isLoading={isLoading}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedExerciseType={selectedExerciseType}
+          setSelectedExerciseType={setSelectedExerciseType}
+          selectedCategoryId={selectedCategoryId}
+          setSelectedCategoryId={setSelectedCategoryId}
+          exerciseTypes={exerciseTypes}
+          categories={categories}
+          filteredCategories={filteredCategories}
+          handleClearSearch={handleClearSearch}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          selectedExercisesDay1={selectedExercisesDay1}
+          selectedExercisesDay2={selectedExercisesDay2}
+          selectedExercisesDay3={selectedExercisesDay3}
+          selectedExercisesDay4={selectedExercisesDay4}
+          toggleExerciseDay1={toggleExerciseDay1}
+          toggleExerciseDay2={toggleExerciseDay2}
+          toggleExerciseDay3={toggleExerciseDay3}
+          toggleExerciseDay4={toggleExerciseDay4}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          filteredExercises={filteredExercises}
+          handleSaveExercises={onSave}
+        />
 
         <ExerciseDialogFooter
           activeTab={activeTab}
-          selectedExercisesCount={getActiveTabSelectedExercises().length}
+          selectedExercisesCount={getActiveTabSelectedExercises(
+            selectedExercisesDay1,
+            selectedExercisesDay2,
+            selectedExercisesDay3,
+            selectedExercisesDay4
+          ).length}
           onCancel={() => onOpenChange(false)}
           onSave={handleSave}
         />
