@@ -29,23 +29,23 @@ export const MainMenuGrid = () => {
       bgColor: "bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20"
     },
     { 
-      title: "مدیریت تمرین‌ها", 
+      title: "حرکات تمرینی", 
       icon: Dumbbell, 
-      href: '/exercise-management', 
+      href: '/Exercise-Movements', 
       color: "from-amber-600 to-amber-400",
       bgColor: "bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20"
     },
     { 
-      title: "مدیریت برنامه غذایی", 
+      title: "برنامه های غذایی", 
       icon: UtensilsCrossed, 
-      href: '/diet-management', 
+      href: '/Diet-Plan', 
       color: "from-purple-600 to-purple-400",
       bgColor: "bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20"
     },
     { 
-      title: "مدیریت مکمل و ویتامین", 
+      title: "مکمل و ویتامین", 
       icon: Pill, 
-      href: '/supplement-management', 
+      href: '/Supplements-Vitamins', 
       color: "from-pink-600 to-pink-400",
       bgColor: "bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20"
     },
@@ -65,6 +65,7 @@ export const MainMenuGrid = () => {
     }
   ];
 
+  // Animation variants
   const container = {
     hidden: { opacity: 0 },
     show: {

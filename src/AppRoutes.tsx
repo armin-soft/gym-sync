@@ -8,9 +8,6 @@ import Diet from './pages/diet';
 import Supplements from './pages/supplements';
 import Trainer from './pages/trainer';
 import Reports from './pages/reports';
-import ExerciseManagement from './pages/exercise-management';
-import DietManagement from './pages/diet-management';
-import SupplementManagement from './pages/supplement-management';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -22,9 +19,6 @@ const AppRoutes: React.FC = () => {
       <Route path="/supplements/*" element={<Supplements />} />
       <Route path="/trainer/*" element={<Trainer />} />
       <Route path="/reports/*" element={<Reports />} />
-      <Route path="/exercise-management" element={<ExerciseManagement />} />
-      <Route path="/diet-management" element={<DietManagement />} />
-      <Route path="/supplement-management" element={<SupplementManagement />} />
     </Routes>
   );
 };
