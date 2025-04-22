@@ -1,6 +1,5 @@
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -8,8 +7,8 @@ import {
 import { useExerciseSelection } from "@/hooks/useExerciseSelection";
 import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
 import { useToast } from "@/hooks/use-toast";
-import ExerciseDialogHeader from "./ExerciseDialogHeader";
-import ExerciseDialogFooter from "./ExerciseDialogFooter";
+import ExerciseDialogHeader from "./dialogs/ExerciseDialogHeader";
+import ExerciseDialogFooter from "./dialogs/ExerciseDialogFooter";
 import { ExerciseDialogContent } from "./dialogs/ExerciseDialogContent";
 import { useExerciseDialogState } from "./dialogs/use-exercise-dialog-state";
 

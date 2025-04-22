@@ -1,6 +1,13 @@
 
 import { useState, useEffect } from "react";
 
+interface SavedState {
+  day1: boolean;
+  day2: boolean;
+  day3: boolean;
+  day4: boolean;
+}
+
 export const useExerciseDialogState = (
   open: boolean,
   initialExercisesDay1: number[] = [],
@@ -9,7 +16,7 @@ export const useExerciseDialogState = (
   initialExercisesDay4: number[] = []
 ) => {
   const [activeTab, setActiveTab] = useState<string>("day1");
-  const [savedState, setSavedState] = useState({
+  const [savedState, setSavedState] = useState<SavedState>({
     day1: false,
     day2: false,
     day3: false,
