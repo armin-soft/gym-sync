@@ -1,18 +1,19 @@
 
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentHistory } from "@/components/students/StudentHistory";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
-import { useStudents } from "@/hooks/useStudents"; 
+import { useStudents } from "@/hooks/students"; 
 import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { Card } from "@/components/ui/card";
 import { StudentSearch } from "@/components/students/search-sort/StudentSearch";
+import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { TabsList, TabsTrigger, Tabs, TabsContent } from "@/components/ui/tabs";
 import { UserRound, History, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import { Button } from "@/components/ui/button";
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   
   const {
     students,
@@ -35,6 +37,7 @@ const StudentsPage = () => {
   
   const { historyEntries, addHistoryEntry } = useStudentHistory();
 
+  // Refresh when localStorage changes
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'students') {
@@ -46,11 +49,14 @@ const StudentsPage = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
+  // Refresh after save
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
+    // Simulate a storage event to refresh other tabs
     window.dispatchEvent(new StorageEvent('storage', { key: 'students' }));
   }, []);
 
+  // Enhanced save handlers with history tracking
   const handleSaveWithHistory = useCallback((data: any, selectedStudent?: Student) => {
     const result = handleSave(data, selectedStudent);
     
@@ -74,20 +80,6 @@ const StudentsPage = () => {
     
     return result;
   }, [handleSave, addHistoryEntry, triggerRefresh]);
-
-  const handleDeleteWithHistory = useCallback((studentId: number) => {
-    const student = students.find(s => s.id === studentId);
-    if (student) {
-      addHistoryEntry(
-        student, 
-        'edit',
-        `شاگرد ${student.name} حذف شد`
-      );
-    }
-    
-    handleDelete(studentId);
-    triggerRefresh();
-  }, [handleDelete, students, addHistoryEntry, triggerRefresh]);
 
   const handleSaveExercisesWithHistory = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
     const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
@@ -146,10 +138,27 @@ const StudentsPage = () => {
     
     return result;
   }, [handleSaveSupplements, students, addHistoryEntry, triggerRefresh]);
+  
+  const handleDeleteWithHistory = useCallback((studentId: number) => {
+    const student = students.find(s => s.id === studentId);
+    if (student) {
+      addHistoryEntry(
+        student, 
+        'edit',
+        `شاگرد ${student.name} حذف شد`
+      );
+    }
+    
+    handleDelete(studentId);
+    triggerRefresh();
+  }, [handleDelete, students, addHistoryEntry, triggerRefresh]);
 
   const {
     searchQuery,
     setSearchQuery,
+    sortOrder,
+    sortField,
+    toggleSort,
     sortedAndFilteredStudents,
     handleClearSearch
   } = useStudentFiltering(students);
@@ -201,12 +210,18 @@ const StudentsPage = () => {
                   </div>
                 </Card>
               </motion.div>
+              
+              <StudentsViewToggle 
+                viewMode={viewMode} 
+                onChange={setViewMode} 
+              />
             </div>
           </div>
           
           <TabsContent value="all" className="flex-1 flex flex-col w-full">
             <AnimatePresence mode="wait">
               <motion.div
+                key={viewMode}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -218,14 +233,15 @@ const StudentsPage = () => {
                   sortedAndFilteredStudents={sortedAndFilteredStudents}
                   searchQuery={searchQuery}
                   refreshTrigger={refreshTrigger}
-                  onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+                  onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
                   onDelete={handleDeleteWithHistory}
-                  onAddExercise={(student) => dialogManagerRef.current?.handleAddExercise(student)}
-                  onAddDiet={(student) => dialogManagerRef.current?.handleAddDiet(student)}
-                  onAddSupplement={(student) => dialogManagerRef.current?.handleAddSupplement(student)}
-                  onDownload={(student) => dialogManagerRef.current?.handleDownload(student)}
+                  onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
+                  onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
+                  onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
+                  onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
                   onAddStudent={() => dialogManagerRef.current?.handleAdd()}
                   onClearSearch={handleClearSearch}
+                  viewMode={viewMode}
                 />
               </motion.div>
             </AnimatePresence>

@@ -8,25 +8,21 @@ import Diet from './pages/diet';
 import Supplements from './pages/supplements';
 import Trainer from './pages/trainer';
 import Reports from './pages/reports';
-import StudentExercisePage from './pages/student-exercise';
-import StudentDietPage from './pages/student-diet';
-import StudentSupplementPage from './pages/student-supplement';
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
-      <Route path="/students" element={<Students />} />
+      <Route path="/students/*" element={<Students />} />
       <Route path="/exercises/*" element={<Exercises />} />
       <Route path="/diet/*" element={<Diet />} />
       <Route path="/supplements/*" element={<Supplements />} />
       <Route path="/trainer/*" element={<Trainer />} />
       <Route path="/reports/*" element={<Reports />} />
-      <Route path="/student/:studentId/exercises" element={<StudentExercisePage />} />
-      <Route path="/student/:studentId/diet" element={<StudentDietPage />} />
-      <Route path="/student/:studentId/supplements" element={<StudentSupplementPage />} />
+      {/* About route has been removed */}
     </Routes>
   );
 };
 
 export default AppRoutes;
+
