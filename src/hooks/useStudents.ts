@@ -101,19 +101,23 @@ export const useStudents = () => {
       setStudents(prev => 
         prev.map(student => {
           if (student.id === studentId) {
-            const exercises = student.exercises || [];
-            
             if (dayNumber !== undefined) {
-              // For a specific day
-              const dayExercises = exercises.filter(ex => ex.day !== dayNumber);
-              const newExercises = [
-                ...dayExercises,
-                ...exerciseIds.map(id => ({ id, day: dayNumber }))
-              ];
-              return { ...student, exercises: newExercises };
+              // For a specific day, update the corresponding day's exercises array
+              switch(dayNumber) {
+                case 1:
+                  return { ...student, exercisesDay1: exerciseIds };
+                case 2:
+                  return { ...student, exercisesDay2: exerciseIds };
+                case 3:
+                  return { ...student, exercisesDay3: exerciseIds };
+                case 4:
+                  return { ...student, exercisesDay4: exerciseIds };
+                default:
+                  return student;
+              }
             } else {
-              // For all days
-              return { ...student, exercises: exerciseIds.map(id => ({ id, day: 1 })) };
+              // For general exercises, directly update the exercises array
+              return { ...student, exercises: exerciseIds };
             }
           }
           return student;
