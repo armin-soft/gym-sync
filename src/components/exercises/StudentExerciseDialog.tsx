@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -64,6 +65,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   const [activeTab, setActiveTab] = useState<string>("day1");
   
+  // Track if exercises have been saved for each day
   const [savedState, setSavedState] = useState({
     day1: false,
     day2: false,
@@ -71,8 +73,10 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     day4: false
   });
 
+  // Auto-select category based on saved exercises
   useEffect(() => {
     if (open && !categoriesLoading && !exercisesLoading && categories.length > 0 && exercises.length > 0) {
+      // Get the active tab's selected exercises
       let selectedExercises: number[] = [];
       switch(activeTab) {
         case "day1": selectedExercises = initialExercisesDay1; break;
@@ -82,15 +86,19 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         default: selectedExercises = initialExercises;
       }
       
+      // Find category of first selected exercise if there are any
       if (selectedExercises.length > 0) {
         const firstExerciseId = selectedExercises[0];
         const firstExercise = exercises.find(ex => ex.id === firstExerciseId);
         
         if (firstExercise && firstExercise.categoryId) {
+          console.log("Auto-selecting category:", firstExercise.categoryId);
           setSelectedCategoryId(firstExercise.categoryId);
           
+          // Get exercise type for this category
           const category = categories.find(cat => cat.id === firstExercise.categoryId);
           if (category && category.type) {
+            console.log("Auto-selecting exercise type:", category.type);
             setSelectedExerciseType(category.type);
           }
         }
@@ -99,6 +107,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   }, [open, activeTab, categories, exercises, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, categoriesLoading, exercisesLoading]);
 
   useEffect(() => {
+    // Reset saved state when dialog opens
     if (open) {
       setSavedState({
         day1: false,
@@ -160,6 +169,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
       const success = onSave(selectedExercises, dayNumber);
       
       if (success) {
+        // Update saved state for the current tab
         setSavedState(prev => ({
           ...prev,
           [activeTab]: true
@@ -172,11 +182,13 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                          dayNumber === 3 ? 'روز سوم' : 'روز چهارم'} با موفقیت ذخیره شدند`,
         });
         
+        // Automatically switch to the next day tab if not on day4
         if (activeTab !== "day4") {
           const nextTab = `day${dayNumber + 1}`;
           setActiveTab(nextTab);
         } else {
-          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true;
+          // If all days have been saved, close the dialog
+          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true; // day4 is saved now
           if (allSaved) {
             onOpenChange(false);
           }
@@ -202,7 +214,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[100vw] w-full max-h-[100vh] h-[95vh] md:h-[90vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none sm:rounded-lg">
+      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
         <ExerciseDialogHeader studentName={studentName} />
 
         {isLoading ? (
