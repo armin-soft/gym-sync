@@ -115,7 +115,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
       <AnimatePresence mode="wait">
         {filteredExercises.length > 0 ? (
           <StudentExerciseListWrapper 
-            maxHeight="calc(85vh - 280px)" 
+            maxHeight="calc(70vh - 280px)" 
             className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-lg shadow-sm"
             viewMode={viewMode}
           >

@@ -29,7 +29,10 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
   showControls = false
 }) => {
   const isMobile = useIsMobile();
-  const calculatedMaxHeight = isMobile ? "calc(100vh - 160px)" : "calc(100vh - 100px)";
+  
+  // Adjust max height based on screen size
+  // Use vh units instead of fixed pixels for better responsiveness
+  const calculatedMaxHeight = isMobile ? "calc(70vh - 160px)" : "calc(85vh - 100px)";
 
   return (
     <Card className={cn(
