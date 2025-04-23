@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import fs from 'fs';
+import { componentTagger } from "lovable-tagger";
 
 // Create necessary directories for output structure
 const createOutputDirectories = () => {
@@ -33,7 +34,8 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-    ],
+      mode === 'development' && componentTagger(),
+    ].filter(Boolean),
     base: './', // Use relative paths
     resolve: {
       alias: {
@@ -84,3 +86,4 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
+
