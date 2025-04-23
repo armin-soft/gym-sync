@@ -2,7 +2,7 @@
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { TrainerProfile } from "@/types/trainer";
 import { defaultProfile } from "@/types/trainer";
 import { ProfileImage } from "@/components/trainer/ProfileImage";
@@ -16,11 +16,13 @@ const TrainerProfile = () => {
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState<string>("personal");
 
+  // Load saved profile from localStorage
   useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
         const parsed = JSON.parse(savedProfile);
+        // Handle migration from old profile structure to new one
         if (!parsed.gymName) {
           parsed.gymName = "";
           parsed.gymDescription = "مرکز تخصصی آمادگی جسمانی و بدنسازی";
@@ -40,6 +42,7 @@ const TrainerProfile = () => {
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
     setProfile(prev => ({ ...prev, [key]: value }));
+    // Clear error when user starts typing
     if (errors[key]) {
       setErrors(prev => ({ ...prev, [key]: '' }));
     }
@@ -48,7 +51,9 @@ const TrainerProfile = () => {
   const handleSave = () => {
     try {
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
+      // Force update of any components that depend on the gym name
       window.dispatchEvent(new Event('storage'));
+      
       toast({
         title: "ذخیره موفق",
         description: "اطلاعات پروفایل با موفقیت ذخیره شد"
@@ -63,6 +68,7 @@ const TrainerProfile = () => {
     }
   };
 
+  // Animation variants
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -92,13 +98,12 @@ const TrainerProfile = () => {
   ];
 
   return (
-    <PageContainer withBackground className="w-full h-screen min-h-screen flex flex-col justify-center items-center">
+    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
       <motion.div 
-        className="flex flex-col w-full max-w-3xl flex-1 mx-auto py-6 px-2 sm:px-4 md:px-8 space-y-8"
+        className="w-full h-full flex flex-col mx-auto py-8 space-y-8 px-4 md:px-6 lg:px-8"
         variants={stagger}
         initial="initial"
         animate="animate"
-        style={{ minHeight: "calc(100vh - 32px)" }}
       >
         <motion.div 
           className="flex flex-col space-y-6"
@@ -125,7 +130,7 @@ const TrainerProfile = () => {
         </motion.div>
 
         <motion.div 
-          className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 flex-1 items-start"
+          className="grid lg:grid-cols-[300px_1fr] gap-8 flex-1"
           variants={stagger}
         >
           <motion.div 
@@ -136,6 +141,8 @@ const TrainerProfile = () => {
               image={profile.image}
               onImageChange={(image) => handleUpdate('image', image)}
             />
+
+            {/* Tabs for mobile view */}
             <div className="flex lg:hidden overflow-x-auto pb-2 gap-2 no-scrollbar">
               {sections.map((section) => (
                 <motion.button
@@ -154,7 +161,8 @@ const TrainerProfile = () => {
               ))}
             </div>
           </motion.div>
-          <motion.div variants={fadeIn} className="flex-1 flex flex-col">
+
+          <motion.div variants={fadeIn} className="flex-1">
             <ProfileForm
               profile={profile}
               onUpdate={handleUpdate}
