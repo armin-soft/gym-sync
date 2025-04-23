@@ -1,4 +1,3 @@
-
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -16,13 +15,11 @@ const TrainerProfile = () => {
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState<string>("personal");
 
-  // Load saved profile from localStorage
   useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
         const parsed = JSON.parse(savedProfile);
-        // Handle migration from old profile structure to new one
         if (!parsed.gymName) {
           parsed.gymName = "";
           parsed.gymDescription = "مرکز تخصصی آمادگی جسمانی و بدنسازی";
@@ -42,7 +39,6 @@ const TrainerProfile = () => {
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
     setProfile(prev => ({ ...prev, [key]: value }));
-    // Clear error when user starts typing
     if (errors[key]) {
       setErrors(prev => ({ ...prev, [key]: '' }));
     }
@@ -51,7 +47,6 @@ const TrainerProfile = () => {
   const handleSave = () => {
     try {
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
-      // Force update of any components that depend on the gym name
       window.dispatchEvent(new Event('storage'));
       
       toast({
@@ -68,7 +63,6 @@ const TrainerProfile = () => {
     }
   };
 
-  // Animation variants
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -98,9 +92,9 @@ const TrainerProfile = () => {
   ];
 
   return (
-    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
+    <PageContainer withBackground className="w-full min-h-screen overflow-y-auto">
       <motion.div 
-        className="w-full h-full flex flex-col mx-auto py-8 space-y-8 px-4 md:px-6 lg:px-8"
+        className="flex flex-col mx-auto py-8 space-y-8 px-4 md:px-6 lg:px-8 max-w-3xl"
         variants={stagger}
         initial="initial"
         animate="animate"
@@ -142,7 +136,6 @@ const TrainerProfile = () => {
               onImageChange={(image) => handleUpdate('image', image)}
             />
 
-            {/* Tabs for mobile view */}
             <div className="flex lg:hidden overflow-x-auto pb-2 gap-2 no-scrollbar">
               {sections.map((section) => (
                 <motion.button
