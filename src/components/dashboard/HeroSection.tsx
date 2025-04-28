@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -8,6 +7,8 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Users, Clock, Sun, Crown, TrendingUp, Activity } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard";
 import { getAssetPath } from "@/utils/basePath";
+import { useShamsiDate } from "@/hooks/useShamsiDate";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface HeroSectionProps {
   stats: DashboardStats;
@@ -20,6 +21,7 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionProps) => {
   const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
+  const { dateInfo, isLoading } = useShamsiDate();
   
   const quickStats = [
     { 
@@ -99,14 +101,42 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="flex flex-wrap gap-3"
               >
-                <Badge variant="outline" className="border-white/10 bg-white/10 text-white backdrop-blur-sm px-3 py-1.5 rounded-full">
-                  <Sun className="w-3.5 h-3.5 ml-1.5 text-yellow-300" />
-                  {currentTime.toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).replace(/(\d+)\s+(\S+)\s+(\d+),\s+(\S+)/, '$4 $1 $2 $3')}
-                </Badge>
-                <Badge variant="outline" className="border-white/10 bg-white/10 text-white backdrop-blur-sm px-3 py-1.5 rounded-full">
-                  <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
-                  {currentTime.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                </Badge>
+                <AnimatePresence mode="wait">
+                  {dateInfo && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="flex flex-wrap gap-3"
+                    >
+                      <Badge 
+                        variant="outline" 
+                        className="border-white/10 bg-white/10 text-white backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2"
+                      >
+                        <span className="text-2xl">{dateInfo.Season_Emoji}</span>
+                        <span>{dateInfo.Shamsi_Date}</span>
+                        <span className="text-white/60">{dateInfo.Season}</span>
+                      </Badge>
+                      <Badge 
+                        variant="outline" 
+                        className="border-white/10 bg-white/10 text-white backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2"
+                      >
+                        <span className="text-2xl">{dateInfo.Time_Based_Emoji}</span>
+                        <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
+                        <span>{currentTime.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                        <span className="text-white/60">{dateInfo.Time_Based}</span>
+                      </Badge>
+                    </motion.div>
+                  )}
+                  {isLoading && (
+                    <Badge 
+                      variant="outline" 
+                      className="border-white/10 bg-white/10 text-white backdrop-blur-sm px-3 py-1.5 rounded-full animate-pulse"
+                    >
+                      در حال بارگذاری...
+                    </Badge>
+                  )}
+                </AnimatePresence>
               </motion.div>
             </motion.div>
             
