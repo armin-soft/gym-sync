@@ -48,6 +48,17 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
           </p>
         </div>
       </div>
+
+      <div className="flex flex-wrap gap-3 mt-2">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm">
+          <Users className="w-4 h-4 text-blue-300" />
+          <span className="text-white/90">{toPersianNumbers(stats.totalStudents)} شاگرد</span>
+        </div>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm">
+          <Activity className="w-4 h-4 text-green-300" />
+          <span className="text-white/90">پیشرفت {toPersianNumbers(stats.studentsProgress)}٪</span>
+        </div>
+      </div>
     </motion.div>
   );
 };
