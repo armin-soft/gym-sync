@@ -1,5 +1,6 @@
+
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import { Users, Clock, Sun, Crown, TrendingUp, Activity } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard";
 import { getAssetPath } from "@/utils/basePath";
 import { useShamsiDate } from "@/hooks/useShamsiDate";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface HeroSectionProps {
   stats: DashboardStats;
