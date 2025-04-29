@@ -24,6 +24,7 @@ interface ExerciseTableContentProps {
   onEdit: (exercise: Exercise) => void;
   onDelete: (ids: number[]) => void;
   onClearFilters?: () => void;
+  isMobile?: boolean;
 }
 
 export const ExerciseTableContent: React.FC<ExerciseTableContentProps> = ({
@@ -34,30 +35,32 @@ export const ExerciseTableContent: React.FC<ExerciseTableContentProps> = ({
   onSelectExercise,
   onEdit,
   onDelete,
-  onClearFilters
+  onClearFilters,
+  isMobile
 }) => {
   const allSelected = exercises.length > 0 && selectedExercises.length === exercises.length;
   const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
 
   return (
-    <div className="relative overflow-x-auto rounded-lg border border-indigo-100">
-      <div className="w-full overflow-auto max-h-[50vh]">
-        <Table>
-          <TableHeader>
+    <div className="relative rounded-lg border border-indigo-100 overflow-hidden">
+      <div className="w-full overflow-auto max-h-[40vh] sm:max-h-[45vh] md:max-h-[50vh]">
+        <Table className="min-w-[500px]">
+          <TableHeader className="sticky top-0 z-10 bg-white">
             <TableRow className="bg-gradient-to-r from-indigo-50 to-transparent hover:bg-indigo-50/50">
-              <TableHead className="w-[40px] text-center">
+              <TableHead className="w-[40px] text-center py-2 sm:py-3">
                 <Checkbox 
                   checked={allSelected}
                   onCheckedChange={onSelectAll}
                   className={cn(
+                    "h-3.5 w-3.5 sm:h-4 sm:w-4",
                     isIndeterminate && "data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
                   )}
                 />
               </TableHead>
-              <TableHead className="font-bold text-indigo-800 whitespace-nowrap">ردیف</TableHead>
-              <TableHead className="font-bold text-indigo-800 whitespace-nowrap">نام حرکت</TableHead>
-              <TableHead className="font-bold text-indigo-800 whitespace-nowrap">دسته‌بندی</TableHead>
-              <TableHead className="w-[100px] text-center font-bold text-indigo-800 whitespace-nowrap">عملیات</TableHead>
+              <TableHead className="font-bold text-indigo-800 whitespace-nowrap py-2 sm:py-3 text-xs sm:text-sm">ردیف</TableHead>
+              <TableHead className="font-bold text-indigo-800 whitespace-nowrap py-2 sm:py-3 text-xs sm:text-sm">نام حرکت</TableHead>
+              <TableHead className="font-bold text-indigo-800 whitespace-nowrap py-2 sm:py-3 text-xs sm:text-sm">دسته‌بندی</TableHead>
+              <TableHead className="w-[80px] sm:w-[100px] text-center font-bold text-indigo-800 whitespace-nowrap py-2 sm:py-3 text-xs sm:text-sm">عملیات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -65,13 +68,13 @@ export const ExerciseTableContent: React.FC<ExerciseTableContentProps> = ({
               <TableRow>
                 <TableCell 
                   colSpan={5} 
-                  className="text-center h-32 text-muted-foreground animate-fade-in"
+                  className="text-center h-24 sm:h-32 text-muted-foreground animate-fade-in"
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <Dumbbell className="w-8 h-8 text-indigo-200" />
-                    <p>هیچ حرکتی یافت نشد</p>
+                    <Dumbbell className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-indigo-200" />
+                    <p className="text-sm sm:text-base">هیچ حرکتی یافت نشد</p>
                     {onClearFilters && (
-                      <Button variant="link" onClick={onClearFilters} className="text-indigo-500">
+                      <Button variant="link" onClick={onClearFilters} className="text-indigo-500 text-xs sm:text-sm">
                         پاک کردن فیلترها
                       </Button>
                     )}
@@ -90,46 +93,46 @@ export const ExerciseTableContent: React.FC<ExerciseTableContentProps> = ({
                       selectedExercises.includes(exercise.id) && "bg-indigo-50"
                     )}
                   >
-                    <TableCell>
+                    <TableCell className="py-1.5 sm:py-2 md:py-3">
                       <Checkbox 
                         checked={selectedExercises.includes(exercise.id)}
                         onCheckedChange={(checked) => onSelectExercise(exercise.id, checked as boolean)}
-                        className="data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
                       />
                     </TableCell>
-                    <TableCell className="font-medium text-muted-foreground">
+                    <TableCell className="font-medium text-muted-foreground text-xs sm:text-sm py-1.5 sm:py-2 md:py-3">
                       {toPersianNumbers(index + 1)}
                     </TableCell>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-indigo-500 group-hover:scale-110 transition-transform duration-300" />
+                    <TableCell className="font-medium text-xs sm:text-sm py-1.5 sm:py-2 md:py-3">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-500 group-hover:scale-110 transition-transform duration-300" />
                         <span className="group-hover:text-indigo-600 transition-colors duration-200 whitespace-nowrap">
                           {exercise.name}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <span className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-indigo-500 to-indigo-400 text-white rounded-full text-xs sm:text-sm font-medium shadow-sm whitespace-nowrap">
+                    <TableCell className="py-1.5 sm:py-2 md:py-3">
+                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-gradient-to-r from-indigo-500 to-indigo-400 text-white rounded-full text-xs sm:text-xs font-medium shadow-sm whitespace-nowrap">
                         {category?.name}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-1.5 sm:py-2 md:py-3">
                       <div className="flex items-center justify-center gap-1 sm:gap-2">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"
+                          className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"
                           onClick={() => onEdit(exercise)}
                         >
-                          <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <Edit className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-red-100 hover:text-red-600 transition-colors"
+                          className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 hover:bg-red-100 hover:text-red-600 transition-colors"
                           onClick={() => onDelete([exercise.id])}
                         >
-                          <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" />
                         </Button>
                       </div>
                     </TableCell>

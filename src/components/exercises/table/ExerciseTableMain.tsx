@@ -6,6 +6,7 @@ import ExerciseTableHeader from "./ExerciseTableHeader";
 import ExerciseTableFilter from "./ExerciseTableFilter";
 import ExerciseTableContent from "./ExerciseTableContent";
 import ExerciseTableDeleteDialog from "./ExerciseTableDeleteDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ExerciseTableMainProps {
   exercises: Exercise[];
@@ -26,6 +27,7 @@ export function ExerciseTableMain({
   onSort,
   isAscending
 }: ExerciseTableMainProps) {
+  const isMobile = useIsMobile();
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [exercisesToDelete, setExercisesToDelete] = useState<number[]>([]);
@@ -90,7 +92,7 @@ export function ExerciseTableMain({
 
   return (
     <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
-      <div className="p-4 sm:p-6">
+      <div className="p-3 sm:p-4 md:p-5 lg:p-6">
         <ExerciseTableHeader
           selectedCount={selectedExercises.length}
           onAdd={onAdd}
@@ -107,6 +109,7 @@ export function ExerciseTableMain({
           categories={categories}
           onClearFilters={handleClearFilters}
           hasActiveFilters={hasActiveFilters}
+          isMobile={isMobile}
         />
 
         <ExerciseTableContent
@@ -118,6 +121,7 @@ export function ExerciseTableMain({
           onEdit={onEdit}
           onDelete={confirmDelete}
           onClearFilters={hasActiveFilters ? handleClearFilters : undefined}
+          isMobile={isMobile}
         />
       </div>
 

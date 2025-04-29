@@ -21,6 +21,7 @@ interface ExerciseTableFilterProps {
   categories: ExerciseCategory[];
   onClearFilters: () => void;
   hasActiveFilters: boolean;
+  isMobile?: boolean;
 }
 
 export const ExerciseTableFilter: React.FC<ExerciseTableFilterProps> = ({
@@ -30,31 +31,32 @@ export const ExerciseTableFilter: React.FC<ExerciseTableFilterProps> = ({
   onCategoryChange,
   categories,
   onClearFilters,
-  hasActiveFilters
+  hasActiveFilters,
+  isMobile
 }) => {
   return (
-    <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4">
+    <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
       <div className="relative flex-1">
         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-          <Search className="h-4 w-4" />
+          <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </div>
         <Input
           placeholder="جستجوی حرکت..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pr-10 h-9 sm:h-10"
+          className="pr-9 sm:pr-10 text-sm h-8 sm:h-9 md:h-10"
         />
       </div>
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="gap-2 w-full sm:w-auto h-9 sm:h-10 text-xs sm:text-sm">
-            <Filter className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <Button variant="outline" className="gap-1.5 sm:gap-2 w-full sm:w-auto h-8 sm:h-9 md:h-10 text-xs sm:text-sm whitespace-nowrap">
+            <Filter className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" />
             فیلتر دسته‌بندی
-            {selectedCategoryId && <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-800 rounded-full text-xs mr-1">{toPersianNumbers(1)}</span>}
+            {selectedCategoryId && <span className="px-1 py-0.5 bg-indigo-100 text-indigo-800 rounded-full text-xs mr-1">{toPersianNumbers(1)}</span>}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent align={isMobile ? "center" : "end"} className="w-[200px] sm:w-56">
           <DropdownMenuItem 
             onClick={() => onCategoryChange(null)}
             className={!selectedCategoryId ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
