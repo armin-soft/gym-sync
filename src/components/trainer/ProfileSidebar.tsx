@@ -4,10 +4,12 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { UserRound, Building, Globe, Camera } from "lucide-react";
-import { ProfileImage } from "./ProfileImage";
+import { UserRound, Building, Globe } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { NavigationTabs } from "./sidebar/NavigationTabs";
+import { MobileTab } from "./sidebar/MobileTab";
+import { ProfileImageSection } from "./sidebar/ProfileImageSection";
+import { ProfileInfo } from "./sidebar/ProfileInfo";
 
 interface ProfileSidebarProps {
   profile: {
@@ -41,19 +43,6 @@ export const ProfileSidebar = ({
     animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
     hover: { y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }
   };
-  
-  const tabVariants = {
-    active: { 
-      backgroundColor: "hsl(var(--primary))", 
-      color: "hsl(var(--primary-foreground))",
-      scale: 1,
-    },
-    inactive: { 
-      backgroundColor: "transparent", 
-      color: "hsl(var(--muted-foreground))",
-      scale: 0.98,
-    }
-  };
 
   // Card padding based on device
   const getCardPadding = () => {
@@ -78,42 +67,13 @@ export const ProfileSidebar = ({
           <div className={getCardPadding()}>
             <div className="space-y-5">
               {/* Profile Image */}
-              <div className="relative mx-auto">
-                <ProfileImage 
-                  image={profile.image}
-                  onImageChange={onImageChange}
-                />
-                
-                <motion.div 
-                  className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-900 shadow-md rounded-full px-3 py-1 flex items-center gap-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <Camera className="h-3.5 w-3.5 text-indigo-500" />
-                  <span className="text-xs font-medium">تغییر تصویر</span>
-                </motion.div>
-              </div>
+              <ProfileImageSection 
+                image={profile.image}
+                onImageChange={onImageChange}
+              />
               
               {/* Profile Name */}
-              <motion.div
-                className="text-center space-y-1.5"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <h3 className="font-bold text-lg bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-100 dark:to-white bg-clip-text text-transparent">
-                  {profile.name || "نام مربی"}
-                </h3>
-                <div className="flex justify-center gap-1.5">
-                  <Badge variant="outline" className="text-xs bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800">
-                    مربی
-                  </Badge>
-                  <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
-                    فعال
-                  </Badge>
-                </div>
-              </motion.div>
+              <ProfileInfo name={profile.name} />
               
               <Separator />
               
@@ -123,7 +83,6 @@ export const ProfileSidebar = ({
                   sections={sections}
                   activeSection={activeSection}
                   onTabChange={onTabChange}
-                  tabVariants={tabVariants}
                 />
               </div>
             </div>
@@ -153,85 +112,5 @@ export const ProfileSidebar = ({
         </motion.div>
       )}
     </div>
-  );
-};
-
-interface TabSectionType {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-interface NavigationTabsProps {
-  sections: TabSectionType[];
-  activeSection: string;
-  onTabChange: (section: string) => void;
-  tabVariants: any;
-}
-
-const NavigationTabs = ({ 
-  sections, 
-  activeSection, 
-  onTabChange, 
-  tabVariants 
-}: NavigationTabsProps) => {
-  return (
-    <div className="space-y-2">
-      {sections.map((section) => {
-        const Icon = section.icon;
-        return (
-          <motion.button
-            key={section.id}
-            onClick={() => onTabChange(section.id)}
-            className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium",
-              "transition-all duration-200",
-              activeSection === section.id 
-                ? "bg-primary text-primary-foreground shadow-md" 
-                : "hover:bg-muted/50"
-            )}
-            variants={tabVariants}
-            initial="inactive"
-            animate={activeSection === section.id ? "active" : "inactive"}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Icon className={cn(
-              "h-4.5 w-4.5",
-              activeSection === section.id ? "text-primary-foreground" : "text-muted-foreground"
-            )} />
-            <span>{section.label}</span>
-          </motion.button>
-        );
-      })}
-    </div>
-  );
-};
-
-interface MobileTabProps {
-  section: TabSectionType;
-  isActive: boolean;
-  onClick: () => void;
-}
-
-const MobileTab = ({ section, isActive, onClick }: MobileTabProps) => {
-  const Icon = section.icon;
-  
-  return (
-    <motion.button
-      onClick={onClick}
-      className={cn(
-        "flex-shrink-0 flex flex-col items-center gap-1 px-4 py-2 rounded-lg",
-        "transition-all duration-200",
-        isActive 
-          ? "bg-gradient-to-r from-indigo-500 to-sky-500 text-white shadow-md" 
-          : "bg-white/50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300"
-      )}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <Icon className="h-4 w-4" />
-      <span className="text-xs whitespace-nowrap">{section.label}</span>
-    </motion.button>
   );
 };
