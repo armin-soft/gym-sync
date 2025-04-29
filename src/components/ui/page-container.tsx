@@ -29,13 +29,13 @@ export const PageContainer = ({
     if (noPadding) return "p-0";
     
     if (deviceInfo.isMobile) {
-      return "px-2 py-2";
+      return "px-2 py-1";
     } else if (deviceInfo.isTablet) {
-      return "px-4 py-3";
+      return "px-3 py-2";
     } else if (deviceInfo.isSmallLaptop) {
-      return "px-6 py-4";
+      return "px-4 py-3";
     } else {
-      return "px-8 py-6";
+      return "px-5 py-4";
     }
   };
   
@@ -55,7 +55,7 @@ export const PageContainer = ({
         </>
       )}
       <div className={cn(
-        "w-full h-full overflow-auto transition-all duration-300",
+        "w-full h-full flex-1 overflow-auto transition-all duration-300",
         getPadding()
       )}>
         {children}

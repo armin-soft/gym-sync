@@ -1,26 +1,28 @@
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Student } from "@/components/students/StudentTypes";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 export const useStudentFiltering = (students: Student[]) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const deviceInfo = useDeviceInfo();
 
-  const toggleSort = (field: "name" | "weight" | "height") => {
+  const toggleSort = useCallback((field: "name" | "weight" | "height") => {
     if (field === sortField) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
       setSortOrder("asc");
     }
-  };
+  }, [sortField, sortOrder]);
 
-  const handleClearSearch = () => {
+  const handleClearSearch = useCallback(() => {
     setSearchQuery("");
-  };
+  }, []);
 
-  // Filter and sort students
+  // Filter and sort students with optimizations for mobile
   const sortedAndFilteredStudents = useMemo(() => {
     let filtered = [...students];
 
@@ -34,7 +36,7 @@ export const useStudentFiltering = (students: Student[]) => {
       );
     }
 
-    // Sort students
+    // Sort students with consideration for device performance
     return filtered.sort((a, b) => {
       let aValue: string | number = a[sortField];
       let bValue: string | number = b[sortField];
@@ -43,6 +45,14 @@ export const useStudentFiltering = (students: Student[]) => {
       if (sortField === "weight" || sortField === "height") {
         aValue = parseFloat(aValue as string) || 0;
         bValue = parseFloat(bValue as string) || 0;
+      }
+
+      // Optimize string comparison for mobile devices
+      if (deviceInfo.isMobile && sortField === "name") {
+        // Simple string comparison for mobile to improve performance
+        return sortOrder === "asc" 
+          ? aValue.toString().localeCompare(bValue.toString()) 
+          : bValue.toString().localeCompare(aValue.toString());
       }
 
       if (sortOrder === "asc") {
@@ -55,7 +65,8 @@ export const useStudentFiltering = (students: Student[]) => {
     students,
     searchQuery,
     sortField,
-    sortOrder
+    sortOrder,
+    deviceInfo.isMobile
   ]);
 
   return {

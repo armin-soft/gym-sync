@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
@@ -17,11 +16,13 @@ import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { TabsList, TabsTrigger, Tabs, TabsContent } from "@/components/ui/tabs";
 import { UserRound, History, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
+  const deviceInfo = useDeviceInfo();
   
   const {
     students,
@@ -163,35 +164,42 @@ const StudentsPage = () => {
     handleClearSearch
   } = useStudentFiltering(students);
 
+  // Determine the appropriate classes based on device type
+  const getContentPadding = () => {
+    if (deviceInfo.isMobile) return "px-2";
+    if (deviceInfo.isTablet) return "px-4";
+    return "px-4 sm:px-6 lg:px-8";
+  };
+
   return (
-    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full flex flex-col mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <PageContainer withBackground fullHeight className="w-full overflow-hidden">
+      <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
         
         <StudentStatsCards students={students} />
         
-        <Tabs defaultValue="all" className="w-full mt-6 flex-1 flex flex-col">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <TabsList className="h-12 p-1">
-              <TabsTrigger value="all" className="gap-2 h-10 px-6">
-                <UserRound className="h-4 w-4" />
-                همه شاگردان
+        <Tabs defaultValue="all" className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-4 md:mb-6">
+            <TabsList className={`h-10 sm:h-12 p-1 ${deviceInfo.isMobile ? 'w-full' : ''}`}>
+              <TabsTrigger value="all" className="gap-2 h-8 sm:h-10 px-3 sm:px-6">
+                <UserRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="text-sm sm:text-base">همه شاگردان</span>
               </TabsTrigger>
-              <TabsTrigger value="history" className="gap-2 h-10 px-6">
-                <History className="h-4 w-4" />
-                تاریخچه
+              <TabsTrigger value="history" className="gap-2 h-8 sm:h-10 px-3 sm:px-6">
+                <History className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="text-sm sm:text-base">تاریخچه</span>
               </TabsTrigger>
             </TabsList>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 mt-2 md:mt-0">
               {searchQuery && (
                 <Button 
                   variant="outline" 
-                  size="icon" 
+                  size={deviceInfo.isMobile ? "sm" : "icon"}
                   onClick={handleClearSearch}
-                  className="h-10 w-10 flex-shrink-0"
+                  className={deviceInfo.isMobile ? "h-8 w-8" : "h-10 w-10 flex-shrink-0"}
                 >
-                  <FilterX className="h-4 w-4" />
+                  <FilterX className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Button>
               )}
               
@@ -199,7 +207,7 @@ const StudentsPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="w-full md:w-80"
+                className={`${deviceInfo.isMobile ? 'w-full' : 'w-full md:w-80'}`}
               >
                 <Card className="backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border border-gray-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all duration-300 p-1">
                   <div className="relative">
@@ -218,7 +226,7 @@ const StudentsPage = () => {
             </div>
           </div>
           
-          <TabsContent value="all" className="flex-1 flex flex-col w-full">
+          <TabsContent value="all" className="flex-1 flex flex-col w-full mt-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={viewMode}
@@ -226,7 +234,7 @@ const StudentsPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300 flex-1 w-full"
+                className="rounded-xl sm:rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300 flex-1 w-full"
               >
                 <StudentsTable 
                   students={students}
@@ -234,7 +242,7 @@ const StudentsPage = () => {
                   searchQuery={searchQuery}
                   refreshTrigger={refreshTrigger}
                   onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
-                  onDelete={handleDeleteWithHistory}
+                  onDelete={handleDelete}
                   onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
                   onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
                   onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
