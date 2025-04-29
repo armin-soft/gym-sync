@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Plus, Star, Medal } from "lucide-react";
+import { GraduationCap, Plus, Star, Medal, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface StudentsHeaderProps {
@@ -83,6 +83,10 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({ onAddStudent }) 
               <div className="absolute -bottom-1 -left-1">
                 <Medal className="h-6 w-6 text-amber-200" />
               </div>
+              
+              <div className="absolute -top-1 -left-1">
+                <Sparkles className="h-4 w-4 text-amber-200/70" />
+              </div>
             </div>
             <div className="absolute bottom-0 right-0 w-full h-full bg-indigo-500/20 blur-xl rounded-full -z-10 scale-[0.7] translate-y-1/4"></div>
           </motion.div>
@@ -119,12 +123,12 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({ onAddStudent }) 
           <Button
             onClick={onAddStudent}
             size="lg"
-            className="relative h-14 pr-6 pl-12 bg-gradient-to-r from-indigo-600 to-violet-700 text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 rounded-xl"
+            className="relative h-14 pr-6 pl-12 bg-gradient-to-r from-indigo-600 to-violet-700 hover:from-indigo-700 hover:to-violet-800 text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 rounded-xl border-0"
           >
             <span className="absolute left-0 top-0 bottom-0 w-12 bg-white/20 rounded-l-xl flex items-center justify-center">
               <Plus className="h-6 w-6" strokeWidth={2.5} />
             </span>
-            <span className="font-medium text-base">افزودن شاگرد جدید</span>
+            <span className="font-bold text-base">افزودن شاگرد جدید</span>
           </Button>
         </motion.div>
       </div>

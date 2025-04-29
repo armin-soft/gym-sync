@@ -5,11 +5,11 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 
 export const useStudentFiltering = (students: Student[]) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortField, setSortField] = useState<"name" | "weight" | "height">("name");
+  const [sortField, setSortField] = useState<"name" | "weight" | "height" | "progress">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const deviceInfo = useDeviceInfo();
 
-  const toggleSort = useCallback((field: "name" | "weight" | "height") => {
+  const toggleSort = useCallback((field: "name" | "weight" | "height" | "progress") => {
     if (field === sortField) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
@@ -32,7 +32,8 @@ export const useStudentFiltering = (students: Student[]) => {
       filtered = filtered.filter(
         (student) =>
           student.name.toLowerCase().includes(normalizedQuery) ||
-          student.phone.toLowerCase().includes(normalizedQuery)
+          student.phone.toLowerCase().includes(normalizedQuery) ||
+          (student.payment && student.payment.toLowerCase().includes(normalizedQuery))
       );
     }
 
@@ -41,8 +42,13 @@ export const useStudentFiltering = (students: Student[]) => {
       let aValue: string | number = a[sortField];
       let bValue: string | number = b[sortField];
 
+      // Handle progress field specifically
+      if (sortField === "progress") {
+        aValue = a.progress || 0;
+        bValue = b.progress || 0;
+      }
       // Convert to numbers for weight and height
-      if (sortField === "weight" || sortField === "height") {
+      else if (sortField === "weight" || sortField === "height") {
         aValue = parseFloat(aValue as string) || 0;
         bValue = parseFloat(bValue as string) || 0;
       }

@@ -86,3 +86,19 @@ export const getProgressColor = (percentage: number): string => {
   if (percentage >= 30) return "bg-amber-500";
   return "bg-blue-500";
 };
+
+// Get gradient class based on progress percentage
+export const getProgressGradient = (percentage: number): string => {
+  if (percentage >= 100) return "from-emerald-500 to-teal-400";
+  if (percentage >= 70) return "from-green-500 to-emerald-400";
+  if (percentage >= 30) return "from-amber-500 to-yellow-400";
+  return "from-blue-500 to-indigo-400";
+};
+
+// Get text color based on progress percentage
+export const getProgressTextColor = (percentage: number): string => {
+  if (percentage >= 100) return "text-emerald-600 dark:text-emerald-400";
+  if (percentage >= 70) return "text-green-600 dark:text-green-400";
+  if (percentage >= 30) return "text-amber-600 dark:text-amber-400";
+  return "text-blue-600 dark:text-blue-400";
+};

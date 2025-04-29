@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { Student } from "./StudentTypes";
@@ -54,6 +55,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       shadowColor: "shadow-blue-500/25",
       bgLight: "bg-blue-50",
       iconColor: "text-blue-500",
+      hover: "hover:shadow-blue-500/20",
     },
     {
       id: "active",
@@ -64,6 +66,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       shadowColor: "shadow-amber-500/25",
       bgLight: "bg-amber-50",
       iconColor: "text-amber-500",
+      hover: "hover:shadow-amber-500/20",
     },
     {
       id: "completed",
@@ -74,6 +77,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       shadowColor: "shadow-emerald-500/25",
       bgLight: "bg-emerald-50",
       iconColor: "text-emerald-500",
+      hover: "hover:shadow-emerald-500/20",
     },
     {
       id: "new",
@@ -84,6 +88,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       shadowColor: "shadow-purple-500/25",
       bgLight: "bg-purple-50",
       iconColor: "text-purple-500",
+      hover: "hover:shadow-purple-500/20",
     },
   ];
 
@@ -116,9 +121,9 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
           whileHover={{ y: -5, transition: { type: "spring", stiffness: 300 } }}
           className="relative group"
         >
-          <div className="absolute inset-0 bg-gradient-to-br opacity-70 blur-xl rounded-3xl -z-10 group-hover:opacity-100 transition-opacity duration-300 scale-[0.85] group-hover:scale-90 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900" />
+          <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-70 transition-all duration-300 blur-xl rounded-3xl -z-10 scale-90 bg-gradient-to-r ${stat.color}`} />
           
-          <div className="backdrop-blur-sm bg-white/80 dark:bg-slate-900/80 rounded-3xl border border-gray-200/50 dark:border-gray-800/50 p-6 h-full shadow-lg shadow-gray-100/50 dark:shadow-gray-950/30 group-hover:shadow-xl transition-all duration-300">
+          <div className="backdrop-blur-sm bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-gray-200/50 dark:border-gray-800/50 p-6 h-full shadow-lg shadow-gray-100/50 dark:shadow-gray-950/30 group-hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
               <div className={`w-12 h-12 rounded-2xl ${stat.bgLight} dark:bg-opacity-20 flex items-center justify-center ${stat.iconColor}`}>
                 <stat.icon size={24} />

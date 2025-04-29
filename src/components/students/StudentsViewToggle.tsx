@@ -1,64 +1,64 @@
 
-import React from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
 import { LayoutGrid, LayoutList } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 interface StudentsViewToggleProps {
-  viewMode: "table" | "grid";
-  onChange: (mode: "table" | "grid") => void;
+  viewMode: "grid" | "table";
+  onChange: (mode: "grid" | "table") => void;
 }
 
-export const StudentsViewToggle: React.FC<StudentsViewToggleProps> = ({ viewMode, onChange }) => {
+export const StudentsViewToggle = ({ viewMode, onChange }: StudentsViewToggleProps) => {
+  const handleToggle = (mode: "grid" | "table") => {
+    onChange(mode);
+  };
+
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-800 rounded-xl p-1 shadow-sm hidden md:flex">
-      <Button
-        variant={viewMode === "table" ? "default" : "ghost"}
-        size="sm"
-        onClick={() => onChange("table")}
-        className={`relative h-10 px-3 ${
-          viewMode === "table" 
-            ? "bg-primary text-primary-foreground" 
-            : "hover:bg-transparent hover:text-foreground"
-        }`}
-      >
-        {viewMode === "table" && (
-          <motion.div
-            layoutId="active-view-pill"
-            className="absolute inset-0 bg-primary rounded-lg"
-            initial={false}
-            transition={{ type: "spring", duration: 0.5, bounce: 0.25 }}
-          />
-        )}
-        <span className="relative flex items-center gap-2">
-          <LayoutList className="h-4 w-4" />
-          <span className="font-medium">جدول</span>
-        </span>
-      </Button>
-      
-      <Button
-        variant={viewMode === "grid" ? "default" : "ghost"}
-        size="sm"
-        onClick={() => onChange("grid")}
-        className={`relative h-10 px-3 ${
-          viewMode === "grid" 
-            ? "bg-primary text-primary-foreground" 
-            : "hover:bg-transparent hover:text-foreground"
+    <motion.div 
+      className="flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg h-[50px]"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <button
+        onClick={() => handleToggle("grid")}
+        className={`relative flex items-center justify-center p-2.5 flex-1 h-full min-w-[60px] transition-colors overflow-hidden rounded-l-lg ${
+          viewMode === "grid" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
         }`}
       >
         {viewMode === "grid" && (
           <motion.div
-            layoutId="active-view-pill"
-            className="absolute inset-0 bg-primary rounded-lg"
+            layoutId="viewToggleHighlight"
+            className="absolute inset-0 bg-indigo-50 dark:bg-indigo-950/30 z-0"
             initial={false}
-            transition={{ type: "spring", duration: 0.5, bounce: 0.25 }}
+            transition={{ type: "spring", duration: 0.5 }}
           />
         )}
-        <span className="relative flex items-center gap-2">
-          <LayoutGrid className="h-4 w-4" />
-          <span className="font-medium">کارت</span>
+        <span className="relative z-10 flex items-center justify-center">
+          <LayoutGrid className={`h-5 w-5 ${viewMode === "grid" ? "stroke-[2.5px]" : "stroke-[1.5px]"}`} />
         </span>
-      </Button>
-    </div>
+      </button>
+      
+      <div className="w-px h-5 bg-gray-200 dark:bg-gray-800" />
+      
+      <button
+        onClick={() => handleToggle("table")}
+        className={`relative flex items-center justify-center p-2.5 flex-1 h-full min-w-[60px] transition-colors overflow-hidden rounded-r-lg ${
+          viewMode === "table" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+        }`}
+      >
+        {viewMode === "table" && (
+          <motion.div
+            layoutId="viewToggleHighlight"
+            className="absolute inset-0 bg-indigo-50 dark:bg-indigo-950/30 z-0"
+            initial={false}
+            transition={{ type: "spring", duration: 0.5 }}
+          />
+        )}
+        <span className="relative z-10 flex items-center justify-center">
+          <LayoutList className={`h-5 w-5 ${viewMode === "table" ? "stroke-[2.5px]" : "stroke-[1.5px]"}`} />
+        </span>
+      </button>
+    </motion.div>
   );
 };
