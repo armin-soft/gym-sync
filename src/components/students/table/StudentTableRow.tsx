@@ -17,6 +17,7 @@ interface StudentTableRowProps {
   onAddSupplement: (student: Student) => void;
   onDownload?: (student: Student) => void;
   isProfileComplete: boolean;
+  index?: number; // Added index as an optional prop
 }
 
 export const StudentTableRow: React.FC<StudentTableRowProps> = ({
@@ -28,6 +29,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   onAddSupplement,
   onDownload,
   isProfileComplete,
+  index, // Added index parameter
 }) => {
   return (
     <TableRow>
