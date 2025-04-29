@@ -1,9 +1,11 @@
+
+import React from "react";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -12,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
 import { CheckCircle, UserRound } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

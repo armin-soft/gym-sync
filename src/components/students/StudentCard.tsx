@@ -98,7 +98,7 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                       variant="ghost"
                       size="sm"
                       className="h-9 px-3 flex-1"
-                      onClick={() => onEdit(student)}
+                      onClick={onEdit}
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       ویرایش

@@ -10,6 +10,7 @@ interface StudentsListProps {
   searchQuery: string;
   viewMode: "table" | "grid";
   isProfileComplete: boolean;
+  refreshTrigger?: number;
   onAddStudent: () => void;
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
@@ -17,6 +18,7 @@ interface StudentsListProps {
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
   onClearSearch: () => void;
+  onDownload?: (student: Student) => void;
 }
 
 export const StudentsList: React.FC<StudentsListProps> = ({
@@ -24,13 +26,15 @@ export const StudentsList: React.FC<StudentsListProps> = ({
   searchQuery,
   viewMode,
   isProfileComplete,
+  refreshTrigger = 0,
   onAddStudent,
   onEdit,
   onDelete,
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  onClearSearch
+  onClearSearch,
+  onDownload
 }) => {
   if (students.length === 0) {
     return (
@@ -69,11 +73,18 @@ export const StudentsList: React.FC<StudentsListProps> = ({
         ) : (
           <StudentTable 
             students={students}
+            sortedAndFilteredStudents={students} // Pass the same array for both props
+            searchQuery={searchQuery}
+            refreshTrigger={refreshTrigger}
             onEdit={onEdit}
             onDelete={onDelete}
             onAddExercise={onAddExercise}
             onAddDiet={onAddDiet}
             onAddSupplement={onAddSupplement}
+            onDownload={onDownload}
+            onAddStudent={onAddStudent}
+            onClearSearch={onClearSearch}
+            viewMode={viewMode}
             isProfileComplete={isProfileComplete}
           />
         )}
