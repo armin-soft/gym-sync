@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ExerciseWithSets } from "@/types/exercise";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface StudentExerciseDialogProps {
   open: boolean;
@@ -40,6 +41,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay4 = [],
 }) => {
   const { toast } = useToast();
+  const deviceInfo = useDeviceInfo();
   const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
@@ -244,9 +246,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
 
+  // Dynamic full-screen dialog based on device
+  const getDialogContentClass = () => {
+    return `${deviceInfo.isMobile ? 'max-w-[100vw] p-0 m-0 rounded-none' : 'max-w-[95vw]'} w-full h-[100vh] max-h-[100vh] overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col`;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[100vw] w-full h-[100vh] max-h-[100vh] p-0 overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0 rounded-none">
+      <DialogContent className={getDialogContentClass()}>
         <ExerciseDialogHeader studentName={studentName} />
 
         {isLoading ? (

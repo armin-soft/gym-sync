@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface ExerciseSearchFiltersProps {
   searchQuery: string;
@@ -56,10 +57,24 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
     selectedExerciseType ? 1 : 0,
     selectedCategoryId ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
+  
+  const deviceInfo = useDeviceInfo();
+
+  // Determine responsive classes based on device type
+  const getBgClass = () => {
+    if (deviceInfo.isMobile) {
+      return "sticky top-0 z-30 bg-gradient-to-b from-background via-background to-transparent backdrop-blur-md pb-3 px-1 pt-2";
+    }
+    return "sticky top-0 z-30 bg-gradient-to-b from-background via-background to-transparent backdrop-blur-sm pb-6 px-1";
+  };
 
   return (
-    <div className="sticky top-0 z-10 bg-gradient-to-b from-background via-background to-transparent backdrop-blur-sm pb-6 px-1">
-      <div className="flex flex-col md:flex-row gap-2 md:gap-3">
+    <div className={getBgClass()}>
+      <div className={cn(
+        "flex flex-col gap-2",
+        deviceInfo.isTablet ? "md:flex-row md:gap-3" : 
+        deviceInfo.isMobile ? "gap-2" : "md:flex-row md:gap-3"
+      )}>
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
@@ -82,7 +97,11 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
           )}
         </div>
 
-        <div className="flex gap-2 md:gap-3">
+        <div className={cn(
+          "flex gap-2",
+          deviceInfo.isTablet ? "md:gap-3" : 
+          deviceInfo.isMobile ? "gap-2" : "md:gap-3"
+        )}>
           <Select
             value={selectedExerciseType || "all-types"}
             onValueChange={(value) => {
@@ -91,7 +110,10 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
             }}
           >
             <SelectTrigger
-              className="min-w-[160px] h-10 text-sm bg-background/80 backdrop-blur-sm border-border/50"
+              className={cn(
+                "h-10 text-sm bg-background/80 backdrop-blur-sm border-border/50",
+                deviceInfo.isMobile ? "min-w-[110px]" : "min-w-[160px]"
+              )}
             >
               <SelectValue placeholder="نوع تمرین" />
             </SelectTrigger>
@@ -117,9 +139,10 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
           >
             <SelectTrigger
               className={cn(
-                "min-w-[160px] h-10 text-sm bg-background/80 backdrop-blur-sm border-border/50",
+                "h-10 text-sm bg-background/80 backdrop-blur-sm border-border/50",
                 filteredCategories.length === 0 &&
-                  "opacity-50 cursor-not-allowed"
+                  "opacity-50 cursor-not-allowed",
+                deviceInfo.isMobile ? "min-w-[110px]" : "min-w-[160px]"
               )}
             >
               <SelectValue placeholder="دسته‌بندی" />
