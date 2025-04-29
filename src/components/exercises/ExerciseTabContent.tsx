@@ -15,8 +15,8 @@ interface ExerciseTabContentProps {
   handleClearSearch: () => void;
   exerciseSets?: Record<number, number>;
   onSetsChange?: (exerciseId: number, sets: number) => void;
-  repsInfo?: Record<number, string>;  // New prop to store reps information
-  onRepsChange?: (exerciseId: number, reps: string) => void;  // New handler for reps changes
+  repsInfo?: Record<number, string>;  // Prop to store reps information
+  onRepsChange?: (exerciseId: number, reps: string) => void;  // Handler for reps changes
 }
 
 export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
@@ -64,7 +64,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
         const category = categories.find((c) => c.id === exercise.categoryId);
         const isSelected = selectedExercises.includes(exercise.id);
         const sets = exerciseSets[exercise.id] || 3;
-        const reps = repsInfo[exercise.id] || '';  // Get reps info or empty string as default
+        const reps = repsInfo[exercise.id] || '12-15';  // Default reps to '12-15'
 
         return (
           <StudentExerciseCard

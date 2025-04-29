@@ -25,11 +25,11 @@ export interface Exercise {
   type?: string; // نوع تمرین مانند "قدرتی"، "استقامتی" و غیره
 }
 
-// Interface for exercise with sets information
+// Interface for exercise with sets and reps information
 export interface ExerciseWithSets {
   id: number;
   sets: number;
-  reps?: string; // اضافه کردن اطلاعات تکرار به عنوان یک فیلد اختیاری
+  reps: string; // Making reps a required field instead of optional
 }
 
 export const defaultExerciseTypes: ExerciseType[] = [];

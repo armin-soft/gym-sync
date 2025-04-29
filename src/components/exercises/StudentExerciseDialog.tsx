@@ -135,6 +135,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     handleSetsChangeDay2,
     handleSetsChangeDay3,
     handleSetsChangeDay4,
+    exerciseRepsDay1,
+    exerciseRepsDay2,
+    exerciseRepsDay3,
+    exerciseRepsDay4,
+    handleRepsChangeDay1,
+    handleRepsChangeDay2,
+    handleRepsChangeDay3,
+    handleRepsChangeDay4,
     getSelectedExercisesWithSetsDay1,
     getSelectedExercisesWithSetsDay2,
     getSelectedExercisesWithSetsDay3,
@@ -229,8 +237,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const handleSaveExercises = (exerciseIdsWithSets: ExerciseWithSets[], dayNumber?: number) => {
-    return onSave(exerciseIdsWithSets, dayNumber);
+  const handleSaveExercises = (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => {
+    return onSave(exercisesWithSets, dayNumber);
   };
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
@@ -304,6 +312,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                 handleSetsChangeDay2={handleSetsChangeDay2}
                 handleSetsChangeDay3={handleSetsChangeDay3}
                 handleSetsChangeDay4={handleSetsChangeDay4}
+                exerciseRepsDay1={exerciseRepsDay1}
+                exerciseRepsDay2={exerciseRepsDay2}
+                exerciseRepsDay3={exerciseRepsDay3}
+                exerciseRepsDay4={exerciseRepsDay4}
+                handleRepsChangeDay1={handleRepsChangeDay1}
+                handleRepsChangeDay2={handleRepsChangeDay2}
+                handleRepsChangeDay3={handleRepsChangeDay3}
+                handleRepsChangeDay4={handleRepsChangeDay4}
               />
             </motion.div>
           </AnimatePresence>
