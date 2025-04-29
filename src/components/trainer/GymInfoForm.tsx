@@ -30,7 +30,7 @@ export const GymInfoForm = ({
         label="نام باشگاه"
         value={profile.gymName}
         onChange={(value) => onChange('gymName', value)}
-        placeholder="باشگاه بدنسازی فیکس"
+        placeholder="نام باشگاه را وارد کنید"
         icon={<Building className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />}
         error={errors.gymName}
         isValid={validFields.gymName}
@@ -51,7 +51,7 @@ export const GymInfoForm = ({
         label="آدرس باشگاه"
         value={profile.gymAddress}
         onChange={(value) => onChange('gymAddress', value)}
-        placeholder="تهران، خیابان ولیعصر، پلاک ۱۲۸"
+        placeholder="آدرس باشگاه را وارد کنید"
         icon={<MapPin className="absolute right-3 top-3 h-4 w-4 text-muted-foreground/70" />}
         error={errors.gymAddress}
         isValid={validFields.gymAddress}

@@ -1,4 +1,3 @@
-
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -22,12 +21,6 @@ const TrainerProfile = () => {
     if (savedProfile) {
       try {
         const parsed = JSON.parse(savedProfile);
-        // Handle migration from old profile structure to new one
-        if (!parsed.gymName) {
-          parsed.gymName = "";
-          parsed.gymDescription = "مرکز تخصصی آمادگی جسمانی و بدنسازی";
-          parsed.gymAddress = "تهران، خیابان ولیعصر، پلاک ۱۲۸";
-        }
         setProfile(parsed);
       } catch (error) {
         console.error('Error loading profile from localStorage:', error);
