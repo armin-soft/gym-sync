@@ -14,9 +14,11 @@ import { useToast } from "@/hooks/use-toast";
 import useExerciseTypes from "@/hooks/useExerciseTypes";
 import useExerciseCategories from "@/hooks/useExerciseCategories";
 import useExerciseManagement from "@/hooks/useExerciseManagement";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const ExercisesPage = () => {
   const { toast } = useToast();
+  const deviceInfo = useDeviceInfo();
   
   // استفاده از هوک‌های جدا شده
   const { 
@@ -78,58 +80,81 @@ const ExercisesPage = () => {
       });
   }, [exercises, filteredCategories, isAscending]);
 
+  // تنظیم کلاس‌های شرطی برای پاسخگویی بهتر
+  const getResponsiveSpacing = () => {
+    if (deviceInfo.isMobile) {
+      return "space-y-3 px-1 py-2";
+    } else if (deviceInfo.isTablet) {
+      return "space-y-4 px-2 py-3";
+    } else if (deviceInfo.isSmallLaptop) {
+      return "space-y-6 px-3 py-4"; 
+    } else {
+      return "space-y-8 px-4 py-6";
+    }
+  };
+
+  const getCardSpacing = () => {
+    if (deviceInfo.isMobile) {
+      return "p-2 gap-2";
+    } else if (deviceInfo.isTablet) {
+      return "p-3 gap-3";
+    } else {
+      return "p-4 gap-4";
+    }
+  };
+
   return (
-    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full flex flex-col py-4 sm:py-6 lg:py-10 space-y-6 sm:space-y-8 lg:space-y-12 px-2 sm:px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:gap-6">
+    <PageContainer withBackground fullWidth fullHeight className="w-full h-full min-h-screen overflow-hidden">
+      <div className={`w-full h-full flex flex-col ${getResponsiveSpacing()}`}>
+        <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5">
           <div className="flex items-center justify-between">
-            <div className="space-y-1 sm:space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="space-y-0.5 sm:space-y-1">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 مدیریت حرکات تمرینی
               </h2>
-              <p className="text-muted-foreground text-xs sm:text-sm">
+              <p className={`text-muted-foreground ${deviceInfo.isMobile ? "text-2xs" : deviceInfo.isTablet ? "text-xs" : "text-sm"}`}>
                 مدیریت انواع، دسته بندی ها و حرکات تمرینی
               </p>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-            <Card className="p-4 sm:p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-xl">
-                  <Tag className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 dark:text-indigo-400" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+            <Card className={`${getCardSpacing()} bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 shadow-lg hover:shadow-xl transition-shadow duration-300`}>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="bg-indigo-100 dark:bg-indigo-900 p-2 sm:p-3 rounded-xl">
+                  <Tag className={`${deviceInfo.isMobile ? "w-5 h-5" : "w-6 h-6 sm:w-7 sm:h-7"} text-indigo-600 dark:text-indigo-400`} />
                 </div>
-                <div className="space-y-0.5 sm:space-y-1">
-                  <p className="text-sm sm:text-base font-medium text-muted-foreground">انواع حرکات</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                <div className="space-y-0.5">
+                  <p className={`${deviceInfo.isMobile ? "text-xs" : "text-sm"} font-medium text-muted-foreground`}>انواع حرکات</p>
+                  <p className={`${deviceInfo.isMobile ? "text-lg" : "text-xl sm:text-2xl"} font-bold text-indigo-600 dark:text-indigo-400`}>
                     {toPersianNumbers(exerciseTypes.length)}
                   </p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-4 sm:p-6 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-xl">
-                  <FolderTree className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 dark:text-purple-400" />
+            <Card className={`${getCardSpacing()} bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900 shadow-lg hover:shadow-xl transition-shadow duration-300`}>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="bg-purple-100 dark:bg-purple-900 p-2 sm:p-3 rounded-xl">
+                  <FolderTree className={`${deviceInfo.isMobile ? "w-5 h-5" : "w-6 h-6 sm:w-7 sm:h-7"} text-purple-600 dark:text-purple-400`} />
                 </div>
-                <div className="space-y-0.5 sm:space-y-1">
-                  <p className="text-sm sm:text-base font-medium text-muted-foreground">دسته بندی ها</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600 dark:text-purple-400">
+                <div className="space-y-0.5">
+                  <p className={`${deviceInfo.isMobile ? "text-xs" : "text-sm"} font-medium text-muted-foreground`}>دسته بندی ها</p>
+                  <p className={`${deviceInfo.isMobile ? "text-lg" : "text-xl sm:text-2xl"} font-bold text-purple-600 dark:text-purple-400`}>
                     {toPersianNumbers(categories.length)}
                   </p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-4 sm:p-6 bg-gradient-to-br from-pink-50 to-white dark:from-pink-950 dark:to-gray-900 border-pink-100 dark:border-pink-900 shadow-lg hover:shadow-xl transition-shadow duration-300 sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="bg-pink-100 dark:bg-pink-900 p-3 rounded-xl">
-                  <Activity className="w-6 h-6 sm:w-8 sm:h-8 text-pink-600 dark:text-pink-400" />
+            <Card className={`${getCardSpacing()} bg-gradient-to-br from-pink-50 to-white dark:from-pink-950 dark:to-gray-900 border-pink-100 dark:border-pink-900 shadow-lg hover:shadow-xl transition-shadow duration-300 sm:col-span-2 lg:col-span-1`}>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="bg-pink-100 dark:bg-pink-900 p-2 sm:p-3 rounded-xl">
+                  <Activity className={`${deviceInfo.isMobile ? "w-5 h-5" : "w-6 h-6 sm:w-7 sm:h-7"} text-pink-600 dark:text-pink-400`} />
                 </div>
-                <div className="space-y-0.5 sm:space-y-1">
-                  <p className="text-sm sm:text-base font-medium text-muted-foreground">حرکات</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600 dark:text-pink-400">
+                <div className="space-y-0.5">
+                  <p className={`${deviceInfo.isMobile ? "text-xs" : "text-sm"} font-medium text-muted-foreground`}>حرکات</p>
+                  <p className={`${deviceInfo.isMobile ? "text-lg" : "text-xl sm:text-2xl"} font-bold text-pink-600 dark:text-pink-400`}>
                     {toPersianNumbers(exercises.length)}
                   </p>
                 </div>
@@ -138,7 +163,7 @@ const ExercisesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-4 sm:p-6 lg:p-8 flex-shrink-0">
+        <div className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg ${getCardSpacing()} flex-shrink-0`}>
           <ExerciseTypes
             types={exerciseTypes}
             selectedType={selectedType}
@@ -160,7 +185,7 @@ const ExercisesPage = () => {
         </div>
 
         {exerciseTypes.length > 0 && (
-          <div className="flex flex-col gap-6 sm:gap-8 flex-1">
+          <div className="flex flex-col gap-3 sm:gap-4 lg:gap-6 flex-1 overflow-hidden">
             <CategoryTable 
               categories={filteredCategories}
               onAdd={() => {
@@ -183,34 +208,36 @@ const ExercisesPage = () => {
             />
 
             {hasCategories && (
-              <ExerciseTableMain
-                exercises={filteredExercises}
-                categories={categories}
-                onAdd={() => {
-                  if (filteredCategories.length === 0) {
-                    toast({
-                      variant: "destructive",
-                      title: "خطا",
-                      description: "ابتدا باید یک دسته بندی ایجاد کنید"
+              <div className="flex-1 min-h-0 overflow-hidden">
+                <ExerciseTableMain
+                  exercises={filteredExercises}
+                  categories={categories}
+                  onAdd={() => {
+                    if (filteredCategories.length === 0) {
+                      toast({
+                        variant: "destructive",
+                        title: "خطا",
+                        description: "ابتدا باید یک دسته بندی ایجاد کنید"
+                      });
+                      return;
+                    }
+                    setSelectedExercise(undefined);
+                    setExerciseFormData({ name: "", categoryId: filteredCategories[0].id });
+                    setIsExerciseDialogOpen(true);
+                  }}
+                  onEdit={(exercise) => {
+                    setSelectedExercise(exercise);
+                    setExerciseFormData({
+                      name: exercise.name,
+                      categoryId: exercise.categoryId
                     });
-                    return;
-                  }
-                  setSelectedExercise(undefined);
-                  setExerciseFormData({ name: "", categoryId: filteredCategories[0].id });
-                  setIsExerciseDialogOpen(true);
-                }}
-                onEdit={(exercise) => {
-                  setSelectedExercise(exercise);
-                  setExerciseFormData({
-                    name: exercise.name,
-                    categoryId: exercise.categoryId
-                  });
-                  setIsExerciseDialogOpen(true);
-                }}
-                onDelete={handleDeleteExercises}
-                onSort={handleSort}
-                isAscending={isAscending}
-              />
+                    setIsExerciseDialogOpen(true);
+                  }}
+                  onDelete={handleDeleteExercises}
+                  onSort={handleSort}
+                  isAscending={isAscending}
+                />
+              </div>
             )}
           </div>
         )}

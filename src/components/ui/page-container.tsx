@@ -24,18 +24,18 @@ export const PageContainer = ({
   const deviceInfo = useDeviceInfo();
   const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
   
-  // Calculate responsive padding based on device type
+  // Calculate responsive padding based on device type with optimized values
   const getPadding = () => {
     if (noPadding) return "p-0";
     
     if (deviceInfo.isMobile) {
-      return "px-2 py-1";
+      return "px-1 py-0.5";
     } else if (deviceInfo.isTablet) {
-      return "px-3 py-2";
+      return "px-2 py-1";
     } else if (deviceInfo.isSmallLaptop) {
-      return "px-4 py-3";
+      return "px-3 py-1.5";
     } else {
-      return "px-5 py-4";
+      return "px-4 py-2";
     }
   };
   
@@ -44,7 +44,7 @@ export const PageContainer = ({
       "w-full flex flex-col",
       fullHeight ? "h-full min-h-screen" : "h-full",
       withBackground && "relative",
-      fullWidth ? "max-w-none" : "max-w-[2000px] mx-auto",
+      fullWidth ? "max-w-none" : "max-w-full mx-auto",
       className
     )}>
       {withBackground && (

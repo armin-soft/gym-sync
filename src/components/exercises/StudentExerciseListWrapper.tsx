@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ExerciseViewControls } from "./ExerciseViewControls";
 import { motion } from "framer-motion";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 import { Dumbbell } from "lucide-react";
 
 interface StudentExerciseListWrapperProps {
@@ -31,9 +31,46 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
   showControls = false,
   isEmpty = false
 }) => {
-  const isMobile = useIsMobile();
-  // Adjust the max height to be more responsive based on screen size
-  const calculatedMaxHeight = isMobile ? "calc(100vh - 180px)" : "calc(100vh - 120px)";
+  const deviceInfo = useDeviceInfo();
+  
+  // ارتفاع ریسپانسیو براساس نوع دستگاه
+  const getResponsiveHeight = () => {
+    if (deviceInfo.isMobile) {
+      return "calc(100vh - 200px)";
+    } else if (deviceInfo.isTablet) {
+      return "calc(100vh - 180px)";
+    } else if (deviceInfo.isSmallLaptop) {
+      return "calc(100vh - 150px)";
+    } else {
+      return "calc(100vh - 130px)";
+    }
+  };
+
+  // محاسبه پدینگ ریسپانسیو براساس نوع دستگاه
+  const getResponsivePadding = () => {
+    if (deviceInfo.isMobile) {
+      return "p-1";
+    } else if (deviceInfo.isTablet) {
+      return "p-1.5";
+    } else if (deviceInfo.isSmallLaptop) {
+      return "p-2";
+    } else {
+      return "p-3";
+    }
+  };
+
+  // تنظیم ابعاد آیکون براساس دستگاه
+  const getIconSize = () => {
+    if (deviceInfo.isMobile) {
+      return "h-8 w-8";
+    } else if (deviceInfo.isTablet) {
+      return "h-10 w-10";
+    } else {
+      return "h-12 w-12";
+    }
+  };
+
+  const calculatedMaxHeight = maxHeight === "100%" ? getResponsiveHeight() : maxHeight;
 
   return (
     <Card className={cn(
@@ -41,7 +78,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
       className
     )}>
       {showControls && setViewMode && toggleSortOrder && (
-        <div className="p-1.5 sm:p-2 border-b">
+        <div className="p-1 sm:p-1.5 border-b">
           <ExerciseViewControls
             viewMode={viewMode}
             setViewMode={setViewMode}
@@ -52,21 +89,22 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
       )}
       <ScrollArea className="w-full h-full overflow-auto flex-1" style={{ height: calculatedMaxHeight, maxHeight: calculatedMaxHeight }}>
         {isEmpty ? (
-          <div className="flex items-center justify-center h-full p-6">
+          <div className="flex items-center justify-center h-full p-3 sm:p-4 md:p-6">
             <div className="text-center">
-              <Dumbbell className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-              <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">هیچ تمرینی وجود ندارد</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">لطفاً ابتدا حرکت‌های تمرینی را اضافه کنید.</p>
+              <Dumbbell className={`mx-auto ${getIconSize()} text-gray-300 mb-2 sm:mb-3`} />
+              <h3 className={`${deviceInfo.isMobile ? "text-base" : "text-lg"} font-medium text-gray-700 dark:text-gray-300 mb-1`}>هیچ تمرینی وجود ندارد</h3>
+              <p className={`${deviceInfo.isMobile ? "text-2xs" : "text-xs sm:text-sm"} text-gray-500 dark:text-gray-400`}>لطفاً ابتدا حرکت‌های تمرینی را اضافه کنید.</p>
             </div>
           </div>
         ) : (
           <motion.div
             layout
             className={cn(
-              "p-2 sm:p-4 w-full h-full", 
+              getResponsivePadding(),
+              "w-full h-full", 
               viewMode === "grid" 
-                ? "grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3" 
-                : "flex flex-col space-y-2 sm:space-y-3"
+                ? "grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 xs:gap-1.5 sm:gap-2" 
+                : "flex flex-col space-y-1 xs:space-y-1.5 sm:space-y-2"
             )}
           >
             {children}
