@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { TrainerProfile } from "@/types/trainer";
 import { defaultProfile } from "@/types/trainer";
 import { ProfileForm } from "@/components/trainer/ProfileForm";
@@ -18,34 +18,25 @@ const TrainerProfile = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState<string>("personal");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const deviceInfo = useDeviceInfo();
 
   // Load saved profile from localStorage
   useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const savedProfile = localStorage.getItem('trainerProfile');
-        if (savedProfile) {
-          const parsed = JSON.parse(savedProfile);
-          setProfile(parsed);
-        }
-      } catch (error) {
-        console.error('Error loading profile from localStorage:', error);
-        toast({
-          variant: "destructive",
-          title: "خطا در بارگذاری اطلاعات",
-          description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
-        });
-      } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 600);
+    try {
+      const savedProfile = localStorage.getItem('trainerProfile');
+      if (savedProfile) {
+        const parsed = JSON.parse(savedProfile);
+        setProfile(parsed);
       }
-    };
-    
-    loadProfile();
+    } catch (error) {
+      console.error('Error loading profile from localStorage:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا در بارگذاری اطلاعات",
+        description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
+      });
+    }
   }, []);
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
@@ -125,65 +116,43 @@ const TrainerProfile = () => {
     <PageContainer withBackground fullWidth fullHeight className="w-full overflow-auto">
       <BackgroundElements />
       
-      <AnimatePresence>
-        {isLoading ? (
-          <motion.div 
-            initial={{ opacity: 1 }} 
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm z-50"
-          >
-            <motion.div
-              animate={{ 
-                rotate: 360,
-                scale: [1, 1.05, 1]
-              }}
-              transition={{
-                rotate: { repeat: Infinity, duration: 1, ease: "linear" },
-                scale: { repeat: Infinity, duration: 1.5 }
-              }}
-              className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full"
-            />
-          </motion.div>
-        ) : (
-          <motion.div 
-            className="w-full h-full flex flex-col space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            {/* Profile Header */}
-            <ProfileHeader />
+      <motion.div 
+        className="w-full h-full flex flex-col space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Profile Header */}
+        <ProfileHeader />
 
-            {/* Main Content */}
-            <div className={
-              deviceInfo.isMobile 
-                ? "flex flex-col space-y-6" 
-                : "grid lg:grid-cols-[320px_1fr] xl:grid-cols-[380px_1fr] gap-6 md:gap-8"
-            }>
-              {/* Sidebar */}
-              <ProfileSidebar
-                profile={profile}
-                onImageChange={(image) => handleUpdate('image', image)} 
-                activeSection={activeSection}
-                onTabChange={setActiveSection}
-              />
+        {/* Main Content */}
+        <div className={
+          deviceInfo.isMobile 
+            ? "flex flex-col space-y-6" 
+            : "grid lg:grid-cols-[320px_1fr] xl:grid-cols-[380px_1fr] gap-6 md:gap-8"
+        }>
+          {/* Sidebar */}
+          <ProfileSidebar
+            profile={profile}
+            onImageChange={(image) => handleUpdate('image', image)} 
+            activeSection={activeSection}
+            onTabChange={setActiveSection}
+          />
 
-              {/* Form */}
-              <ProfileForm
-                profile={profile}
-                onUpdate={handleUpdate}
-                onSave={handleSave}
-                errors={errors}
-                setErrors={setErrors}
-                validFields={validFields}
-                setValidFields={setValidFields}
-                activeSection={activeSection}
-                isSaving={isSaving}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {/* Form */}
+          <ProfileForm
+            profile={profile}
+            onUpdate={handleUpdate}
+            onSave={handleSave}
+            errors={errors}
+            setErrors={setErrors}
+            validFields={validFields}
+            setValidFields={setValidFields}
+            activeSection={activeSection}
+            isSaving={isSaving}
+          />
+        </div>
+      </motion.div>
     </PageContainer>
   );
 };
