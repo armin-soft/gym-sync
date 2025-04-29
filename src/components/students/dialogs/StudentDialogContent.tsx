@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
 import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
 import { StudentSupplementDialog } from "@/components/nutrition/StudentSupplementDialog";
 import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
 import { Student } from "@/components/students/StudentTypes";
+import { Supplement, SupplementCategory } from "@/types/supplement";
 
 interface StudentDialogContentProps {
   isDialogOpen: boolean;
@@ -56,12 +57,13 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
   meals,
   supplements
 }) => {
-  // اطمینان حاصل کنیم که داده‌ها از localStorage بارگذاری شوند اگر به عنوان پراپ ارسال نشده‌اند
-  const [localSupplements, setLocalSupplements] = React.useState(supplements);
-  const [localCategories, setLocalCategories] = React.useState<any[]>([]);
+  const [localSupplements, setLocalSupplements] = useState<Supplement[]>([]);
+  const [localCategories, setLocalCategories] = useState<SupplementCategory[]>([]);
+  const [supplementsLoaded, setSupplementsLoaded] = useState(false);
 
-  React.useEffect(() => {
-    if (!supplements || supplements.length === 0) {
+  // بارگذاری مکمل‌ها و دسته‌بندی‌ها از localStorage
+  useEffect(() => {
+    const loadSupplementsData = () => {
       try {
         const savedSupplements = localStorage.getItem('supplements');
         const savedCategories = localStorage.getItem('supplementCategories');
@@ -70,6 +72,9 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
           const parsedSupplements = JSON.parse(savedSupplements);
           console.log("Loaded supplements from localStorage in DialogContent:", parsedSupplements);
           setLocalSupplements(parsedSupplements);
+        } else if (supplements && supplements.length > 0) {
+          console.log("Using supplements from props:", supplements);
+          setLocalSupplements(supplements);
         }
         
         if (savedCategories) {
@@ -77,13 +82,26 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
           console.log("Loaded categories from localStorage in DialogContent:", parsedCategories);
           setLocalCategories(parsedCategories);
         }
+        
+        setSupplementsLoaded(true);
       } catch (error) {
-        console.error("Error loading supplements from localStorage in DialogContent:", error);
+        console.error("Error loading supplements data:", error);
       }
-    } else {
-      setLocalSupplements(supplements);
+    };
+
+    loadSupplementsData();
+  }, [supplements, isSupplementDialogOpen]);
+
+  // اطلاعات دیالوگ‌های مکمل‌ها و ویتامین‌ها در کنسول برای اشکال‌زدایی
+  useEffect(() => {
+    if (isSupplementDialogOpen && selectedStudentForSupplement) {
+      console.log("Opening supplement dialog for student:", selectedStudentForSupplement);
+      console.log("Student supplements:", selectedStudentForSupplement.supplements || []);
+      console.log("Student vitamins:", selectedStudentForSupplement.vitamins || []);
+      console.log("Available supplements:", localSupplements);
+      console.log("Available categories:", localCategories);
     }
-  }, [supplements]);
+  }, [isSupplementDialogOpen, selectedStudentForSupplement, localSupplements, localCategories]);
 
   return (
     <>
@@ -114,16 +132,19 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         initialMeals={selectedStudentForDiet?.meals || []}
       />
 
-      <StudentSupplementDialog
-        open={isSupplementDialogOpen}
-        onOpenChange={setIsSupplementDialogOpen}
-        studentName={selectedStudentForSupplement?.name || ""}
-        onSave={handleSaveSupplementsWrapper}
-        initialSupplements={selectedStudentForSupplement?.supplements || []}
-        initialVitamins={selectedStudentForSupplement?.vitamins || []}
-        supplements={localSupplements}
-        categories={localCategories}
-      />
+      {/* استفاده از حالت بارگذاری برای اطمینان از بارگذاری داده‌ها قبل از نمایش دیالوگ */}
+      {supplementsLoaded && (
+        <StudentSupplementDialog
+          open={isSupplementDialogOpen}
+          onOpenChange={setIsSupplementDialogOpen}
+          studentName={selectedStudentForSupplement?.name || ""}
+          onSave={handleSaveSupplementsWrapper}
+          initialSupplements={selectedStudentForSupplement?.supplements || []}
+          initialVitamins={selectedStudentForSupplement?.vitamins || []}
+          supplements={localSupplements.length > 0 ? localSupplements : supplements}
+          categories={localCategories}
+        />
+      )}
 
       <StudentDownloadDialog
         open={isDownloadDialogOpen}
@@ -131,7 +152,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
         student={selectedStudentForDownload}
         exercises={exercises}
         meals={meals}
-        supplements={localSupplements}
+        supplements={localSupplements.length > 0 ? localSupplements : supplements}
         vitamins={localSupplements.filter(item => item.type === 'vitamin')}
       />
     </>

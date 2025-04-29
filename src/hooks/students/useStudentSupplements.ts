@@ -1,13 +1,29 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { Student } from "@/components/students/StudentTypes";
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Supplement } from "@/types/supplement";
 
 export const useStudentSupplements = (
   students: Student[], 
   setStudents: Dispatch<SetStateAction<Student[]>>
 ) => {
   const { toast } = useToast();
+  const [supplements, setSupplements] = useState<Supplement[]>([]);
+  
+  // بارگذاری مکمل‌ها و ویتامین‌ها از localStorage هنگام اولین رندر
+  useEffect(() => {
+    try {
+      const savedSupplements = localStorage.getItem('supplements');
+      if (savedSupplements) {
+        const parsedSupplements = JSON.parse(savedSupplements);
+        console.log('Loaded supplements from localStorage in useStudentSupplements:', parsedSupplements);
+        setSupplements(parsedSupplements);
+      }
+    } catch (error) {
+      console.error('Error loading supplements from localStorage:', error);
+    }
+  }, []);
   
   const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}, studentId: number) => {
     try {
@@ -26,6 +42,10 @@ export const useStudentSupplements = (
           if (data.supplements.length || data.vitamins.length) progressCount++;
           
           const progress = Math.round((progressCount / 4) * 100);
+          
+          // نمایش اطلاعات در کنسول برای اشکال‌زدایی
+          console.log('Updated student supplements:', data.supplements);
+          console.log('Updated student vitamins:', data.vitamins);
           
           return {
             ...student,
@@ -56,5 +76,14 @@ export const useStudentSupplements = (
     }
   };
 
-  return { handleSaveSupplements };
+  // افزودن تابع برای دریافت اطلاعات مکمل‌ها و ویتامین‌ها
+  const getSupplementInfo = (supplementId: number) => {
+    return supplements.find(item => item.id === supplementId);
+  };
+
+  return { 
+    handleSaveSupplements,
+    getSupplementInfo,
+    supplements 
+  };
 };
