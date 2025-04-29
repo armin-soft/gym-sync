@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { Dumbbell, Globe, UserRound } from "lucide-react";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface FormTabsProps {
   activeSection: string;
@@ -8,10 +9,12 @@ interface FormTabsProps {
 }
 
 export const FormTabs = ({ activeSection, onTabChange }: FormTabsProps) => {
+  const deviceInfo = useDeviceInfo();
+  
   const sections = [
-    { id: "personal", label: "اطلاعات شخصی", icon: <UserRound className="h-5 w-5" /> },
-    { id: "gym", label: "اطلاعات باشگاه", icon: <Dumbbell className="h-5 w-5" /> },
-    { id: "social", label: "شبکه‌های اجتماعی", icon: <Globe className="h-5 w-5" /> }
+    { id: "personal", label: "اطلاعات شخصی", icon: <UserRound className="h-4 w-4 sm:h-5 sm:w-5" /> },
+    { id: "gym", label: "اطلاعات باشگاه", icon: <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5" /> },
+    { id: "social", label: "شبکه‌های اجتماعی", icon: <Globe className="h-4 w-4 sm:h-5 sm:w-5" /> }
   ];
 
   const tabVariants = {
@@ -31,13 +34,20 @@ export const FormTabs = ({ activeSection, onTabChange }: FormTabsProps) => {
     }
   };
 
+  // Adjust tab size based on device
+  const getTabSize = () => {
+    if (deviceInfo.isSmallLaptop) return "px-4 py-2 text-xs";
+    if (deviceInfo.isDesktop) return "px-5 py-2.5 text-sm";
+    return "px-5 py-2.5 text-sm";
+  };
+
   return (
-    <div className="hidden lg:flex mb-6 gap-4">
+    <div className="hidden lg:flex mb-6 gap-3 lg:gap-4 overflow-x-auto">
       {sections.map((section) => (
         <motion.button
           key={section.id}
           onClick={() => onTabChange(section.id)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm"
+          className={`flex items-center gap-2 rounded-lg font-medium ${getTabSize()}`}
           variants={tabVariants}
           animate={activeSection === section.id ? "active" : "inactive"}
           whileHover={{ scale: 1.03 }}

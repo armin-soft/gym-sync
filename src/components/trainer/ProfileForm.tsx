@@ -10,6 +10,7 @@ import { GymInfoForm } from "./GymInfoForm";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { SaveButton } from "./SaveButton";
 import { SocialMediaForm } from "./SocialMediaForm";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -35,6 +36,7 @@ export const ProfileForm = ({
   setActiveSection 
 }: ProfileFormProps) => {
   const { toast } = useToast();
+  const deviceInfo = useDeviceInfo();
 
   const validateField = (key: keyof TrainerProfile, value: string) => {
     let isValid = false;
@@ -182,16 +184,23 @@ export const ProfileForm = ({
     }
   };
 
+  // Determine card padding based on device
+  const getCardPadding = () => {
+    if (deviceInfo.isMobile) return "p-4";
+    if (deviceInfo.isTablet) return "p-5";
+    return "p-6";
+  };
+
   return (
-    <Card className="backdrop-blur-xl bg-white/50 border-primary/10 shadow-xl">
-      <div className="p-6 space-y-6">
+    <Card className="backdrop-blur-xl bg-white/50 border-primary/10 shadow-xl h-full">
+      <div className={`${getCardPadding()} space-y-6 h-full flex flex-col`}>
         {/* Desktop Tabs */}
         <FormTabs
           activeSection={activeSection}
           onTabChange={setActiveSection}
         />
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" className="flex-1">
           {renderTabContent()}
         </AnimatePresence>
 

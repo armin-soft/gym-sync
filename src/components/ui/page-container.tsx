@@ -10,6 +10,7 @@ interface PageContainerProps {
   withBackground?: boolean;
   fullWidth?: boolean;
   noPadding?: boolean;
+  fullHeight?: boolean;
 }
 
 export const PageContainer = ({ 
@@ -17,7 +18,8 @@ export const PageContainer = ({
   className = "",
   withBackground = false,
   fullWidth = false,
-  noPadding = false
+  noPadding = false,
+  fullHeight = false
 }: PageContainerProps) => {
   const deviceInfo = useDeviceInfo();
   const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
@@ -39,7 +41,8 @@ export const PageContainer = ({
   
   return (
     <div className={cn(
-      "w-full h-full flex flex-col",
+      "w-full flex flex-col",
+      fullHeight ? "h-full min-h-screen" : "h-full",
       withBackground && "relative",
       fullWidth ? "max-w-none" : "max-w-[2000px] mx-auto",
       className

@@ -1,3 +1,4 @@
+
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -7,6 +8,7 @@ import { defaultProfile } from "@/types/trainer";
 import { ProfileImage } from "@/components/trainer/ProfileImage";
 import { ProfileForm } from "@/components/trainer/ProfileForm";
 import { PageContainer } from "@/components/ui/page-container";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const TrainerProfile = () => {
   const { toast } = useToast();
@@ -14,6 +16,7 @@ const TrainerProfile = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState<string>("personal");
+  const deviceInfo = useDeviceInfo();
 
   // Load saved profile from localStorage
   useEffect(() => {
@@ -75,31 +78,29 @@ const TrainerProfile = () => {
     }
   };
 
-  const tabVariants = {
-    inactive: { opacity: 0.7, y: 0 },
-    active: { 
-      opacity: 1, 
-      y: 0,
-      transition: { type: "spring", stiffness: 300, damping: 20 }
-    }
+  const getContainerPadding = () => {
+    if (deviceInfo.isMobile) return "py-4 px-3";
+    if (deviceInfo.isTablet) return "py-6 px-4";
+    if (deviceInfo.isSmallLaptop) return "py-6 px-6";
+    return "py-8 px-4 md:px-6 lg:px-8";
   };
 
-  const sections = [
-    { id: "personal", label: "اطلاعات شخصی" },
-    { id: "gym", label: "اطلاعات باشگاه" },
-    { id: "social", label: "شبکه‌های اجتماعی" }
-  ];
+  const getGridLayout = () => {
+    if (deviceInfo.isMobile) return "flex flex-col gap-6";
+    if (deviceInfo.isTablet) return "flex flex-col gap-8";
+    return "grid lg:grid-cols-[300px_1fr] gap-8";
+  };
 
   return (
-    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
+    <PageContainer withBackground fullWidth fullHeight className="w-full overflow-auto">
       <motion.div 
-        className="w-full h-full flex flex-col mx-auto py-8 space-y-8 px-4 md:px-6 lg:px-8"
+        className={`w-full h-full flex flex-col mx-auto ${getContainerPadding()} space-y-6 sm:space-y-8`}
         variants={stagger}
         initial="initial"
         animate="animate"
       >
         <motion.div 
-          className="flex flex-col space-y-6"
+          className="flex flex-col space-y-4 sm:space-y-6"
           variants={fadeIn}
         >
           <motion.div 
@@ -108,14 +109,14 @@ const TrainerProfile = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
-              <Camera className="h-6 w-6" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+              <Camera className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
                 پروفایل مربی
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 اطلاعات پروفایل خود را مدیریت کنید
               </p>
             </div>
@@ -123,7 +124,7 @@ const TrainerProfile = () => {
         </motion.div>
 
         <motion.div 
-          className="grid lg:grid-cols-[300px_1fr] gap-8 flex-1"
+          className={getGridLayout()}
           variants={stagger}
         >
           <motion.div 
@@ -137,19 +138,23 @@ const TrainerProfile = () => {
 
             {/* Tabs for mobile view */}
             <div className="flex lg:hidden overflow-x-auto pb-2 gap-2 no-scrollbar">
-              {sections.map((section) => (
+              {["personal", "gym", "social"].map((section) => (
                 <motion.button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
-                    activeSection === section.id
+                  key={section}
+                  onClick={() => setActiveSection(section)}
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap ${
+                    activeSection === section
                       ? "bg-primary text-primary-foreground shadow-md"
                       : "bg-muted/50 text-muted-foreground hover:bg-muted"
                   }`}
-                  variants={tabVariants}
-                  animate={activeSection === section.id ? "active" : "inactive"}
+                  animate={activeSection === section ? 
+                    { opacity: 1, y: 0, scale: 1.05 } : 
+                    { opacity: 0.7, y: 0, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
-                  {section.label}
+                  {section === "personal" ? "اطلاعات شخصی" : 
+                   section === "gym" ? "اطلاعات باشگاه" : 
+                   "شبکه‌های اجتماعی"}
                 </motion.button>
               ))}
             </div>
