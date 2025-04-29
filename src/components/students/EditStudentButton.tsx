@@ -9,6 +9,7 @@ interface EditStudentButtonProps {
   variant?: "default" | "secondary" | "ghost" | "outline";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
+  onClick?: () => void;
 }
 
 export const EditStudentButton = ({
@@ -16,7 +17,27 @@ export const EditStudentButton = ({
   variant = "ghost",
   size = "icon",
   className = "",
+  onClick
 }: EditStudentButtonProps) => {
+  if (onClick) {
+    return (
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Button
+          variant={variant}
+          size={size}
+          className={className}
+          onClick={onClick}
+        >
+          <Edit className="h-4 w-4" />
+          {size !== "icon" && "ویرایش"}
+        </Button>
+      </motion.div>
+    );
+  }
+  
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
