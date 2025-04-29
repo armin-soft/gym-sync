@@ -76,51 +76,49 @@ export const Layout = memo(() => {
   };
 
   return (
-    <div className="min-h-screen h-screen w-full overflow-hidden bg-background persian-numbers" dir="rtl">
+    <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       
       <Toaster />
       
-      <div className="flex flex-col h-full w-full">
-        <motion.header 
-          initial={{ y: -10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className={`sticky top-0 z-50 w-full border-b transition-all duration-200 ${
-            scrolled 
-              ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" 
-              : "bg-background"
-          }`}
-        >
-          <div className="w-full px-4">
-            <div className="w-full flex h-14 items-center justify-between">
-              <div className="flex items-center">
-                <button
-                  onClick={() => setSidebarOpen(true)}
-                  className="mr-2 rounded-md p-2 hover:bg-accent"
-                  aria-label="Open menu"
-                >
-                  <Menu className="h-5 w-5" />
-                </button>
-                <div className="flex items-center gap-2">
-                  <AppIcon size="sm" animated />
-                  <h1 className="text-lg font-semibold hidden md:block">
-                    {gymName ? `مدیریت برنامه ${gymName}` : 'مدیریت برنامه'}
-                  </h1>
-                </div>
+      <motion.header 
+        initial={{ y: -10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className={`sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0 ${
+          scrolled 
+            ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" 
+            : "bg-background"
+        }`}
+      >
+        <div className="w-full px-2 xs:px-3 sm:px-4">
+          <div className="w-full flex h-12 sm:h-14 items-center justify-between">
+            <div className="flex items-center">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="mr-1 sm:mr-2 rounded-md p-1.5 sm:p-2 hover:bg-accent"
+                aria-label="Open menu"
+              >
+                <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <AppIcon size="sm" animated />
+                <h1 className="text-sm sm:text-lg font-semibold hidden xs:block">
+                  {gymName ? `مدیریت برنامه ${gymName}` : 'مدیریت برنامه'}
+                </h1>
               </div>
             </div>
           </div>
-        </motion.header>
-        
-        <main className="flex-1 overflow-hidden w-full h-full">
-          <div className="w-full h-full">
-            <Suspense fallback={<LoadingFallback />}>
-              <Outlet />
-            </Suspense>
-          </div>
-        </main>
-      </div>
+        </div>
+      </motion.header>
+      
+      <main className="flex-1 overflow-hidden w-full">
+        <Suspense fallback={<LoadingFallback />}>
+          <Outlet />
+        </Suspense>
+      </main>
     </div>
   );
 });
+
+export default Layout;

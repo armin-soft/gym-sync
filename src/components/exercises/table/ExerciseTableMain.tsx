@@ -91,8 +91,8 @@ export function ExerciseTableMain({
   const hasActiveFilters = searchQuery !== "" || selectedCategoryId !== null;
 
   return (
-    <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
-      <div className="p-3 sm:p-4 md:p-5 lg:p-6">
+    <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30 w-full h-full">
+      <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 h-full flex flex-col">
         <ExerciseTableHeader
           selectedCount={selectedExercises.length}
           onAdd={onAdd}
@@ -112,17 +112,19 @@ export function ExerciseTableMain({
           isMobile={isMobile}
         />
 
-        <ExerciseTableContent
-          exercises={filteredExercises}
-          categories={categories}
-          selectedExercises={selectedExercises}
-          onSelectAll={handleSelectAll}
-          onSelectExercise={handleSelectExercise}
-          onEdit={onEdit}
-          onDelete={confirmDelete}
-          onClearFilters={hasActiveFilters ? handleClearFilters : undefined}
-          isMobile={isMobile}
-        />
+        <div className="flex-1 min-h-0 w-full">
+          <ExerciseTableContent
+            exercises={filteredExercises}
+            categories={categories}
+            selectedExercises={selectedExercises}
+            onSelectAll={handleSelectAll}
+            onSelectExercise={handleSelectExercise}
+            onEdit={onEdit}
+            onDelete={confirmDelete}
+            onClearFilters={hasActiveFilters ? handleClearFilters : undefined}
+            isMobile={isMobile}
+          />
+        </div>
       </div>
 
       <ExerciseTableDeleteDialog

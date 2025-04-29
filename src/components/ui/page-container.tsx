@@ -18,7 +18,7 @@ export const PageContainer = ({
   
   return (
     <div className={cn(
-      "w-full h-full min-h-screen pb-0 flex flex-col",
+      "w-full h-full flex flex-col",
       withBackground && "relative",
       className
     )}>
@@ -29,7 +29,9 @@ export const PageContainer = ({
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5 -z-10" />
         </>
       )}
-      {children}
+      <div className="w-full h-full overflow-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 py-2 xs:py-3 sm:py-4 md:py-6">
+        {children}
+      </div>
     </div>
   );
 };

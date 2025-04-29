@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -62,6 +63,19 @@
     font-family: "Vazirmatn", sans-serif;
     direction: rtl;
     @apply text-base antialiased;
+    font-size: 14px;
+  }
+  
+  @media screen and (min-width: 640px) {
+    html {
+      font-size: 15px;
+    }
+  }
+  
+  @media screen and (min-width: 1024px) {
+    html {
+      font-size: 16px;
+    }
   }
   
   body {
@@ -70,38 +84,38 @@
 
   /* تنظیمات تایپوگرافی */
   h1 {
-    @apply text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl;
+    @apply text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl;
   }
 
   h2 {
-    @apply text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl;
+    @apply text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-4xl;
   }
 
   h3 {
-    @apply text-xl font-semibold tracking-tight md:text-2xl lg:text-3xl;
+    @apply text-lg font-semibold tracking-tight sm:text-xl md:text-2xl lg:text-3xl;
   }
 
   h4 {
-    @apply text-lg font-medium md:text-xl;
+    @apply text-base font-medium sm:text-lg md:text-xl;
   }
 
   h5, h6 {
-    @apply text-base font-medium md:text-lg;
+    @apply text-sm font-medium sm:text-base md:text-lg;
   }
 
   p {
-    @apply text-base leading-relaxed md:text-lg;
+    @apply text-sm leading-relaxed sm:text-base md:text-lg;
   }
 
   small {
-    @apply text-sm md:text-base;
+    @apply text-xs sm:text-sm md:text-base;
   }
 
   /* تنظیمات فرم‌ها */
   input, textarea, select {
     direction: rtl;
     text-align: right;
-    @apply text-sm md:text-base rounded-md;
+    @apply text-xs sm:text-sm md:text-base rounded-md;
   }
 
   /* استثنا برای ورودی‌های لاتین */
@@ -113,36 +127,36 @@
 
   /* تنظیمات دکمه‌ها */
   button {
-    @apply text-sm md:text-base rounded-md transition-all duration-200;
+    @apply text-xs sm:text-sm md:text-base rounded-md transition-all duration-200;
   }
 
   /* تنظیمات جداول */
   table {
     direction: rtl;
-    @apply w-full text-sm md:text-base border-collapse;
+    @apply w-full text-xs sm:text-sm md:text-base border-collapse;
   }
 
   th {
-    @apply font-semibold text-right p-3 border-b;
+    @apply font-semibold text-right p-2 sm:p-3 border-b;
   }
 
   td {
-    @apply p-3 border-b;
+    @apply p-2 sm:p-3 border-b;
   }
 
   /* تنظیمات کارت‌ها */
   .card {
-    @apply bg-card text-card-foreground rounded-lg border shadow-sm;
+    @apply bg-card text-card-foreground rounded-lg border shadow-sm w-full;
   }
 
   /* تنظیمات باکس‌ها */
   .container {
-    @apply px-4 mx-auto sm:px-6 lg:px-8 h-full;
+    @apply px-2 xs:px-3 sm:px-4 md:px-6 mx-auto h-full w-full;
   }
 
   /* تنظیمات گرید و فلکس */
   .grid {
-    @apply gap-4 md:gap-6 lg:gap-8;
+    @apply gap-2 sm:gap-4 md:gap-6 lg:gap-8;
   }
 
   .flex {
@@ -151,7 +165,7 @@
 
   /* تنظیمات فاصله‌گذاری */
   .section {
-    @apply py-8 md:py-12 lg:py-16;
+    @apply py-4 sm:py-6 md:py-8 lg:py-12;
   }
 
   /* تنظیمات انیمیشن‌ها */
@@ -178,20 +192,20 @@
 
   /* کامپوننت‌های پاسخگو */
   .responsive-container {
-    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+    @apply container mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 w-full h-full;
   }
 
   .responsive-grid {
-    @apply grid gap-4 sm:gap-6 lg:gap-8;
+    @apply grid gap-2 xs:gap-3 sm:gap-4 md:gap-6 lg:gap-8;
   }
 
   .responsive-flex {
-    @apply flex flex-col sm:flex-row;
+    @apply flex flex-col xs:flex-row;
   }
 
   /* دکمه‌های پاسخگو */
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md
+    @apply inline-flex items-center justify-center px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md
            transition-colors duration-200 ease-in-out
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -206,8 +220,8 @@
 
   /* فرم‌های پاسخگو */
   .form-input {
-    @apply w-full rounded-md border border-input bg-background px-3 py-2
-           text-sm ring-offset-background
+    @apply w-full rounded-md border border-input bg-background px-2 py-1.5 xs:px-3 xs:py-2
+           text-xs sm:text-sm ring-offset-background
            file:border-0 file:bg-transparent file:text-sm file:font-medium
            placeholder:text-muted-foreground
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
@@ -216,7 +230,7 @@
 
   /* کارت‌های پاسخگو */
   .responsive-card {
-    @apply p-4 sm:p-6 lg:p-8 rounded-lg border bg-card text-card-foreground shadow-sm;
+    @apply p-3 sm:p-4 md:p-6 lg:p-8 rounded-lg border bg-card text-card-foreground shadow-sm;
   }
   
   /* تمام صفحه */

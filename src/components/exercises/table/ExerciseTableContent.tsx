@@ -42,9 +42,9 @@ export const ExerciseTableContent: React.FC<ExerciseTableContentProps> = ({
   const isIndeterminate = selectedExercises.length > 0 && selectedExercises.length < exercises.length;
 
   return (
-    <div className="relative rounded-lg border border-indigo-100 overflow-hidden">
-      <div className="w-full overflow-auto max-h-[40vh] sm:max-h-[45vh] md:max-h-[50vh]">
-        <Table className="min-w-[500px]">
+    <div className="relative rounded-lg border border-indigo-100 overflow-hidden w-full">
+      <div className="w-full overflow-auto max-h-[50vh] sm:max-h-[55vh] md:max-h-[60vh] lg:max-h-[65vh]">
+        <Table className="min-w-[450px] sm:min-w-[500px] w-full">
           <TableHeader className="sticky top-0 z-10 bg-white">
             <TableRow className="bg-gradient-to-r from-indigo-50 to-transparent hover:bg-indigo-50/50">
               <TableHead className="w-[40px] text-center py-2 sm:py-3">
@@ -105,7 +105,7 @@ export const ExerciseTableContent: React.FC<ExerciseTableContentProps> = ({
                     </TableCell>
                     <TableCell className="font-medium text-xs sm:text-sm py-1.5 sm:py-2 md:py-3">
                       <div className="flex items-center gap-1.5 sm:gap-2">
-                        <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-500 group-hover:scale-110 transition-transform duration-300" />
+                        <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-500 group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
                         <span className="group-hover:text-indigo-600 transition-colors duration-200 whitespace-nowrap">
                           {exercise.name}
                         </span>

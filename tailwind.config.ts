@@ -14,20 +14,30 @@ export default {
     container: {
       center: true,
       padding: {
-        DEFAULT: '1rem',
+        DEFAULT: '0.75rem',
+        xs: '1rem',
         sm: '1.5rem',
-        lg: '2rem'
+        md: '2rem',
+        lg: '2.5rem',
+        xl: '3rem',
       },
       screens: {
+        xs: '375px',
         sm: '640px',
         md: '768px',
         lg: '1024px',
         xl: '1280px',
         '2xl': '1400px',
         '3xl': '1600px',
+        '4xl': '1920px',
       },
     },
     extend: {
+      screens: {
+        'xs': '375px',
+        '3xl': '1600px',
+        '4xl': '1920px',
+      },
       fontSize: {
         '3xs': ['0.5rem', { lineHeight: '0.75rem' }],
         '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
@@ -112,11 +122,6 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         fadeIn: "fadeIn 0.5s ease-out",
         slideIn: "slideIn 0.5s ease-out",
-      },
-      screens: {
-        'xs': '375px',
-        '3xl': '1600px',
-        '4xl': '1920px',
       },
     },
   },
