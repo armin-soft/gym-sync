@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -9,7 +10,9 @@ import {
   Pill, 
   ChartBar, 
   Database, 
-  HelpCircle 
+  HelpCircle,
+  ArrowRight,
+  Sparkles
 } from "lucide-react";
 
 export const MainMenuGrid = () => {
@@ -19,49 +22,64 @@ export const MainMenuGrid = () => {
       icon: User2, 
       href: '/Coach-Profile', 
       color: "from-blue-600 to-blue-400",
-      bgColor: "bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20"
+      shadowColor: "shadow-blue-500/20",
+      bgColor: "bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20"
     },
     { 
       title: "شاگردان", 
       icon: Users, 
       href: '/Students', 
       color: "from-emerald-600 to-emerald-400",
-      bgColor: "bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20"
+      shadowColor: "shadow-emerald-500/20",
+      bgColor: "bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-900/20 dark:to-teal-900/20"
     },
     { 
       title: "حرکات تمرینی", 
       icon: Dumbbell, 
       href: '/Exercise-Movements', 
       color: "from-amber-600 to-amber-400",
-      bgColor: "bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20"
+      shadowColor: "shadow-amber-500/20",
+      bgColor: "bg-gradient-to-br from-amber-50/80 to-yellow-50/80 dark:from-amber-900/20 dark:to-yellow-900/20"
     },
     { 
       title: "برنامه های غذایی", 
       icon: UtensilsCrossed, 
       href: '/Diet-Plan', 
       color: "from-purple-600 to-purple-400",
-      bgColor: "bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20"
+      shadowColor: "shadow-purple-500/20",
+      bgColor: "bg-gradient-to-br from-purple-50/80 to-violet-50/80 dark:from-purple-900/20 dark:to-violet-900/20"
     },
     { 
       title: "مکمل و ویتامین", 
       icon: Pill, 
       href: '/Supplements-Vitamins', 
       color: "from-pink-600 to-pink-400",
-      bgColor: "bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20"
+      shadowColor: "shadow-pink-500/20",
+      bgColor: "bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-900/20 dark:to-rose-900/20"
     },
     { 
       title: "گزارشات", 
       icon: ChartBar, 
       href: '/Reports', 
       color: "from-indigo-600 to-indigo-400",
-      bgColor: "bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20"
+      shadowColor: "shadow-indigo-500/20",
+      bgColor: "bg-gradient-to-br from-indigo-50/80 to-blue-50/80 dark:from-indigo-900/20 dark:to-blue-900/20"
     },
     { 
       title: "پشتیبان‌گیری و بازیابی", 
       icon: Database, 
       href: '/Backup-Restore', 
       color: "from-cyan-600 to-cyan-400",
-      bgColor: "bg-gradient-to-br from-cyan-50 to-sky-50 dark:from-cyan-900/20 dark:to-sky-900/20"
+      shadowColor: "shadow-cyan-500/20",
+      bgColor: "bg-gradient-to-br from-cyan-50/80 to-sky-50/80 dark:from-cyan-900/20 dark:to-sky-900/20"
+    },
+    { 
+      title: "راهنما و پشتیبانی", 
+      icon: HelpCircle, 
+      href: '/Help', 
+      color: "from-gray-600 to-gray-400",
+      shadowColor: "shadow-gray-500/20",
+      bgColor: "bg-gradient-to-br from-gray-50/80 to-slate-50/80 dark:from-gray-900/20 dark:to-slate-900/20"
     }
   ];
 
@@ -93,16 +111,43 @@ export const MainMenuGrid = () => {
         <motion.div key={dashItem.href} variants={item}>
           <Link 
             to={dashItem.href}
-            className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-slate-200 dark:border-slate-800 p-3 md:p-4 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
+            className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-3 md:p-4 shadow-md ${dashItem.shadowColor} hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
           >
-            <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 bg-gradient-to-r ${dashItem.color} transition-opacity duration-300`} />
-            <div className="relative flex flex-col items-center text-center gap-2 md:gap-3">
-              <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-gradient-to-r from-white via-transparent to-transparent transition-opacity duration-300" />
+            
+            {/* Animated shine effect on hover */}
+            <div className="absolute -inset-x-1/2 top-0 h-[200%] w-[200%] -translate-x-full rotate-45 transform bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-700 ease-out" />
+            
+            <div className="relative z-10 flex flex-col items-center text-center gap-2 md:gap-3">
+              <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md ring-1 ring-white/10 group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
                 <dashItem.icon className="w-5 h-5" />
               </div>
               <span className="font-medium text-xs sm:text-sm md:text-base text-gray-800 dark:text-white">
                 {dashItem.title}
               </span>
+              
+              {/* Arrow icon that appears on hover */}
+              <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="p-1 rounded-full bg-white/20 backdrop-blur-sm">
+                  <ArrowRight className="w-3 h-3 text-gray-700 dark:text-white" />
+                </div>
+              </div>
+              
+              {/* Sparkle decoration */}
+              <motion.div 
+                className="absolute top-1 left-1 opacity-0 group-hover:opacity-80 transition-opacity duration-300"
+                animate={{
+                  scale: [0.8, 1.2, 0.8],
+                  rotate: [0, 90, 0],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "loop"
+                }}
+              >
+                <Sparkles className="w-3 h-3 text-yellow-400" />
+              </motion.div>
             </div>
           </Link>
         </motion.div>
