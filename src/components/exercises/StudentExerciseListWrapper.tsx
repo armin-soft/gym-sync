@@ -29,7 +29,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
   showControls = false
 }) => {
   const isMobile = useIsMobile();
-  const calculatedMaxHeight = isMobile ? "calc(100vh - 160px)" : "calc(100vh - 100px)";
+  const calculatedMaxHeight = isMobile ? "calc(100vh - 180px)" : "calc(100vh - 120px)";
 
   return (
     <Card className={cn(
@@ -37,7 +37,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
       className
     )}>
       {showControls && setViewMode && toggleSortOrder && (
-        <div className="p-2 border-b">
+        <div className="p-1.5 sm:p-2 border-b">
           <ExerciseViewControls
             viewMode={viewMode}
             setViewMode={setViewMode}
@@ -50,10 +50,10 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
         <motion.div
           layout
           className={cn(
-            "p-4 w-full h-full", 
+            "p-2 sm:p-3 w-full h-full", 
             viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3" 
-              : "flex flex-col space-y-3"
+              ? "grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3" 
+              : "flex flex-col space-y-2 sm:space-y-3"
           )}
         >
           {children}

@@ -30,14 +30,14 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
             <Button 
               variant="ghost" 
               size="sm"
-              className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-primary/10 text-primary" : ""}`}
+              className={`h-7 w-7 p-0 rounded-none ${viewMode === "grid" ? "bg-primary/10 text-primary" : ""}`}
               onClick={() => setViewMode("grid")}
             >
-              <Grid className="h-4 w-4" />
+              <Grid className="h-3.5 w-3.5" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-xs">نمایش گرید</p>
+            <p className="text-2xs sm:text-xs">نمایش گرید</p>
           </TooltipContent>
         </Tooltip>
         
@@ -46,14 +46,14 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
             <Button 
               variant="ghost" 
               size="sm"
-              className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-primary/10 text-primary" : ""}`}
+              className={`h-7 w-7 p-0 rounded-none ${viewMode === "list" ? "bg-primary/10 text-primary" : ""}`}
               onClick={() => setViewMode("list")}
             >
-              <List className="h-4 w-4" />
+              <List className="h-3.5 w-3.5" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-xs">نمایش لیست</p>
+            <p className="text-2xs sm:text-xs">نمایش لیست</p>
           </TooltipContent>
         </Tooltip>
         
@@ -62,14 +62,14 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
             <Button 
               variant="ghost" 
               size="sm"
-              className="h-8 w-8 p-0 rounded-none"
+              className="h-7 w-7 p-0 rounded-none"
               onClick={toggleSortOrder}
             >
-              {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+              {sortOrder === "asc" ? <ArrowDown className="h-3.5 w-3.5" /> : <ArrowUp className="h-3.5 w-3.5" />}
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-xs">{sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}</p>
+            <p className="text-2xs sm:text-xs">{sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}</p>
           </TooltipContent>
         </Tooltip>
       </motion.div>
