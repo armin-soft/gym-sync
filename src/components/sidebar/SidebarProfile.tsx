@@ -1,64 +1,78 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, User } from "lucide-react";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface SidebarProfileProps {
   name: string;
-  email: string;
-  image: string;
+  email?: string;
+  image?: string;
   onClose: () => void;
 }
 
-export function SidebarProfile({ name, email, image, onClose }: SidebarProfileProps) {
+export function SidebarProfile({
+  name,
+  email,
+  image,
+  onClose
+}: SidebarProfileProps) {
+  const deviceInfo = useDeviceInfo();
+  
+  // تنظیمات ریسپانسیو برای پروفایل
+  const getProfilePadding = () => {
+    if (deviceInfo.isMobile) return "p-3 py-2";
+    if (deviceInfo.isTablet) return "p-4 py-3";
+    return "p-5 py-4";
+  };
+  
+  const getAvatarSize = () => {
+    if (deviceInfo.isMobile) return "h-12 w-12";
+    if (deviceInfo.isTablet) return "h-14 w-14";
+    return "h-16 w-16";
+  };
+  
+  const getNameSize = () => {
+    if (deviceInfo.isMobile) return "text-sm";
+    if (deviceInfo.isTablet) return "text-base";
+    return "text-lg";
+  };
+  
+  const getEmailSize = () => {
+    if (deviceInfo.isMobile) return "text-xs";
+    if (deviceInfo.isTablet) return "text-xs";
+    return "text-sm";
+  };
+  
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="relative px-5 py-6 bg-gradient-to-r from-indigo-600 to-purple-700 text-white"
-    >
-      <Button 
-        size="icon" 
-        variant="ghost" 
-        onClick={onClose} 
-        className="absolute top-4 left-4 rounded-full text-white hover:bg-white/20 h-8 w-8 p-0"
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </Button>
-      
-      <div className="flex flex-col items-center text-center">
-        <div className="relative mb-2">
-          <div className="absolute inset-0 rounded-full bg-white/20 blur-lg"></div>
-          <Avatar className="h-16 w-16 border-2 border-white/50 relative">
-            {image ? (
-              <AvatarImage src={image} alt={name} />
-            ) : (
-              <AvatarFallback className="bg-gradient-to-br from-indigo-400 to-purple-500 text-white">
-                {name.slice(0, 2)}
-              </AvatarFallback>
-            )}
+    <div className={cn(
+      "border-b bg-primary/5 backdrop-blur-sm",
+      getProfilePadding()
+    )}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Avatar className={cn("border-2 border-primary/20", getAvatarSize())}>
+            <AvatarImage src={image} />
+            <AvatarFallback className="bg-primary/10">
+              <User className="h-6 w-6 text-primary/60" />
+            </AvatarFallback>
           </Avatar>
+          
+          <div>
+            <h3 className={cn("font-semibold", getNameSize())}>{name}</h3>
+            {email && (
+              <p className={cn("text-muted-foreground", getEmailSize())}>{email}</p>
+            )}
+          </div>
         </div>
-        <h3 className="font-bold text-lg">{name}</h3>
-        <p className="text-xs text-white/70">{email}</p>
         
-        <div className="flex mt-4 space-x-2 space-x-reverse">
-          <Button 
-            size="sm" 
-            variant="outline"
-            asChild
-            className="rounded-full text-xs bg-white/10 border-white/20 hover:bg-white/20 text-white"
-          >
-            <Link to="/Coach-Profile">
-              <Settings className="h-3.5 w-3.5 ml-1.5" />
-              پروفایل
-            </Link>
-          </Button>
-        </div>
+        <button 
+          onClick={onClose}
+          className="rounded-full p-1.5 hover:bg-muted transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

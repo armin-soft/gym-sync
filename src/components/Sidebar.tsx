@@ -12,7 +12,6 @@ import {
   LineChart,
   Database,
   ChevronLeft,
-  Settings,
   Menu
 } from "lucide-react";
 import manifestData from "@/Manifest.json";
@@ -22,6 +21,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { SidebarProfile } from "./sidebar/SidebarProfile";
 import { SidebarMenuList } from "./sidebar/SidebarMenuList";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -87,6 +87,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     email: ""
   });
   const { toast } = useToast();
+  const deviceInfo = useDeviceInfo();
   
   const loadProfile = () => {
     const savedProfile = localStorage.getItem('trainerProfile');
@@ -121,11 +122,22 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     };
   }, []);
   
+  // تنظیم عرض منو بر اساس نوع دستگاه
+  const getSidebarWidth = () => {
+    if (deviceInfo.isMobile) return "w-[280px]";
+    if (deviceInfo.isTablet) return "w-[320px]";
+    if (deviceInfo.isSmallLaptop) return "w-[350px]";
+    return "w-[380px]";
+  };
+  
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
         side="right" 
-        className="w-[320px] p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
+        className={cn(
+          getSidebarWidth(),
+          "p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
+        )}
       >
         <div className="flex h-full flex-col overflow-hidden">
           <SidebarProfile 
@@ -136,7 +148,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           />
           
           <div className="px-4 py-3 border-b bg-muted/30">
-            <h4 className="text-sm font-medium text-center text-muted-foreground">{gymName}</h4>
+            <h4 className={cn(
+              "text-sm font-medium text-center text-muted-foreground",
+              deviceInfo.isMobile ? "text-xs" : 
+              deviceInfo.isTablet ? "text-sm" : "text-base"
+            )}>
+              {gymName}
+            </h4>
           </div>
           
           <ScrollArea className="flex-1">

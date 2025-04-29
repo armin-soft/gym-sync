@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 const LoadingFallback = memo(() => <LoadingScreen />);
 
@@ -77,11 +78,40 @@ export const Layout = memo(() => {
     window.location.reload();
   };
 
-  // Optimize header height based on device
+  // تنظیمات ریسپانسیو برای هدر
   const getHeaderHeight = () => {
     if (deviceInfo.isMobile) return "h-12";
     if (deviceInfo.isTablet) return "h-14";
     return "h-16";
+  };
+  
+  const getHeaderPadding = () => {
+    if (deviceInfo.isMobile) return "px-2 xs:px-3";
+    if (deviceInfo.isTablet) return "px-3 sm:px-4";
+    return "px-4 md:px-6 lg:px-8";
+  };
+  
+  const getButtonSize = () => {
+    if (deviceInfo.isMobile) return "p-1.5";
+    if (deviceInfo.isTablet) return "p-2";
+    return "p-2";
+  };
+  
+  const getIconSize = () => {
+    if (deviceInfo.isMobile) return "h-4 w-4";
+    if (deviceInfo.isTablet) return "h-5 w-5";
+    return "h-5 w-5";
+  };
+  
+  const getLogoGap = () => {
+    if (deviceInfo.isMobile) return "gap-1.5";
+    return "gap-2";
+  };
+  
+  const getTitleSize = () => {
+    if (deviceInfo.isMobile) return "text-sm";
+    if (deviceInfo.isTablet) return "text-base";
+    return "text-lg";
   };
 
   return (
@@ -100,19 +130,22 @@ export const Layout = memo(() => {
             : "bg-background"
         }`}
       >
-        <div className="w-full px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8">
-          <div className={`w-full flex items-center justify-between ${getHeaderHeight()}`}>
+        <div className={cn("w-full", getHeaderPadding())}>
+          <div className={cn("w-full flex items-center justify-between", getHeaderHeight())}>
             <div className="flex items-center">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="mr-1 sm:mr-2 rounded-md p-1.5 sm:p-2 hover:bg-accent"
+                className={cn("mr-1 sm:mr-2 rounded-md hover:bg-accent", getButtonSize())}
                 aria-label="Open menu"
               >
-                <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+                <Menu className={getIconSize()} />
               </button>
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className={cn("flex items-center", getLogoGap())}>
                 <AppIcon size="sm" animated />
-                <h1 className="text-sm sm:text-base md:text-lg font-semibold hidden xs:block">
+                <h1 className={cn(
+                  "font-semibold hidden xs:block",
+                  getTitleSize()
+                )}>
                   {gymName ? `مدیریت برنامه ${gymName}` : 'مدیریت برنامه'}
                 </h1>
               </div>
