@@ -150,7 +150,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
       <StudentDownloadDialog
         open={isDownloadDialogOpen}
         onOpenChange={setIsDownloadDialogOpen}
-        student={selectedStudentForDownload}
+        student={selectedStudentForDownload as Student}
         exercises={exercises}
         meals={meals}
         supplements={localSupplements.length > 0 ? localSupplements : supplements}

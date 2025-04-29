@@ -2,10 +2,11 @@
 import React from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
+import { ExerciseWithSets } from "@/types/exercise";
 
 interface StudentDialogManagerWrapperProps {
   onSave: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => boolean;
-  onSaveExercises: (exerciseIds: number[], studentId: number, dayNumber?: number) => boolean;
+  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[], studentId: number) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
   exercises: any[];

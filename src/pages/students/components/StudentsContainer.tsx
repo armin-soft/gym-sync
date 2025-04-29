@@ -10,6 +10,7 @@ import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
 import { StudentsList } from "./StudentsList";
 import { StudentDialogManagerWrapper } from "@/components/students/StudentDialogManagerWrapper";
+import { ExerciseWithSets } from "@/types/exercise";
 
 const StudentsContainer = () => {
   const {

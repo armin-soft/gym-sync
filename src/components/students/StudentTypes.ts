@@ -43,9 +43,31 @@ export interface Student {
   address?: string;
   email?: string;
   
-  // Add the missing properties being referenced throughout the application
+  // تمام ویژگی‌های مورد نیاز را به صورت اختیاری تعریف می‌کنیم
   height?: string;
   weight?: string;
   image?: string;
   payment?: string;
+}
+
+// مدل‌های تمرین، غذا و مکمل که باید اضافه شوند
+export interface Exercise {
+  id: number;
+  name: string;
+  categoryId: number;
+  description?: string;
+}
+
+export interface Meal {
+  id: number;
+  name: string;
+  type: string;
+  description?: string;
+}
+
+export interface Supplement {
+  id: number;
+  name: string;
+  type: string;
+  description?: string;
 }

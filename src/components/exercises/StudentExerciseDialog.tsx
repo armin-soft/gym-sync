@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -19,7 +20,7 @@ interface StudentExerciseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
-  onSave: (exerciseIdsWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
+  onSave: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   initialExercises?: number[];
   initialExercisesDay1?: number[];
   initialExercisesDay2?: number[];

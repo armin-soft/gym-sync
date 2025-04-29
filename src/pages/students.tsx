@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
