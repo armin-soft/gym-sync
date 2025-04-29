@@ -69,14 +69,22 @@ export const SupplementDialog = ({
 
   useEffect(() => {
     if (mode === "add") {
-      form.reset({
-        name: "",
-        category: "",
-      });
+      // در حالت افزودن، دسته‌بندی اول را به صورت پیش‌فرض انتخاب می‌کنیم اگر وجود داشته باشد
+      if (categories.length > 0) {
+        form.reset({
+          name: "",
+          category: categories[0].name,
+        });
+      } else {
+        form.reset({
+          name: "",
+          category: "",
+        });
+      }
     } else if (defaultValues) {
       form.reset(defaultValues);
     }
-  }, [defaultValues, form, mode]);
+  }, [defaultValues, form, mode, categories]);
 
   const placeholders = {
     supplement: {
@@ -140,7 +148,10 @@ export const SupplementDialog = ({
                     <ListTodo className="h-4 w-4 text-purple-500" />
                     دسته بندی
                   </FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value || (categories.length > 0 ? categories[0].name : "")}
+                  >
                     <FormControl>
                       <SelectTrigger className="border-purple-200 focus:ring-purple-500">
                         <SelectValue placeholder="دسته بندی را انتخاب کنید" />
