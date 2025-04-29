@@ -1,16 +1,26 @@
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const useExerciseFiltering = (
   exercises: Exercise[],
   categories: ExerciseCategory[] = []
 ) => {
+  const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  // Default to list view on mobile, grid on larger screens
+  const [viewMode, setViewMode] = useState<"grid" | "list">(isMobile ? "list" : "grid");
+
+  // Update view mode when screen size changes
+  useEffect(() => {
+    if (isMobile) {
+      setViewMode("list");
+    }
+  }, [isMobile]);
 
   // Get filtered categories based on exercise type
   const filteredCategories = useMemo(() => {

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp, Grid, List } from "lucide-react";
+import { ArrowDown, ArrowUp, LayoutGrid, LayoutList } from "lucide-react";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -30,10 +30,10 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
             <Button 
               variant="ghost" 
               size="sm"
-              className={`h-8 w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-primary/10 text-primary" : ""}`}
+              className={`h-7 w-7 sm:h-8 sm:w-8 p-0 rounded-none ${viewMode === "grid" ? "bg-primary/10 text-primary" : ""}`}
               onClick={() => setViewMode("grid")}
             >
-              <Grid className="h-4 w-4" />
+              <LayoutGrid className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -46,10 +46,10 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
             <Button 
               variant="ghost" 
               size="sm"
-              className={`h-8 w-8 p-0 rounded-none ${viewMode === "list" ? "bg-primary/10 text-primary" : ""}`}
+              className={`h-7 w-7 sm:h-8 sm:w-8 p-0 rounded-none ${viewMode === "list" ? "bg-primary/10 text-primary" : ""}`}
               onClick={() => setViewMode("list")}
             >
-              <List className="h-4 w-4" />
+              <LayoutList className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -62,10 +62,10 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
             <Button 
               variant="ghost" 
               size="sm"
-              className="h-8 w-8 p-0 rounded-none"
+              className="h-7 w-7 sm:h-8 sm:w-8 p-0 rounded-none"
               onClick={toggleSortOrder}
             >
-              {sortOrder === "asc" ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+              {sortOrder === "asc" ? <ArrowDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <ArrowUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
             </Button>
           </TooltipTrigger>
           <TooltipContent>
