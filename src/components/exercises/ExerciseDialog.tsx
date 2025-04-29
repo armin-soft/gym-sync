@@ -151,7 +151,7 @@ export function ExerciseDialog({
   if (selectedExercise) {
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               ویرایش حرکت
@@ -206,7 +206,7 @@ export function ExerciseDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
             افزودن حرکت جدید

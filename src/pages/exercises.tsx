@@ -265,56 +265,56 @@ const ExercisesPage = () => {
 
   return (
     <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full flex flex-col py-10 space-y-12 px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col gap-6">
+      <div className="w-full h-full flex flex-col py-4 sm:py-6 lg:py-10 space-y-6 sm:space-y-8 lg:space-y-12 px-2 sm:px-4 md:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 sm:gap-6">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="space-y-1 sm:space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 مدیریت حرکات تمرینی
               </h2>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-xs sm:text-sm">
                 مدیریت انواع، دسته بندی ها و حرکات تمرینی
               </p>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center gap-4">
-                <div className="bg-indigo-100 dark:bg-indigo-900 p-4 rounded-xl">
-                  <Tag className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+            <Card className="p-4 sm:p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-xl">
+                  <Tag className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <div className="space-y-1">
-                  <p className="text-base font-medium text-muted-foreground">انواع حرکات</p>
-                  <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-sm sm:text-base font-medium text-muted-foreground">انواع حرکات</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-600 dark:text-indigo-400">
                     {toPersianNumbers(exerciseTypes.length)}
                   </p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-6 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center gap-4">
-                <div className="bg-purple-100 dark:bg-purple-900 p-4 rounded-xl">
-                  <FolderTree className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+            <Card className="p-4 sm:p-6 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-xl">
+                  <FolderTree className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 dark:text-purple-400" />
                 </div>
-                <div className="space-y-1">
-                  <p className="text-base font-medium text-muted-foreground">دسته بندی ها</p>
-                  <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-sm sm:text-base font-medium text-muted-foreground">دسته بندی ها</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600 dark:text-purple-400">
                     {toPersianNumbers(categories.length)}
                   </p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-6 bg-gradient-to-br from-pink-50 to-white dark:from-pink-950 dark:to-gray-900 border-pink-100 dark:border-pink-900 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="flex items-center gap-4">
-                <div className="bg-pink-100 dark:bg-pink-900 p-4 rounded-xl">
-                  <Activity className="w-8 h-8 text-pink-600 dark:text-pink-400" />
+            <Card className="p-4 sm:p-6 bg-gradient-to-br from-pink-50 to-white dark:from-pink-950 dark:to-gray-900 border-pink-100 dark:border-pink-900 shadow-lg hover:shadow-xl transition-shadow duration-300 sm:col-span-2 lg:col-span-1">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="bg-pink-100 dark:bg-pink-900 p-3 rounded-xl">
+                  <Activity className="w-6 h-6 sm:w-8 sm:h-8 text-pink-600 dark:text-pink-400" />
                 </div>
-                <div className="space-y-1">
-                  <p className="text-base font-medium text-muted-foreground">حرکات</p>
-                  <p className="text-3xl font-bold text-pink-600 dark:text-pink-400">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-sm sm:text-base font-medium text-muted-foreground">حرکات</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-600 dark:text-pink-400">
                     {toPersianNumbers(exercises.length)}
                   </p>
                 </div>
@@ -323,7 +323,7 @@ const ExercisesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-8 flex-shrink-0">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-4 sm:p-6 lg:p-8 flex-shrink-0">
           <ExerciseTypes
             types={exerciseTypes}
             selectedType={selectedType}
@@ -335,7 +335,7 @@ const ExercisesPage = () => {
         </div>
 
         {exerciseTypes.length > 0 && (
-          <div className="flex flex-col gap-8 flex-1">
+          <div className="flex flex-col gap-6 sm:gap-8 flex-1">
             <CategoryTable 
               categories={filteredCategories}
               onAdd={() => {
