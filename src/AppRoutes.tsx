@@ -1,57 +1,61 @@
+import React from "react";
+import { useRoutes } from "react-router-dom";
 
-import React, { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { LoadingScreen } from './components/LoadingScreen';
+import Home from "./pages/home";
+import Login from "./pages/login";
+import Register from "./pages/register";
+import Profile from "./pages/profile";
+import Students from "./pages/students";
+import Exercises from "./pages/exercises";
+import Nutrition from "./pages/nutrition";
+import Settings from "./pages/settings";
+import AddEditStudent from "./pages/students/add-edit";
 
-// Lazy load components for better performance
-const Dashboard = lazy(() => import('./pages/Index'));
-const Students = lazy(() => import('./pages/students'));
-const Exercises = lazy(() => import('./pages/exercises'));
-const Diet = lazy(() => import('./pages/diet'));
-const Supplements = lazy(() => import('./pages/supplements'));
-const Trainer = lazy(() => import('./pages/trainer'));
-const Reports = lazy(() => import('./pages/reports'));
+const AppRoutes = () => {
+  const routes = useRoutes([
+    {
+      path: "/",
+      element: <Home />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/register",
+      element: <Register />,
+    },
+    {
+      path: "/profile",
+      element: <Profile />,
+    },
+    {
+      path: "/students",
+      element: <Students />,
+    },
+    {
+      path: "/students/add-edit",
+      element: <AddEditStudent />,
+    },
+    {
+      path: "/students/add-edit/:id",
+      element: <AddEditStudent />,
+    },
+    {
+      path: "/exercises",
+      element: <Exercises />,
+    },
+    {
+      path: "/nutrition",
+      element: <Nutrition />,
+    },
+    {
+      path: "/settings",
+      element: <Settings />,
+    },
+  ]);
 
-const AppRoutes: React.FC = () => {
-  return (
-    <Routes>
-      <Route path="/" element={
-        <Suspense fallback={<LoadingScreen />}>
-          <Dashboard />
-        </Suspense>
-      } />
-      <Route path="/students/*" element={
-        <Suspense fallback={<LoadingScreen />}>
-          <Students />
-        </Suspense>
-      } />
-      <Route path="/exercises/*" element={
-        <Suspense fallback={<LoadingScreen />}>
-          <Exercises />
-        </Suspense>
-      } />
-      <Route path="/diet/*" element={
-        <Suspense fallback={<LoadingScreen />}>
-          <Diet />
-        </Suspense>
-      } />
-      <Route path="/supplements/*" element={
-        <Suspense fallback={<LoadingScreen />}>
-          <Supplements />
-        </Suspense>
-      } />
-      <Route path="/trainer/*" element={
-        <Suspense fallback={<LoadingScreen />}>
-          <Trainer />
-        </Suspense>
-      } />
-      <Route path="/reports/*" element={
-        <Suspense fallback={<LoadingScreen />}>
-          <Reports />
-        </Suspense>
-      } />
-    </Routes>
-  );
+  return routes;
 };
 
 export default AppRoutes;

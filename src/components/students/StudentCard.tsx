@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Edit, Trash2, Dumbbell, UtensilsCrossed, Pill, Clipboard, User, Download } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { EditStudentButton } from "./EditStudentButton";
 
 interface StudentCardProps {
   student: Student;
@@ -92,18 +92,26 @@ export const StudentCard: React.FC<StudentCardProps> = ({
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">مدیریت اطلاعات شاگرد</p>
                 </div>
                 
-                <DropdownMenuItem 
-                  onClick={onEdit} 
-                  className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 group/item"
-                >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover/item:bg-blue-200 dark:group-hover/item:bg-blue-800/50 transition-all duration-200">
-                    <Edit className="h-4 w-4" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors duration-200">ویرایش اطلاعات</span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">تغییر مشخصات شاگرد</span>
-                  </div>
-                </DropdownMenuItem>
+                <div className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 group/item">
+                  {onEdit ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-9 px-3 flex-1"
+                      onClick={() => onEdit(student)}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      ویرایش
+                    </Button>
+                  ) : (
+                    <EditStudentButton
+                      studentId={student.id}
+                      variant="ghost"
+                      size="sm"
+                      className="h-9 px-3 flex-1"
+                    />
+                  )}
+                </div>
                 
                 <DropdownMenuItem 
                   onClick={onAddExercise} 
