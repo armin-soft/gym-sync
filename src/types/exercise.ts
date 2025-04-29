@@ -25,6 +25,12 @@ export interface Exercise {
   type?: string; // نوع تمرین مانند "قدرتی"، "استقامتی" و غیره
 }
 
+// Interface for exercise with sets information
+export interface ExerciseWithSets {
+  id: number;
+  sets: number;
+}
+
 export const defaultExerciseTypes: ExerciseType[] = [];
 
 export const defaultCategories: ExerciseCategory[] = [];

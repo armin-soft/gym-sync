@@ -1,5 +1,7 @@
+
 import { Student } from '@/components/students/StudentTypes';
 import { useToast } from '@/hooks/use-toast';
+import { ExerciseWithSets } from '@/types/exercise';
 import { Dispatch, SetStateAction } from 'react';
 
 export const useStudentExercises = (
@@ -8,33 +10,45 @@ export const useStudentExercises = (
 ) => {
   const { toast } = useToast();
   
-  const handleSaveExercises = (exerciseIds: number[], studentId: number, dayNumber?: number) => {
+  const handleSaveExercises = (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
     try {
-      console.log(`Saving exercises for student ${studentId} day ${dayNumber || 'general'}:`, exerciseIds);
+      console.log(`Saving exercises for student ${studentId} day ${dayNumber || 'general'}:`, exercisesWithSets);
       
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
           const updatedStudent = { ...student };
+          
+          // Extract exercise IDs and sets
+          const exerciseIds = exercisesWithSets.map(ex => ex.id);
+          const exerciseSets = exercisesWithSets.reduce((acc, ex) => {
+            acc[ex.id] = ex.sets;
+            return acc;
+          }, {} as Record<number, number>);
           
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
             switch(dayNumber) {
               case 1:
                 updatedStudent.exercisesDay1 = exerciseIds;
+                updatedStudent.exerciseSetsDay1 = exerciseSets;
                 break;
               case 2:
                 updatedStudent.exercisesDay2 = exerciseIds;
+                updatedStudent.exerciseSetsDay2 = exerciseSets;
                 break;
               case 3:
                 updatedStudent.exercisesDay3 = exerciseIds;
+                updatedStudent.exerciseSetsDay3 = exerciseSets;
                 break;
               case 4:
                 updatedStudent.exercisesDay4 = exerciseIds;
+                updatedStudent.exerciseSetsDay4 = exerciseSets;
                 break;
             }
           } else {
             // Otherwise update the general exercises
             updatedStudent.exercises = exerciseIds;
+            updatedStudent.exerciseSets = exerciseSets;
           }
           
           // Calculate progress

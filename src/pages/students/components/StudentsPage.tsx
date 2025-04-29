@@ -10,6 +10,7 @@ import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { ExerciseWithSets } from "@/types/exercise";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
@@ -74,8 +75,8 @@ const StudentsPage = () => {
     return result;
   }, [handleSave, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveExercisesWithHistory = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
-    const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
+  const handleSaveExercisesWithHistory = useCallback((exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+    const result = handleSaveExercises(exercisesWithSets, studentId, dayNumber);
     
     if (result) {
       const student = students.find(s => s.id === studentId);

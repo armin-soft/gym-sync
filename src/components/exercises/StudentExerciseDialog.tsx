@@ -14,12 +14,13 @@ import ExerciseDialogHeader from "./ExerciseDialogHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ExerciseWithSets } from "@/types/exercise";
 
 interface StudentExerciseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
-  onSave: (exerciseIds: number[], dayNumber?: number) => boolean;
+  onSave: (exerciseIdsWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   initialExercises?: number[];
   initialExercisesDay1?: number[];
   initialExercisesDay2?: number[];
@@ -127,6 +128,18 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     toggleExerciseDay2,
     toggleExerciseDay3,
     toggleExerciseDay4,
+    exerciseSetsDay1,
+    exerciseSetsDay2,
+    exerciseSetsDay3,
+    exerciseSetsDay4,
+    handleSetsChangeDay1,
+    handleSetsChangeDay2,
+    handleSetsChangeDay3,
+    handleSetsChangeDay4,
+    getSelectedExercisesWithSetsDay1,
+    getSelectedExercisesWithSetsDay2,
+    getSelectedExercisesWithSetsDay3,
+    getSelectedExercisesWithSetsDay4
   } = useExerciseSelection(
     initialExercises,
     initialExercisesDay1,
@@ -161,12 +174,22 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
+  const getActiveTabSelectedExercisesWithSets = () => {
+    switch(activeTab) {
+      case "day1": return getSelectedExercisesWithSetsDay1();
+      case "day2": return getSelectedExercisesWithSetsDay2();
+      case "day3": return getSelectedExercisesWithSetsDay3();
+      case "day4": return getSelectedExercisesWithSetsDay4();
+      default: return [];
+    }
+  };
+
   const handleSave = () => {
-    const selectedExercises = getActiveTabSelectedExercises();
+    const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
     const dayNumber = parseInt(activeTab.replace("day", ""));
     
     try {
-      const success = onSave(selectedExercises, dayNumber);
+      const success = onSave(selectedExercisesWithSets, dayNumber);
       
       if (success) {
         // Update saved state for the current tab
@@ -207,7 +230,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const handleSaveExercises = (exerciseIds: number[], dayNumber?: number) => {
+  const handleSaveExercises = (exerciseIds: ExerciseWithSets[], dayNumber?: number) => {
     return onSave(exerciseIds, dayNumber);
   };
 
@@ -274,6 +297,14 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                 selectedCategoryId={selectedCategoryId}
                 toggleSortOrder={toggleSortOrder}
                 sortOrder={sortOrder}
+                exerciseSetsDay1={exerciseSetsDay1}
+                exerciseSetsDay2={exerciseSetsDay2}
+                exerciseSetsDay3={exerciseSetsDay3}
+                exerciseSetsDay4={exerciseSetsDay4}
+                handleSetsChangeDay1={handleSetsChangeDay1}
+                handleSetsChangeDay2={handleSetsChangeDay2}
+                handleSetsChangeDay3={handleSetsChangeDay3}
+                handleSetsChangeDay4={handleSetsChangeDay4}
               />
             </motion.div>
           </AnimatePresence>
