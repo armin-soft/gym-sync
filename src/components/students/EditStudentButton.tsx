@@ -19,20 +19,50 @@ export const EditStudentButton = ({
   className = "",
   onClick
 }: EditStudentButtonProps) => {
+  // Hover animation variants
+  const buttonVariants = {
+    rest: { 
+      scale: 1,
+      backgroundColor: "var(--transparent)",
+      transition: { duration: 0.2, ease: "easeInOut" } 
+    },
+    hover: { 
+      scale: 1.05,
+      backgroundColor: "var(--hover-bg)",
+      transition: { duration: 0.2, ease: "easeInOut" } 
+    },
+    tap: { 
+      scale: 0.95,
+      transition: { duration: 0.1, ease: "easeInOut" } 
+    }
+  };
+  
+  // Dynamic styles based on variant
+  const getHoverBg = () => {
+    if (variant === "ghost") return "var(--bg-hover-ghost)";
+    if (variant === "outline") return "var(--bg-hover-outline)";
+    return "var(--bg-hover-default)";
+  };
+
   if (onClick) {
     return (
       <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        initial="rest"
+        whileHover="hover"
+        whileTap="tap"
+        variants={buttonVariants}
+        style={{ "--hover-bg": getHoverBg() } as any}
       >
         <Button
           variant={variant}
           size={size}
-          className={className}
+          className={`transition-all duration-300 ${className}`}
           onClick={onClick}
         >
           <Edit className="h-4 w-4" />
-          {size !== "icon" && "ویرایش"}
+          {size !== "icon" && (
+            <span className="mr-2 text-sm font-medium">ویرایش</span>
+          )}
         </Button>
       </motion.div>
     );
@@ -40,18 +70,23 @@ export const EditStudentButton = ({
   
   return (
     <motion.div
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      initial="rest"
+      whileHover="hover"
+      whileTap="tap"
+      variants={buttonVariants}
+      style={{ "--hover-bg": getHoverBg() } as any}
     >
       <Button
         asChild
         variant={variant}
         size={size}
-        className={className}
+        className={`transition-all duration-300 ${className}`}
       >
-        <Link to={`/students/add-edit/${studentId}`}>
+        <Link to={`/students/add-edit/${studentId}`} className="flex items-center">
           <Edit className="h-4 w-4" />
-          {size !== "icon" && "ویرایش"}
+          {size !== "icon" && (
+            <span className="mr-2 text-sm font-medium">ویرایش</span>
+          )}
         </Link>
       </Button>
     </motion.div>
