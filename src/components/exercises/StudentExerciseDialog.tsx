@@ -180,6 +180,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           description: `تمرین‌های ${dayNumber === 1 ? 'روز اول' : 
                          dayNumber === 2 ? 'روز دوم' : 
                          dayNumber === 3 ? 'روز سوم' : 'روز چهارم'} با موفقیت ذخیره شدند`,
+          variant: "default",
         });
         
         // Automatically switch to the next day tab if not on day4
@@ -218,8 +219,16 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
         <ExerciseDialogHeader studentName={studentName} />
 
         {isLoading ? (
-          <div className="flex items-center justify-center h-64">
+          <div className="flex flex-col items-center justify-center h-64 gap-4">
             <Loader2 className="h-12 w-12 text-primary animate-spin" />
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-gray-600 dark:text-gray-400 font-medium"
+            >
+              در حال بارگذاری تمرین‌ها...
+            </motion.p>
           </div>
         ) : (
           <AnimatePresence mode="wait">

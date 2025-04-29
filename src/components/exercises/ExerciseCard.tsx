@@ -24,7 +24,13 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   const variants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.8 }
+    exit: { opacity: 0, scale: 0.8 },
+    hover: { 
+      scale: 1.02,
+      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      transition: { duration: 0.2 }
+    },
+    tap: { scale: 0.98 }
   };
 
   if (viewMode === "list") {
@@ -35,20 +41,21 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         initial="hidden"
         animate="visible"
         exit="exit"
-        whileTap={{ scale: 0.98 }}
+        whileHover="hover"
+        whileTap="tap"
         transition={{ duration: 0.2 }}
         className={cn(
           "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full h-12 sm:h-16",
           isSelected 
             ? "ring-2 ring-primary shadow-lg border-primary/50 bg-primary/5" 
-            : "hover:shadow-md border-gray-100 hover:border-gray-200 hover:bg-gray-50/80"
+            : "hover:shadow-md border-gray-100 hover:border-gray-200 hover:bg-gray-50/80 dark:border-gray-700 dark:hover:border-gray-600 dark:bg-gray-800/30 dark:hover:bg-gray-700/30"
         )}
         onClick={onClick}
       >
         <div className="absolute inset-0 flex items-center p-1.5 sm:p-2">
           <div className={cn(
             "p-1.5 sm:p-2 mr-1 sm:mr-2 rounded-full shrink-0 transition-all duration-300",
-            isSelected ? "bg-primary text-white" : "bg-gray-100 text-gray-600"
+            isSelected ? "bg-primary text-white" : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
           )}>
             {isSelected ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Dumbbell className="w-3 h-3 sm:w-4 sm:h-4" />}
           </div>
@@ -77,35 +84,56 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       initial="hidden"
       animate="visible"
       exit="exit"
-      whileTap={{ scale: 0.98 }}
+      whileHover="hover"
+      whileTap="tap"
       transition={{ duration: 0.2 }}
       className={cn(
         "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full h-24 sm:h-28",
         isSelected 
           ? "ring-2 ring-primary shadow-lg border-primary/50" 
-          : "hover:shadow-md border-gray-100 hover:border-gray-200"
+          : "hover:shadow-md border-gray-100 hover:border-gray-200 dark:border-gray-700 dark:hover:border-gray-600"
       )}
       onClick={onClick}
     >
       <div className={cn(
         "absolute inset-0 bg-gradient-to-br transition-all duration-300",
-        isSelected ? "from-primary/10 to-primary/30" : "from-gray-50 to-gray-100/80 hover:from-gray-100/50 hover:to-gray-200/50"
+        isSelected 
+          ? "from-primary/10 to-primary/30 dark:from-primary/20 dark:to-primary/10" 
+          : "from-gray-50 to-gray-100/80 hover:from-gray-100/50 hover:to-gray-200/50 dark:from-gray-800/50 dark:to-gray-900/80 dark:hover:from-gray-700/50 dark:hover:to-gray-800/80"
       )}>
         <div className="absolute inset-0 flex flex-col justify-between p-2 sm:p-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center">
               <div className={cn(
                 "p-1.5 sm:p-2.5 mr-1.5 sm:mr-2 rounded-full shrink-0 transition-all duration-300",
-                isSelected ? "bg-primary text-white" : "bg-white/90 text-gray-700 shadow-sm"
+                isSelected 
+                  ? "bg-primary text-white shadow-md" 
+                  : "bg-white/90 text-gray-700 shadow-sm dark:bg-gray-800 dark:text-gray-200"
               )}>
-                {isSelected ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : <Dumbbell className="w-4 h-4 sm:w-5 sm:h-5" />}
+                {isSelected ? 
+                  <motion.div
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </motion.div>
+                  : 
+                  <Dumbbell className="w-4 h-4 sm:w-5 sm:h-5" />
+                }
               </div>
               <h3 className="font-bold text-sm sm:text-lg line-clamp-1 mr-1 sm:mr-2 text-gray-900 dark:text-white">{exercise.name}</h3>
             </div>
             {isSelected && (
-              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-bold">
-                انتخاب شده
-              </Badge>
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-bold">
+                  انتخاب شده
+                </Badge>
+              </motion.div>
             )}
           </div>
           

@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X } from "lucide-react";
+import { Check, X, Save } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
 
@@ -48,9 +48,11 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
     >
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          تعداد تمرین‌های انتخاب شده:
+          تمرین‌های انتخاب شده:
         </span>
-        <Badge variant={selectedExercisesCount > 0 ? "default" : "outline"} className="px-2.5 py-1">
+        <Badge variant={selectedExercisesCount > 0 ? "default" : "outline"} 
+          className={`px-2.5 py-1 ${selectedExercisesCount > 0 ? `bg-${activeTab === "day1" ? "blue" : activeTab === "day2" ? "purple" : activeTab === "day3" ? "pink" : "amber"}-500/20 text-${activeTab === "day1" ? "blue" : activeTab === "day2" ? "purple" : activeTab === "day3" ? "pink" : "amber"}-700 border-${activeTab === "day1" ? "blue" : activeTab === "day2" ? "purple" : activeTab === "day3" ? "pink" : "amber"}-500/30` : ""}`}
+        >
           {toPersianNumbers(selectedExercisesCount)}
         </Badge>
       </div>
@@ -60,7 +62,7 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
           variant="outline"
           size="sm"
           onClick={onCancel}
-          className="border-gray-300 hover:bg-gray-100"
+          className="border-gray-300 hover:bg-gray-100 transition-all"
         >
           <X className="h-4 w-4 ml-1" />
           انصراف
@@ -69,10 +71,13 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
           onClick={onSave}
           disabled={selectedExercisesCount === 0}
           size="sm"
-          className={`${btnGradient} shadow-md hover:shadow-lg transition-all`}
+          className={`${btnGradient} shadow-md hover:shadow-lg transition-all relative overflow-hidden group`}
         >
-          <Check className="h-4 w-4 ml-1" />
-          ذخیره تمرین‌های {dayName}
+          <span className="absolute inset-0 w-full h-full bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
+          <div className="flex items-center">
+            <Save className="h-4 w-4 ml-1.5 group-hover:scale-110 transition-transform" />
+            <span>ذخیره تمرین‌های {dayName}</span>
+          </div>
         </Button>
       </div>
     </motion.div>
