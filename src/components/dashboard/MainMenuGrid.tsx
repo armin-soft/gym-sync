@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { 
   User2, 
   Users, 
@@ -83,75 +82,32 @@ export const MainMenuGrid = () => {
     }
   ];
 
-  // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
-
   return (
-    <motion.div 
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4"
-    >
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4">
       {dashboardItems.map((dashItem) => (
-        <motion.div key={dashItem.href} variants={item}>
+        <div key={dashItem.href}>
           <Link 
             to={dashItem.href}
             className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-3 md:p-4 shadow-md ${dashItem.shadowColor} hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
           >
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-gradient-to-r from-white via-transparent to-transparent transition-opacity duration-300" />
-            
-            {/* Animated shine effect on hover */}
-            <div className="absolute -inset-x-1/2 top-0 h-[200%] w-[200%] -translate-x-full rotate-45 transform bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-700 ease-out" />
-            
             <div className="relative z-10 flex flex-col items-center text-center gap-2 md:gap-3">
-              <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md ring-1 ring-white/10 group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
+              <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md ring-1 ring-white/10 group-hover:shadow-lg transition-all duration-300`}>
                 <dashItem.icon className="w-5 h-5" />
               </div>
               <span className="font-medium text-xs sm:text-sm md:text-base text-gray-800 dark:text-white">
                 {dashItem.title}
               </span>
               
-              {/* Arrow icon that appears on hover */}
+              {/* Simple arrow icon without animations */}
               <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="p-1 rounded-full bg-white/20 backdrop-blur-sm">
                   <ArrowRight className="w-3 h-3 text-gray-700 dark:text-white" />
                 </div>
               </div>
-              
-              {/* Sparkle decoration */}
-              <motion.div 
-                className="absolute top-1 left-1 opacity-0 group-hover:opacity-80 transition-opacity duration-300"
-                animate={{
-                  scale: [0.8, 1.2, 0.8],
-                  rotate: [0, 90, 0],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
-              >
-                <Sparkles className="w-3 h-3 text-yellow-400" />
-              </motion.div>
             </div>
           </Link>
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
