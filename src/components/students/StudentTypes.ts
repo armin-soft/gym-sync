@@ -42,4 +42,10 @@ export interface Student {
   trainingTime?: string;
   address?: string;
   email?: string;
+  
+  // Add the missing properties being referenced throughout the application
+  height?: string;
+  weight?: string;
+  image?: string;
+  payment?: string;
 }

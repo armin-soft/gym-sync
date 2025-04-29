@@ -1,10 +1,11 @@
 
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
+import { ExerciseWithSets } from "@/types/exercise";
 
 export interface DialogHandlerOptions {
   onSave: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => boolean;
-  onSaveExercises: (exerciseIds: number[], studentId: number, dayNumber?: number) => boolean;
+  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[], studentId: number) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
   selectedStudent?: Student;
@@ -49,15 +50,15 @@ export const useStudentDialogHandlers = ({
     }
   };
 
-  const handleSaveExercisesWrapper = (exerciseIds: number[], dayNumber?: number): boolean => {
+  const handleSaveExercisesWrapper = (exercisesWithSets: ExerciseWithSets[], dayNumber?: number): boolean => {
     if (!selectedStudentForExercise) return false;
     
     try {
       console.log("Saving exercises for student:", selectedStudentForExercise.id);
-      console.log("Exercise IDs:", exerciseIds);
+      console.log("Exercises with sets:", exercisesWithSets);
       console.log("Day number:", dayNumber);
       
-      const success = onSaveExercises(exerciseIds, selectedStudentForExercise.id, dayNumber);
+      const success = onSaveExercises(exercisesWithSets, selectedStudentForExercise.id, dayNumber);
       if (success && dayNumber === undefined) {
         setIsExerciseDialogOpen(false);
       }

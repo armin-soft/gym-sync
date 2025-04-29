@@ -7,6 +7,7 @@ import { StudentSupplementDialog } from "@/components/nutrition/StudentSupplemen
 import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
 import { Student } from "@/components/students/StudentTypes";
 import { Supplement, SupplementCategory } from "@/types/supplement";
+import { ExerciseWithSets } from "@/types/exercise";
 
 interface StudentDialogContentProps {
   isDialogOpen: boolean;
@@ -25,7 +26,7 @@ interface StudentDialogContentProps {
   selectedStudentForSupplement: Student | null;
   selectedStudentForDownload: Student | null;
   handleSaveWrapper: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">) => void;
-  handleSaveExercisesWrapper: (exerciseIds: number[], dayNumber?: number) => boolean;
+  handleSaveExercisesWrapper: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   handleSaveDietWrapper: (mealIds: number[]) => boolean;
   handleSaveSupplementsWrapper: (data: {supplements: number[], vitamins: number[]}) => boolean;
   exercises: any[];

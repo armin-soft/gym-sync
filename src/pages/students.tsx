@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
@@ -17,6 +18,7 @@ import { TabsList, TabsTrigger, Tabs, TabsContent } from "@/components/ui/tabs";
 import { UserRound, History, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { ExerciseWithSets } from "@/types/exercise";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
@@ -82,8 +84,8 @@ const StudentsPage = () => {
     return result;
   }, [handleSave, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveExercisesWithHistory = useCallback((exerciseIds: number[], studentId: number, dayNumber?: number) => {
-    const result = handleSaveExercises(exerciseIds, studentId, dayNumber);
+  const handleSaveExercisesWithHistory = useCallback((exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+    const result = handleSaveExercises(exercisesWithSets, studentId, dayNumber);
     
     if (result) {
       const student = students.find(s => s.id === studentId);

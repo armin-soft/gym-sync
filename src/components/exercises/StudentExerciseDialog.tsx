@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -230,8 +229,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const handleSaveExercises = (exerciseIds: ExerciseWithSets[], dayNumber?: number) => {
-    return onSave(exerciseIds, dayNumber);
+  const handleSaveExercises = (exerciseIdsWithSets: ExerciseWithSets[], dayNumber?: number) => {
+    return onSave(exerciseIdsWithSets, dayNumber);
   };
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
