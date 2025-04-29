@@ -11,6 +11,7 @@ interface PageContainerProps {
   fullWidth?: boolean;
   noPadding?: boolean;
   fullHeight?: boolean;
+  fullScreen?: boolean; // اضافه کردن ویژگی برای نمایش تمام صفحه
 }
 
 export const PageContainer = ({ 
@@ -19,7 +20,8 @@ export const PageContainer = ({
   withBackground = false,
   fullWidth = false,
   noPadding = false,
-  fullHeight = false
+  fullHeight = false,
+  fullScreen = false // مقدار پیش‌فرض
 }: PageContainerProps) => {
   const deviceInfo = useDeviceInfo();
   const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
@@ -42,7 +44,8 @@ export const PageContainer = ({
   return (
     <div className={cn(
       "w-full flex flex-col",
-      fullHeight ? "h-full min-h-screen" : "h-full",
+      fullHeight || fullScreen ? "h-full min-h-screen" : "h-full",
+      fullScreen && "fixed inset-0 z-50", // اضافه کردن کلاس‌های لازم برای حالت تمام صفحه
       withBackground && "relative",
       fullWidth ? "max-w-none" : "max-w-full mx-auto",
       className
@@ -55,7 +58,7 @@ export const PageContainer = ({
         </>
       )}
       <div className={cn(
-        "w-full h-full flex-1 overflow-hidden transition-all duration-300",
+        "w-full h-full flex-1 overflow-auto", // تغییر overflow-hidden به overflow-auto
         getPadding()
       )}>
         {children}
