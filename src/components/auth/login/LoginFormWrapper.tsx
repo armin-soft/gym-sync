@@ -5,8 +5,8 @@ import { LoginFormView } from "./LoginFormView";
 import { motion } from "framer-motion";
 import { successToast } from "@/components/ui/notification-toast";
 import { TrainerProfile } from "@/types/trainer";
-import { AnimatedBackground } from "./AnimatedBackground";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { AnimatedBackground } from "./AnimatedBackground";
 
 interface LoginFormProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -129,30 +129,20 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     }, 800);
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 30,
-        duration: 0.8,
-        staggerChildren: 0.15
-      }
-    }
-  };
-
   return (
     <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.5,
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }}
       className="w-full max-w-md"
     >
-      <div className="overflow-hidden border-none bg-white/90 backdrop-blur-xl shadow-2xl rounded-lg">
+      <div className="relative overflow-hidden border-none bg-white/90 backdrop-blur-xl shadow-2xl rounded-lg">
+        {/* گرادیان پس‌زمینه */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-primary/5 to-violet-500/10 z-0 rounded-lg"></div>
         
         {locked ? (
@@ -179,9 +169,14 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         )}
 
         <div className="relative z-10 pt-0 pb-6 flex items-center p-6">
-          <p className="text-xs text-center text-muted-foreground w-full">
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+            className="text-xs text-center text-muted-foreground w-full"
+          >
             برای ورود از اطلاعات ثبت شده در بخش پروفایل مربی استفاده کنید
-          </p>
+          </motion.p>
         </div>
 
         <AnimatedBackground />

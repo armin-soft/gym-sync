@@ -26,7 +26,7 @@ export const EmailField = ({ email, setEmail }: EmailFieldProps) => {
           value={email} 
           onChange={(e) => setEmail(e.target.value)}
           placeholder="ایمیل خود را وارد کنید" 
-          className="pl-3 pr-12 h-10 sm:h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary" 
+          className="pl-3 pr-12 h-10 sm:h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary shadow-sm" 
           required 
           dir="ltr"
         />

@@ -2,24 +2,24 @@
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Clock, Shield } from "lucide-react";
+import { AlertTriangle, Clock, Shield, Lock } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { containerVariants, lockIconVariants, lockTimerVariants } from "./form/AnimationVariants";
 
 // Extracted subcomponents for better organization
 const LockIcon = () => (
   <motion.div 
     className="rounded-full bg-destructive/10 p-3 sm:p-5"
-    whileHover={lockIconVariants.hover}
-    whileTap={lockIconVariants.tap}
+    whileHover={{ rotate: [0, -5, 5, -5, 5, 0], scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
   >
-    <AlertTriangle className="h-8 sm:h-12 w-8 sm:w-12 text-destructive" />
+    <Lock className="h-8 sm:h-12 w-8 sm:w-12 text-destructive" />
   </motion.div>
 );
 
 const LockAlert = () => (
   <Alert variant="destructive" className="border-destructive/30 bg-destructive/10">
-    <AlertDescription className="text-center font-semibold py-1 text-xs sm:text-sm">
+    <AlertDescription className="text-center font-semibold py-1 text-xs sm:text-sm flex items-center justify-center gap-1.5">
+      <AlertTriangle className="h-4 w-4" />
       حساب کاربری شما موقتاً قفل شده است
     </AlertDescription>
   </Alert>
@@ -103,15 +103,69 @@ export const AccountLockedView = ({
     return () => clearInterval(interval);
   }, [lockExpiry, setTimeLeft]);
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+        duration: 0.8,
+        staggerChildren: 0.15
+      }
+    }
+  };
+
   return (
     <div className="relative z-10 p-4 sm:p-6">
       <motion.div 
         variants={containerVariants}
+        initial="hidden"
+        animate="visible"
         className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 p-2 sm:p-4"
       >
-        <LockIcon />
-        <LockAlert />
-        <LockTimer timeLeft={timeLeft} />
+        <motion.div 
+          variants={{
+            hidden: { opacity: 0, scale: 0.8, y: -20 },
+            visible: { 
+              opacity: 1, 
+              scale: 1, 
+              y: 0,
+              transition: { type: "spring", stiffness: 400, damping: 20 }
+            }
+          }}
+        >
+          <LockIcon />
+        </motion.div>
+        
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, x: -20 },
+            visible: { 
+              opacity: 1, 
+              x: 0,
+              transition: { type: "spring", stiffness: 400, damping: 20, delay: 0.2 }
+            }
+          }}
+        >
+          <LockAlert />
+        </motion.div>
+        
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { 
+              opacity: 1, 
+              y: 0,
+              transition: { type: "spring", stiffness: 400, damping: 20, delay: 0.4 }
+            }
+          }}
+        >
+          <LockTimer timeLeft={timeLeft} />
+        </motion.div>
+        
         <SecurityMessage />
       </motion.div>
     </div>

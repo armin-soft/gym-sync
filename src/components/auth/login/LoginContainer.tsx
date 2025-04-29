@@ -1,7 +1,7 @@
 
-import { LoginForm } from "../LoginForm";
 import { motion } from "framer-motion";
 import { PageContainer } from "@/components/ui/page-container";
+import { LoginForm } from "./LoginFormWrapper";
 
 interface LoginContainerProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -10,20 +10,31 @@ interface LoginContainerProps {
 export const LoginContainer = ({ onLoginSuccess }: LoginContainerProps) => {
   return (
     <PageContainer fullScreen fullHeight withBackground>
-      {/* Animated background with blurred gradient */}
+      {/* افکت‌های فوق مدرن پس‌زمینه */}
       <AnimatedBackground />
 
-      {/* Login form container with enhanced animations */}
-      <div className="relative z-10 w-full h-full flex items-center justify-center">
+      {/* محتوای اصلی فرم ورود */}
+      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
         <div className="px-4 w-full max-w-md">
           <LoginForm onLoginSuccess={onLoginSuccess} />
         </div>
+        
+        {/* نشان وب‌اپلیکیشن */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          className="mt-8 text-white/50 text-xs flex flex-col items-center"
+        >
+          <p className="text-center mb-1">سیستم مدیریت باشگاه</p>
+          <p className="text-center">نسخه ۱.۰.۰</p>
+        </motion.div>
       </div>
     </PageContainer>
   );
 };
 
-// Animated Background component for the login page
+// کامپوننت افکت های پس‌زمینه پیشرفته
 const AnimatedBackground = () => {
   return (
     <motion.div 
@@ -32,10 +43,10 @@ const AnimatedBackground = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-primary/5 to-violet-500/10"></div>
+      {/* گرادیان پس‌زمینه */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 via-primary/15 to-violet-600/20"></div>
       
-      {/* Animated floating particles */}
+      {/* حباب‌های شناور */}
       {[...Array(12)].map((_, i) => (
         <motion.div
           key={i}
@@ -64,6 +75,45 @@ const AnimatedBackground = () => {
           }}
         />
       ))}
+
+      {/* خطوط موجی */}
+      <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="wave-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.05" />
+            <stop offset="50%" stopColor="#4361ee" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="#4f46e5" stopOpacity="0.05" />
+          </linearGradient>
+        </defs>
+        
+        {[...Array(5)].map((_, i) => {
+          const baseY = 200 + i * 200;
+          const amplitude = 30 + i * 10;
+          const period = 800 + i * 200;
+          
+          return (
+            <motion.path
+              key={i}
+              d={`M0 ${baseY} Q ${period/4} ${baseY + amplitude}, ${period/2} ${baseY} T ${period} ${baseY} T ${period*1.5} ${baseY} T ${period*2} ${baseY}`}
+              fill="none"
+              stroke="url(#wave-grad)"
+              strokeWidth="2"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ 
+                pathLength: 1, 
+                opacity: 0.5,
+                pathOffset: [0, 1]
+              }}
+              transition={{
+                duration: 15 + i * 5,
+                repeat: Infinity,
+                ease: "linear",
+                delay: i * 1
+              }}
+            />
+          );
+        })}
+      </svg>
     </motion.div>
   );
 };

@@ -33,7 +33,7 @@ export const PasswordField = ({
           value={password} 
           onChange={(e) => setPassword(e.target.value)}
           placeholder="رمز عبور خود را وارد کنید" 
-          className="pl-12 pr-12 h-10 sm:h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary" 
+          className="pl-12 pr-12 h-10 sm:h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary shadow-sm" 
           required 
         />
         <motion.span 
@@ -41,17 +41,19 @@ export const PasswordField = ({
           initial={{ width: 0 }}
           animate={{ width: password ? "100%" : "0%" }}
         />
-        <button
+        <motion.button
           type="button"
           className="absolute left-3 top-3 rounded-full p-1.5 hover:bg-primary/10 transition-colors"
           onClick={() => setShowPassword(!showPassword)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
           {showPassword ? (
             <EyeOff className="h-4 w-4 text-muted-foreground" />
           ) : (
             <Eye className="h-4 w-4 text-muted-foreground" />
           )}
-        </button>
+        </motion.button>
       </div>
     </motion.div>
   );
