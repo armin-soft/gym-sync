@@ -25,30 +25,48 @@ export const useStudentExercises = (
             return acc;
           }, {} as Record<number, number>);
           
+          // Extract reps information if available
+          const exerciseReps = exercisesWithSets.reduce((acc, ex) => {
+            if (ex.reps) acc[ex.id] = ex.reps!;
+            return acc;
+          }, {} as Record<number, string>);
+          
+          // Store the reps information in the student object
+          updatedStudent.exerciseReps = updatedStudent.exerciseReps || {};
+          updatedStudent.exerciseRepsDay1 = updatedStudent.exerciseRepsDay1 || {};
+          updatedStudent.exerciseRepsDay2 = updatedStudent.exerciseRepsDay2 || {};
+          updatedStudent.exerciseRepsDay3 = updatedStudent.exerciseRepsDay3 || {};
+          updatedStudent.exerciseRepsDay4 = updatedStudent.exerciseRepsDay4 || {};
+          
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
             switch(dayNumber) {
               case 1:
                 updatedStudent.exercisesDay1 = exerciseIds;
                 updatedStudent.exerciseSetsDay1 = exerciseSets;
+                updatedStudent.exerciseRepsDay1 = exerciseReps;
                 break;
               case 2:
                 updatedStudent.exercisesDay2 = exerciseIds;
                 updatedStudent.exerciseSetsDay2 = exerciseSets;
+                updatedStudent.exerciseRepsDay2 = exerciseReps;
                 break;
               case 3:
                 updatedStudent.exercisesDay3 = exerciseIds;
                 updatedStudent.exerciseSetsDay3 = exerciseSets;
+                updatedStudent.exerciseRepsDay3 = exerciseReps;
                 break;
               case 4:
                 updatedStudent.exercisesDay4 = exerciseIds;
                 updatedStudent.exerciseSetsDay4 = exerciseSets;
+                updatedStudent.exerciseRepsDay4 = exerciseReps;
                 break;
             }
           } else {
             // Otherwise update the general exercises
             updatedStudent.exercises = exerciseIds;
             updatedStudent.exerciseSets = exerciseSets;
+            updatedStudent.exerciseReps = exerciseReps;
           }
           
           // Calculate progress

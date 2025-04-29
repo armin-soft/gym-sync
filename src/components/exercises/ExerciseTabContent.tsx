@@ -1,23 +1,22 @@
 
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Exercise } from "@/types/exercise";
+import { ExerciseCategory } from "@/types/exercise";
 import { StudentExerciseCard } from "./StudentExerciseCard";
-import StudentExerciseListWrapper from "./StudentExerciseListWrapper";
-import { ArrowLeftIcon, Info } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ExerciseTabContentProps {
   filteredExercises: Exercise[];
   viewMode: "grid" | "list";
   selectedExercises: number[];
   toggleExercise: (id: number) => void;
-  categories: any[];
+  categories: ExerciseCategory[];
   handleClearSearch: () => void;
-  exerciseSets: Record<number, number>;
+  exerciseSets?: Record<number, number>;
   onSetsChange?: (exerciseId: number, sets: number) => void;
+  repsInfo?: Record<number, string>;  // New prop to store reps information
+  onRepsChange?: (exerciseId: number, reps: string) => void;  // New handler for reps changes
 }
 
 export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
@@ -27,89 +26,61 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   toggleExercise,
   categories,
   handleClearSearch,
-  exerciseSets,
-  onSetsChange
+  exerciseSets = {},
+  onSetsChange,
+  repsInfo = {},  // Default to empty object
+  onRepsChange
 }) => {
   if (filteredExercises.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-        className="flex flex-col items-center justify-center py-10 px-4 text-center"
-      >
-        <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-full mb-4">
-          <Info className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+      <div className="flex flex-col items-center justify-center h-64 gap-2.5 mt-4">
+        <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center">
+          <Check className="h-8 w-8 text-muted-foreground/50" />
         </div>
-        <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-          حرکتی یافت نشد
-        </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 max-w-md">
-          حرکت مورد نظر شما پیدا نشد. می‌توانید معیارهای جستجو را تغییر دهید یا
-          حرکت جدیدی اضافه کنید.
+        <h3 className="text-lg font-medium text-center">هیچ تمرینی پیدا نشد</h3>
+        <p className="text-sm text-muted-foreground text-center max-w-sm">
+          تمرینی با این فیلترها پیدا نشد. لطفا فیلترها را تغییر دهید یا جستجوی جدیدی انجام دهید.
         </p>
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={handleClearSearch}
-          className="flex items-center gap-1"
+          className="mt-2 text-primary text-sm font-medium hover:underline"
         >
-          <ArrowLeftIcon className="h-4 w-4" />
-          <span>پاک کردن فیلترها</span>
-        </Button>
-      </motion.div>
+          پاک کردن جستجو
+        </button>
+      </div>
     );
   }
 
   return (
-    <StudentExerciseListWrapper viewMode={viewMode}>
-      <AnimatePresence>
-        {filteredExercises.map((exercise) => {
-          const isSelected = selectedExercises.includes(exercise.id);
-          const category = categories.find(
-            (cat) => cat.id === exercise.categoryId
-          );
-          const sets = exerciseSets?.[exercise.id] || 3;
+    <div
+      className={cn(
+        "grid gap-3 pb-6",
+        viewMode === "grid"
+          ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          : "grid-cols-1"
+      )}
+    >
+      {filteredExercises.map((exercise) => {
+        const category = categories.find((c) => c.id === exercise.categoryId);
+        const isSelected = selectedExercises.includes(exercise.id);
+        const sets = exerciseSets[exercise.id] || 3;
+        const reps = repsInfo[exercise.id] || '';  // Get reps info or empty string as default
 
-          return (
-            <motion.div
-              key={exercise.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              className={cn(
-                "flex",
-                viewMode === "list" ? "w-full" : "flex-col"
-              )}
-            >
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="w-full">
-                      <StudentExerciseCard
-                        exercise={exercise}
-                        category={category}
-                        isSelected={isSelected}
-                        viewMode={viewMode}
-                        onClick={() => toggleExercise(exercise.id)}
-                        sets={sets}
-                        onSetsChange={onSetsChange}
-                      />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" align="center">
-                    <p className="text-xs">{exercise.name}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </motion.div>
-          );
-        })}
-      </AnimatePresence>
-    </StudentExerciseListWrapper>
+        return (
+          <StudentExerciseCard
+            key={exercise.id}
+            exercise={exercise}
+            category={category}
+            isSelected={isSelected}
+            viewMode={viewMode}
+            onClick={() => toggleExercise(exercise.id)}
+            sets={sets}
+            onSetsChange={onSetsChange}
+            reps={reps}  // Pass reps info
+            onRepsChange={onRepsChange}  // Pass reps change handler
+          />
+        );
+      })}
+    </div>
   );
 };
-
-export default ExerciseTabContent;

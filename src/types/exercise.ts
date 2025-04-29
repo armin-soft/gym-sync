@@ -29,6 +29,7 @@ export interface Exercise {
 export interface ExerciseWithSets {
   id: number;
   sets: number;
+  reps?: string; // اضافه کردن اطلاعات تکرار به عنوان یک فیلد اختیاری
 }
 
 export const defaultExerciseTypes: ExerciseType[] = [];

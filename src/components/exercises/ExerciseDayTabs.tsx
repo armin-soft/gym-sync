@@ -22,7 +22,7 @@ interface ExerciseDayTabsProps {
   filteredExercises: Exercise[];
   categories: any[];
   handleClearSearch: () => void;
-  handleSaveExercises: (exerciseIds: number[], dayNumber?: number) => boolean;
+  handleSaveExercises: (exercisesWithSets: any[], dayNumber?: number) => boolean;
   selectedCategoryId: number | null;
   toggleSortOrder: () => void;
   sortOrder: "asc" | "desc";
@@ -34,6 +34,14 @@ interface ExerciseDayTabsProps {
   handleSetsChangeDay2?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay3?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay4?: (exerciseId: number, sets: number) => void;
+  exerciseRepsDay1?: Record<number, string>;  // Add reps record
+  exerciseRepsDay2?: Record<number, string>;
+  exerciseRepsDay3?: Record<number, string>;
+  exerciseRepsDay4?: Record<number, string>;
+  handleRepsChangeDay1?: (exerciseId: number, reps: string) => void;  // Add reps handler
+  handleRepsChangeDay2?: (exerciseId: number, reps: string) => void;
+  handleRepsChangeDay3?: (exerciseId: number, reps: string) => void;
+  handleRepsChangeDay4?: (exerciseId: number, reps: string) => void;
 }
 
 const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
@@ -62,7 +70,15 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
   handleSetsChangeDay1,
   handleSetsChangeDay2,
   handleSetsChangeDay3,
-  handleSetsChangeDay4
+  handleSetsChangeDay4,
+  exerciseRepsDay1 = {},
+  exerciseRepsDay2 = {},
+  exerciseRepsDay3 = {},
+  exerciseRepsDay4 = {},
+  handleRepsChangeDay1,
+  handleRepsChangeDay2,
+  handleRepsChangeDay3,
+  handleRepsChangeDay4
 }) => {
   return (
     <Tabs
@@ -135,6 +151,8 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay1}
           onSetsChange={handleSetsChangeDay1}
+          repsInfo={exerciseRepsDay1}
+          onRepsChange={handleRepsChangeDay1}
         />
       </TabsContent>
       
@@ -151,6 +169,8 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay2}
           onSetsChange={handleSetsChangeDay2}
+          repsInfo={exerciseRepsDay2}
+          onRepsChange={handleRepsChangeDay2}
         />
       </TabsContent>
       
@@ -167,6 +187,8 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay3}
           onSetsChange={handleSetsChangeDay3}
+          repsInfo={exerciseRepsDay3}
+          onRepsChange={handleRepsChangeDay3}
         />
       </TabsContent>
       
@@ -183,6 +205,8 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay4}
           onSetsChange={handleSetsChangeDay4}
+          repsInfo={exerciseRepsDay4}
+          onRepsChange={handleRepsChangeDay4}
         />
       </TabsContent>
     </Tabs>
