@@ -1,8 +1,9 @@
 
-import StudentsContainer from "./components/StudentsContainer";
+import React from "react";
+import StudentsPage from "./components/StudentsPage";
 
 const Students = () => {
-  return <StudentsContainer />;
+  return <StudentsPage />;
 };
 
 export default Students;

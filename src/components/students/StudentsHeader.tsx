@@ -17,7 +17,7 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({ onAddStudent }) 
       
       {onAddStudent ? (
         <AddStudentButton
-          variant="accent"
+          variant="secondary"
           onClick={onAddStudent}
           className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
         />

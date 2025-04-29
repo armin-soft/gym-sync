@@ -1,17 +1,21 @@
+
 import React from "react";
 import { useRoutes } from "react-router-dom";
 
-import Home from "./pages/home";
-import Login from "./pages/login";
-import Register from "./pages/register";
-import Profile from "./pages/profile";
+// Import page components directly from their index files
 import Students from "./pages/students";
-import Exercises from "./pages/exercises";
-import Nutrition from "./pages/nutrition";
-import Settings from "./pages/settings";
 import AddEditStudent from "./pages/students/add-edit";
 
 const AppRoutes = () => {
+  // Create placeholders for the pages that are referenced but don't exist
+  const Home = () => <div>Home Page</div>;
+  const Login = () => <div>Login Page</div>;
+  const Register = () => <div>Register Page</div>;
+  const Profile = () => <div>Profile Page</div>;
+  const Exercises = () => <div>Exercises Page</div>;
+  const Nutrition = () => <div>Nutrition Page</div>;
+  const Settings = () => <div>Settings Page</div>;
+
   const routes = useRoutes([
     {
       path: "/",

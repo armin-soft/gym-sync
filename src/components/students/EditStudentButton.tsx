@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 interface EditStudentButtonProps {
   studentId: number;
-  variant?: "default" | "ghost" | "outline";
+  variant?: "default" | "secondary" | "ghost" | "outline";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
 }
