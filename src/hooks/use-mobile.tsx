@@ -1,63 +1,98 @@
 
 import * as React from "react"
 
-// Added XS breakpoint for better responsive design
+// Added additional breakpoints for more precise responsive design
 export const BREAKPOINTS = {
-  xs: 375, // Added extra small breakpoint
-  sm: 640,
-  md: 768,
-  lg: 1024,
-  xl: 1280,
-  "2xl": 1400,
-  "3xl": 1600,
-  "4xl": 1920,
+  xs: 375, // Mobile phones
+  sm: 640, // Small tablets
+  md: 768, // Tablets
+  lg: 1024, // Small laptops
+  xl: 1280, // Laptops and desktops
+  "2xl": 1400, // Large desktops
+  "3xl": 1600, // Extra large desktops
+  "4xl": 1920, // Ultra wide screens
 };
 
 export function useBreakpoint(breakpoint: keyof typeof BREAKPOINTS) {
   const [isAboveBreakpoint, setIsAboveBreakpoint] = React.useState<boolean | undefined>(undefined);
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(min-width: ${BREAKPOINTS[breakpoint]}px)`);
-    const onChange = () => {
-      setIsAboveBreakpoint(mql.matches);
+    const handleResize = () => {
+      setIsAboveBreakpoint(window.innerWidth >= BREAKPOINTS[breakpoint]);
     };
     
-    onChange(); // Initial check
+    // Initial check
+    handleResize();
     
-    if (mql.addEventListener) {
-      mql.addEventListener("change", onChange);
-      return () => mql.removeEventListener("change", onChange);
-    } else {
-      // Fallback for older browsers
-      mql.addListener(onChange);
-      return () => mql.removeListener(onChange);
-    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [breakpoint]);
 
   return isAboveBreakpoint;
 }
 
+// Improved isMobile hook with additional device type detection
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
+  const [deviceType, setDeviceType] = React.useState<{
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+  }>({
+    isMobile: false,
+    isTablet: false,
+    isDesktop: true
+  });
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${BREAKPOINTS.md - 1}px)`);
-    
-    const onChange = () => {
-      setIsMobile(window.innerWidth < BREAKPOINTS.md);
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setDeviceType({
+        isMobile: width < BREAKPOINTS.md,
+        isTablet: width >= BREAKPOINTS.md && width < BREAKPOINTS.lg,
+        isDesktop: width >= BREAKPOINTS.lg
+      });
     };
     
-    onChange(); // Initial check
+    // Initial check
+    handleResize();
     
-    if (mql.addEventListener) {
-      mql.addEventListener("change", onChange);
-      return () => mql.removeEventListener("change", onChange);
-    } else {
-      // Fallback for older browsers
-      mql.addListener(onChange);
-      return () => mql.removeListener(onChange);
-    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return !!isMobile;
+  return deviceType.isMobile;
+}
+
+// New hook to get detailed device information
+export function useDeviceInfo() {
+  const [deviceInfo, setDeviceInfo] = React.useState({
+    isMobile: false,
+    isTablet: false,
+    isSmallLaptop: false,
+    isDesktop: false,
+    isLargeDesktop: false,
+    currentWidth: 0
+  });
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setDeviceInfo({
+        isMobile: width < BREAKPOINTS.sm,
+        isTablet: width >= BREAKPOINTS.sm && width < BREAKPOINTS.lg,
+        isSmallLaptop: width >= BREAKPOINTS.lg && width < BREAKPOINTS.xl,
+        isDesktop: width >= BREAKPOINTS.xl && width < BREAKPOINTS["2xl"],
+        isLargeDesktop: width >= BREAKPOINTS["2xl"],
+        currentWidth: width
+      });
+    };
+    
+    // Initial check
+    handleResize();
+    
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return deviceInfo;
 }

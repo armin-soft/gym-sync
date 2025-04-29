@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const LoadingFallback = memo(() => <LoadingScreen />);
 
@@ -26,6 +27,7 @@ export const Layout = memo(() => {
     image: "",
   });
   const [scrolled, setScrolled] = useState(false);
+  const deviceInfo = useDeviceInfo();
   
   const loadProfile = () => {
     try {
@@ -75,6 +77,13 @@ export const Layout = memo(() => {
     window.location.reload();
   };
 
+  // Optimize header height based on device
+  const getHeaderHeight = () => {
+    if (deviceInfo.isMobile) return "h-12";
+    if (deviceInfo.isTablet) return "h-14";
+    return "h-16";
+  };
+
   return (
     <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
@@ -91,8 +100,8 @@ export const Layout = memo(() => {
             : "bg-background"
         }`}
       >
-        <div className="w-full px-2 xs:px-3 sm:px-4">
-          <div className="w-full flex h-12 sm:h-14 items-center justify-between">
+        <div className="w-full px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className={`w-full flex items-center justify-between ${getHeaderHeight()}`}>
             <div className="flex items-center">
               <button
                 onClick={() => setSidebarOpen(true)}
@@ -103,7 +112,7 @@ export const Layout = memo(() => {
               </button>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <AppIcon size="sm" animated />
-                <h1 className="text-sm sm:text-lg font-semibold hidden xs:block">
+                <h1 className="text-sm sm:text-base md:text-lg font-semibold hidden xs:block">
                   {gymName ? `مدیریت برنامه ${gymName}` : 'مدیریت برنامه'}
                 </h1>
               </div>
@@ -112,7 +121,7 @@ export const Layout = memo(() => {
         </div>
       </motion.header>
       
-      <main className="flex-1 overflow-hidden w-full">
+      <main className="flex-1 overflow-hidden w-full max-w-full">
         <Suspense fallback={<LoadingFallback />}>
           <Outlet />
         </Suspense>

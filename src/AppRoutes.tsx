@@ -1,28 +1,57 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Dashboard from './pages/Index';
-import Students from './pages/students';
-import Exercises from './pages/exercises';
-import Diet from './pages/diet';
-import Supplements from './pages/supplements';
-import Trainer from './pages/trainer';
-import Reports from './pages/reports';
+import { LoadingScreen } from './components/LoadingScreen';
+
+// Lazy load components for better performance
+const Dashboard = lazy(() => import('./pages/Index'));
+const Students = lazy(() => import('./pages/students'));
+const Exercises = lazy(() => import('./pages/exercises'));
+const Diet = lazy(() => import('./pages/diet'));
+const Supplements = lazy(() => import('./pages/supplements'));
+const Trainer = lazy(() => import('./pages/trainer'));
+const Reports = lazy(() => import('./pages/reports'));
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/students/*" element={<Students />} />
-      <Route path="/exercises/*" element={<Exercises />} />
-      <Route path="/diet/*" element={<Diet />} />
-      <Route path="/supplements/*" element={<Supplements />} />
-      <Route path="/trainer/*" element={<Trainer />} />
-      <Route path="/reports/*" element={<Reports />} />
-      {/* About route has been removed */}
+      <Route path="/" element={
+        <Suspense fallback={<LoadingScreen />}>
+          <Dashboard />
+        </Suspense>
+      } />
+      <Route path="/students/*" element={
+        <Suspense fallback={<LoadingScreen />}>
+          <Students />
+        </Suspense>
+      } />
+      <Route path="/exercises/*" element={
+        <Suspense fallback={<LoadingScreen />}>
+          <Exercises />
+        </Suspense>
+      } />
+      <Route path="/diet/*" element={
+        <Suspense fallback={<LoadingScreen />}>
+          <Diet />
+        </Suspense>
+      } />
+      <Route path="/supplements/*" element={
+        <Suspense fallback={<LoadingScreen />}>
+          <Supplements />
+        </Suspense>
+      } />
+      <Route path="/trainer/*" element={
+        <Suspense fallback={<LoadingScreen />}>
+          <Trainer />
+        </Suspense>
+      } />
+      <Route path="/reports/*" element={
+        <Suspense fallback={<LoadingScreen />}>
+          <Reports />
+        </Suspense>
+      } />
     </Routes>
   );
 };
 
 export default AppRoutes;
-
