@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ExerciseViewControls } from "./ExerciseViewControls";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Dumbbell } from "lucide-react";
 
 interface StudentExerciseListWrapperProps {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ interface StudentExerciseListWrapperProps {
   toggleSortOrder?: () => void;
   sortOrder?: "asc" | "desc";
   showControls?: boolean;
+  isEmpty?: boolean;
 }
 
 export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProps> = ({
@@ -26,7 +28,8 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
   setViewMode,
   toggleSortOrder,
   sortOrder = "asc",
-  showControls = false
+  showControls = false,
+  isEmpty = false
 }) => {
   const isMobile = useIsMobile();
   // Adjust the max height to be more responsive based on screen size
@@ -48,17 +51,27 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
         </div>
       )}
       <ScrollArea className="w-full h-full overflow-auto flex-1" style={{ height: calculatedMaxHeight, maxHeight: calculatedMaxHeight }}>
-        <motion.div
-          layout
-          className={cn(
-            "p-2 sm:p-4 w-full h-full", 
-            viewMode === "grid" 
-              ? "grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3" 
-              : "flex flex-col space-y-2 sm:space-y-3"
-          )}
-        >
-          {children}
-        </motion.div>
+        {isEmpty ? (
+          <div className="flex items-center justify-center h-full p-6">
+            <div className="text-center">
+              <Dumbbell className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+              <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">هیچ تمرینی وجود ندارد</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">لطفاً ابتدا حرکت‌های تمرینی را اضافه کنید.</p>
+            </div>
+          </div>
+        ) : (
+          <motion.div
+            layout
+            className={cn(
+              "p-2 sm:p-4 w-full h-full", 
+              viewMode === "grid" 
+                ? "grid grid-cols-1 xxs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3" 
+                : "flex flex-col space-y-2 sm:space-y-3"
+            )}
+          >
+            {children}
+          </motion.div>
+        )}
       </ScrollArea>
     </Card>
   );
