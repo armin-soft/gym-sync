@@ -10,7 +10,7 @@ import { Meal, MealType, WeekDay } from "@/types/meal";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
-const weekDays = [
+const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
   'دوشنبه', 
@@ -18,16 +18,16 @@ const weekDays = [
   'چهارشنبه', 
   'پنجشنبه', 
   'جمعه'
-];
+] as WeekDay[];
 
-const mealTypes = [
+const mealTypes: MealType[] = [
   "صبحانه",
   "میان وعده صبح",
   "ناهار",
   "میان وعده عصر",
   "شام",
   "میان وعده"
-];
+] as MealType[];
 
 const Index = () => {
   const { toast } = useToast();
@@ -151,8 +151,8 @@ const Index = () => {
             onOpenChange={setOpen}
             onSave={handleSave}
             meal={selectedMeal}
-            mealTypes={mealTypes as MealType[]}
-            weekDays={weekDays as WeekDay[]}
+            mealTypes={mealTypes}
+            weekDays={weekDays}
           />
         </motion.div>
       </div>

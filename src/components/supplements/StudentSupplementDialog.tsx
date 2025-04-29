@@ -396,9 +396,11 @@ export function StudentSupplementDialog({
                       ? "bg-gradient-to-b from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900" 
                       : "bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900"
                   )}>
-                    {activeTab === "supplements" 
-                      ? <Beaker className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} className="text-violet-500 dark:text-violet-400" /> 
-                      : <Pill className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} className="text-blue-500 dark:text-blue-400" />}
+                    {activeTab === "supplements" ? (
+                      <Beaker className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color="text-violet-500 dark:text-violet-400" />
+                    ) : (
+                      <Pill className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color="text-blue-500 dark:text-blue-400" />
+                    )}
                   </div>
                   <h3 className={cn(
                     "font-medium text-foreground",
