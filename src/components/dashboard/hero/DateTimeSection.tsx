@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
 import { useShamsiDate } from "@/hooks/useShamsiDate";
+import { useState, useEffect } from "react";
 
 interface DateTimeSectionProps {
   currentTime: Date;
@@ -10,6 +11,16 @@ interface DateTimeSectionProps {
 
 export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
   const { dateInfo, isLoading } = useShamsiDate();
+  const [time, setTime] = useState(new Date());
+  
+  // Effect to update the time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    
+    return () => clearInterval(timer); // Cleanup on unmount
+  }, []);
 
   return (
     <motion.div 
@@ -40,7 +51,7 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
             >
               <span className="text-2xl">{dateInfo.Time_Based_Emoji}</span>
               <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300" />
-              <span>{currentTime.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}</span>
+              <span>{time.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
               <span className="text-white/60">{dateInfo.Time_Based}</span>
             </Badge>
           </motion.div>
