@@ -24,6 +24,7 @@ import { MonthlyDataChart } from "@/components/reports/MonthlyDataChart";
 import { IncomeChart } from "@/components/reports/IncomeChart";
 import { ActivitiesChart } from "@/components/reports/ActivitiesChart";
 import { PageContainer } from "@/components/ui/page-container";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface MonthlyData {
   name: string;
@@ -41,6 +42,7 @@ const Reports = () => {
   const [expandedData, setExpandedData] = useState<MonthlyData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const deviceInfo = useDeviceInfo();
 
   useEffect(() => {
     const loadData = () => {
@@ -88,7 +90,7 @@ const Reports = () => {
 
   if (isLoading) {
     return (
-      <PageContainer withBackground className="w-full h-full min-h-screen flex items-center justify-center">
+      <PageContainer withBackground fullWidth fullHeight className="w-full h-full min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
           <p className="text-muted-foreground animate-pulse">در حال بارگذاری گزارشات...</p>
@@ -187,19 +189,42 @@ const Reports = () => {
     setActiveTab(value);
   };
 
+  const getResponsiveGridCols = () => {
+    if (deviceInfo.isMobile) {
+      return "grid-cols-1";
+    } else if (deviceInfo.isTablet || deviceInfo.isSmallLaptop) {
+      return "grid-cols-3";
+    } else {
+      return "grid-cols-3";
+    }
+  };
+
+  const getResponsiveNutritionGridCols = () => {
+    if (deviceInfo.isMobile) {
+      return "grid-cols-1";
+    } else {
+      return "grid-cols-2";
+    }
+  };
+
   return (
-    <PageContainer withBackground className="w-full h-full min-h-screen overflow-auto">
-      <div className="w-full h-full flex flex-col py-6 space-y-8 px-4 md:px-6 lg:px-8">
+    <PageContainer 
+      withBackground 
+      fullWidth 
+      fullHeight 
+      className="w-full h-full min-h-screen overflow-auto"
+    >
+      <div className="w-full h-full flex flex-col py-3 sm:py-4 md:py-6 space-y-4 sm:space-y-6 md:space-y-8 px-2 sm:px-4 md:px-6 lg:px-8">
         <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <h2 className={`${deviceInfo.isMobile ? 'text-xl' : 'text-2xl md:text-3xl'} font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent`}>
             گزارشات و آمار
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             در این بخش می‌توانید آمار و گزارشات دقیق باشگاه را مشاهده کنید
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className={`grid gap-2 sm:gap-3 md:gap-4 ${getResponsiveGridCols()}`}>
           {stats.map((stat, index) => (
             <StatCard
               key={stat.title}
@@ -212,11 +237,12 @@ const Reports = () => {
               textColor={stat.textColor}
               format={stat.format}
               index={index}
+              isMobile={deviceInfo.isMobile}
             />
           ))}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className={`grid gap-2 sm:gap-3 md:gap-4 ${getResponsiveNutritionGridCols()}`}>
           {nutritionStats.map((stat, index) => (
             <StatCard
               key={stat.title}
@@ -228,41 +254,47 @@ const Reports = () => {
               bgLight={stat.bgLight}
               textColor={stat.textColor}
               index={index + 3}
+              isMobile={deviceInfo.isMobile}
             />
           ))}
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6 flex-1" onValueChange={handleTabChange}>
-          <TabsList className="bg-white border">
-            <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-gray-100">
-              <ChartBarIcon className="w-4 h-4" />
+        <Tabs defaultValue="overview" className="space-y-4 md:space-y-6 flex-1" onValueChange={handleTabChange}>
+          <TabsList className="bg-white border overflow-x-auto w-full justify-start sm:justify-center py-0.5">
+            <TabsTrigger value="overview" className="gap-1 sm:gap-2 data-[state=active]:bg-gray-100 text-xs sm:text-sm">
+              <ChartBarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
               نمای کلی
             </TabsTrigger>
-            <TabsTrigger value="income" className="gap-2 data-[state=active]:bg-gray-100">
-              <Wallet className="w-4 h-4" />
+            <TabsTrigger value="income" className="gap-1 sm:gap-2 data-[state=active]:bg-gray-100 text-xs sm:text-sm">
+              <Wallet className="w-3 h-3 sm:w-4 sm:h-4" />
               درآمد
             </TabsTrigger>
-            <TabsTrigger value="activities" className="gap-2 data-[state=active]:bg-gray-100">
-              <ChartPieIcon className="w-4 h-4" />
+            <TabsTrigger value="activities" className="gap-1 sm:gap-2 data-[state=active]:bg-gray-100 text-xs sm:text-sm">
+              <ChartPieIcon className="w-3 h-3 sm:w-4 sm:h-4" />
               فعالیت‌ها
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6 h-full">
+          <TabsContent value="overview" className="space-y-4 md:space-y-6 h-full">
             <MonthlyDataChart 
               data={expandedData} 
-              chartConfig={chartConfig} 
+              chartConfig={chartConfig}
+              isMobile={deviceInfo.isMobile}
             />
           </TabsContent>
 
-          <TabsContent value="income" className="space-y-6 h-full">
-            <IncomeChart data={expandedData} />
+          <TabsContent value="income" className="space-y-4 md:space-y-6 h-full">
+            <IncomeChart 
+              data={expandedData}
+              isMobile={deviceInfo.isMobile}
+            />
           </TabsContent>
 
-          <TabsContent value="activities" className="space-y-6 h-full">
+          <TabsContent value="activities" className="space-y-4 md:space-y-6 h-full">
             <ActivitiesChart 
               data={expandedData} 
-              chartConfig={chartConfig} 
+              chartConfig={chartConfig}
+              isMobile={deviceInfo.isMobile}
             />
           </TabsContent>
         </Tabs>

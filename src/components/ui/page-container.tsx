@@ -29,13 +29,13 @@ export const PageContainer = ({
     if (noPadding) return "p-0";
     
     if (deviceInfo.isMobile) {
-      return "px-1.5 py-1";
+      return "px-1 py-0.5";
     } else if (deviceInfo.isTablet) {
-      return "px-2 py-1.5";
+      return "px-2 py-1";
     } else if (deviceInfo.isSmallLaptop) {
-      return "px-3 py-2";
+      return "px-3 py-1.5";
     } else {
-      return "px-4 py-2.5";
+      return "px-4 py-2";
     }
   };
   
