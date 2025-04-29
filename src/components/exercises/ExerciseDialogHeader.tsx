@@ -1,45 +1,30 @@
 
 import React from "react";
-import {
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Dumbbell } from "lucide-react";
+import { Activity, X } from "lucide-react";
+import { DialogTitle, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 
 interface ExerciseDialogHeaderProps {
   studentName: string;
 }
 
-const ExerciseDialogHeader: React.FC<ExerciseDialogHeaderProps> = ({
-  studentName,
-}) => {
+const ExerciseDialogHeader: React.FC<ExerciseDialogHeaderProps> = ({ studentName }) => {
   return (
-    <DialogHeader className="pb-4 border-b p-6 bg-gradient-to-r from-white to-gray-50 dark:from-gray-900 dark:to-gray-800/60 shadow-sm rounded-t-xl">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+    <DialogHeader className="relative border-b border-b-gray-200 dark:border-b-gray-800 pt-6 pb-4 px-6 shadow-sm bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+      <motion.div 
+        className="absolute -top-8 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-primary rounded-full p-3 shadow-lg"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 150, damping: 15 }}
       >
-        <DialogTitle className="text-xl md:text-2xl font-bold flex items-center gap-3 text-primary">
-          <div className="p-2 bg-primary/10 rounded-full shadow-inner">
-            <Dumbbell className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-          </div>
-          <span className="bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 bg-clip-text text-transparent">مدیریت تمرین‌های {studentName}</span>
-        </DialogTitle>
-        <DialogDescription className="mt-3 text-base text-gray-700 dark:text-gray-300 font-medium">
-          <motion.div
-            initial={{ opacity: 0, x: -5 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-            className="flex items-center"
-          >
-            <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></span>
-            تمرین‌های مورد نظر را انتخاب کنید تا به برنامه تمرینی شاگرد اضافه شوند
-          </motion.div>
-        </DialogDescription>
+        <Activity className="h-6 w-6 text-white" />
       </motion.div>
+      <DialogTitle className="text-center mt-4 text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent pb-1">
+        مدیریت تمرین‌های {studentName}
+      </DialogTitle>
+      <DialogDescription className="text-center text-muted-foreground max-w-md mx-auto">
+        در این قسمت می‌توانید تمرین‌های روزهای مختلف را مدیریت کنید. لطفاً برای هر روز، تمرین‌ها را انتخاب کرده و تعداد ست و تکرار را مشخص نمایید.
+      </DialogDescription>
     </DialogHeader>
   );
 };

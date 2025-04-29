@@ -1,156 +1,120 @@
 
 import React from "react";
-import { Exercise } from "@/types/exercise";
-import { Dumbbell, Check } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Dumbbell, CheckCircle } from "lucide-react";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
 interface ExerciseCardProps {
   exercise: Exercise;
-  category: any;
+  category?: ExerciseCategory;
+  onClick?: () => void;
   isSelected: boolean;
   viewMode: "grid" | "list";
-  onClick: () => void;
 }
 
-export const ExerciseCard: React.FC<ExerciseCardProps> = ({
+export const ExerciseCard = ({
   exercise,
   category,
+  onClick,
   isSelected,
   viewMode,
-  onClick,
-}) => {
-  const variants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.8 },
-    hover: { 
-      scale: 1.02,
-      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-      transition: { duration: 0.2 }
-    },
-    tap: { scale: 0.98 }
-  };
+}: ExerciseCardProps) => {
+  const { name, description, targetMuscle, equipment } = exercise;
+  
+  const cardClasses = cn(
+    "group relative rounded-lg overflow-hidden border transition-all duration-300 cursor-pointer",
+    viewMode === "grid" 
+      ? "h-auto" 
+      : "flex flex-row items-center gap-3 py-2.5 px-3",
+    isSelected 
+      ? "border-primary/50 bg-primary/5 dark:border-primary/30 dark:bg-primary/10" 
+      : "border-border bg-card hover:border-primary/30 hover:bg-primary/[0.03] dark:hover:bg-primary/5"
+  );
 
-  if (viewMode === "list") {
-    return (
-      <motion.div
-        layout
-        variants={variants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        whileHover="hover"
-        whileTap="tap"
-        transition={{ duration: 0.2 }}
-        className={cn(
-          "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full h-12 sm:h-16",
-          isSelected 
-            ? "ring-2 ring-primary shadow-lg border-primary/50 bg-primary/5" 
-            : "hover:shadow-md border-gray-100 hover:border-gray-200 hover:bg-gray-50/80 dark:border-gray-700 dark:hover:border-gray-600 dark:bg-gray-800/30 dark:hover:bg-gray-700/30"
-        )}
-        onClick={onClick}
-      >
-        <div className="absolute inset-0 flex items-center p-1.5 sm:p-2">
-          <div className={cn(
-            "p-1.5 sm:p-2 mr-1 sm:mr-2 rounded-full shrink-0 transition-all duration-300",
-            isSelected ? "bg-primary text-white" : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-          )}>
-            {isSelected ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Dumbbell className="w-3 h-3 sm:w-4 sm:h-4" />}
-          </div>
-          <div className="flex items-center justify-between flex-1 overflow-hidden">
-            <div className="flex flex-col">
-              <h3 className="font-semibold text-sm sm:text-base line-clamp-1 text-gray-900 dark:text-white">{exercise.name}</h3>
-              <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 line-clamp-1 font-medium">
-                {exercise.description || (category ? `دسته: ${category.name}` : '')}
-              </p>
-            </div>
-            {category && (
-              <Badge variant={isSelected ? "default" : "outline"} className="mr-1 sm:mr-2 whitespace-nowrap text-xs font-bold">
+  const gridView = viewMode === "grid";
+
+  return (
+    <div 
+      className={cardClasses} 
+      onClick={onClick}
+    >
+      {/* شاخص انتخاب شده */}
+      {isSelected && (
+        <motion.div 
+          className="absolute top-2 right-2 z-10"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <CheckCircle className="h-5 w-5 text-primary bg-white dark:bg-gray-900 rounded-full" />
+        </motion.div>
+      )}
+
+      {/* محتوای کارت */}
+      <div className={cn(
+        "flex",
+        gridView ? "flex-col" : "flex-row gap-3 items-center w-full"
+      )}>
+        {/* آیکون تمرین */}
+        <div className={cn(
+          "flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10 text-primary",
+          gridView ? "py-6 w-full" : "h-12 w-12 rounded-lg"
+        )}>
+          <Dumbbell className={gridView ? "h-8 w-8" : "h-6 w-6"} />
+        </div>
+
+        {/* اطلاعات تمرین */}
+        <div className={cn(
+          "flex flex-col",
+          gridView ? "w-full p-3" : "flex-1"
+        )}>
+          <div className="flex items-center justify-between gap-2">
+            <h3 className={cn(
+              "font-medium group-hover:text-primary transition-colors line-clamp-1",
+              gridView ? "text-base" : "text-sm"
+            )}>
+              {name}
+            </h3>
+            
+            {!gridView && category && (
+              <Badge variant="outline" className="h-5 text-2xs bg-muted/20">
                 {category.name}
               </Badge>
             )}
           </div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div
-      layout
-      variants={variants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      whileHover="hover"
-      whileTap="tap"
-      transition={{ duration: 0.2 }}
-      className={cn(
-        "relative rounded-xl overflow-hidden transition-all duration-300 cursor-pointer border w-full h-24 sm:h-28",
-        isSelected 
-          ? "ring-2 ring-primary shadow-lg border-primary/50" 
-          : "hover:shadow-md border-gray-100 hover:border-gray-200 dark:border-gray-700 dark:hover:border-gray-600"
-      )}
-      onClick={onClick}
-    >
-      <div className={cn(
-        "absolute inset-0 bg-gradient-to-br transition-all duration-300",
-        isSelected 
-          ? "from-primary/10 to-primary/30 dark:from-primary/20 dark:to-primary/10" 
-          : "from-gray-50 to-gray-100/80 hover:from-gray-100/50 hover:to-gray-200/50 dark:from-gray-800/50 dark:to-gray-900/80 dark:hover:from-gray-700/50 dark:hover:to-gray-800/80"
-      )}>
-        <div className="absolute inset-0 flex flex-col justify-between p-2 sm:p-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center">
-              <div className={cn(
-                "p-1.5 sm:p-2.5 mr-1.5 sm:mr-2 rounded-full shrink-0 transition-all duration-300",
-                isSelected 
-                  ? "bg-primary text-white shadow-md" 
-                  : "bg-white/90 text-gray-700 shadow-sm dark:bg-gray-800 dark:text-gray-200"
-              )}>
-                {isSelected ? 
-                  <motion.div
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </motion.div>
-                  : 
-                  <Dumbbell className="w-4 h-4 sm:w-5 sm:h-5" />
-                }
-              </div>
-              <h3 className="font-bold text-sm sm:text-lg line-clamp-1 mr-1 sm:mr-2 text-gray-900 dark:text-white">{exercise.name}</h3>
-            </div>
-            {isSelected && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-bold">
-                  انتخاب شده
-                </Badge>
-              </motion.div>
-            )}
-          </div>
           
-          <div className="flex items-center justify-between mt-1 sm:mt-2">
-            {exercise.description && (
-              <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-200 line-clamp-1 mr-8 sm:mr-12 font-medium">{exercise.description}</p>
+          {gridView && description && (
+            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+              {description}
+            </p>
+          )}
+          
+          <div className={cn(
+            "flex items-center gap-2 mt-1.5",
+            gridView ? "flex-wrap" : "flex-nowrap"
+          )}>
+            {targetMuscle && (
+              <Badge variant="secondary" className="h-5 text-2xs bg-secondary/10 text-secondary-foreground">
+                {targetMuscle}
+              </Badge>
             )}
-            {category && (
-              <Badge variant={isSelected ? "default" : "outline"} className="mr-auto font-bold text-xs">
+            
+            {category && gridView && (
+              <Badge variant="outline" className="h-5 text-2xs bg-muted/20">
                 {category.name}
+              </Badge>
+            )}
+            
+            {equipment && (
+              <Badge variant="outline" className="h-5 text-2xs bg-muted/20">
+                {equipment}
               </Badge>
             )}
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
-
-export default ExerciseCard;

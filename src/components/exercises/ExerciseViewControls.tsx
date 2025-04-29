@@ -1,7 +1,8 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Grid3X3, ArrowDownUp, ArrowUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Grid, List, SortAsc, SortDesc } from "lucide-react";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -12,75 +13,147 @@ interface ExerciseViewControlsProps {
   sortOrder: "asc" | "desc";
 }
 
-export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
+const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
   viewMode,
   setViewMode,
   toggleSortOrder,
   sortOrder,
 }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
-      className="flex items-center gap-1"
-    >
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleSortOrder}
-              className="h-8 w-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700/50"
-            >
-              {sortOrder === "asc" ? (
-                <ArrowDownUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-              ) : (
-                <ArrowUpDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-              )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="bg-gray-900 text-white dark:bg-black border-gray-800 text-xs p-2">
-            {sortOrder === "asc" ? "مرتب‌سازی نزولی" : "مرتب‌سازی صعودی"}
-          </TooltipContent>
-        </Tooltip>
+  const buttonVariants = {
+    active: {
+      backgroundColor: "rgb(var(--primary) / 0.1)",
+      color: "rgb(var(--primary))",
+      scale: 1.05,
+      transition: { type: "spring", stiffness: 400, damping: 10 }
+    },
+    inactive: {
+      backgroundColor: "transparent",
+      color: "rgb(var(--muted-foreground))",
+      scale: 1,
+      transition: { duration: 0.2 }
+    }
+  };
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full p-0.5">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className={`h-7 rounded-full px-2.5 ${
-                  viewMode === "grid"
-                    ? "bg-white dark:bg-gray-700 text-primary shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-200/70 dark:hover:bg-gray-700/70"
-                }`}
+  return (
+    <TooltipProvider>
+      <div className="flex items-center justify-end gap-1 p-1 bg-muted/40 rounded-lg border border-border/30">
+        <motion.div 
+          className="flex"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <motion.div
+                variants={buttonVariants}
+                animate={sortOrder === "asc" ? "active" : "inactive"}
               >
-                <Grid3X3 className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className={`h-7 rounded-full px-2.5 ${
-                  viewMode === "list"
-                    ? "bg-white dark:bg-gray-700 text-primary shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-200/70 dark:hover:bg-gray-700/70"
-                }`}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "h-8 w-8 rounded-md",
+                    sortOrder === "asc" && "text-primary bg-primary/10"
+                  )}
+                  onClick={toggleSortOrder}
+                >
+                  <SortAsc className="h-4 w-4" />
+                  <span className="sr-only">مرتب‌سازی صعودی</span>
+                </Button>
+              </motion.div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs">مرتب‌سازی صعودی</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <motion.div
+                variants={buttonVariants}
+                animate={sortOrder === "desc" ? "active" : "inactive"}
               >
-                <ListFilter className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="bg-gray-900 text-white dark:bg-black border-gray-800 text-xs p-2">
-            تغییر نمایش
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </motion.div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "h-8 w-8 rounded-md",
+                    sortOrder === "desc" && "text-primary bg-primary/10"
+                  )}
+                  onClick={toggleSortOrder}
+                >
+                  <SortDesc className="h-4 w-4" />
+                  <span className="sr-only">مرتب‌سازی نزولی</span>
+                </Button>
+              </motion.div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs">مرتب‌سازی نزولی</p>
+            </TooltipContent>
+          </Tooltip>
+        </motion.div>
+        
+        <span className="w-px h-6 bg-border/50 mx-1"></span>
+        
+        <motion.div 
+          className="flex"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2, delay: 0.1 }}
+        >
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <motion.div
+                variants={buttonVariants}
+                animate={viewMode === "grid" ? "active" : "inactive"}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "h-8 w-8 rounded-md",
+                    viewMode === "grid" && "text-primary bg-primary/10"
+                  )}
+                  onClick={() => setViewMode("grid")}
+                >
+                  <Grid className="h-4 w-4" />
+                  <span className="sr-only">نمایش شبکه‌ای</span>
+                </Button>
+              </motion.div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs">نمایش شبکه‌ای</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <motion.div
+                variants={buttonVariants}
+                animate={viewMode === "list" ? "active" : "inactive"}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    "h-8 w-8 rounded-md",
+                    viewMode === "list" && "text-primary bg-primary/10"
+                  )}
+                  onClick={() => setViewMode("list")}
+                >
+                  <List className="h-4 w-4" />
+                  <span className="sr-only">نمایش لیستی</span>
+                </Button>
+              </motion.div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-xs">نمایش لیستی</p>
+            </TooltipContent>
+          </Tooltip>
+        </motion.div>
+      </div>
+    </TooltipProvider>
   );
 };
 

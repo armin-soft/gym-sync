@@ -1,9 +1,9 @@
 
 import React from "react";
+import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Check, X, Save } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Save, X, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 interface ExerciseDialogFooterProps {
@@ -19,68 +19,52 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
   onCancel,
   onSave,
 }) => {
-  const getBtnGradient = (tab: string) => {
-    switch (tab) {
-      case "day1": return "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700";
-      case "day2": return "bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700";
-      case "day3": return "bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700";
-      case "day4": return "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700";
-      default: return "";
-    }
-  };
-
-  const dayText = {
-    day1: "روز اول",
-    day2: "روز دوم", 
-    day3: "روز سوم",
-    day4: "روز چهارم"
-  };
-  
-  const dayName = dayText[activeTab as keyof typeof dayText] || "";
-  const btnGradient = getBtnGradient(activeTab);
+  const dayNumber = activeTab.replace("day", "");
+  const hasExercises = selectedExercisesCount > 0;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="flex items-center justify-between p-4 border-t bg-white/80 dark:bg-gray-800/30 backdrop-blur-sm shrink-0"
-    >
+    <DialogFooter className="flex flex-row-reverse sm:flex-row-reverse justify-between items-center border-t border-t-gray-200 dark:border-t-gray-800 p-4 bg-gradient-to-t from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
       <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          تمرین‌های انتخاب شده:
-        </span>
-        <Badge variant={selectedExercisesCount > 0 ? "default" : "outline"} 
-          className={`px-2.5 py-1 ${selectedExercisesCount > 0 ? `bg-${activeTab === "day1" ? "blue" : activeTab === "day2" ? "purple" : activeTab === "day3" ? "pink" : "amber"}-500/20 text-${activeTab === "day1" ? "blue" : activeTab === "day2" ? "purple" : activeTab === "day3" ? "pink" : "amber"}-700 border-${activeTab === "day1" ? "blue" : activeTab === "day2" ? "purple" : activeTab === "day3" ? "pink" : "amber"}-500/30` : ""}`}
-        >
-          {toPersianNumbers(selectedExercisesCount)}
-        </Badge>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onCancel}
-          className="border-gray-300 hover:bg-gray-100 transition-all"
-        >
-          <X className="h-4 w-4 ml-1" />
-          انصراف
-        </Button>
         <Button
           onClick={onSave}
-          disabled={selectedExercisesCount === 0}
-          size="sm"
-          className={`${btnGradient} shadow-md hover:shadow-lg transition-all relative overflow-hidden group`}
+          className={cn(
+            "gap-1.5 transition-all duration-300",
+            hasExercises ? "bg-primary hover:bg-primary-hover" : "bg-muted text-muted-foreground cursor-not-allowed"
+          )}
+          disabled={!hasExercises}
         >
-          <span className="absolute inset-0 w-full h-full bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
-          <div className="flex items-center">
-            <Save className="h-4 w-4 ml-1.5 group-hover:scale-110 transition-transform" />
-            <span>ذخیره تمرین‌های {dayName}</span>
-          </div>
+          <Save className={cn("h-4 w-4", hasExercises ? "text-white" : "text-gray-400")} />
+          <span>ذخیره تمرین‌های روز {dayNumber}</span>
+        </Button>
+        <Button variant="outline" onClick={onCancel} className="gap-1.5">
+          <X className="h-4 w-4" />
+          <span>انصراف</span>
         </Button>
       </div>
-    </motion.div>
+
+      {!hasExercises && (
+        <motion.div 
+          className="flex items-center text-sm text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 px-3 py-1.5 rounded-full"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <AlertCircle className="h-4 w-4 mr-1.5 flex-shrink-0" />
+          <span>هیچ تمرینی برای روز {dayNumber} انتخاب نشده است</span>
+        </motion.div>
+      )}
+      
+      {hasExercises && (
+        <motion.div 
+          className="flex items-center text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1.5 rounded-full"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <span>{selectedExercisesCount} تمرین برای روز {dayNumber} انتخاب شده</span>
+        </motion.div>
+      )}
+    </DialogFooter>
   );
 };
 

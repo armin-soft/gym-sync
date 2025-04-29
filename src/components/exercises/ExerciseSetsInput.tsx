@@ -1,10 +1,8 @@
 
 import React from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from "lucide-react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Minus, Plus } from "lucide-react";
 
 interface ExerciseSetsInputProps {
   exerciseId: number;
@@ -17,65 +15,54 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
   exerciseId,
   sets,
   onSetsChange,
-  className
+  className,
 }) => {
-  const handleIncrement = () => {
-    onSetsChange(exerciseId, Math.min(sets + 1, 10));
-  };
-
   const handleDecrement = () => {
-    onSetsChange(exerciseId, Math.max(sets - 1, 1));
+    if (sets > 1) {
+      onSetsChange(exerciseId, sets - 1);
+    }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value, 10);
-    if (!isNaN(newValue) && newValue >= 1 && newValue <= 10) {
-      onSetsChange(exerciseId, newValue);
+  const handleIncrement = () => {
+    if (sets < 10) {
+      onSetsChange(exerciseId, sets + 1);
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
+    <div
       className={cn(
-        "flex items-center justify-between bg-gray-50 dark:bg-gray-800/60 rounded-lg p-1.5",
+        "flex items-center h-8 rounded-md bg-muted/40 border border-border/50 p-1 select-none",
         className
       )}
     >
       <Button
         type="button"
-        variant="outline"
+        variant="ghost"
         size="icon"
-        className="h-7 w-7 rounded-md border-gray-200 dark:border-gray-700"
+        className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
         onClick={handleDecrement}
         disabled={sets <= 1}
       >
-        <Minus className="h-3.5 w-3.5" />
+        <Minus className="h-3 w-3" />
+        <span className="sr-only">کاهش</span>
       </Button>
       
-      <Input
-        type="number"
-        min={1}
-        max={10}
-        value={sets}
-        onChange={handleInputChange}
-        className="h-7 w-12 text-center border-0 bg-transparent text-sm font-medium focus-visible:ring-0 focus-visible:ring-offset-0"
-      />
+      <div className="flex-1 flex items-center justify-center text-sm font-medium">
+        {sets}
+      </div>
       
       <Button
         type="button"
-        variant="outline"
+        variant="ghost"
         size="icon"
-        className="h-7 w-7 rounded-md border-gray-200 dark:border-gray-700"
+        className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
         onClick={handleIncrement}
         disabled={sets >= 10}
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus className="h-3 w-3" />
+        <span className="sr-only">افزایش</span>
       </Button>
-    </motion.div>
+    </div>
   );
 };
-
-export default ExerciseSetsInput;
