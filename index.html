@@ -23,6 +23,92 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Service Worker registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('./Assets/Service-Worker.js')
+            .then(function(registration) {
+              // Registration was successful
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+              
+              // Check for updates when the page loads
+              navigator.serviceWorker.ready.then(registration => {
+                registration.update();
+              });
+              
+              // When a new service worker is waiting to be activated
+              if (registration.waiting) {
+                console.log('New version available! Ready to update.');
+                // Notify the user about update
+                showUpdateNotification();
+              }
+              
+              // When a new service worker is detected
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('New version installed! Ready to update.');
+                    showUpdateNotification();
+                  }
+                });
+              });
+            }).catch(function(err) {
+              // registration failed :(
+              console.log('ServiceWorker registration failed: ', err);
+            });
+            
+          // Listen for controller change events
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            console.log('Controller changed, refreshing page...');
+            window.location.reload();
+          });
+        });
+        
+        // Check for updates every hour
+        setInterval(() => {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'CHECK_FOR_UPDATES'
+            });
+          }
+        }, 60 * 60 * 1000); // 1 hour
+        
+        // Function to show update notification
+        function showUpdateNotification() {
+          // Simple notification implementation
+          if (typeof window.showToast === 'function') {
+            window.showToast({
+              title: 'بروزرسانی جدید',
+              description: 'نسخه جدید برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.',
+              action: {
+                label: 'بروزرسانی',
+                onClick: () => {
+                  if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                      type: 'SKIP_WAITING'
+                    });
+                  }
+                }
+              }
+            });
+          } else {
+            if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
+              if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                  type: 'SKIP_WAITING'
+                });
+              }
+            }
+          }
+        }
+      }
+    </script>
     <!-- Lovable required script -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <!-- Main app entry -->
