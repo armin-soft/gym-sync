@@ -24,22 +24,26 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
 }) => {
   const deviceInfo = useDeviceInfo();
   
-  // Calculate responsive max height based on device type
+  // بهینه‌سازی حداکثر ارتفاع برای دستگاه‌های مختلف
   const getResponsiveMaxHeight = () => {
     if (deviceInfo.isMobile) {
-      return "calc(100vh - 260px)";
+      return "calc(100vh - 240px)";
     } else if (deviceInfo.isTablet) {
+      return "calc(100vh - 260px)";
+    } else if (deviceInfo.isSmallLaptop) {
       return "calc(100vh - 270px)";
     } else {
       return maxHeight;
     }
   };
   
-  // Calculate responsive padding based on device type
+  // بهینه‌سازی پدینگ برای دستگاه‌های مختلف
   const getResponsivePadding = () => {
     if (deviceInfo.isMobile) {
-      return "p-2";
+      return "p-1.5";
     } else if (deviceInfo.isTablet) {
+      return "p-2";
+    } else if (deviceInfo.isSmallLaptop) {
       return "p-3";
     } else {
       return "p-4";
@@ -53,7 +57,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
     )}>
       {showControls && (
         <div className="flex items-center justify-end gap-2 p-2 sm:p-3 bg-muted/20 border-b">
-          {/* Sort button placeholder */}
+          {/* دکمه‌های کنترل */}
         </div>
       )}
       <ScrollArea 
@@ -64,7 +68,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
         <motion.div 
           layout 
           className={cn(
-            "w-full flex flex-col space-y-2 sm:space-y-3",
+            "w-full flex flex-col space-y-1.5 sm:space-y-2 md:space-y-3",
             getResponsivePadding()
           )}
         >

@@ -12,12 +12,10 @@ export const useStudentSupplements = (
   const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}, studentId: number) => {
     try {
       console.log(`Saving supplements for student ${studentId}:`, data);
-      console.log("Supplements to save:", data.supplements);
-      console.log("Vitamins to save:", data.vitamins);
       
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
-          // Calculate progress
+          // محاسبه پیشرفت شاگرد
           let progressCount = 0;
           if (student.exercises?.length) progressCount++;
           if (student.exercisesDay1?.length || student.exercisesDay2?.length || 
@@ -38,8 +36,6 @@ export const useStudentSupplements = (
         }
         return student;
       });
-      
-      console.log("Updated students after saving supplements:", updatedStudents);
       
       setStudents(updatedStudents);
       localStorage.setItem('students', JSON.stringify(updatedStudents));

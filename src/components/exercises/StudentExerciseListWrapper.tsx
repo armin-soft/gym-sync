@@ -33,16 +33,16 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
 }) => {
   const deviceInfo = useDeviceInfo();
   
-  // ارتفاع ریسپانسیو براساس نوع دستگاه
+  // محاسبه ارتفاع ریسپانسیو براساس نوع دستگاه
   const getResponsiveHeight = () => {
     if (deviceInfo.isMobile) {
-      return "calc(100vh - 180px)";
+      return "calc(100vh - 170px)";
     } else if (deviceInfo.isTablet) {
-      return "calc(100vh - 160px)";
+      return "calc(100vh - 150px)";
     } else if (deviceInfo.isSmallLaptop) {
-      return "calc(100vh - 130px)";
+      return "calc(100vh - 120px)";
     } else {
-      return "calc(100vh - 110px)";
+      return "calc(100vh - 100px)";
     }
   };
 

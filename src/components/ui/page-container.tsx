@@ -24,18 +24,18 @@ export const PageContainer = ({
   const deviceInfo = useDeviceInfo();
   const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
   
-  // Calculate responsive padding based on device type with optimized values
+  // بهینه‌سازی پدینگ ریسپانسیو براساس نوع دستگاه
   const getPadding = () => {
     if (noPadding) return "p-0";
     
     if (deviceInfo.isMobile) {
-      return "px-2 py-1";
+      return "px-1.5 py-1";
     } else if (deviceInfo.isTablet) {
-      return "px-3 py-1.5";
+      return "px-2 py-1.5";
     } else if (deviceInfo.isSmallLaptop) {
-      return "px-4 py-2";
+      return "px-3 py-2";
     } else {
-      return "px-6 py-3";
+      return "px-4 py-2.5";
     }
   };
   
@@ -55,7 +55,7 @@ export const PageContainer = ({
         </>
       )}
       <div className={cn(
-        "w-full h-full flex-1 overflow-auto transition-all duration-300",
+        "w-full h-full flex-1 overflow-hidden transition-all duration-300",
         getPadding()
       )}>
         {children}

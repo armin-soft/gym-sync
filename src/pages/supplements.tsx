@@ -12,9 +12,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useDeviceInfo } from "@/hooks/use-mobile";
+import { PageContainer } from "@/components/ui/page-container";
 
 const SupplementsPage = () => {
   const { toast } = useToast();
+  const deviceInfo = useDeviceInfo();
   const [supplements, setSupplements] = useState<Supplement[]>([]);
   const [categories, setCategories] = useState<SupplementCategory[]>([]);
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
@@ -58,6 +61,7 @@ const SupplementsPage = () => {
     });
   };
 
+  // بارگذاری اطلاعات از localStorage
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
@@ -65,19 +69,14 @@ const SupplementsPage = () => {
         const savedSupplements = localStorage.getItem('supplements');
         const savedCategories = localStorage.getItem('supplementCategories');
 
-        console.log("Loaded supplements from localStorage:", savedSupplements);
-        console.log("Loaded categories from localStorage:", savedCategories);
-
         if (savedSupplements) {
           const parsedSupplements = JSON.parse(savedSupplements);
           setSupplements(parsedSupplements);
-          console.log("Parsed supplements:", parsedSupplements);
         }
 
         if (savedCategories) {
           const parsedCategories = JSON.parse(savedCategories);
           setCategories(parsedCategories);
-          console.log("Parsed categories:", parsedCategories);
           
           const relevantCategories = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
           if (relevantCategories.length > 0) {
@@ -101,6 +100,7 @@ const SupplementsPage = () => {
     loadData();
   }, [activeTab, toast]);
 
+  // ذخیره تغییرات در localStorage
   useEffect(() => {
     localStorage.setItem('supplements', JSON.stringify(supplements));
     localStorage.setItem('supplementCategories', JSON.stringify(categories));
@@ -197,27 +197,47 @@ const SupplementsPage = () => {
     return typeMatch && s.category === selectedCategory;
   });
 
-  console.log("Filtered supplements:", filteredSupplements);
-  console.log("Active tab:", activeTab);
-  console.log("Selected category:", selectedCategory);
-
   // دسته‌بندی‌های مرتبط با تب فعال (مکمل یا ویتامین)
   const relevantCategories = categories.filter(c => c.type === activeTab);
 
+  // محاسبه ارتفاع ریسپانسیو برای ScrollArea
+  const getScrollAreaHeight = () => {
+    if (deviceInfo.isMobile) {
+      return "500px";
+    } else if (deviceInfo.isTablet) {
+      return "550px";  
+    } else if (deviceInfo.isSmallLaptop) {
+      return "600px";
+    } else {
+      return "650px";
+    }
+  };
+
+  // سایز عناوین متناسب با دستگاه
+  const getHeaderSize = () => {
+    if (deviceInfo.isMobile) {
+      return "text-xl";
+    } else if (deviceInfo.isTablet) {
+      return "text-2xl";
+    } else {
+      return "text-3xl";
+    }
+  };
+
   return (
-    <div className="container mx-auto py-8 space-y-8 max-w-7xl">
+    <PageContainer className="container mx-auto py-2 sm:py-4 md:py-6 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8 max-w-7xl">
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-purple-500/10 rounded-3xl" />
-        <div className="relative bg-white/50 backdrop-blur-sm rounded-3xl border shadow-sm p-8">
-          <div className="flex items-center gap-3">
-            <div className="p-4 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl shadow-xl">
-              <FlaskConical className="h-8 w-8 text-white" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-purple-500/10 rounded-xl sm:rounded-2xl lg:rounded-3xl" />
+        <div className="relative bg-white/50 backdrop-blur-sm rounded-xl sm:rounded-2xl lg:rounded-3xl border shadow-sm p-3 sm:p-5 lg:p-8">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-2 sm:p-3 md:p-4 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-xl">
+              <FlaskConical className={`h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-white`} />
             </div>
             <div>
-              <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h2 className={`${getHeaderSize()} font-extrabold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent`}>
                 مکمل ها و ویتامین ها
               </h2>
-              <p className="text-muted-foreground mt-2">
+              <p className={`text-xs sm:text-sm lg:text-base text-muted-foreground mt-1 lg:mt-2`}>
                 در این بخش می توانید مکمل های ورزشی و ویتامین های خود را مدیریت کنید
               </p>
             </div>
@@ -225,17 +245,17 @@ const SupplementsPage = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="supplement" className="space-y-6" onValueChange={(value) => {
+      <Tabs defaultValue="supplement" className="space-y-4 sm:space-y-6" onValueChange={(value) => {
         setActiveTab(value as 'supplement' | 'vitamin');
         setSelectedCategory("");
       }}>
-        <TabsList className="grid w-full grid-cols-2 h-12">
+        <TabsList className="grid w-full grid-cols-2 h-9 sm:h-10 md:h-12">
           <TabsTrigger value="supplement" className="data-[state=active]:bg-purple-50 data-[state=active]:text-purple-600">
-            <FlaskConical className="w-5 h-5 ml-2" />
+            <FlaskConical className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
             مکمل ها
           </TabsTrigger>
           <TabsTrigger value="vitamin" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600">
-            <Pill className="w-5 h-5 ml-2" />
+            <Pill className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
             ویتامین ها
           </TabsTrigger>
         </TabsList>
@@ -246,17 +266,17 @@ const SupplementsPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-center py-12"
+              className="flex items-center justify-center py-8 sm:py-10 md:py-12"
             >
-              <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+              <Loader2 className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 animate-spin text-purple-500" />
             </motion.div>
           ) : (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
-              <TabsContent value="supplement" className="space-y-6">
+              <TabsContent value="supplement" className="space-y-4 sm:space-y-6">
                 <CategoryTable 
                   categories={relevantCategories}
                   onAdd={handleAddCategory}
@@ -264,29 +284,29 @@ const SupplementsPage = () => {
                   onDelete={handleDeleteCategory}
                 />
                 {relevantCategories.length > 0 && (
-                  <div className="bg-white rounded-3xl border shadow-lg p-8 space-y-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-50 rounded-xl">
-                          <FlaskConical className="w-6 h-6 text-purple-600" />
+                  <div className="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl border shadow-md hover:shadow-lg transition-all p-3 sm:p-5 lg:p-8 space-y-4 sm:space-y-6">
+                    <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="p-2 sm:p-3 bg-gradient-to-br from-purple-100 to-blue-50 rounded-lg sm:rounded-xl">
+                          <FlaskConical className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-gray-800">مکمل ها</h3>
-                          <p className="text-sm text-gray-500">
+                          <h3 className={`text-lg sm:text-xl lg:text-2xl font-bold text-gray-800`}>مکمل ها</h3>
+                          <p className="text-xs sm:text-sm text-gray-500">
                             تعداد کل: {toPersianNumbers(supplements.filter(s => s.type === 'supplement').length)}
                           </p>
                         </div>
                       </div>
                       <Button 
                         onClick={handleAddSupplement}
-                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-lg sm:rounded-xl text-xs sm:text-sm h-8 sm:h-10"
                       >
-                        <Plus className="h-4 w-4 ml-2" />
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-2" />
                         افزودن مکمل
                       </Button>
                     </div>
 
-                    <ScrollArea className="h-[600px] pr-4">
+                    <ScrollArea className="w-full" style={{ height: getScrollAreaHeight() }}>
                       <SupplementList 
                         supplements={filteredSupplements}
                         onEdit={handleEditSupplement}
@@ -297,7 +317,7 @@ const SupplementsPage = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="vitamin" className="space-y-6">
+              <TabsContent value="vitamin" className="space-y-4 sm:space-y-6">
                 <CategoryTable 
                   categories={relevantCategories}
                   onAdd={handleAddCategory}
@@ -305,29 +325,29 @@ const SupplementsPage = () => {
                   onDelete={handleDeleteCategory}
                 />
                 {relevantCategories.length > 0 && (
-                  <div className="bg-white rounded-3xl border shadow-lg p-8 space-y-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 bg-gradient-to-br from-blue-100 to-purple-50 rounded-xl">
-                          <Pill className="w-6 h-6 text-blue-600" />
+                  <div className="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl border shadow-md hover:shadow-lg transition-all p-3 sm:p-5 lg:p-8 space-y-4 sm:space-y-6">
+                    <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-100 to-purple-50 rounded-lg sm:rounded-xl">
+                          <Pill className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-gray-800">ویتامین ها</h3>
-                          <p className="text-sm text-gray-500">
+                          <h3 className={`text-lg sm:text-xl lg:text-2xl font-bold text-gray-800`}>ویتامین ها</h3>
+                          <p className="text-xs sm:text-sm text-gray-500">
                             تعداد کل: {toPersianNumbers(supplements.filter(s => s.type === 'vitamin').length)}
                           </p>
                         </div>
                       </div>
                       <Button 
                         onClick={handleAddSupplement}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-blue-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-blue-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-lg sm:rounded-xl text-xs sm:text-sm h-8 sm:h-10"
                       >
-                        <Plus className="h-4 w-4 ml-2" />
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-2" />
                         افزودن ویتامین
                       </Button>
                     </div>
 
-                    <ScrollArea className="h-[600px] pr-4">
+                    <ScrollArea className="w-full" style={{ height: getScrollAreaHeight() }}>
                       <SupplementList 
                         supplements={filteredSupplements}
                         onEdit={handleEditSupplement}
@@ -359,7 +379,7 @@ const SupplementsPage = () => {
         defaultValue={editingCategory?.name}
         mode={editingCategory ? "edit" : "add"}
       />
-    </div>
+    </PageContainer>
   );
 };
 
