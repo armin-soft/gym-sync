@@ -1,21 +1,23 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
-import { StudentExerciseCard } from "@/components/exercises/StudentExerciseCard";
+import { Exercise } from "@/types/exercise";
+import { StudentExerciseCard } from "./StudentExerciseCard";
+import StudentExerciseListWrapper from "./StudentExerciseListWrapper";
+import { ArrowLeftIcon, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { RefreshCcw } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ExerciseTabContentProps {
   filteredExercises: Exercise[];
   viewMode: "grid" | "list";
   selectedExercises: number[];
   toggleExercise: (id: number) => void;
-  categories: ExerciseCategory[];
+  categories: any[];
   handleClearSearch: () => void;
-  exerciseSets?: Record<number, number>;
+  exerciseSets: Record<number, number>;
   onSetsChange?: (exerciseId: number, sets: number) => void;
-  displayMode?: "edit" | "view";
 }
 
 export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
@@ -25,98 +27,89 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   toggleExercise,
   categories,
   handleClearSearch,
-  exerciseSets = {},
-  onSetsChange,
-  displayMode = "edit"
+  exerciseSets,
+  onSetsChange
 }) => {
-  const getCategoryForExercise = (exercise: Exercise) => {
-    return categories.find(cat => cat.id === exercise.categoryId);
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
-      }
-    }
-  };
-
   if (filteredExercises.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4 text-gray-500 dark:text-gray-400">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-center"
-        >
-          <p className="text-lg font-medium mb-2">هیچ تمرینی پیدا نشد!</p>
-          <p className="text-sm mb-4">لطفا جستجوی خود را تغییر دهید یا فیلترها را پاک کنید</p>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleClearSearch}
-            className="gap-2"
-          >
-            <RefreshCcw className="h-4 w-4" />
-            پاک کردن فیلترها
-          </Button>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (viewMode === "grid") {
-    return (
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-col items-center justify-center py-10 px-4 text-center"
       >
-        <AnimatePresence>
-          {filteredExercises.map(exercise => (
-            <StudentExerciseCard
-              key={exercise.id}
-              exercise={exercise}
-              category={getCategoryForExercise(exercise)}
-              isSelected={selectedExercises.includes(exercise.id)}
-              viewMode={viewMode}
-              onClick={() => toggleExercise(exercise.id)}
-              sets={exerciseSets[exercise.id] || 3}
-              onSetsChange={onSetsChange}
-              displayMode={displayMode}
-            />
-          ))}
-        </AnimatePresence>
+        <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-full mb-4">
+          <Info className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+          حرکتی یافت نشد
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 max-w-md">
+          حرکت مورد نظر شما پیدا نشد. می‌توانید معیارهای جستجو را تغییر دهید یا
+          حرکت جدیدی اضافه کنید.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleClearSearch}
+          className="flex items-center gap-1"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          <span>پاک کردن فیلترها</span>
+        </Button>
       </motion.div>
     );
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="flex flex-col gap-2 pb-4"
-    >
+    <StudentExerciseListWrapper viewMode={viewMode}>
       <AnimatePresence>
-        {filteredExercises.map(exercise => (
-          <StudentExerciseCard
-            key={exercise.id}
-            exercise={exercise}
-            category={getCategoryForExercise(exercise)}
-            isSelected={selectedExercises.includes(exercise.id)}
-            viewMode={viewMode}
-            onClick={() => toggleExercise(exercise.id)}
-            sets={exerciseSets[exercise.id] || 3}
-            onSetsChange={onSetsChange}
-            displayMode={displayMode}
-          />
-        ))}
+        {filteredExercises.map((exercise) => {
+          const isSelected = selectedExercises.includes(exercise.id);
+          const category = categories.find(
+            (cat) => cat.id === exercise.categoryId
+          );
+          const sets = exerciseSets?.[exercise.id] || 3;
+
+          return (
+            <motion.div
+              key={exercise.id}
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className={cn(
+                "flex",
+                viewMode === "list" ? "w-full" : "flex-col"
+              )}
+            >
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-full">
+                      <StudentExerciseCard
+                        exercise={exercise}
+                        category={category}
+                        isSelected={isSelected}
+                        viewMode={viewMode}
+                        onClick={() => toggleExercise(exercise.id)}
+                        sets={sets}
+                        onSetsChange={onSetsChange}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="center">
+                    <p className="text-xs">{exercise.name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
-    </motion.div>
+    </StudentExerciseListWrapper>
   );
 };
+
+export default ExerciseTabContent;

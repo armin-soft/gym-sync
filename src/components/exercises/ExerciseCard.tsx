@@ -12,8 +12,6 @@ interface ExerciseCardProps {
   isSelected: boolean;
   viewMode: "grid" | "list";
   onClick: () => void;
-  showSets?: boolean;
-  setsCount?: number;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
@@ -22,8 +20,6 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   isSelected,
   viewMode,
   onClick,
-  showSets = false,
-  setsCount = 3
 }) => {
   const variants = {
     hidden: { opacity: 0, scale: 0.8 },
@@ -70,18 +66,11 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
                 {exercise.description || (category ? `دسته: ${category.name}` : '')}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              {showSets && isSelected && (
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 font-bold">
-                  ۱×{setsCount}
-                </Badge>
-              )}
-              {category && (
-                <Badge variant={isSelected ? "default" : "outline"} className="mr-1 sm:mr-2 whitespace-nowrap text-xs font-bold">
-                  {category.name}
-                </Badge>
-              )}
-            </div>
+            {category && (
+              <Badge variant={isSelected ? "default" : "outline"} className="mr-1 sm:mr-2 whitespace-nowrap text-xs font-bold">
+                {category.name}
+              </Badge>
+            )}
           </div>
         </div>
       </motion.div>
@@ -135,24 +124,17 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
               </div>
               <h3 className="font-bold text-sm sm:text-lg line-clamp-1 mr-1 sm:mr-2 text-gray-900 dark:text-white">{exercise.name}</h3>
             </div>
-            <div className="flex items-center gap-2">
-              {showSets && isSelected && (
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 font-bold">
-                  ۱×{setsCount}
+            {isSelected && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-bold">
+                  انتخاب شده
                 </Badge>
-              )}
-              {isSelected && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-bold">
-                    انتخاب شده
-                  </Badge>
-                </motion.div>
-              )}
-            </div>
+              </motion.div>
+            )}
           </div>
           
           <div className="flex items-center justify-between mt-1 sm:mt-2">

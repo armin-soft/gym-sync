@@ -12,7 +12,6 @@ interface StudentExerciseCardProps {
   onClick: () => void;
   sets: number;
   onSetsChange?: (exerciseId: number, sets: number) => void;
-  displayMode?: "edit" | "view"; // New prop to determine display mode
 }
 
 export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
@@ -22,8 +21,7 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
   viewMode,
   onClick,
   sets = 3,
-  onSetsChange,
-  displayMode = "edit" // Default to edit mode
+  onSetsChange
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -33,11 +31,9 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
         isSelected={isSelected}
         viewMode={viewMode}
         onClick={onClick}
-        showSets={isSelected}
-        setsCount={sets}
       />
       
-      {isSelected && onSetsChange && displayMode === "edit" && (
+      {isSelected && onSetsChange && (
         <div className="flex items-center justify-between px-2">
           <span className="text-xs font-medium text-gray-500 dark:text-gray-400">تعداد ست:</span>
           <ExerciseSetsInput

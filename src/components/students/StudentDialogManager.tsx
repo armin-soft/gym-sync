@@ -4,11 +4,10 @@ import { Student } from "@/components/students/StudentTypes";
 import { useStudentDialogs } from "@/hooks/useStudentDialogs";
 import { useStudentDialogHandlers, DialogHandlerOptions } from "@/hooks/useStudentDialogHandlers";
 import { StudentDialogContent } from "@/components/students/dialogs/StudentDialogContent";
-import { ExerciseWithSets } from "@/types/exercise";
 
 interface StudentDialogManagerProps {
   onSave: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => boolean;
-  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
+  onSaveExercises: (exerciseIds: number[], studentId: number, dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[], studentId: number) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
   exercises: any[];
