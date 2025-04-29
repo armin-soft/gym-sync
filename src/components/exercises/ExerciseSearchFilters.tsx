@@ -84,9 +84,9 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
 
         <div className="flex gap-2 md:gap-3">
           <Select
-            value={selectedExerciseType || ""}
+            value={selectedExerciseType || "all-types"}
             onValueChange={(value) => {
-              setSelectedExerciseType(value);
+              setSelectedExerciseType(value === "all-types" ? "" : value);
               setSelectedCategoryId(null);
             }}
           >
@@ -98,7 +98,7 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
             <SelectContent className="max-h-[300px]">
               <SelectGroup>
                 <SelectLabel>نوع تمرین</SelectLabel>
-                <SelectItem value="">همه انواع</SelectItem>
+                <SelectItem value="all-types">همه انواع</SelectItem>
                 {exerciseTypes.map((type) => (
                   <SelectItem key={type} value={type}>
                     {type}
@@ -109,9 +109,9 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
           </Select>
 
           <Select
-            value={selectedCategoryId?.toString() || ""}
+            value={selectedCategoryId?.toString() || "all-categories"}
             onValueChange={(value) =>
-              setSelectedCategoryId(value ? parseInt(value) : null)
+              setSelectedCategoryId(value === "all-categories" ? null : parseInt(value))
             }
             disabled={filteredCategories.length === 0}
           >
@@ -127,7 +127,7 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
             <SelectContent className="max-h-[300px]">
               <SelectGroup>
                 <SelectLabel>دسته‌بندی</SelectLabel>
-                <SelectItem value="">همه دسته‌بندی‌ها</SelectItem>
+                <SelectItem value="all-categories">همه دسته‌بندی‌ها</SelectItem>
                 {filteredCategories.map((category) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     {category.name}
