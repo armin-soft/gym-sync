@@ -93,9 +93,9 @@ export const LoginFormView = ({
 
   return (
     <>
-      <div className="relative z-10 flex flex-col space-y-1.5 p-6">
+      <div className="relative z-10 flex flex-col space-y-1.5 p-4 sm:p-6">
         <motion.div 
-          className="mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-indigo-500/40 p-3 w-20 h-20 flex items-center justify-center shadow-lg shadow-primary/20"
+          className="mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-primary/20 to-indigo-500/40 p-2 sm:p-3 w-16 sm:w-20 h-16 sm:h-20 flex items-center justify-center shadow-lg shadow-primary/20"
           variants={itemVariants}
           whileHover={{ 
             scale: 1.05, 
@@ -103,10 +103,10 @@ export const LoginFormView = ({
           }}
           whileTap={{ scale: 0.95 }}
         >
-          <UserCircle2 className="h-12 w-12 text-primary" />
+          <UserCircle2 className="h-10 sm:h-12 w-10 sm:w-12 text-primary" />
         </motion.div>
         <motion.div variants={itemVariants}>
-          <h3 className="text-2xl font-bold text-center mb-3 bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">
+          <h3 className="text-xl sm:text-2xl font-bold text-center mb-2 sm:mb-3 bg-gradient-to-r from-primary via-indigo-600 to-violet-600 bg-clip-text text-transparent">
             {gymName ? (
               <>ورود به سیستم مدیریت {gymName}</>
             ) : (
@@ -114,7 +114,7 @@ export const LoginFormView = ({
             )}
           </h3>
           <motion.p 
-            className="text-center text-muted-foreground text-sm"
+            className="text-center text-muted-foreground text-xs sm:text-sm"
             initial={{ opacity: 0, y: 10 }}
             animate={{ 
               opacity: 1, 
@@ -127,13 +127,13 @@ export const LoginFormView = ({
         </motion.div>
       </div>
       
-      <div className="relative z-10 p-6 pt-6">
+      <div className="relative z-10 p-4 sm:p-6 pt-2 sm:pt-6">
         <motion.form 
           onSubmit={handleLogin} 
-          className="space-y-6"
+          className="space-y-4 sm:space-y-6"
           variants={containerVariants}
         >
-          <motion.div className="space-y-3" variants={itemVariants}>
+          <motion.div className="space-y-2 sm:space-y-3" variants={itemVariants}>
             <Label htmlFor="email" className="text-sm font-medium flex items-center gap-1.5">
               <Mail className="h-3.5 w-3.5 text-primary" />
               ایمیل
@@ -148,7 +148,7 @@ export const LoginFormView = ({
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ایمیل خود را وارد کنید" 
-                className="pl-3 pr-12 h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary" 
+                className="pl-3 pr-12 h-10 sm:h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary" 
                 required 
                 dir="ltr"
               />
@@ -160,7 +160,7 @@ export const LoginFormView = ({
             </div>
           </motion.div>
           
-          <motion.div className="space-y-3" variants={itemVariants}>
+          <motion.div className="space-y-2 sm:space-y-3" variants={itemVariants}>
             <Label htmlFor="password" className="text-sm font-medium flex items-center gap-1.5">
               <Key className="h-3.5 w-3.5 text-primary" />
               رمز عبور
@@ -175,7 +175,7 @@ export const LoginFormView = ({
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="رمز عبور خود را وارد کنید" 
-                className="pl-12 pr-12 h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary" 
+                className="pl-12 pr-12 h-10 sm:h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary" 
                 required 
               />
               <motion.span 
@@ -209,7 +209,7 @@ export const LoginFormView = ({
             />
             <Label 
               htmlFor="rememberMe" 
-              className="text-sm text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors"
+              className="text-xs sm:text-sm text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors"
             >
               مرا به خاطر بسپار (به مدت ۳۰ روز)
             </Label>
@@ -222,7 +222,7 @@ export const LoginFormView = ({
                 animate={{ opacity: 1, y: 0, height: 'auto' }}
                 exit={{ opacity: 0, y: -10, height: 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                className="p-3 rounded-md bg-red-600/15 border-2 border-red-600/30 text-red-700 text-sm font-medium shadow-sm"
+                className="p-2 sm:p-3 rounded-md bg-red-600/15 border-2 border-red-600/30 text-red-700 text-xs sm:text-sm font-medium shadow-sm"
               >
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 flex-shrink-0 text-red-600" />
@@ -235,7 +235,7 @@ export const LoginFormView = ({
           <motion.div variants={itemVariants}>
             <motion.button 
               type="submit" 
-              className="w-full h-12 text-base font-medium transition-all relative overflow-hidden rounded-md bg-gradient-to-r from-primary to-indigo-600 text-white flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+              className="w-full h-10 sm:h-12 text-sm sm:text-base font-medium transition-all relative overflow-hidden rounded-md bg-gradient-to-r from-primary to-indigo-600 text-white flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
               disabled={loading}
               variants={buttonVariants}
               initial="rest"
@@ -244,7 +244,7 @@ export const LoginFormView = ({
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 sm:h-5 w-4 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -258,7 +258,7 @@ export const LoginFormView = ({
                     initial="rest"
                     whileHover="hover"
                   >
-                    <LogIn className="h-5 w-5" />
+                    <LogIn className="h-4 sm:h-5 w-4 sm:w-5" />
                   </motion.div>
                   
                   <div className="absolute inset-0 overflow-hidden">

@@ -1,6 +1,7 @@
 
 import { LoginForm } from "../LoginForm";
 import { motion } from "framer-motion";
+import { PageContainer } from "@/components/ui/page-container";
 
 interface LoginContainerProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -8,15 +9,17 @@ interface LoginContainerProps {
 
 export const LoginContainer = ({ onLoginSuccess }: LoginContainerProps) => {
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <PageContainer fullScreen fullHeight withBackground>
       {/* Animated background with blurred gradient */}
       <AnimatedBackground />
 
       {/* Login form container with enhanced animations */}
-      <div className="relative z-10 px-4 w-full max-w-md">
-        <LoginForm onLoginSuccess={onLoginSuccess} />
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
+        <div className="px-4 w-full max-w-md">
+          <LoginForm onLoginSuccess={onLoginSuccess} />
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
