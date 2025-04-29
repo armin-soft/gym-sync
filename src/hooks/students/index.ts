@@ -11,6 +11,7 @@ export const useStudents = () => {
     meals, 
     supplements, 
     setStudents, 
+    setSupplements,
     handleDelete, 
     handleSave 
   } = useStudentManagement();
@@ -24,6 +25,8 @@ export const useStudents = () => {
     exercises,
     meals,
     supplements,
+    setStudents,
+    setSupplements,
     handleDelete,
     handleSave,
     handleSaveExercises,

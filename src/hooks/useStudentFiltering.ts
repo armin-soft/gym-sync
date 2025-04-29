@@ -39,18 +39,21 @@ export const useStudentFiltering = (students: Student[]) => {
 
     // Sort students with consideration for device performance
     return filtered.sort((a, b) => {
-      let aValue: string | number = a[sortField];
-      let bValue: string | number = b[sortField];
+      let aValue: string | number = a.name;
+      let bValue: string | number = b.name;
 
-      // Handle progress field specifically
-      if (sortField === "progress") {
+      if (sortField === "name") {
+        aValue = a.name;
+        bValue = b.name;
+      } else if (sortField === "weight") {
+        aValue = parseFloat(a.weight) || 0;
+        bValue = parseFloat(b.weight) || 0;
+      } else if (sortField === "height") {
+        aValue = parseFloat(a.height) || 0;
+        bValue = parseFloat(b.height) || 0;
+      } else if (sortField === "progress") {
         aValue = a.progress || 0;
         bValue = b.progress || 0;
-      }
-      // Convert to numbers for weight and height
-      else if (sortField === "weight" || sortField === "height") {
-        aValue = parseFloat(aValue as string) || 0;
-        bValue = parseFloat(bValue as string) || 0;
       }
 
       // Optimize string comparison for mobile devices
