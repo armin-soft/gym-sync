@@ -52,22 +52,22 @@ export const LoadingScreen = memo(() => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }} // Faster animation
-      className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-background to-background/95 z-50"
+      className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-background to-background/95 z-50 w-screen h-screen"
     >
       <motion.div 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.3 }} // Faster animation
-        className="w-full max-w-md px-8 py-8 flex flex-col items-center"
+        className="w-full max-w-md px-4 sm:px-6 md:px-8 py-6 sm:py-8 flex flex-col items-center"
       >
-        <div className="relative mb-4">
+        <div className="relative mb-6 sm:mb-8">
           <Loader className="h-16 w-16 text-primary animate-spin" />
           <div className="absolute inset-0 flex items-center justify-center">
             <AppIcon size="lg" animated />
           </div>
         </div>
         
-        <h1 className="text-2xl font-bold mb-6 text-center">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center">
           {gymName ? (
             <>در حال بارگذاری مدیریت برنامه {gymName}</>
           ) : (
@@ -76,7 +76,7 @@ export const LoadingScreen = memo(() => {
         </h1>
         
         <div className="w-full space-y-3">
-          <Progress value={progress} className="h-3" />
+          <Progress value={progress} className="h-2 sm:h-3" />
           
           <div className="flex justify-between items-center text-sm font-medium">
             <span className="text-muted-foreground">درحال بارگذاری...</span>
