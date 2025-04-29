@@ -134,5 +134,3 @@ export const ExerciseViewControls: React.FC<ExerciseViewControlsProps> = ({
     </motion.div>
   );
 };
-
-export default ExerciseViewControls;

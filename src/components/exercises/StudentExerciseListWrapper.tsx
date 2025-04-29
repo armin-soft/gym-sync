@@ -36,13 +36,13 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
   // ارتفاع ریسپانسیو براساس نوع دستگاه
   const getResponsiveHeight = () => {
     if (deviceInfo.isMobile) {
-      return "calc(100vh - 200px)";
-    } else if (deviceInfo.isTablet) {
       return "calc(100vh - 180px)";
+    } else if (deviceInfo.isTablet) {
+      return "calc(100vh - 160px)";
     } else if (deviceInfo.isSmallLaptop) {
-      return "calc(100vh - 150px)";
-    } else {
       return "calc(100vh - 130px)";
+    } else {
+      return "calc(100vh - 110px)";
     }
   };
 

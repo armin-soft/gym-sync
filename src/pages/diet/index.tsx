@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import { MealDialog } from "@/components/diet/MealDialog";
 import { DayMeals } from "@/components/diet/DayMeals";
 import { useToast } from "@/components/ui/use-toast";
-import { v4 as uuidv4 } from 'uuid';
+import { PageContainer } from "@/components/ui/page-container";
 import { Meal, MealType, WeekDay } from "@/types/meal";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
@@ -95,36 +95,68 @@ const Index = () => {
   }, [meals, toast]);
 
   return (
-    <div className="container py-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">برنامه غذایی</h1>
-        <Button onClick={handleOpen} className="bg-green-600 hover:bg-green-500 text-white">
-          <Plus className="mr-2" />
-          افزودن وعده غذایی
-        </Button>
-      </div>
+    <PageContainer 
+      withBackground 
+      fullWidth 
+      fullHeight 
+      noPadding
+      className="flex flex-col overflow-hidden"
+    >
+      <div className="h-full w-full overflow-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="h-full w-full py-4 sm:py-6 space-y-4 sm:space-y-6 px-2 sm:px-4 md:px-6"
+        >
+          <div className="flex flex-col space-y-4">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4"
+            >
+              <div className="space-y-1.5">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-3">
+                  <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                    برنامه های غذایی هفتگی
+                  </span>
+                </h2>
+              </div>
+              <Button 
+                onClick={handleOpen} 
+                size="sm"
+                className="bg-gradient-to-l from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-primary/25 group"
+              >
+                <Plus className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:scale-110 group-hover:rotate-180 duration-300" />
+                افزودن وعده غذایی
+              </Button>
+            </motion.div>
+          </div>
 
-      <Card className="p-4">
-        {weekDays.map(day => (
-          <DayMeals
-            key={day}
-            meals={meals.filter(meal => meal.day === day)}
+          <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-140px)]">
+            <div className="h-full overflow-auto">
+              <div className="p-2 xs:p-3 sm:p-4 md:p-6">
+                <DayMeals
+                  meals={meals}
+                  mealTypes={mealTypes}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </div>
+            </div>
+          </Card>
+
+          <MealDialog
+            open={open}
+            onOpenChange={setOpen}
+            onSave={handleSave}
+            meal={selectedMeal}
             mealTypes={mealTypes as MealType[]}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+            weekDays={weekDays as WeekDay[]}
           />
-        ))}
-      </Card>
-
-      <MealDialog
-        open={open}
-        onOpenChange={setOpen}
-        onSave={handleSave}
-        meal={selectedMeal}
-        mealTypes={mealTypes as MealType[]}
-        weekDays={weekDays as WeekDay[]}
-      />
-    </div>
+        </motion.div>
+      </div>
+    </PageContainer>
   );
 };
 

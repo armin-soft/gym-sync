@@ -8,6 +8,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 interface DayMealsProps {
   meals: Meal[];
@@ -25,6 +28,16 @@ const mealTypeOrder: Record<MealType, number> = {
   "شام": 5,
   "میان وعده": 6
 };
+
+const weekDays = [
+  'شنبه', 
+  'یکشنبه', 
+  'دوشنبه', 
+  'سه‌شنبه', 
+  'چهارشنبه', 
+  'پنجشنبه', 
+  'جمعه'
+];
 
 const getMealTypeIcon = (type: MealType) => {
   switch (type) {
@@ -91,122 +104,162 @@ const getMealTypeStyle = (type: MealType) => {
 };
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
+  const [selectedDay, setSelectedDay] = useState<string>("شنبه");
+  const deviceInfo = useDeviceInfo();
+  
   // Sort meal types based on the defined order
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
+  
+  const dayMeals = meals.filter(meal => meal.day === selectedDay);
 
   return (
-    <div className="space-y-6" dir="rtl">
-      {sortedMealTypes.map((type, typeIndex) => {
-        const typeMeals = meals.filter((meal) => meal.type === type);
-        const styles = getMealTypeStyle(type);
-        
-        return (
-          <motion.div
-            key={type}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: typeIndex * 0.05 }}
-            className={cn(
-              "rounded-xl border border-border/50 overflow-hidden",
-              styles?.border
-            )}
-            dir="rtl"
-          >
-            <div className={`p-4 ${styles?.bg} rounded-t-xl border-b ${styles?.border}`}>
-              <div className="flex items-center gap-2">
-                <div className={`${styles?.icon}`}>
-                  {getMealTypeIcon(type)}
-                </div>
-                <h3 className="text-base font-medium text-foreground/90">
-                  {type}
-                </h3>
-                <Badge variant="outline" className={cn("mr-2 bg-background/50", styles?.border)}>
-                  {toPersianNumbers(typeMeals.length)} مورد
-                </Badge>
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                {typeMeals.length > 0 ? (
-                  typeMeals.map((meal, index) => (
-                    <motion.div
-                      key={meal.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        duration: 0.2,
-                        delay: index * 0.05,
-                      }}
-                    >
-                      <Card 
-                        className={`group relative border ${styles?.border} ${styles?.hover} transition-all duration-300 hover:shadow-sm h-full`}
-                      >
-                        <div className="p-3 text-right h-full flex flex-col">
-                          <div className="flex items-start justify-between gap-2">
-                            <h4 className="text-sm font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300">
-                              {meal.name}
-                            </h4>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7 hover:bg-primary/10 hover:text-primary rounded-lg"
-                                onClick={() => onEdit(meal)}
-                              >
-                                <Edit className="h-3.5 w-3.5" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7 hover:bg-red-500/10 hover:text-red-500 rounded-lg"
-                                onClick={() => onDelete(meal.id)}
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            </div>
-                          </div>
-                          {meal.description && (
-                            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                              {meal.description}
-                            </p>
-                          )}
-                          <div className="mt-2 pt-2 border-t border-dashed border-border/40 flex flex-wrap gap-1.5 mt-auto">
-                            {meal.calories && (
-                              <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900">
-                                کالری: {toPersianNumbers(meal.calories)}
-                              </Badge>
-                            )}
-                            {meal.protein && (
-                              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900">
-                                پروتئین: {toPersianNumbers(meal.protein)}
-                              </Badge>
-                            )}
-                            {meal.carbs && (
-                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800">
-                                کربوهیدرات: {toPersianNumbers(meal.carbs)}
-                              </Badge>
-                            )}
-                            {meal.fat && (
-                              <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800">
-                                چربی: {toPersianNumbers(meal.fat)}
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </Card>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-6 text-muted-foreground">
-                    هیچ موردی یافت نشد
+    <div dir="rtl">
+      <ScrollArea className="w-full">
+        <Tabs value={selectedDay} onValueChange={setSelectedDay} className="w-full">
+          <div className="bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 pb-2 sm:pb-4">
+            <TabsList className="w-full flex justify-between gap-1 bg-muted/30 p-1 rounded-xl">
+              {weekDays.map((day) => (
+                <TabsTrigger 
+                  key={day} 
+                  value={day}
+                  className={cn(
+                    "flex-1 text-xs xs:text-sm sm:text-base px-1.5 xs:px-2 sm:px-4 py-1.5 sm:py-3 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground",
+                    "transition-all duration-300 hover:bg-primary/10 data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20",
+                    "data-[state=active]:scale-105 relative overflow-hidden group"
+                  )}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative whitespace-nowrap">
+                    {day}
                   </div>
-                )}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+          <ScrollBar orientation="horizontal" />
+        
+          {weekDays.map((day) => (
+            <TabsContent 
+              key={day}
+              value={day} 
+              className="mt-4 sm:mt-6 focus-visible:outline-none"
+            >
+              <div className="space-y-4 sm:space-y-6">
+                {sortedMealTypes.map((type, typeIndex) => {
+                  const typeMeals = dayMeals.filter((meal) => meal.type === type);
+                  const styles = getMealTypeStyle(type);
+                  
+                  return (
+                    <motion.div
+                      key={type}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2, delay: typeIndex * 0.05 }}
+                      className={cn(
+                        "rounded-xl border border-border/50 overflow-hidden",
+                        styles?.border
+                      )}
+                    >
+                      <div className={`p-2 sm:p-4 ${styles?.bg} rounded-t-xl border-b ${styles?.border}`}>
+                        <div className="flex items-center gap-2">
+                          <div className={`${styles?.icon}`}>
+                            {getMealTypeIcon(type)}
+                          </div>
+                          <h3 className="text-sm sm:text-base font-medium text-foreground/90">
+                            {type}
+                          </h3>
+                          <Badge variant="outline" className={cn("mr-2 bg-background/50", styles?.border)}>
+                            {toPersianNumbers(typeMeals.length)} مورد
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="p-2 xs:p-3 sm:p-4">
+                        {typeMeals.length > 0 ? (
+                          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-3">
+                            {typeMeals.map((meal, index) => (
+                              <motion.div
+                                key={meal.id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                  duration: 0.2,
+                                  delay: index * 0.05,
+                                }}
+                              >
+                                <Card 
+                                  className={`group relative border ${styles?.border} ${styles?.hover} transition-all duration-300 hover:shadow-sm h-full`}
+                                >
+                                  <div className="p-2 xs:p-3 text-right h-full flex flex-col">
+                                    <div className="flex items-start justify-between gap-2">
+                                      <h4 className="text-xs xs:text-sm font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300">
+                                        {meal.name}
+                                      </h4>
+                                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-primary/10 hover:text-primary rounded-lg"
+                                          onClick={() => onEdit(meal)}
+                                        >
+                                          <Edit className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-red-500/10 hover:text-red-500 rounded-lg"
+                                          onClick={() => onDelete(meal.id)}
+                                        >
+                                          <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                    {meal.description && (
+                                      <p className="mt-1 text-2xs xs:text-xs text-muted-foreground line-clamp-2">
+                                        {meal.description}
+                                      </p>
+                                    )}
+                                    <div className="mt-2 pt-2 border-t border-dashed border-border/40 flex flex-wrap gap-1 mt-auto">
+                                      {meal.calories && (
+                                        <Badge variant="outline" className="text-2xs xs:text-xs bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900">
+                                          کالری: {toPersianNumbers(meal.calories)}
+                                        </Badge>
+                                      )}
+                                      {meal.protein && (
+                                        <Badge variant="outline" className="text-2xs xs:text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900">
+                                          پروتئین: {toPersianNumbers(meal.protein)}
+                                        </Badge>
+                                      )}
+                                      {meal.carbs && (
+                                        <Badge variant="outline" className="text-2xs xs:text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800">
+                                          کربوهیدرات: {toPersianNumbers(meal.carbs)}
+                                        </Badge>
+                                      )}
+                                      {meal.fat && (
+                                        <Badge variant="outline" className="text-2xs xs:text-xs bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800">
+                                          چربی: {toPersianNumbers(meal.fat)}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                </Card>
+                              </motion.div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="col-span-full text-center py-6 text-muted-foreground">
+                            هیچ موردی برای {type} در روز {day} یافت نشد
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
-            </div>
-          </motion.div>
-        );
-      })}
+            </TabsContent>
+          ))}
+        </Tabs>
+      </ScrollArea>
     </div>
   );
 };
