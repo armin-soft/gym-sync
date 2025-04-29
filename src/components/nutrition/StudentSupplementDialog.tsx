@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { AnimatePresence } from "framer-motion";
 import { Pill, Beaker } from "lucide-react";
+import { Supplement, SupplementCategory } from "@/types/supplement";
 
 // Import refactored components
 import { SupplementDialogHeader } from "./supplements/SupplementDialogHeader";
@@ -26,6 +27,8 @@ interface StudentSupplementDialogProps {
   }) => boolean;
   initialSupplements: number[];
   initialVitamins: number[];
+  supplements?: Supplement[];
+  categories?: SupplementCategory[];
 }
 
 export function StudentSupplementDialog({
@@ -34,7 +37,9 @@ export function StudentSupplementDialog({
   studentName,
   onSave,
   initialSupplements = [],
-  initialVitamins = []
+  initialVitamins = [],
+  supplements = [],
+  categories = []
 }: StudentSupplementDialogProps) {
   const deviceInfo = useDeviceInfo();
   
