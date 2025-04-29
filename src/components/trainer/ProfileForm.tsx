@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { TrainerProfile } from "@/types/trainer";
@@ -200,9 +199,11 @@ export const ProfileForm = ({
           onTabChange={setActiveSection}
         />
 
-        <AnimatePresence mode="wait" className="flex-1">
-          {renderTabContent()}
-        </AnimatePresence>
+        <div className="flex-1">
+          <AnimatePresence mode="wait">
+            {renderTabContent()}
+          </AnimatePresence>
+        </div>
 
         <SaveButton onSave={handleSave} />
       </div>
