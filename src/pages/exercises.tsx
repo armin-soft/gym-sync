@@ -115,6 +115,20 @@ const ExercisesPage = () => {
       return;
     }
 
+    // بررسی تکراری بودن نوع تمرین جدید
+    const typeExists = exerciseTypes.some(type => 
+      type.toLowerCase() === newTypeName.toLowerCase() && type !== editingType
+    );
+    
+    if (typeExists) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "این نوع حرکت قبلاً اضافه شده است"
+      });
+      return;
+    }
+
     let updatedTypes: string[];
     if (editingType) {
       updatedTypes = exerciseTypes.map(type => 
@@ -130,14 +144,6 @@ const ExercisesPage = () => {
         setSelectedType(newTypeName);
       }
     } else {
-      if (exerciseTypes.includes(newTypeName)) {
-        toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "این نوع حرکت قبلاً اضافه شده است"
-        });
-        return;
-      }
       updatedTypes = [...exerciseTypes, newTypeName];
       setSelectedType(newTypeName);
     }
@@ -195,6 +201,21 @@ const ExercisesPage = () => {
 
   const handleExerciseSave = async (formData: { name: string; categoryId: number }) => {
     try {
+      // بررسی تکراری بودن نام حرکت
+      const exerciseExists = exercises.some(ex => 
+        ex.name.toLowerCase() === formData.name.toLowerCase() && 
+        (selectedExercise ? ex.id !== selectedExercise.id : true)
+      );
+      
+      if (exerciseExists) {
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "این حرکت قبلاً اضافه شده است"
+        });
+        return Promise.reject("نام تکراری");
+      }
+
       if (selectedExercise) {
         const updatedExercises = exercises.map(ex =>
           ex.id === selectedExercise.id ? { ...ex, ...formData } : ex
@@ -406,6 +427,20 @@ const ExercisesPage = () => {
                 variant: "destructive",
                 title: "خطا",
                 description: "لطفاً نام دسته بندی را وارد کنید"
+              });
+              return;
+            }
+
+            // بررسی تکراری بودن نام دسته‌بندی
+            const categoryExists = categories.some(
+              cat => cat.name.toLowerCase() === categoryFormData.name.toLowerCase() && cat.type === selectedType
+            );
+            
+            if (categoryExists) {
+              toast({
+                variant: "destructive",
+                title: "خطا",
+                description: "این دسته بندی قبلاً در این نوع حرکت اضافه شده است"
               });
               return;
             }

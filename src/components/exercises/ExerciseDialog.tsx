@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,6 +39,8 @@ export function ExerciseDialog({
   const [activeTab, setActiveTab] = useState("single");
   const [isSaving, setIsSaving] = useState(false);
   const [currentSaveIndex, setCurrentSaveIndex] = useState(0);
+  const [totalToSave, setTotalToSave] = useState(0);
+  const [skippedExercises, setSkippedExercises] = useState<string[]>([]);
 
   useEffect(() => {
     if (selectedExercise) {
@@ -50,6 +53,7 @@ export function ExerciseDialog({
       if (!isOpen) {
         setGroupText("");
         setActiveTab("single");
+        setSkippedExercises([]);
         onFormDataChange({ name: "", categoryId: categories[0]?.id || 0 });
       }
     }
@@ -100,33 +104,44 @@ export function ExerciseDialog({
         }
 
         setIsSaving(true);
+        setTotalToSave(exercises.length);
+        setSkippedExercises([]);
+        let savedCount = 0;
         
         for (let i = 0; i < exercises.length; i++) {
           const exercise = exercises[i];
+          setCurrentSaveIndex(i);
           try {
             await new Promise(resolve => setTimeout(resolve, 1));
             await onSave({
               name: exercise,
               categoryId: formData.categoryId
             });
+            savedCount++;
           } catch (error) {
-            toast({
-              variant: "destructive",
-              title: "خطا",
-              description: `خطا در ذخیره حرکت "${exercise}"`
-            });
-            setIsSaving(false);
-            return;
+            console.error(`خطا در ذخیره حرکت "${exercise}"`, error);
+            setSkippedExercises(prev => [...prev, exercise]);
+            continue;  // ادامه حلقه با حرکت بعدی
           }
         }
 
-        toast({
-          title: "موفقیت",
-          description: `${toPersianNumbers(exercises.length)} حرکت با موفقیت اضافه شد`
-        });
+        // نمایش خلاصه نتایج
+        if (skippedExercises.length > 0) {
+          toast({
+            title: "هشدار",
+            description: `${toPersianNumbers(savedCount)} حرکت با موفقیت اضافه شد. ${toPersianNumbers(skippedExercises.length)} حرکت به دلیل تکراری بودن رد شد.`,
+          });
+        } else {
+          toast({
+            title: "موفقیت",
+            description: `${toPersianNumbers(savedCount)} حرکت با موفقیت اضافه شد`
+          });
+        }
 
-        onOpenChange(false);
-        setGroupText("");
+        if (savedCount > 0) {
+          onOpenChange(false);
+          setGroupText("");
+        }
       }
     } finally {
       setIsSaving(false);
@@ -254,7 +269,19 @@ export function ExerciseDialog({
               />
               {isSaving && (
                 <div className="text-sm text-gray-600">
-                  در حال ذخیره حرکت {toPersianNumbers(currentSaveIndex + 1)}...
+                  در حال ذخیره حرکت {toPersianNumbers(currentSaveIndex + 1)} از {toPersianNumbers(totalToSave)}...
+                </div>
+              )}
+              {skippedExercises.length > 0 && (
+                <div className="mt-2">
+                  <div className="text-sm text-red-600 font-medium mb-2">
+                    حرکات زیر تکراری بوده و رد شدند:
+                  </div>
+                  <ul className="text-sm text-red-500 list-disc pr-5">
+                    {skippedExercises.map((ex, i) => (
+                      <li key={i}>{ex}</li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </TabsContent>
@@ -270,7 +297,7 @@ export function ExerciseDialog({
           </Button>
           <Button 
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || (activeTab === "group" && !groupText.trim())}
             className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
           >
             {isSaving ? "در حال ذخیره..." : "ذخیره"}
