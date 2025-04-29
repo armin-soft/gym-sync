@@ -11,13 +11,15 @@ interface ExerciseSetsInputProps {
   sets: number;
   onSetsChange: (exerciseId: number, sets: number) => void;
   className?: string;
+  showMultiplier?: boolean;
 }
 
 export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
   exerciseId,
   sets,
   onSetsChange,
-  className
+  className,
+  showMultiplier = false
 }) => {
   const handleIncrement = () => {
     onSetsChange(exerciseId, Math.min(sets + 1, 10));
@@ -33,6 +35,18 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
       onSetsChange(exerciseId, newValue);
     }
   };
+
+  // If showMultiplier is true, display "1×{sets}" format
+  if (showMultiplier) {
+    return (
+      <div className={cn(
+        "inline-flex items-center justify-center bg-primary/10 text-primary font-medium px-2 py-1 rounded-md",
+        className
+      )}>
+        <span>1×{sets}</span>
+      </div>
+    );
+  }
 
   return (
     <motion.div

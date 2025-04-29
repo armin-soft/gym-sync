@@ -229,8 +229,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
     }
   };
 
-  const handleSaveExercises = (exerciseIdsWithSets: ExerciseWithSets[], dayNumber?: number) => {
-    return onSave(exerciseIdsWithSets, dayNumber);
+  const handleSaveExercises = (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => {
+    return onSave(exercisesWithSets, dayNumber);
   };
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
