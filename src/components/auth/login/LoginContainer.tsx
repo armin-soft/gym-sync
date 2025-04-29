@@ -18,17 +18,6 @@ export const LoginContainer = ({ onLoginSuccess }: LoginContainerProps) => {
         <div className="px-4 w-full max-w-md">
           <LoginForm onLoginSuccess={onLoginSuccess} />
         </div>
-        
-        {/* نشان وب‌اپلیکیشن */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
-          className="mt-8 text-white/50 text-xs flex flex-col items-center"
-        >
-          <p className="text-center mb-1">سیستم مدیریت باشگاه</p>
-          <p className="text-center">نسخه ۱.۰.۰</p>
-        </motion.div>
       </div>
     </PageContainer>
   );
