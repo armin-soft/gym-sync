@@ -1,15 +1,16 @@
+
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { TrainerProfile } from "@/types/trainer";
 import { isValidEmail, isValidIranianMobile, isValidPassword, isValidPersianName } from "@/utils/validation";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { FormTabs } from "./FormTabs";
-import { GymInfoForm } from "./GymInfoForm";
 import { PersonalInfoForm } from "./PersonalInfoForm";
-import { SaveButton } from "./SaveButton";
+import { GymInfoForm } from "./GymInfoForm";
 import { SocialMediaForm } from "./SocialMediaForm";
+import { SaveButton } from "./SaveButton";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -20,19 +21,19 @@ interface ProfileFormProps {
   validFields: Partial<Record<keyof TrainerProfile, boolean>>;
   setValidFields: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, boolean>>>>;
   activeSection: string;
-  setActiveSection: React.Dispatch<React.SetStateAction<string>>;
+  isSaving: boolean;
 }
 
-export const ProfileForm = ({ 
-  profile, 
-  onUpdate, 
-  onSave, 
-  errors, 
+export const ProfileForm = ({
+  profile,
+  onUpdate,
+  onSave,
+  errors,
   setErrors,
   validFields,
   setValidFields,
   activeSection,
-  setActiveSection 
+  isSaving
 }: ProfileFormProps) => {
   const { toast } = useToast();
   const deviceInfo = useDeviceInfo();
@@ -150,62 +151,94 @@ export const ProfileForm = ({
   };
 
   const renderTabContent = () => {
+    const variants = {
+      initial: { opacity: 0, y: 10 },
+      animate: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: -10 }
+    };
+
     switch (activeSection) {
       case 'personal':
         return (
-          <PersonalInfoForm
-            profile={profile}
-            onChange={handleInputChange}
-            errors={errors}
-            validFields={validFields}
-          />
+          <motion.div 
+            key="personal"
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            <PersonalInfoForm
+              profile={profile}
+              onChange={handleInputChange}
+              errors={errors}
+              validFields={validFields}
+            />
+          </motion.div>
         );
       case 'gym':
         return (
-          <GymInfoForm
-            profile={profile}
-            onChange={handleInputChange}
-            errors={errors}
-            validFields={validFields}
-          />
+          <motion.div 
+            key="gym"
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            <GymInfoForm
+              profile={profile}
+              onChange={handleInputChange}
+              errors={errors}
+              validFields={validFields}
+            />
+          </motion.div>
         );
       case 'social':
         return (
-          <SocialMediaForm
-            profile={profile}
-            onChange={handleInputChange}
-            errors={errors}
-            validFields={validFields}
-          />
+          <motion.div 
+            key="social"
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            <SocialMediaForm
+              profile={profile}
+              onChange={handleInputChange}
+              errors={errors}
+              validFields={validFields}
+            />
+          </motion.div>
         );
       default:
         return null;
     }
   };
 
-  // Determine card padding based on device
   const getCardPadding = () => {
-    if (deviceInfo.isMobile) return "p-4";
-    if (deviceInfo.isTablet) return "p-5";
-    return "p-6";
+    if (deviceInfo.isMobile) return "px-4 py-5";
+    if (deviceInfo.isTablet) return "px-5 py-6";
+    return "px-6 py-7";
   };
 
   return (
-    <Card className="backdrop-blur-xl bg-white/50 border-primary/10 shadow-xl h-full">
-      <div className={`${getCardPadding()} space-y-6 h-full flex flex-col`}>
-        {/* Desktop Tabs */}
-        <FormTabs
-          activeSection={activeSection}
-          onTabChange={setActiveSection}
-        />
-
+    <Card className={cn(
+      "backdrop-blur-xl bg-white/50 dark:bg-gray-900/30 border-primary/10 shadow-xl h-full",
+      "transition-all duration-300 hover:shadow-2xl hover:bg-white/60 dark:hover:bg-gray-900/40"
+    )}>
+      <div className={cn(
+        getCardPadding(),
+        "space-y-6 h-full flex flex-col"
+      )}>
         <div className="flex-1">
           <AnimatePresence mode="wait">
             {renderTabContent()}
           </AnimatePresence>
         </div>
 
-        <SaveButton onSave={handleSave} />
+        <SaveButton onSave={handleSave} isLoading={isSaving} />
       </div>
     </Card>
   );

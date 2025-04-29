@@ -1,12 +1,11 @@
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Camera, ImageIcon, UploadCloud } from "lucide-react";
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 interface ProfileImageProps {
   image: string;
@@ -18,6 +17,7 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const deviceInfo = useDeviceInfo();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,109 +91,128 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
 
   // Responsive image dimensions based on device type
   const getImageSize = () => {
-    if (deviceInfo.isMobile) return "w-40 h-40";
-    if (deviceInfo.isTablet) return "w-48 h-48";
-    return "w-56 h-56";
-  };
-
-  // Responsive card padding based on device type
-  const getCardPadding = () => {
-    if (deviceInfo.isMobile) return "p-4";
-    if (deviceInfo.isTablet) return "p-5";
-    return "p-6";
+    if (deviceInfo.isMobile) return "w-28 h-28 sm:w-32 sm:h-32";
+    if (deviceInfo.isTablet) return "w-36 h-36";
+    return "w-40 h-40";
   };
 
   return (
-    <Card className="relative overflow-hidden backdrop-blur-xl bg-white/50 border-primary/10 shadow-xl">
-      <div className={`${getCardPadding()}`}>
-        <div 
-          className={`relative mx-auto ${getImageSize()} group`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
+    <div className="relative mx-auto flex flex-col items-center">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleImageUpload}
+        onClick={(e) => e.stopPropagation()}
+      />
+      
+      <motion.div 
+        className="relative"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+        onClick={() => fileInputRef.current?.click()}
+      >
+        {/* Background glow effect */}
+        <motion.div 
+          className={cn(
+            "absolute -inset-3 rounded-full bg-gradient-to-r from-indigo-500/40 via-sky-500/40 to-purple-500/40 opacity-0",
+            isHovering || dragActive ? "opacity-100" : ""
+          )}
+          animate={{ 
+            opacity: isHovering || dragActive ? 0.8 : 0, 
+            scale: isHovering || dragActive ? 1.05 : 1
+          }}
+          transition={{ duration: 0.3 }}
+        />
+        
+        {/* Image container */}
+        <motion.div
+          className={cn(
+            getImageSize(),
+            "relative rounded-full overflow-hidden cursor-pointer",
+            "ring-4 ring-white dark:ring-gray-900 shadow-xl",
+            "hover:ring-indigo-200 dark:hover:ring-indigo-900 hover:shadow-indigo-500/20",
+            "transition-all duration-300",
+            isUploading ? "cursor-wait" : ""
+          )}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageUpload}
-            onClick={(e) => e.stopPropagation()}
-            required
-          />
+          {/* Image or placeholder */}
+          {image === "/placeholder.svg" ? (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+              <ImageIcon className="w-10 h-10 text-muted-foreground/40 mb-2" />
+              <p className="text-xs text-muted-foreground font-medium">انتخاب تصویر</p>
+            </div>
+          ) : (
+            <img 
+              src={image} 
+              alt="تصویر پروفایل"
+              className="w-full h-full object-cover"
+            />
+          )}
           
-          <motion.div 
-            className={cn(
-              `${getImageSize()} relative rounded-2xl overflow-hidden cursor-pointer`,
-              "ring-4 ring-background shadow-2xl transition-all duration-500",
-              "hover:ring-primary/20 hover:shadow-primary/20 hover:scale-[1.02]",
-              dragActive ? "ring-primary ring-opacity-70 scale-[1.05]" : "",
-              isUploading ? "cursor-wait" : "cursor-pointer"
+          {/* Hover overlay */}
+          <AnimatePresence>
+            {(isHovering || dragActive) && !isUploading && (
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/30 flex flex-col items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {dragActive ? (
+                  <div className="text-white flex flex-col items-center">
+                    <UploadCloud className="h-10 w-10 text-white mb-1" />
+                    <p className="text-sm font-medium">رها کنید</p>
+                  </div>
+                ) : (
+                  <div className="text-white flex flex-col items-center">
+                    <Camera className="h-8 w-8 text-white mb-1" />
+                    <p className="text-sm font-medium">تغییر تصویر</p>
+                  </div>
+                )}
+              </motion.div>
             )}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {/* Placeholder for empty image */}
-            {image === "/placeholder.svg" ? (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
-                <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/40 mb-4" />
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium">انتخاب تصویر پروفایل</p>
-              </div>
-            ) : (
-              <img 
-                src={image} 
-                alt="تصویر پروفایل"
-                className="w-full h-full object-cover"
-              />
-            )}
-            
-            {/* Overlay effect */}
-            <motion.div 
-              className={cn(
-                "absolute inset-0 flex flex-col items-center justify-center",
-                "bg-gradient-to-t from-black/60 to-transparent",
-                dragActive ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-                "transition-all duration-300"
-              )}
-              animate={{ opacity: dragActive ? 1 : 0 }}
-              whileHover={{ opacity: 1 }}
-            >
-              {dragActive ? (
-                <motion.div 
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="flex flex-col items-center"
-                >
-                  <UploadCloud className="h-10 w-10 sm:h-12 sm:w-12 text-white drop-shadow-lg mb-2" />
-                  <p className="text-xs sm:text-sm text-white font-medium drop-shadow-md">رها کنید</p>
-                </motion.div>
-              ) : (
-                <motion.div className="flex flex-col items-center">
-                  <Camera className="h-8 w-8 sm:h-10 sm:w-10 text-white drop-shadow-lg mb-2" />
-                  <p className="text-xs sm:text-sm text-white font-medium drop-shadow-md">تغییر تصویر</p>
-                </motion.div>
-              )}
-            </motion.div>
-          </motion.div>
+          </AnimatePresence>
           
           {/* Upload progress indicator */}
           {isUploading && (
             <motion.div 
-              className="absolute inset-0 bg-black/30 rounded-2xl flex items-center justify-center"
+              className="absolute inset-0 bg-black/60 flex items-center justify-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              <motion.div 
-                className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-white border-t-transparent rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              />
+              <div className="flex flex-col items-center">
+                <motion.div 
+                  className="w-10 h-10 border-3 border-white border-t-transparent rounded-full"
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                />
+                <p className="text-white text-xs mt-2">در حال آپلود...</p>
+              </div>
             </motion.div>
           )}
-        </div>
-      </div>
-    </Card>
+        </motion.div>
+      </motion.div>
+      
+      {/* Profile badge */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.4 }}
+        className="absolute -bottom-2 -right-1"
+      >
+        <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 border-none text-white px-2 py-0.5 text-xs">
+          مربی
+        </Badge>
+      </motion.div>
+    </div>
   );
 };

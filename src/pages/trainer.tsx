@@ -1,14 +1,16 @@
 
-import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import type { TrainerProfile } from "@/types/trainer";
 import { defaultProfile } from "@/types/trainer";
-import { ProfileImage } from "@/components/trainer/ProfileImage";
 import { ProfileForm } from "@/components/trainer/ProfileForm";
 import { PageContainer } from "@/components/ui/page-container";
+import { ProfileHeader } from "@/components/trainer/ProfileHeader";
+import { ProfileSidebar } from "@/components/trainer/ProfileSidebar";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
+import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const TrainerProfile = () => {
   const { toast } = useToast();
@@ -16,15 +18,19 @@ const TrainerProfile = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState<string>("personal");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const deviceInfo = useDeviceInfo();
 
   // Load saved profile from localStorage
   useEffect(() => {
-    const savedProfile = localStorage.getItem('trainerProfile');
-    if (savedProfile) {
+    const loadProfile = async () => {
       try {
-        const parsed = JSON.parse(savedProfile);
-        setProfile(parsed);
+        const savedProfile = localStorage.getItem('trainerProfile');
+        if (savedProfile) {
+          const parsed = JSON.parse(savedProfile);
+          setProfile(parsed);
+        }
       } catch (error) {
         console.error('Error loading profile from localStorage:', error);
         toast({
@@ -32,8 +38,14 @@ const TrainerProfile = () => {
           title: "خطا در بارگذاری اطلاعات",
           description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
         });
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 600);
       }
-    }
+    };
+    
+    loadProfile();
   }, []);
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
@@ -44,8 +56,13 @@ const TrainerProfile = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    setIsSaving(true);
+    
     try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
       // Force update of any components that depend on the gym name
       window.dispatchEvent(new Event('storage'));
@@ -61,120 +78,112 @@ const TrainerProfile = () => {
         title: "خطا در ذخیره اطلاعات",
         description: "مشکلی در ذخیره اطلاعات پیش آمده است"
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  // Animation variants
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
-
-  const stagger = {
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const getContainerPadding = () => {
-    if (deviceInfo.isMobile) return "py-4 px-3";
-    if (deviceInfo.isTablet) return "py-6 px-4";
-    if (deviceInfo.isSmallLaptop) return "py-6 px-6";
-    return "py-8 px-4 md:px-6 lg:px-8";
-  };
-
-  const getGridLayout = () => {
-    if (deviceInfo.isMobile) return "flex flex-col gap-6";
-    if (deviceInfo.isTablet) return "flex flex-col gap-8";
-    return "grid lg:grid-cols-[300px_1fr] gap-8";
-  };
+  // Decorative elements for the background
+  const BackgroundElements = () => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Gradient blobs */}
+      <div className="absolute -top-40 -right-20 w-80 h-80 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full" />
+      <div className="absolute top-1/4 -left-40 w-80 h-80 bg-gradient-to-br from-sky-500/10 to-blue-500/5 blur-3xl rounded-full" />
+      <div className="absolute -bottom-20 right-20 w-60 h-60 bg-gradient-to-tr from-pink-500/10 to-rose-500/5 blur-3xl rounded-full" />
+      
+      {/* Animated sparkles */}
+      {Array.from({ length: 8 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{ 
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            opacity: 0.1,
+            scale: 0.5
+          }}
+          animate={{
+            opacity: [0.2, 0.5, 0.2],
+            scale: [0.6, 1, 0.6]
+          }}
+          transition={{
+            duration: Math.random() * 4 + 3,
+            repeat: Infinity,
+            delay: Math.random() * 5
+          }}
+        >
+          <Sparkles className={cn(
+            "text-indigo-400/30",
+            i % 3 === 0 ? "w-4 h-4" : i % 3 === 1 ? "w-5 h-5" : "w-3 h-3"
+          )} />
+        </motion.div>
+      ))}
+    </div>
+  );
 
   return (
     <PageContainer withBackground fullWidth fullHeight className="w-full overflow-auto">
-      <motion.div 
-        className={`w-full h-full flex flex-col mx-auto ${getContainerPadding()} space-y-6 sm:space-y-8`}
-        variants={stagger}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div 
-          className="flex flex-col space-y-4 sm:space-y-6"
-          variants={fadeIn}
-        >
+      <BackgroundElements />
+      
+      <AnimatePresence>
+        {isLoading ? (
           <motion.div 
-            className="flex items-center gap-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            initial={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm z-50"
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
-              <Camera className="h-5 w-5 sm:h-6 sm:w-6" />
-            </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
-                پروفایل مربی
-              </h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                اطلاعات پروفایل خود را مدیریت کنید
-              </p>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        <motion.div 
-          className={getGridLayout()}
-          variants={stagger}
-        >
-          <motion.div 
-            className="space-y-6"
-            variants={fadeIn}
-          >
-            <ProfileImage 
-              image={profile.image}
-              onImageChange={(image) => handleUpdate('image', image)}
-            />
-
-            {/* Tabs for mobile view */}
-            <div className="flex lg:hidden overflow-x-auto pb-2 gap-2 no-scrollbar">
-              {["personal", "gym", "social"].map((section) => (
-                <motion.button
-                  key={section}
-                  onClick={() => setActiveSection(section)}
-                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap ${
-                    activeSection === section
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                  }`}
-                  animate={activeSection === section ? 
-                    { opacity: 1, y: 0, scale: 1.05 } : 
-                    { opacity: 0.7, y: 0, scale: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
-                  {section === "personal" ? "اطلاعات شخصی" : 
-                   section === "gym" ? "اطلاعات باشگاه" : 
-                   "شبکه‌های اجتماعی"}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div variants={fadeIn} className="flex-1">
-            <ProfileForm
-              profile={profile}
-              onUpdate={handleUpdate}
-              onSave={handleSave}
-              errors={errors}
-              setErrors={setErrors}
-              validFields={validFields}
-              setValidFields={setValidFields}
-              activeSection={activeSection}
-              setActiveSection={setActiveSection}
+            <motion.div
+              animate={{ 
+                rotate: 360,
+                scale: [1, 1.05, 1]
+              }}
+              transition={{
+                rotate: { repeat: Infinity, duration: 1, ease: "linear" },
+                scale: { repeat: Infinity, duration: 1.5 }
+              }}
+              className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full"
             />
           </motion.div>
-        </motion.div>
-      </motion.div>
+        ) : (
+          <motion.div 
+            className="w-full h-full flex flex-col space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Profile Header */}
+            <ProfileHeader />
+
+            {/* Main Content */}
+            <div className={
+              deviceInfo.isMobile 
+                ? "flex flex-col space-y-6" 
+                : "grid lg:grid-cols-[320px_1fr] xl:grid-cols-[380px_1fr] gap-6 md:gap-8"
+            }>
+              {/* Sidebar */}
+              <ProfileSidebar
+                profile={profile}
+                onImageChange={(image) => handleUpdate('image', image)} 
+                activeSection={activeSection}
+                onTabChange={setActiveSection}
+              />
+
+              {/* Form */}
+              <ProfileForm
+                profile={profile}
+                onUpdate={handleUpdate}
+                onSave={handleSave}
+                errors={errors}
+                setErrors={setErrors}
+                validFields={validFields}
+                setValidFields={setValidFields}
+                activeSection={activeSection}
+                isSaving={isSaving}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageContainer>
   );
 };
