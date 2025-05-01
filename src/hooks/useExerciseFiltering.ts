@@ -12,13 +12,13 @@ export const useExerciseFiltering = (
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  // Default to list view on mobile, grid on larger screens
-  const [viewMode, setViewMode] = useState<"grid" | "list">(isMobile ? "list" : "grid");
+  // Default to grid view on mobile
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Update view mode when screen size changes
   useEffect(() => {
     if (isMobile) {
-      setViewMode("list");
+      setViewMode("grid");
     }
   }, [isMobile]);
 
@@ -30,7 +30,7 @@ export const useExerciseFiltering = (
   }, [categories, selectedExerciseType]);
   
   // Ensure selected category is valid when exercise type changes
-  useMemo(() => {
+  useEffect(() => {
     if (selectedCategoryId && filteredCategories.length > 0) {
       const categoryExists = filteredCategories.some(cat => cat.id === selectedCategoryId);
       if (!categoryExists) {
@@ -42,10 +42,17 @@ export const useExerciseFiltering = (
   // Filter and sort exercises
   const filteredExercises = useMemo(() => {
     return exercises
-      .filter((exercise) => 
-        exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-        (selectedCategoryId ? exercise.categoryId === selectedCategoryId : false)
-      )
+      .filter((exercise) => {
+        const matchesSearch = !searchQuery || 
+          exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (exercise.description && exercise.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (exercise.targetMuscle && exercise.targetMuscle.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (exercise.equipment && exercise.equipment.toLowerCase().includes(searchQuery.toLowerCase()));
+
+        const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
+        
+        return matchesSearch && matchesCategory;
+      })
       .sort((a, b) => {
         if (sortOrder === "asc") {
           return a.name.localeCompare(b.name);
@@ -81,3 +88,5 @@ export const useExerciseFiltering = (
     handleClearSearch,
   };
 };
+
+export default useExerciseFiltering;
