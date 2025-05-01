@@ -12,6 +12,7 @@ export const useExerciseFilters = (
   selectedCategoryId: number | null
 ) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   
   // Get filtered categories based on exercise type
   const filteredCategories = useMemo(() => {
@@ -46,12 +47,18 @@ export const useExerciseFilters = (
     setSearchQuery("");
   };
 
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
+
   return {
     searchQuery,
     setSearchQuery,
     filteredCategories,
     filteredExercises,
-    handleClearSearch
+    handleClearSearch,
+    sortOrder,
+    toggleSortOrder
   };
 };
 

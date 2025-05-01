@@ -15,6 +15,7 @@ export const useExerciseFiltering = (
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   // Update view mode when screen size changes
   useEffect(() => {
@@ -81,6 +82,10 @@ export const useExerciseFiltering = (
     return filtered;
   }, [exercises, searchQuery, selectedCategoryId, selectedExerciseType, filteredCategories]);
 
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
+
   const handleClearSearch = () => {
     console.log("Clearing search filters");
     setSearchQuery("");
@@ -97,6 +102,8 @@ export const useExerciseFiltering = (
     setSelectedExerciseType,
     viewMode,
     setViewMode,
+    sortOrder,
+    toggleSortOrder,
     filteredExercises,
     filteredCategories,
     handleClearSearch,
