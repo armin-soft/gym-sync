@@ -78,8 +78,6 @@ const HierarchicalExercisesView = () => {
 
   // استفاده از هوک فیلترینگ حرکات
   const {
-    searchQuery,
-    setSearchQuery,
     selectedCategoryId,
     setSelectedCategoryId,
     selectedExerciseType,
@@ -195,8 +193,8 @@ const HierarchicalExercisesView = () => {
   // نمایش عناصر UI متناسب با مرحله انتخاب
   return (
     <PageContainer withBackground fullWidth fullHeight className="overflow-hidden">
-      <div className="w-full h-full flex flex-col gap-3 p-2 sm:p-3 lg:p-4">
-        <div className="flex flex-col gap-2 sm:gap-3">
+      <div className="w-full h-full flex flex-col gap-2 p-2 sm:p-3 lg:p-4">
+        <div className="flex flex-col gap-1 sm:gap-2">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             حرکات تمرینی
           </h2>
@@ -217,8 +215,6 @@ const HierarchicalExercisesView = () => {
         
         {/* فیلترهای جستجو و مسیر سلسله مراتبی */}
         <AdvancedSearchFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
           selectedExerciseType={selectedExerciseType}
           setSelectedExerciseType={setSelectedExerciseType}
           selectedCategoryId={selectedCategoryId}
@@ -336,7 +332,7 @@ const TypeSelectionStage = ({
 
   return (
     <motion.div 
-      className="h-full flex flex-col gap-4"
+      className="h-full flex flex-col gap-3"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -445,7 +441,7 @@ const CategorySelectionStage = ({
 
   return (
     <motion.div 
-      className="h-full flex flex-col gap-4"
+      className="h-full flex flex-col gap-3"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -726,3 +722,4 @@ const ExercisesStage = ({
 };
 
 export default HierarchicalExercisesView;
+

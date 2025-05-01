@@ -7,8 +7,6 @@ import { ActiveFilterTags } from "./ActiveFilterTags";
 import { HierarchicalMenu } from "./HierarchicalMenu";
 
 interface ExerciseSearchFiltersProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
   selectedExerciseType: string | null;
   setSelectedExerciseType: (type: string | null) => void;
   selectedCategoryId: number | null;
@@ -22,8 +20,6 @@ interface ExerciseSearchFiltersProps {
 }
 
 export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
-  searchQuery,
-  setSearchQuery,
   selectedExerciseType,
   setSelectedExerciseType,
   selectedCategoryId,
@@ -67,7 +63,6 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
         <div className={`flex gap-2 ${deviceInfo.isTablet ? "md:gap-3" : deviceInfo.isMobile ? "gap-2" : "md:gap-3"}`}>
           {/* Filter Button */}
           <FilterButton
-            searchQuery=""
             selectedExerciseType={selectedExerciseType}
             setSelectedExerciseType={setSelectedExerciseType}
             selectedCategoryId={selectedCategoryId}
@@ -91,8 +86,6 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
       {/* Active Filter Tags */}
       {hasFilters && (
         <ActiveFilterTags
-          searchQuery=""
-          setSearchQuery={setSearchQuery}
           selectedExerciseType={selectedExerciseType}
           setSelectedExerciseType={setSelectedExerciseType}
           selectedCategoryId={selectedCategoryId}
@@ -105,3 +98,4 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
     </div>
   );
 };
+

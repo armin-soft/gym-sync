@@ -101,6 +101,7 @@ const ExercisesPage = () => {
     viewMode,
     setViewMode,
     filteredExercises,
+    handleClearSearch
   } = useExerciseFiltering(
     exercises.filter(ex => filteredCategories.some(cat => cat.id === ex.categoryId)),
     categories
