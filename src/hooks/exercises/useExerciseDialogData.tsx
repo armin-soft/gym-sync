@@ -86,13 +86,18 @@ export const useExerciseDialogData = () => {
   }, [selectedType]);
 
   // Filter categories based on selected type
-  const filteredCategories = selectedType 
-    ? categories.filter(cat => cat.type === selectedType)
-    : [];
+  const filteredCategories = useMemo(() => {
+    return selectedType 
+      ? categories.filter(cat => cat.type === selectedType)
+      : [];
+  }, [categories, selectedType]);
 
   // Get filtered exercises based on selection
   const filteredExercises = useMemo(() => {
+    // Must have an exercise type selected to proceed
     if (!selectedType) return [];
+    
+    // Must have a category selected if categories are available for the selected type
     if (filteredCategories.length > 0 && !selectedCategoryId) return [];
     
     return exercises.filter(exercise => {
