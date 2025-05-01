@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Camera, Award, Medal, Settings } from "lucide-react";
+import { Camera } from "lucide-react";
 
 export const ProfileHeader = () => {
   return (
@@ -29,34 +29,6 @@ export const ProfileHeader = () => {
           <p className="text-sm sm:text-base text-muted-foreground">
             اطلاعات و تنظیمات پروفایل خود را مدیریت کنید
           </p>
-        </div>
-
-        <div className="hidden md:flex ml-auto gap-2">
-          <motion.div 
-            className="bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-gray-200/50 dark:border-gray-700/50"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Award className="h-4 w-4 text-amber-500" />
-            <span className="text-xs font-medium">مربی حرفه‌ای</span>
-          </motion.div>
-
-          <motion.div 
-            className="bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-gray-200/50 dark:border-gray-700/50"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Medal className="h-4 w-4 text-indigo-500" />
-            <span className="text-xs font-medium">+۵ سال سابقه</span>
-          </motion.div>
-
-          <motion.div 
-            className="w-10 h-10 bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 rounded-full flex items-center justify-center shadow-sm border border-gray-200/50 dark:border-gray-700/50 cursor-pointer"
-            whileHover={{ scale: 1.1, rotate: 15 }}
-            whileTap={{ scale: 0.9, rotate: 0 }}
-          >
-            <Settings className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-          </motion.div>
         </div>
       </motion.div>
     </motion.div>
