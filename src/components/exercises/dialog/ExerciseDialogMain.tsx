@@ -23,6 +23,8 @@ interface ExerciseDialogProps {
   formData: { name: string; categoryId: number };
   onFormDataChange: (data: { name: string; categoryId: number }) => void;
   onSave: (data: { name: string; categoryId: number }) => Promise<void>;
+  deviceInfo?: any; // Added deviceInfo prop
+  fullScreen?: boolean; // Added fullScreen prop
 }
 
 export function ExerciseDialogMain({
@@ -33,6 +35,8 @@ export function ExerciseDialogMain({
   formData,
   onFormDataChange,
   onSave,
+  deviceInfo, // Added deviceInfo parameter
+  fullScreen, // Added fullScreen parameter
 }: ExerciseDialogProps) {
   const { toast } = useToast();
   const [groupText, setGroupText] = useState("");
