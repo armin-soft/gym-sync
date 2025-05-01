@@ -26,17 +26,13 @@ export const useExerciseFiltering = (
 
   // Reset category selection when exercise type changes
   useEffect(() => {
-    if (selectedExerciseType === null) {
-      setSelectedCategoryId(null);
-    } else {
-      // Only reset if the category doesn't belong to the selected type
-      if (selectedCategoryId) {
-        const categoryBelongsToType = categories.some(
-          cat => cat.id === selectedCategoryId && cat.type === selectedExerciseType
-        );
-        if (!categoryBelongsToType) {
-          setSelectedCategoryId(null);
-        }
+    // When exercise type changes, check if the current selected category still belongs to the new type
+    if (selectedCategoryId && selectedExerciseType) {
+      const categoryBelongsToType = categories.some(
+        cat => cat.id === selectedCategoryId && cat.type === selectedExerciseType
+      );
+      if (!categoryBelongsToType) {
+        setSelectedCategoryId(null);
       }
     }
   }, [selectedExerciseType, categories, selectedCategoryId]);

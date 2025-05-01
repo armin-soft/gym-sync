@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, Plus, Check } from "lucide-react";
@@ -26,6 +26,13 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
   const filteredTypes = exerciseTypes.filter(type => 
     type.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  // Reset search term when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchTerm("");
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -69,7 +76,6 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
                       onClick={() => {
                         onSelectType(type);
                         setIsOpen(false);
-                        setSearchTerm("");
                       }}
                       className={cn(
                         "w-full justify-between transition-all duration-200",
@@ -89,7 +95,6 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
                   <Button onClick={() => {
                     onAddType();
                     setIsOpen(false);
-                    setSearchTerm("");
                   }}>
                     <Plus className="h-4 w-4 ml-2" />
                     افزودن نوع جدید
@@ -104,7 +109,6 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
               <Button onClick={() => {
                 onAddType();
                 setIsOpen(false);
-                setSearchTerm("");
               }} variant="outline">
                 <Plus className="h-4 w-4 ml-2" />
                 افزودن نوع جدید

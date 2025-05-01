@@ -15,8 +15,13 @@ export const useExerciseTypeSelection = (exerciseTypes: string[]) => {
     }
   }, [exerciseTypes, selectedType]);
 
+  const handleSelectType = (type: string | null) => {
+    console.log("Selecting exercise type:", type);
+    setSelectedType(type);
+  };
+
   return {
     selectedType,
-    setSelectedType
+    setSelectedType: handleSelectType
   };
 };
