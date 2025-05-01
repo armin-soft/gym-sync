@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
@@ -22,6 +22,7 @@ interface HierarchicalMenuProps {
   exerciseTypes: string[];
   filteredCategories: any[];
   onAddType?: () => void;
+  onAddCategory?: () => void;
 }
 
 export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
@@ -31,7 +32,8 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
   setSelectedCategoryId,
   exerciseTypes,
   filteredCategories,
-  onAddType
+  onAddType,
+  onAddCategory
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -101,6 +103,22 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
                   {category.name}
                 </DropdownMenuItem>
               ))}
+              
+              {onAddCategory && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      onAddCategory();
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                  >
+                    <Plus className="h-4 w-4 ml-2" />
+                    افزودن دسته‌بندی جدید
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}

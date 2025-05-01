@@ -10,17 +10,27 @@ import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { Grid3X3, ListOrdered, Dumbbell, Search, Plus } from "lucide-react";
+import { Grid3X3, ListOrdered, Dumbbell, Search, Plus, Edit, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TypeDialog } from "@/components/exercises/TypeDialog";
 import { useExerciseTypes } from "@/hooks/useExerciseTypes";
 import { ExerciseTypes } from "@/components/exercises/ExerciseTypes";
+import { useExerciseCategories } from "@/hooks/useExerciseCategories";
+import { CategoryDialog } from "@/components/exercises/CategoryDialog";
+import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
+import { useExerciseManagement } from "@/hooks/useExerciseManagement";
+import { CategoryTable } from "@/components/exercises/CategoryTable";
+import { ExerciseTableMain } from "@/components/exercises/table/ExerciseTableMain";
+import { useToast } from "@/hooks/use-toast";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 const HierarchicalExercisesView = () => {
+  const { toast } = useToast();
   const deviceInfo = useDeviceInfo();
-  const { exercises, categories, isLoading } = useExerciseData();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{type: "category" | "type", value: any} | null>(null);
 
   // استفاده از هوک های مدیریت انواع تمرین
   const {
@@ -37,6 +47,34 @@ const HierarchicalExercisesView = () => {
     handleSaveType,
     handleDeleteType
   } = useExerciseTypes();
+
+  // استفاده از هوک مدیریت دسته‌بندی‌ها
+  const {
+    categories,
+    selectedCategory,
+    setSelectedCategory,
+    isCategoryDialogOpen,
+    setIsCategoryDialogOpen,
+    categoryFormData,
+    setCategoryFormData,
+    handleSaveCategory,
+    handleDeleteCategory
+  } = useExerciseCategories(selectedType);
+
+  // استفاده از هوک مدیریت حرکت‌ها
+  const {
+    exercises,
+    selectedExercise,
+    setSelectedExercise,
+    exerciseFormData,
+    setExerciseFormData,
+    isExerciseDialogOpen,
+    setIsExerciseDialogOpen,
+    isAscending,
+    handleSort,
+    handleExerciseSave,
+    handleDeleteExercises
+  } = useExerciseManagement();
 
   // استفاده از هوک فیلترینگ حرکات
   const {
@@ -68,6 +106,64 @@ const HierarchicalExercisesView = () => {
       setViewMode("grid");
     }
   }, [deviceInfo.isMobile]);
+
+  // عملیات‌های مورد نیاز برای افزودن/ویرایش دسته‌بندی
+  const handleOpenCategoryDialog = () => {
+    setCategoryFormData({
+      name: "",
+      type: selectedType || ""
+    });
+    setSelectedCategory(null);
+    setIsCategoryDialogOpen(true);
+  };
+
+  const handleEditCategoryDialog = (category) => {
+    setSelectedCategory(category);
+    setCategoryFormData({
+      name: category.name,
+      type: category.type
+    });
+    setIsCategoryDialogOpen(true);
+  };
+
+  // عملیات‌های مورد نیاز برای افزودن/ویرایش حرکت
+  const handleOpenExerciseDialog = () => {
+    setExerciseFormData({
+      name: "",
+      categoryId: selectedCategoryId || 0
+    });
+    setSelectedExercise(undefined);
+    setIsExerciseDialogOpen(true);
+  };
+
+  const handleEditExercise = (exercise) => {
+    setSelectedExercise(exercise);
+    setExerciseFormData({
+      name: exercise.name,
+      categoryId: exercise.categoryId,
+      ...exercise
+    });
+    setIsExerciseDialogOpen(true);
+  };
+
+  // تایید حذف آیتم
+  const confirmDelete = (type: "category" | "type", value: any) => {
+    setItemToDelete({ type, value });
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!itemToDelete) return;
+
+    if (itemToDelete.type === "category") {
+      handleDeleteCategory(itemToDelete.value, exercises);
+    } else if (itemToDelete.type === "type") {
+      handleDeleteType(itemToDelete.value);
+    }
+
+    setIsDeleteConfirmOpen(false);
+    setItemToDelete(null);
+  };
 
   // انیمیشن‌ها برای عناصر UI
   const containerVariants = {
@@ -116,7 +212,7 @@ const HierarchicalExercisesView = () => {
           onSelectType={setSelectedExerciseType}
           onAddType={handleAddType}
           onEditType={handleEditType}
-          onDeleteType={handleDeleteType}
+          onDeleteType={(type) => confirmDelete("type", type)}
         />
         
         {/* فیلترهای جستجو و مسیر سلسله مراتبی */}
@@ -133,44 +229,41 @@ const HierarchicalExercisesView = () => {
           handleClearSearch={handleClearSearch}
           toggleSortOrder={toggleSortOrder}
           sortOrder={sortOrder}
+          onAddType={handleAddType}
+          onAddCategory={handleOpenCategoryDialog}
         />
 
         {/* محتوای اصلی متناسب با مرحله انتخاب */}
         <div className="flex-1 min-h-0 overflow-hidden">
-          {isLoading ? (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="mt-2 text-muted-foreground">در حال بارگذاری...</p>
-              </div>
-            </div>
-          ) : (
-            <div className="h-full flex flex-col">
-              {selectionStage === "type" && (
-                <TypeSelectionStage 
-                  exerciseTypes={exerciseTypes}
-                  setSelectedExerciseType={setSelectedExerciseType}
-                />
-              )}
+          {selectionStage === "type" && (
+            <TypeSelectionStage 
+              exerciseTypes={exerciseTypes}
+              setSelectedExerciseType={setSelectedExerciseType}
+            />
+          )}
 
-              {selectionStage === "category" && (
-                <CategorySelectionStage 
-                  categories={filteredCategories}
-                  setSelectedCategoryId={setSelectedCategoryId}
-                  selectedExerciseType={selectedExerciseType}
-                />
-              )}
+          {selectionStage === "category" && (
+            <CategorySelectionStage 
+              categories={filteredCategories}
+              setSelectedCategoryId={setSelectedCategoryId}
+              selectedExerciseType={selectedExerciseType}
+              onAddCategory={handleOpenCategoryDialog}
+              onEditCategory={handleEditCategoryDialog}
+              onDeleteCategory={(category) => confirmDelete("category", category)}
+            />
+          )}
 
-              {selectionStage === "exercises" && (
-                <ExercisesStage 
-                  exercises={filteredExercises}
-                  categories={categories}
-                  viewMode={viewMode}
-                  setViewMode={setViewMode}
-                  deviceInfo={deviceInfo}
-                />
-              )}
-            </div>
+          {selectionStage === "exercises" && (
+            <ExercisesStage 
+              exercises={filteredExercises}
+              categories={categories}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              deviceInfo={deviceInfo}
+              onAddExercise={handleOpenExerciseDialog}
+              onEditExercise={handleEditExercise}
+              onDeleteExercises={handleDeleteExercises}
+            />
           )}
         </div>
       </div>
@@ -183,6 +276,45 @@ const HierarchicalExercisesView = () => {
         onTypeNameChange={setNewTypeName}
         onSave={handleSaveType}
         isEditing={!!editingType}
+      />
+
+      {/* دیالوگ افزودن/ویرایش دسته‌بندی */}
+      <CategoryDialog 
+        isOpen={isCategoryDialogOpen}
+        onOpenChange={setIsCategoryDialogOpen}
+        exerciseTypes={exerciseTypes}
+        selectedType={categoryFormData.type || selectedType || ""}
+        formData={categoryFormData}
+        onFormDataChange={setCategoryFormData}
+        onTypeChange={(type) => setCategoryFormData({ ...categoryFormData, type })}
+        onSave={handleSaveCategory}
+      />
+
+      {/* دیالوگ افزودن/ویرایش حرکت */}
+      <ExerciseDialog
+        isOpen={isExerciseDialogOpen} 
+        onOpenChange={setIsExerciseDialogOpen}
+        categories={categories}
+        formData={exerciseFormData}
+        onFormChange={setExerciseFormData}
+        onSave={handleExerciseSave}
+        isEditing={!!selectedExercise}
+      />
+
+      {/* دیالوگ تایید حذف */}
+      <ConfirmationDialog
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="تأیید حذف"
+        description={
+          itemToDelete?.type === "category"
+            ? `آیا از حذف دسته‌بندی "${itemToDelete?.value?.name}" اطمینان دارید؟`
+            : `آیا از حذف نوع حرکت "${itemToDelete?.value}" اطمینان دارید؟`
+        }
+        confirmText="حذف"
+        cancelText="انصراف"
+        variant="destructive"
       />
     </PageContainer>
   );
@@ -293,11 +425,17 @@ const TypeSelectionStage = ({
 const CategorySelectionStage = ({ 
   categories, 
   setSelectedCategoryId,
-  selectedExerciseType
+  selectedExerciseType,
+  onAddCategory,
+  onEditCategory,
+  onDeleteCategory
 }: { 
   categories: ExerciseCategory[], 
   setSelectedCategoryId: (id: number | null) => void,
-  selectedExerciseType: string | null
+  selectedExerciseType: string | null,
+  onAddCategory: () => void,
+  onEditCategory: (category: ExerciseCategory) => void,
+  onDeleteCategory: (category: ExerciseCategory) => void
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   
@@ -314,9 +452,19 @@ const CategorySelectionStage = ({
       transition={{ duration: 0.3 }}
     >
       <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-semibold">
-          دسته‌بندی‌های {selectedExerciseType}
-        </h3>
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">
+            دسته‌بندی‌های {selectedExerciseType}
+          </h3>
+          <Button
+            size="sm"
+            onClick={onAddCategory}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+          >
+            <Plus className="h-4 w-4 ml-2" />
+            افزودن دسته‌بندی
+          </Button>
+        </div>
         
         <div className="relative">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -354,9 +502,34 @@ const CategorySelectionStage = ({
               className="h-full"
             >
               <Card
-                className="h-full cursor-pointer bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900 hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                className="h-full cursor-pointer bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-gray-900 border-purple-100 dark:border-purple-900 hover:shadow-xl transition-all duration-300 overflow-hidden group relative"
                 onClick={() => setSelectedCategoryId(category.id)}
               >
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white text-purple-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditCategory(category);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white hover:text-red-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteCategory(category);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                
                 <div className="p-4 flex flex-col gap-2">
                   <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-xl flex items-center justify-center">
                     <Dumbbell className="h-8 w-8 text-purple-600 dark:text-purple-400" />
@@ -379,15 +552,24 @@ const CategorySelectionStage = ({
               <p className="text-muted-foreground text-sm mb-4">
                 با عبارت جستجو شده هیچ دسته‌بندی پیدا نشد.
               </p>
-              {searchTerm && (
+              <div className="flex flex-col gap-2 sm:flex-row">
+                {searchTerm && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setSearchTerm("")}
+                  >
+                    پاک کردن جستجو
+                  </Button>
+                )}
                 <Button 
-                  variant="outline" 
                   size="sm"
-                  onClick={() => setSearchTerm("")}
+                  onClick={onAddCategory}
                 >
-                  پاک کردن جستجو
+                  <Plus className="h-4 w-4 ml-2" />
+                  افزودن دسته‌بندی
                 </Button>
-              )}
+              </div>
             </div>
           )}
         </motion.div>
@@ -402,14 +584,22 @@ const ExercisesStage = ({
   categories,
   viewMode,
   setViewMode,
-  deviceInfo
+  deviceInfo,
+  onAddExercise,
+  onEditExercise,
+  onDeleteExercises
 }: {
   exercises: Exercise[],
   categories: ExerciseCategory[],
   viewMode: "grid" | "list",
   setViewMode: (mode: "grid" | "list") => void,
-  deviceInfo: any
+  deviceInfo: any,
+  onAddExercise: () => void,
+  onEditExercise: (exercise: Exercise) => void,
+  onDeleteExercises: (ids: number[]) => void
 }) => {
+  const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
+
   return (
     <motion.div 
       className="h-full flex flex-col gap-3"
@@ -419,24 +609,51 @@ const ExercisesStage = ({
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">
-          حرکات تمرینی ({exercises.length})
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold">
+            حرکات تمرینی ({exercises.length})
+          </h3>
+          
+          {selectedExerciseIds.length > 0 && (
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => {
+                onDeleteExercises(selectedExerciseIds);
+                setSelectedExerciseIds([]);
+              }}
+              className="mr-2"
+            >
+              <Trash2 className="h-4 w-4 ml-2" />
+              حذف ({selectedExerciseIds.length})
+            </Button>
+          )}
+        </div>
         
-        <Tabs
-          value={viewMode}
-          onValueChange={(value) => setViewMode(value as "grid" | "list")}
-          className="mr-auto"
-        >
-          <TabsList className="bg-muted/30">
-            <TabsTrigger value="grid" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
-              <Grid3X3 className="h-4 w-4" />
-            </TabsTrigger>
-            <TabsTrigger value="list" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
-              <ListOrdered className="h-4 w-4" />
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            onClick={onAddExercise}
+            className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
+          >
+            <Plus className="h-4 w-4 ml-2" />
+            افزودن حرکت
+          </Button>
+          
+          <Tabs
+            value={viewMode}
+            onValueChange={(value) => setViewMode(value as "grid" | "list")}
+          >
+            <TabsList className="bg-muted/30">
+              <TabsTrigger value="grid" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
+                <Grid3X3 className="h-4 w-4" />
+              </TabsTrigger>
+              <TabsTrigger value="list" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
+                <ListOrdered className="h-4 w-4" />
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto">
@@ -457,23 +674,35 @@ const ExercisesStage = ({
           animate="visible"
         >
           {exercises.length > 0 ? (
-            exercises.map((exercise) => (
-              <motion.div 
-                key={exercise.id} 
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1 }
-                }}
-              >
-                <ExerciseCard 
-                  exercise={exercise}
-                  category={categories.find(cat => cat.id === exercise.categoryId)}
-                  isSelected={false}
-                  viewMode={viewMode}
-                  onClick={() => {}}
-                />
-              </motion.div>
-            ))
+            exercises.map((exercise) => {
+              const isSelected = selectedExerciseIds.includes(exercise.id);
+              
+              return (
+                <motion.div 
+                  key={exercise.id} 
+                  variants={{
+                    hidden: { y: 20, opacity: 0 },
+                    visible: { y: 0, opacity: 1 }
+                  }}
+                >
+                  <ExerciseCard 
+                    exercise={exercise}
+                    category={categories.find(cat => cat.id === exercise.categoryId)}
+                    isSelected={isSelected}
+                    viewMode={viewMode}
+                    onClick={() => {
+                      setSelectedExerciseIds(prev => 
+                        isSelected 
+                          ? prev.filter(id => id !== exercise.id)
+                          : [...prev, exercise.id]
+                      );
+                    }}
+                    onEdit={() => onEditExercise(exercise)}
+                    onDelete={() => onDeleteExercises([exercise.id])}
+                  />
+                </motion.div>
+              );
+            })
           ) : (
             <div className="col-span-full flex flex-col items-center justify-center p-8 text-center bg-muted/20 rounded-lg border border-dashed border-muted">
               <Dumbbell className="h-12 w-12 text-muted-foreground opacity-20 mb-3" />
@@ -481,6 +710,13 @@ const ExercisesStage = ({
               <p className="text-muted-foreground text-sm mb-4">
                 در این دسته‌بندی هنوز حرکتی تعریف نشده است.
               </p>
+              <Button 
+                onClick={onAddExercise}
+                className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
+              >
+                <Plus className="h-4 w-4 ml-2" />
+                افزودن حرکت جدید
+              </Button>
             </div>
           )}
         </motion.div>

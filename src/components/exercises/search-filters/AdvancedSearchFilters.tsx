@@ -27,6 +27,8 @@ interface AdvancedSearchFiltersProps {
   handleClearSearch: () => void;
   toggleSortOrder: () => void;
   sortOrder: "asc" | "desc";
+  onAddType?: () => void;
+  onAddCategory?: () => void;
 }
 
 export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
@@ -42,6 +44,8 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
   handleClearSearch,
   toggleSortOrder,
   sortOrder,
+  onAddType,
+  onAddCategory,
 }) => {
   const hasFilters = searchQuery || selectedExerciseType || selectedCategoryId;
   const activeFilterCount = [
@@ -71,6 +75,8 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
           setSelectedCategoryId={setSelectedCategoryId}
           exerciseTypes={exerciseTypes}
           filteredCategories={filteredCategories}
+          onAddType={onAddType}
+          onAddCategory={onAddCategory}
         />
 
         {/* Search Input */}
