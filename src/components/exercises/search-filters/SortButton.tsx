@@ -7,14 +7,16 @@ import { Card } from "@/components/ui/card";
 interface SortButtonProps {
   sortOrder: "asc" | "desc";
   toggleSortOrder: () => void;
+  className?: string;
 }
 
 export const SortButton: React.FC<SortButtonProps> = ({ 
   sortOrder, 
-  toggleSortOrder 
+  toggleSortOrder,
+  className = ""
 }) => {
   return (
-    <Card className="p-2">
+    <Card className={`p-2 ${className}`}>
       <Button 
         onClick={toggleSortOrder} 
         size="sm" 
