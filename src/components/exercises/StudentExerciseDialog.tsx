@@ -55,7 +55,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   isLoading={isLoading}
                   activeTab={activeTab}
                   handleSaveExercises={(exercisesWithSets, dayNumber) => {
-                    return contentProps.handleSaveDay(
+                    return handleSaveDay(
                       exercisesWithSets, 
                       onSave, 
                       dayNumber || parseInt(activeTab.replace("day", ""))
