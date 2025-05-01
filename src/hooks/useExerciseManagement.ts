@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from "react";
-import { Exercise, defaultExercises } from "@/types/exercise";
+import { Exercise } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
 
 export const useExerciseManagement = () => {
@@ -15,11 +15,7 @@ export const useExerciseManagement = () => {
   useEffect(() => {
     try {
       const savedExercises = localStorage.getItem("exercises");
-      if (!savedExercises || savedExercises === "[]") {
-        // اگر داده‌ای در localStorage نبود، از داده‌های پیش‌فرض استفاده کن
-        setExercises(defaultExercises);
-        localStorage.setItem("exercises", JSON.stringify(defaultExercises));
-      } else {
+      if (savedExercises) {
         const exs = JSON.parse(savedExercises);
         setExercises(exs);
       }

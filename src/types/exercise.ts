@@ -43,27 +43,3 @@ export interface ExerciseWithSets {
   weight?: string;
   intensity?: number;
 }
-
-export const defaultExerciseTypes: ExerciseType[] = [
-  "قدرتی",
-  "استقامتی",
-  "انعطاف‌پذیری",
-  "تعادلی",
-  "کاردیو"
-];
-
-export const defaultCategories: ExerciseCategory[] = [
-  { id: 1, name: "سینه", type: "قدرتی" },
-  { id: 2, name: "پشت", type: "قدرتی" },
-  { id: 3, name: "شانه", type: "قدرتی" },
-  { id: 4, name: "بازو", type: "قدرتی" },
-  { id: 5, name: "پا", type: "قدرتی" },
-  { id: 6, name: "شکم", type: "قدرتی" },
-  { id: 7, name: "کشش", type: "انعطاف‌پذیری" }
-];
-
-export const defaultExercises: Exercise[] = [
-  { id: 101, name: "پرس سینه", categoryId: 1, targetMuscle: "سینه", equipment: "دمبل" },
-  { id: 102, name: "زیر بغل", categoryId: 2, targetMuscle: "پشت", equipment: "هالتر" },
-  { id: 103, name: "پرس سرشانه", categoryId: 3, targetMuscle: "شانه", equipment: "دمبل" }
-];

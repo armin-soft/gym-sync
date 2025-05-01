@@ -1,7 +1,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { defaultExerciseTypes } from "@/types/exercise";
 
 export const useExerciseTypes = () => {
   const { toast } = useToast();
@@ -15,14 +14,7 @@ export const useExerciseTypes = () => {
   useEffect(() => {
     try {
       const savedTypes = localStorage.getItem("exerciseTypes");
-      if (!savedTypes || savedTypes === "[]") {
-        // اگر داده‌ای در localStorage نبود، از داده‌های پیش‌فرض استفاده کن
-        setExerciseTypes(defaultExerciseTypes);
-        localStorage.setItem("exerciseTypes", JSON.stringify(defaultExerciseTypes));
-        if (defaultExerciseTypes.length > 0) {
-          setSelectedType(defaultExerciseTypes[0]);
-        }
-      } else {
+      if (savedTypes) {
         const types = JSON.parse(savedTypes);
         setExerciseTypes(types);
         if (types.length > 0) {

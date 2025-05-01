@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ExerciseCategory, defaultCategories } from "@/types/exercise";
+import { ExerciseCategory } from "@/types/exercise";
 
 export const useExerciseCategories = (selectedType: string | null) => {
   const { toast } = useToast();
@@ -14,11 +14,7 @@ export const useExerciseCategories = (selectedType: string | null) => {
   useEffect(() => {
     try {
       const savedCategories = localStorage.getItem("exerciseCategories");
-      if (!savedCategories || savedCategories === "[]") {
-        // اگر داده‌ای در localStorage نبود، از داده‌های پیش‌فرض استفاده کن
-        setCategories(defaultCategories);
-        localStorage.setItem("exerciseCategories", JSON.stringify(defaultCategories));
-      } else {
+      if (savedCategories) {
         const cats = JSON.parse(savedCategories);
         setCategories(cats);
       }
