@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { TypeSelector } from "./TypeSelector";
 
 interface HierarchicalMenuProps {
   selectedExerciseType: string | null;
@@ -20,6 +21,7 @@ interface HierarchicalMenuProps {
   setSelectedCategoryId: (id: number | null) => void;
   exerciseTypes: string[];
   filteredCategories: any[];
+  onAddType?: () => void;
 }
 
 export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
@@ -29,6 +31,7 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
   setSelectedCategoryId,
   exerciseTypes,
   filteredCategories,
+  onAddType
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -63,38 +66,29 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
         </div>
       </div>
       
-      <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="h-8 px-2 hover:bg-indigo-50 text-indigo-600"
-          >
-            {selectedExerciseType ? "تغییر" : "انتخاب"}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>انتخاب نوع حرکت</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          
-          {exerciseTypes.map(type => (
-            <DropdownMenuItem 
-              key={type}
-              className={cn(selectedExerciseType === type ? "bg-indigo-50 text-indigo-700 font-medium" : "")}
-              onClick={() => {
-                setSelectedExerciseType(type);
-                if (selectedExerciseType !== type) {
-                  setSelectedCategoryId(null);
-                }
-              }}
-            >
-              {type}
-            </DropdownMenuItem>
-          ))}
-          
-          {selectedExerciseType && filteredCategories.length > 0 && (
-            <>
-              <DropdownMenuLabel className="mt-2">انتخاب دسته‌بندی</DropdownMenuLabel>
+      <div className="flex items-center gap-2">
+        <TypeSelector 
+          exerciseTypes={exerciseTypes}
+          selectedType={selectedExerciseType}
+          onSelectType={setSelectedExerciseType}
+          onAddType={onAddType}
+        />
+        
+        {selectedExerciseType && filteredCategories.length > 0 && (
+          <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="h-8 px-3 hover:bg-indigo-50 text-indigo-600 min-w-32"
+                disabled={!selectedExerciseType}
+              >
+                {selectedCategoryId ? getSelectedCategoryName() : "انتخاب دسته‌بندی"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>انتخاب دسته‌بندی</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              
               {filteredCategories.map(category => (
                 <DropdownMenuItem 
                   key={category.id}
@@ -107,10 +101,10 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
                   {category.name}
                 </DropdownMenuItem>
               ))}
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
     </Card>
   );
 };

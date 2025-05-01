@@ -10,14 +10,33 @@ import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { useExerciseFiltering } from "@/hooks/useExerciseFiltering";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { Grid3X3, ListOrdered, Dumbbell, Search } from "lucide-react";
+import { Grid3X3, ListOrdered, Dumbbell, Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { TypeDialog } from "@/components/exercises/TypeDialog";
+import { useExerciseTypes } from "@/hooks/useExerciseTypes";
+import { ExerciseTypes } from "@/components/exercises/ExerciseTypes";
 
 const HierarchicalExercisesView = () => {
   const deviceInfo = useDeviceInfo();
-  const { exercises, categories, exerciseTypes, isLoading } = useExerciseData();
+  const { exercises, categories, isLoading } = useExerciseData();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // استفاده از هوک های مدیریت انواع تمرین
+  const {
+    exerciseTypes,
+    selectedType,
+    setSelectedType,
+    isTypeDialogOpen,
+    setIsTypeDialogOpen,
+    newTypeName,
+    setNewTypeName,
+    editingType,
+    handleAddType,
+    handleEditType,
+    handleSaveType,
+    handleDeleteType
+  } = useExerciseTypes();
 
   // استفاده از هوک فیلترینگ حرکات
   const {
@@ -33,6 +52,15 @@ const HierarchicalExercisesView = () => {
     filteredCategories,
     handleClearSearch,
   } = useExerciseFiltering(exercises, categories);
+
+  // همگام‌سازی بین حالت انتخاب شده در دو جا
+  useEffect(() => {
+    if (selectedType && selectedType !== selectedExerciseType) {
+      setSelectedExerciseType(selectedType);
+    } else if (selectedExerciseType && selectedExerciseType !== selectedType) {
+      setSelectedType(selectedExerciseType);
+    }
+  }, [selectedType, selectedExerciseType]);
 
   // تنظیم حالت نمایش براساس اندازه صفحه
   useEffect(() => {
@@ -80,6 +108,16 @@ const HierarchicalExercisesView = () => {
             انتخاب و مدیریت حرکات تمرینی بصورت سلسله مراتبی
           </p>
         </div>
+
+        {/* انواع تمرین */}
+        <ExerciseTypes
+          types={exerciseTypes}
+          selectedType={selectedExerciseType || ""}
+          onSelectType={setSelectedExerciseType}
+          onAddType={handleAddType}
+          onEditType={handleEditType}
+          onDeleteType={handleDeleteType}
+        />
         
         {/* فیلترهای جستجو و مسیر سلسله مراتبی */}
         <AdvancedSearchFilters
@@ -136,6 +174,16 @@ const HierarchicalExercisesView = () => {
           )}
         </div>
       </div>
+      
+      {/* دیالوگ افزودن/ویرایش نوع تمرین */}
+      <TypeDialog 
+        isOpen={isTypeDialogOpen}
+        onOpenChange={setIsTypeDialogOpen}
+        typeName={newTypeName}
+        onTypeNameChange={setNewTypeName}
+        onSave={handleSaveType}
+        isEditing={!!editingType}
+      />
     </PageContainer>
   );
 };
