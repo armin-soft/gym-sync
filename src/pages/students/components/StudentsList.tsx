@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
 import { StudentCard } from "@/components/students/StudentCard";
 import { StudentTable } from "@/components/students/StudentTable";
-import { EmptyStudentState } from "@/components/students/EmptyStudentState";
+import { EmptyStudentState } from "./EmptyStudentState";
 
 interface StudentsListProps {
   students: Student[];
@@ -47,16 +47,17 @@ export const StudentsList: React.FC<StudentsListProps> = ({
   }
 
   return (
-    <div className="pr-2">
+    <div className="pr-2 overflow-auto h-full">
       <motion.div 
         key={viewMode}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
+        className="h-full"
       >
         {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
             {students.map(student => (
               <StudentCard 
                 key={student.id}
