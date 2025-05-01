@@ -1,30 +1,49 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { PageContainer } from "@/components/ui/page-container";
-import { Sparkles } from "lucide-react";
+import { EyeIcon, Calendar, TrendingUp, ChevronRight, Users, BarChart2, Award, Search } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+import { useToast } from "@/components/ui/use-toast";
 
 // Import components
-import { HeroSection } from "@/components/dashboard/HeroSection";
-import { MainMenuGrid } from "@/components/dashboard/MainMenuGrid";
-import { RecentStudentsCard } from "@/components/dashboard/RecentStudentsCard";
-import { StatsCards } from "@/components/dashboard/StatsCards";
-import { ProgressCard } from "@/components/dashboard/ProgressCard";
-import { ActivitySummaryCard } from "@/components/dashboard/ActivitySummaryCard";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { StatisticsGrid } from "@/components/dashboard/StatisticsGrid";
+import { RecentStudents } from "@/components/dashboard/RecentStudents";
+import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
+import { ProgressOverview } from "@/components/dashboard/ProgressOverview";
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
+import { LoadingSkeleton } from "@/components/dashboard/LoadingSkeleton";
 
 const Index = () => {
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const deviceInfo = useDeviceInfo();
+  const { theme } = useTheme();
+  const { toast } = useToast();
   
-  const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
+  // Get trainer profile from localStorage
+  const trainerProfile = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"کاربر گرامی","image":"/placeholder.svg"}');
+    } catch (e) {
+      return {"name":"کاربر گرامی","image":"/placeholder.svg"};
+    }
+  }, []);
 
   useEffect(() => {
+    // Simulate loading data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    
     try {
       const savedStudents = localStorage.getItem('students');
       if (savedStudents) {
@@ -38,138 +57,105 @@ const Index = () => {
       } else {
         setStudents([]);
       }
+      
+      // Show welcome toast
+      toast({
+        title: `${getTimeBasedGreeting()}، ${trainerProfile.name}`,
+        description: "به داشبورد مدیریت برنامه‌ها خوش آمدید!",
+        duration: 4000,
+      });
+      
     } catch (error) {
       console.error('Error loading students:', error);
       setStudents([]);
     }
-  }, []);
-
-  // Animation variants
-  const fadeIn = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 0.6 } }
+    
+    return () => clearTimeout(timer);
+  }, [toast, trainerProfile.name]);
+  
+  // Get greeting based on time of day
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'صبح بخیر';
+    if (hour < 17) return 'ظهر بخیر';
+    if (hour < 21) return 'عصر بخیر';
+    return 'شب بخیر';
   };
-
-  // Determine optimal grid layout based on device type
-  const getGridLayout = () => {
-    if (deviceInfo.isMobile) {
-      return "grid-cols-1 gap-4";
-    } else if (deviceInfo.isTablet) {
-      return "grid-cols-2 gap-5";
-    } else {
-      return "md:grid-cols-3 gap-6";
+  
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        when: "beforeChildren"
+      }
     }
   };
   
-  // Background decorative elements
-  const BackgroundDecorations = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Top right decoration */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full" />
-      
-      {/* Bottom left decoration */}
-      <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-tr from-blue-500/10 to-teal-500/5 blur-3xl rounded-full" />
-      
-      {/* Animated sparkles that appear in random positions */}
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            opacity: 0.7
-          }}
-          animate={{
-            opacity: [0.4, 0.7, 0.4],
-            scale: [0.8, 1, 0.8]
-          }}
-          transition={{
-            duration: Math.random() * 3 + 2,
-            repeat: Infinity,
-            delay: Math.random() * 5
-          }}
-        >
-          <Sparkles className="w-3 h-3 text-indigo-400/30" />
-        </motion.div>
-      ))}
-    </div>
-  );
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.4 }
+    }
+  };
+  
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
 
   return (
     <PageContainer fullWidth noPadding>
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full h-full overflow-auto p-2 xs:p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6 relative"
-      >
-        {/* Background decorations */}
-        <BackgroundDecorations />
+      <div className="w-full h-full overflow-auto">
+        <DashboardHeader 
+          trainerProfile={trainerProfile} 
+          currentTime={currentTime}
+          stats={stats}
+        />
         
-        {/* Page content */}
-        <div className="relative z-10">
-          {/* Hero Section */}
-          <HeroSection 
-            stats={stats} 
-            currentTime={currentTime} 
-            trainerProfile={trainerProfile} 
-          />
-
-          {/* Main Menu Grid */}
-          <motion.div 
-            {...fadeIn}
-            transition={{ delay: 0.2 }}
-            className="mt-4 sm:mt-5 md:mt-6"
-          >
-            <MainMenuGrid />
+        <motion.div 
+          className="p-3 sm:p-4 md:p-6 grid gap-4 md:gap-6 max-w-[1800px] mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Top statistics */}
+          <motion.div variants={itemVariants}>
+            <StatisticsGrid stats={stats} />
           </motion.div>
-
-          {/* Stats and Recent Students */}
-          <motion.div
-            {...fadeIn}
-            transition={{ delay: 0.4 }} 
-            className={`mt-4 sm:mt-5 md:mt-6 grid ${getGridLayout()}`}
-          >
-            {/* First column on larger screens */}
-            <motion.div 
-              {...fadeIn}
-              transition={{ delay: 0.6 }}
-              className={deviceInfo.isMobile ? "" : "md:col-span-2 space-y-4 sm:space-y-5 md:space-y-6"}
-            >
-              {/* Students Card */}
-              <RecentStudentsCard students={students} />
-              
-              {deviceInfo.isMobile && (
-                <>
-                  {/* Progress Card - Show here on mobile */}
-                  <ProgressCard stats={stats} />
-                  
-                  {/* Activity Summary Card - Show here on mobile */}
-                  <ActivitySummaryCard stats={stats} />
-                </>
-              )}
-              
-              {/* Stats Cards */}
-              <StatsCards stats={stats} />
-            </motion.div>
-            
-            {!deviceInfo.isMobile && (
-              <motion.div 
-                {...fadeIn}
-                transition={{ delay: 0.7 }}
-                className="space-y-4 sm:space-y-5 md:space-y-6"
-              >
-                {/* Progress Card */}
-                <ProgressCard stats={stats} />
-
-                {/* Activity Summary Card */}
-                <ActivitySummaryCard stats={stats} />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            {/* Main content - 2 columns on large screens */}
+            <div className="lg:col-span-2 space-y-4 md:space-y-6">
+              <motion.div variants={itemVariants}>
+                <PerformanceChart stats={stats} />
               </motion.div>
-            )}
-          </motion.div>
-        </div>
-      </motion.div>
+              
+              <motion.div variants={itemVariants}>
+                <RecentStudents students={students} />
+              </motion.div>
+            </div>
+            
+            {/* Side panel - 1 column */}
+            <div className="space-y-4 md:space-y-6">
+              <motion.div variants={itemVariants}>
+                <QuickActions />
+              </motion.div>
+              
+              <motion.div variants={itemVariants}>
+                <ProgressOverview stats={stats} />
+              </motion.div>
+              
+              <motion.div variants={itemVariants}>
+                <ActivityTimeline />
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </PageContainer>
   );
 };

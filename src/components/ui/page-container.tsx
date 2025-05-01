@@ -1,68 +1,24 @@
 
-import React from "react";
-import { cn } from "@/lib/utils";
-import { getAssetPath } from "@/utils/basePath";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import React from 'react';
 
 interface PageContainerProps {
   children: React.ReactNode;
-  className?: string;
-  withBackground?: boolean;
   fullWidth?: boolean;
   noPadding?: boolean;
-  fullHeight?: boolean;
-  fullScreen?: boolean; // اضافه کردن ویژگی برای نمایش تمام صفحه
+  className?: string;
 }
 
-export const PageContainer = ({ 
-  children, 
-  className = "",
-  withBackground = false,
-  fullWidth = false,
-  noPadding = false,
-  fullHeight = false,
-  fullScreen = false // مقدار پیش‌فرض
-}: PageContainerProps) => {
-  const deviceInfo = useDeviceInfo();
-  const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
-  
-  // بهینه‌سازی پدینگ ریسپانسیو براساس نوع دستگاه
-  const getPadding = () => {
-    if (noPadding) return "p-0";
-    
-    if (deviceInfo.isMobile) {
-      return "px-1 py-0.5";
-    } else if (deviceInfo.isTablet) {
-      return "px-2 py-1";
-    } else if (deviceInfo.isSmallLaptop) {
-      return "px-3 py-1.5";
-    } else {
-      return "px-4 py-2";
-    }
-  };
-  
+export const PageContainer = ({ children, fullWidth = false, noPadding = false, className = '' }: PageContainerProps) => {
   return (
-    <div className={cn(
-      "w-full flex flex-col",
-      fullHeight || fullScreen ? "h-full min-h-screen" : "h-full",
-      fullScreen && "fixed inset-0 z-50", // اضافه کردن کلاس‌های لازم برای حالت تمام صفحه
-      withBackground && "relative",
-      fullWidth ? "max-w-none" : "max-w-full mx-auto",
-      className
-    )}>
-      {withBackground && (
-        <>
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-sky-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 -z-10" />
-          <div className={`absolute inset-0 bg-[url('${patternUrl}')] [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-grid-slate-800/50 -z-10`} />
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-sky-500/5 -z-10" />
-        </>
-      )}
-      <div className={cn(
-        "w-full h-full flex-1 overflow-auto", // تغییر overflow-hidden به overflow-auto
-        getPadding()
-      )}>
-        {children}
-      </div>
+    <div 
+      className={`
+        h-full w-full overflow-hidden
+        ${fullWidth ? '' : 'max-w-[1800px] mx-auto'}
+        ${noPadding ? '' : 'p-4 md:p-6'}
+        ${className}
+      `}
+    >
+      {children}
     </div>
   );
 };
