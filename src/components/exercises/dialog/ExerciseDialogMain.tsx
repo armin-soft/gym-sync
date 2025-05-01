@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { 
   Dialog,
@@ -24,7 +23,7 @@ interface ExerciseDialogProps {
   onFormDataChange: (data: { name: string; categoryId: number }) => void;
   onSave: (data: { name: string; categoryId: number }) => Promise<void>;
   deviceInfo?: any; // Added deviceInfo prop
-  fullScreen?: boolean; // Added fullScreen prop
+  fullScreen?: boolean; // Added fullScreen parameter
 }
 
 export function ExerciseDialogMain({
@@ -163,30 +162,13 @@ export function ExerciseDialogMain({
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
-            <div className="space-y-2">
-              <Label className="text-base">دسته‌بندی تمرین</Label>
-              <select
-                className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
-                value={formData.categoryId}
-                onChange={(e) => onFormDataChange({ ...formData, categoryId: Number(e.target.value) })}
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-base">نام حرکت</Label>
-              <input
-                value={formData.name}
-                onChange={(e) => onFormDataChange({ ...formData, name: e.target.value })}
-                placeholder="نام حرکت را وارد کنید"
-                className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
-              />
-            </div>
+            <SingleExerciseForm 
+              value={formData.name}
+              onChange={(value) => onFormDataChange({ ...formData, name: value })}
+              categories={categories}
+              categoryId={formData.categoryId}
+              onCategoryChange={(id) => onFormDataChange({ ...formData, categoryId: id })}
+            />
           </div>
           <ExerciseFormActions
             onCancel={() => onOpenChange(false)}
