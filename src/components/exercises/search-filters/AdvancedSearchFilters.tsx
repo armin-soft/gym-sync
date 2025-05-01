@@ -1,9 +1,7 @@
 
 import React from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { SearchInput } from "./SearchInput";
 import { ActiveFilterTags } from "./ActiveFilterTags";
-import { Card } from "@/components/ui/card";
 import { HierarchicalMenu } from "./HierarchicalMenu";
 
 interface AdvancedSearchFiltersProps {
@@ -39,9 +37,8 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
   onAddType,
   onAddCategory,
 }) => {
-  const hasFilters = searchQuery || selectedExerciseType || selectedCategoryId;
+  const hasFilters = selectedExerciseType || selectedCategoryId;
   const activeFilterCount = [
-    searchQuery ? 1 : 0,
     selectedExerciseType ? 1 : 0,
     selectedCategoryId ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
@@ -70,18 +67,12 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
           onAddType={onAddType}
           onAddCategory={onAddCategory}
         />
-
-        {/* Search Input */}
-        <SearchInput 
-          searchQuery={searchQuery} 
-          setSearchQuery={setSearchQuery} 
-        />
       </div>
       
       {/* Active Filter Tags */}
       {hasFilters && (
         <ActiveFilterTags
-          searchQuery={searchQuery}
+          searchQuery=""
           setSearchQuery={setSearchQuery}
           selectedExerciseType={selectedExerciseType}
           setSelectedExerciseType={setSelectedExerciseType}

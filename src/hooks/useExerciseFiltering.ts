@@ -11,7 +11,6 @@ export const useExerciseFiltering = (
   console.log("useExerciseFiltering received categories:", categories);
   
   const isMobile = useIsMobile();
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -67,20 +66,13 @@ export const useExerciseFiltering = (
 
     const filtered = exercises
       .filter((exercise) => {
-        const matchesSearch = !searchQuery || 
-          exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (exercise.description && exercise.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (exercise.targetMuscle && exercise.targetMuscle.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          (exercise.equipment && exercise.equipment.toLowerCase().includes(searchQuery.toLowerCase()));
-
         const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
-        
-        return matchesSearch && matchesCategory;
+        return matchesCategory;
       });
     
     console.log("Filtered exercises result:", filtered);
     return filtered;
-  }, [exercises, searchQuery, selectedCategoryId, selectedExerciseType, filteredCategories]);
+  }, [exercises, selectedCategoryId, selectedExerciseType, filteredCategories]);
 
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
@@ -88,14 +80,13 @@ export const useExerciseFiltering = (
 
   const handleClearSearch = () => {
     console.log("Clearing search filters");
-    setSearchQuery("");
     setSelectedCategoryId(null);
     setSelectedExerciseType(null);
   };
 
   return {
-    searchQuery,
-    setSearchQuery,
+    searchQuery: "", // Empty string since we removed search
+    setSearchQuery: () => {}, // No-op function
     selectedCategoryId,
     setSelectedCategoryId,
     selectedExerciseType,

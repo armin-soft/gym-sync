@@ -1,7 +1,6 @@
 
 import React from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { SearchInput } from "./SearchInput";
 import { SortButton } from "./SortButton";
 import { FilterButton } from "./FilterButton";
 import { ActiveFilterTags } from "./ActiveFilterTags";
@@ -36,9 +35,8 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
   toggleSortOrder,
   sortOrder,
 }) => {
-  const hasFilters = searchQuery || selectedExerciseType || selectedCategoryId;
+  const hasFilters = selectedExerciseType || selectedCategoryId;
   const activeFilterCount = [
-    searchQuery ? 1 : 0,
     selectedExerciseType ? 1 : 0,
     selectedCategoryId ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
@@ -66,16 +64,10 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
           filteredCategories={filteredCategories}
         />
 
-        {/* Search Input */}
-        <SearchInput 
-          searchQuery={searchQuery} 
-          setSearchQuery={setSearchQuery} 
-        />
-
         <div className={`flex gap-2 ${deviceInfo.isTablet ? "md:gap-3" : deviceInfo.isMobile ? "gap-2" : "md:gap-3"}`}>
           {/* Filter Button */}
           <FilterButton
-            searchQuery={searchQuery}
+            searchQuery=""
             selectedExerciseType={selectedExerciseType}
             setSelectedExerciseType={setSelectedExerciseType}
             selectedCategoryId={selectedCategoryId}
@@ -99,7 +91,7 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
       {/* Active Filter Tags */}
       {hasFilters && (
         <ActiveFilterTags
-          searchQuery={searchQuery}
+          searchQuery=""
           setSearchQuery={setSearchQuery}
           selectedExerciseType={selectedExerciseType}
           setSelectedExerciseType={setSelectedExerciseType}

@@ -11,7 +11,6 @@ export const useExerciseFilters = (
   selectedType: string | null,
   selectedCategoryId: number | null
 ) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   
   // Get filtered categories based on exercise type
@@ -21,7 +20,7 @@ export const useExerciseFilters = (
     );
   }, [categories, selectedType]);
 
-  // Filter exercises based on search query, type, and category
+  // Filter exercises based on type and category
   const filteredExercises = useMemo(() => {
     // Must have an exercise type selected to proceed
     if (!selectedType) {
@@ -34,17 +33,13 @@ export const useExerciseFilters = (
     }
 
     return exercises.filter(exercise => {
-      const matchesSearch = !searchQuery || 
-        exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
-      
       const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
-      
-      return matchesSearch && matchesCategory;
+      return matchesCategory;
     });
-  }, [exercises, searchQuery, selectedCategoryId, selectedType, filteredCategories]);
+  }, [exercises, selectedCategoryId, selectedType, filteredCategories]);
 
   const handleClearSearch = () => {
-    setSearchQuery("");
+    // Only clear categories and type, no search to clear
   };
 
   const toggleSortOrder = () => {
@@ -52,8 +47,8 @@ export const useExerciseFilters = (
   };
 
   return {
-    searchQuery,
-    setSearchQuery,
+    searchQuery: "", // Empty string since we removed search
+    setSearchQuery: () => {}, // No-op function
     filteredCategories,
     filteredExercises,
     handleClearSearch,
