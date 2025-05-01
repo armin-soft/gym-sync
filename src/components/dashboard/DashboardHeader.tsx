@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -136,7 +135,7 @@ export const DashboardHeader = ({ trainerProfile, currentTime, stats }: Dashboar
             title="شاگردان هفته"
             value={stats.totalStudents}
             growth={stats.studentGrowth}
-            icon={<Users className="h-5 w-5" />}
+            icon={<User2 className="h-5 w-5" />}
             delay={0.1}
           />
           
