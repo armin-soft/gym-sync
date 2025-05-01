@@ -2,8 +2,6 @@
 import React, { useState } from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { SearchInput } from "./SearchInput";
-import { TypeSelector } from "./TypeSelector";
-import { CategorySelector } from "./CategorySelector";
 import { SortButton } from "./SortButton";
 import { FilterButton } from "./FilterButton";
 import { ActiveFilterTags } from "./ActiveFilterTags";
@@ -23,8 +21,8 @@ import { cn } from "@/lib/utils";
 interface ExerciseSearchFiltersProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  selectedExerciseType: string;
-  setSelectedExerciseType: (type: string) => void;
+  selectedExerciseType: string | null;
+  setSelectedExerciseType: (type: string | null) => void;
   selectedCategoryId: number | null;
   setSelectedCategoryId: (id: number | null) => void;
   exerciseTypes: any[];

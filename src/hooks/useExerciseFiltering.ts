@@ -53,13 +53,13 @@ export const useExerciseFiltering = (
   const filteredExercises = useMemo(() => {
     console.log("Filtering and sorting exercises");
     
-    // If no exercise type is selected, return empty array
+    // Must have an exercise type selected to proceed
     if (!selectedExerciseType) {
       console.log("No exercise type selected, returning empty array");
       return [];
     }
 
-    // If no category is selected despite having a selected type, return empty array
+    // Must have a category selected if categories are available for the selected type
     if (filteredCategories.length > 0 && !selectedCategoryId) {
       console.log("Exercise type selected but no category selected, returning empty array");
       return [];

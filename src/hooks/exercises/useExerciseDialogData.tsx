@@ -8,6 +8,7 @@ import { Exercise, ExerciseCategory } from "@/types/exercise";
  */
 export const useExerciseDialogData = () => {
   const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   
   // Get exercises data
   const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
@@ -79,10 +80,26 @@ export const useExerciseDialogData = () => {
     }
   }, [exerciseTypes, selectedType]);
 
+  // Reset category selection when exercise type changes
+  useEffect(() => {
+    setSelectedCategoryId(null);
+  }, [selectedType]);
+
   // Filter categories based on selected type
   const filteredCategories = selectedType 
     ? categories.filter(cat => cat.type === selectedType)
     : [];
+
+  // Get filtered exercises based on selection
+  const filteredExercises = useMemo(() => {
+    if (!selectedType) return [];
+    if (filteredCategories.length > 0 && !selectedCategoryId) return [];
+    
+    return exercises.filter(exercise => {
+      const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
+      return matchesCategory;
+    });
+  }, [exercises, selectedType, selectedCategoryId, filteredCategories]);
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
 
@@ -92,7 +109,10 @@ export const useExerciseDialogData = () => {
     exerciseTypes,
     selectedType,
     setSelectedType,
+    selectedCategoryId,
+    setSelectedCategoryId,
     filteredCategories,
+    filteredExercises,
     isLoading
   };
 };
