@@ -1,7 +1,7 @@
 
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ExerciseSearchFilters } from "../ExerciseSearchFilters";
+import { ExerciseSearchFilters } from "../search-filters";
 import ExerciseDayTabs from "../ExerciseDayTabs";
 
 interface ExerciseDialogContentProps {
@@ -11,7 +11,7 @@ interface ExerciseDialogContentProps {
   setSelectedExerciseType: (type: string) => void;
   selectedCategoryId: number | null;
   setSelectedCategoryId: (id: number | null) => void;
-  exerciseTypes: string[];
+  exerciseTypes: any[];
   categories: any[];
   filteredCategories: any[];
   handleClearSearch: () => void;
