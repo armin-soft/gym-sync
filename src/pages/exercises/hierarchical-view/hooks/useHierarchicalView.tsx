@@ -51,6 +51,8 @@ export const useHierarchicalView = ({
 
   // عملیات‌های مورد نیاز برای افزودن/ویرایش دسته‌بندی
   const handleOpenCategoryDialog = () => {
+    // بجای برگرداندن شیء، مستقیماً اطلاعات پیش‌فرض را برمی‌گرداند
+    // که در صفحه اصلی استفاده می‌شود
     return {
       name: "",
       type: selectedType || ""
@@ -58,6 +60,8 @@ export const useHierarchicalView = ({
   };
 
   const handleEditCategoryDialog = (category: ExerciseCategory) => {
+    // بجای برگرداندن شیء، مستقیماً اطلاعات دسته‌بندی را برمی‌گرداند
+    // که در صفحه اصلی استفاده می‌شود
     return {
       name: category.name,
       type: category.type
@@ -66,6 +70,8 @@ export const useHierarchicalView = ({
 
   // عملیات‌های مورد نیاز برای افزودن/ویرایش حرکت
   const handleOpenExerciseDialog = () => {
+    // بجای برگرداندن شیء، مستقیماً اطلاعات پیش‌فرض را برمی‌گرداند
+    // که در صفحه اصلی استفاده می‌شود
     return {
       name: "",
       categoryId: selectedCategoryId || 0
@@ -73,6 +79,8 @@ export const useHierarchicalView = ({
   };
 
   const handleEditExercise = (exercise: any) => {
+    // بجای برگرداندن شیء، مستقیماً اطلاعات حرکت را برمی‌گرداند
+    // که در صفحه اصلی استفاده می‌شود
     return {
       name: exercise.name,
       categoryId: exercise.categoryId,

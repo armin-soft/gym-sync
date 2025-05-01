@@ -62,12 +62,8 @@ export const ContentStages: React.FC<ContentStagesProps> = ({
             setSelectedCategoryId(id);
           }}
           selectedExerciseType={selectedExerciseType}
-          onAddCategory={() => {
-            handleOpenCategoryDialog();
-          }}
-          onEditCategory={(category) => {
-            handleEditCategoryDialog(category);
-          }}
+          onAddCategory={handleOpenCategoryDialog}
+          onEditCategory={handleEditCategoryDialog}
           onDeleteCategory={(category) => confirmDelete("category", category)}
         />
       )}
@@ -78,12 +74,8 @@ export const ContentStages: React.FC<ContentStagesProps> = ({
           categories={categories}
           viewMode={viewMode}
           setViewMode={setViewMode}
-          onAddExercise={() => {
-            handleOpenExerciseDialog();
-          }}
-          onEditExercise={(exercise) => {
-            handleEditExercise(exercise);
-          }}
+          onAddExercise={handleOpenExerciseDialog}
+          onEditExercise={handleEditExercise}
           onDeleteExercises={handleDeleteExercises}
         />
       )}

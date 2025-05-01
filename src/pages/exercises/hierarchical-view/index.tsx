@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PageContainer } from "@/components/ui/page-container";
 import { useToast } from "@/hooks/use-toast";
 import { useExerciseTypes } from "@/hooks/useExerciseTypes";
@@ -86,10 +86,10 @@ const HierarchicalExercisesView = () => {
     itemToDelete,
     setItemToDelete,
     selectionStage,
-    handleOpenCategoryDialog,
-    handleEditCategoryDialog,
-    handleOpenExerciseDialog,
-    handleEditExercise,
+    handleOpenCategoryDialog: getOpenCategoryDialogData,
+    handleEditCategoryDialog: getEditCategoryDialogData,
+    handleOpenExerciseDialog: getOpenExerciseDialogData,
+    handleEditExercise: getEditExerciseData,
     confirmDelete,
     handleConfirmDelete,
   } = useHierarchicalView({
@@ -103,6 +103,35 @@ const HierarchicalExercisesView = () => {
     handleDeleteCategory,
     handleDeleteType,
   });
+
+  // توابع مدیریت باز کردن دیالوگ‌ها با استفاده از داده‌های بازگشتی
+  const handleOpenCategoryDialog = () => {
+    const data = getOpenCategoryDialogData();
+    setSelectedCategory(null);
+    setCategoryFormData(data);
+    setIsCategoryDialogOpen(true);
+  };
+
+  const handleEditCategoryDialog = (category) => {
+    const data = getEditCategoryDialogData(category);
+    setSelectedCategory(category);
+    setCategoryFormData(data);
+    setIsCategoryDialogOpen(true);
+  };
+
+  const handleOpenExerciseDialog = () => {
+    const data = getOpenExerciseDialogData();
+    setSelectedExercise(undefined);
+    setExerciseFormData(data);
+    setIsExerciseDialogOpen(true);
+  };
+
+  const handleEditExercise = (exercise) => {
+    const data = getEditExerciseData(exercise);
+    setSelectedExercise(exercise);
+    setExerciseFormData(data);
+    setIsExerciseDialogOpen(true);
+  };
 
   return (
     <PageContainer withBackground fullWidth fullHeight className="overflow-hidden">
