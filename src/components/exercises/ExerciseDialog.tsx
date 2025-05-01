@@ -1,4 +1,5 @@
 
+import React from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import ExerciseDialogMain from "./dialog/ExerciseDialogMain";
 
