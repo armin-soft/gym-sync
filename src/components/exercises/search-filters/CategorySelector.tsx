@@ -1,6 +1,7 @@
 
 import React from "react";
-import { Check, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Select,
