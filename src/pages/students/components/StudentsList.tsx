@@ -1,9 +1,9 @@
 
 import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
-import { StudentCard } from "@/components/students/StudentCard";
 import { StudentTable } from "@/components/students/StudentTable";
 import { EmptyStudentState } from "./EmptyStudentState";
+import { StudentGridView } from "./StudentGridView";
 
 interface StudentsListProps {
   students: Student[];
@@ -57,20 +57,15 @@ export const StudentsList: React.FC<StudentsListProps> = ({
         className="h-full"
       >
         {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 p-2 sm:p-4">
-            {students.map(student => (
-              <StudentCard 
-                key={student.id}
-                student={student}
-                onEdit={() => onEdit(student)}
-                onDelete={() => onDelete(student.id)}
-                onAddExercise={() => onAddExercise(student)}
-                onAddDiet={() => onAddDiet(student)}
-                onAddSupplement={() => onAddSupplement(student)}
-                isProfileComplete={isProfileComplete}
-              />
-            ))}
-          </div>
+          <StudentGridView
+            students={students}
+            isProfileComplete={isProfileComplete}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onAddExercise={onAddExercise}
+            onAddDiet={onAddDiet}
+            onAddSupplement={onAddSupplement}
+          />
         ) : (
           <StudentTable 
             students={students}

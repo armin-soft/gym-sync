@@ -1,9 +1,8 @@
 
 import React, { useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Tabs } from "@/components/ui/tabs";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
-import { StudentTabs } from "./StudentTabs";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; 
 import { useStudentHistory } from "@/hooks/useStudentHistory";
@@ -11,10 +10,14 @@ import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { ExerciseWithSets } from "@/types/exercise";
+import { StudentContent } from "./StudentContent";
+import { StudentTabControls } from "./StudentTabControls";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
+  const [activeTab, setActiveTab] = useState("all");
   const deviceInfo = useDeviceInfo();
   
   const {
@@ -147,6 +150,19 @@ const StudentsPage = () => {
     triggerRefresh();
   }, [handleDelete, students, addHistoryEntry, triggerRefresh]);
 
+  // Student filtering and search
+  const [searchQuery, setSearchQuery] = useState("");
+  const sortedAndFilteredStudents = students.filter(student => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      student.name.toLowerCase().includes(query) || 
+      (student.phone && student.phone.toLowerCase().includes(query))
+    );
+  });
+
+  const handleClearSearch = () => setSearchQuery("");
+
   // Determine the appropriate classes based on device type
   const getContentPadding = () => {
     if (deviceInfo.isMobile) return "px-2";
@@ -164,18 +180,38 @@ const StudentsPage = () => {
         </div>
         
         <div className="flex-1 overflow-hidden flex flex-col min-h-0">
-          <StudentTabs 
-            students={students}
-            historyEntries={historyEntries}
-            refreshTrigger={refreshTrigger}
-            onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
-            onDelete={handleDeleteWithHistory}
-            onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
-            onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
-            onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
-            onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
-            onAddStudent={() => dialogManagerRef.current?.handleAdd()}
-          />
+          <Tabs 
+            defaultValue="all" 
+            className="w-full flex-1 flex flex-col"
+            onValueChange={setActiveTab}
+          >
+            <StudentTabControls
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              onClearSearch={handleClearSearch}
+            />
+            
+            <StudentContent
+              activeTab={activeTab}
+              students={students}
+              historyEntries={historyEntries}
+              viewMode={viewMode}
+              searchQuery={searchQuery}
+              sortedAndFilteredStudents={sortedAndFilteredStudents}
+              refreshTrigger={refreshTrigger}
+              isProfileComplete={true} // Set based on your actual profile check
+              onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+              onDelete={handleDeleteWithHistory}
+              onAddExercise={(student) => dialogManagerRef.current?.handleAddExercise(student)}
+              onAddDiet={(student) => dialogManagerRef.current?.handleAddDiet(student)}
+              onAddSupplement={(student) => dialogManagerRef.current?.handleAddSupplement(student)}
+              onDownload={(student) => dialogManagerRef.current?.handleDownload(student)}
+              onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+              onClearSearch={handleClearSearch}
+            />
+          </Tabs>
         </div>
 
         <StudentDialogManager
