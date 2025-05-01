@@ -24,18 +24,12 @@ export const useExerciseFiltering = (
     }
   }, [isMobile]);
 
-  // Reset category selection when exercise type changes
+  // Force reset category when exercise type changes 
   useEffect(() => {
-    // When exercise type changes, check if the current selected category still belongs to the new type
-    if (selectedCategoryId && selectedExerciseType) {
-      const categoryBelongsToType = categories.some(
-        cat => cat.id === selectedCategoryId && cat.type === selectedExerciseType
-      );
-      if (!categoryBelongsToType) {
-        setSelectedCategoryId(null);
-      }
-    }
-  }, [selectedExerciseType, categories, selectedCategoryId]);
+    console.log("Exercise type changed to:", selectedExerciseType);
+    // Always reset category when exercise type changes
+    setSelectedCategoryId(null);
+  }, [selectedExerciseType]);
 
   // Get filtered categories based on exercise type
   const filteredCategories = useMemo(() => {
@@ -96,13 +90,21 @@ export const useExerciseFiltering = (
     setSearchQuery("");
   };
 
+  // Function to specifically handle exercise type change
+  const handleExerciseTypeChange = (type: string | null) => {
+    console.log("Handling exercise type change to:", type);
+    setSelectedExerciseType(type);
+    // Reset category selection when changing exercise type
+    setSelectedCategoryId(null);
+  };
+
   return {
     searchQuery,
     setSearchQuery,
     selectedCategoryId,
     setSelectedCategoryId,
     selectedExerciseType,
-    setSelectedExerciseType,
+    setSelectedExerciseType: handleExerciseTypeChange, // Use the new handler
     viewMode,
     setViewMode,
     sortOrder,

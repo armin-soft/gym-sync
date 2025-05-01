@@ -55,7 +55,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
           <div className="relative mb-4">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="جستجوی نوع حرکت..."
+              placeholder="جستجوی نوع تمرین..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-3 pr-10"
@@ -74,6 +74,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
                     <Button
                       variant="outline"
                       onClick={() => {
+                        console.log("Type selected in selector:", type);
                         onSelectType(type);
                         setIsOpen(false);
                       }}

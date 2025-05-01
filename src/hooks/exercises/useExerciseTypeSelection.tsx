@@ -17,7 +17,11 @@ export const useExerciseTypeSelection = (exerciseTypes: string[]) => {
 
   const handleSelectType = (type: string | null) => {
     console.log("Selecting exercise type:", type);
-    setSelectedType(type);
+    // Force re-render by setting to null first, then the new value
+    setSelectedType(null);
+    setTimeout(() => {
+      setSelectedType(type);
+    }, 10);
   };
 
   return {
