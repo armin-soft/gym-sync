@@ -2,13 +2,20 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { useToast } from "@/hooks/use-toast";
 
 /**
- * Hook to fetch and manage exercise data for the exercise dialog
+ * Hook to fetch and manage exercise data for the exercise dialog with enhanced UI/UX
+ * Supports hierarchical selection: Exercise Type → Category → Exercises
  */
 export const useExerciseDialogData = () => {
+  const { toast } = useToast();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
   
   // Get exercises data
   const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
@@ -26,6 +33,11 @@ export const useExerciseDialogData = () => {
         return parsedData;
       } catch (error) {
         console.error("Error loading exercises:", error);
+        toast({
+          variant: "destructive", 
+          title: "خطا در بارگیری", 
+          description: "اطلاعات تمرین‌ها بارگیری نشد"
+        });
         return [];
       }
     },
@@ -47,6 +59,11 @@ export const useExerciseDialogData = () => {
         return parsedData;
       } catch (error) {
         console.error("Error loading categories:", error);
+        toast({
+          variant: "destructive", 
+          title: "خطا در بارگیری", 
+          description: "اطلاعات دسته‌بندی‌ها بارگیری نشد"
+        });
         return [];
       }
     },
@@ -68,6 +85,11 @@ export const useExerciseDialogData = () => {
         return parsedData;
       } catch (error) {
         console.error("Error loading exercise types:", error);
+        toast({
+          variant: "destructive", 
+          title: "خطا در بارگیری", 
+          description: "اطلاعات انواع تمرین بارگیری نشد"
+        });
         return [];
       }
     },
@@ -76,6 +98,7 @@ export const useExerciseDialogData = () => {
   // Set initial selected type when data loads
   useEffect(() => {
     if (exerciseTypes.length > 0 && !selectedType) {
+      console.log("Setting initial exercise type:", exerciseTypes[0]);
       setSelectedType(exerciseTypes[0]);
     }
   }, [exerciseTypes, selectedType]);
@@ -83,28 +106,78 @@ export const useExerciseDialogData = () => {
   // Reset category selection when exercise type changes
   useEffect(() => {
     setSelectedCategoryId(null);
+    setSelectedExerciseIds([]);
   }, [selectedType]);
+
+  // Reset exercise selection when category changes
+  useEffect(() => {
+    setSelectedExerciseIds([]);
+  }, [selectedCategoryId]);
 
   // Filter categories based on selected type
   const filteredCategories = useMemo(() => {
-    return selectedType 
-      ? categories.filter(cat => cat.type === selectedType)
-      : [];
-  }, [categories, selectedType]);
-
-  // Get filtered exercises based on selection
-  const filteredExercises = useMemo(() => {
-    // Must have an exercise type selected to proceed
     if (!selectedType) return [];
     
-    // Must have a category selected if categories are available for the selected type
-    if (filteredCategories.length > 0 && !selectedCategoryId) return [];
+    const filtered = categories.filter(cat => cat.type === selectedType);
+    console.log(`Filtered categories for type '${selectedType}':`, filtered);
+    return filtered;
+  }, [categories, selectedType]);
+
+  // Get filtered exercises based on selection and search
+  const filteredExercises = useMemo(() => {
+    // Must have an exercise type selected to proceed
+    if (!selectedType) {
+      console.log("No exercise type selected, returning empty array");
+      return [];
+    }
     
-    return exercises.filter(exercise => {
-      const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
-      return matchesCategory;
+    // Must have a category selected if categories are available for the selected type
+    if (filteredCategories.length > 0 && !selectedCategoryId) {
+      console.log("Exercise type selected but no category selected, returning empty array");
+      return [];
+    }
+    
+    return exercises
+      .filter(exercise => {
+        // Filter by category if selected
+        const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
+        
+        // Filter by search query if provided
+        const matchesSearch = !searchQuery || 
+          exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (exercise.description && exercise.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (exercise.targetMuscle && exercise.targetMuscle.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (exercise.equipment && exercise.equipment.toLowerCase().includes(searchQuery.toLowerCase()));
+        
+        return matchesCategory && matchesSearch;
+      })
+      .sort((a, b) => {
+        if (sortOrder === "asc") {
+          return a.name.localeCompare(b.name);
+        } else {
+          return b.name.localeCompare(a.name);
+        }
+      });
+  }, [exercises, selectedType, selectedCategoryId, filteredCategories, searchQuery, sortOrder]);
+
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+    console.log(`Sort order toggled to: ${sortOrder === "asc" ? "desc" : "asc"}`);
+  };
+  
+  const toggleExerciseSelection = (exerciseId: number) => {
+    setSelectedExerciseIds(prev => {
+      if (prev.includes(exerciseId)) {
+        return prev.filter(id => id !== exerciseId);
+      } else {
+        return [...prev, exerciseId];
+      }
     });
-  }, [exercises, selectedType, selectedCategoryId, filteredCategories]);
+  };
+  
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
 
@@ -118,7 +191,18 @@ export const useExerciseDialogData = () => {
     setSelectedCategoryId,
     filteredCategories,
     filteredExercises,
-    isLoading
+    isLoading,
+    // Enhanced UI/UX features
+    viewMode,
+    setViewMode,
+    searchQuery,
+    setSearchQuery,
+    sortOrder,
+    toggleSortOrder,
+    selectedExerciseIds,
+    setSelectedExerciseIds,
+    toggleExerciseSelection,
+    handleClearSearch
   };
 };
 
