@@ -14,7 +14,6 @@ export const useExerciseFiltering = (
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Update view mode when screen size changes
@@ -49,9 +48,9 @@ export const useExerciseFiltering = (
     }
   }, [selectedExerciseType, filteredCategories, selectedCategoryId]);
 
-  // Filter and sort exercises based on selected type and category
+  // Filter exercises based on selected type and category
   const filteredExercises = useMemo(() => {
-    console.log("Filtering and sorting exercises");
+    console.log("Filtering exercises");
     
     // Must have an exercise type selected to proceed
     if (!selectedExerciseType) {
@@ -76,23 +75,11 @@ export const useExerciseFiltering = (
         const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
         
         return matchesSearch && matchesCategory;
-      })
-      .sort((a, b) => {
-        if (sortOrder === "asc") {
-          return a.name.localeCompare(b.name);
-        } else {
-          return b.name.localeCompare(a.name);
-        }
       });
     
     console.log("Filtered exercises result:", filtered);
     return filtered;
-  }, [exercises, searchQuery, selectedCategoryId, selectedExerciseType, filteredCategories, sortOrder]);
-
-  const toggleSortOrder = () => {
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    console.log("Sort order toggled to:", sortOrder === "asc" ? "desc" : "asc");
-  };
+  }, [exercises, searchQuery, selectedCategoryId, selectedExerciseType, filteredCategories]);
 
   const handleClearSearch = () => {
     console.log("Clearing search filters");
@@ -108,8 +95,6 @@ export const useExerciseFiltering = (
     setSelectedCategoryId,
     selectedExerciseType,
     setSelectedExerciseType,
-    sortOrder,
-    toggleSortOrder,
     viewMode,
     setViewMode,
     filteredExercises,

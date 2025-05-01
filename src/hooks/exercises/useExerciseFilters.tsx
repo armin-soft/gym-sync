@@ -12,7 +12,6 @@ export const useExerciseFilters = (
   selectedCategoryId: number | null
 ) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   
   // Get filtered categories based on exercise type
   const filteredCategories = useMemo(() => {
@@ -40,18 +39,8 @@ export const useExerciseFilters = (
       const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
       
       return matchesSearch && matchesCategory;
-    }).sort((a, b) => {
-      if (sortOrder === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
     });
-  }, [exercises, searchQuery, selectedCategoryId, selectedType, filteredCategories, sortOrder]);
-
-  const toggleSortOrder = () => {
-    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
-  };
+  }, [exercises, searchQuery, selectedCategoryId, selectedType, filteredCategories]);
 
   const handleClearSearch = () => {
     setSearchQuery("");
@@ -60,8 +49,6 @@ export const useExerciseFilters = (
   return {
     searchQuery,
     setSearchQuery,
-    sortOrder,
-    toggleSortOrder,
     filteredCategories,
     filteredExercises,
     handleClearSearch
