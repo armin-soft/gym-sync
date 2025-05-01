@@ -3,6 +3,7 @@ import React from "react";
 import { TabsList } from "@/components/ui/tabs";
 import DayTabTrigger from "./DayTabTrigger";
 import ExerciseViewControls from "../ExerciseViewControls";
+import { motion } from "framer-motion";
 
 interface TabHeaderProps {
   activeTab: string;
@@ -40,26 +41,77 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
     }
   };
 
+  // Animation variants for the container
+  const containerVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.4, 
+        staggerChildren: 0.1,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  // Animation variants for children
+  const childVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { 
+        type: "spring",
+        stiffness: 400,
+        damping: 20
+      }
+    }
+  };
+
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-      <TabsList className="flex bg-muted/60 p-1 rounded-xl">
-        {dayTabs.map((day) => (
-          <DayTabTrigger
-            key={day}
-            day={day}
-            activeTab={activeTab}
-            selectedExercisesCount={getSelectedExercisesCount(day)}
-          />
-        ))}
-      </TabsList>
+    <motion.div 
+      className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div 
+        className="relative z-10"
+        variants={childVariants}
+      >
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 blur-md z-0"></div>
+        <TabsList className="relative flex bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg p-1.5 rounded-xl border border-white/10 dark:border-slate-700/30 shadow-lg shadow-primary/5 z-10">
+          {dayTabs.map((day, index) => (
+            <motion.div 
+              key={day} 
+              className="flex-1"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.08, duration: 0.4 }}
+            >
+              <DayTabTrigger
+                day={day}
+                activeTab={activeTab}
+                selectedExercisesCount={getSelectedExercisesCount(day)}
+              />
+            </motion.div>
+          ))}
+        </TabsList>
+      </motion.div>
       
-      <ExerciseViewControls
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        toggleSortOrder={toggleSortOrder}
-        sortOrder={sortOrder}
-      />
-    </div>
+      <motion.div
+        variants={childVariants}
+        className="flex justify-end"
+      >
+        <ExerciseViewControls
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+        />
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -3,6 +3,7 @@ import React from "react";
 import { TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import DayTabIcon from "./DayTabIcon";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DayTabTriggerProps {
   day: string;
@@ -22,18 +23,58 @@ export const DayTabTrigger: React.FC<DayTabTriggerProps> = ({
     <TabsTrigger 
       key={day}
       value={day} 
-      className="flex-1 min-w-[80px] relative rounded-lg transition-all duration-300"
+      className="flex-1 min-w-[80px] relative rounded-lg overflow-hidden transition-all duration-300"
     >
-      <div className="flex items-center gap-1.5">
-        <DayTabIcon day={day} isActive={isActive} />
-        <span>روز {dayNumber}</span>
-      </div>
       <div className={cn(
-        "absolute -top-2 -right-1 px-1.5 py-0.5 text-2xs rounded-full bg-primary text-white font-medium transition-all scale-0",
-        selectedExercisesCount > 0 && "scale-100"
-      )}>
-        {selectedExercisesCount}
+        "absolute inset-0 w-full h-full",
+        isActive ? "bg-gradient-to-br from-primary/10 to-primary/5" : "bg-transparent"
+      )} />
+      
+      <div className="relative z-10 flex items-center gap-1.5 py-2 px-1">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        >
+          <DayTabIcon day={day} isActive={isActive} />
+        </motion.div>
+        
+        <motion.span
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+          className={cn(
+            "font-medium transition-all",
+            isActive ? "text-primary" : "text-muted-foreground"
+          )}
+        >
+          روز {dayNumber}
+        </motion.span>
       </div>
+      
+      <AnimatePresence>
+        {selectedExercisesCount > 0 && (
+          <motion.div 
+            className="absolute -top-1.5 -right-1 px-1.5 py-0.5 text-2xs rounded-full bg-primary text-white font-medium"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          >
+            {selectedExercisesCount}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {isActive && (
+        <motion.div 
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+          layoutId="activeTab"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
     </TabsTrigger>
   );
 };
