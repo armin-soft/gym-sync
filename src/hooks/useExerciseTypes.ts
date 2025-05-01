@@ -1,39 +1,49 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useExerciseTypes = () => {
   const { toast } = useToast();
-  const [exerciseTypes, setExerciseTypes] = useState<string[]>([]);
+  const queryClient = useQueryClient();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isTypeDialogOpen, setIsTypeDialogOpen] = useState(false);
   const [newTypeName, setNewTypeName] = useState("");
   const [editingType, setEditingType] = useState<string | null>(null);
 
-  // بارگذاری اطلاعات از localStorage
-  useEffect(() => {
-    try {
-      const savedTypes = localStorage.getItem("exerciseTypes");
-      if (savedTypes) {
-        const types = JSON.parse(savedTypes);
-        setExerciseTypes(types);
-        if (types.length > 0) {
-          setSelectedType(types[0]);
+  // بارگذاری اطلاعات از localStorage با استفاده از React Query
+  const { data: exerciseTypes = [], isLoading } = useQuery({
+    queryKey: ["exerciseTypes"],
+    queryFn: () => {
+      try {
+        console.log("Loading exercise types");
+        const savedTypes = localStorage.getItem("exerciseTypes");
+        if (!savedTypes) {
+          console.log("No exercise types found in localStorage");
+          return [];
         }
+        const types = JSON.parse(savedTypes);
+        console.log("Loaded exercise types:", types);
+        return types;
+      } catch (error) {
+        console.error("Error loading exercise types from localStorage:", error);
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "خطا در بارگذاری انواع تمرین‌ها"
+        });
+        return [];
       }
-    } catch (error) {
-      console.error("Error loading exercise types from localStorage:", error);
     }
-  }, []);
+  });
 
-  // ذخیره اطلاعات در localStorage
+  // تنظیم نوع انتخاب شده اولیه هنگامی که داده‌ها بارگذاری می‌شوند
   useEffect(() => {
-    try {
-      localStorage.setItem("exerciseTypes", JSON.stringify(exerciseTypes));
-    } catch (error) {
-      console.error("Error saving exercise types to localStorage:", error);
+    if (exerciseTypes.length > 0 && !selectedType) {
+      console.log("Setting initial selected type:", exerciseTypes[0]);
+      setSelectedType(exerciseTypes[0]);
     }
-  }, [exerciseTypes]);
+  }, [exerciseTypes, selectedType]);
 
   // افزودن نوع جدید
   const handleAddType = useCallback(() => {
@@ -60,82 +70,110 @@ export const useExerciseTypes = () => {
       return;
     }
 
-    if (editingType) {
-      // ویرایش نوع موجود
-      if (exerciseTypes.includes(newTypeName) && newTypeName !== editingType) {
-        toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "این نوع قبلاً اضافه شده است"
-        });
-        return;
-      }
-
-      setExerciseTypes(prevTypes => {
-        const newTypes = [...prevTypes];
-        const index = newTypes.indexOf(editingType);
-        if (index !== -1) {
-          newTypes[index] = newTypeName;
+    try {
+      let updatedTypes;
+      
+      if (editingType) {
+        // ویرایش نوع موجود
+        if (exerciseTypes.includes(newTypeName) && newTypeName !== editingType) {
+          toast({
+            variant: "destructive",
+            title: "خطا",
+            description: "این نوع قبلاً اضافه شده است"
+          });
+          return;
         }
-        return newTypes;
-      });
 
-      if (selectedType === editingType) {
-        setSelectedType(newTypeName);
-      }
+        updatedTypes = [...exerciseTypes];
+        const index = updatedTypes.indexOf(editingType);
+        if (index !== -1) {
+          updatedTypes[index] = newTypeName;
+        }
 
-      toast({
-        title: "موفقیت",
-        description: "نوع حرکت با موفقیت ویرایش شد"
-      });
-    } else {
-      // افزودن نوع جدید
-      if (exerciseTypes.includes(newTypeName)) {
+        if (selectedType === editingType) {
+          setSelectedType(newTypeName);
+        }
+
         toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "این نوع قبلاً اضافه شده است"
+          title: "موفقیت",
+          description: "نوع حرکت با موفقیت ویرایش شد"
         });
-        return;
+      } else {
+        // افزودن نوع جدید
+        if (exerciseTypes.includes(newTypeName)) {
+          toast({
+            variant: "destructive",
+            title: "خطا",
+            description: "این نوع قبلاً اضافه شده است"
+          });
+          return;
+        }
+
+        updatedTypes = [...exerciseTypes, newTypeName];
+        
+        // اگر هیچ نوعی انتخاب نشده باشد، نوع جدید را انتخاب کن
+        if (selectedType === null) {
+          setSelectedType(newTypeName);
+        }
+        
+        toast({
+          title: "موفقیت",
+          description: "نوع جدید با موفقیت اضافه شد"
+        });
       }
 
-      setExerciseTypes(prev => [...prev, newTypeName]);
+      // ذخیره در localStorage و به‌روزرسانی کش react-query
+      localStorage.setItem("exerciseTypes", JSON.stringify(updatedTypes));
+      queryClient.setQueryData(["exerciseTypes"], updatedTypes);
       
-      // اگر هیچ نوعی انتخاب نشده باشد، نوع جدید را انتخاب کن
-      if (selectedType === null) {
-        setSelectedType(newTypeName);
-      }
+      setIsTypeDialogOpen(false);
+      setEditingType(null);
+      setNewTypeName("");
       
+      console.log("Updated exercise types:", updatedTypes);
+    } catch (error) {
+      console.error("Error saving exercise type:", error);
       toast({
-        title: "موفقیت",
-        description: "نوع جدید با موفقیت اضافه شد"
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در ذخیره‌سازی نوع حرکت"
       });
     }
-
-    setIsTypeDialogOpen(false);
-    setEditingType(null);
-    setNewTypeName("");
-  }, [editingType, exerciseTypes, newTypeName, selectedType]);
+  }, [editingType, exerciseTypes, newTypeName, selectedType, queryClient, toast]);
 
   // حذف نوع
   const handleDeleteType = useCallback((type: string) => {
-    setExerciseTypes(prev => prev.filter(t => t !== type));
-    
-    // اگر نوع حذف شده، انتخاب شده بود، نوع انتخاب شده را به اولین نوع موجود تغییر بده
-    if (selectedType === type) {
-      const remainingTypes = exerciseTypes.filter(t => t !== type);
-      if (remainingTypes.length > 0) {
-        setSelectedType(remainingTypes[0]);
-      } else {
-        setSelectedType(null);
+    try {
+      const updatedTypes = exerciseTypes.filter(t => t !== type);
+      
+      // اگر نوع حذف شده، انتخاب شده بود، نوع انتخاب شده را به اولین نوع موجود تغییر بده
+      if (selectedType === type) {
+        if (updatedTypes.length > 0) {
+          setSelectedType(updatedTypes[0]);
+        } else {
+          setSelectedType(null);
+        }
       }
+      
+      // ذخیره در localStorage و به‌روزرسانی کش react-query
+      localStorage.setItem("exerciseTypes", JSON.stringify(updatedTypes));
+      queryClient.setQueryData(["exerciseTypes"], updatedTypes);
+      
+      toast({
+        title: "موفقیت",
+        description: "نوع حرکت با موفقیت حذف شد"
+      });
+      
+      console.log("Updated exercise types after deletion:", updatedTypes);
+    } catch (error) {
+      console.error("Error deleting exercise type:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در حذف نوع حرکت"
+      });
     }
-    
-    toast({
-      title: "موفقیت",
-      description: "نوع حرکت با موفقیت حذف شد"
-    });
-  }, [exerciseTypes, selectedType]);
+  }, [exerciseTypes, selectedType, queryClient, toast]);
 
   return {
     exerciseTypes,
@@ -149,7 +187,8 @@ export const useExerciseTypes = () => {
     handleAddType,
     handleEditType,
     handleSaveType,
-    handleDeleteType
+    handleDeleteType,
+    isLoading
   };
 };
 

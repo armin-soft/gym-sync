@@ -2,46 +2,41 @@
 import { useState, useEffect, useCallback } from "react";
 import { Exercise } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useExerciseManagement = () => {
   const { toast } = useToast();
-  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const queryClient = useQueryClient();
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
   const [exerciseFormData, setExerciseFormData] = useState({ name: "", categoryId: 0 });
   const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
   const [isAscending, setIsAscending] = useState(true);
 
-  // بارگذاری اطلاعات از localStorage
-  useEffect(() => {
-    try {
-      const savedExercises = localStorage.getItem("exercises");
-      if (savedExercises) {
+  // بارگذاری اطلاعات از localStorage با استفاده از React Query
+  const { data: exercises = [], isLoading } = useQuery({
+    queryKey: ["exercises"],
+    queryFn: () => {
+      try {
+        console.log("Loading exercises in useExerciseManagement");
+        const savedExercises = localStorage.getItem("exercises");
+        if (!savedExercises) {
+          console.log("No exercises found in localStorage");
+          return [];
+        }
         const exs = JSON.parse(savedExercises);
-        setExercises(exs);
+        console.log("Loaded exercises in useExerciseManagement:", exs);
+        return exs;
+      } catch (error) {
+        console.error("Error loading exercises from localStorage:", error);
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "خطا در بارگذاری اطلاعات تمرین‌ها"
+        });
+        return [];
       }
-    } catch (error) {
-      console.error("Error loading exercises from localStorage:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در بارگذاری اطلاعات تمرین‌ها"
-      });
     }
-  }, []);
-
-  // ذخیره اطلاعات در localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem("exercises", JSON.stringify(exercises));
-    } catch (error) {
-      console.error("Error saving exercises to localStorage:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره سازی اطلاعات تمرین‌ها"
-      });
-    }
-  }, [exercises]);
+  });
 
   // مرتب‌سازی حرکات
   const handleSort = useCallback(() => {
@@ -66,31 +61,38 @@ export const useExerciseManagement = () => {
         return Promise.reject("نام تکراری");
       }
 
+      let updatedExercises;
+      
       if (selectedExercise) {
-        const updatedExercises = exercises.map(ex =>
+        // ویرایش حرکت موجود
+        updatedExercises = exercises.map(ex =>
           ex.id === selectedExercise.id ? { ...ex, ...formData } : ex
         );
-        setExercises(updatedExercises);
-        setIsExerciseDialogOpen(false);
         
         toast({
           title: "موفقیت",
           description: "حرکت با موفقیت ویرایش شد"
         });
       } else {
+        // افزودن حرکت جدید
         const timestamp = Date.now();
         const newExercise: Exercise = {
           id: timestamp,
           ...formData
         };
-        setExercises(prev => [...prev, newExercise]);
-        setIsExerciseDialogOpen(false);
+        updatedExercises = [...exercises, newExercise];
         
         toast({
           title: "موفقیت",
           description: "حرکت جدید با موفقیت اضافه شد"
         });
       }
+      
+      // ذخیره در localStorage و به‌روزرسانی کش react-query
+      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+      queryClient.setQueryData(["exercises"], updatedExercises);
+      
+      setIsExerciseDialogOpen(false);
       return Promise.resolve();
     } catch (error) {
       console.error('Error saving exercise:', error);
@@ -101,22 +103,37 @@ export const useExerciseManagement = () => {
       });
       return Promise.reject(error);
     }
-  }, [exercises, selectedExercise]);
+  }, [exercises, selectedExercise, queryClient, toast]);
 
   // حذف حرکات
   const handleDeleteExercises = useCallback((selectedIds: number[]) => {
-    setExercises(prevExercises => prevExercises.filter(ex => !selectedIds.includes(ex.id)));
-    toast({
-      title: "موفقیت",
-      description: selectedIds.length > 1 
-        ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
-        : "حرکت با موفقیت حذف شد"
-    });
-  }, []);
+    try {
+      const updatedExercises = exercises.filter(ex => !selectedIds.includes(ex.id));
+      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+      queryClient.setQueryData(["exercises"], updatedExercises);
+      
+      toast({
+        title: "موفقیت",
+        description: selectedIds.length > 1 
+          ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
+          : "حرکت با موفقیت حذف شد"
+      });
+    } catch (error) {
+      console.error('Error deleting exercises:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در حذف حرکت‌ها"
+      });
+    }
+  }, [exercises, queryClient, toast]);
 
   return {
     exercises,
-    setExercises,
+    setExercises: (newExercises: Exercise[]) => {
+      localStorage.setItem("exercises", JSON.stringify(newExercises));
+      queryClient.setQueryData(["exercises"], newExercises);
+    },
     selectedExercise,
     setSelectedExercise,
     exerciseFormData,
@@ -126,7 +143,8 @@ export const useExerciseManagement = () => {
     isAscending,
     handleSort,
     handleExerciseSave,
-    handleDeleteExercises
+    handleDeleteExercises,
+    isLoading
   };
 };
 

@@ -2,40 +2,45 @@
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ExerciseCategory } from "@/types/exercise";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useExerciseCategories = (selectedType: string | null) => {
   const { toast } = useToast();
-  const [categories, setCategories] = useState<ExerciseCategory[]>([]);
+  const queryClient = useQueryClient();
   const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | null>(null);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [categoryFormData, setCategoryFormData] = useState({ name: "", type: selectedType || "" });
 
-  // بارگذاری اطلاعات از localStorage
-  useEffect(() => {
-    try {
-      const savedCategories = localStorage.getItem("exerciseCategories");
-      if (savedCategories) {
+  // بارگذاری اطلاعات از localStorage با استفاده از React Query
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: ["exerciseCategories"],
+    queryFn: () => {
+      try {
+        console.log("Loading categories");
+        const savedCategories = localStorage.getItem("exerciseCategories");
+        if (!savedCategories) {
+          console.log("No categories found in localStorage");
+          return [];
+        }
         const cats = JSON.parse(savedCategories);
-        setCategories(cats);
+        console.log("Loaded categories:", cats);
+        return cats;
+      } catch (error) {
+        console.error("Error loading categories from localStorage:", error);
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "خطا در بارگذاری دسته‌بندی‌ها"
+        });
+        return [];
       }
-    } catch (error) {
-      console.error("Error loading categories from localStorage:", error);
     }
-  }, []);
+  });
 
   // به‌روزرسانی فرم با نوع انتخاب شده
   useEffect(() => {
     setCategoryFormData(prev => ({ ...prev, type: selectedType || "" }));
   }, [selectedType]);
-
-  // ذخیره اطلاعات در localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem("exerciseCategories", JSON.stringify(categories));
-    } catch (error) {
-      console.error("Error saving categories to localStorage:", error);
-    }
-  }, [categories]);
 
   // ذخیره یا ویرایش دسته‌بندی
   const handleSaveCategory = useCallback(async (data: { name: string; type: string }) => {
@@ -49,6 +54,8 @@ export const useExerciseCategories = (selectedType: string | null) => {
     }
 
     try {
+      let updatedCategories;
+      
       if (selectedCategory) {
         // ویرایش دسته‌بندی موجود
         const categoryExists = categories.some(cat =>
@@ -64,13 +71,9 @@ export const useExerciseCategories = (selectedType: string | null) => {
           return Promise.reject("تکراری");
         }
 
-        const updatedCategories = categories.map(cat =>
+        updatedCategories = categories.map(cat =>
           cat.id === selectedCategory.id ? { ...cat, name: data.name, type: data.type } : cat
         );
-        
-        setCategories(updatedCategories);
-        setIsCategoryDialogOpen(false);
-        setSelectedCategory(null);
         
         toast({
           title: "موفقیت",
@@ -98,8 +101,7 @@ export const useExerciseCategories = (selectedType: string | null) => {
           type: data.type
         };
         
-        setCategories(prev => [...prev, newCategory]);
-        setIsCategoryDialogOpen(false);
+        updatedCategories = [...categories, newCategory];
         
         toast({
           title: "موفقیت",
@@ -107,6 +109,14 @@ export const useExerciseCategories = (selectedType: string | null) => {
         });
       }
       
+      // ذخیره در localStorage و به‌روزرسانی کش react-query
+      localStorage.setItem("exerciseCategories", JSON.stringify(updatedCategories));
+      queryClient.setQueryData(["exerciseCategories"], updatedCategories);
+      
+      setIsCategoryDialogOpen(false);
+      setSelectedCategory(null);
+      
+      console.log("Updated categories:", updatedCategories);
       return Promise.resolve();
     } catch (error) {
       console.error("Error saving category:", error);
@@ -117,32 +127,50 @@ export const useExerciseCategories = (selectedType: string | null) => {
       });
       return Promise.reject(error);
     }
-  }, [categories, selectedCategory]);
+  }, [categories, selectedCategory, queryClient, toast]);
 
   // حذف دسته‌بندی
   const handleDeleteCategory = useCallback((category: ExerciseCategory, exercises: any[] = []) => {
-    const exercisesInCategory = exercises.filter(ex => ex.categoryId === category.id);
-    
-    if (exercisesInCategory.length > 0) {
+    try {
+      const exercisesInCategory = exercises.filter(ex => ex.categoryId === category.id);
+      
+      if (exercisesInCategory.length > 0) {
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "ابتدا باید حرکات موجود در این دسته‌بندی را حذف کنید"
+        });
+        return;
+      }
+      
+      const updatedCategories = categories.filter(cat => cat.id !== category.id);
+      
+      // ذخیره در localStorage و به‌روزرسانی کش react-query
+      localStorage.setItem("exerciseCategories", JSON.stringify(updatedCategories));
+      queryClient.setQueryData(["exerciseCategories"], updatedCategories);
+      
+      toast({
+        title: "موفقیت",
+        description: "دسته‌بندی با موفقیت حذف شد"
+      });
+      
+      console.log("Updated categories after deletion:", updatedCategories);
+    } catch (error) {
+      console.error("Error deleting category:", error);
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "ابتدا باید حرکات موجود در این دسته‌بندی را حذف کنید"
+        description: "خطا در حذف دسته‌بندی"
       });
-      return;
     }
-    
-    setCategories(prev => prev.filter(cat => cat.id !== category.id));
-    
-    toast({
-      title: "موفقیت",
-      description: "دسته‌بندی با موفقیت حذف شد"
-    });
-  }, []);
+  }, [categories, queryClient, toast]);
 
   return {
     categories,
-    setCategories,
+    setCategories: (newCategories: ExerciseCategory[]) => {
+      localStorage.setItem("exerciseCategories", JSON.stringify(newCategories));
+      queryClient.setQueryData(["exerciseCategories"], newCategories);
+    },
     selectedCategory,
     setSelectedCategory,
     isCategoryDialogOpen,
@@ -150,7 +178,8 @@ export const useExerciseCategories = (selectedType: string | null) => {
     categoryFormData,
     setCategoryFormData,
     handleSaveCategory,
-    handleDeleteCategory
+    handleDeleteCategory,
+    isLoading
   };
 };
 

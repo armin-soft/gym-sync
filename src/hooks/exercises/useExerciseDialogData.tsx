@@ -11,11 +11,20 @@ export const useExerciseDialogData = () => {
   const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
-      const exercisesData = localStorage.getItem("exercises");
-      if (!exercisesData) {
+      try {
+        console.log("Loading exercises from localStorage");
+        const exercisesData = localStorage.getItem("exercises");
+        if (!exercisesData) {
+          console.log("No exercises data found in localStorage");
+          return [];
+        }
+        const parsedData = JSON.parse(exercisesData);
+        console.log("Loaded exercises:", parsedData);
+        return parsedData;
+      } catch (error) {
+        console.error("Error loading exercises:", error);
         return [];
       }
-      return JSON.parse(exercisesData);
     },
   });
 
@@ -23,11 +32,20 @@ export const useExerciseDialogData = () => {
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["exerciseCategories"],
     queryFn: () => {
-      const categoriesData = localStorage.getItem("exerciseCategories");
-      if (!categoriesData) {
+      try {
+        console.log("Loading categories from localStorage");
+        const categoriesData = localStorage.getItem("exerciseCategories");
+        if (!categoriesData) {
+          console.log("No categories data found in localStorage");
+          return [];
+        }
+        const parsedData = JSON.parse(categoriesData);
+        console.log("Loaded categories:", parsedData);
+        return parsedData;
+      } catch (error) {
+        console.error("Error loading categories:", error);
         return [];
       }
-      return JSON.parse(categoriesData);
     },
   });
 
@@ -35,11 +53,20 @@ export const useExerciseDialogData = () => {
   const { data: exerciseTypes = [], isLoading: typesLoading } = useQuery({
     queryKey: ["exerciseTypes"],
     queryFn: () => {
-      const typesData = localStorage.getItem("exerciseTypes");
-      if (!typesData) {
+      try {
+        console.log("Loading exercise types from localStorage");
+        const typesData = localStorage.getItem("exerciseTypes");
+        if (!typesData) {
+          console.log("No exercise types data found in localStorage");
+          return [];
+        }
+        const parsedData = JSON.parse(typesData);
+        console.log("Loaded exercise types:", parsedData);
+        return parsedData;
+      } catch (error) {
+        console.error("Error loading exercise types:", error);
         return [];
       }
-      return JSON.parse(typesData);
     },
   });
 
