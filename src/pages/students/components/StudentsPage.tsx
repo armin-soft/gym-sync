@@ -159,9 +159,11 @@ const StudentsPage = () => {
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
         
-        <StudentStatsCards students={students} />
+        <div className="mb-4 md:mb-6">
+          <StudentStatsCards students={students} />
+        </div>
         
-        <div className="flex-1 overflow-hidden flex flex-col mt-4 md:mt-6">
+        <div className="flex-1 overflow-hidden flex flex-col min-h-0">
           <StudentTabs 
             students={students}
             historyEntries={historyEntries}

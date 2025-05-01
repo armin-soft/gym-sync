@@ -47,7 +47,7 @@ export const StudentsList: React.FC<StudentsListProps> = ({
   }
 
   return (
-    <div className="w-full h-full overflow-auto">
+    <div className="w-full h-full flex-1 overflow-auto">
       <motion.div 
         key={viewMode}
         initial={{ opacity: 0 }}
@@ -57,7 +57,7 @@ export const StudentsList: React.FC<StudentsListProps> = ({
         className="h-full"
       >
         {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 p-2 sm:p-4">
             {students.map(student => (
               <StudentCard 
                 key={student.id}

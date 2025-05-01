@@ -59,7 +59,7 @@ export const StudentTableBody: React.FC<StudentTableBodyProps> = ({
               type: "spring", 
               stiffness: 500, 
               damping: 30,
-              delay: index * 0.05 
+              delay: index * 0.03 // Reduced delay for faster loading with many students
             }}
           >
             <StudentTableRow

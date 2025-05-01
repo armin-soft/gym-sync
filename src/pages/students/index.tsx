@@ -4,7 +4,7 @@ import StudentsPage from './components/StudentsPage';
 
 const Students = () => {
   return (
-    <div className="w-full h-full overflow-hidden">
+    <div className="w-full h-full overflow-hidden flex">
       <StudentsPage />
     </div>
   );
