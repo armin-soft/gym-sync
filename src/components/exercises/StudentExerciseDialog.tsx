@@ -1,17 +1,16 @@
-
 import React from "react";
 import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
-import { useExerciseSelection } from "@/hooks/useExerciseSelection";
+import { useExerciseSelection } from "@/hooks/exercise-selection";
 import ExerciseDialogFooter from "./ExerciseDialogFooter";
 import ExerciseDialogHeader from "./ExerciseDialogHeader";
 import ExerciseDialogLoading from "./dialog/ExerciseDialogLoading";
 import ExerciseDialogContent from "./dialog/ExerciseDialogContent";
 import { useExerciseDialogData } from "@/hooks/exercises/useExerciseDialogData";
 import { useExerciseDialogState } from "@/hooks/exercises/useExerciseDialogState";
-import { ExerciseWithSets } from "@/types/exercise";
+import { ExerciseWithSets } from "@/hooks/exercise-selection";
 
 interface StudentExerciseDialogProps {
   open: boolean;
