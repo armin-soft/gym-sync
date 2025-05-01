@@ -38,7 +38,7 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const getSelectedTypeName = () => {
-    return selectedExerciseType || "انتخاب نوع حرکت";
+    return selectedExerciseType || "انتخاب نوع تمرین";
   };
   
   const getSelectedCategoryName = () => {
@@ -62,7 +62,7 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
                 )}
               </>
             ) : (
-              "انتخاب نوع حرکت"
+              "انتخاب نوع تمرین"
             )}
           </span>
         </div>
@@ -87,7 +87,7 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
                 {selectedCategoryId ? getSelectedCategoryName() : "انتخاب دسته‌بندی"}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-white">
               <DropdownMenuLabel>انتخاب دسته‌بندی</DropdownMenuLabel>
               <DropdownMenuSeparator />
               

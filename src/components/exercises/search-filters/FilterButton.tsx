@@ -1,19 +1,16 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { Filter, X, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuGroup
-} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { TypeSelector } from "./TypeSelector";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 interface FilterButtonProps {
   searchQuery: string;
@@ -29,7 +26,7 @@ interface FilterButtonProps {
   activeFilterCount: number;
 }
 
-export const FilterButton: React.FC<FilterButtonProps> = ({ 
+export const FilterButton: React.FC<FilterButtonProps> = ({
   searchQuery,
   selectedExerciseType,
   setSelectedExerciseType,
@@ -40,95 +37,109 @@ export const FilterButton: React.FC<FilterButtonProps> = ({
   handleClearSearch,
   toggleSortOrder,
   sortOrder,
-  activeFilterCount
+  activeFilterCount,
 }) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Card className="p-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant="ghost" 
-            className={`h-8 px-2 text-sm hover:bg-indigo-50 ${activeFilterCount > 0 ? "text-indigo-600" : ""}`}
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setOpen(true)}
+        className="flex h-10 items-center gap-1 bg-white"
+      >
+        <Filter className="h-4 w-4" />
+        <span>فیلترها</span>
+        {activeFilterCount > 0 && (
+          <Badge
+            variant="secondary"
+            className="h-5 w-5 rounded-full p-0 flex items-center justify-center ml-1"
           >
-            <Filter className="h-4 w-4 mr-1" />
-            <span>فیلترها</span>
-            {activeFilterCount > 0 && (
-              <Badge className="ml-2 bg-indigo-600 hover:bg-indigo-700">
-                {activeFilterCount}
-              </Badge>
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-60" sideOffset={8}>
-          <DropdownMenuLabel>فیلتر حرکات</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-xs">نوع حرکت</DropdownMenuLabel>
-            {exerciseTypes.map(type => (
-              <DropdownMenuItem 
-                key={type}
-                className={cn(selectedExerciseType === type ? "bg-indigo-50 text-indigo-700 font-medium" : "")}
-                onClick={() => {
-                  setSelectedExerciseType(type);
-                  if (selectedExerciseType !== type) {
-                    setSelectedCategoryId(null);
-                  }
-                }}
+            {activeFilterCount}
+          </Badge>
+        )}
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">فیلتر حرکات</DialogTitle>
+          </DialogHeader>
+
+          <div className="grid gap-5 py-4">
+            <div className="space-y-2">
+              <h3 className="text-base font-medium">نوع تمرین</h3>
+              <div className="w-full">
+                <TypeSelector
+                  exerciseTypes={exerciseTypes}
+                  selectedType={selectedExerciseType}
+                  onSelectType={setSelectedExerciseType}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                انتخاب نوع تمرین، دسته‌بندی‌های قابل انتخاب را فیلتر می‌کند.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-base font-medium">دسته‌بندی</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {selectedExerciseType ? (
+                  filteredCategories.length > 0 ? (
+                    filteredCategories.map((category) => (
+                      <Button
+                        key={category.id}
+                        variant={selectedCategoryId === category.id ? "default" : "outline"}
+                        className="justify-start"
+                        onClick={() =>
+                          setSelectedCategoryId(
+                            selectedCategoryId === category.id ? null : category.id
+                          )
+                        }
+                      >
+                        {category.name}
+                      </Button>
+                    ))
+                  ) : (
+                    <div className="col-span-2 py-3 text-center text-muted-foreground">
+                      هیچ دسته‌بندی‌ای برای این نوع تمرین وجود ندارد
+                    </div>
+                  )
+                ) : (
+                  <div className="col-span-2 py-3 text-center text-muted-foreground">
+                    لطفا ابتدا یک نوع تمرین انتخاب کنید
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-base font-medium">مرتب‌سازی</h3>
+              <Button
+                variant="outline"
+                className="w-full justify-between"
+                onClick={toggleSortOrder}
               >
-                {type}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-          
-          {selectedExerciseType && filteredCategories.length > 0 && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="text-xs">دسته‌بندی</DropdownMenuLabel>
-                {filteredCategories.map(category => (
-                  <DropdownMenuItem 
-                    key={category.id}
-                    className={cn(selectedCategoryId === category.id ? "bg-indigo-50 text-indigo-700 font-medium" : "")}
-                    onClick={() => setSelectedCategoryId(category.id)}
-                  >
-                    {category.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </>
-          )}
-          
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-xs">مرتب‌سازی</DropdownMenuLabel>
-            <DropdownMenuItem 
-              className={sortOrder === "asc" ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
-              onClick={() => toggleSortOrder()}
-            >
-              به ترتیب الفبا (صعودی)
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className={sortOrder === "desc" ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
-              onClick={() => toggleSortOrder()}
-            >
-              به ترتیب الفبا (نزولی)
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          
-          {activeFilterCount > 0 && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 justify-center font-medium"
-                onClick={handleClearSearch}
-              >
-                پاک کردن همه فیلترها
-              </DropdownMenuItem>
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </Card>
+                <span>
+                  {sortOrder === "asc" ? "صعودی (الف تا ی)" : "نزولی (ی تا الف)"}
+                </span>
+                <ArrowUpDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={handleClearSearch}>
+              <X className="h-4 w-4 ml-2" />
+              پاک کردن فیلترها
+            </Button>
+            <Button onClick={() => setOpen(false)}>اعمال فیلترها</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
+
+export default FilterButton;

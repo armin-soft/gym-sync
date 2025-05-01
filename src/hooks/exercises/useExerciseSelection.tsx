@@ -2,20 +2,18 @@
 import { useState } from "react";
 
 /**
- * Hook to manage exercise selection
+ * Hook to manage exercise selection and view mode
  */
 export const useExerciseSelection = () => {
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
+  
   const toggleExerciseSelection = (exerciseId: number) => {
-    setSelectedExerciseIds(prev => {
-      if (prev.includes(exerciseId)) {
-        return prev.filter(id => id !== exerciseId);
-      } else {
-        return [...prev, exerciseId];
-      }
-    });
+    setSelectedExerciseIds(prev => 
+      prev.includes(exerciseId)
+        ? prev.filter(id => id !== exerciseId)
+        : [...prev, exerciseId]
+    );
   };
 
   return {
@@ -26,3 +24,5 @@ export const useExerciseSelection = () => {
     toggleExerciseSelection
   };
 };
+
+export default useExerciseSelection;
