@@ -7,6 +7,7 @@ import { ExerciseCategory } from "@/types/exercise";
 
 interface DayTabContentProps {
   day: string;
+  dayNumber: number;  // Added dayNumber property
   filteredExercises: Exercise[];
   viewMode: "grid" | "list";
   selectedExercises: number[];
@@ -21,6 +22,7 @@ interface DayTabContentProps {
 
 export const DayTabContent: React.FC<DayTabContentProps> = ({
   day,
+  dayNumber,  // Added dayNumber parameter
   filteredExercises,
   viewMode,
   selectedExercises,

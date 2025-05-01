@@ -80,69 +80,65 @@ const TabContentWrapper: React.FC<TabContentWrapperProps> = ({
       animate="visible"
       className="w-full overflow-hidden"
     >
-      <TabsContent value="day1" className="mt-0 data-[state=active]:mt-0">
-        <DayTabContent
-          dayNumber={1}
-          filteredExercises={filteredExercises}
-          categories={categories}
-          viewMode={viewMode}
-          handleClearSearch={handleClearSearch}
-          selectedExercises={selectedExercisesDay1}
-          toggleExercise={toggleExerciseDay1}
-          exerciseSets={exerciseSetsDay1}
-          handleSetsChange={handleSetsChangeDay1}
-          exerciseReps={exerciseRepsDay1}
-          handleRepsChange={handleRepsChangeDay1}
-        />
-      </TabsContent>
+      <DayTabContent
+        day="day1"
+        dayNumber={1}
+        filteredExercises={filteredExercises}
+        categories={categories}
+        viewMode={viewMode}
+        handleClearSearch={handleClearSearch}
+        selectedExercises={selectedExercisesDay1}
+        toggleExercise={toggleExerciseDay1}
+        exerciseSets={exerciseSetsDay1}
+        onSetsChange={handleSetsChangeDay1}
+        repsInfo={exerciseRepsDay1}
+        onRepsChange={handleRepsChangeDay1}
+      />
 
-      <TabsContent value="day2" className="mt-0 data-[state=active]:mt-0">
-        <DayTabContent
-          dayNumber={2}
-          filteredExercises={filteredExercises}
-          categories={categories}
-          viewMode={viewMode}
-          handleClearSearch={handleClearSearch}
-          selectedExercises={selectedExercisesDay2}
-          toggleExercise={toggleExerciseDay2}
-          exerciseSets={exerciseSetsDay2}
-          handleSetsChange={handleSetsChangeDay2}
-          exerciseReps={exerciseRepsDay2}
-          handleRepsChange={handleRepsChangeDay2}
-        />
-      </TabsContent>
+      <DayTabContent
+        day="day2"
+        dayNumber={2}
+        filteredExercises={filteredExercises}
+        categories={categories}
+        viewMode={viewMode}
+        handleClearSearch={handleClearSearch}
+        selectedExercises={selectedExercisesDay2}
+        toggleExercise={toggleExerciseDay2}
+        exerciseSets={exerciseSetsDay2}
+        onSetsChange={handleSetsChangeDay2}
+        repsInfo={exerciseRepsDay2}
+        onRepsChange={handleRepsChangeDay2}
+      />
 
-      <TabsContent value="day3" className="mt-0 data-[state=active]:mt-0">
-        <DayTabContent
-          dayNumber={3}
-          filteredExercises={filteredExercises}
-          categories={categories}
-          viewMode={viewMode}
-          handleClearSearch={handleClearSearch}
-          selectedExercises={selectedExercisesDay3}
-          toggleExercise={toggleExerciseDay3}
-          exerciseSets={exerciseSetsDay3}
-          handleSetsChange={handleSetsChangeDay3}
-          exerciseReps={exerciseRepsDay3}
-          handleRepsChange={handleRepsChangeDay3}
-        />
-      </TabsContent>
+      <DayTabContent
+        day="day3"
+        dayNumber={3}
+        filteredExercises={filteredExercises}
+        categories={categories}
+        viewMode={viewMode}
+        handleClearSearch={handleClearSearch}
+        selectedExercises={selectedExercisesDay3}
+        toggleExercise={toggleExerciseDay3}
+        exerciseSets={exerciseSetsDay3}
+        onSetsChange={handleSetsChangeDay3}
+        repsInfo={exerciseRepsDay3}
+        onRepsChange={handleRepsChangeDay3}
+      />
 
-      <TabsContent value="day4" className="mt-0 data-[state=active]:mt-0">
-        <DayTabContent
-          dayNumber={4}
-          filteredExercises={filteredExercises}
-          categories={categories}
-          viewMode={viewMode}
-          handleClearSearch={handleClearSearch}
-          selectedExercises={selectedExercisesDay4}
-          toggleExercise={toggleExerciseDay4}
-          exerciseSets={exerciseSetsDay4}
-          handleSetsChange={handleSetsChangeDay4}
-          exerciseReps={exerciseRepsDay4}
-          handleRepsChange={handleRepsChangeDay4}
-        />
-      </TabsContent>
+      <DayTabContent
+        day="day4"
+        dayNumber={4}
+        filteredExercises={filteredExercises}
+        categories={categories}
+        viewMode={viewMode}
+        handleClearSearch={handleClearSearch}
+        selectedExercises={selectedExercisesDay4}
+        toggleExercise={toggleExerciseDay4}
+        exerciseSets={exerciseSetsDay4}
+        onSetsChange={handleSetsChangeDay4}
+        repsInfo={exerciseRepsDay4}
+        onRepsChange={handleRepsChangeDay4}
+      />
     </motion.div>
   );
 };
