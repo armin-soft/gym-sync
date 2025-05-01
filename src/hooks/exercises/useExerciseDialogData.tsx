@@ -7,6 +7,8 @@ import { Exercise, ExerciseCategory } from "@/types/exercise";
  * Hook to fetch and manage exercise data for the exercise dialog
  */
 export const useExerciseDialogData = () => {
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  
   // Get exercises data
   const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
     queryKey: ["exercises"],
@@ -70,12 +72,27 @@ export const useExerciseDialogData = () => {
     },
   });
 
+  // Set initial selected type when data loads
+  useEffect(() => {
+    if (exerciseTypes.length > 0 && !selectedType) {
+      setSelectedType(exerciseTypes[0]);
+    }
+  }, [exerciseTypes, selectedType]);
+
+  // Filter categories based on selected type
+  const filteredCategories = selectedType 
+    ? categories.filter(cat => cat.type === selectedType)
+    : [];
+
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
 
   return {
     exercises,
     categories,
     exerciseTypes,
+    selectedType,
+    setSelectedType,
+    filteredCategories,
     isLoading
   };
 };

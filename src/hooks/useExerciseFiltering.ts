@@ -15,7 +15,6 @@ export const useExerciseFiltering = (
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  // Default to grid view on mobile
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Update view mode when screen size changes
@@ -27,7 +26,6 @@ export const useExerciseFiltering = (
 
   // Reset category selection when exercise type changes
   useEffect(() => {
-    // Reset category selection when exercise type changes
     setSelectedCategoryId(null);
   }, [selectedExerciseType]);
 
