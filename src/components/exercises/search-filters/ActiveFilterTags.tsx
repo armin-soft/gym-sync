@@ -2,7 +2,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 interface ActiveFilterTagsProps {
   searchQuery: string;
@@ -27,90 +27,62 @@ export const ActiveFilterTags: React.FC<ActiveFilterTagsProps> = ({
   activeFilterCount,
   handleClearSearch,
 }) => {
-  if (activeFilterCount === 0) return null;
-
-  const getCategoryName = (id: number) => {
-    const category = categories.find((cat) => cat.id === id);
-    return category?.name || "دسته‌بندی";
-  };
-
+  const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
+  
   return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      className="flex flex-wrap gap-2 mt-3"
-    >
-      {selectedExerciseType && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs text-indigo-700"
-        >
-          <span className="ml-1">نوع:</span>
-          <span>{selectedExerciseType}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4 ml-1 p-0 hover:bg-indigo-100"
-            onClick={() => setSelectedExerciseType(null)}
-          >
-            <X className="h-2.5 w-2.5" />
-          </Button>
-        </motion.div>
-      )}
-
-      {selectedCategoryId && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="inline-flex items-center rounded-full bg-purple-50 px-2 py-1 text-xs text-purple-700"
-        >
-          <span className="ml-1">دسته‌بندی:</span>
-          <span>{getCategoryName(selectedCategoryId)}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4 ml-1 p-0 hover:bg-purple-100"
-            onClick={() => setSelectedCategoryId(null)}
-          >
-            <X className="h-2.5 w-2.5" />
-          </Button>
-        </motion.div>
-      )}
-
+    <div className="flex flex-wrap items-center gap-2 pt-2">
       {searchQuery && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs text-blue-700"
-        >
-          <span className="ml-1">جستجو:</span>
-          <span>{searchQuery}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4 ml-1 p-0 hover:bg-blue-100"
+        <Badge variant="secondary" className="py-1 px-2 gap-1 bg-secondary/10 hover:bg-secondary/20">
+          <span>جستجو: {searchQuery}</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-4 w-4 rounded-full p-0 hover:bg-muted"
             onClick={() => setSearchQuery("")}
           >
-            <X className="h-2.5 w-2.5" />
+            <X className="h-3 w-3" />
           </Button>
-        </motion.div>
+        </Badge>
       )}
-
+      
+      {selectedExerciseType && (
+        <Badge variant="secondary" className="py-1 px-2 gap-1 bg-primary/10 hover:bg-primary/20 text-primary">
+          <span>نوع: {selectedExerciseType}</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-4 w-4 rounded-full p-0 hover:bg-muted"
+            onClick={() => setSelectedExerciseType(null)}
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        </Badge>
+      )}
+      
+      {selectedCategory && (
+        <Badge variant="secondary" className="py-1 px-2 gap-1 bg-secondary/10 hover:bg-secondary/20">
+          <span>دسته‌بندی: {selectedCategory.name}</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-4 w-4 rounded-full p-0 hover:bg-muted"
+            onClick={() => setSelectedCategoryId(null)}
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        </Badge>
+      )}
+      
       {activeFilterCount > 1 && (
-        <Button
-          variant="ghost"
-          size="sm"
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-7 text-xs text-muted-foreground hover:text-destructive"
           onClick={handleClearSearch}
-          className="text-xs h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
         >
           پاک کردن همه
         </Button>
       )}
-    </motion.div>
+    </div>
   );
 };

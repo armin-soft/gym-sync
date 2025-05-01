@@ -7,3 +7,4 @@ export * from './HierarchicalMenu';
 export * from './SearchInput';
 export * from './SortButton';
 export * from './TypeSelector';
+export * from './AdvancedSearchFilters';

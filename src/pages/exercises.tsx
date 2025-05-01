@@ -1,4 +1,4 @@
 
-import ExercisesPage from "./exercises/index";
+import HierarchicalExercisesView from "./exercises/hierarchical-view";
 
-export default ExercisesPage;
+export default HierarchicalExercisesView;
