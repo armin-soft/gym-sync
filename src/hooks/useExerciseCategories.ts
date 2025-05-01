@@ -1,115 +1,158 @@
 
 import { useState, useEffect, useCallback } from "react";
-import { ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
+import { ExerciseCategory, defaultCategories } from "@/types/exercise";
 
-export const useExerciseCategories = (selectedType: string) => {
+export const useExerciseCategories = (selectedType: string | null) => {
   const { toast } = useToast();
   const [categories, setCategories] = useState<ExerciseCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | null>(null);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
-  const [categoryFormData, setCategoryFormData] = useState({ name: "" });
+  const [categoryFormData, setCategoryFormData] = useState({ name: "", type: selectedType || "" });
 
-  // بارگذاری دسته‌بندی‌ها از localStorage
+  // بارگذاری اطلاعات از localStorage
   useEffect(() => {
     try {
       const savedCategories = localStorage.getItem("exerciseCategories");
-      const cats = savedCategories ? JSON.parse(savedCategories) : [];
-      setCategories(cats);
+      if (!savedCategories || savedCategories === "[]") {
+        // اگر داده‌ای در localStorage نبود، از داده‌های پیش‌فرض استفاده کن
+        setCategories(defaultCategories);
+        localStorage.setItem("exerciseCategories", JSON.stringify(defaultCategories));
+      } else {
+        const cats = JSON.parse(savedCategories);
+        setCategories(cats);
+      }
     } catch (error) {
       console.error("Error loading categories from localStorage:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در بارگذاری دسته‌بندی‌ها"
-      });
     }
   }, []);
 
-  // ذخیره دسته‌بندی‌ها در localStorage
+  // به‌روزرسانی فرم با نوع انتخاب شده
+  useEffect(() => {
+    setCategoryFormData(prev => ({ ...prev, type: selectedType || "" }));
+  }, [selectedType]);
+
+  // ذخیره اطلاعات در localStorage
   useEffect(() => {
     try {
       localStorage.setItem("exerciseCategories", JSON.stringify(categories));
     } catch (error) {
       console.error("Error saving categories to localStorage:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره سازی دسته‌بندی‌ها"
-      });
     }
   }, [categories]);
 
-  // دسته‌بندی‌های مرتبط با نوع حرکت انتخاب شده
-  const filteredCategories = useCallback(() => {
-    return categories.filter(cat => cat.type === selectedType);
-  }, [categories, selectedType]);
-
-  // افزودن دسته‌بندی جدید
-  const handleSaveCategory = useCallback(() => {
-    if (!categoryFormData.name) {
+  // ذخیره یا ویرایش دسته‌بندی
+  const handleSaveCategory = useCallback(async (data: { name: string; type: string }) => {
+    if (!data.name.trim() || !data.type) {
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "لطفاً نام دسته بندی را وارد کنید"
+        description: "لطفاً نام و نوع دسته‌بندی را وارد کنید"
       });
-      return;
+      return Promise.reject("اطلاعات ناقص");
     }
 
-    // بررسی تکراری بودن نام دسته‌بندی
-    const categoryExists = categories.some(
-      cat => cat.name.toLowerCase() === categoryFormData.name.toLowerCase() && cat.type === selectedType
-    );
-    
-    if (categoryExists) {
+    try {
+      if (selectedCategory) {
+        // ویرایش دسته‌بندی موجود
+        const categoryExists = categories.some(cat =>
+          cat.name === data.name && cat.type === data.type && cat.id !== selectedCategory.id
+        );
+
+        if (categoryExists) {
+          toast({
+            variant: "destructive",
+            title: "خطا",
+            description: "دسته‌بندی با این نام و نوع قبلاً اضافه شده است"
+          });
+          return Promise.reject("تکراری");
+        }
+
+        const updatedCategories = categories.map(cat =>
+          cat.id === selectedCategory.id ? { ...cat, name: data.name, type: data.type } : cat
+        );
+        
+        setCategories(updatedCategories);
+        setIsCategoryDialogOpen(false);
+        setSelectedCategory(null);
+        
+        toast({
+          title: "موفقیت",
+          description: "دسته‌بندی با موفقیت ویرایش شد"
+        });
+      } else {
+        // افزودن دسته‌بندی جدید
+        const categoryExists = categories.some(cat =>
+          cat.name === data.name && cat.type === data.type
+        );
+
+        if (categoryExists) {
+          toast({
+            variant: "destructive",
+            title: "خطا",
+            description: "دسته‌بندی با این نام و نوع قبلاً اضافه شده است"
+          });
+          return Promise.reject("تکراری");
+        }
+
+        const timestamp = Date.now();
+        const newCategory: ExerciseCategory = {
+          id: timestamp,
+          name: data.name,
+          type: data.type
+        };
+        
+        setCategories(prev => [...prev, newCategory]);
+        setIsCategoryDialogOpen(false);
+        
+        toast({
+          title: "موفقیت",
+          description: "دسته‌بندی جدید با موفقیت اضافه شد"
+        });
+      }
+      
+      return Promise.resolve();
+    } catch (error) {
+      console.error("Error saving category:", error);
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "این دسته بندی قبلاً در این نوع حرکت اضافه شده است"
+        description: "خطا در ذخیره‌سازی دسته‌بندی"
       });
-      return;
+      return Promise.reject(error);
     }
-
-    const newCategory: ExerciseCategory = {
-      id: Math.max(0, ...categories.map(c => c.id)) + 1,
-      name: categoryFormData.name,
-      type: selectedType
-    };
-
-    setCategories(prevCategories => [...prevCategories, newCategory]);
-    setIsCategoryDialogOpen(false);
-    setCategoryFormData({ name: "" });
-    
-    toast({
-      title: "موفقیت",
-      description: "دسته بندی جدید با موفقیت اضافه شد"
-    });
-  }, [categories, categoryFormData.name, selectedType]);
+  }, [categories, selectedCategory]);
 
   // حذف دسته‌بندی
-  const handleDeleteCategory = useCallback((category: ExerciseCategory, exercises: any[]) => {
-    if (exercises.some(ex => ex.categoryId === category.id)) {
+  const handleDeleteCategory = useCallback((category: ExerciseCategory, exercises: any[] = []) => {
+    const exercisesInCategory = exercises.filter(ex => ex.categoryId === category.id);
+    
+    if (exercisesInCategory.length > 0) {
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "ابتدا باید تمام حرکات این دسته بندی را حذف کنید"
+        description: "ابتدا باید حرکات موجود در این دسته‌بندی را حذف کنید"
       });
       return;
     }
-    setCategories(prevCategories => prevCategories.filter(c => c.id !== category.id));
+    
+    setCategories(prev => prev.filter(cat => cat.id !== category.id));
+    
     toast({
       title: "موفقیت",
-      description: "دسته بندی با موفقیت حذف شد"
+      description: "دسته‌بندی با موفقیت حذف شد"
     });
   }, []);
 
   return {
     categories,
     setCategories,
+    selectedCategory,
+    setSelectedCategory,
     isCategoryDialogOpen,
     setIsCategoryDialogOpen,
     categoryFormData,
     setCategoryFormData,
-    filteredCategories,
     handleSaveCategory,
     handleDeleteCategory
   };
