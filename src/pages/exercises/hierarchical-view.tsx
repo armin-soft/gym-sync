@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { PageContainer } from "@/components/ui/page-container";
 import { Card } from "@/components/ui/card";
@@ -94,11 +93,13 @@ const HierarchicalExercisesView = () => {
   // همگام‌سازی بین حالت انتخاب شده در دو جا
   useEffect(() => {
     if (selectedType && selectedType !== selectedExerciseType) {
+      console.log("Syncing selectedType to selectedExerciseType:", selectedType);
       setSelectedExerciseType(selectedType);
     } else if (selectedExerciseType && selectedExerciseType !== selectedType) {
+      console.log("Syncing selectedExerciseType to selectedType:", selectedExerciseType);
       setSelectedType(selectedExerciseType);
     }
-  }, [selectedType, selectedExerciseType]);
+  }, [selectedType, selectedExerciseType, setSelectedExerciseType, setSelectedType]);
 
   // تنظیم حالت نمایش براساس اندازه صفحه
   useEffect(() => {
@@ -191,6 +192,7 @@ const HierarchicalExercisesView = () => {
   };
 
   const selectionStage = getSelectionStage();
+  console.log("Current selection stage:", selectionStage, "Type:", selectedExerciseType, "Category:", selectedCategoryId);
 
   // نمایش عناصر UI متناسب با مرحله انتخاب
   return (
@@ -209,7 +211,10 @@ const HierarchicalExercisesView = () => {
         <ExerciseTypes
           types={exerciseTypes}
           selectedType={selectedExerciseType || ""}
-          onSelectType={setSelectedExerciseType}
+          onSelectType={(type) => {
+            console.log("Selected exercise type:", type);
+            setSelectedExerciseType(type);
+          }}
           onAddType={handleAddType}
           onEditType={handleEditType}
           onDeleteType={(type) => confirmDelete("type", type)}
@@ -220,9 +225,15 @@ const HierarchicalExercisesView = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           selectedExerciseType={selectedExerciseType}
-          setSelectedExerciseType={setSelectedExerciseType}
+          setSelectedExerciseType={(type) => {
+            console.log("Setting exercise type from AdvancedSearchFilters:", type);
+            setSelectedExerciseType(type);
+          }}
           selectedCategoryId={selectedCategoryId}
-          setSelectedCategoryId={setSelectedCategoryId}
+          setSelectedCategoryId={(id) => {
+            console.log("Setting category ID from AdvancedSearchFilters:", id);
+            setSelectedCategoryId(id);
+          }}
           exerciseTypes={exerciseTypes}
           categories={categories}
           filteredCategories={filteredCategories}
@@ -238,14 +249,20 @@ const HierarchicalExercisesView = () => {
           {selectionStage === "type" && (
             <TypeSelectionStage 
               exerciseTypes={exerciseTypes}
-              setSelectedExerciseType={setSelectedExerciseType}
+              setSelectedExerciseType={(type) => {
+                console.log("Setting exercise type from TypeSelectionStage:", type);
+                setSelectedExerciseType(type);
+              }}
             />
           )}
 
           {selectionStage === "category" && (
             <CategorySelectionStage 
               categories={filteredCategories}
-              setSelectedCategoryId={setSelectedCategoryId}
+              setSelectedCategoryId={(id) => {
+                console.log("Setting category ID from CategorySelectionStage:", id);
+                setSelectedCategoryId(id);
+              }}
               selectedExerciseType={selectedExerciseType}
               onAddCategory={handleOpenCategoryDialog}
               onEditCategory={handleEditCategoryDialog}

@@ -15,6 +15,7 @@ export const useExerciseFiltering = (
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Update view mode when screen size changes
   useEffect(() => {
@@ -25,54 +26,68 @@ export const useExerciseFiltering = (
 
   // Reset category selection when exercise type changes
   useEffect(() => {
-    setSelectedCategoryId(null);
-  }, [selectedExerciseType]);
+    if (selectedExerciseType === null) {
+      setSelectedCategoryId(null);
+    } else {
+      // Only reset if the category doesn't belong to the selected type
+      if (selectedCategoryId) {
+        const categoryBelongsToType = categories.some(
+          cat => cat.id === selectedCategoryId && cat.type === selectedExerciseType
+        );
+        if (!categoryBelongsToType) {
+          setSelectedCategoryId(null);
+        }
+      }
+    }
+  }, [selectedExerciseType, categories, selectedCategoryId]);
 
   // Get filtered categories based on exercise type
   const filteredCategories = useMemo(() => {
+    console.log("Filtering categories based on type:", selectedExerciseType);
     const filtered = categories.filter(category => 
       selectedExerciseType ? category.type === selectedExerciseType : true
     );
-    console.log("Filtered categories:", filtered, "based on selectedExerciseType:", selectedExerciseType);
+    console.log("Filtered categories result:", filtered);
     return filtered;
   }, [categories, selectedExerciseType]);
   
-  // Ensure selected category is valid when exercise type changes
-  useEffect(() => {
-    if (selectedCategoryId && filteredCategories.length > 0) {
-      const categoryExists = filteredCategories.some(cat => cat.id === selectedCategoryId);
-      if (!categoryExists) {
-        console.log("Selected category no longer exists after filter, resetting selection");
-        setSelectedCategoryId(null);
-      }
-    }
-  }, [selectedExerciseType, filteredCategories, selectedCategoryId]);
-
-  // Filter exercises based on selected type and category
+  // Filter exercises based on selected type, category and search query
   const filteredExercises = useMemo(() => {
-    console.log("Filtering exercises");
+    console.log("Filtering exercises with type:", selectedExerciseType, "category:", selectedCategoryId);
     
-    // Must have an exercise type selected to proceed
-    if (!selectedExerciseType) {
-      console.log("No exercise type selected, returning empty array");
+    if (!selectedExerciseType && !selectedCategoryId && !searchQuery) {
+      console.log("No filters applied, returning empty array");
       return [];
     }
 
-    // Must have a category selected if categories are available for the selected type
-    if (filteredCategories.length > 0 && !selectedCategoryId) {
-      console.log("Exercise type selected but no category selected, returning empty array");
-      return [];
+    let filtered = [...exercises];
+
+    // Filter by exercise type if selected
+    if (selectedExerciseType) {
+      const categoriesOfType = categories.filter(cat => cat.type === selectedExerciseType)
+                                        .map(cat => cat.id);
+      filtered = filtered.filter(exercise => categoriesOfType.includes(exercise.categoryId));
+      console.log(`After type filter (${selectedExerciseType}):`, filtered.length);
     }
 
-    const filtered = exercises
-      .filter((exercise) => {
-        const matchesCategory = !selectedCategoryId || exercise.categoryId === selectedCategoryId;
-        return matchesCategory;
-      });
+    // Filter by category if selected
+    if (selectedCategoryId) {
+      filtered = filtered.filter(exercise => exercise.categoryId === selectedCategoryId);
+      console.log(`After category filter (${selectedCategoryId}):`, filtered.length);
+    }
+
+    // Filter by search query if provided
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(exercise => 
+        exercise.name.toLowerCase().includes(query)
+      );
+      console.log(`After search filter (${searchQuery}):`, filtered.length);
+    }
     
-    console.log("Filtered exercises result:", filtered);
+    console.log("Final filtered exercises:", filtered);
     return filtered;
-  }, [exercises, selectedCategoryId, selectedExerciseType, filteredCategories]);
+  }, [exercises, selectedExerciseType, selectedCategoryId, categories, searchQuery]);
 
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
@@ -82,11 +97,12 @@ export const useExerciseFiltering = (
     console.log("Clearing search filters");
     setSelectedCategoryId(null);
     setSelectedExerciseType(null);
+    setSearchQuery("");
   };
 
   return {
-    searchQuery: "", // Empty string since we removed search
-    setSearchQuery: () => {}, // No-op function
+    searchQuery,
+    setSearchQuery,
     selectedCategoryId,
     setSelectedCategoryId,
     selectedExerciseType,

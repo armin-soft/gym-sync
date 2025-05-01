@@ -37,14 +37,6 @@ export const useExerciseTypes = () => {
     }
   });
 
-  // تنظیم نوع انتخاب شده اولیه هنگامی که داده‌ها بارگذاری می‌شوند
-  useEffect(() => {
-    if (exerciseTypes.length > 0 && !selectedType) {
-      console.log("Setting initial selected type:", exerciseTypes[0]);
-      setSelectedType(exerciseTypes[0]);
-    }
-  }, [exerciseTypes, selectedType]);
-
   // افزودن نوع جدید
   const handleAddType = useCallback(() => {
     setEditingType(null);
