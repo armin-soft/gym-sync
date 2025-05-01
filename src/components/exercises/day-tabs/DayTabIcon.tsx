@@ -24,7 +24,7 @@ export const DayTabIcon: React.FC<DayTabIconProps> = ({ day, isActive }) => {
     <div className="relative">
       {isActive && (
         <motion.div 
-          className="absolute inset-0 bg-primary/10 rounded-full -m-1 p-1"
+          className="absolute inset-0 bg-primary/15 rounded-full -m-1 p-1"
           initial={{ scale: 0 }}
           animate={{ scale: 1.2 }}
           transition={{ duration: 0.3 }}
@@ -38,9 +38,9 @@ export const DayTabIcon: React.FC<DayTabIconProps> = ({ day, isActive }) => {
       >
         <Icon 
           className={cn(
-            "h-4 w-4 transition-all", 
+            "h-5 w-5 transition-all", 
             isActive 
-              ? "text-primary filter drop-shadow-sm" 
+              ? "text-primary filter drop-shadow-md" 
               : "text-muted-foreground"
           )} 
         />

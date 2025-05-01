@@ -23,14 +23,14 @@ export const DayTabTrigger: React.FC<DayTabTriggerProps> = ({
     <TabsTrigger 
       key={day}
       value={day} 
-      className="flex-1 min-w-[80px] relative rounded-lg overflow-hidden transition-all duration-300"
+      className="flex-1 min-w-[90px] relative rounded-lg overflow-hidden transition-all duration-300 px-1 py-2.5"
     >
       <div className={cn(
         "absolute inset-0 w-full h-full",
         isActive ? "bg-gradient-to-br from-primary/10 to-primary/5" : "bg-transparent"
       )} />
       
-      <div className="relative z-10 flex items-center gap-1.5 py-2 px-1">
+      <div className="relative z-10 flex items-center justify-center gap-2 py-1 px-1.5">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -44,7 +44,7 @@ export const DayTabTrigger: React.FC<DayTabTriggerProps> = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.3 }}
           className={cn(
-            "font-medium transition-all",
+            "font-bold transition-all text-base",
             isActive ? "text-primary" : "text-muted-foreground"
           )}
         >
@@ -55,7 +55,7 @@ export const DayTabTrigger: React.FC<DayTabTriggerProps> = ({
       <AnimatePresence>
         {selectedExercisesCount > 0 && (
           <motion.div 
-            className="absolute -top-1.5 -right-1 px-1.5 py-0.5 text-2xs rounded-full bg-primary text-white font-medium"
+            className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs rounded-full bg-primary text-white font-bold"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}

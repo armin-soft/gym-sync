@@ -71,21 +71,21 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
 
   return (
     <motion.div 
-      className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4"
+      className="flex flex-col gap-4 mb-4"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <motion.div 
-        className="relative z-10"
+        className="relative z-10 mx-auto w-full max-w-xl"
         variants={childVariants}
       >
         <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 blur-md z-0"></div>
-        <TabsList className="relative flex bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg p-1.5 rounded-xl border border-white/10 dark:border-slate-700/30 shadow-lg shadow-primary/5 z-10">
+        <TabsList className="relative flex justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg p-2 rounded-xl border border-white/10 dark:border-slate-700/30 shadow-lg shadow-primary/5 z-10 w-full">
           {dayTabs.map((day, index) => (
             <motion.div 
               key={day} 
-              className="flex-1"
+              className="flex-1 text-center max-w-[120px]"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.08, duration: 0.4 }}
@@ -102,7 +102,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
       
       <motion.div
         variants={childVariants}
-        className="flex justify-end"
+        className="flex justify-center md:justify-end"
       >
         <ExerciseViewControls
           viewMode={viewMode}
