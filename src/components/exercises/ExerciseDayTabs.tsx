@@ -1,12 +1,9 @@
 
 import React from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExerciseTabContent } from "./ExerciseTabContent";
-import ExerciseViewControls from "./ExerciseViewControls";
+import { Tabs } from "@/components/ui/tabs";
+import TabHeader from "./day-tabs/TabHeader";
+import TabContentWrapper from "./day-tabs/TabContentWrapper";
 import { Exercise } from "@/types/exercise";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
-import { CalendarDays, CalendarCheck2, CalendarClock, CalendarRange } from "lucide-react";
 
 interface ExerciseDayTabsProps {
   activeTab: string;
@@ -82,160 +79,59 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
   handleRepsChangeDay3,
   handleRepsChangeDay4
 }) => {
-  // Icons for each day tab
-  const dayIcons = {
-    day1: CalendarDays,
-    day2: CalendarCheck2,
-    day3: CalendarClock,
-    day4: CalendarRange
-  };
+  // Available day tabs
+  const dayTabs = ["day1", "day2", "day3", "day4"];
   
-  // Tab content variants for animation
-  const tabContentVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.3 }
-    },
-    exit: { 
-      opacity: 0, 
-      y: -20,
-      transition: { duration: 0.2 }
-    }
-  };
-
   return (
     <Tabs
       value={activeTab}
       onValueChange={setActiveTab}
       className="flex-1 flex flex-col overflow-hidden px-4 pb-2"
     >
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-        <TabsList className="flex bg-muted/60 p-1 rounded-xl">
-          {Object.entries(dayIcons).map(([day, Icon]) => {
-            const dayNumber = day.replace("day", "");
-            const selectedExercises = {
-              day1: selectedExercisesDay1,
-              day2: selectedExercisesDay2,
-              day3: selectedExercisesDay3,
-              day4: selectedExercisesDay4
-            }[day];
-            
-            return (
-              <TabsTrigger 
-                key={day}
-                value={day} 
-                className="flex-1 min-w-[80px] relative rounded-lg transition-all duration-300"
-              >
-                <div className="flex items-center gap-1.5">
-                  <Icon className={cn(
-                    "h-4 w-4 transition-colors", 
-                    activeTab === day ? "text-primary" : "text-muted-foreground"
-                  )} />
-                  <span>روز {dayNumber}</span>
-                </div>
-                <div className={cn(
-                  "absolute -top-2 -right-1 px-1.5 py-0.5 text-2xs rounded-full bg-primary text-white font-medium transition-all scale-0",
-                  selectedExercises?.length > 0 && "scale-100"
-                )}>
-                  {selectedExercises?.length}
-                </div>
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
-        
-        <ExerciseViewControls
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          toggleSortOrder={toggleSortOrder}
-          sortOrder={sortOrder}
-        />
-      </div>
+      <TabHeader 
+        activeTab={activeTab}
+        dayTabs={dayTabs}
+        selectedExercisesDay1={selectedExercisesDay1}
+        selectedExercisesDay2={selectedExercisesDay2}
+        selectedExercisesDay3={selectedExercisesDay3}
+        selectedExercisesDay4={selectedExercisesDay4}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        toggleSortOrder={toggleSortOrder}
+        sortOrder={sortOrder}
+      />
       
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          className="flex-1 overflow-auto"
-          variants={tabContentVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <TabsContent
-            value="day1"
-            className="flex-1 overflow-auto mt-0 p-0 border-none data-[state=active]:h-full"
-          >
-            <ExerciseTabContent
-              filteredExercises={filteredExercises}
-              viewMode={viewMode}
-              selectedExercises={selectedExercisesDay1}
-              toggleExercise={toggleExerciseDay1}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              exerciseSets={exerciseSetsDay1}
-              onSetsChange={handleSetsChangeDay1}
-              repsInfo={exerciseRepsDay1}
-              onRepsChange={handleRepsChangeDay1}
-            />
-          </TabsContent>
-          
-          <TabsContent
-            value="day2"
-            className="flex-1 overflow-auto mt-0 p-0 border-none data-[state=active]:h-full"
-          >
-            <ExerciseTabContent
-              filteredExercises={filteredExercises}
-              viewMode={viewMode}
-              selectedExercises={selectedExercisesDay2}
-              toggleExercise={toggleExerciseDay2}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              exerciseSets={exerciseSetsDay2}
-              onSetsChange={handleSetsChangeDay2}
-              repsInfo={exerciseRepsDay2}
-              onRepsChange={handleRepsChangeDay2}
-            />
-          </TabsContent>
-          
-          <TabsContent
-            value="day3"
-            className="flex-1 overflow-auto mt-0 p-0 border-none data-[state=active]:h-full"
-          >
-            <ExerciseTabContent
-              filteredExercises={filteredExercises}
-              viewMode={viewMode}
-              selectedExercises={selectedExercisesDay3}
-              toggleExercise={toggleExerciseDay3}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              exerciseSets={exerciseSetsDay3}
-              onSetsChange={handleSetsChangeDay3}
-              repsInfo={exerciseRepsDay3}
-              onRepsChange={handleRepsChangeDay3}
-            />
-          </TabsContent>
-          
-          <TabsContent
-            value="day4"
-            className="flex-1 overflow-auto mt-0 p-0 border-none data-[state=active]:h-full"
-          >
-            <ExerciseTabContent
-              filteredExercises={filteredExercises}
-              viewMode={viewMode}
-              selectedExercises={selectedExercisesDay4}
-              toggleExercise={toggleExerciseDay4}
-              categories={categories}
-              handleClearSearch={handleClearSearch}
-              exerciseSets={exerciseSetsDay4}
-              onSetsChange={handleSetsChangeDay4}
-              repsInfo={exerciseRepsDay4}
-              onRepsChange={handleRepsChangeDay4}
-            />
-          </TabsContent>
-        </motion.div>
-      </AnimatePresence>
+      <TabContentWrapper
+        activeTab={activeTab}
+        filteredExercises={filteredExercises}
+        categories={categories}
+        viewMode={viewMode}
+        handleClearSearch={handleClearSearch}
+        selectedExercisesDay1={selectedExercisesDay1}
+        selectedExercisesDay2={selectedExercisesDay2}
+        selectedExercisesDay3={selectedExercisesDay3}
+        selectedExercisesDay4={selectedExercisesDay4}
+        toggleExerciseDay1={toggleExerciseDay1}
+        toggleExerciseDay2={toggleExerciseDay2}
+        toggleExerciseDay3={toggleExerciseDay3}
+        toggleExerciseDay4={toggleExerciseDay4}
+        exerciseSetsDay1={exerciseSetsDay1}
+        exerciseSetsDay2={exerciseSetsDay2}
+        exerciseSetsDay3={exerciseSetsDay3}
+        exerciseSetsDay4={exerciseSetsDay4}
+        handleSetsChangeDay1={handleSetsChangeDay1}
+        handleSetsChangeDay2={handleSetsChangeDay2}
+        handleSetsChangeDay3={handleSetsChangeDay3}
+        handleSetsChangeDay4={handleSetsChangeDay4}
+        exerciseRepsDay1={exerciseRepsDay1}
+        exerciseRepsDay2={exerciseRepsDay2}
+        exerciseRepsDay3={exerciseRepsDay3}
+        exerciseRepsDay4={exerciseRepsDay4}
+        handleRepsChangeDay1={handleRepsChangeDay1}
+        handleRepsChangeDay2={handleRepsChangeDay2}
+        handleRepsChangeDay3={handleRepsChangeDay3}
+        handleRepsChangeDay4={handleRepsChangeDay4}
+      />
     </Tabs>
   );
 };
