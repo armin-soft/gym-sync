@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import TabHeader from "./day-tabs/TabHeader";
-import TabContentWrapper from "./day-tabs/TabContentWrapper";
 import { Exercise } from "@/types/exercise";
 import { Button } from "@/components/ui/button";
 import { ListFilter, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import TabContentWrapper from "./day-tabs/TabContentWrapper";
 
 interface ExerciseDayTabsProps {
   activeTab: string;
@@ -156,38 +156,6 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
             نمایش تمرین‌ها
           </Button>
         </div>
-        
-        <TabContentWrapper
-          activeTab={activeTab}
-          filteredExercises={filteredExercises}
-          categories={categories}
-          viewMode={viewMode}
-          handleClearSearch={handleClearSearch}
-          selectedExercisesDay1={selectedExercisesDay1}
-          selectedExercisesDay2={selectedExercisesDay2}
-          selectedExercisesDay3={selectedExercisesDay3}
-          selectedExercisesDay4={selectedExercisesDay4}
-          toggleExerciseDay1={toggleExerciseDay1}
-          toggleExerciseDay2={toggleExerciseDay2}
-          toggleExerciseDay3={toggleExerciseDay3}
-          toggleExerciseDay4={toggleExerciseDay4}
-          exerciseSetsDay1={exerciseSetsDay1}
-          exerciseSetsDay2={exerciseSetsDay2}
-          exerciseSetsDay3={exerciseSetsDay3}
-          exerciseSetsDay4={exerciseSetsDay4}
-          handleSetsChangeDay1={handleSetsChangeDay1}
-          handleSetsChangeDay2={handleSetsChangeDay2}
-          handleSetsChangeDay3={handleSetsChangeDay3}
-          handleSetsChangeDay4={handleSetsChangeDay4}
-          exerciseRepsDay1={exerciseRepsDay1}
-          exerciseRepsDay2={exerciseRepsDay2}
-          exerciseRepsDay3={exerciseRepsDay3}
-          exerciseRepsDay4={exerciseRepsDay4}
-          handleRepsChangeDay1={handleRepsChangeDay1}
-          handleRepsChangeDay2={handleRepsChangeDay2}
-          handleRepsChangeDay3={handleRepsChangeDay3}
-          handleRepsChangeDay4={handleRepsChangeDay4}
-        />
       </Tabs>
       
       {/* Full Screen Dialog for better visibility */}
