@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 
 interface ExerciseWithSets {
   id: number;
   sets: number;
-  reps?: string; // اضافه کردن اطلاعات تکرار به عنوان یک فیلد اختیاری
+  reps?: string;
 }
 
 export function useExerciseSelection(
@@ -34,22 +33,31 @@ export function useExerciseSelection(
   const [exerciseRepsDay3, setExerciseRepsDay3] = useState<Record<number, string>>({});
   const [exerciseRepsDay4, setExerciseRepsDay4] = useState<Record<number, string>>({});
   
+  // اعمال مقادیر اولیه برای ست‌ها و تکرارها
   useEffect(() => {
+    // تابع کمکی برای محدود کردن مقدار ست‌ها بین 1 تا 10
+    const initSets = (ids: number[]) => {
+      return ids.reduce((acc, id) => {
+        // مقدار پیش‌فرض 3 با محدودیت بین 1 تا 10
+        acc[id] = 3;
+        return acc;
+      }, {} as Record<number, number>);
+    };
+    
+    // تابع کمکی برای مقداردهی اولیه تکرارها
+    const initReps = (ids: number[]) => {
+      return ids.reduce((acc, id) => {
+        // مقدار پیش‌فرض 8 با محدودیت بین 1 تا 10
+        acc[id] = '8';
+        return acc;
+      }, {} as Record<number, string>);
+    };
+    
     setSelectedExercises(initialExercises);
     setSelectedExercisesDay1(initialExercisesDay1);
     setSelectedExercisesDay2(initialExercisesDay2);
     setSelectedExercisesDay3(initialExercisesDay3);
     setSelectedExercisesDay4(initialExercisesDay4);
-    
-    // Initialize sets with default value of 3
-    const initSets = (ids: number[]) => {
-      return ids.reduce((acc, id) => ({ ...acc, [id]: 3 }), {});
-    };
-    
-    // Initialize reps with empty string
-    const initReps = (ids: number[]) => {
-      return ids.reduce((acc, id) => ({ ...acc, [id]: '12-15' }), {});
-    };
     
     setExerciseSets(initSets(initialExercises));
     setExerciseSetsDay1(initSets(initialExercisesDay1));
@@ -64,6 +72,7 @@ export function useExerciseSelection(
     setExerciseRepsDay4(initReps(initialExercisesDay4));
   }, [initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
 
+  // Toggle exercise selection functions
   const toggleExercise = (exerciseId: number) => {
     setSelectedExercises((prev) => {
       const isSelected = prev.includes(exerciseId);
@@ -79,7 +88,7 @@ export function useExerciseSelection(
       } else {
         // Add exercise with default sets and reps
         setExerciseSets(prev => ({ ...prev, [exerciseId]: 3 }));
-        setExerciseReps(prev => ({ ...prev, [exerciseId]: '12-15' }));
+        setExerciseReps(prev => ({ ...prev, [exerciseId]: '8' }));
         return [...prev, exerciseId];
       }
     });
@@ -98,7 +107,7 @@ export function useExerciseSelection(
         return prev.filter(id => id !== exerciseId);
       } else {
         setExerciseSetsDay1(prev => ({ ...prev, [exerciseId]: 3 }));
-        setExerciseRepsDay1(prev => ({ ...prev, [exerciseId]: '12-15' }));
+        setExerciseRepsDay1(prev => ({ ...prev, [exerciseId]: '8' }));
         return [...prev, exerciseId];
       }
     });
@@ -117,7 +126,7 @@ export function useExerciseSelection(
         return prev.filter(id => id !== exerciseId);
       } else {
         setExerciseSetsDay2(prev => ({ ...prev, [exerciseId]: 3 }));
-        setExerciseRepsDay2(prev => ({ ...prev, [exerciseId]: '12-15' }));
+        setExerciseRepsDay2(prev => ({ ...prev, [exerciseId]: '8' }));
         return [...prev, exerciseId];
       }
     });
@@ -136,7 +145,7 @@ export function useExerciseSelection(
         return prev.filter(id => id !== exerciseId);
       } else {
         setExerciseSetsDay3(prev => ({ ...prev, [exerciseId]: 3 }));
-        setExerciseRepsDay3(prev => ({ ...prev, [exerciseId]: '12-15' }));
+        setExerciseRepsDay3(prev => ({ ...prev, [exerciseId]: '8' }));
         return [...prev, exerciseId];
       }
     });
@@ -155,34 +164,40 @@ export function useExerciseSelection(
         return prev.filter(id => id !== exerciseId);
       } else {
         setExerciseSetsDay4(prev => ({ ...prev, [exerciseId]: 3 }));
-        setExerciseRepsDay4(prev => ({ ...prev, [exerciseId]: '12-15' }));
+        setExerciseRepsDay4(prev => ({ ...prev, [exerciseId]: '8' }));
         return [...prev, exerciseId];
       }
     });
   };
 
-  // Handle sets change for each day
+  // Handle sets change for each day with input validation
   const handleSetsChange = (exerciseId: number, sets: number) => {
-    setExerciseSets(prev => ({ ...prev, [exerciseId]: sets }));
+    // محدود کردن مقدار sets بین 1 تا 10
+    const validSets = Math.min(Math.max(1, sets), 10);
+    setExerciseSets(prev => ({ ...prev, [exerciseId]: validSets }));
   };
 
   const handleSetsChangeDay1 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay1(prev => ({ ...prev, [exerciseId]: sets }));
+    const validSets = Math.min(Math.max(1, sets), 10);
+    setExerciseSetsDay1(prev => ({ ...prev, [exerciseId]: validSets }));
   };
 
   const handleSetsChangeDay2 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay2(prev => ({ ...prev, [exerciseId]: sets }));
+    const validSets = Math.min(Math.max(1, sets), 10);
+    setExerciseSetsDay2(prev => ({ ...prev, [exerciseId]: validSets }));
   };
 
   const handleSetsChangeDay3 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay3(prev => ({ ...prev, [exerciseId]: sets }));
+    const validSets = Math.min(Math.max(1, sets), 10);
+    setExerciseSetsDay3(prev => ({ ...prev, [exerciseId]: validSets }));
   };
 
   const handleSetsChangeDay4 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay4(prev => ({ ...prev, [exerciseId]: sets }));
+    const validSets = Math.min(Math.max(1, sets), 10);
+    setExerciseSetsDay4(prev => ({ ...prev, [exerciseId]: validSets }));
   };
   
-  // Handle reps change for each day
+  // Handle reps change for each day with input validation
   const handleRepsChange = (exerciseId: number, reps: string) => {
     setExerciseReps(prev => ({ ...prev, [exerciseId]: reps }));
   };
@@ -203,12 +218,12 @@ export function useExerciseSelection(
     setExerciseRepsDay4(prev => ({ ...prev, [exerciseId]: reps }));
   };
 
-  // Get selected exercises with their sets and reps
+  // Helper functions to get selected exercises with their sets and reps
   const getSelectedExercisesWithSets = () => {
     return selectedExercises.map(id => ({
       id,
       sets: exerciseSets[id] || 3,
-      reps: exerciseReps[id] || '12-15'
+      reps: exerciseReps[id] || '8'
     }));
   };
 
@@ -216,7 +231,7 @@ export function useExerciseSelection(
     return selectedExercisesDay1.map(id => ({
       id,
       sets: exerciseSetsDay1[id] || 3,
-      reps: exerciseRepsDay1[id] || '12-15'
+      reps: exerciseRepsDay1[id] || '8'
     }));
   };
 
@@ -224,7 +239,7 @@ export function useExerciseSelection(
     return selectedExercisesDay2.map(id => ({
       id,
       sets: exerciseSetsDay2[id] || 3,
-      reps: exerciseRepsDay2[id] || '12-15'
+      reps: exerciseRepsDay2[id] || '8'
     }));
   };
 
@@ -232,7 +247,7 @@ export function useExerciseSelection(
     return selectedExercisesDay3.map(id => ({
       id,
       sets: exerciseSetsDay3[id] || 3,
-      reps: exerciseRepsDay3[id] || '12-15'
+      reps: exerciseRepsDay3[id] || '8'
     }));
   };
 
@@ -240,7 +255,7 @@ export function useExerciseSelection(
     return selectedExercisesDay4.map(id => ({
       id,
       sets: exerciseSetsDay4[id] || 3,
-      reps: exerciseRepsDay4[id] || '12-15'
+      reps: exerciseRepsDay4[id] || '8'
     }));
   };
 

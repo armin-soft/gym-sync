@@ -3,8 +3,7 @@ import React from "react";
 import { ExerciseCard } from "./ExerciseCard";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { ExerciseSetsInput } from "./ExerciseSetsInput";
-import { Input } from "@/components/ui/input"; 
-import { Label } from "@/components/ui/label";
+import { ExerciseRepsInput } from "./ExerciseRepsInput";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Dumbbell, BarChart } from "lucide-react";
@@ -29,7 +28,7 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
   onClick,
   sets = 3,
   onSetsChange,
-  reps = '',
+  reps = '8',
   onRepsChange
 }) => {
   return (
@@ -62,9 +61,9 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
               <div className="p-1 bg-primary/10 rounded-full">
                 <Dumbbell className="h-3.5 w-3.5 text-primary" />
               </div>
-              <Label htmlFor={`sets-${exercise.id}`} className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                 تعداد ست:
-              </Label>
+              </span>
             </div>
             {onSetsChange && (
               <ExerciseSetsInput
@@ -82,16 +81,15 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
                 <div className="p-1 bg-primary/10 rounded-full">
                   <BarChart className="h-3.5 w-3.5 text-primary" />
                 </div>
-                <Label htmlFor={`reps-${exercise.id}`} className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                   تکرار هر ست:
-                </Label>
+                </span>
               </div>
-              <Input
-                id={`reps-${exercise.id}`}
-                value={reps}
-                onChange={(e) => onRepsChange(exercise.id, e.target.value)}
-                className="w-28 h-8 text-sm"
-                placeholder="12-15"
+              <ExerciseRepsInput
+                exerciseId={exercise.id}
+                reps={reps}
+                onRepsChange={onRepsChange}
+                className="w-28"
               />
             </div>
           )}
