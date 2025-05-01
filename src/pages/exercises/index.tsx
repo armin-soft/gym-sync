@@ -291,7 +291,7 @@ const ExercisesPage = () => {
                     });
                     return;
                   }
-                  setCategoryFormData({ name: "" });
+                  setCategoryFormData({ name: "", type: selectedType || "" });
                   setIsCategoryDialogOpen(true);
                 }}
                 className="bg-gradient-to-r from-purple-600 to-purple-400 hover:from-purple-700 hover:to-purple-500 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105"
@@ -319,11 +319,11 @@ const ExercisesPage = () => {
                     });
                     return;
                   }
-                  setCategoryFormData({ name: "" });
+                  setCategoryFormData({ name: "", type: selectedType || "" });
                   setIsCategoryDialogOpen(true);
                 }}
                 onEdit={(category) => {
-                  setCategoryFormData({ name: category.name });
+                  setCategoryFormData({ name: category.name, type: category.type });
                   setIsCategoryDialogOpen(true);
                 }}
                 onDelete={(category) => handleDeleteCategory(category, exercises)}
@@ -558,7 +558,7 @@ const ExercisesPage = () => {
                       });
                       return;
                     }
-                    setCategoryFormData({ name: "" });
+                    setCategoryFormData({ name: "", type: selectedType || "" });
                     setIsCategoryDialogOpen(true);
                   }}
                 >
@@ -583,7 +583,7 @@ const ExercisesPage = () => {
           isOpen={isCategoryDialogOpen}
           onOpenChange={setIsCategoryDialogOpen}
           exerciseTypes={exerciseTypes}
-          selectedType={selectedType}
+          selectedType={selectedType || (exerciseTypes.length > 0 ? exerciseTypes[0] : "")}
           formData={categoryFormData}
           onFormDataChange={setCategoryFormData}
           onTypeChange={setSelectedType}

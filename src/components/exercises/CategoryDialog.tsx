@@ -15,10 +15,10 @@ interface CategoryDialogProps {
   onOpenChange: (open: boolean) => void;
   exerciseTypes: string[];
   selectedType: string;
-  formData: { name: string };
-  onFormDataChange: (data: { name: string }) => void;
+  formData: { name: string; type?: string };
+  onFormDataChange: (data: { name: string; type: string }) => void;
   onTypeChange: (type: string) => void;
-  onSave: () => void;
+  onSave: (data?: { name: string; type: string }) => Promise<void> | void;
 }
 
 export function CategoryDialog({
@@ -34,14 +34,14 @@ export function CategoryDialog({
   // اضافه کردن قابلیت Enter
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && isOpen && formData.name.trim()) {
-        onSave();
+      if (e.key === "Enter" && isOpen && formData.name.trim() && selectedType) {
+        onSave({ name: formData.name, type: selectedType });
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, formData.name, onSave]);
+  }, [isOpen, formData.name, selectedType, onSave]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -71,7 +71,7 @@ export function CategoryDialog({
             <Label className="text-base">نام دسته بندی</Label>
             <Input
               value={formData.name}
-              onChange={(e) => onFormDataChange({ ...formData, name: e.target.value })}
+              onChange={(e) => onFormDataChange({ name: e.target.value, type: selectedType })}
               placeholder="نام دسته بندی را وارد کنید"
               className="h-11 text-base focus-visible:ring-blue-400"
               autoFocus
@@ -87,8 +87,8 @@ export function CategoryDialog({
             انصراف
           </Button>
           <Button 
-            onClick={onSave}
-            disabled={!formData.name.trim()}
+            onClick={() => onSave({ name: formData.name, type: selectedType })}
+            disabled={!formData.name.trim() || !selectedType}
             className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
           >
             ذخیره
