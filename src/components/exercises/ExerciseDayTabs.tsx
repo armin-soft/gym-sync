@@ -5,9 +5,11 @@ import TabHeader from "./day-tabs/TabHeader";
 import { Exercise } from "@/types/exercise";
 import { Button } from "@/components/ui/button";
 import { ListFilter, Eye } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TabContentWrapper from "./day-tabs/TabContentWrapper";
+import { ExerciseCountBadge } from "./day-tabs/ExerciseCountBadge";
+import { cn } from "@/lib/utils";
 
 interface ExerciseDayTabsProps {
   activeTab: string;
@@ -132,94 +134,102 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           sortOrder={sortOrder}
         />
         
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-gradient-to-r from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30 rounded-lg py-1 px-3 flex items-center gap-1"
-            >
-              <ListFilter className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
-                {getSelectedExercisesCount()} تمرین انتخاب شده
-              </span>
-            </motion.div>
-          </div>
+        <div className="flex items-center justify-between mb-4 mt-2">
+          <ExerciseCountBadge count={getSelectedExercisesCount()} />
           
           <Button
             size="sm"
             variant="outline"
-            className="flex items-center gap-1 text-xs bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30"
+            className="flex items-center gap-1.5 text-xs bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 border-indigo-200 dark:border-indigo-800 shadow-sm hover:shadow-md transition-all duration-300"
             onClick={() => setShowFullDialog(true)}
           >
-            <Eye className="w-3.5 h-3.5" />
+            <Eye className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
             نمایش تمرین‌ها
           </Button>
         </div>
       </Tabs>
       
       {/* Full Screen Dialog for better visibility */}
-      <Dialog open={showFullDialog} onOpenChange={setShowFullDialog}>
-        <DialogContent className="max-w-4xl h-[90vh] flex flex-col overflow-hidden">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-              نمایش تمرین‌های {getDayName()}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-auto p-4">
-            {/* Important: Wrapping TabContentWrapper in Tabs context */}
-            <Tabs value={activeTab}>
-              <TabContentWrapper
-                activeTab={activeTab}
-                filteredExercises={filteredExercises}
-                categories={categories}
-                viewMode={viewMode}
-                handleClearSearch={handleClearSearch}
-                selectedExercisesDay1={selectedExercisesDay1}
-                selectedExercisesDay2={selectedExercisesDay2}
-                selectedExercisesDay3={selectedExercisesDay3}
-                selectedExercisesDay4={selectedExercisesDay4}
-                toggleExerciseDay1={toggleExerciseDay1}
-                toggleExerciseDay2={toggleExerciseDay2}
-                toggleExerciseDay3={toggleExerciseDay3}
-                toggleExerciseDay4={toggleExerciseDay4}
-                exerciseSetsDay1={exerciseSetsDay1}
-                exerciseSetsDay2={exerciseSetsDay2}
-                exerciseSetsDay3={exerciseSetsDay3}
-                exerciseSetsDay4={exerciseSetsDay4}
-                handleSetsChangeDay1={handleSetsChangeDay1}
-                handleSetsChangeDay2={handleSetsChangeDay2}
-                handleSetsChangeDay3={handleSetsChangeDay3}
-                handleSetsChangeDay4={handleSetsChangeDay4}
-                exerciseRepsDay1={exerciseRepsDay1}
-                exerciseRepsDay2={exerciseRepsDay2}
-                exerciseRepsDay3={exerciseRepsDay3}
-                exerciseRepsDay4={exerciseRepsDay4}
-                handleRepsChangeDay1={handleRepsChangeDay1}
-                handleRepsChangeDay2={handleRepsChangeDay2}
-                handleRepsChangeDay3={handleRepsChangeDay3}
-                handleRepsChangeDay4={handleRepsChangeDay4}
-              />
-            </Tabs>
-          </div>
-          
-          <div className="bg-gray-50 dark:bg-gray-900 p-4 flex justify-between items-center">
-            <div>
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {getSelectedExercisesCount()} تمرین انتخاب شده
-              </span>
-            </div>
-            <Button
-              onClick={() => setShowFullDialog(false)}
-              variant="outline"
-              className="border-indigo-200 dark:border-indigo-800"
-            >
-              بستن
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AnimatePresence>
+        {showFullDialog && (
+          <Dialog open={showFullDialog} onOpenChange={setShowFullDialog}>
+            <DialogContent className="max-w-4xl h-[90vh] flex flex-col overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 p-0 pt-4">
+              <DialogHeader className="px-6 pb-2 border-b border-gray-100 dark:border-gray-800">
+                <DialogTitle className="text-center text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                  نمایش تمرین‌های {getDayName()}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="flex-1 overflow-auto px-6 py-4">
+                {/* Important: Wrapping TabContentWrapper in Tabs context */}
+                <Tabs value={activeTab}>
+                  <TabContentWrapper
+                    activeTab={activeTab}
+                    filteredExercises={filteredExercises}
+                    categories={categories}
+                    viewMode={viewMode}
+                    handleClearSearch={handleClearSearch}
+                    selectedExercisesDay1={selectedExercisesDay1}
+                    selectedExercisesDay2={selectedExercisesDay2}
+                    selectedExercisesDay3={selectedExercisesDay3}
+                    selectedExercisesDay4={selectedExercisesDay4}
+                    toggleExerciseDay1={toggleExerciseDay1}
+                    toggleExerciseDay2={toggleExerciseDay2}
+                    toggleExerciseDay3={toggleExerciseDay3}
+                    toggleExerciseDay4={toggleExerciseDay4}
+                    exerciseSetsDay1={exerciseSetsDay1}
+                    exerciseSetsDay2={exerciseSetsDay2}
+                    exerciseSetsDay3={exerciseSetsDay3}
+                    exerciseSetsDay4={exerciseSetsDay4}
+                    handleSetsChangeDay1={handleSetsChangeDay1}
+                    handleSetsChangeDay2={handleSetsChangeDay2}
+                    handleSetsChangeDay3={handleSetsChangeDay3}
+                    handleSetsChangeDay4={handleSetsChangeDay4}
+                    exerciseRepsDay1={exerciseRepsDay1}
+                    exerciseRepsDay2={exerciseRepsDay2}
+                    exerciseRepsDay3={exerciseRepsDay3}
+                    exerciseRepsDay4={exerciseRepsDay4}
+                    handleRepsChangeDay1={handleRepsChangeDay1}
+                    handleRepsChangeDay2={handleRepsChangeDay2}
+                    handleRepsChangeDay3={handleRepsChangeDay3}
+                    handleRepsChangeDay4={handleRepsChangeDay4}
+                  />
+                </Tabs>
+              </div>
+              
+              <div className="bg-gray-50 dark:bg-gray-900 p-4 flex justify-between items-center border-t border-gray-100 dark:border-gray-800">
+                <div className="flex items-center">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {getSelectedExercisesCount()} تمرین انتخاب شده
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFullDialog(false)}
+                    className="border-gray-200 dark:border-gray-800"
+                  >
+                    بستن
+                  </Button>
+                  
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => handleSaveExercises([], parseInt(activeTab.replace("day", "")))}
+                    className={cn(
+                      "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700",
+                      getSelectedExercisesCount() === 0 && "opacity-50 pointer-events-none"
+                    )}
+                  >
+                    ذخیره تمرین‌ها
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </AnimatePresence>
     </>
   );
 };

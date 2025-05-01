@@ -1,9 +1,12 @@
 
 import React from "react";
 import { TabsList } from "@/components/ui/tabs";
-import DayTabTrigger from "./DayTabTrigger";
-import ExerciseViewControls from "../ExerciseViewControls";
+import { cn } from "@/lib/utils";
+import { SortAsc, SortDesc, Grid, List } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import DayTabTrigger from "./DayTabTrigger";
 
 interface TabHeaderProps {
   activeTab: string;
@@ -18,7 +21,7 @@ interface TabHeaderProps {
   sortOrder: "asc" | "desc";
 }
 
-export const TabHeader: React.FC<TabHeaderProps> = ({
+const TabHeader: React.FC<TabHeaderProps> = ({
   activeTab,
   dayTabs,
   selectedExercisesDay1,
@@ -30,8 +33,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
   toggleSortOrder,
   sortOrder
 }) => {
-  // Helper function to get selected exercises count for a day
-  const getSelectedExercisesCount = (day: string): number => {
+  const getSelectedCount = (day: string) => {
     switch (day) {
       case "day1": return selectedExercisesDay1.length;
       case "day2": return selectedExercisesDay2.length;
@@ -41,77 +43,76 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
     }
   };
 
-  // Animation variants for the container
-  const containerVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.4, 
-        staggerChildren: 0.1,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  // Animation variants for children
-  const childVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: { 
-        type: "spring",
-        stiffness: 400,
-        damping: 20
-      }
-    }
-  };
-
   return (
-    <motion.div 
-      className="flex flex-col gap-4 mb-4"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      <motion.div 
-        className="relative z-10 mx-auto w-full max-w-xl"
-        variants={childVariants}
-      >
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 blur-md z-0"></div>
-        <TabsList className="relative flex justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg p-2 rounded-xl border border-white/10 dark:border-slate-700/30 shadow-lg shadow-primary/5 z-10 w-full">
-          {dayTabs.map((day, index) => (
-            <motion.div 
-              key={day} 
-              className="flex-1 text-center max-w-[120px]"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.08, duration: 0.4 }}
-            >
-              <DayTabTrigger
-                day={day}
-                activeTab={activeTab}
-                selectedExercisesCount={getSelectedExercisesCount(day)}
-              />
-            </motion.div>
-          ))}
-        </TabsList>
-      </motion.div>
-      
-      <motion.div
-        variants={childVariants}
-        className="flex justify-center md:justify-end"
-      >
-        <ExerciseViewControls
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          toggleSortOrder={toggleSortOrder}
-          sortOrder={sortOrder}
-        />
-      </motion.div>
-    </motion.div>
+    <div className="flex flex-col sm:flex-row gap-3 items-center justify-between mb-3 sm:mb-4">
+      <TabsList className="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm p-1 rounded-xl">
+        {dayTabs.map((day, index) => (
+          <DayTabTrigger
+            key={day}
+            value={day}
+            active={activeTab === day}
+            count={getSelectedCount(day)}
+            dayNumber={index + 1}
+          />
+        ))}
+      </TabsList>
+
+      <div className="flex gap-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className={cn(
+                  "h-9 w-9 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm",
+                )}
+                onClick={toggleSortOrder}
+              >
+                <motion.div
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: sortOrder === "asc" ? 0 : 180 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {sortOrder === "asc" ? (
+                    <SortAsc className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  ) : (
+                    <SortDesc className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  )}
+                </motion.div>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{sortOrder === "asc" ? "مرتب‌سازی صعودی" : "مرتب‌سازی نزولی"}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className={cn(
+                  "h-9 w-9 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm",
+                )}
+                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+              >
+                {viewMode === "grid" ? (
+                  <Grid className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                ) : (
+                  <List className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{viewMode === "grid" ? "نمایش لیستی" : "نمایش شبکه‌ای"}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </div>
   );
 };
 

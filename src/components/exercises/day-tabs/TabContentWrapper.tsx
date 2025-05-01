@@ -1,9 +1,9 @@
 
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { TabsContent } from "@/components/ui/tabs";
 import DayTabContent from "./DayTabContent";
-import { Exercise } from "@/types/exercise";
-import { ExerciseCategory } from "@/types/exercise";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { motion } from "framer-motion";
 
 interface TabContentWrapperProps {
   activeTab: string;
@@ -19,25 +19,25 @@ interface TabContentWrapperProps {
   toggleExerciseDay2: (id: number) => void;
   toggleExerciseDay3: (id: number) => void;
   toggleExerciseDay4: (id: number) => void;
-  exerciseSetsDay1: Record<number, number>;
-  exerciseSetsDay2: Record<number, number>;
-  exerciseSetsDay3: Record<number, number>;
-  exerciseSetsDay4: Record<number, number>;
+  exerciseSetsDay1?: Record<number, number>;
+  exerciseSetsDay2?: Record<number, number>;
+  exerciseSetsDay3?: Record<number, number>;
+  exerciseSetsDay4?: Record<number, number>;
   handleSetsChangeDay1?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay2?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay3?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay4?: (exerciseId: number, sets: number) => void;
-  exerciseRepsDay1: Record<number, string>;
-  exerciseRepsDay2: Record<number, string>;
-  exerciseRepsDay3: Record<number, string>;
-  exerciseRepsDay4: Record<number, string>;
+  exerciseRepsDay1?: Record<number, string>;
+  exerciseRepsDay2?: Record<number, string>;
+  exerciseRepsDay3?: Record<number, string>;
+  exerciseRepsDay4?: Record<number, string>;
   handleRepsChangeDay1?: (exerciseId: number, reps: string) => void;
   handleRepsChangeDay2?: (exerciseId: number, reps: string) => void;
   handleRepsChangeDay3?: (exerciseId: number, reps: string) => void;
   handleRepsChangeDay4?: (exerciseId: number, reps: string) => void;
 }
 
-export const TabContentWrapper: React.FC<TabContentWrapperProps> = ({
+const TabContentWrapper: React.FC<TabContentWrapperProps> = ({
   activeTab,
   filteredExercises,
   categories,
@@ -66,90 +66,84 @@ export const TabContentWrapper: React.FC<TabContentWrapperProps> = ({
   handleRepsChangeDay1,
   handleRepsChangeDay2,
   handleRepsChangeDay3,
-  handleRepsChangeDay4
+  handleRepsChangeDay4,
 }) => {
-  // Tab content variants for animation
-  const tabContentVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.3 }
-    },
-    exit: { 
-      opacity: 0, 
-      y: -20,
-      transition: { duration: 0.2 }
-    }
+  const containerVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
   };
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={activeTab}
-        className="flex-1 overflow-auto"
-        variants={tabContentVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="w-full overflow-hidden"
+    >
+      <TabsContent value="day1" className="mt-0 data-[state=active]:mt-0">
         <DayTabContent
-          day="day1"
+          dayNumber={1}
           filteredExercises={filteredExercises}
+          categories={categories}
           viewMode={viewMode}
+          handleClearSearch={handleClearSearch}
           selectedExercises={selectedExercisesDay1}
           toggleExercise={toggleExerciseDay1}
-          categories={categories}
-          handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay1}
-          onSetsChange={handleSetsChangeDay1}
-          repsInfo={exerciseRepsDay1}
-          onRepsChange={handleRepsChangeDay1}
+          handleSetsChange={handleSetsChangeDay1}
+          exerciseReps={exerciseRepsDay1}
+          handleRepsChange={handleRepsChangeDay1}
         />
-        
+      </TabsContent>
+
+      <TabsContent value="day2" className="mt-0 data-[state=active]:mt-0">
         <DayTabContent
-          day="day2"
+          dayNumber={2}
           filteredExercises={filteredExercises}
+          categories={categories}
           viewMode={viewMode}
+          handleClearSearch={handleClearSearch}
           selectedExercises={selectedExercisesDay2}
           toggleExercise={toggleExerciseDay2}
-          categories={categories}
-          handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay2}
-          onSetsChange={handleSetsChangeDay2}
-          repsInfo={exerciseRepsDay2}
-          onRepsChange={handleRepsChangeDay2}
+          handleSetsChange={handleSetsChangeDay2}
+          exerciseReps={exerciseRepsDay2}
+          handleRepsChange={handleRepsChangeDay2}
         />
-        
+      </TabsContent>
+
+      <TabsContent value="day3" className="mt-0 data-[state=active]:mt-0">
         <DayTabContent
-          day="day3"
+          dayNumber={3}
           filteredExercises={filteredExercises}
+          categories={categories}
           viewMode={viewMode}
+          handleClearSearch={handleClearSearch}
           selectedExercises={selectedExercisesDay3}
           toggleExercise={toggleExerciseDay3}
-          categories={categories}
-          handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay3}
-          onSetsChange={handleSetsChangeDay3}
-          repsInfo={exerciseRepsDay3}
-          onRepsChange={handleRepsChangeDay3}
+          handleSetsChange={handleSetsChangeDay3}
+          exerciseReps={exerciseRepsDay3}
+          handleRepsChange={handleRepsChangeDay3}
         />
-        
+      </TabsContent>
+
+      <TabsContent value="day4" className="mt-0 data-[state=active]:mt-0">
         <DayTabContent
-          day="day4"
+          dayNumber={4}
           filteredExercises={filteredExercises}
+          categories={categories}
           viewMode={viewMode}
+          handleClearSearch={handleClearSearch}
           selectedExercises={selectedExercisesDay4}
           toggleExercise={toggleExerciseDay4}
-          categories={categories}
-          handleClearSearch={handleClearSearch}
           exerciseSets={exerciseSetsDay4}
-          onSetsChange={handleSetsChangeDay4}
-          repsInfo={exerciseRepsDay4}
-          onRepsChange={handleRepsChangeDay4}
+          handleSetsChange={handleSetsChangeDay4}
+          exerciseReps={exerciseRepsDay4}
+          handleRepsChange={handleRepsChangeDay4}
         />
-      </motion.div>
-    </AnimatePresence>
+      </TabsContent>
+    </motion.div>
   );
 };
 
