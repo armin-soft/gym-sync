@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm border border-primary/20 hover:shadow-md",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm border border-destructive/20 hover:shadow-md",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm border border-secondary/20 hover:shadow-md",
+        default: "bg-brand-500 text-white hover:bg-brand-600 shadow-sm border border-brand-500/20 hover:shadow-md",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm border border-destructive/20 hover:shadow-md",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm border border-secondary/20 hover:shadow-md",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        gradient: "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm hover:shadow-md border border-primary/10",
+        link: "text-brand-500 underline-offset-4 hover:underline",
+        gradient: "bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white shadow-sm hover:shadow-md border border-brand-500/10",
+        success: "bg-success-500 text-white hover:bg-success-600 shadow-sm border border-success-500/20 hover:shadow-md",
+        warning: "bg-warning-500 text-white hover:bg-warning-600 shadow-sm border border-warning-500/20 hover:shadow-md",
+        info: "bg-info-500 text-white hover:bg-info-600 shadow-sm border border-info-500/20 hover:shadow-md",
       },
       size: {
         default: "h-10 px-4 py-2",

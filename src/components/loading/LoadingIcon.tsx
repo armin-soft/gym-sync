@@ -9,7 +9,7 @@ export const LoadingIcon = () => {
       <motion.div 
         animate={{ rotate: 360 }} 
         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        className="text-primary-foreground/80"
+        className="text-white/80"
       >
         <Loader2 className="h-16 w-16" strokeWidth={1.5} />
       </motion.div>
