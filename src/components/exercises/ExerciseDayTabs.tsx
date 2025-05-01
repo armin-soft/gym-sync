@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Tabs } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import TabHeader from "./day-tabs/TabHeader";
 import TabContentWrapper from "./day-tabs/TabContentWrapper";
 import { Exercise } from "@/types/exercise";
@@ -200,37 +200,40 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           </DialogHeader>
           
           <div className="flex-1 overflow-auto p-4">
-            <TabContentWrapper
-              activeTab={activeTab}
-              filteredExercises={filteredExercises}
-              categories={categories}
-              viewMode={viewMode}
-              handleClearSearch={handleClearSearch}
-              selectedExercisesDay1={selectedExercisesDay1}
-              selectedExercisesDay2={selectedExercisesDay2}
-              selectedExercisesDay3={selectedExercisesDay3}
-              selectedExercisesDay4={selectedExercisesDay4}
-              toggleExerciseDay1={toggleExerciseDay1}
-              toggleExerciseDay2={toggleExerciseDay2}
-              toggleExerciseDay3={toggleExerciseDay3}
-              toggleExerciseDay4={toggleExerciseDay4}
-              exerciseSetsDay1={exerciseSetsDay1}
-              exerciseSetsDay2={exerciseSetsDay2}
-              exerciseSetsDay3={exerciseSetsDay3}
-              exerciseSetsDay4={exerciseSetsDay4}
-              handleSetsChangeDay1={handleSetsChangeDay1}
-              handleSetsChangeDay2={handleSetsChangeDay2}
-              handleSetsChangeDay3={handleSetsChangeDay3}
-              handleSetsChangeDay4={handleSetsChangeDay4}
-              exerciseRepsDay1={exerciseRepsDay1}
-              exerciseRepsDay2={exerciseRepsDay2}
-              exerciseRepsDay3={exerciseRepsDay3}
-              exerciseRepsDay4={exerciseRepsDay4}
-              handleRepsChangeDay1={handleRepsChangeDay1}
-              handleRepsChangeDay2={handleRepsChangeDay2}
-              handleRepsChangeDay3={handleRepsChangeDay3}
-              handleRepsChangeDay4={handleRepsChangeDay4}
-            />
+            {/* Important: Wrapping TabContentWrapper in Tabs context */}
+            <Tabs value={activeTab}>
+              <TabContentWrapper
+                activeTab={activeTab}
+                filteredExercises={filteredExercises}
+                categories={categories}
+                viewMode={viewMode}
+                handleClearSearch={handleClearSearch}
+                selectedExercisesDay1={selectedExercisesDay1}
+                selectedExercisesDay2={selectedExercisesDay2}
+                selectedExercisesDay3={selectedExercisesDay3}
+                selectedExercisesDay4={selectedExercisesDay4}
+                toggleExerciseDay1={toggleExerciseDay1}
+                toggleExerciseDay2={toggleExerciseDay2}
+                toggleExerciseDay3={toggleExerciseDay3}
+                toggleExerciseDay4={toggleExerciseDay4}
+                exerciseSetsDay1={exerciseSetsDay1}
+                exerciseSetsDay2={exerciseSetsDay2}
+                exerciseSetsDay3={exerciseSetsDay3}
+                exerciseSetsDay4={exerciseSetsDay4}
+                handleSetsChangeDay1={handleSetsChangeDay1}
+                handleSetsChangeDay2={handleSetsChangeDay2}
+                handleSetsChangeDay3={handleSetsChangeDay3}
+                handleSetsChangeDay4={handleSetsChangeDay4}
+                exerciseRepsDay1={exerciseRepsDay1}
+                exerciseRepsDay2={exerciseRepsDay2}
+                exerciseRepsDay3={exerciseRepsDay3}
+                exerciseRepsDay4={exerciseRepsDay4}
+                handleRepsChangeDay1={handleRepsChangeDay1}
+                handleRepsChangeDay2={handleRepsChangeDay2}
+                handleRepsChangeDay3={handleRepsChangeDay3}
+                handleRepsChangeDay4={handleRepsChangeDay4}
+              />
+            </Tabs>
           </div>
           
           <div className="bg-gray-50 dark:bg-gray-900 p-4 flex justify-between items-center">
