@@ -55,10 +55,10 @@ self.addEventListener('activate', (event: any) => {
 // Handle messages from clients
 self.addEventListener('message', (event: any) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+    (self as any).skipWaiting();
   }
   if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
-    self.registration.update();
+    (self as any).registration.update();
   }
 });
 
