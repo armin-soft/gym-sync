@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Minus, Plus } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseSetsInputProps {
   exerciseId: number;
@@ -49,7 +50,7 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
       </Button>
       
       <div className="flex-1 flex items-center justify-center text-sm font-medium">
-        {sets}
+        {toPersianNumbers(sets)}
       </div>
       
       <Button

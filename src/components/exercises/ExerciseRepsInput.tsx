@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Minus, Plus } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseRepsInputProps {
   exerciseId: number;
@@ -42,6 +43,15 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
     }
   };
 
+  // تبدیل اعداد به فارسی برای نمایش
+  const displayReps = () => {
+    if (reps.includes('-')) {
+      const [min, max] = reps.split('-');
+      return `${toPersianNumbers(max)}-${toPersianNumbers(min)}`;
+    }
+    return toPersianNumbers(reps);
+  };
+
   return (
     <div
       className={cn(
@@ -62,7 +72,7 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
       </Button>
       
       <div className="flex-1 flex items-center justify-center text-sm font-medium">
-        {reps}
+        {displayReps()}
       </div>
       
       <Button

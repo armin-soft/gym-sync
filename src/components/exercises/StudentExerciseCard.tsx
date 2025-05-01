@@ -7,6 +7,7 @@ import { ExerciseRepsInput } from "./ExerciseRepsInput";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Dumbbell, BarChart } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentExerciseCardProps {
   exercise: Exercise;
