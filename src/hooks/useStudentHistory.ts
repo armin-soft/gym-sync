@@ -1,10 +1,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Student } from '@/components/students/StudentTypes';
-import { StudentHistoryEntry } from '@/components/students/StudentHistory';
+
+// Define and export the HistoryEntry type
+export interface HistoryEntry {
+  id: number;
+  studentId: number;
+  date: string;
+  action: 'edit' | 'exercise' | 'diet' | 'supplement';
+  details: string;
+}
 
 export const useStudentHistory = () => {
-  const [historyEntries, setHistoryEntries] = useState<StudentHistoryEntry[]>([]);
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
 
   // Load history entries from localStorage
   useEffect(() => {
@@ -34,7 +42,7 @@ export const useStudentHistory = () => {
     action: 'edit' | 'exercise' | 'diet' | 'supplement',
     details: string
   ) => {
-    const newEntry: StudentHistoryEntry = {
+    const newEntry: HistoryEntry = {
       id: Date.now(),
       studentId: student.id,
       date: new Date().toISOString(),
