@@ -47,7 +47,7 @@ export const StudentsList: React.FC<StudentsListProps> = ({
   }
 
   return (
-    <div className="pr-2 overflow-auto h-full">
+    <div className="w-full h-full overflow-auto">
       <motion.div 
         key={viewMode}
         initial={{ opacity: 0 }}
@@ -74,7 +74,7 @@ export const StudentsList: React.FC<StudentsListProps> = ({
         ) : (
           <StudentTable 
             students={students}
-            sortedAndFilteredStudents={students} // Pass the same array for both props
+            sortedAndFilteredStudents={students}
             searchQuery={searchQuery}
             refreshTrigger={refreshTrigger}
             onEdit={onEdit}

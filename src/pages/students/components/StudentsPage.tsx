@@ -161,18 +161,20 @@ const StudentsPage = () => {
         
         <StudentStatsCards students={students} />
         
-        <StudentTabs 
-          students={students}
-          historyEntries={historyEntries}
-          refreshTrigger={refreshTrigger}
-          onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
-          onDelete={handleDeleteWithHistory}
-          onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
-          onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
-          onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
-          onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
-          onAddStudent={() => dialogManagerRef.current?.handleAdd()}
-        />
+        <div className="flex-1 overflow-hidden flex flex-col mt-4 md:mt-6">
+          <StudentTabs 
+            students={students}
+            historyEntries={historyEntries}
+            refreshTrigger={refreshTrigger}
+            onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
+            onDelete={handleDeleteWithHistory}
+            onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
+            onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
+            onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
+            onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
+            onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+          />
+        </div>
 
         <StudentDialogManager
           ref={dialogManagerRef}

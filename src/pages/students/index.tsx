@@ -4,7 +4,7 @@ import StudentsPage from './components/StudentsPage';
 
 const Students = () => {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full overflow-hidden">
       <StudentsPage />
     </div>
   );
