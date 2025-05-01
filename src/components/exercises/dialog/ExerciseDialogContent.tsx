@@ -96,38 +96,26 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={activeTab}
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0.5, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 15 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 30, 
-          duration: 0.3 
-        }}
-        className="flex flex-col flex-1 overflow-hidden px-1 pt-1 pb-0"
+        exit={{ opacity: 0.5, y: 10 }}
+        transition={{ duration: 0.2 }}
+        className="flex flex-col flex-1 overflow-hidden"
       >
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-        >
-          <ExerciseSearchFilters
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            selectedExerciseType={selectedExerciseType}
-            setSelectedExerciseType={setSelectedExerciseType}
-            selectedCategoryId={selectedCategoryId}
-            setSelectedCategoryId={setSelectedCategoryId}
-            exerciseTypes={exerciseTypes}
-            categories={categories}
-            filteredCategories={filteredCategories}
-            handleClearSearch={handleClearSearch}
-            toggleSortOrder={toggleSortOrder}
-            sortOrder={sortOrder}
-          />
-        </motion.div>
+        <ExerciseSearchFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedExerciseType={selectedExerciseType}
+          setSelectedExerciseType={setSelectedExerciseType}
+          selectedCategoryId={selectedCategoryId}
+          setSelectedCategoryId={setSelectedCategoryId}
+          exerciseTypes={exerciseTypes}
+          categories={categories}
+          filteredCategories={filteredCategories}
+          handleClearSearch={handleClearSearch}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+        />
 
         <ExerciseDayTabs 
           activeTab={activeTab}
