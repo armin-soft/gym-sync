@@ -25,6 +25,12 @@ export const useExerciseFiltering = (
     }
   }, [isMobile]);
 
+  // Reset category selection when exercise type changes
+  useEffect(() => {
+    // Reset category selection when exercise type changes
+    setSelectedCategoryId(null);
+  }, [selectedExerciseType]);
+
   // Get filtered categories based on exercise type
   const filteredCategories = useMemo(() => {
     const filtered = categories.filter(category => 
@@ -45,9 +51,22 @@ export const useExerciseFiltering = (
     }
   }, [selectedExerciseType, filteredCategories, selectedCategoryId]);
 
-  // Filter and sort exercises
+  // Filter and sort exercises based on selected type and category
   const filteredExercises = useMemo(() => {
     console.log("Filtering and sorting exercises");
+    
+    // If no exercise type is selected, return empty array
+    if (!selectedExerciseType) {
+      console.log("No exercise type selected, returning empty array");
+      return [];
+    }
+
+    // If no category is selected despite having a selected type, return empty array
+    if (filteredCategories.length > 0 && !selectedCategoryId) {
+      console.log("Exercise type selected but no category selected, returning empty array");
+      return [];
+    }
+
     const filtered = exercises
       .filter((exercise) => {
         const matchesSearch = !searchQuery || 
@@ -70,7 +89,7 @@ export const useExerciseFiltering = (
     
     console.log("Filtered exercises result:", filtered);
     return filtered;
-  }, [exercises, searchQuery, selectedCategoryId, sortOrder]);
+  }, [exercises, searchQuery, selectedCategoryId, selectedExerciseType, filteredCategories, sortOrder]);
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
