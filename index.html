@@ -3,11 +3,9 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="./Assets/Image/Logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران" />
     <meta name="theme-color" content="#7c3aed" />
-    <link rel="manifest" href="./Assets/Manifest.json" />
     <title>مدیریت برنامه</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,100 +13,12 @@
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap"
       rel="stylesheet"
     />
-    <!-- Favicon settings -->
-    <link rel="apple-touch-icon" href="./Assets/Image/Logo.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </head>
   <body>
     <div id="root"></div>
-    <!-- Service Worker registration -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('./Assets/Service-Worker.js')
-            .then(function(registration) {
-              // Registration was successful
-              console.log('ServiceWorker registration successful with scope: ', registration.scope);
-              
-              // Check for updates when the page loads
-              navigator.serviceWorker.ready.then(registration => {
-                registration.update();
-              });
-              
-              // When a new service worker is waiting to be activated
-              if (registration.waiting) {
-                console.log('New version available! Ready to update.');
-                // Notify the user about update
-                showUpdateNotification();
-              }
-              
-              // When a new service worker is detected
-              registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    console.log('New version installed! Ready to update.');
-                    showUpdateNotification();
-                  }
-                });
-              });
-            }).catch(function(err) {
-              // registration failed :(
-              console.log('ServiceWorker registration failed: ', err);
-            });
-            
-          // Listen for controller change events
-          let refreshing = false;
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (refreshing) return;
-            refreshing = true;
-            console.log('Controller changed, refreshing page...');
-            window.location.reload();
-          });
-        });
-        
-        // Check for updates every hour
-        setInterval(() => {
-          if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-              type: 'CHECK_FOR_UPDATES'
-            });
-          }
-        }, 60 * 60 * 1000); // 1 hour
-        
-        // Function to show update notification
-        function showUpdateNotification() {
-          // Simple notification implementation
-          if (typeof window.showToast === 'function') {
-            window.showToast({
-              title: 'بروزرسانی جدید',
-              description: 'نسخه جدید برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.',
-              action: {
-                label: 'بروزرسانی',
-                onClick: () => {
-                  if (navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.controller.postMessage({
-                      type: 'SKIP_WAITING'
-                    });
-                  }
-                }
-              }
-            });
-          } else {
-            if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
-              if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage({
-                  type: 'SKIP_WAITING'
-                });
-              }
-            }
-          }
-        }
-      }
-    </script>
     <!-- Lovable required script -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <!-- Main app entry -->
