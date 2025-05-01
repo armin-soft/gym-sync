@@ -10,7 +10,7 @@ const ResponsiveExerciseDialog = (props) => {
     <ExerciseDialogMain 
       {...props} 
       deviceInfo={deviceInfo} 
-      fullScreen={deviceInfo.isMobile || deviceInfo.isTablet}
+      fullScreen={true} // Always use fullscreen mode
     />
   );
 };
