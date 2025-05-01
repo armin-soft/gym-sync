@@ -3,6 +3,7 @@ import React from "react";
 import { TabsList } from "@/components/ui/tabs";
 import DayTabTrigger from "./DayTabTrigger";
 import ExerciseViewControls from "../ExerciseViewControls";
+import { motion } from "framer-motion";
 
 interface TabHeaderProps {
   activeTab: string;
@@ -40,26 +41,50 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
     }
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-      <TabsList className="flex bg-muted/60 p-1 rounded-xl">
-        {dayTabs.map((day) => (
-          <DayTabTrigger
-            key={day}
-            day={day}
-            activeTab={activeTab}
-            selectedExercisesCount={getSelectedExercisesCount(day)}
-          />
-        ))}
-      </TabsList>
+    <motion.div 
+      className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={item}>
+        <TabsList className="flex bg-muted/30 dark:bg-muted/10 p-1 rounded-xl shadow-sm backdrop-blur-sm border border-gray-200/40 dark:border-gray-800/40">
+          {dayTabs.map((day) => (
+            <DayTabTrigger
+              key={day}
+              day={day}
+              activeTab={activeTab}
+              selectedExercisesCount={getSelectedExercisesCount(day)}
+            />
+          ))}
+        </TabsList>
+      </motion.div>
       
-      <ExerciseViewControls
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        toggleSortOrder={toggleSortOrder}
-        sortOrder={sortOrder}
-      />
-    </div>
+      <motion.div variants={item}>
+        <ExerciseViewControls
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+        />
+      </motion.div>
+    </motion.div>
   );
 };
 

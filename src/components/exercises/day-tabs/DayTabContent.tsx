@@ -4,6 +4,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import { ExerciseTabContent } from "../ExerciseTabContent";
 import { Exercise } from "@/types/exercise";
 import { ExerciseCategory } from "@/types/exercise";
+import { motion } from "framer-motion";
 
 interface DayTabContentProps {
   day: string;
@@ -37,18 +38,25 @@ export const DayTabContent: React.FC<DayTabContentProps> = ({
       value={day}
       className="flex-1 overflow-auto mt-0 p-0 border-none data-[state=active]:h-full"
     >
-      <ExerciseTabContent
-        filteredExercises={filteredExercises}
-        viewMode={viewMode}
-        selectedExercises={selectedExercises}
-        toggleExercise={toggleExercise}
-        categories={categories}
-        handleClearSearch={handleClearSearch}
-        exerciseSets={exerciseSets}
-        onSetsChange={onSetsChange}
-        repsInfo={repsInfo}
-        onRepsChange={onRepsChange}
-      />
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="h-full"
+      >
+        <ExerciseTabContent
+          filteredExercises={filteredExercises}
+          viewMode={viewMode}
+          selectedExercises={selectedExercises}
+          toggleExercise={toggleExercise}
+          categories={categories}
+          handleClearSearch={handleClearSearch}
+          exerciseSets={exerciseSets}
+          onSetsChange={onSetsChange}
+          repsInfo={repsInfo}
+          onRepsChange={onRepsChange}
+        />
+      </motion.div>
     </TabsContent>
   );
 };
