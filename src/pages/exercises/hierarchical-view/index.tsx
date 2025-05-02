@@ -1,23 +1,14 @@
 
-import React, { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
+import React, { useState } from "react";
+import { HierarchicalViewContainer } from "./components/HierarchicalViewContainer";
+import { TypeDialogManager } from "./components/dialogs/TypeDialogManager";
+import { CategoryDialogManager } from "./components/dialogs/CategoryDialogManager";
+import { DeleteTypeConfirmation } from "./components/dialogs/DeleteTypeConfirmation";
 import { useHierarchicalView } from "./hooks/useHierarchicalView";
-import { ContentStages } from "./components/ContentStages";
-import TypeSelectionStage from "./components/TypeSelectionStage";
-import CategoriesStage from "./components/CategoriesStage";
-import ExercisesStage from "./components/ExercisesStage";
-import { TypeDialog } from "@/components/exercises/TypeDialog";
-import { CategoryDialog } from "@/components/exercises/CategoryDialog";
-import { useToast } from "@/hooks/use-toast";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
-import { useQueryClient } from "@tanstack/react-query";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
-import { PageContainer } from "@/components/ui/page-container";
-import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { ExerciseCategory } from "@/types/exercise";
 
 const HierarchicalExercisesView = () => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const { 
     currentStage, 
     selectedTypeId, 
@@ -34,8 +25,6 @@ const HierarchicalExercisesView = () => {
   // State for dialog management
   const [isTypeDialogOpen, setIsTypeDialogOpen] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
-  const [newTypeName, setNewTypeName] = useState("");
-  const [categoryFormData, setCategoryFormData] = useState({ name: "", type: "" });
   const [editingType, setEditingType] = useState<string | null>(null);
   const [editingCategory, setEditingCategory] = useState<ExerciseCategory | null>(null);
   const [typeToDelete, setTypeToDelete] = useState<string | null>(null);
@@ -48,312 +37,89 @@ const HierarchicalExercisesView = () => {
   // Handle add button click based on the current stage
   const handleAddClick = () => {
     if (currentStage === 'types') {
-      setNewTypeName("");
       setEditingType(null);
       setIsTypeDialogOpen(true);
     } else if (currentStage === 'categories' && selectedTypeId) {
-      setCategoryFormData({ name: "", type: selectedTypeId });
       setEditingCategory(null);
       setIsCategoryDialogOpen(true);
-    } else {
-      // Exercise stage will be handled within the component
-    }
-  };
-  
-  // Handle save type
-  const handleSaveType = async () => {
-    if (!newTypeName.trim()) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "لطفاً نام نوع تمرین را وارد کنید"
-      });
-      return;
-    }
-    
-    try {
-      let updatedTypes;
-      const existingTypes = exerciseTypes || [];
-      
-      if (editingType) {
-        // Check for duplicate names except the editing one
-        if (existingTypes.some(t => t !== editingType && t.toLowerCase() === newTypeName.toLowerCase())) {
-          toast({
-            variant: "destructive",
-            title: "خطا",
-            description: "این نوع تمرین قبلاً اضافه شده است"
-          });
-          return;
-        }
-        
-        updatedTypes = existingTypes.map(t => t === editingType ? newTypeName : t);
-        
-        toast({
-          title: "موفقیت",
-          description: "نوع تمرین با موفقیت ویرایش شد"
-        });
-      } else {
-        // Check for duplicate names
-        if (existingTypes.some(t => t.toLowerCase() === newTypeName.toLowerCase())) {
-          toast({
-            variant: "destructive",
-            title: "خطا",
-            description: "این نوع تمرین قبلاً اضافه شده است"
-          });
-          return;
-        }
-        
-        updatedTypes = [...existingTypes, newTypeName];
-        
-        toast({
-          title: "موفقیت",
-          description: "نوع تمرین جدید با موفقیت اضافه شد"
-        });
-      }
-      
-      localStorage.setItem("exerciseTypes", JSON.stringify(updatedTypes));
-      queryClient.setQueryData(["exerciseTypes"], updatedTypes);
-      
-      setIsTypeDialogOpen(false);
-      setNewTypeName("");
-      setEditingType(null);
-    } catch (error) {
-      console.error("Error saving exercise type:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره‌سازی نوع تمرین"
-      });
-    }
-  };
-  
-  // Handle delete type
-  const handleDeleteType = (type: string) => {
-    setTypeToDelete(type);
-    setIsDeleteTypeDialogOpen(true);
-  };
-  
-  // Confirm delete type
-  const confirmDeleteType = async () => {
-    if (!typeToDelete) return;
-    
-    try {
-      // Check if type is used in any category
-      const typeInUse = categories.some(c => c.type === typeToDelete);
-      if (typeInUse) {
-        toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "این نوع تمرین در دسته‌بندی‌ها استفاده شده است و قابل حذف نیست"
-        });
-        return;
-      }
-      
-      const updatedTypes = exerciseTypes.filter(t => t !== typeToDelete);
-      
-      localStorage.setItem("exerciseTypes", JSON.stringify(updatedTypes));
-      queryClient.setQueryData(["exerciseTypes"], updatedTypes);
-      
-      toast({
-        title: "موفقیت",
-        description: "نوع تمرین با موفقیت حذف شد"
-      });
-      
-      // If the deleted type was selected, go back to types list
-      if (selectedTypeId === typeToDelete) {
-        handleBackToTypes();
-      }
-    } catch (error) {
-      console.error("Error deleting exercise type:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در حذف نوع تمرین"
-      });
-    } finally {
-      setIsDeleteTypeDialogOpen(false);
-      setTypeToDelete(null);
-    }
-  };
-  
-  // Handle save category
-  const handleSaveCategory = async (data?: { name: string; type: string }) => {
-    try {
-      const formData = data || categoryFormData;
-      
-      if (!formData.name.trim() || !formData.type) {
-        toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "لطفاً نام دسته‌بندی و نوع تمرین را وارد کنید"
-        });
-        return;
-      }
-      
-      let updatedCategories;
-      const existingCategories = categories || [];
-      
-      if (editingCategory) {
-        // Check for duplicate names except the editing one
-        if (existingCategories.some(c => 
-          c.id !== editingCategory.id && 
-          c.name.toLowerCase() === formData.name.toLowerCase() && 
-          c.type === formData.type
-        )) {
-          toast({
-            variant: "destructive",
-            title: "خطا",
-            description: "این دسته‌بندی قبلاً برای این نوع تمرین اضافه شده است"
-          });
-          return;
-        }
-        
-        updatedCategories = existingCategories.map(c => 
-          c.id === editingCategory.id 
-            ? { ...c, name: formData.name, type: formData.type } 
-            : c
-        );
-        
-        toast({
-          title: "موفقیت",
-          description: "دسته‌بندی با موفقیت ویرایش شد"
-        });
-      } else {
-        // Check for duplicate names
-        if (existingCategories.some(c => 
-          c.name.toLowerCase() === formData.name.toLowerCase() && 
-          c.type === formData.type
-        )) {
-          toast({
-            variant: "destructive",
-            title: "خطا",
-            description: "این دسته‌بندی قبلاً برای این نوع تمرین اضافه شده است"
-          });
-          return;
-        }
-        
-        const newCategoryId = Date.now(); // Use timestamp as ID
-        const newCategory: ExerciseCategory = {
-          id: newCategoryId,
-          name: formData.name,
-          type: formData.type
-        };
-        
-        updatedCategories = [...existingCategories, newCategory];
-        
-        toast({
-          title: "موفقیت",
-          description: "دسته‌بندی جدید با موفقیت اضافه شد"
-        });
-      }
-      
-      localStorage.setItem("exerciseCategories", JSON.stringify(updatedCategories));
-      queryClient.setQueryData(["exerciseCategories"], updatedCategories);
-      
-      setIsCategoryDialogOpen(false);
-      setCategoryFormData({ name: "", type: "" });
-      setEditingCategory(null);
-    } catch (error) {
-      console.error("Error saving category:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره‌سازی دسته‌بندی"
-      });
     }
   };
   
   // Function to handle editing a type
   const handleEditType = (type: string) => {
-    setNewTypeName(type);
     setEditingType(type);
     setIsTypeDialogOpen(true);
   };
   
+  // Function to handle deleting a type
+  const handleDeleteType = (type: string) => {
+    setTypeToDelete(type);
+    setIsDeleteTypeDialogOpen(true);
+  };
+  
   // Function to handle editing a category
   const handleEditCategory = (category: ExerciseCategory) => {
-    setCategoryFormData({ name: category.name, type: category.type });
     setEditingCategory(category);
     setIsCategoryDialogOpen(true);
   };
+
+  // Function to handle completion of type operations
+  const handleTypeOperationComplete = () => {
+    setEditingType(null);
+    setTypeToDelete(null);
+    // If the deleted type was selected, go back to types list
+    if (typeToDelete === selectedTypeId) {
+      handleBackToTypes();
+    }
+  };
+  
+  // Function to handle completion of category operations
+  const handleCategoryOperationComplete = () => {
+    setEditingCategory(null);
+  };
   
   return (
-    <PageContainer fullWidth>
-      <div className="h-full flex flex-col p-4 md:p-6">
-        {/* Content stages display */}
-        <ContentStages 
-          currentStage={currentStage} 
-          selectedTypeName={selectedTypeName} 
-          selectedCategoryName={selectedCategory?.name} 
-          onAddClick={handleAddClick}
-        />
-        
-        <Card className="flex-1 overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
-          <div className="h-full p-4 md:p-6 overflow-y-auto">
-            {/* Render the appropriate stage based on the current state */}
-            {currentStage === 'types' && (
-              <TypeSelectionStage 
-                onTypeSelect={handleTypeSelect} 
-                onEditType={handleEditType}
-                onDeleteType={handleDeleteType}
-              />
-            )}
-            
-            {currentStage === 'categories' && selectedTypeId && (
-              <CategoriesStage 
-                typeId={selectedTypeId} 
-                onCategorySelect={handleCategorySelect} 
-                onBack={handleBackToTypes} 
-                onEditCategory={handleEditCategory}
-              />
-            )}
-            
-            {currentStage === 'exercises' && selectedTypeId && selectedCategoryId && (
-              <ExercisesStage 
-                typeId={selectedTypeId} 
-                categoryId={selectedCategoryId} 
-                onBack={handleBackToCategories} 
-                onExerciseSelect={handleExerciseSelect} 
-              />
-            )}
-          </div>
-        </Card>
-        
-        {/* Type Dialog */}
-        <TypeDialog
-          isOpen={isTypeDialogOpen}
-          onOpenChange={setIsTypeDialogOpen}
-          typeName={newTypeName}
-          onTypeNameChange={setNewTypeName}
-          onSave={handleSaveType}
-          isEditing={!!editingType}
-        />
-        
-        {/* Category Dialog */}
-        <CategoryDialog
-          isOpen={isCategoryDialogOpen}
-          onOpenChange={setIsCategoryDialogOpen}
-          exerciseTypes={exerciseTypes}
-          selectedType={categoryFormData.type || (selectedTypeId || exerciseTypes[0] || "")}
-          formData={categoryFormData}
-          onFormDataChange={setCategoryFormData}
-          onTypeChange={(type) => setCategoryFormData(prev => ({ ...prev, type }))}
-          onSave={handleSaveCategory}
-        />
-
-        {/* Delete Type Confirmation Dialog */}
-        <ConfirmationDialog
-          isOpen={isDeleteTypeDialogOpen}
-          onClose={() => setIsDeleteTypeDialogOpen(false)}
-          onConfirm={confirmDeleteType}
-          title="حذف نوع تمرین"
-          description={`آیا مطمئن هستید که می‌خواهید نوع تمرین «${typeToDelete}» را حذف کنید؟ این عمل قابل بازگشت نیست.`}
-          confirmText="حذف"
-          cancelText="انصراف"
-          variant="destructive"
-        />
-      </div>
-    </PageContainer>
+    <>
+      <HierarchicalViewContainer 
+        currentStage={currentStage}
+        selectedTypeName={selectedTypeName}
+        selectedCategoryName={selectedCategory?.name}
+        selectedTypeId={selectedTypeId}
+        selectedCategoryId={selectedCategoryId}
+        handleTypeSelect={handleTypeSelect}
+        handleCategorySelect={handleCategorySelect}
+        handleBackToTypes={handleBackToTypes}
+        handleBackToCategories={handleBackToCategories}
+        handleExerciseSelect={handleExerciseSelect}
+        handleAddClick={handleAddClick}
+        handleEditType={handleEditType}
+        handleDeleteType={handleDeleteType}
+        handleEditCategory={handleEditCategory}
+      />
+      
+      {/* Dialog components */}
+      <TypeDialogManager
+        isOpen={isTypeDialogOpen}
+        onOpenChange={setIsTypeDialogOpen}
+        editingType={editingType}
+        onComplete={handleTypeOperationComplete}
+      />
+      
+      <CategoryDialogManager
+        isOpen={isCategoryDialogOpen}
+        onOpenChange={setIsCategoryDialogOpen}
+        editingCategory={editingCategory}
+        selectedTypeId={selectedTypeId}
+        onComplete={handleCategoryOperationComplete}
+      />
+      
+      <DeleteTypeConfirmation
+        isOpen={isDeleteTypeDialogOpen}
+        onOpenChange={setIsDeleteTypeDialogOpen}
+        typeToDelete={typeToDelete}
+        onComplete={handleTypeOperationComplete}
+      />
+    </>
   );
 };
 
