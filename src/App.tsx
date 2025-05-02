@@ -31,10 +31,10 @@ function App() {
         toast({
           title: options.title,
           description: options.description,
-          action: options.action ? React.createElement(
-            ToastAction,
-            { altText: options.action.label, onClick: options.action.onClick },
-            options.action.label
+          action: options.action ? (
+            <ToastAction altText={options.action.label} onClick={options.action.onClick}>
+              {options.action.label}
+            </ToastAction>
           ) : undefined,
         });
       }
