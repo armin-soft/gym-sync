@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dumbbell, Plus, Grid3X3, ListOrdered, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -202,14 +201,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
         </div>
         
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            onClick={handleAddExercise}
-            className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
-          >
-            <Plus className="h-4 w-4 ml-2" />
-            افزودن حرکت
-          </Button>
+          {/* Removed the Add Exercise button as requested */}
           
           <Tabs
             value={viewMode}
