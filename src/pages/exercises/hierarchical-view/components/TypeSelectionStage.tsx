@@ -1,24 +1,53 @@
 
 import React, { useState, useEffect } from "react";
-import { Search, Dumbbell } from "lucide-react";
+import { Search, Dumbbell, Edit, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useExerciseTypes } from "@/hooks/useExerciseTypes";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 interface TypeSelectionStageProps {
   onTypeSelect: (typeId: string) => void;
-  onEditType?: (type: string) => void; // Added the missing prop
+  onEditType?: (type: string) => void;
+  onDeleteType?: (type: string) => void;
 }
 
-export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({ onTypeSelect, onEditType }) => {
+export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({ 
+  onTypeSelect, 
+  onEditType,
+  onDeleteType 
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { exerciseTypes, isLoading } = useExerciseTypes();
+  const [typeToDelete, setTypeToDelete] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   const filteredTypes = exerciseTypes.filter(type => 
     !searchTerm || type.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDeleteClick = (type: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the card click
+    setTypeToDelete(type);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (typeToDelete && onDeleteType) {
+      onDeleteType(typeToDelete);
+    }
+    setIsDeleteDialogOpen(false);
+    setTypeToDelete(null);
+  };
+
+  const handleEditClick = (type: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the card click
+    if (onEditType) {
+      onEditType(type);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -75,7 +104,7 @@ export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({ onTypeSe
                 className="h-full"
               >
                 <Card
-                  className="h-full cursor-pointer bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                  className="h-full cursor-pointer bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 hover:shadow-xl transition-all duration-300 overflow-hidden group relative"
                   onClick={() => onTypeSelect(type)}
                 >
                   <div className="h-full flex flex-col">
@@ -91,6 +120,32 @@ export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({ onTypeSe
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Action buttons */}
+                  {(onEditType || onDeleteType) && (
+                    <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {onEditType && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 bg-white/80 hover:bg-white text-indigo-600 hover:text-indigo-800 rounded-full shadow-sm"
+                          onClick={(e) => handleEditClick(type, e)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {onDeleteType && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 bg-white/80 hover:bg-red-50 text-red-500 hover:text-red-700 rounded-full shadow-sm"
+                          onClick={(e) => handleDeleteClick(type, e)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </Card>
               </motion.div>
             ))
@@ -114,6 +169,18 @@ export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({ onTypeSe
           )}
         </motion.div>
       </div>
+      
+      {/* Delete confirmation dialog */}
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="حذف نوع تمرین"
+        description={`آیا مطمئن هستید که می‌خواهید نوع تمرین «${typeToDelete}» را حذف کنید؟ این عمل قابل بازگشت نیست.`}
+        confirmText="حذف"
+        cancelText="انصراف"
+        variant="destructive"
+      />
     </motion.div>
   );
 };

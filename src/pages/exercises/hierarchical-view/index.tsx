@@ -13,6 +13,7 @@ import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 import { useQueryClient } from "@tanstack/react-query";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { PageContainer } from "@/components/ui/page-container";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 const HierarchicalExercisesView = () => {
   const { toast } = useToast();
@@ -37,6 +38,8 @@ const HierarchicalExercisesView = () => {
   const [categoryFormData, setCategoryFormData] = useState({ name: "", type: "" });
   const [editingType, setEditingType] = useState<string | null>(null);
   const [editingCategory, setEditingCategory] = useState<ExerciseCategory | null>(null);
+  const [typeToDelete, setTypeToDelete] = useState<string | null>(null);
+  const [isDeleteTypeDialogOpen, setIsDeleteTypeDialogOpen] = useState(false);
 
   // Selected type and category data
   const selectedTypeName = selectedTypeId ? selectedTypeId : undefined;
@@ -121,6 +124,55 @@ const HierarchicalExercisesView = () => {
         title: "خطا",
         description: "خطا در ذخیره‌سازی نوع تمرین"
       });
+    }
+  };
+  
+  // Handle delete type
+  const handleDeleteType = (type: string) => {
+    setTypeToDelete(type);
+    setIsDeleteTypeDialogOpen(true);
+  };
+  
+  // Confirm delete type
+  const confirmDeleteType = async () => {
+    if (!typeToDelete) return;
+    
+    try {
+      // Check if type is used in any category
+      const typeInUse = categories.some(c => c.type === typeToDelete);
+      if (typeInUse) {
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "این نوع تمرین در دسته‌بندی‌ها استفاده شده است و قابل حذف نیست"
+        });
+        return;
+      }
+      
+      const updatedTypes = exerciseTypes.filter(t => t !== typeToDelete);
+      
+      localStorage.setItem("exerciseTypes", JSON.stringify(updatedTypes));
+      queryClient.setQueryData(["exerciseTypes"], updatedTypes);
+      
+      toast({
+        title: "موفقیت",
+        description: "نوع تمرین با موفقیت حذف شد"
+      });
+      
+      // If the deleted type was selected, go back to types list
+      if (selectedTypeId === typeToDelete) {
+        handleBackToTypes();
+      }
+    } catch (error) {
+      console.error("Error deleting exercise type:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در حذف نوع تمرین"
+      });
+    } finally {
+      setIsDeleteTypeDialogOpen(false);
+      setTypeToDelete(null);
     }
   };
   
@@ -242,7 +294,8 @@ const HierarchicalExercisesView = () => {
             {currentStage === 'types' && (
               <TypeSelectionStage 
                 onTypeSelect={handleTypeSelect} 
-                onEditType={handleEditType} 
+                onEditType={handleEditType}
+                onDeleteType={handleDeleteType}
               />
             )}
             
@@ -286,6 +339,18 @@ const HierarchicalExercisesView = () => {
           onFormDataChange={setCategoryFormData}
           onTypeChange={(type) => setCategoryFormData(prev => ({ ...prev, type }))}
           onSave={handleSaveCategory}
+        />
+
+        {/* Delete Type Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={isDeleteTypeDialogOpen}
+          onClose={() => setIsDeleteTypeDialogOpen(false)}
+          onConfirm={confirmDeleteType}
+          title="حذف نوع تمرین"
+          description={`آیا مطمئن هستید که می‌خواهید نوع تمرین «${typeToDelete}» را حذف کنید؟ این عمل قابل بازگشت نیست.`}
+          confirmText="حذف"
+          cancelText="انصراف"
+          variant="destructive"
         />
       </div>
     </PageContainer>
