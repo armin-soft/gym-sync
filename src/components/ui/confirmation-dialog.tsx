@@ -90,10 +90,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           </Button>
           <Button
             className={`flex-1 ${buttonClass}`}
-            onClick={() => {
-              onConfirm();
-              onClose();
-            }}
+            onClick={onConfirm}
           >
             <Check className="ml-2 h-4 w-4" />
             {confirmText}

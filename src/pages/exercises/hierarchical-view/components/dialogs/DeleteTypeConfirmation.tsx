@@ -35,6 +35,7 @@ export const DeleteTypeConfirmation: React.FC<DeleteTypeConfirmationProps> = ({
           title: "خطا",
           description: "این نوع تمرین در دسته‌بندی‌ها استفاده شده است و قابل حذف نیست"
         });
+        onOpenChange(false);
         return;
       }
       
@@ -57,6 +58,7 @@ export const DeleteTypeConfirmation: React.FC<DeleteTypeConfirmationProps> = ({
         title: "خطا",
         description: "خطا در حذف نوع تمرین"
       });
+      onOpenChange(false);
     }
   };
 
