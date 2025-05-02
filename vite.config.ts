@@ -19,5 +19,29 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: 'dist',
+    rollupOptions: {
+      output: {
+        entryFileNames: 'public/Assets/Script/[name].js',
+        chunkFileNames: 'public/Assets/Script/[name].js',
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.');
+          const extType = info[info.length - 1];
+          
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+            return 'public/Assets/Image/[name][extname]';
+          }
+          
+          if (/css/i.test(extType)) {
+            return 'public/Assets/Style/[name][extname]';
+          }
+          
+          if (/manifest\.json/i.test(assetInfo.name)) {
+            return 'public/Assets/[name][extname]';
+          }
+          
+          return 'public/Assets/[name][extname]';
+        },
+      },
+    },
   },
 }));
