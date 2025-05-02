@@ -19,7 +19,6 @@ import { useEffect } from "react";
 const queryClient = new QueryClient();
 
 function App() {
-  // Service worker is now registered in index.html
   useEffect(() => {
     // Register toast function globally for service worker updates
     (window as any).showToast = (options: any) => {

@@ -29,14 +29,14 @@ const copyFilesPlugin = () => {
         fs.unlinkSync('dist/Assets/Script/Service-Worker.js');
       }
 
-      // Copy Logo.ico and Logo.png to Assets/Image if they exist
+      // Copy Logo.ico to Assets/Image if it exists
       if (fs.existsSync('src/Logo.ico')) {
         fs.copyFileSync('src/Logo.ico', 'dist/Assets/Image/Logo.ico');
       }
       
-      // Ensure Logo.png is in the right place
-      if (fs.existsSync('public/Assets/Image/Logo.png')) {
-        fs.copyFileSync('public/Assets/Image/Logo.png', 'dist/Assets/Image/Logo.png');
+      // Create Logo.png in Assets/Image from src if it exists
+      if (fs.existsSync('src/Logo.png')) {
+        fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
       }
     },
   };
@@ -49,6 +49,9 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  server: {
+    port: 8080
   },
   build: {
     outDir: 'dist',
