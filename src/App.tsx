@@ -15,6 +15,8 @@ import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import React from "react";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
@@ -29,7 +31,11 @@ function App() {
         toast({
           title: options.title,
           description: options.description,
-          action: options.action,
+          action: options.action ? React.createElement(
+            ToastAction,
+            { altText: options.action.label, onClick: options.action.onClick },
+            options.action.label
+          ) : undefined,
         });
       }
     };
