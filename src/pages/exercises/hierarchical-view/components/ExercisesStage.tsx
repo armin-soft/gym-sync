@@ -7,6 +7,10 @@ import { motion } from "framer-motion";
 import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { useToast } from "@/hooks/use-toast";
+import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ExercisesStageProps {
   categoryId: string;
@@ -21,12 +25,133 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
   onBack,
   onExerciseSelect
 }) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { exercises, categories, isLoading } = useExerciseData();
   
+  // State برای مدیریت دیالوگ‌ها
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
+  const [formData, setFormData] = useState({ name: "", categoryId: parseInt(categoryId) || 0 });
+
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, categoryId: parseInt(categoryId) || 0 }));
+  }, [categoryId]);
+  
   // فیلتر کردن تمرین‌ها بر اساس دسته‌بندی انتخاب شده
   const filteredExercises = exercises.filter(ex => ex.categoryId.toString() === categoryId);
+  
+  // حذف تمرین‌ها
+  const handleDeleteExercises = () => {
+    try {
+      const updatedExercises = exercises.filter(ex => !selectedExerciseIds.includes(ex.id));
+      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+      queryClient.setQueryData(["exercises"], updatedExercises);
+      
+      toast({
+        title: "موفقیت",
+        description: selectedExerciseIds.length > 1 
+          ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
+          : "حرکت با موفقیت حذف شد"
+      });
+      
+      setSelectedExerciseIds([]);
+      setIsDeleteDialogOpen(false);
+    } catch (error) {
+      console.error('Error deleting exercises:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در حذف حرکت‌ها"
+      });
+    }
+  };
+
+  // ذخیره تمرین جدید یا ویرایش شده
+  const handleSaveExercise = async (data: { name: string; categoryId: number }) => {
+    try {
+      // بررسی تکراری بودن نام حرکت
+      const exerciseExists = exercises.some(ex => 
+        ex.name.toLowerCase() === data.name.toLowerCase() && 
+        (selectedExercise ? ex.id !== selectedExercise.id : true)
+      );
+      
+      if (exerciseExists) {
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "این حرکت قبلاً اضافه شده است"
+        });
+        return Promise.reject("نام تکراری");
+      }
+
+      let updatedExercises;
+      
+      if (selectedExercise) {
+        // ویرایش حرکت موجود
+        updatedExercises = exercises.map(ex =>
+          ex.id === selectedExercise.id ? { ...ex, ...data } : ex
+        );
+        
+        toast({
+          title: "موفقیت",
+          description: "حرکت با موفقیت ویرایش شد"
+        });
+      } else {
+        // افزودن حرکت جدید
+        const timestamp = Date.now();
+        const newExercise: Exercise = {
+          id: timestamp,
+          ...data
+        };
+        updatedExercises = [...exercises, newExercise];
+        
+        toast({
+          title: "موفقیت",
+          description: "حرکت جدید با موفقیت اضافه شد"
+        });
+      }
+      
+      // ذخیره در localStorage و به‌روزرسانی کش react-query
+      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+      queryClient.setQueryData(["exercises"], updatedExercises);
+      
+      setIsAddDialogOpen(false);
+      setSelectedExercise(undefined);
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error saving exercise:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در ذخیره سازی حرکت"
+      });
+      return Promise.reject(error);
+    }
+  };
+
+  // ویرایش تمرین
+  const handleEditExercise = (exercise: Exercise) => {
+    setSelectedExercise(exercise);
+    setFormData({
+      name: exercise.name,
+      categoryId: exercise.categoryId
+    });
+    setIsAddDialogOpen(true);
+  };
+
+  // افزودن تمرین جدید
+  const handleAddExercise = () => {
+    setSelectedExercise(undefined);
+    setFormData({
+      name: "",
+      categoryId: parseInt(categoryId) || 0
+    });
+    setIsAddDialogOpen(true);
+  };
   
   if (isLoading) {
     return (
@@ -66,10 +191,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
             <Button
               size="sm"
               variant="destructive"
-              onClick={() => {
-                // Handle delete
-                setSelectedExerciseIds([]);
-              }}
+              onClick={() => setIsDeleteDialogOpen(true)}
               className="mr-2"
             >
               <Trash2 className="h-4 w-4 ml-2" />
@@ -81,9 +203,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            onClick={() => {
-              // Handle add exercise
-            }}
+            onClick={handleAddExercise}
             className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
           >
             <Plus className="h-4 w-4 ml-2" />
@@ -147,8 +267,11 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
                           : [...prev, exercise.id]
                       );
                     }}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
+                    onEdit={() => handleEditExercise(exercise)}
+                    onDelete={() => {
+                      setSelectedExerciseIds([exercise.id]);
+                      setIsDeleteDialogOpen(true);
+                    }}
                   />
                 </motion.div>
               );
@@ -161,9 +284,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
                 در این دسته‌بندی هنوز حرکتی تعریف نشده است.
               </p>
               <Button 
-                onClick={() => {
-                  // Handle add exercise
-                }}
+                onClick={handleAddExercise}
                 className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
               >
                 <Plus className="h-4 w-4 ml-2" />
@@ -173,6 +294,34 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
           )}
         </motion.div>
       </div>
+
+      {/* دیالوگ افزودن/ویرایش تمرین */}
+      <ExerciseDialog 
+        isOpen={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        selectedExercise={selectedExercise}
+        categories={categories}
+        formData={formData}
+        onFormChange={setFormData}
+        onSave={handleSaveExercise}
+        isEditing={!!selectedExercise}
+      />
+
+      {/* دیالوگ تایید حذف */}
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeleteExercises}
+        title="حذف حرکت"
+        description={
+          selectedExerciseIds.length > 1
+            ? `آیا از حذف ${selectedExerciseIds.length} حرکت انتخاب شده اطمینان دارید؟`
+            : "آیا از حذف این حرکت اطمینان دارید؟"
+        }
+        confirmText="حذف"
+        cancelText="انصراف"
+        variant="destructive"
+      />
     </motion.div>
   );
 };
