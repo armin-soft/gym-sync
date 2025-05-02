@@ -1,32 +1,33 @@
 
 import { useState, useCallback } from "react";
 
-export type ViewStage = 'categories' | 'types' | 'exercises';
+export type ViewStage = 'types' | 'categories' | 'exercises';
 
 export const useHierarchicalView = () => {
-  const [currentStage, setCurrentStage] = useState<ViewStage>('categories');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  // تغییر مرحله اول به انواع تمرین
+  const [currentStage, setCurrentStage] = useState<ViewStage>('types');
   const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
-  
-  const handleCategorySelect = useCallback((categoryId: string) => {
-    setSelectedCategoryId(categoryId);
-    setCurrentStage('types');
-  }, []);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   
   const handleTypeSelect = useCallback((typeId: string) => {
     setSelectedTypeId(typeId);
-    setCurrentStage('exercises');
+    setCurrentStage('categories');
   }, []);
   
-  const handleBackToCategories = useCallback(() => {
-    setSelectedCategoryId(null);
-    setSelectedTypeId(null);
-    setCurrentStage('categories');
+  const handleCategorySelect = useCallback((categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+    setCurrentStage('exercises');
   }, []);
   
   const handleBackToTypes = useCallback(() => {
     setSelectedTypeId(null);
+    setSelectedCategoryId(null);
     setCurrentStage('types');
+  }, []);
+  
+  const handleBackToCategories = useCallback(() => {
+    setSelectedCategoryId(null);
+    setCurrentStage('categories');
   }, []);
   
   const handleExerciseSelect = useCallback((exerciseId: string) => {
@@ -36,12 +37,12 @@ export const useHierarchicalView = () => {
   
   return {
     currentStage,
-    selectedCategoryId,
     selectedTypeId,
-    handleCategorySelect,
+    selectedCategoryId,
     handleTypeSelect,
-    handleBackToCategories,
+    handleCategorySelect,
     handleBackToTypes,
+    handleBackToCategories,
     handleExerciseSelect
   };
 };

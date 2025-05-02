@@ -1,11 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dumbbell, Plus, Grid3X3, ListOrdered, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import { ExerciseCard } from "@/components/exercises/ExerciseCard";
-import { ExerciseCategory } from "@/types/exercise";
+import { useExerciseData } from "@/hooks/exercises/useExerciseData";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 
 interface ExercisesStageProps {
   categoryId: string;
@@ -14,7 +15,7 @@ interface ExercisesStageProps {
   onExerciseSelect: (exerciseId: string) => void;
 }
 
-const ExercisesStage: React.FC<ExercisesStageProps> = ({
+export const ExercisesStage: React.FC<ExercisesStageProps> = ({
   categoryId,
   typeId,
   onBack,
@@ -22,18 +23,24 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
 }) => {
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const { exercises, categories, isLoading } = useExerciseData();
   
-  // Dummy exercises for demonstration
-  const exercises = [
-    { id: 1, name: "حرکت شماره ۱", categoryId: 1 },
-    { id: 2, name: "حرکت شماره ۲", categoryId: 1 },
-    { id: 3, name: "حرکت شماره ۳", categoryId: 1 }
-  ];
+  // فیلتر کردن تمرین‌ها بر اساس دسته‌بندی انتخاب شده
+  const filteredExercises = exercises.filter(ex => ex.categoryId.toString() === categoryId);
   
-  // Dummy categories for demonstration
-  const categories: ExerciseCategory[] = [
-    { id: 1, name: "دسته شماره ۱", type: typeId }
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          <p className="text-sm text-muted-foreground">در حال بارگذاری تمرین‌ها...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // پیدا کردن دسته‌بندی انتخاب شده
+  const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
 
   return (
     <motion.div 
@@ -45,14 +52,14 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
     >
       <div className="flex items-center justify-between">
         <Button variant="outline" size="sm" onClick={onBack}>
-          بازگشت به انواع تمرین
+          بازگشت به دسته‌بندی‌ها
         </Button>
       </div>
 
       <div className="flex items-center justify-between mt-4">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-semibold">
-            حرکات تمرینی ({exercises.length})
+            حرکات تمرینی ({filteredExercises.length})
           </h3>
           
           {selectedExerciseIds.length > 0 && (
@@ -116,8 +123,8 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
           initial="hidden"
           animate="visible"
         >
-          {exercises.length > 0 ? (
-            exercises.map((exercise) => {
+          {filteredExercises.length > 0 ? (
+            filteredExercises.map((exercise) => {
               const isSelected = selectedExerciseIds.includes(exercise.id);
               
               return (
@@ -130,7 +137,7 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
                 >
                   <ExerciseCard 
                     exercise={exercise}
-                    category={categories.find(cat => cat.id === exercise.categoryId)}
+                    category={selectedCategory}
                     isSelected={isSelected}
                     viewMode={viewMode}
                     onClick={() => {
