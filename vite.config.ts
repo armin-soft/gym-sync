@@ -79,52 +79,125 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     assetsDir: 'Assets',
+    // Increase the warning limit to reduce noise during build
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         // Customize the output structure
-        entryFileNames: 'Assets/Script/[name].js',
-        chunkFileNames: 'Assets/Script/[name].js',
+        entryFileNames: 'Assets/Script/[name]-[hash].js',
+        chunkFileNames: 'Assets/Script/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           // Handle different asset types
           const info = assetInfo.name || '';
           
           // For CSS files
           if (info.endsWith('.css')) {
-            return 'Assets/Style/Menu.css';
+            return 'Assets/Style/Menu-[hash].css';
           }
           
           // For image files
           if (info.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
-            return 'Assets/Image/[name][extname]';
+            return 'Assets/Image/[name]-[hash][extname]';
           }
           
           // For other files
-          return 'Assets/[name][extname]';
+          return 'Assets/[name]-[hash][extname]';
         },
-        // Customize chunk names based on imports
+        // Improved manual chunks strategy to better split code
         manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) {
-              return 'React';
-            }
-            if (id.includes('chart') || id.includes('recharts')) {
-              return 'Charts';
-            }
-            if (id.includes('pdf') || id.includes('jspdf')) {
-              return 'PDF';
-            }
-            if (id.includes('framer-motion') || id.includes('animation')) {
-              return 'Animation';
-            }
-            if (id.includes('@radix-ui') || id.includes('component')) {
-              return 'UI';
-            }
-            return 'Other';
+          // Core React libraries
+          if (id.includes('node_modules/react/') || 
+              id.includes('node_modules/react-dom/') || 
+              id.includes('node_modules/scheduler/')) {
+            return 'react-core';
           }
-          // Main application code
-          return 'Main';
+          
+          // React Router and related
+          if (id.includes('node_modules/react-router') || 
+              id.includes('node_modules/@remix-run')) {
+            return 'routing';
+          }
+          
+          // UI Components - Radix UI, shadcn
+          if (id.includes('node_modules/@radix-ui/') || 
+              id.includes('/components/ui/')) {
+            return 'ui-components';
+          }
+          
+          // Chart libraries
+          if (id.includes('recharts') || 
+              id.includes('chart.js') || 
+              id.includes('d3')) {
+            return 'charts';
+          }
+          
+          // PDF generation
+          if (id.includes('jspdf') || 
+              id.includes('pdf-lib') || 
+              id.includes('pdfmake')) {
+            return 'pdf';
+          }
+          
+          // Animation libraries
+          if (id.includes('framer-motion') || 
+              id.includes('animation') || 
+              id.includes('gsap')) {
+            return 'animations';
+          }
+          
+          // Data management (Tanstack Query)
+          if (id.includes('@tanstack/react-query')) {
+            return 'data-management';
+          }
+          
+          // Utils libraries
+          if (id.includes('node_modules/date-fns') || 
+              id.includes('node_modules/uuid') || 
+              id.includes('node_modules/zod') ||
+              id.includes('node_modules/clsx')) {
+            return 'utils';
+          }
+          
+          // Feature-based code splitting for app code
+          if (id.includes('/src/pages/')) {
+            const page = id.split('/src/pages/')[1].split('/')[0];
+            return `page-${page}`;
+          }
+          
+          if (id.includes('/src/components/exercises/')) {
+            return 'feature-exercises';
+          }
+          
+          if (id.includes('/src/components/students/')) {
+            return 'feature-students';
+          }
+          
+          if (id.includes('/src/components/diet/') || 
+              id.includes('/src/components/nutrition/')) {
+            return 'feature-nutrition';
+          }
+          
+          // Other node_modules
+          if (id.includes('node_modules/')) {
+            return 'vendors';
+          }
+          
+          // Main app code (everything else)
+          return 'app';
         },
       }
     },
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+    // Minify options
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
+    // Enable source maps for production (can be disabled to reduce size)
+    sourcemap: false
   },
 }))

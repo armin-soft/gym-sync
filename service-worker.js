@@ -1,52 +1,53 @@
 // This is the service worker for the application
 // It handles caching and offline functionality
 
-const CACHE_NAME = 'gym-sync-v1';
+const CACHE_NAME = 'gym-sync-v2';
 
 // Assets to cache - use relative paths instead of absolute
 const STATIC_ASSETS = [
   './',
   './index.html',
-  './Assets/Script/Main.js',
-  './Assets/Style/Menu.css',
-  './Assets/Image/Logo.png',
   './Manifest.json'
+  // Dynamic JS and CSS files will be cached during fetch
 ];
 
 // Install event
 self.addEventListener('install', (event) => {
   console.log('Service Worker: Installing');
   
+  // Skip waiting to activate immediately
+  self.skipWaiting();
+  
   // Use a more resilient caching strategy
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Caching Files');
-        // Cache assets one by one to avoid a single failure breaking everything
-        const cachePromises = STATIC_ASSETS.map(url => {
-          // Try to fetch each resource and cache it
-          return fetch(url)
-            .then(response => {
-              if (!response || response.status !== 200) {
-                console.log(`Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
-                return;
-              }
-              return cache.put(url, response);
-            })
-            .catch(err => {
-              console.log(`Error caching ${url}: ${err}`);
-              // Continue despite errors
-              return Promise.resolve();
-            });
+        return cache.addAll(STATIC_ASSETS).catch(err => {
+          console.error('Failed to cache all resources:', err);
+          
+          // If bulk caching fails, try individual items
+          return Promise.all(
+            STATIC_ASSETS.map(url => 
+              fetch(url)
+                .then(response => {
+                  if (!response || response.status !== 200) {
+                    console.log(`Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
+                    return;
+                  }
+                  return cache.put(url, response);
+                })
+                .catch(err => {
+                  console.log(`Error caching ${url}: ${err}`);
+                  // Continue despite errors
+                  return Promise.resolve();
+                })
+            )
+          );
         });
-        
-        return Promise.all(cachePromises);
       })
-      .then(() => self.skipWaiting())
       .catch(err => {
         console.error('Service Worker: Cache error during installation', err);
-        // Continue installation even if caching fails
-        return self.skipWaiting();
       })
   );
 });
@@ -63,18 +64,30 @@ self.addEventListener('activate', (event) => {
             console.log('Service Worker: Clearing Old Cache');
             return caches.delete(cache);
           }
+          return Promise.resolve();
         })
       );
     })
     .then(() => self.clients.claim())
   );
-  return self.clients.claim();
 });
 
 // Fetch event
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests and requests to external resources
-  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  // Skip analytics, API calls, etc.
+  if (event.request.url.includes('/api/') || 
+      event.request.url.includes('analytics') || 
+      event.request.url.includes('chrome-extension')) {
     return;
   }
 
@@ -85,6 +98,26 @@ self.addEventListener('fetch', (event) => {
       .then(cachedResponse => {
         // Return cached response if available
         if (cachedResponse) {
+          // In background, update the cache
+          fetch(event.request)
+            .then(response => {
+              if (!response || response.status !== 200 || response.type !== 'basic') {
+                return;
+              }
+              
+              const responseToCache = response.clone();
+              caches.open(CACHE_NAME)
+                .then(cache => {
+                  cache.put(event.request, responseToCache);
+                })
+                .catch(err => {
+                  console.log('Failed to update cache for:', event.request.url, err);
+                });
+            })
+            .catch(() => {
+              // Network error, but we already have a cached version, so it's fine
+            });
+            
           return cachedResponse;
         }
 
@@ -116,12 +149,19 @@ self.addEventListener('fetch', (event) => {
               return caches.match('./');
             }
             
-            // Otherwise return whatever we have
-            return new Response('Network error occurred', {
+            // Otherwise return error response
+            return new Response('Network error occurred. App is offline.', {
               status: 408,
               headers: { 'Content-Type': 'text/plain' }
             });
           });
+      })
+      .catch(error => {
+        console.error('Error in fetch handler:', error);
+        return new Response('Fatal error in service worker', {
+          status: 500,
+          headers: { 'Content-Type': 'text/plain' }
+        });
       })
   );
 });
