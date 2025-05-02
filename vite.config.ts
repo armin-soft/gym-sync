@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -21,13 +20,11 @@ const copyFilesPlugin = () => {
       // Copy Manifest.json to the root
       if (fs.existsSync('dist/Assets/Manifest.json')) {
         fs.copyFileSync('dist/Assets/Manifest.json', 'dist/Manifest.json');
-        fs.unlinkSync('dist/Assets/Manifest.json');
       }
 
-      // Copy Service-Worker.js to the root
-      if (fs.existsSync('dist/Assets/Script/Service-Worker.js')) {
-        fs.copyFileSync('dist/Assets/Script/Service-Worker.js', 'dist/Service-Worker.js');
-        fs.unlinkSync('dist/Assets/Script/Service-Worker.js');
+      // Copy service-worker.js to the root
+      if (fs.existsSync('dist/assets/src/service-worker.js')) {
+        fs.copyFileSync('dist/assets/src/service-worker.js', 'dist/service-worker.js');
       }
 
       // Copy Logo.ico to Assets/Image if it exists
