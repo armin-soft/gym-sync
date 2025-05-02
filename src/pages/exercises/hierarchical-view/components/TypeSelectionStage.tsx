@@ -9,9 +9,10 @@ import { useExerciseTypes } from "@/hooks/useExerciseTypes";
 
 interface TypeSelectionStageProps {
   onTypeSelect: (typeId: string) => void;
+  onEditType?: (type: string) => void; // Added the missing prop
 }
 
-export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({ onTypeSelect }) => {
+export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({ onTypeSelect, onEditType }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { exerciseTypes, isLoading } = useExerciseTypes();
   
