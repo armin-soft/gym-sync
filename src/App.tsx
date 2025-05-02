@@ -19,19 +19,13 @@ import { useEffect } from "react";
 const queryClient = new QueryClient();
 
 function App() {
-  // Register service worker
+  // Service worker is now registered in index.html
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(registration => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          })
-          .catch(error => {
-            console.log('ServiceWorker registration failed: ', error);
-          });
-      });
-    }
+    // Register toast function globally for service worker updates
+    (window as any).showToast = (options: any) => {
+      // Implementation will be handled by the service worker script
+      console.log("Toast notification requested:", options);
+    };
   }, []);
 
   return (

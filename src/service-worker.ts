@@ -6,6 +6,8 @@ const CACHE_NAME = 'app-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/Assets/Image/Logo.png',
+  '/Assets/Manifest.json',
   '/src/main.tsx',
   '/src/index.css',
 ];
