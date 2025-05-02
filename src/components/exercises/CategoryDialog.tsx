@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect } from "react";
+import { Check, X } from "lucide-react";
 
 interface CategoryDialogProps {
   isOpen: boolean;
@@ -45,7 +46,7 @@ export function CategoryDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md text-right" dir="rtl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center">
             افزودن دسته بندی جدید
@@ -55,9 +56,10 @@ export function CategoryDialog({
           <div className="space-y-2">
             <Label className="text-base">نوع حرکت</Label>
             <select
-              className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
+              className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow text-right"
               value={selectedType}
               onChange={(e) => onTypeChange(e.target.value)}
+              dir="rtl"
             >
               {exerciseTypes.map((type) => (
                 <option key={type} value={type}>
@@ -73,17 +75,19 @@ export function CategoryDialog({
               value={formData.name}
               onChange={(e) => onFormDataChange({ name: e.target.value, type: selectedType })}
               placeholder="نام دسته بندی را وارد کنید"
-              className="h-11 text-base focus-visible:ring-blue-400"
+              className="h-11 text-base focus-visible:ring-blue-400 text-right"
               autoFocus
+              dir="rtl"
             />
           </div>
         </div>
-        <div className="flex justify-end gap-3 mt-4">
+        <div className="flex justify-start gap-3 mt-4">
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
             className="hover:bg-muted/50 transition-colors"
           >
+            <X className="ml-2 h-4 w-4" />
             انصراف
           </Button>
           <Button 
@@ -91,6 +95,7 @@ export function CategoryDialog({
             disabled={!formData.name.trim() || !selectedType}
             className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24"
           >
+            <Check className="ml-2 h-4 w-4" />
             ذخیره
           </Button>
         </div>

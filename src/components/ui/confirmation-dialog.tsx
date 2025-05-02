@@ -9,7 +9,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, AlertCircle, HelpCircle } from "lucide-react";
+import { AlertTriangle, AlertCircle, HelpCircle, Check, X } from "lucide-react";
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -63,7 +63,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md text-right" dir="rtl">
         <DialogHeader className="flex flex-col items-center justify-center text-center">
           <div
             className={`p-3 rounded-full bg-opacity-10 mb-4 ${
@@ -79,12 +79,13 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             {description}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-center mt-4 flex-row gap-2">
+        <DialogFooter className="sm:justify-center mt-4 flex-row-reverse gap-2">
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1"
+            className="flex-1 border-gray-300 hover:bg-gray-100 hover:text-gray-800"
           >
+            <X className="ml-2 h-4 w-4" />
             {cancelText}
           </Button>
           <Button
@@ -94,6 +95,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
               onClose();
             }}
           >
+            <Check className="ml-2 h-4 w-4" />
             {confirmText}
           </Button>
         </DialogFooter>
