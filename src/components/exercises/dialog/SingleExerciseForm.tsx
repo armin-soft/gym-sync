@@ -20,19 +20,21 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 text-right">
       <Label className="text-base">نام حرکت</Label>
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="نام حرکت را وارد کنید"
-        className="h-11 text-base focus-visible:ring-blue-400"
+        className="h-11 text-base focus-visible:ring-blue-400 text-right"
+        dir="rtl"
       />
       <Label className="text-base">دسته‌بندی تمرین</Label>
       <select
-        className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
+        className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow text-right"
         value={categoryId}
         onChange={(e) => onCategoryChange(Number(e.target.value))}
+        dir="rtl"
       >
         {categories.map((category) => (
           <option key={category.id} value={category.id}>

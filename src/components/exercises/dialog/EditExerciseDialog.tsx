@@ -33,7 +33,7 @@ export function EditExerciseDialog({
             ویرایش حرکت
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 text-right">
           <SingleExerciseForm
             value={formData.name}
             onChange={(value) => onFormDataChange({ ...formData, name: value })}

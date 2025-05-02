@@ -48,7 +48,7 @@ export function AddExerciseDialog({
             افزودن حرکت جدید
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 text-right">
           <Tabs 
             defaultValue="single" 
             className="w-full" 

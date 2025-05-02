@@ -22,7 +22,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
   skippedExercises,
 }) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 text-right">
       <Label className="text-base">نام حرکت‌ها (هر حرکت در یک خط)</Label>
       <Textarea
         value={value}
@@ -31,7 +31,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
 نشر از جلو دمبل
 پرس سرشانه هالتر
 نشر از جانب"
-        className="min-h-[150px] focus-visible:ring-blue-400"
+        className="min-h-[150px] focus-visible:ring-blue-400 text-right"
         onChange={(e) => onChange(e.target.value)}
         dir="rtl"
         onKeyDown={(e) => {
@@ -42,17 +42,17 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
       />
       
       {isSaving && (
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 text-right">
           در حال ذخیره حرکت {toPersianNumbers(currentSaveIndex + 1)} از {toPersianNumbers(totalToSave)}...
         </div>
       )}
 
       {skippedExercises.length > 0 && (
-        <div className="mt-2">
+        <div className="mt-2 text-right">
           <div className="text-sm text-red-600 font-medium mb-2">
             حرکات زیر تکراری بوده و رد شدند:
           </div>
-          <ul className="text-sm text-red-500 list-disc pr-5">
+          <ul className="text-sm text-red-500 list-disc pr-5 text-right">
             {skippedExercises.map((ex, i) => (
               <li key={i}>{ex}</li>
             ))}
