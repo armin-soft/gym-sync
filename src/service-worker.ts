@@ -27,10 +27,31 @@ self.addEventListener('install', (event: any) => {
       .then((cache) => {
         const urlsToCache = getUrlsToCache();
         console.log('Service Worker: Caching files', urlsToCache);
-        return cache.addAll(urlsToCache);
+        
+        // Cache assets one by one to avoid a single failure breaking everything
+        const cachePromises = urlsToCache.map((url: string) => {
+          // Try to fetch each resource and cache it
+          return fetch(url)
+            .then(response => {
+              if (!response || response.status !== 200) {
+                console.log(`Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
+                return;
+              }
+              return cache.put(url, response);
+            })
+            .catch(err => {
+              console.log(`Error caching ${url}: ${err}`);
+              // Continue despite errors
+              return Promise.resolve();
+            });
+        });
+        
+        return Promise.all(cachePromises);
       })
       .catch(error => {
         console.error('Service Worker: Cache failed', error);
+        // Continue installation even if caching fails
+        return Promise.resolve();
       })
   );
 });
@@ -67,6 +88,9 @@ self.addEventListener('fetch', (event: any) => {
             caches.open(CACHE_NAME)
               .then(cache => {
                 cache.put(event.request, responseToCache);
+              })
+              .catch(err => {
+                console.error('Failed to cache response:', err);
               });
 
             return response;
@@ -74,6 +98,14 @@ self.addEventListener('fetch', (event: any) => {
           .catch(err => {
             console.log('Service Worker: Fetch failed', err);
             // You might want to return a custom offline page here
+            if (event.request.mode === 'navigate') {
+              return caches.match('/');
+            }
+            
+            return new Response('Network error occurred', {
+              status: 408,
+              headers: { 'Content-Type': 'text/plain' }
+            });
           });
       })
   );

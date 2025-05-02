@@ -3,26 +3,51 @@
 
 const CACHE_NAME = 'gym-sync-v1';
 
-// Assets to cache
+// Assets to cache - use relative paths instead of absolute
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/Assets/Script/Main.js',
-  '/Assets/Style/Menu.css',
-  '/Assets/Image/Logo.png',
-  '/Manifest.json'
+  './',
+  './index.html',
+  './Assets/Script/Main.js',
+  './Assets/Style/Menu.css',
+  './Assets/Image/Logo.png',
+  './Manifest.json'
 ];
 
 // Install event
 self.addEventListener('install', (event) => {
   console.log('Service Worker: Installing');
+  
+  // Use a more resilient caching strategy
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Caching Files');
-        return cache.addAll(STATIC_ASSETS);
+        // Cache assets one by one to avoid a single failure breaking everything
+        const cachePromises = STATIC_ASSETS.map(url => {
+          // Try to fetch each resource and cache it
+          return fetch(url)
+            .then(response => {
+              if (!response || response.status !== 200) {
+                console.log(`Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
+                return;
+              }
+              return cache.put(url, response);
+            })
+            .catch(err => {
+              console.log(`Error caching ${url}: ${err}`);
+              // Continue despite errors
+              return Promise.resolve();
+            });
+        });
+        
+        return Promise.all(cachePromises);
       })
       .then(() => self.skipWaiting())
+      .catch(err => {
+        console.error('Service Worker: Cache error during installation', err);
+        // Continue installation even if caching fails
+        return self.skipWaiting();
+      })
   );
 });
 
@@ -41,6 +66,7 @@ self.addEventListener('activate', (event) => {
         })
       );
     })
+    .then(() => self.clients.claim())
   );
   return self.clients.claim();
 });
@@ -77,6 +103,9 @@ self.addEventListener('fetch', (event) => {
             caches.open(CACHE_NAME)
               .then(cache => {
                 cache.put(event.request, responseToCache);
+              })
+              .catch(err => {
+                console.error('Failed to cache response:', err);
               });
 
             return response;
@@ -84,7 +113,7 @@ self.addEventListener('fetch', (event) => {
           .catch(() => {
             // For navigation requests, return the offline page
             if (event.request.mode === 'navigate') {
-              return caches.match('/');
+              return caches.match('./');
             }
             
             // Otherwise return whatever we have
