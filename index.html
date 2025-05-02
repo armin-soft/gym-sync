@@ -27,7 +27,33 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('./Assets/Service-Worker.js')
+          // Get the base path dynamically
+          const getBasePath = () => {
+            const scriptTags = document.getElementsByTagName('script');
+            for (let i = 0; i < scriptTags.length; i++) {
+              const src = scriptTags[i].getAttribute('src') || '';
+              if (src.includes('Main.js') || src.includes('main.tsx') || src.includes('main.js')) {
+                const pathParts = src.split('/');
+                pathParts.pop();
+                if (pathParts.length > 0 && pathParts[pathParts.length - 1] === 'Script') {
+                  pathParts.pop();
+                }
+                if (pathParts.length > 0 && pathParts[pathParts.length - 1] === 'Assets') {
+                  pathParts.pop();
+                }
+                return pathParts.join('/') + '/';
+              }
+            }
+            // Fallback to the pathname
+            return window.location.pathname.replace(/\/[^/]*$/, '/');
+          };
+          
+          const basePath = getBasePath();
+          const swPath = `${basePath}Service-Worker.js`;
+          
+          console.log('Registering Service Worker at:', swPath);
+          
+          navigator.serviceWorker.register(swPath)
             .then(function(registration) {
               // Registration was successful
               console.log('ServiceWorker registration successful with scope: ', registration.scope);
