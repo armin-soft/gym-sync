@@ -13,7 +13,7 @@ const getUrlsToCache = () => {
     `${basePath}`,
     `${basePath}index.html`,
     `${basePath}Assets/Image/Logo.png`,
-    `${basePath}Assets/Manifest.json`,
+    `${basePath}Manifest.json`, // Updated path to single Manifest.json file
     `${basePath}src/main.tsx`,
     `${basePath}src/index.css`,
   ];
