@@ -18,7 +18,7 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
       )}
     >
       <img
-        src="/Assets/Image/Logo.png"
+        src="/src/Logo.png"
         alt="لوگوی برنامه"
         className={cn(
           "rounded-xl",
