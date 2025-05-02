@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -28,10 +27,9 @@ const copyFilesPlugin = () => {
       }
 
       // Copy service-worker.js to the root of dist
-      if (fs.existsSync('dist/assets/service-worker.js')) {
-        fs.copyFileSync('dist/assets/service-worker.js', 'dist/service-worker.js');
-      } else if (fs.existsSync('dist/assets/src/service-worker.js')) {
-        fs.copyFileSync('dist/assets/src/service-worker.js', 'dist/service-worker.js');
+      if (fs.existsSync('service-worker.js')) {
+        fs.copyFileSync('service-worker.js', 'dist/service-worker.js');
+        console.log('Copied service-worker.js to dist root');
       }
 
       // Copy Logo.ico to Assets/Image if it exists
@@ -57,6 +55,15 @@ export default defineConfig(({ mode }) => ({
     react({
       // Fixing React 18 useLayoutEffect warning in SSR/build
       jsxRuntime: 'automatic',
+      babel: {
+        // Add this to fix the useLayoutEffect error
+        plugins: [
+          ['@babel/plugin-transform-react-jsx', {
+            runtime: 'automatic',
+            importSource: 'react'
+          }]
+        ]
+      }
     }),
     mode === 'development' && componentTagger(),
     copyFilesPlugin()

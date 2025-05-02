@@ -1,4 +1,3 @@
-
 // This is the service worker for the application
 // It handles caching and offline functionality
 
@@ -8,8 +7,10 @@ const CACHE_NAME = 'gym-sync-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/src/main.tsx',
-  '/Assets/Image/Logo.png'
+  '/Assets/Script/Main.js',
+  '/Assets/Style/Menu.css',
+  '/Assets/Image/Logo.png',
+  '/Manifest.json'
 ];
 
 // Install event
@@ -46,21 +47,53 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event
 self.addEventListener('fetch', (event) => {
-  console.log('Service Worker: Fetching');
+  // Skip non-GET requests and requests to external resources
+  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  console.log('Service Worker: Fetching', event.request.url);
+  
   event.respondWith(
-    fetch(event.request)
-      .then(res => {
-        // Make a copy of response
-        const resClone = res.clone();
-        
-        // Open cache
-        caches.open(CACHE_NAME)
-          .then(cache => {
-            // Add response to cache
-            cache.put(event.request, resClone);
+    caches.match(event.request)
+      .then(cachedResponse => {
+        // Return cached response if available
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        // Otherwise fetch from network
+        return fetch(event.request)
+          .then(response => {
+            // Don't cache if response is not valid
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Clone the response
+            const responseToCache = response.clone();
+
+            // Add to cache
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          })
+          .catch(() => {
+            // For navigation requests, return the offline page
+            if (event.request.mode === 'navigate') {
+              return caches.match('/');
+            }
+            
+            // Otherwise return whatever we have
+            return new Response('Network error occurred', {
+              status: 408,
+              headers: { 'Content-Type': 'text/plain' }
+            });
           });
-        return res;
-      }).catch(() => caches.match(event.request).then(res => res))
+      })
   );
 });
 

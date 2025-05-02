@@ -14,18 +14,26 @@ import BackupRestore from "@/pages/backup";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
 
 function App() {
+  const { toast } = useToast();
+
   useEffect(() => {
     // Register toast function globally for service worker updates
-    (window as any).showToast = (options: any) => {
-      // Implementation will be handled by the service worker script
-      console.log("Toast notification requested:", options);
+    window.showToast = (options) => {
+      if (options && options.title && options.description) {
+        toast({
+          title: options.title,
+          description: options.description,
+          action: options.action,
+        });
+      }
     };
-  }, []);
+  }, [toast]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -49,6 +57,20 @@ function App() {
       </BrowserRouter>
     </QueryClientProvider>
   );
+}
+
+// Add window type augmentation for TypeScript
+declare global {
+  interface Window {
+    showToast: (options: {
+      title: string;
+      description: string;
+      action?: {
+        label: string;
+        onClick: () => void;
+      };
+    }) => void;
+  }
 }
 
 export default App;
