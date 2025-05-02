@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ListFilter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseCountBadgeProps {
   count: number;
@@ -22,7 +23,7 @@ export const ExerciseCountBadge: React.FC<ExerciseCountBadgeProps> = ({ count, c
     >
       <ListFilter className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
       <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
-        {count} تمرین انتخاب شده
+        {toPersianNumbers(count)} تمرین انتخاب شده
       </span>
     </motion.div>
   );

@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useQueryClient } from "@tanstack/react-query";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExercisesStageProps {
   categoryId: string;
@@ -184,7 +185,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
       <div className="flex items-center justify-between mt-4">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-semibold">
-            حرکات تمرینی ({filteredExercises.length})
+            حرکات تمرینی ({toPersianNumbers(filteredExercises.length)})
           </h3>
           
           {selectedExerciseIds.length > 0 && (
@@ -195,7 +196,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
               className="mr-2"
             >
               <Trash2 className="h-4 w-4 ml-2" />
-              حذف ({selectedExerciseIds.length})
+              حذف ({toPersianNumbers(selectedExerciseIds.length)})
             </Button>
           )}
         </div>
@@ -244,7 +245,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
           animate="visible"
         >
           {filteredExercises.length > 0 ? (
-            filteredExercises.map((exercise) => {
+            filteredExercises.map((exercise, index) => {
               const isSelected = selectedExerciseIds.includes(exercise.id);
               
               return (
@@ -315,7 +316,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
         title="حذف حرکت"
         description={
           selectedExerciseIds.length > 1
-            ? `آیا از حذف ${selectedExerciseIds.length} حرکت انتخاب شده اطمینان دارید؟`
+            ? `آیا از حذف ${toPersianNumbers(selectedExerciseIds.length)} حرکت انتخاب شده اطمینان دارید؟`
             : "آیا از حذف این حرکت اطمینان دارید؟"
         }
         confirmText="حذف"

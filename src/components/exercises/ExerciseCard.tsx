@@ -6,6 +6,7 @@ import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { Edit, Trash2, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseCardProps {
   exercise: Exercise;
