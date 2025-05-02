@@ -1,11 +1,17 @@
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
+import React from "react";
+import { 
+  Dialog,
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SingleExerciseForm } from "./SingleExerciseForm";
 import { GroupExerciseForm } from "./GroupExerciseForm";
 import { ExerciseFormActions } from "./ExerciseFormActions";
+import { motion, AnimatePresence } from "framer-motion";
+import { ExerciseCategory } from "@/types/exercise";
 
 interface AddExerciseDialogProps {
   isOpen: boolean;
@@ -42,9 +48,9 @@ export function AddExerciseDialog({
 }: AddExerciseDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto">
+      <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-indigo-100/50 dark:border-indigo-900/30">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center">
+          <DialogTitle className="text-xl font-bold text-center bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
             افزودن حرکت جدید
           </DialogTitle>
         </DialogHeader>
@@ -52,43 +58,102 @@ export function AddExerciseDialog({
           <Tabs 
             defaultValue="single" 
             className="w-full" 
-            onValueChange={setActiveTab}
             value={activeTab}
+            onValueChange={setActiveTab}
           >
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="single">تکی</TabsTrigger>
-              <TabsTrigger value="group">چند حرکت</TabsTrigger>
+            <TabsList className="grid grid-cols-2 mb-4 bg-gray-100 dark:bg-gray-800">
+              <TabsTrigger 
+                value="single"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-violet-600 data-[state=active]:text-white"
+              >
+                افزودن تکی
+              </TabsTrigger>
+              <TabsTrigger 
+                value="group"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-violet-600 data-[state=active]:text-white"
+              >
+                افزودن گروهی
+              </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="single">
-              <SingleExerciseForm 
-                value={formData.name}
-                onChange={(value) => onFormDataChange({ ...formData, name: value })}
-                categories={categories}
-                categoryId={formData.categoryId}
-                onCategoryChange={(id) => onFormDataChange({ ...formData, categoryId: id })}
-              />
-            </TabsContent>
-            
-            <TabsContent value="group">
-              <GroupExerciseForm 
-                value={groupText}
-                onChange={setGroupText}
-                isSaving={isSaving}
-                currentSaveIndex={currentSaveIndex}
-                totalToSave={totalToSave}
-                skippedExercises={skippedExercises}
-              />
-            </TabsContent>
+            <AnimatePresence mode="wait">
+              <TabsContent 
+                value="single" 
+                className="mt-0 border-0 p-0"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <SingleExerciseForm
+                    value={formData.name}
+                    onChange={(value) => onFormDataChange({ ...formData, name: value })}
+                    categories={categories}
+                    categoryId={formData.categoryId}
+                    onCategoryChange={(id) => onFormDataChange({ ...formData, categoryId: id })}
+                  />
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent 
+                value="group" 
+                className="mt-0 border-0 p-0"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="mb-4">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      دسته‌بندی انتخاب شده: <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                        {categories.find(c => c.id === formData.categoryId)?.name}
+                      </span>
+                    </p>
+                    <select
+                      className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow text-right"
+                      value={formData.categoryId}
+                      onChange={(e) => onFormDataChange({ ...formData, categoryId: Number(e.target.value) })}
+                      dir="rtl"
+                    >
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <GroupExerciseForm
+                    value={groupText}
+                    onChange={setGroupText}
+                    isSaving={isSaving}
+                    currentSaveIndex={currentSaveIndex}
+                    totalToSave={totalToSave}
+                    skippedExercises={skippedExercises}
+                  />
+                </motion.div>
+              </TabsContent>
+            </AnimatePresence>
           </Tabs>
+          
+          <ExerciseFormActions
+            onCancel={() => onOpenChange(false)}
+            onSave={onSave}
+            isSaving={isSaving}
+            isDisabled={
+              activeTab === "single" 
+                ? formData.name.trim() === "" 
+                : groupText.trim() === ""
+            }
+          />
         </div>
-        <ExerciseFormActions
-          onCancel={() => onOpenChange(false)}
-          onSave={onSave}
-          isSaving={isSaving}
-          isDisabled={activeTab === "group" && !groupText.trim()}
-        />
       </DialogContent>
     </Dialog>
   );
 }
+
+export default AddExerciseDialog;

@@ -4,7 +4,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import TabHeader from "./day-tabs/TabHeader";
 import { Exercise } from "@/types/exercise";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TabContentWrapper from "./day-tabs/TabContentWrapper";

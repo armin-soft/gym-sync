@@ -1,135 +1,65 @@
 
-import { useState, useEffect } from "react";
-import { useDeviceInfo } from "@/hooks/use-mobile";
-import { ExerciseCategory } from "@/types/exercise";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 
-interface UseHierarchicalViewProps {
-  selectedType: string | null;
-  selectedExerciseType: string | null;
-  setSelectedExerciseType: (type: string | null) => void;
-  setSelectedType: (type: string | null) => void;
-  selectedCategoryId: number | null;
-  filteredCategories: ExerciseCategory[];
-  exercises: any[];
-  handleDeleteCategory: (category: ExerciseCategory, exercises: any[]) => void;
-  handleDeleteType: (type: string) => void;
-}
+export type ViewStage = 'types' | 'categories' | 'exercises';
 
-export const useHierarchicalView = ({
-  selectedType,
-  selectedExerciseType,
-  setSelectedExerciseType,
-  setSelectedType,
-  selectedCategoryId,
-  filteredCategories,
-  exercises,
-  handleDeleteCategory,
-  handleDeleteType,
-}: UseHierarchicalViewProps) => {
-  const deviceInfo = useDeviceInfo();
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{type: "category" | "type", value: any} | null>(null);
+const useHierarchicalView = (exercises: Exercise[], categories: ExerciseCategory[]) => {
+  // Current view stage
+  const [activeStage, setActiveStage] = useState<ViewStage>('types');
   
-  // همگام‌سازی بین حالت انتخاب شده در دو جا
+  // Selected type and category
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | null>(null);
+  
+  // View mode for exercise display
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  
+  // Navigate between stages
+  const navigateToStage = useCallback((stage: ViewStage) => {
+    setActiveStage(stage);
+  }, []);
+  
+  // Handle type selection
+  const handleTypeSelection = useCallback((type: string) => {
+    setSelectedType(type);
+    setSelectedCategory(null);
+    navigateToStage('categories');
+  }, [navigateToStage]);
+  
+  // Handle category selection
+  const handleCategorySelection = useCallback((category: ExerciseCategory) => {
+    setSelectedCategory(category);
+    navigateToStage('exercises');
+  }, [navigateToStage]);
+  
+  // Filter exercises by selected category
+  const exercisesByCategory = useMemo(() => {
+    if (!selectedCategory) return [];
+    return exercises.filter(exercise => exercise.categoryId === selectedCategory.id);
+  }, [exercises, selectedCategory]);
+  
+  // Set default type if available
   useEffect(() => {
-    if (selectedType && selectedType !== selectedExerciseType) {
-      console.log("Syncing selectedType to selectedExerciseType:", selectedType);
-      setSelectedExerciseType(selectedType);
-    } else if (selectedExerciseType && selectedExerciseType !== selectedType) {
-      console.log("Syncing selectedExerciseType to selectedType:", selectedExerciseType);
-      setSelectedType(selectedExerciseType);
+    const types = [...new Set(categories.map(cat => cat.type))];
+    if (types.length > 0 && !selectedType) {
+      setSelectedType(types[0]);
     }
-  }, [selectedType, selectedExerciseType, setSelectedExerciseType, setSelectedType]);
-
-  // تنظیم حالت نمایش براساس اندازه صفحه
-  useEffect(() => {
-    if (deviceInfo.isMobile) {
-      setViewMode("grid");
-    }
-  }, [deviceInfo.isMobile]);
-
-  // عملیات‌های مورد نیاز برای افزودن/ویرایش دسته‌بندی
-  const handleOpenCategoryDialog = () => {
-    // بجای برگرداندن شیء، مستقیماً اطلاعات پیش‌فرض را برمی‌گرداند
-    // که در صفحه اصلی استفاده می‌شود
-    return {
-      name: "",
-      type: selectedType || ""
-    };
-  };
-
-  const handleEditCategoryDialog = (category: ExerciseCategory) => {
-    // بجای برگرداندن شیء، مستقیماً اطلاعات دسته‌بندی را برمی‌گرداند
-    // که در صفحه اصلی استفاده می‌شود
-    return {
-      name: category.name,
-      type: category.type
-    };
-  };
-
-  // عملیات‌های مورد نیاز برای افزودن/ویرایش حرکت
-  const handleOpenExerciseDialog = () => {
-    // بجای برگرداندن شیء، مستقیماً اطلاعات پیش‌فرض را برمی‌گرداند
-    // که در صفحه اصلی استفاده می‌شود
-    return {
-      name: "",
-      categoryId: selectedCategoryId || 0
-    };
-  };
-
-  const handleEditExercise = (exercise: any) => {
-    // بجای برگرداندن شیء، مستقیماً اطلاعات حرکت را برمی‌گرداند
-    // که در صفحه اصلی استفاده می‌شود
-    return {
-      name: exercise.name,
-      categoryId: exercise.categoryId,
-      ...exercise
-    };
-  };
-
-  // تایید حذف آیتم
-  const confirmDelete = (type: "category" | "type", value: any) => {
-    setItemToDelete({ type, value });
-    setIsDeleteConfirmOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (!itemToDelete) return;
-
-    if (itemToDelete.type === "category") {
-      handleDeleteCategory(itemToDelete.value, exercises);
-    } else if (itemToDelete.type === "type") {
-      handleDeleteType(itemToDelete.value);
-    }
-
-    setIsDeleteConfirmOpen(false);
-    setItemToDelete(null);
-  };
-
-  // هدایت کاربر در مسیر انتخاب سلسله مراتبی
-  const getSelectionStage = (): "type" | "category" | "exercises" => {
-    if (!selectedExerciseType) return "type";
-    if (!selectedCategoryId && filteredCategories.length > 0) return "category";
-    return "exercises";
-  };
-
-  const selectionStage = getSelectionStage();
-  console.log("Current selection stage:", selectionStage, "Type:", selectedExerciseType, "Category:", selectedCategoryId);
-
+  }, [categories, selectedType]);
+  
   return {
+    activeStage,
+    selectedType,
+    setSelectedType,
+    selectedCategory,
+    setSelectedCategory,
     viewMode,
     setViewMode,
-    isDeleteConfirmOpen,
-    setIsDeleteConfirmOpen,
-    itemToDelete,
-    setItemToDelete,
-    selectionStage,
-    handleOpenCategoryDialog,
-    handleEditCategoryDialog,
-    handleOpenExerciseDialog,
-    handleEditExercise,
-    confirmDelete,
-    handleConfirmDelete,
+    exercisesByCategory,
+    navigateToStage,
+    handleTypeSelection,
+    handleCategorySelection
   };
 };
+
+export default useHierarchicalView;

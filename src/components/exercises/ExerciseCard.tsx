@@ -1,186 +1,155 @@
 
 import React from "react";
-import { cn } from "@/lib/utils";
-import { Dumbbell, CheckCircle, Activity, Edit, Trash2 } from "lucide-react";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { Edit, Trash2, Activity } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface ExerciseCardProps {
   exercise: Exercise;
   category?: ExerciseCategory;
-  onClick?: () => void;
-  isSelected: boolean;
+  isSelected?: boolean;
   viewMode: "grid" | "list";
+  onClick?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
-export const ExerciseCard = ({
+export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
   category,
-  onClick,
-  isSelected,
+  isSelected = false,
   viewMode,
+  onClick,
   onEdit,
-  onDelete
-}: ExerciseCardProps) => {
-  const { name, description, targetMuscle, equipment } = exercise;
-  
-  const cardClasses = cn(
-    "group relative rounded-xl overflow-hidden border transition-all duration-300",
-    viewMode === "grid" 
-      ? "h-full" 
-      : "flex flex-row items-center gap-3 py-2.5 px-3",
-    isSelected 
-      ? "border-primary/50 bg-primary/5 dark:border-primary/30 dark:bg-primary/10 shadow-md shadow-primary/5" 
-      : "border-border bg-card hover:border-primary/30 hover:bg-primary/[0.03] dark:hover:bg-primary/5 hover:shadow-md"
-  );
-
-  const gridView = viewMode === "grid";
-  
-  // انیمیشن برای کارت
-  const cardVariants = {
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-    hover: { 
-      y: -5, 
-      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" 
-    }
+  onDelete,
+}) => {
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEdit) onEdit();
   };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDelete) onDelete();
+  };
+
+  if (viewMode === "list") {
+    return (
+      <motion.div 
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Card 
+          onClick={onClick}
+          className={cn(
+            "cursor-pointer hover:shadow-md transition-all duration-300 mb-2 border-l-4",
+            isSelected ? "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 dark:border-indigo-400" : "border-transparent hover:border-indigo-300 dark:hover:border-indigo-700"
+          )}
+        >
+          <div className="flex items-center justify-between p-3 sm:p-4">
+            <div className="flex items-center gap-3 text-right">
+              <div className="flex-shrink-0 bg-indigo-100 dark:bg-indigo-900/50 p-2 rounded-full">
+                <Activity className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-medium">{exercise.name}</h4>
+                {category && (
+                  <p className="text-xs text-muted-foreground">{category.name}</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-1">
+              {onEdit && (
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-8 w-8 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+                  onClick={handleEdit}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              )}
+              
+              {onDelete && (
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-8 w-8 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </Card>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div 
-      className={cardClasses} 
-      onClick={onClick}
-      variants={cardVariants}
-      initial="initial"
-      animate="animate"
-      whileHover="hover"
-      whileTap={{ scale: 0.98 }}
-      layout
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.2 }}
     >
-      {/* شاخص انتخاب شده */}
-      {isSelected && (
-        <motion.div 
-          className="absolute top-2 right-2 z-10"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <CheckCircle className="h-5 w-5 text-primary bg-white dark:bg-gray-900 rounded-full shadow-sm" />
-        </motion.div>
-      )}
-
-      {/* محتوای کارت */}
-      <div className={cn(
-        "flex",
-        gridView ? "flex-col" : "flex-row gap-3 items-center w-full"
-      )}>
-        {/* آیکون تمرین */}
-        <div className={cn(
-          "flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10 text-primary",
-          gridView 
-            ? "py-6 w-full" 
-            : "h-12 w-12 rounded-lg"
+      <Card 
+        onClick={onClick}
+        className={cn(
+          "cursor-pointer overflow-hidden h-full shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-100 dark:border-indigo-800/50",
+          isSelected && "ring-2 ring-indigo-500 dark:ring-indigo-400"
+        )}
+      >
+        <CardHeader className={cn(
+          "p-3 pb-2 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/50 dark:to-violet-950/50",
+          isSelected && "bg-gradient-to-r from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30"
         )}>
-          {gridView 
-            ? <Dumbbell className="h-8 w-8" />
-            : <Activity className="h-6 w-6" />
-          }
-        </div>
-
-        {/* اطلاعات تمرین */}
-        <div className={cn(
-          "flex flex-col",
-          gridView ? "w-full p-3" : "flex-1"
-        )}>
-          <div className="flex items-center justify-between gap-2">
-            <h3 className={cn(
-              "font-medium group-hover:text-primary transition-colors line-clamp-1",
-              gridView ? "text-base" : "text-sm"
-            )}>
-              {name}
-            </h3>
+          <div className="flex items-center justify-between">
+            <div className="bg-white/80 dark:bg-gray-800/80 p-1.5 rounded-full">
+              <Activity className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+            </div>
             
-            {!gridView && category && (
-              <Badge variant="outline" className="h-5 text-2xs bg-muted/20">
-                {category.name}
-              </Badge>
-            )}
+            <div className="text-xs font-medium px-2 py-1 rounded-full bg-white/80 dark:bg-gray-800/80 text-indigo-700 dark:text-indigo-300">
+              {category?.name || "دسته‌بندی نشده"}
+            </div>
           </div>
-          
-          {gridView && description && (
-            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-              {description}
-            </p>
-          )}
-          
-          <div className={cn(
-            "flex items-center gap-2 mt-1.5",
-            gridView ? "flex-wrap" : "flex-nowrap"
-          )}>
-            {targetMuscle && (
-              <Badge variant="secondary" className="h-5 text-2xs bg-secondary/10 text-secondary-foreground">
-                {targetMuscle}
-              </Badge>
-            )}
-            
-            {category && gridView && (
-              <Badge variant="outline" className="h-5 text-2xs bg-muted/20">
-                {category.name}
-              </Badge>
-            )}
-            
-            {equipment && (
-              <Badge variant="outline" className="h-5 text-2xs bg-muted/20">
-                {equipment}
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {/* دکمه‌های عملیات */}
+        </CardHeader>
+        
+        <CardContent className="p-3 pt-2 text-center">
+          <h4 className="font-medium line-clamp-2 min-h-[2.5rem]">{exercise.name}</h4>
+        </CardContent>
+        
         {(onEdit || onDelete) && (
-          <div className={cn(
-            "flex",
-            gridView 
-              ? "absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity" 
-              : "flex-shrink-0"
-          )}>
+          <CardFooter className="p-2 flex justify-center gap-2 border-t border-indigo-50 dark:border-indigo-900/50">
             {onEdit && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit();
-                }}
-                className="h-7 w-7 hover:bg-background/80 hover:text-primary"
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+                onClick={handleEdit}
               >
                 <Edit className="h-3.5 w-3.5" />
               </Button>
             )}
             
             {onDelete && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete();
-                }}
-                className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive"
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+                onClick={handleDelete}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             )}
-          </div>
+          </CardFooter>
         )}
-      </div>
+      </Card>
     </motion.div>
   );
 };
-
-export default ExerciseCard;
