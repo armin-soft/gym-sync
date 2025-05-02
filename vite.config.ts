@@ -18,9 +18,13 @@ const copyFilesPlugin = () => {
         fs.mkdirSync('dist/Assets/Image', { recursive: true });
       }
 
-      // Copy Manifest.json directly to the root of dist, avoiding duplication
+      // Copy Manifest.json from src to the root of dist, avoiding duplication
       if (fs.existsSync('src/Manifest.json')) {
         fs.copyFileSync('src/Manifest.json', 'dist/Manifest.json');
+        console.log('Copied Manifest.json from src to dist root');
+      } else if (fs.existsSync('public/Manifest.json')) {
+        fs.copyFileSync('public/Manifest.json', 'dist/Manifest.json');
+        console.log('Copied Manifest.json from public to dist root');
       }
 
       // Copy service-worker.js to the root of dist
