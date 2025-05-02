@@ -6,10 +6,10 @@ const CACHE_NAME = 'app-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/public/Assets/Image/Logo.png',
-  '/public/Assets/Manifest.json',
-  '/public/Assets/Script/Main.js',
-  '/public/Assets/Style/Menu.css',
+  '/Assets/Image/Logo.png',
+  '/Assets/Manifest.json',
+  '/src/main.tsx',
+  '/src/index.css',
 ];
 
 // Install a service worker

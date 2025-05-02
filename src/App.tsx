@@ -26,9 +26,6 @@ function App() {
       // Implementation will be handled by the service worker script
       console.log("Toast notification requested:", options);
     };
-
-    // Log the environment to help with debugging
-    console.log("Environment:", import.meta.env.MODE);
   }, []);
 
   return (
