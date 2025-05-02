@@ -23,8 +23,10 @@ const copyFilesPlugin = () => {
         fs.copyFileSync('src/Manifest.json', 'dist/Manifest.json');
       }
 
-      // Copy service-worker.js to the root
-      if (fs.existsSync('dist/assets/src/service-worker.js')) {
+      // Copy service-worker.js to the root of dist
+      if (fs.existsSync('dist/assets/service-worker.js')) {
+        fs.copyFileSync('dist/assets/service-worker.js', 'dist/service-worker.js');
+      } else if (fs.existsSync('dist/assets/src/service-worker.js')) {
         fs.copyFileSync('dist/assets/src/service-worker.js', 'dist/service-worker.js');
       }
 
@@ -33,9 +35,13 @@ const copyFilesPlugin = () => {
         fs.copyFileSync('src/Logo.ico', 'dist/Assets/Image/Logo.ico');
       }
       
-      // Create Logo.png in Assets/Image from src if it exists
+      // Copy Logo.png to Assets/Image
       if (fs.existsSync('src/Logo.png')) {
         fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
+      } else if (fs.existsSync('public/Assets/Image/Logo.png')) {
+        // Ensure destination directory exists
+        fs.mkdirSync('dist/Assets/Image', { recursive: true });
+        fs.copyFileSync('public/Assets/Image/Logo.png', 'dist/Assets/Image/Logo.png');
       }
     },
   };
@@ -44,7 +50,10 @@ const copyFilesPlugin = () => {
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
-    react(),
+    react({
+      // Fixing React 18 useLayoutEffect warning in SSR/build
+      jsxRuntime: 'automatic',
+    }),
     mode === 'development' && componentTagger(),
     copyFilesPlugin()
   ].filter(Boolean),

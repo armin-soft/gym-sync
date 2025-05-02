@@ -1,5 +1,6 @@
 
 import { cn } from "@/lib/utils";
+import { getAssetPath } from "@/utils/basePath";
 
 interface AppIconProps {
   size?: "sm" | "md" | "lg";
@@ -18,7 +19,7 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
       )}
     >
       <img
-        src="./Assets/Image/Logo.png"
+        src="/Assets/Image/Logo.png"
         alt="لوگوی برنامه"
         className={cn(
           "rounded-xl",
