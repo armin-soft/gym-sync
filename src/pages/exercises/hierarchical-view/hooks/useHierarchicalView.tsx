@@ -1,64 +1,48 @@
 
-import { useState, useMemo, useCallback, useEffect } from "react";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { useState, useCallback } from "react";
 
-export type ViewStage = 'types' | 'categories' | 'exercises';
+export type ViewStage = 'categories' | 'types' | 'exercises';
 
-const useHierarchicalView = (exercises: Exercise[], categories: ExerciseCategory[]) => {
-  // Current view stage
-  const [activeStage, setActiveStage] = useState<ViewStage>('types');
+export const useHierarchicalView = () => {
+  const [currentStage, setCurrentStage] = useState<ViewStage>('categories');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
   
-  // Selected type and category
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | null>(null);
-  
-  // View mode for exercise display
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  
-  // Navigate between stages
-  const navigateToStage = useCallback((stage: ViewStage) => {
-    setActiveStage(stage);
+  const handleCategorySelect = useCallback((categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+    setCurrentStage('types');
   }, []);
   
-  // Handle type selection
-  const handleTypeSelection = useCallback((type: string) => {
-    setSelectedType(type);
-    setSelectedCategory(null);
-    navigateToStage('categories');
-  }, [navigateToStage]);
+  const handleTypeSelect = useCallback((typeId: string) => {
+    setSelectedTypeId(typeId);
+    setCurrentStage('exercises');
+  }, []);
   
-  // Handle category selection
-  const handleCategorySelection = useCallback((category: ExerciseCategory) => {
-    setSelectedCategory(category);
-    navigateToStage('exercises');
-  }, [navigateToStage]);
+  const handleBackToCategories = useCallback(() => {
+    setSelectedCategoryId(null);
+    setSelectedTypeId(null);
+    setCurrentStage('categories');
+  }, []);
   
-  // Filter exercises by selected category
-  const exercisesByCategory = useMemo(() => {
-    if (!selectedCategory) return [];
-    return exercises.filter(exercise => exercise.categoryId === selectedCategory.id);
-  }, [exercises, selectedCategory]);
+  const handleBackToTypes = useCallback(() => {
+    setSelectedTypeId(null);
+    setCurrentStage('types');
+  }, []);
   
-  // Set default type if available
-  useEffect(() => {
-    const types = [...new Set(categories.map(cat => cat.type))];
-    if (types.length > 0 && !selectedType) {
-      setSelectedType(types[0]);
-    }
-  }, [categories, selectedType]);
+  const handleExerciseSelect = useCallback((exerciseId: string) => {
+    console.log("Selected exercise:", exerciseId);
+    // Additional handling can be added here
+  }, []);
   
   return {
-    activeStage,
-    selectedType,
-    setSelectedType,
-    selectedCategory,
-    setSelectedCategory,
-    viewMode,
-    setViewMode,
-    exercisesByCategory,
-    navigateToStage,
-    handleTypeSelection,
-    handleCategorySelection
+    currentStage,
+    selectedCategoryId,
+    selectedTypeId,
+    handleCategorySelect,
+    handleTypeSelect,
+    handleBackToCategories,
+    handleBackToTypes,
+    handleExerciseSelect
   };
 };
 

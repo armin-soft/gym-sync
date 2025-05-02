@@ -7,15 +7,20 @@ import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
 interface TypeSelectionStageProps {
-  exerciseTypes: string[];
-  setSelectedExerciseType: (type: string | null) => void;
+  categoryId: string;
+  onTypeSelect: (typeId: string) => void;
+  onBack: () => void;
 }
 
-export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({
-  exerciseTypes,
-  setSelectedExerciseType
+const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({
+  categoryId,
+  onTypeSelect,
+  onBack
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  
+  // Dummy exercise types for demonstration
+  const exerciseTypes = ["قدرتی", "استقامتی", "انعطاف‌پذیری", "هوازی", "تعادلی"];
   
   const filteredTypes = exerciseTypes.filter(type => 
     !searchTerm || type.toLowerCase().includes(searchTerm.toLowerCase())
@@ -29,6 +34,12 @@ export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
+      <div className="flex items-center justify-between mb-4">
+        <Button variant="outline" size="sm" onClick={onBack}>
+          بازگشت به دسته‌بندی‌ها
+        </Button>
+      </div>
+      
       <div className="relative">
         <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -65,7 +76,7 @@ export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({
             >
               <Card
                 className="h-full cursor-pointer bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950 dark:to-gray-900 border-indigo-100 dark:border-indigo-900 hover:shadow-xl transition-all duration-300 overflow-hidden group"
-                onClick={() => setSelectedExerciseType(type)}
+                onClick={() => onTypeSelect(type)}
               >
                 <div className="h-full flex flex-col">
                   <div className="bg-gradient-to-r from-indigo-600/80 to-purple-600/80 p-6 flex items-center justify-center text-white">
@@ -107,3 +118,5 @@ export const TypeSelectionStage: React.FC<TypeSelectionStageProps> = ({
     </motion.div>
   );
 };
+
+export default TypeSelectionStage;

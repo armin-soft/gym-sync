@@ -10,7 +10,7 @@ interface CategorySelectionStageProps {
 }
 
 const CategorySelectionStage: React.FC<CategorySelectionStageProps> = ({ onCategorySelect }) => {
-  const { categories, isLoading } = useExerciseCategories();
+  const { categories, isLoading } = useExerciseCategories(""); // Passing empty string as selectedType
 
   if (isLoading) {
     return (
@@ -32,7 +32,7 @@ const CategorySelectionStage: React.FC<CategorySelectionStageProps> = ({ onCateg
           <Card 
             key={category.id}
             className="cursor-pointer transition-all hover:border-primary hover:shadow-md"
-            onClick={() => onCategorySelect(category.id)}
+            onClick={() => onCategorySelect(category.id.toString())}
           >
             <CardContent className="p-4 text-center">
               <div className="flex flex-col items-center space-y-2">

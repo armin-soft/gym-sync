@@ -8,25 +8,32 @@ import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { ExerciseCategory } from "@/types/exercise";
 
 interface ExercisesStageProps {
-  exercises: any[];
-  categories: ExerciseCategory[];
-  viewMode: "grid" | "list";
-  setViewMode: (mode: "grid" | "list") => void;
-  onAddExercise: () => void;
-  onEditExercise: (exercise: any) => void;
-  onDeleteExercises: (ids: number[]) => void;
+  categoryId: string;
+  typeId: string;
+  onBack: () => void;
+  onExerciseSelect: (exerciseId: string) => void;
 }
 
-export const ExercisesStage: React.FC<ExercisesStageProps> = ({
-  exercises,
-  categories,
-  viewMode,
-  setViewMode,
-  onAddExercise,
-  onEditExercise,
-  onDeleteExercises
+const ExercisesStage: React.FC<ExercisesStageProps> = ({
+  categoryId,
+  typeId,
+  onBack,
+  onExerciseSelect
 }) => {
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  
+  // Dummy exercises for demonstration
+  const exercises = [
+    { id: 1, name: "حرکت شماره ۱", categoryId: 1 },
+    { id: 2, name: "حرکت شماره ۲", categoryId: 1 },
+    { id: 3, name: "حرکت شماره ۳", categoryId: 1 }
+  ];
+  
+  // Dummy categories for demonstration
+  const categories: ExerciseCategory[] = [
+    { id: 1, name: "دسته شماره ۱", type: typeId }
+  ];
 
   return (
     <motion.div 
@@ -37,6 +44,12 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center justify-between">
+        <Button variant="outline" size="sm" onClick={onBack}>
+          بازگشت به انواع تمرین
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between mt-4">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-semibold">
             حرکات تمرینی ({exercises.length})
@@ -47,7 +60,7 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
               size="sm"
               variant="destructive"
               onClick={() => {
-                onDeleteExercises(selectedExerciseIds);
+                // Handle delete
                 setSelectedExerciseIds([]);
               }}
               className="mr-2"
@@ -61,7 +74,9 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            onClick={onAddExercise}
+            onClick={() => {
+              // Handle add exercise
+            }}
             className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
           >
             <Plus className="h-4 w-4 ml-2" />
@@ -125,8 +140,8 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
                           : [...prev, exercise.id]
                       );
                     }}
-                    onEdit={() => onEditExercise(exercise)}
-                    onDelete={() => onDeleteExercises([exercise.id])}
+                    onEdit={() => {}}
+                    onDelete={() => {}}
                   />
                 </motion.div>
               );
@@ -139,7 +154,9 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
                 در این دسته‌بندی هنوز حرکتی تعریف نشده است.
               </p>
               <Button 
-                onClick={onAddExercise}
+                onClick={() => {
+                  // Handle add exercise
+                }}
                 className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
               >
                 <Plus className="h-4 w-4 ml-2" />
@@ -152,3 +169,5 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
     </motion.div>
   );
 };
+
+export default ExercisesStage;

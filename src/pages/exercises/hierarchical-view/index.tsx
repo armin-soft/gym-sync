@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { PageHeader } from '../../../components/ui/page-header';
 import { PageContainer } from '../../../components/ui/page-container';
 import { Card } from '../../../components/ui/card';
@@ -9,7 +9,7 @@ import ContentStages from './components/ContentStages';
 import CategorySelectionStage from './components/CategorySelectionStage';
 import TypeSelectionStage from './components/TypeSelectionStage';
 import ExercisesStage from './components/ExercisesStage';
-import { useHierarchicalView } from './hooks/useHierarchicalView';
+import useHierarchicalView from './hooks/useHierarchicalView';
 
 const HierarchicalView: React.FC = () => {
   const {
