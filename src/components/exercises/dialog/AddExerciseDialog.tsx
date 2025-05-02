@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
@@ -50,21 +49,6 @@ export function AddExerciseDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
-          <div className="space-y-2">
-            <Label className="text-base">دسته‌بندی تمرین</Label>
-            <select
-              className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow"
-              value={formData.categoryId}
-              onChange={(e) => onFormDataChange({ ...formData, categoryId: Number(e.target.value) })}
-            >
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
           <Tabs 
             defaultValue="single" 
             className="w-full" 
