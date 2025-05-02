@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import fs from 'fs'
+import { componentTagger } from 'lovable-tagger'
 
 // Custom plugin to handle file copying
 const copyFilesPlugin = () => {
@@ -43,8 +44,12 @@ const copyFilesPlugin = () => {
 };
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react(), copyFilesPlugin()],
+export default defineConfig(({ mode }) => ({
+  plugins: [
+    react(),
+    mode === 'development' && componentTagger(),
+    copyFilesPlugin()
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -104,4 +109,4 @@ export default defineConfig({
       }
     },
   },
-})
+}))
