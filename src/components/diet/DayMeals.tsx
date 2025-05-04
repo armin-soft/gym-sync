@@ -27,9 +27,11 @@ const weekDays: WeekDay[] = [
 ];
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
-  // Get unique days from meals that have content
+  // Get unique days from meals that have content - هنوز این را نگهداشتیم برای نمایش روزهای دارای محتوا
   const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
-  const [selectedDay, setSelectedDay] = useState<WeekDay>(daysWithContent[0] || weekDays[0]);
+  
+  // استفاده از همه روزهای هفته به جای فقط روزهایی که محتوا دارند
+  const [selectedDay, setSelectedDay] = useState<WeekDay>(weekDays[0]);
   const deviceInfo = useDeviceInfo();
   
   // Fix: Create a handler function to properly cast the string to WeekDay
