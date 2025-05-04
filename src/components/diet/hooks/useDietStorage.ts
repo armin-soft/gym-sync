@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Meal } from "@/types/meal";
+import { Meal, WeekDay } from "@/types/meal";
 
 /**
  * خوک برای مدیریت ذخیره‌سازی وعده‌های غذایی
@@ -28,10 +28,11 @@ export const useDietStorage = () => {
       // استاندارد کردن روزهای هفته قبل از ذخیره‌سازی
       const normalizedMeals = newMeals.map(meal => ({
         ...meal,
-        day: meal.day ? normalizeDay(meal.day) : meal.day
+        day: meal.day ? normalizeDay(meal.day) as WeekDay : meal.day
       }));
       
       localStorage.setItem('meals', JSON.stringify(normalizedMeals));
+      // Now use setMeals with the processed array that matches the Meal[] type
       setMeals(normalizedMeals);
       return true;
     } catch (error) {
@@ -52,6 +53,6 @@ export const useDietStorage = () => {
 };
 
 // تابع کمکی برای استاندارد کردن نام روزها
-export const normalizeDay = (day: string): string => {
+export const normalizeDay = (day: string | WeekDay): string => {
   return day.replace(/\s+/g, ' ');  // استفاده از فضای خالی معمولی
 };

@@ -112,7 +112,7 @@ export const useDietState = (): DietStateHook => {
   
   return {
     meals,
-    setMeals,
+    setMeals: saveMeals,
     open,
     setOpen,
     selectedMeal,
