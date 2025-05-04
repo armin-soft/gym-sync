@@ -7,6 +7,7 @@ import Index from "@/pages/Index";
 import TrainerProfile from "@/pages/trainer";
 import Students from "@/pages/students";
 import ExerciseMovements from "@/pages/exercises";
+import HierarchicalExercisesView from "@/pages/exercises/hierarchical-view";
 import DietPlan from "@/pages/diet";
 import SupplementsVitamins from "@/pages/supplements";
 import Reports from "@/pages/reports";
@@ -51,6 +52,7 @@ function App() {
               <Route path="/Coach-Profile" element={<TrainerProfile />} />
               <Route path="/Students" element={<Students />} />
               <Route path="/Exercise-Movements" element={<ExerciseMovements />} />
+              <Route path="/Exercise-Movements/Hierarchical-View" element={<HierarchicalExercisesView />} />
               <Route path="/Diet-Plan" element={<DietPlan />} />
               <Route path="/Supplements-Vitamins" element={<SupplementsVitamins />} />
               <Route path="/Reports" element={<Reports />} />
