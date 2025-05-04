@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useHierarchicalView } from "./hooks/useHierarchicalView";
 import { HierarchicalViewContainer } from "./components/HierarchicalViewContainer";
@@ -35,7 +36,6 @@ const HierarchicalExercisesView = () => {
       handleEditType={handleEditType}
       handleDeleteType={handleDeleteType}
       handleEditCategory={handleEditCategory}
-      // حذف پراپ handleAddClick که مربوط به افزودن تمرین بود
     />
   );
 };
