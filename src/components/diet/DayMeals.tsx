@@ -2,7 +2,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import type { Meal, MealType } from "@/types/meal";
+import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { DayTabs } from "./DayTabs";
 import { DayContent } from "./DayContent";
 
@@ -13,8 +13,8 @@ interface DayMealsProps {
   onDelete: (id: number) => void;
 }
 
-// Define weekdays array
-const weekDays = [
+// Define weekdays array with correct type
+const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
   'دوشنبه', 
@@ -25,7 +25,7 @@ const weekDays = [
 ];
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
-  const [selectedDay, setSelectedDay] = useState<string>("شنبه");
+  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   const deviceInfo = useDeviceInfo();
   
   return (
