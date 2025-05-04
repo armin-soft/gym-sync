@@ -5,6 +5,7 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { DayTabs } from "./DayTabs";
 import { DayContent } from "./DayContent";
+import { TabsContent } from "@/components/ui/tabs";
 
 interface DayMealsProps {
   meals: Meal[];
@@ -37,14 +38,16 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
           onDayChange={setSelectedDay}
         >
           {weekDays.map((day) => (
-            <DayContent
-              key={day}
-              day={day}
-              mealTypes={mealTypes}
-              meals={meals.filter(meal => meal.day === day)} // Filter meals for each specific day
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
+            <TabsContent key={day} value={day}>
+              <DayContent
+                key={day}
+                day={day}
+                mealTypes={mealTypes}
+                meals={meals.filter(meal => meal.day === day)} // Filter meals for each specific day
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            </TabsContent>
           ))}
         </DayTabs>
       </ScrollArea>
