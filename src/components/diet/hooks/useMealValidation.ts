@@ -9,37 +9,58 @@ import { normalizeDay } from "./useDietStorage";
 export const useMealValidation = (meals: Meal[]) => {
   const { toast } = useToast();
   
+  // تابع کمکی برای استاندارد کردن نام غذاها (حذف فاصله‌های اضافی، یکسان‌سازی حروف)
+  const normalizeMealName = (name: string): string => {
+    return name.trim().toLowerCase();
+  };
+  
   // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده - با دقت بیشتر
   const isMealDuplicate = (data: Omit<Meal, "id">, mealId?: number): boolean => {
     // لاگ برای دیباگ
     console.log("Checking for duplicate meal:", data);
     
+    const normalizedNewName = normalizeMealName(data.name);
+    const normalizedNewDay = normalizeDay(data.day || '');
+    
+    console.log(`Normalized new meal: Name="${normalizedNewName}", Day="${normalizedNewDay}", Type="${data.type}"`);
+    
     const duplicate = meals.some(existingMeal => {
       // استاندارد کردن نام روزها و نام غذاها قبل از مقایسه
       const normalizedExistingDay = normalizeDay(existingMeal.day || '');
-      const normalizedNewDay = normalizeDay(data.day || '');
-      
-      const existingMealNameLower = existingMeal.name.trim().toLowerCase();
-      const newMealNameLower = data.name.trim().toLowerCase();
+      const normalizedExistingName = normalizeMealName(existingMeal.name);
       
       // مقایسه دقیق نام غذا، نوع وعده و روز
       const isDuplicate = 
-        existingMealNameLower === newMealNameLower && 
+        normalizedExistingName === normalizedNewName && 
         existingMeal.type === data.type && 
         normalizedExistingDay === normalizedNewDay &&
         existingMeal.id !== mealId;
       
       if (isDuplicate) {
-        console.log("Found duplicate:", existingMeal, "comparing with:", data);
-        console.log("Name comparison:", existingMealNameLower === newMealNameLower);
-        console.log("Type comparison:", existingMeal.type === data.type);
-        console.log("Day comparison:", normalizedExistingDay === normalizedNewDay);
+        console.log("Found duplicate meal:", {
+          existing: {
+            id: existingMeal.id,
+            name: existingMeal.name,
+            normalizedName: normalizedExistingName,
+            type: existingMeal.type,
+            day: existingMeal.day,
+            normalizedDay: normalizedExistingDay
+          },
+          new: {
+            name: data.name,
+            normalizedName: normalizedNewName,
+            type: data.type,
+            day: data.day,
+            normalizedDay: normalizedNewDay,
+            mealId
+          }
+        });
       }
       
       return isDuplicate;
     });
     
-    console.log("Duplicate found:", duplicate);
+    console.log("Duplicate meal found:", duplicate);
     return duplicate;
   };
   

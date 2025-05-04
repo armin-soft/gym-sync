@@ -34,7 +34,7 @@ export const MealDialog = ({
       name: data.name.trim(),
       type: data.type as MealType,
       day: data.day as WeekDay,
-      description: "",
+      description: data.description || "",
       category: data.category || ""
     };
     
