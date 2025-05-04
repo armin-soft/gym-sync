@@ -53,7 +53,7 @@ export const useDietState = (): DietStateHook => {
     const cleanData = {
       ...data,
       name: data.name.trim(),
-      description: "",
+      description: data.description || "",
       // استاندارد کردن نام روز
       day: data.day ? normalizeDay(data.day) as WeekDay : data.day
     };

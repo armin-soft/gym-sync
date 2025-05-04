@@ -1,6 +1,6 @@
 
 import { useToast } from "@/components/ui/use-toast";
-import { Meal } from "@/types/meal";
+import { Meal, WeekDay } from "@/types/meal";
 import { normalizeDay } from "./useDietStorage";
 
 /**
@@ -15,18 +15,25 @@ export const useMealValidation = (meals: Meal[]) => {
     console.log("Checking for duplicate meal:", data);
     
     const duplicate = meals.some(existingMeal => {
-      // استاندارد کردن نام روزها قبل از مقایسه
+      // استاندارد کردن نام روزها و نام غذاها قبل از مقایسه
       const normalizedExistingDay = normalizeDay(existingMeal.day || '');
       const normalizedNewDay = normalizeDay(data.day || '');
       
+      const existingMealNameLower = existingMeal.name.trim().toLowerCase();
+      const newMealNameLower = data.name.trim().toLowerCase();
+      
+      // مقایسه دقیق نام غذا، نوع وعده و روز
       const isDuplicate = 
-        existingMeal.name.trim().toLowerCase() === data.name.trim().toLowerCase() && 
+        existingMealNameLower === newMealNameLower && 
         existingMeal.type === data.type && 
         normalizedExistingDay === normalizedNewDay &&
         existingMeal.id !== mealId;
       
       if (isDuplicate) {
-        console.log("Found duplicate:", existingMeal);
+        console.log("Found duplicate:", existingMeal, "comparing with:", data);
+        console.log("Name comparison:", existingMealNameLower === newMealNameLower);
+        console.log("Type comparison:", existingMeal.type === data.type);
+        console.log("Day comparison:", normalizedExistingDay === normalizedNewDay);
       }
       
       return isDuplicate;
