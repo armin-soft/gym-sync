@@ -4,7 +4,7 @@
 
 // Dynamically determine the base path where the app is running
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
-const CACHE_NAME = 'app-cache-v2';
+const CACHE_NAME = 'app-cache-v3';
 
 // Files to cache - use relative paths that will work in any environment
 const getUrlsToCache = () => {
@@ -14,33 +14,33 @@ const getUrlsToCache = () => {
     `${basePath}index.html`,
     `${basePath}Assets/Image/Logo.png`,
     `${basePath}Manifest.json`, // Single Manifest.json at root
-    `${basePath}Assets/Script/Main.js`,
+    `${basePath}Assets/Script/index.js`,
     `${basePath}Assets/Style/Menu.css`,
   ];
 };
 
 // Install a service worker
 self.addEventListener('install', (event: any) => {
-  console.log('Service Worker: Installing...', BASE_PATH);
+  console.log('[Service Worker] Installing...', BASE_PATH);
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         const urlsToCache = getUrlsToCache();
-        console.log('Service Worker: Caching files', urlsToCache);
+        console.log('[Service Worker] Caching files', urlsToCache);
         
         // Cache assets one by one to avoid a single failure breaking everything
         const cachePromises = urlsToCache.map((url: string) => {
           // Try to fetch each resource and cache it
-          return fetch(url)
+          return fetch(new Request(url, { cache: 'reload' }))
             .then(response => {
               if (!response || response.status !== 200) {
-                console.log(`Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
+                console.log(`[Service Worker] Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
                 return;
               }
               return cache.put(url, response);
             })
             .catch(err => {
-              console.log(`Error caching ${url}: ${err}`);
+              console.log(`[Service Worker] Error caching ${url}: ${err}`);
               // Continue despite errors
               return Promise.resolve();
             });
@@ -49,7 +49,7 @@ self.addEventListener('install', (event: any) => {
         return Promise.all(cachePromises);
       })
       .catch(error => {
-        console.error('Service Worker: Cache failed', error);
+        console.error('[Service Worker] Cache failed', error);
         // Continue installation even if caching fails
         return Promise.resolve();
       })
@@ -90,21 +90,21 @@ self.addEventListener('fetch', (event: any) => {
                 cache.put(event.request, responseToCache);
               })
               .catch(err => {
-                console.error('Failed to cache response:', err);
+                console.error('[Service Worker] Failed to cache response:', err);
               });
 
             return response;
           })
           .catch(err => {
-            console.log('Service Worker: Fetch failed', err);
+            console.log('[Service Worker] Fetch failed', err);
             // You might want to return a custom offline page here
             if (event.request.mode === 'navigate') {
               return caches.match('/');
             }
             
-            return new Response('Network error occurred', {
+            return new Response('خطا در اتصال به شبکه', {
               status: 408,
-              headers: { 'Content-Type': 'text/plain' }
+              headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
             });
           });
       })
@@ -113,14 +113,14 @@ self.addEventListener('fetch', (event: any) => {
 
 // Update a service worker
 self.addEventListener('activate', (event: any) => {
-  console.log('Service Worker: Activating...');
+  console.log('[Service Worker] Activating...');
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Service Worker: Deleting old cache', cacheName);
+            console.log('[Service Worker] Deleting old cache', cacheName);
             return caches.delete(cacheName);
           }
           return null;
@@ -134,15 +134,15 @@ self.addEventListener('activate', (event: any) => {
 
 // Handle messages from clients
 self.addEventListener('message', (event: any) => {
-  console.log('Service Worker: Received message', event.data);
+  console.log('[Service Worker] Received message', event.data);
   
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    console.log('Service Worker: Skipping waiting');
+    console.log('[Service Worker] Skipping waiting');
     (self as any).skipWaiting();
   }
   
   if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
-    console.log('Service Worker: Checking for updates');
+    console.log('[Service Worker] Checking for updates');
     (self as any).registration.update();
   }
 });

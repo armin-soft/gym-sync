@@ -1,19 +1,21 @@
 // This is the service worker for the application
 // It handles caching and offline functionality
 
-const CACHE_NAME = 'gym-sync-v2';
+const CACHE_NAME = 'gym-sync-v3';
 
 // Assets to cache - use relative paths instead of absolute
 const STATIC_ASSETS = [
   './',
   './index.html',
-  './Manifest.json'
-  // Dynamic JS and CSS files will be cached during fetch
+  './Manifest.json',
+  './Assets/Image/Logo.png',
+  './Assets/Script/index.js',
+  './Assets/Style/Menu.css'
 ];
 
 // Install event
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing');
+  console.log('[Service Worker] Installing');
   
   // Skip waiting to activate immediately
   self.skipWaiting();
@@ -22,23 +24,23 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Service Worker: Caching Files');
+        console.log('[Service Worker] Caching Files');
         return cache.addAll(STATIC_ASSETS).catch(err => {
-          console.error('Failed to cache all resources:', err);
+          console.error('[Service Worker] Failed to cache all resources:', err);
           
           // If bulk caching fails, try individual items
           return Promise.all(
             STATIC_ASSETS.map(url => 
-              fetch(url)
+              fetch(new Request(url, { cache: 'reload' }))
                 .then(response => {
                   if (!response || response.status !== 200) {
-                    console.log(`Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
+                    console.log(`[Service Worker] Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
                     return;
                   }
                   return cache.put(url, response);
                 })
                 .catch(err => {
-                  console.log(`Error caching ${url}: ${err}`);
+                  console.log(`[Service Worker] Error caching ${url}: ${err}`);
                   // Continue despite errors
                   return Promise.resolve();
                 })
@@ -47,21 +49,21 @@ self.addEventListener('install', (event) => {
         });
       })
       .catch(err => {
-        console.error('Service Worker: Cache error during installation', err);
+        console.error('[Service Worker] Cache error during installation', err);
       })
   );
 });
 
 // Activate event
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activated');
+  console.log('[Service Worker] Activated');
   // Remove old caches
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('Service Worker: Clearing Old Cache');
+            console.log('[Service Worker] Clearing Old Cache');
             return caches.delete(cache);
           }
           return Promise.resolve();
@@ -91,7 +93,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  console.log('Service Worker: Fetching', event.request.url);
+  console.log('[Service Worker] Fetching', event.request.url);
   
   event.respondWith(
     caches.match(event.request)
@@ -111,7 +113,7 @@ self.addEventListener('fetch', (event) => {
                   cache.put(event.request, responseToCache);
                 })
                 .catch(err => {
-                  console.log('Failed to update cache for:', event.request.url, err);
+                  console.log('[Service Worker] Failed to update cache for:', event.request.url, err);
                 });
             })
             .catch(() => {
@@ -138,7 +140,7 @@ self.addEventListener('fetch', (event) => {
                 cache.put(event.request, responseToCache);
               })
               .catch(err => {
-                console.error('Failed to cache response:', err);
+                console.error('[Service Worker] Failed to cache response:', err);
               });
 
             return response;
@@ -150,17 +152,17 @@ self.addEventListener('fetch', (event) => {
             }
             
             // Otherwise return error response
-            return new Response('Network error occurred. App is offline.', {
+            return new Response('خطا در اتصال به شبکه. برنامه در حالت آفلاین است.', {
               status: 408,
-              headers: { 'Content-Type': 'text/plain' }
+              headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
             });
           });
       })
       .catch(error => {
-        console.error('Error in fetch handler:', error);
-        return new Response('Fatal error in service worker', {
+        console.error('[Service Worker] Error in fetch handler:', error);
+        return new Response('خطای سرویس ورکر', {
           status: 500,
-          headers: { 'Content-Type': 'text/plain' }
+          headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
         });
       })
   );
@@ -173,7 +175,7 @@ self.addEventListener('message', (event) => {
   }
   
   if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
-    console.log('Checking for updates...');
+    console.log('[Service Worker] Checking for updates...');
     self.registration.update();
   }
 });

@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -9,36 +10,42 @@ const copyFilesPlugin = () => {
   return {
     name: 'copy-files',
     closeBundle: () => {
-      // Ensure directories exist
-      if (!fs.existsSync('dist/Assets')) {
-        fs.mkdirSync('dist/Assets', { recursive: true });
-      }
-      if (!fs.existsSync('dist/Assets/Image')) {
-        fs.mkdirSync('dist/Assets/Image', { recursive: true });
-      }
+      try {
+        // Ensure directories exist
+        if (!fs.existsSync('dist/Assets')) {
+          fs.mkdirSync('dist/Assets', { recursive: true });
+        }
+        if (!fs.existsSync('dist/Assets/Image')) {
+          fs.mkdirSync('dist/Assets/Image', { recursive: true });
+        }
 
-      // Copy Manifest.json from src to the root of dist, avoiding duplication
-      if (fs.existsSync('src/Manifest.json')) {
-        fs.copyFileSync('src/Manifest.json', 'dist/Manifest.json');
-        console.log('Copied Manifest.json from src to dist root');
-      } else if (fs.existsSync('public/Manifest.json')) {
-        fs.copyFileSync('public/Manifest.json', 'dist/Manifest.json');
-        console.log('Copied Manifest.json from public to dist root');
-      }
+        // Copy Manifest.json from src to the root of dist, avoiding duplication
+        if (fs.existsSync('src/Manifest.json')) {
+          fs.copyFileSync('src/Manifest.json', 'dist/Manifest.json');
+          console.log('Copied Manifest.json from src to dist root');
+        } else if (fs.existsSync('public/Manifest.json')) {
+          fs.copyFileSync('public/Manifest.json', 'dist/Manifest.json');
+          console.log('Copied Manifest.json from public to dist root');
+        }
 
-      // Copy Service-Worker.js to the root of dist
-      if (fs.existsSync('Service-Worker.js')) {
-        fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
-        console.log('Copied Service-Worker.js to dist root');
-      }
+        // Copy Service-Worker.js to the root of dist
+        if (fs.existsSync('Service-Worker.js')) {
+          fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
+          console.log('Copied Service-Worker.js to dist root');
+        }
 
-      // Copy Logo.png to Assets/Image
-      if (fs.existsSync('src/Logo.png')) {
-        fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
-      } else if (fs.existsSync('public/Assets/Image/Logo.png')) {
-        // Ensure destination directory exists
-        fs.mkdirSync('dist/Assets/Image', { recursive: true });
-        fs.copyFileSync('public/Assets/Image/Logo.png', 'dist/Assets/Image/Logo.png');
+        // Copy Logo.png to Assets/Image
+        if (fs.existsSync('src/Logo.png')) {
+          fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
+          console.log('Copied Logo.png from src to dist/Assets/Image');
+        } else if (fs.existsSync('public/Assets/Image/Logo.png')) {
+          fs.copyFileSync('public/Assets/Image/Logo.png', 'dist/Assets/Image/Logo.png');
+          console.log('Copied Logo.png from public to dist/Assets/Image');
+        }
+        
+        console.log('All files copied successfully!');
+      } catch (error) {
+        console.error('Error during file copying:', error);
       }
     },
   };
@@ -188,7 +195,7 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
+        drop_console: false, // فعلاً برای دیباگ، لاگ‌ها را حفظ می‌کنیم
         drop_debugger: true
       }
     },
