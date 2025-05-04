@@ -2,7 +2,7 @@
 import { TabsContent } from "@/components/ui/tabs";
 import { MealTypeSection } from "./MealTypeSection";
 import { mealTypeOrder } from "./MealTypeUtils";
-import type { Meal, MealType } from "@/types/meal";
+import type { Meal, MealType, WeekDay } from "@/types/meal";
 
 interface DayContentProps {
   day: string;
@@ -16,9 +16,6 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
   // Sort meal types based on the defined order
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   
-  // Get meals for this day
-  const dayMeals = meals.filter(meal => meal.day === day);
-  
   return (
     <TabsContent
       key={day}
@@ -27,7 +24,7 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
     >
       <div className="space-y-4 sm:space-y-6">
         {sortedMealTypes.map((type, typeIndex) => {
-          const typeMeals = dayMeals.filter(meal => meal.type === type);
+          const typeMeals = meals.filter(meal => meal.type === type);
           
           return (
             <MealTypeSection

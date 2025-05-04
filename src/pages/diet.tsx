@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Calendar } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MealDialog } from "@/components/diet/MealDialog";
@@ -31,7 +31,6 @@ const DietPage = () => {
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   
   const saveMeals = (newMeals: Meal[]) => {
     try {
@@ -152,29 +151,12 @@ const DietPage = () => {
         <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-180px)]">
           <ScrollArea className="h-full w-full">
             <div className="p-6">
-              <Tabs 
-                defaultValue="شنبه" 
-                value={selectedDay} 
-                onValueChange={value => setSelectedDay(value as WeekDay)} 
-                className="w-full"
-              >
-                <div className="mt-6">
-                  {weekDays.map(day => (
-                    <TabsContent 
-                      key={day} 
-                      value={day} 
-                      className="focus-visible:outline-none focus-visible:ring-0 space-y-6"
-                    >
-                      <DayMeals 
-                        meals={filteredMeals} 
-                        mealTypes={mealTypes} 
-                        onEdit={handleEdit} 
-                        onDelete={handleDelete} 
-                      />
-                    </TabsContent>
-                  ))}
-                </div>
-              </Tabs>
+              <DayMeals 
+                meals={filteredMeals}
+                mealTypes={mealTypes} 
+                onEdit={handleEdit} 
+                onDelete={handleDelete} 
+              />
             </div>
           </ScrollArea>
         </Card>
