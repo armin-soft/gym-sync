@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowDownAZ, ArrowUpZA, LayoutGrid, ListFilter } from "lucide-react";
@@ -279,7 +278,8 @@ const Index = () => {
                           carbs: parseInt(meal.carbs || "0"),
                           fat: parseInt(meal.fat || "0"),
                           description: meal.description || "",
-                          time: meal.type
+                          time: meal.type,
+                          type: meal.type // Add the type property here
                         }))}
                         onEdit={handleEdit}
                         onDelete={handleDelete}

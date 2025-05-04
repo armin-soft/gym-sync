@@ -10,7 +10,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, Trash2 } from "lucide-react";
+import { Meal as AppMeal } from "@/types/meal";
 
+// Updated interface to match what we need for this component
 export interface Meal {
   id: number;
   name: string;
@@ -21,11 +23,12 @@ export interface Meal {
   description: string;
   image?: string;
   time: string;
+  type?: string; // Added type property to match the app's Meal type
 }
 
 interface MealListProps {
   meals: Meal[];
-  onEdit: (meal: Meal) => void;
+  onEdit: (meal: AppMeal) => void; // Changed to accept AppMeal type
   onDelete: (id: number) => void;
 }
 
@@ -76,7 +79,16 @@ export const MealList = ({ meals, onEdit, onDelete }: MealListProps) => {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onEdit(meal)}
+                      onClick={() => onEdit({
+                        id: meal.id,
+                        name: meal.name,
+                        description: meal.description,
+                        type: meal.time as any, // Convert time to type
+                        calories: meal.calories.toString(),
+                        protein: meal.protein.toString(),
+                        carbs: meal.carbs.toString(),
+                        fat: meal.fat.toString()
+                      })}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
