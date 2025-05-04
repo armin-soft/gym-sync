@@ -28,6 +28,9 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   const deviceInfo = useDeviceInfo();
   
+  // Filter meals by day only, no sorting order
+  const dayMeals = meals.filter(meal => meal.day === selectedDay);
+  
   return (
     <div dir="rtl">
       <ScrollArea className="w-full">
@@ -41,7 +44,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               key={day}
               day={day}
               mealTypes={mealTypes}
-              meals={meals}
+              meals={dayMeals.filter(meal => meal.day === day)}
               onEdit={onEdit}
               onDelete={onDelete}
             />
