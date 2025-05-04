@@ -2,7 +2,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { DayMeals } from "@/components/diet/DayMeals";
 import { MealList } from "@/components/diet/MealList";
 import { Meal, MealType, WeekDay } from "@/types/meal";
@@ -29,6 +29,20 @@ export const DietContentArea = ({
   onEdit,
   onDelete,
 }: DietContentAreaProps) => {
+  // Define all weekdays
+  const allWeekDays: WeekDay[] = [
+    'شنبه', 
+    'یکشنبه', 
+    'دوشنبه', 
+    'سه‌شنبه', 
+    'چهارشنبه', 
+    'پنجشنبه', 
+    'جمعه'
+  ];
+
+  // Get days that have meals
+  const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
+  
   // Filter meals for the selected day
   const dayMeals = meals.filter((meal) => meal.day === selectedDay);
   
@@ -61,17 +75,6 @@ export const DietContentArea = ({
     }));
   };
 
-  // Define all weekdays to ensure all days are shown
-  const allWeekDays: WeekDay[] = [
-    'شنبه', 
-    'یکشنبه', 
-    'دوشنبه', 
-    'سه‌شنبه', 
-    'چهارشنبه', 
-    'پنجشنبه', 
-    'جمعه'
-  ];
-
   return (
     <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-180px)]">
       <ScrollArea className="h-full w-full">
@@ -81,30 +84,55 @@ export const DietContentArea = ({
               weekDays={allWeekDays}
               selectedDay={selectedDay}
               onDayChange={onDayChange}
-            />
-              
-            <div className="mt-6">
-              {viewMode === "grid" ? (
-                <DayMeals
-                  meals={sortedMeals}
-                  mealTypes={mealTypes}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              ) : (
-                <MealList
-                  meals={getListMeals()}
-                  onEdit={(listMeal) => {
-                    // Find the original meal to edit
-                    const originalMeal = sortedMeals.find(m => m.id === listMeal.id);
-                    if (originalMeal) {
-                      onEdit(originalMeal);
-                    }
-                  }}
-                  onDelete={onDelete}
-                />
-              )}
-            </div>
+            >
+              {allWeekDays.map((day) => {
+                // Filter meals for this specific day
+                const daySpecificMeals = meals.filter((meal) => meal.day === day);
+                // Sort these meals 
+                const sortedDayMeals = [...daySpecificMeals].sort((a, b) => {
+                  const typeOrderA = mealTypes.indexOf(a.type);
+                  const typeOrderB = mealTypes.indexOf(b.type);
+                  if (typeOrderA !== typeOrderB) {
+                    return typeOrderA - typeOrderB;
+                  }
+                  const comparison = a.name.localeCompare(b.name);
+                  return sortOrder === "asc" ? comparison : -comparison;
+                });
+
+                return (
+                  <TabsContent key={day} value={day} className="mt-6">
+                    {viewMode === "grid" ? (
+                      <div className={daySpecificMeals.length === 0 ? "flex items-center justify-center py-10" : ""}>
+                        {daySpecificMeals.length > 0 ? (
+                          <DayMeals
+                            meals={sortedDayMeals}
+                            mealTypes={mealTypes}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                          />
+                        ) : (
+                          <div className="text-muted-foreground text-lg text-center">
+                            برای روز {day} برنامه غذایی ثبت نشده است
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <MealList
+                        meals={getListMeals()}
+                        onEdit={(listMeal) => {
+                          // Find the original meal to edit
+                          const originalMeal = sortedDayMeals.find(m => m.id === listMeal.id);
+                          if (originalMeal) {
+                            onEdit(originalMeal);
+                          }
+                        }}
+                        onDelete={onDelete}
+                      />
+                    )}
+                  </TabsContent>
+                );
+              })}
+            </DayTabs>
           </Tabs>
         </div>
       </ScrollArea>

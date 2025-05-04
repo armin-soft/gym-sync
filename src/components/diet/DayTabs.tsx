@@ -46,8 +46,8 @@ export const DayTabs = ({ weekDays, selectedDay, onDayChange, children }: DayTab
             </TabsTrigger>
           ))}
         </TabsList>
-        {children}
       </div>
+      {children}
     </Tabs>
   );
 };

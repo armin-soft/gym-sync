@@ -26,7 +26,9 @@ const weekDays: WeekDay[] = [
 ];
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
-  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
+  // Get unique days from meals that have content
+  const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
+  const [selectedDay, setSelectedDay] = useState<WeekDay>(daysWithContent[0] || weekDays[0]);
   const deviceInfo = useDeviceInfo();
   
   return (
@@ -37,18 +39,29 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
           selectedDay={selectedDay} 
           onDayChange={setSelectedDay}
         >
-          {weekDays.map((day) => (
-            <TabsContent key={day} value={day}>
-              <DayContent
-                key={day}
-                day={day}
-                mealTypes={mealTypes}
-                meals={meals.filter(meal => meal.day === day)} // Filter meals for each specific day
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            </TabsContent>
-          ))}
+          {weekDays.map((day) => {
+            // Filter meals for current day
+            const dayMeals = meals.filter(meal => meal.day === day);
+            
+            return (
+              <TabsContent key={day} value={day} className={dayMeals.length === 0 ? "flex items-center justify-center py-10" : ""}>
+                {dayMeals.length > 0 ? (
+                  <DayContent
+                    key={day}
+                    day={day}
+                    mealTypes={mealTypes}
+                    meals={dayMeals}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                ) : (
+                  <div className="text-muted-foreground text-lg">
+                    برای روز {day} برنامه غذایی ثبت نشده است
+                  </div>
+                )}
+              </TabsContent>
+            );
+          })}
         </DayTabs>
       </ScrollArea>
     </div>
