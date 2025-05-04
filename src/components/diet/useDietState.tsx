@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Meal, MealType, WeekDay } from "@/types/meal";
@@ -69,23 +70,39 @@ export const useDietState = () => {
     });
   };
   
-  // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
+  // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده - با دقت بیشتر
   const isMealDuplicate = (data: Omit<Meal, "id">, mealId?: number): boolean => {
-    return meals.some(existingMeal => 
-      existingMeal.name === data.name && 
-      existingMeal.type === data.type && 
-      existingMeal.day === data.day &&
-      existingMeal.id !== mealId
-    );
+    // لاگ برای دیباگ
+    console.log("Checking for duplicate meal:", data);
+    
+    const duplicate = meals.some(existingMeal => {
+      const isDuplicate = 
+        existingMeal.name.trim().toLowerCase() === data.name.trim().toLowerCase() && 
+        existingMeal.type === data.type && 
+        existingMeal.day === data.day &&
+        existingMeal.id !== mealId;
+      
+      if (isDuplicate) {
+        console.log("Found duplicate:", existingMeal);
+      }
+      
+      return isDuplicate;
+    });
+    
+    console.log("Duplicate found:", duplicate);
+    return duplicate;
   };
   
   // مدیریت ذخیره وعده غذایی
   const handleSave = (data: Omit<Meal, "id">) => {
-    // حذف توضیحات مانند "همراه با چای یا قهوه"
+    // پیش‌پردازش داده‌ها - حذف فاصله‌های اضافی
     const cleanData = {
       ...data,
+      name: data.name.trim(),
       description: ""
     };
+    
+    console.log("Attempting to save meal:", cleanData);
     
     // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
     if (isMealDuplicate(cleanData, selectedMeal?.id)) {

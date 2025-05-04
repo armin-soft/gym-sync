@@ -26,7 +26,7 @@ import { UtensilsCrossed, Type, Clock, CalendarDays, Save, X } from "lucide-reac
 type MealFormData = z.infer<typeof mealFormSchema>;
 
 const mealFormSchema = z.object({
-  name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد"),
+  name: z.string().min(2, "نام غذا باید حداقل ۲ کاراکتر باشد").transform(val => val.trim()),
   type: z.string().min(1, "نوع وعده غذایی الزامی است"),
   day: z.string().min(1, "روز هفته الزامی است"),
   description: z.string(),
@@ -78,14 +78,23 @@ export const MealDialog = ({
   }, [meal, open, form]);
 
   const onSubmit = (data: MealFormData) => {
-    onSave({
-      name: data.name,
+    // پیش‌پردازش داده‌ها - حذف فضاهای خالی اضافی در نام غذا
+    const processedData = {
+      name: data.name.trim(),
       type: data.type as MealType,
       day: data.day as WeekDay,
       description: ""
-    });
-    form.reset();
-    onOpenChange(false);
+    };
+    
+    console.log("Form submitted with data:", processedData);
+    
+    const result = onSave(processedData);
+    
+    // اگر ذخیره موفق بود، فرم را ریست کنیم
+    if (result !== false) {
+      form.reset();
+      onOpenChange(false);
+    }
   };
 
   return (
