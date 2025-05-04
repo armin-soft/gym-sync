@@ -7,6 +7,7 @@ export const mealFormSchema = z.object({
   type: z.string().min(1, "نوع وعده غذایی الزامی است"),
   day: z.string().min(1, "روز هفته الزامی است"),
   description: z.string(),
+  category: z.string().optional(),
 }).required();
 
 export type MealFormData = z.infer<typeof mealFormSchema>;

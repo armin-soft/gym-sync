@@ -32,6 +32,7 @@ export const MealFormContent = ({
       type: meal?.type || "",
       day: meal?.day || "",
       description: "",
+      category: meal?.category || "",
     },
   });
 
@@ -42,6 +43,7 @@ export const MealFormContent = ({
         type: meal.type,
         day: meal.day,
         description: "",
+        category: meal.category || "",
       });
     } else {
       form.reset({
@@ -49,6 +51,7 @@ export const MealFormContent = ({
         type: "",
         day: "",
         description: "",
+        category: "",
       });
     }
   }, [meal, form]);
