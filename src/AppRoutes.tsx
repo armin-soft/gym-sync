@@ -5,6 +5,7 @@ import { useRoutes } from "react-router-dom";
 // Import page components directly from their index files
 import Students from "./pages/students";
 import AddEditStudent from "./pages/students/add-edit";
+import DietPlan from "./pages/diet";
 
 const AppRoutes = () => {
   // Create placeholders for the pages that are referenced but don't exist
@@ -52,6 +53,10 @@ const AppRoutes = () => {
     {
       path: "/nutrition",
       element: <Nutrition />,
+    },
+    {
+      path: "/Diet-Plan",
+      element: <DietPlan />,
     },
     {
       path: "/settings",

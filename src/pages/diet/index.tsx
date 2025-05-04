@@ -1,14 +1,20 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowDownAZ, ArrowUpZA, LayoutGrid, ListFilter } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { MealDialog } from "@/components/diet/MealDialog";
 import { DayMeals } from "@/components/diet/DayMeals";
-import { useToast } from "@/components/ui/use-toast";
 import { PageContainer } from "@/components/ui/page-container";
-import { Meal, MealType, WeekDay } from "@/types/meal";
+import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { Meal, MealType, WeekDay } from "@/types/meal";
+import { Input } from "@/components/ui/input";
 
 const weekDays: WeekDay[] = [
   'شنبه', 
@@ -34,6 +40,10 @@ const Index = () => {
   const [open, setOpen] = useState(false);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     try {
@@ -71,16 +81,17 @@ const Index = () => {
       toast({
         title: "ویرایش موفق",
         description: "وعده غذایی با موفقیت ویرایش شد",
+        className: "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none"
       });
     } else {
       // Adding new meal
-      // Use a numeric ID instead of a string from uuid
       const newId = Math.max(0, ...meals.map(meal => typeof meal.id === 'number' ? meal.id : 0)) + 1;
       const newMeal: Meal = { id: newId, ...data };
       setMeals([...meals, newMeal]);
       toast({
         title: "افزودن موفق",
-        description: "وعده غذایی با موفقیت اضافه شد",
+        description: "وعده غذایی جدید با موفقیت اضافه شد",
+        className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
       });
     }
     return true;
@@ -91,8 +102,19 @@ const Index = () => {
     toast({
       title: "حذف موفق",
       description: "وعده غذایی با موفقیت حذف شد",
+      className: "bg-gradient-to-r from-red-500 to-red-600 text-white border-none"
     });
   }, [meals, toast]);
+
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
+
+  const filteredMeals = meals
+    .filter(meal => 
+      meal.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      meal.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   return (
     <PageContainer 
@@ -108,20 +130,10 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           className="h-full w-full py-4 sm:py-6 space-y-4 sm:space-y-6 px-2 sm:px-4 md:px-6"
         >
-          <div className="flex flex-col space-y-4">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4"
-            >
-              <div className="space-y-1.5">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-3">
-                  <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                    برنامه های غذایی هفتگی
-                  </span>
-                </h2>
-              </div>
+          <PageHeader
+            title="برنامه های غذایی هفتگی"
+            icon={UtensilsCrossed}
+            actions={
               <Button 
                 onClick={handleOpen} 
                 size="sm"
@@ -130,20 +142,127 @@ const Index = () => {
                 <Plus className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:scale-110 group-hover:rotate-180 duration-300" />
                 افزودن وعده غذایی
               </Button>
-            </motion.div>
-          </div>
+            }
+          />
 
-          <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-140px)]">
-            <div className="h-full overflow-auto">
-              <div className="p-2 xs:p-3 sm:p-4 md:p-6">
-                <DayMeals
-                  meals={meals}
-                  mealTypes={mealTypes}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col sm:flex-row items-stretch gap-4"
+          >
+            <div className="relative flex-1">
+              <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground/70 transition-colors group-hover:text-primary" />
+              <Input 
+                placeholder="جستجو در وعده های غذایی..." 
+                className="pr-10 h-11 text-base focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300" 
+                value={searchQuery} 
+                onChange={e => setSearchQuery(e.target.value)} 
+              />
             </div>
+            
+            <div className="flex items-center gap-2 self-start">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className={cn(
+                        "h-11 w-11 border-muted", 
+                        viewMode === "grid" && "bg-primary/10 text-primary border-primary/30"
+                      )} 
+                      onClick={() => setViewMode("grid")}
+                    >
+                      <LayoutGrid className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="text-xs">نمایش شبکه‌ای</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className={cn(
+                        "h-11 w-11 border-muted", 
+                        viewMode === "list" && "bg-primary/10 text-primary border-primary/30"
+                      )} 
+                      onClick={() => setViewMode("list")}
+                    >
+                      <ListFilter className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="text-xs">نمایش لیستی</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="h-11 w-11 border-muted" 
+                      onClick={toggleSortOrder}
+                    >
+                      {sortOrder === "asc" ? 
+                        <ArrowDownAZ className="h-5 w-5" /> : 
+                        <ArrowUpZA className="h-5 w-5" />
+                      }
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="text-xs">تغییر ترتیب</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </motion.div>
+
+          <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-180px)]">
+            <ScrollArea className="h-full w-full">
+              <div className="p-6">
+                <Tabs defaultValue="شنبه" value={selectedDay} onValueChange={value => setSelectedDay(value as WeekDay)} className="w-full">
+                  <div className="bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 pb-2 sm:pb-4">
+                    <TabsList className="w-full flex justify-between gap-1 bg-muted/30 p-1 rounded-xl">
+                      {weekDays.map((day) => (
+                        <TabsTrigger 
+                          key={day} 
+                          value={day}
+                          className={cn(
+                            "flex-1 text-xs xs:text-sm sm:text-base px-1.5 xs:px-2 sm:px-4 py-1.5 sm:py-3 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground",
+                            "transition-all duration-300 hover:bg-primary/10 data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20",
+                            "data-[state=active]:scale-105 relative overflow-hidden group"
+                          )}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div className="relative whitespace-nowrap">
+                            {day}
+                          </div>
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </div>
+
+                  <div className="mt-6">
+                    <DayMeals
+                      meals={filteredMeals.filter(meal => meal.day === selectedDay)}
+                      mealTypes={mealTypes}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                    />
+                  </div>
+                </Tabs>
+              </div>
+            </ScrollArea>
           </Card>
 
           <MealDialog
