@@ -13,7 +13,7 @@ export const DietPageHeader = ({ onAddMeal }: DietPageHeaderProps) => {
   return (
     <PageHeader
       title="برنامه های غذایی هفتگی"
-      icon={() => (
+      icon={
         <motion.div 
           whileHover={{ rotate: 360 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -25,7 +25,7 @@ export const DietPageHeader = ({ onAddMeal }: DietPageHeaderProps) => {
             <path d="M12.97 19.77 7 15h12.5l-3.75 4.5a2 2 0 0 1-2.78.27Z"/>
           </svg>
         </motion.div>
-      )}
+      }
       description="تنظیم و مدیریت برنامه‌های غذایی روزانه"
       actions={
         <Button 

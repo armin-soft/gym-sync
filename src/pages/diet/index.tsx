@@ -39,8 +39,6 @@ const Index = () => {
     setSearchQuery,
     selectedDay,
     setSelectedDay,
-    viewMode, 
-    setViewMode,
     sortOrder,
     filteredMeals,
     handleOpen,
@@ -63,12 +61,10 @@ const Index = () => {
           {/* Header with Add Button */}
           <DietPageHeader onAddMeal={handleOpen} />
           
-          {/* Search and View Mode Controls */}
+          {/* Search and Sort Controls */}
           <SearchAndFilters
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
             sortOrder={sortOrder}
             onSortOrderChange={toggleSortOrder}
           />
@@ -78,7 +74,6 @@ const Index = () => {
             meals={filteredMeals}
             mealTypes={mealTypes}
             selectedDay={selectedDay}
-            viewMode={viewMode}
             sortOrder={sortOrder}
             onDayChange={setSelectedDay}
             onEdit={handleEdit}

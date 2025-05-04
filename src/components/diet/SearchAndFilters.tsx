@@ -1,14 +1,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, SortAsc, SortDesc, Grid, List } from "lucide-react";
+import { Search, SortAsc, SortDesc } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface SearchAndFiltersProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
   sortOrder: "asc" | "desc";
   onSortOrderChange: () => void;
 }
@@ -16,8 +14,6 @@ interface SearchAndFiltersProps {
 export const SearchAndFilters = ({
   searchQuery,
   onSearchChange,
-  viewMode,
-  onViewModeChange,
   sortOrder,
   onSortOrderChange,
 }: SearchAndFiltersProps) => {
@@ -39,25 +35,6 @@ export const SearchAndFilters = ({
       </div>
       
       <div className="flex gap-2 justify-end">
-        <div className="bg-muted/40 backdrop-blur-sm border border-border/50 rounded-lg p-1 flex">
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`h-9 w-9 rounded-md ${viewMode === "grid" ? "bg-card shadow-sm" : ""}`}
-            onClick={() => onViewModeChange("grid")}
-          >
-            <Grid className={`h-4 w-4 ${viewMode === "grid" ? "text-primary" : "text-muted-foreground"}`} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`h-9 w-9 rounded-md ${viewMode === "list" ? "bg-card shadow-sm" : ""}`}
-            onClick={() => onViewModeChange("list")}
-          >
-            <List className={`h-4 w-4 ${viewMode === "list" ? "text-primary" : "text-muted-foreground"}`} />
-          </Button>
-        </div>
-        
         <Button
           variant="outline"
           size="icon"
