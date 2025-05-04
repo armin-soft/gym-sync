@@ -32,6 +32,11 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
   const [selectedDay, setSelectedDay] = useState<WeekDay>(daysWithContent[0] || weekDays[0]);
   const deviceInfo = useDeviceInfo();
   
+  // Fix: Create a handler function to properly cast the string to WeekDay
+  const handleDayChange = (value: string) => {
+    setSelectedDay(value as WeekDay);
+  };
+  
   return (
     <div dir="rtl" className="relative">
       <motion.div
@@ -39,7 +44,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
         animate={{ opacity: 1, y: 0 }}
         className="w-full"
       >
-        <Tabs value={selectedDay} onValueChange={setSelectedDay} className="w-full">
+        <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full">
           <ScrollArea 
             className="w-full overflow-hidden" 
             orientation="both"
@@ -48,7 +53,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               <DayTabs 
                 weekDays={weekDays} 
                 selectedDay={selectedDay} 
-                onDayChange={setSelectedDay}
+                onDayChange={(day) => setSelectedDay(day)}
                 daysWithContent={daysWithContent}
               >
                 {weekDays.map((day) => {
