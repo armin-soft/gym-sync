@@ -29,13 +29,13 @@ export const MealDialog = ({
 }: MealDialogProps) => {
   
   const handleSubmit = (data: MealFormData) => {
-    // پیش‌پردازش داده‌ها - حذف فضاهای خالی اضافی در نام غذا
+    // پیش‌پردازش داده‌ها - حذف فضاهای خالی اضافی در نام غذا و سایر فیلدها
     const processedData = {
       name: data.name.trim(),
       type: data.type as MealType,
       day: data.day as WeekDay,
-      description: data.description || "",
-      category: data.category || ""
+      description: data.description?.trim() || "",
+      category: data.category?.trim() || ""
     };
     
     console.log("Form submitted with data:", processedData);

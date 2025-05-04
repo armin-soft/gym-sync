@@ -21,20 +21,27 @@ export const useMealValidation = (meals: Meal[]) => {
     
     const normalizedNewName = normalizeMealName(data.name);
     const normalizedNewDay = normalizeDay(data.day || '');
+    const newType = data.type;
     
-    console.log(`Normalized new meal: Name="${normalizedNewName}", Day="${normalizedNewDay}", Type="${data.type}"`);
+    console.log(`Normalized new meal: Name="${normalizedNewName}", Day="${normalizedNewDay}", Type="${newType}"`);
     
+    // بررسی تمام وعده‌های موجود
     const duplicate = meals.some(existingMeal => {
+      // اگر مقایسه با خود غذا است (در حالت ویرایش)، نباید به عنوان تکراری محسوب شود
+      if (existingMeal.id === mealId) {
+        return false;
+      }
+      
       // استاندارد کردن نام روزها و نام غذاها قبل از مقایسه
       const normalizedExistingDay = normalizeDay(existingMeal.day || '');
       const normalizedExistingName = normalizeMealName(existingMeal.name);
+      const existingType = existingMeal.type;
       
       // مقایسه دقیق نام غذا، نوع وعده و روز
       const isDuplicate = 
         normalizedExistingName === normalizedNewName && 
-        existingMeal.type === data.type && 
-        normalizedExistingDay === normalizedNewDay &&
-        existingMeal.id !== mealId;
+        existingType === newType && 
+        normalizedExistingDay === normalizedNewDay;
       
       if (isDuplicate) {
         console.log("Found duplicate meal:", {
