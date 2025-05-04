@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Calendar, UtensilsCrossed, ArrowLeft, ArrowDownAZ, ArrowUpZA, LayoutGrid, ListFilter } from "lucide-react";
@@ -11,7 +12,6 @@ import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { MealList } from "@/components/diet/MealList";
 import { cn } from "@/lib/utils";
 import { Meal, MealType, WeekDay } from "@/types/meal";
 import { Input } from "@/components/ui/input";
@@ -114,15 +114,7 @@ const Index = () => {
     .filter(meal => 
       meal.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
       meal.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .filter(meal => meal.day === selectedDay)
-    .sort((a, b) => {
-      const nameA = a.name?.toLowerCase() || "";
-      const nameB = b.name?.toLowerCase() || "";
-      return sortOrder === "asc" 
-        ? nameA.localeCompare(nameB)
-        : nameB.localeCompare(nameA);
-    });
+    );
 
   return (
     <PageContainer 
@@ -261,30 +253,12 @@ const Index = () => {
                   </div>
 
                   <div className="mt-6">
-                    {viewMode === "grid" ? (
-                      <DayMeals
-                        meals={filteredMeals}
-                        mealTypes={mealTypes}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                      />
-                    ) : (
-                      <MealList 
-                        meals={filteredMeals.map(meal => ({
-                          id: meal.id,
-                          name: meal.name,
-                          calories: parseInt(meal.calories || "0"),
-                          protein: parseInt(meal.protein || "0"),
-                          carbs: parseInt(meal.carbs || "0"),
-                          fat: parseInt(meal.fat || "0"),
-                          description: meal.description || "",
-                          time: meal.type,
-                          type: meal.type // Add the type property here
-                        }))}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                      />
-                    )}
+                    <DayMeals
+                      meals={filteredMeals.filter(meal => meal.day === selectedDay)}
+                      mealTypes={mealTypes}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                    />
                   </div>
                 </Tabs>
               </div>
