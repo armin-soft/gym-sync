@@ -81,10 +81,31 @@ export const useDietState = () => {
     });
   };
   
-  // حذف بررسی تکراری بودن وعده غذایی - اجازه ثبت وعده های تکراری
+  // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده - با دقت بیشتر
   const isMealDuplicate = (data: Omit<Meal, "id">, mealId?: number): boolean => {
-    // همیشه false برمی‌گرداند تا اجازه ثبت وعده تکراری را بدهد
-    return false;
+    // لاگ برای دیباگ
+    console.log("Checking for duplicate meal:", data);
+    
+    const duplicate = meals.some(existingMeal => {
+      // استاندارد کردن نام روزها قبل از مقایسه
+      const normalizedExistingDay = normalizeDay(existingMeal.day || '');
+      const normalizedNewDay = normalizeDay(data.day || '');
+      
+      const isDuplicate = 
+        existingMeal.name.trim().toLowerCase() === data.name.trim().toLowerCase() && 
+        existingMeal.type === data.type && 
+        normalizedExistingDay === normalizedNewDay &&
+        existingMeal.id !== mealId;
+      
+      if (isDuplicate) {
+        console.log("Found duplicate:", existingMeal);
+      }
+      
+      return isDuplicate;
+    });
+    
+    console.log("Duplicate found:", duplicate);
+    return duplicate;
   };
   
   // مدیریت ذخیره وعده غذایی
@@ -101,7 +122,14 @@ export const useDietState = () => {
     console.log("Attempting to save meal:", cleanData);
     
     // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
-    // حذف شد - اجازه ثبت وعده های تکراری
+    if (isMealDuplicate(cleanData, selectedMeal?.id)) {
+      toast({
+        variant: "destructive",
+        title: "خطا در ثبت وعده غذایی",
+        description: "این وعده غذایی قبلاً برای این روز و نوع وعده ثبت شده است",
+      });
+      return false;
+    }
     
     let newMeals: Meal[];
     
