@@ -81,9 +81,9 @@ export const useDietState = () => {
   }, [meals, toast]);
 
   // Toggle sort order
-  const toggleSortOrder = () => {
+  const toggleSortOrder = useCallback(() => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
-  };
+  }, []);
 
   // Filter meals by search query
   const filteredMeals = meals

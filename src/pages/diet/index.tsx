@@ -83,6 +83,7 @@ const Index = () => {
             mealTypes={mealTypes}
             selectedDay={selectedDay}
             viewMode={viewMode}
+            sortOrder={sortOrder}
             onDayChange={setSelectedDay}
             onEdit={handleEdit}
             onDelete={handleDelete}

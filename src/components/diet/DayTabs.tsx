@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WeekDay } from "@/types/meal";
 import { cn } from "@/lib/utils";
 
@@ -11,10 +11,23 @@ interface DayTabsProps {
 }
 
 export const DayTabs = ({ weekDays, selectedDay, onDayChange }: DayTabsProps) => {
+  // Sort weekDays based on order
+  const dayOrder: Record<WeekDay, number> = {
+    'شنبه': 0,
+    'یکشنبه': 1,
+    'دوشنبه': 2,
+    'سه‌شنبه': 3,
+    'چهارشنبه': 4,
+    'پنجشنبه': 5,
+    'جمعه': 6
+  };
+
+  const sortedWeekDays = [...weekDays].sort((a, b) => dayOrder[a] - dayOrder[b]);
+
   return (
     <div className="bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 pb-2 sm:pb-4">
       <TabsList className="w-full flex justify-between gap-1 bg-muted/30 p-1 rounded-xl">
-        {weekDays.map((day) => (
+        {sortedWeekDays.map((day) => (
           <TabsTrigger 
             key={day} 
             value={day}
