@@ -63,12 +63,6 @@ export const MealCard = ({ meal, onEdit, onDelete, index }: MealCardProps) => {
             </h4>
           </div>
           
-          {meal.description && (
-            <p className="mt-2 text-xs text-muted-foreground line-clamp-2 text-right">
-              {meal.description}
-            </p>
-          )}
-          
           <div className="mt-auto pt-3 border-t border-dashed border-border/30 flex flex-wrap gap-1.5 justify-end">
             {meal.calories && (
               <Badge variant="outline" className="text-xs bg-amber-50/70 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900 shadow-sm">

@@ -34,16 +34,16 @@ const mealFormSchema = z.object({
 
 export interface MealDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void; // Changed from onClose to onOpenChange
+  onOpenChange: (open: boolean) => void;
   onSave: (data: Omit<Meal, "id">) => boolean | void;
-  meal?: Meal | null; // Changed from Meal to Meal | null for better compatibility
+  meal?: Meal | null;
   mealTypes: MealType[];
   weekDays: WeekDay[];
 }
 
 export const MealDialog = ({
   open,
-  onOpenChange, // Renamed from onClose to match the prop interface
+  onOpenChange,
   onSave,
   meal,
   mealTypes,
@@ -55,7 +55,7 @@ export const MealDialog = ({
       name: meal?.name || "",
       type: meal?.type || "",
       day: meal?.day || "",
-      description: meal?.description || "",
+      description: "",
     },
   });
 
@@ -65,7 +65,7 @@ export const MealDialog = ({
         name: meal.name,
         type: meal.type,
         day: meal.day,
-        description: meal.description,
+        description: "",
       });
     } else if (!meal && open) {
       form.reset({
@@ -82,10 +82,10 @@ export const MealDialog = ({
       name: data.name,
       type: data.type as MealType,
       day: data.day as WeekDay,
-      description: data.description
+      description: ""
     });
     form.reset();
-    onOpenChange(false); // Changed from onClose to onOpenChange
+    onOpenChange(false);
   };
 
   return (
@@ -185,7 +185,7 @@ export const MealDialog = ({
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => onOpenChange(false)} // Changed from onClose to onOpenChange
+                onClick={() => onOpenChange(false)}
                 className="gap-2 hover:bg-red-500/10 hover:text-red-500"
               >
                 <X className="w-4 h-4" />

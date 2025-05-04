@@ -70,15 +70,41 @@ export const useDietState = () => {
     });
   };
   
+  // بررسی تکراری بودن وعده غذایی
+  const isMealDuplicate = (data: Omit<Meal, "id">, mealId?: number): boolean => {
+    return meals.some(existingMeal => 
+      existingMeal.name === data.name && 
+      existingMeal.type === data.type && 
+      existingMeal.day === data.day && 
+      existingMeal.id !== mealId
+    );
+  };
+  
   // مدیریت ذخیره وعده غذایی
   const handleSave = (data: Omit<Meal, "id">) => {
+    // حذف توضیحات مانند "همراه با چای یا قهوه"
+    const cleanData = {
+      ...data,
+      description: ""
+    };
+    
+    // بررسی تکراری بودن وعده غذایی
+    if (isMealDuplicate(cleanData, selectedMeal?.id)) {
+      toast({
+        variant: "destructive",
+        title: "خطا در ثبت وعده غذایی",
+        description: "این وعده غذایی قبلاً برای این روز و نوع وعده ثبت شده است",
+      });
+      return false;
+    }
+    
     let newMeals: Meal[];
     
     if (selectedMeal) {
       // ویرایش وعده غذایی موجود
       newMeals = meals.map(m => 
         m.id === selectedMeal.id 
-          ? { ...data, id: m.id }
+          ? { ...cleanData, id: m.id }
           : m
       );
       
@@ -89,7 +115,7 @@ export const useDietState = () => {
     } else {
       // ایجاد وعده غذایی جدید
       const newMeal = {
-        ...data,
+        ...cleanData,
         id: Math.max(0, ...meals.map(m => m.id)) + 1
       };
       
@@ -104,6 +130,7 @@ export const useDietState = () => {
     saveMeals(newMeals);
     console.log("Saved meals:", newMeals);
     setOpen(false);
+    return true;
   };
   
   // فیلتر وعده‌های غذایی بر اساس جستجو
