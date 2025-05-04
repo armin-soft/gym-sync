@@ -24,6 +24,7 @@ export const useMealValidation = (meals: Meal[]) => {
     const newType = data.type;
     
     console.log(`Normalized new meal: Name="${normalizedNewName}", Day="${normalizedNewDay}", Type="${newType}"`);
+    console.log(`Current meals count: ${meals.length}, Current mealId for edit: ${mealId ?? 'new meal'}`);
     
     // بررسی تمام وعده‌های موجود
     const duplicate = meals.some(existingMeal => {
@@ -38,7 +39,6 @@ export const useMealValidation = (meals: Meal[]) => {
       const normalizedExistingName = normalizeMealName(existingMeal.name);
       const existingType = existingMeal.type;
       
-      // مقایسه دقیق نام غذا، نوع وعده و روز
       const isDuplicate = 
         normalizedExistingName === normalizedNewName && 
         existingType === newType && 

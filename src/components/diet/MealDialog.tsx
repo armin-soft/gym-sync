@@ -40,6 +40,7 @@ export const MealDialog = ({
     
     console.log("Form submitted with data:", processedData);
     console.log("Current meal for editing:", meal);
+    console.log("Current meal ID for validation:", meal?.id);
     
     // بررسی تکراری بودن توسط تابع handleSave انجام می‌شود - با ارسال ID در صورت ویرایش
     const result = onSave(processedData, meal?.id);

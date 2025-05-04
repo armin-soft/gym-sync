@@ -33,6 +33,7 @@ export const useDietState = (): DietStateHook => {
   
   // مدیریت ویرایش وعده غذایی
   const handleEdit = (meal: Meal) => {
+    console.log("Editing meal with ID:", meal.id);
     setSelectedMeal(meal);
     setOpen(true);
   };
@@ -48,7 +49,7 @@ export const useDietState = (): DietStateHook => {
   };
   
   // مدیریت ذخیره وعده غذایی
-  const handleSave = (data: Omit<Meal, "id">, mealId?: number) => {
+  const handleSave = (data: Omit<Meal, "id">, mealId?: number): boolean => {
     // پیش‌پردازش داده‌ها - حذف فاصله‌های اضافی
     const cleanData = {
       ...data,
@@ -60,6 +61,7 @@ export const useDietState = (): DietStateHook => {
     
     console.log("Attempting to save meal:", cleanData);
     console.log("Meal ID for validation:", mealId);
+    console.log("Selected meal for comparison:", selectedMeal);
     
     // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
     if (!validateMeal(cleanData, mealId)) {
@@ -69,10 +71,11 @@ export const useDietState = (): DietStateHook => {
     
     let newMeals: Meal[];
     
-    if (selectedMeal) {
+    if (mealId !== undefined) {
       // ویرایش وعده غذایی موجود
+      console.log(`Updating meal with ID: ${mealId}`);
       newMeals = meals.map(m => 
-        m.id === selectedMeal.id 
+        m.id === mealId 
           ? { ...cleanData, id: m.id }
           : m
       );
@@ -88,6 +91,7 @@ export const useDietState = (): DietStateHook => {
         id: Math.max(0, ...meals.map(m => m.id)) + 1
       };
       
+      console.log(`Creating new meal with ID: ${newMeal.id}`);
       newMeals = [...meals, newMeal];
       
       toast({
