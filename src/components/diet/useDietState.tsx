@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Meal, MealType, WeekDay } from "@/types/meal";
@@ -70,11 +69,12 @@ export const useDietState = () => {
     });
   };
   
-  // بررسی تکراری بودن وعده غذایی در تمام روزهای هفته
+  // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
   const isMealDuplicate = (data: Omit<Meal, "id">, mealId?: number): boolean => {
     return meals.some(existingMeal => 
       existingMeal.name === data.name && 
       existingMeal.type === data.type && 
+      existingMeal.day === data.day &&
       existingMeal.id !== mealId
     );
   };
@@ -87,12 +87,12 @@ export const useDietState = () => {
       description: ""
     };
     
-    // بررسی تکراری بودن وعده غذایی در کل هفته
+    // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
     if (isMealDuplicate(cleanData, selectedMeal?.id)) {
       toast({
         variant: "destructive",
         title: "خطا در ثبت وعده غذایی",
-        description: "این غذا قبلاً برای این نوع وعده در برنامه هفتگی ثبت شده است",
+        description: "این وعده غذایی قبلاً برای این روز و نوع وعده ثبت شده است",
       });
       return false;
     }
