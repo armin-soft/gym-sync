@@ -61,8 +61,16 @@ export const DietContentArea = ({
     }));
   };
 
-  // Get the current week days from the meals
-  const weekDays = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
+  // Define all weekdays to ensure all days are shown
+  const allWeekDays: WeekDay[] = [
+    'شنبه', 
+    'یکشنبه', 
+    'دوشنبه', 
+    'سه‌شنبه', 
+    'چهارشنبه', 
+    'پنجشنبه', 
+    'جمعه'
+  ];
 
   return (
     <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-180px)]">
@@ -70,7 +78,7 @@ export const DietContentArea = ({
         <div className="p-6">
           <Tabs defaultValue={selectedDay} value={selectedDay} className="w-full">
             <DayTabs
-              weekDays={weekDays.length > 0 ? weekDays : [selectedDay]}
+              weekDays={allWeekDays}
               selectedDay={selectedDay}
               onDayChange={onDayChange}
             />
