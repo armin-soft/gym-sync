@@ -13,7 +13,7 @@ import type { MealFormData } from "./meal-form/MealFormSchema";
 export interface MealDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: Omit<Meal, "id">) => boolean | void;
+  onSave: (data: Omit<Meal, "id">, mealId?: number) => boolean | void;
   meal?: Meal | null;
   mealTypes: MealType[];
   weekDays: WeekDay[];
@@ -39,9 +39,10 @@ export const MealDialog = ({
     };
     
     console.log("Form submitted with data:", processedData);
+    console.log("Current meal for editing:", meal);
     
-    // بررسی تکراری بودن توسط تابع handleSave انجام می‌شود
-    const result = onSave(processedData);
+    // بررسی تکراری بودن توسط تابع handleSave انجام می‌شود - با ارسال ID در صورت ویرایش
+    const result = onSave(processedData, meal?.id);
     
     // اگر ذخیره موفق بود، فرم را ریست کنیم
     if (result !== false) {

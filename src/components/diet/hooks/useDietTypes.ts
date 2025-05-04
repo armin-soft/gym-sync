@@ -21,7 +21,7 @@ export interface DietActions {
   handleOpen: () => void;
   handleEdit: (meal: Meal) => void;
   handleDelete: (id: number) => void;
-  handleSave: (data: Omit<Meal, "id">) => boolean;
+  handleSave: (data: Omit<Meal, "id">, mealId?: number) => boolean;
 }
 
 export type DietStateHook = DietState & DietActions & {

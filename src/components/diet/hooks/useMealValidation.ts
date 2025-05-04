@@ -28,7 +28,8 @@ export const useMealValidation = (meals: Meal[]) => {
     // بررسی تمام وعده‌های موجود
     const duplicate = meals.some(existingMeal => {
       // اگر مقایسه با خود غذا است (در حالت ویرایش)، نباید به عنوان تکراری محسوب شود
-      if (existingMeal.id === mealId) {
+      if (mealId !== undefined && existingMeal.id === mealId) {
+        console.log(`Skipping comparison with self (ID: ${mealId})`);
         return false;
       }
       
@@ -72,6 +73,8 @@ export const useMealValidation = (meals: Meal[]) => {
   };
   
   const validateMeal = (data: Omit<Meal, "id">, mealId?: number): boolean => {
+    console.log("Validating meal with ID:", mealId, "and data:", data);
+    
     // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
     if (isMealDuplicate(data, mealId)) {
       toast({

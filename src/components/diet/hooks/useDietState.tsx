@@ -48,20 +48,22 @@ export const useDietState = (): DietStateHook => {
   };
   
   // مدیریت ذخیره وعده غذایی
-  const handleSave = (data: Omit<Meal, "id">) => {
+  const handleSave = (data: Omit<Meal, "id">, mealId?: number) => {
     // پیش‌پردازش داده‌ها - حذف فاصله‌های اضافی
     const cleanData = {
       ...data,
       name: data.name.trim(),
-      description: data.description || "",
+      description: data.description?.trim() || "",
       // استاندارد کردن نام روز
       day: data.day ? normalizeDay(data.day) as WeekDay : data.day
     };
     
     console.log("Attempting to save meal:", cleanData);
+    console.log("Meal ID for validation:", mealId);
     
-    // اعتبارسنجی داده‌ها
-    if (!validateMeal(cleanData, selectedMeal?.id)) {
+    // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
+    if (!validateMeal(cleanData, mealId)) {
+      console.log("Meal validation failed - duplicate found");
       return false;
     }
     
