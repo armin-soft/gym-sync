@@ -38,17 +38,20 @@ export const MealDialog = ({
       category: data.category?.trim() || ""
     };
     
+    console.log("====== MEAL DIALOG SUBMISSION ======");
     console.log("Form submitted with data:", processedData);
     console.log("Current meal for editing:", meal);
     console.log("Current meal ID for validation:", meal?.id);
     
     // بررسی تکراری بودن توسط تابع handleSave انجام می‌شود - با ارسال ID در صورت ویرایش
     const result = onSave(processedData, meal?.id);
+    console.log("Save result:", result);
     
     // اگر ذخیره موفق بود، فرم را ریست کنیم
     if (result !== false) {
       onOpenChange(false);
     }
+    console.log("====== END MEAL DIALOG SUBMISSION ======");
   };
 
   return (

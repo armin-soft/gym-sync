@@ -27,15 +27,19 @@ export const useDietState = (): DietStateHook => {
   
   // مدیریت باز کردن دیالوگ
   const handleOpen = () => {
+    console.log("Opening dialog for new meal");
     setSelectedMeal(undefined);
     setOpen(true);
   };
   
   // مدیریت ویرایش وعده غذایی
   const handleEdit = (meal: Meal) => {
+    console.log("====== EDIT MEAL ======");
     console.log("Editing meal with ID:", meal.id);
+    console.log("Meal details:", meal);
     setSelectedMeal(meal);
     setOpen(true);
+    console.log("====== END EDIT MEAL ======");
   };
   
   // مدیریت حذف وعده غذایی
@@ -50,22 +54,27 @@ export const useDietState = (): DietStateHook => {
   
   // مدیریت ذخیره وعده غذایی
   const handleSave = (data: Omit<Meal, "id">, mealId?: number): boolean => {
+    console.log("====== SAVE MEAL ======");
+    console.log("Save called with mealId:", mealId);
+    console.log("Current selectedMeal:", selectedMeal?.id);
+    
     // پیش‌پردازش داده‌ها - حذف فاصله‌های اضافی
     const cleanData = {
       ...data,
       name: data.name.trim(),
       description: data.description?.trim() || "",
+      category: data.category?.trim() || "",
       // استاندارد کردن نام روز
       day: data.day ? normalizeDay(data.day) as WeekDay : data.day
     };
     
-    console.log("Attempting to save meal:", cleanData);
-    console.log("Meal ID for validation:", mealId);
-    console.log("Selected meal for comparison:", selectedMeal);
+    console.log("Clean data for saving:", cleanData);
     
     // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
+    // استفاده از mealId برای مشخص کردن غذای در حال ویرایش
     if (!validateMeal(cleanData, mealId)) {
-      console.log("Meal validation failed - duplicate found");
+      console.log("Validation failed - duplicate meal detected");
+      console.log("====== END SAVE MEAL (FAILED) ======");
       return false;
     }
     
@@ -101,7 +110,8 @@ export const useDietState = (): DietStateHook => {
     }
     
     const saveResult = saveMeals(newMeals);
-    console.log("Saved meals:", newMeals);
+    console.log("Save completed successfully");
+    console.log("====== END SAVE MEAL (SUCCESS) ======");
     setOpen(false);
     return saveResult;
   };
