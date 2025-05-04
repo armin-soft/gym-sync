@@ -35,7 +35,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import useExerciseFiltering from "@/hooks/useExerciseFiltering";
 import { ExerciseCard } from "@/components/exercises/ExerciseCard";
-import { Link } from "react-router-dom";
 
 const ExercisesPage = () => {
   const { toast } = useToast();
@@ -174,12 +173,6 @@ const ExercisesPage = () => {
                 مدیریت انواع، دسته بندی ها و حرکات تمرینی
               </p>
             </div>
-            
-            <Link to="/Exercise-Movements/Hierarchical-View">
-              <Button variant="outline" className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border-indigo-200">
-                نمایش سلسله مراتبی
-              </Button>
-            </Link>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">

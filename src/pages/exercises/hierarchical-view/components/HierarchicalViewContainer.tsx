@@ -19,7 +19,7 @@ interface HierarchicalViewContainerProps {
   handleBackToTypes: () => void;
   handleBackToCategories: () => void;
   handleExerciseSelect: (exerciseId: string) => void;
-  // حذف پراپ handleAddClick که مربوط به افزودن تمرین بود
+  handleAddClick: () => void;
   handleEditType?: (type: string) => void;
   handleDeleteType?: (type: string) => void;
   handleEditCategory: (category: any) => void;
@@ -36,7 +36,7 @@ export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps>
   handleBackToTypes,
   handleBackToCategories,
   handleExerciseSelect,
-  // حذف پراپ handleAddClick که مربوط به افزودن تمرین بود
+  handleAddClick,
   handleEditType,
   handleDeleteType,
   handleEditCategory
@@ -45,11 +45,12 @@ export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps>
   return (
     <PageContainer fullWidth>
       <div className="h-full flex flex-col p-4 md:p-6">
-        {/* Content stages display - حذف پراپ onAddClick از این کامپوننت */}
+        {/* Content stages display */}
         <ContentStages 
           currentStage={currentStage} 
           selectedTypeName={selectedTypeName} 
           selectedCategoryName={selectedCategoryName} 
+          onAddClick={handleAddClick}
         />
         
         <Card className="flex-1 overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
