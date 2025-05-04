@@ -3,6 +3,11 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Meal, MealType, WeekDay } from "@/types/meal";
 
+// تابع کمکی برای استاندارد کردن نام روزها
+const normalizeDay = (day: string): string => {
+  return day.replace(/\s+/g, '‌');
+}
+
 export const useDietState = () => {
   const { toast } = useToast();
   
@@ -31,8 +36,14 @@ export const useDietState = () => {
   // ذخیره وعده‌های غذایی در localStorage
   const saveMeals = (newMeals: Meal[]) => {
     try {
-      localStorage.setItem('meals', JSON.stringify(newMeals));
-      setMeals(newMeals);
+      // استاندارد کردن روزهای هفته قبل از ذخیره‌سازی
+      const normalizedMeals = newMeals.map(meal => ({
+        ...meal,
+        day: meal.day ? normalizeDay(meal.day) as WeekDay : meal.day
+      }));
+      
+      localStorage.setItem('meals', JSON.stringify(normalizedMeals));
+      setMeals(normalizedMeals);
     } catch (error) {
       console.error('Error saving meals:', error);
       toast({
@@ -76,10 +87,14 @@ export const useDietState = () => {
     console.log("Checking for duplicate meal:", data);
     
     const duplicate = meals.some(existingMeal => {
+      // استاندارد کردن نام روزها قبل از مقایسه
+      const normalizedExistingDay = normalizeDay(existingMeal.day || '');
+      const normalizedNewDay = normalizeDay(data.day || '');
+      
       const isDuplicate = 
         existingMeal.name.trim().toLowerCase() === data.name.trim().toLowerCase() && 
         existingMeal.type === data.type && 
-        existingMeal.day === data.day &&
+        normalizedExistingDay === normalizedNewDay &&
         existingMeal.id !== mealId;
       
       if (isDuplicate) {
@@ -99,7 +114,9 @@ export const useDietState = () => {
     const cleanData = {
       ...data,
       name: data.name.trim(),
-      description: ""
+      description: "",
+      // استاندارد کردن نام روز
+      day: data.day ? normalizeDay(data.day) as WeekDay : data.day
     };
     
     console.log("Attempting to save meal:", cleanData);

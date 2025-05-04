@@ -15,6 +15,11 @@ interface DayMealsProps {
   onDelete: (id: number) => void;
 }
 
+// تابع کمکی برای استاندارد کردن نام روزها
+const normalizeDay = (day: string): string => {
+  return day.replace(/\s+/g, '‌');
+};
+
 // تعریف روزهای هفته با نوع صحیح
 const weekDays: WeekDay[] = [
   'شنبه', 
@@ -27,8 +32,10 @@ const weekDays: WeekDay[] = [
 ];
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
-  // دریافت روزهای دارای محتوا از وعده‌های غذایی
-  const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
+  // دریافت روزهای دارای محتوا از وعده‌های غذایی و استاندارد کردن آن‌ها
+  const daysWithContent = Array.from(
+    new Set(meals.map(meal => normalizeDay(meal.day || '')))
+  ).filter(Boolean) as WeekDay[];
   
   // استفاده از اولین روز هفته به عنوان روز پیش‌فرض
   const [selectedDay, setSelectedDay] = useState<WeekDay>(weekDays[0]);
@@ -58,9 +65,13 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     }
   };
   
-  // نمایش تمام غذاهای مربوط به روز انتخاب شده
+  // نمایش تمام غذاهای مربوط به روز انتخاب شده با در نظر گرفتن استاندارد کردن نام روزها
   const getDayMeals = (day: WeekDay): Meal[] => {
-    const dayMeals = meals.filter(meal => meal.day === day);
+    const normalizedSelectedDay = normalizeDay(day);
+    const dayMeals = meals.filter(meal => {
+      const normalizedMealDay = normalizeDay(meal.day || '');
+      return normalizedMealDay === normalizedSelectedDay;
+    });
     console.log(`Filtered meals for ${day}: ${dayMeals.length} items`);
     return dayMeals;
   };
