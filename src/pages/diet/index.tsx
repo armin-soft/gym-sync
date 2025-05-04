@@ -9,7 +9,7 @@ import { DietContentArea } from "@/components/diet/DietContentArea";
 import { useDietState } from "@/components/diet/useDietState";
 import { MealType, WeekDay } from "@/types/meal";
 
-// Define constants
+// تعریف ثابت‌ها
 const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
@@ -30,7 +30,7 @@ const mealTypes: MealType[] = [
 ] as MealType[];
 
 const Index = () => {
-  // Use the extracted diet state hook
+  // استفاده از هوک استخراج شده برای حالت رژیم غذایی
   const {
     meals,
     open,
@@ -49,10 +49,16 @@ const Index = () => {
     toggleSortOrder
   } = useDietState();
 
-  // Debug meals data on component mount
+  // دیباگ داده‌های وعده‌های غذایی در زمان لود کامپوننت
   useEffect(() => {
     console.log("Diet page loaded with meals:", meals);
     console.log("Filtered meals:", filteredMeals);
+    
+    // اضافه کردن بررسی بیشتر برای دیباگ وعده‌های غذایی هر روز
+    weekDays.forEach(day => {
+      const dayMeals = meals.filter(meal => meal.day === day);
+      console.log(`Day ${day} has ${dayMeals.length} meals`);
+    });
   }, [meals, filteredMeals]);
 
   return (
@@ -65,10 +71,10 @@ const Index = () => {
     >
       <div className="h-full w-full overflow-auto">
         <div className="h-full w-full py-4 sm:py-6 space-y-4 sm:space-y-6 px-3 sm:px-4 md:px-6 max-w-[1600px] mx-auto">
-          {/* Header with Add Button */}
+          {/* سرصفحه با دکمه افزودن */}
           <DietPageHeader onAddMeal={handleOpen} />
           
-          {/* Search and Sort Controls */}
+          {/* کنترل‌های جستجو و مرتب‌سازی */}
           <SearchAndFilters
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -76,7 +82,7 @@ const Index = () => {
             onSortOrderChange={toggleSortOrder}
           />
           
-          {/* Main Content Area */}
+          {/* محتوای اصلی */}
           <DietContentArea 
             meals={filteredMeals}
             mealTypes={mealTypes}
@@ -87,7 +93,7 @@ const Index = () => {
             onDelete={handleDelete}
           />
           
-          {/* Meal Dialog */}
+          {/* دیالوگ وعده غذایی */}
           <MealDialog
             open={open}
             onOpenChange={setOpen}

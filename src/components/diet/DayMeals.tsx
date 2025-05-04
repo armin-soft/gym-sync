@@ -15,7 +15,7 @@ interface DayMealsProps {
   onDelete: (id: number) => void;
 }
 
-// Define weekdays array with correct type
+// تعریف روزهای هفته با نوع صحیح
 const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
@@ -27,20 +27,20 @@ const weekDays: WeekDay[] = [
 ];
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
-  // Get unique days from meals that have content
+  // دریافت روزهای دارای محتوا از وعده‌های غذایی
   const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
   
-  // استفاده از همه روزهای هفته به جای فقط روزهایی که محتوا دارند
+  // استفاده از اولین روز هفته به عنوان روز پیش‌فرض
   const [selectedDay, setSelectedDay] = useState<WeekDay>(weekDays[0]);
   const deviceInfo = useDeviceInfo();
   
-  // Detect if component unmounted to prevent state updates
+  // تشخیص اینکه آیا کامپوننت هنوز نمایش داده می‌شود
   const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
     setIsMounted(true);
     
-    // Debugging information
+    // اطلاعات دیباگ
     console.log("Total meals:", meals.length);
     console.log("Days with content:", daysWithContent);
     console.log("All meals:", meals);
@@ -50,11 +50,19 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     };
   }, [meals, daysWithContent]);
   
-  // Fix: Create a handler function to properly cast the string to WeekDay
+  // یک تابع برای تبدیل مناسب رشته به نوع WeekDay
   const handleDayChange = (value: string) => {
     if (isMounted) {
       setSelectedDay(value as WeekDay);
+      console.log("Changed day to:", value);
     }
+  };
+  
+  // نمایش تمام غذاهای مربوط به روز انتخاب شده
+  const getDayMeals = (day: WeekDay): Meal[] => {
+    const dayMeals = meals.filter(meal => meal.day === day);
+    console.log(`Filtered meals for ${day}: ${dayMeals.length} items`);
+    return dayMeals;
   };
   
   return (
@@ -73,13 +81,11 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               <DayTabs 
                 weekDays={weekDays} 
                 selectedDay={selectedDay} 
-                onDayChange={(day) => setSelectedDay(day)}
+                onDayChange={setSelectedDay}
                 daysWithContent={daysWithContent}
               >
                 {weekDays.map((day) => {
-                  // Filter meals for current day - کد اصلاح شده برای نمایش درست وعده‌های هر روز
-                  const dayMeals = meals.filter(meal => meal.day === day);
-                  console.log(`Day ${day} has ${dayMeals.length} meals`);
+                  const dayMeals = getDayMeals(day);
                   
                   return (
                     <TabsContent 

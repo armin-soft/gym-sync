@@ -14,13 +14,13 @@ interface DayContentProps {
 }
 
 export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayContentProps) => {
-  // Debugging
+  // دیباگ
   console.log(`DayContent rendering for day ${day} with ${meals.length} meals`);
   
-  // Sort meal types based on the defined order
+  // مرتب‌سازی انواع وعده‌های غذایی بر اساس ترتیب تعریف شده
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   
-  // Animation variants for staggered children
+  // واریانت‌های انیمیشن برای کودکان با تأخیر
   const container = {
     hidden: { opacity: 0 },
     show: {

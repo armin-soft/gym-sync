@@ -25,7 +25,7 @@ export const DietContentArea = ({
   onEdit,
   onDelete,
 }: DietContentAreaProps) => {
-  // Define all weekdays
+  // تعریف همه روزهای هفته
   const allWeekDays: WeekDay[] = [
     'شنبه', 
     'یکشنبه', 
@@ -36,13 +36,19 @@ export const DietContentArea = ({
     'جمعه'
   ];
 
-  // Get days that have meals
+  // دریافت روزهای دارای محتوا
   const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
   
-  // Debug meals data
+  // اطلاعات دیباگ
   useEffect(() => {
     console.log("DietContentArea meals:", meals);
     console.log("Days with content:", daysWithContent);
+    
+    // بررسی دقیق تر وعده های غذایی هر روز
+    allWeekDays.forEach(day => {
+      const dayMeals = meals.filter(meal => meal.day === day);
+      console.log(`Day ${day} has ${dayMeals.length} meals`);
+    });
   }, [meals]);
 
   return (

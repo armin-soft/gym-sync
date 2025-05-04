@@ -6,27 +6,29 @@ import { Meal, MealType, WeekDay } from "@/types/meal";
 export const useDietState = () => {
   const { toast } = useToast();
   
-  // Load meals from localStorage or start with empty array
+  // بارگیری وعده‌های غذایی از localStorage یا شروع با آرایه خالی
   const [meals, setMeals] = useState<Meal[]>(() => {
     try {
       const savedMeals = localStorage.getItem('meals');
-      return savedMeals ? JSON.parse(savedMeals) : [];
+      const parsedMeals = savedMeals ? JSON.parse(savedMeals) : [];
+      console.log("Loaded meals from localStorage:", parsedMeals.length);
+      return parsedMeals;
     } catch (error) {
       console.error('Error loading meals:', error);
       return [];
     }
   });
   
-  // Dialog state
+  // حالت دیالوگ
   const [open, setOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>();
   
-  // Search and filter state
+  // جستجو و فیلتر حالت
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   
-  // Save meals to localStorage
+  // ذخیره وعده‌های غذایی در localStorage
   const saveMeals = (newMeals: Meal[]) => {
     try {
       localStorage.setItem('meals', JSON.stringify(newMeals));
@@ -41,24 +43,24 @@ export const useDietState = () => {
     }
   };
   
-  // Toggle sort order
+  // تغییر ترتیب مرتب‌سازی
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
   
-  // Handle open dialog
+  // مدیریت باز کردن دیالوگ
   const handleOpen = () => {
     setSelectedMeal(undefined);
     setOpen(true);
   };
   
-  // Handle edit meal
+  // مدیریت ویرایش وعده غذایی
   const handleEdit = (meal: Meal) => {
     setSelectedMeal(meal);
     setOpen(true);
   };
   
-  // Handle delete meal
+  // مدیریت حذف وعده غذایی
   const handleDelete = (id: number) => {
     const updatedMeals = meals.filter(meal => meal.id !== id);
     saveMeals(updatedMeals);
@@ -68,12 +70,12 @@ export const useDietState = () => {
     });
   };
   
-  // Handle save meal
+  // مدیریت ذخیره وعده غذایی
   const handleSave = (data: Omit<Meal, "id">) => {
     let newMeals: Meal[];
     
     if (selectedMeal) {
-      // Edit existing meal
+      // ویرایش وعده غذایی موجود
       newMeals = meals.map(m => 
         m.id === selectedMeal.id 
           ? { ...data, id: m.id }
@@ -85,7 +87,7 @@ export const useDietState = () => {
         description: "وعده غذایی با موفقیت ویرایش شد",
       });
     } else {
-      // Create new meal
+      // ایجاد وعده غذایی جدید
       const newMeal = {
         ...data,
         id: Math.max(0, ...meals.map(m => m.id)) + 1
@@ -100,14 +102,15 @@ export const useDietState = () => {
     }
     
     saveMeals(newMeals);
+    console.log("Saved meals:", newMeals);
     setOpen(false);
   };
   
-  // Filter meals based on search query and day
+  // فیلتر وعده‌های غذایی بر اساس جستجو
   const filteredMeals = meals.filter(meal => {
     const matchesSearch = 
       !searchQuery || 
-      meal.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      meal.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
       meal.description?.toLowerCase().includes(searchQuery.toLowerCase());
     
     return matchesSearch;
