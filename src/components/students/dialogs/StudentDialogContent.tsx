@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { StudentDialog } from "@/components/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";

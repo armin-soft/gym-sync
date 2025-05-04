@@ -6,7 +6,7 @@ import { MealDialog } from "@/components/diet/MealDialog";
 import { DietPageHeader } from "@/components/diet/DietPageHeader";
 import { SearchAndFilters } from "@/components/diet/SearchAndFilters";
 import { DietContentArea } from "@/components/diet/DietContentArea";
-import { useDietState } from "@/components/diet/useDietState";
+import { useDietState } from "@/components/diet/hooks";
 import { MealType, WeekDay } from "@/types/meal";
 
 // تعریف ثابت‌ها با اصلاح فضای خالی
