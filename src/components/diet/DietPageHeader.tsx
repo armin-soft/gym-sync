@@ -13,14 +13,7 @@ export const DietPageHeader = ({ onAddMeal }: DietPageHeaderProps) => {
   return (
     <PageHeader
       title="برنامه های غذایی هفتگی"
-      icon={
-        <motion.div 
-          whileHover={{ rotate: 360 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-        >
-          <Utensils className="text-primary h-6 w-6" />
-        </motion.div>
-      }
+      icon={Utensils}
       description="تنظیم و مدیریت برنامه‌های غذایی روزانه"
       actions={
         <Button 
