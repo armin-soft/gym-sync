@@ -10,11 +10,11 @@ export const useHierarchicalView = () => {
   const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   
-  const { types, categories } = useExerciseData();
+  const { exerciseTypes, categories } = useExerciseData();
   
   // یافتن نام نوع و دسته‌بندی انتخاب شده بر اساس آیدی
   const selectedTypeName = selectedTypeId ? 
-    types.find(type => type.id.toString() === selectedTypeId)?.name : '';
+    exerciseTypes.find(type => type.id.toString() === selectedTypeId)?.name : '';
     
   const selectedCategoryName = selectedCategoryId ? 
     categories.find(cat => cat.id.toString() === selectedCategoryId)?.name : '';
