@@ -1,6 +1,6 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { DayTabs } from "./DayTabs";
@@ -27,16 +27,34 @@ const weekDays: WeekDay[] = [
 ];
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
-  // Get unique days from meals that have content - هنوز این را نگهداشتیم برای نمایش روزهای دارای محتوا در نشانگر
+  // Get unique days from meals that have content
   const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
   
   // استفاده از همه روزهای هفته به جای فقط روزهایی که محتوا دارند
   const [selectedDay, setSelectedDay] = useState<WeekDay>(weekDays[0]);
   const deviceInfo = useDeviceInfo();
   
+  // Detect if component unmounted to prevent state updates
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Debugging information
+    console.log("Total meals:", meals.length);
+    console.log("Days with content:", daysWithContent);
+    console.log("All meals:", meals);
+    
+    return () => {
+      setIsMounted(false);
+    };
+  }, [meals, daysWithContent]);
+  
   // Fix: Create a handler function to properly cast the string to WeekDay
   const handleDayChange = (value: string) => {
-    setSelectedDay(value as WeekDay);
+    if (isMounted) {
+      setSelectedDay(value as WeekDay);
+    }
   };
   
   return (
@@ -59,8 +77,9 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                 daysWithContent={daysWithContent}
               >
                 {weekDays.map((day) => {
-                  // Filter meals for current day
+                  // Filter meals for current day - کد اصلاح شده برای نمایش درست وعده‌های هر روز
                   const dayMeals = meals.filter(meal => meal.day === day);
+                  console.log(`Day ${day} has ${dayMeals.length} meals`);
                   
                   return (
                     <TabsContent 
@@ -69,7 +88,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                       className="mt-6 relative"
                     >
                       <DayContent
-                        key={day}
+                        key={`day-content-${day}`}
                         day={day}
                         mealTypes={mealTypes}
                         meals={dayMeals}

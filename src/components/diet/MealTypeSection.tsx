@@ -40,7 +40,7 @@ export const MealTypeSection = ({ type, meals, day, onEdit, onDelete, typeIndex 
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 xs:gap-4">
             {meals.map((meal, index) => (
               <MealCard 
-                key={meal.id}
+                key={`${meal.id}-${index}`}
                 meal={meal}
                 onEdit={onEdit}
                 onDelete={onDelete}

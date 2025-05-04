@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { PageContainer } from "@/components/ui/page-container";
 import { MealDialog } from "@/components/diet/MealDialog";
@@ -32,6 +32,7 @@ const mealTypes: MealType[] = [
 const Index = () => {
   // Use the extracted diet state hook
   const {
+    meals,
     open,
     setOpen,
     selectedMeal,
@@ -47,6 +48,12 @@ const Index = () => {
     handleDelete,
     toggleSortOrder
   } = useDietState();
+
+  // Debug meals data on component mount
+  useEffect(() => {
+    console.log("Diet page loaded with meals:", meals);
+    console.log("Filtered meals:", filteredMeals);
+  }, [meals, filteredMeals]);
 
   return (
     <PageContainer 

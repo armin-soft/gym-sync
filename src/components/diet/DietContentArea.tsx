@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DayMeals } from "@/components/diet/DayMeals";
@@ -38,6 +38,12 @@ export const DietContentArea = ({
 
   // Get days that have meals
   const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
+  
+  // Debug meals data
+  useEffect(() => {
+    console.log("DietContentArea meals:", meals);
+    console.log("Days with content:", daysWithContent);
+  }, [meals]);
 
   return (
     <motion.div
