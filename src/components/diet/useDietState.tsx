@@ -5,7 +5,7 @@ import { Meal, MealType, WeekDay } from "@/types/meal";
 
 // تابع کمکی برای استاندارد کردن نام روزها
 const normalizeDay = (day: string): string => {
-  return day.replace(/\s+/g, '‌');
+  return day.replace(/\s+/g, ' ');  // استفاده از فضای خالی معمولی
 }
 
 export const useDietState = () => {
