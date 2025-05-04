@@ -90,7 +90,7 @@ export const MealList = ({ meals, onEdit, onDelete }: MealListProps) => {
                     <TableCell className="text-right">{toPersianNumbers(meal.protein)}</TableCell>
                     <TableCell className="text-right">{toPersianNumbers(meal.carbs)}</TableCell>
                     <TableCell className="text-right">{toPersianNumbers(meal.fat)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">
                       <div className="flex items-center gap-2 justify-end opacity-70 group-hover:opacity-100 transition-opacity">
                         <Button
                           variant="ghost"

@@ -36,13 +36,10 @@ export const MealCard = ({ meal, onEdit, onDelete, index }: MealCardProps) => {
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Indicator bar */}
-        <div className={`absolute top-0 left-0 w-1 h-full ${styles?.accent}`} />
+        <div className={`absolute top-0 right-0 w-1 h-full ${styles?.accent}`} />
         
         <div className="p-3 sm:p-4 text-right h-full flex flex-col relative">
           <div className="flex items-start justify-between gap-2">
-            <h4 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300">
-              {meal.name}
-            </h4>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-200">
               <Button
                 variant="ghost"
@@ -61,15 +58,18 @@ export const MealCard = ({ meal, onEdit, onDelete, index }: MealCardProps) => {
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
+            <h4 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300">
+              {meal.name}
+            </h4>
           </div>
           
           {meal.description && (
-            <p className="mt-2 text-xs text-muted-foreground line-clamp-2">
+            <p className="mt-2 text-xs text-muted-foreground line-clamp-2 text-right">
               {meal.description}
             </p>
           )}
           
-          <div className="mt-auto pt-3 border-t border-dashed border-border/30 flex flex-wrap gap-1.5">
+          <div className="mt-auto pt-3 border-t border-dashed border-border/30 flex flex-wrap gap-1.5 justify-end">
             {meal.calories && (
               <Badge variant="outline" className="text-xs bg-amber-50/70 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900 shadow-sm">
                 {toPersianNumbers(meal.calories)} کالری

@@ -32,7 +32,7 @@ export const SearchAndFilters = ({
         <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground/70 transition-colors" />
         <Input 
           placeholder="جستجو در وعده های غذایی..." 
-          className="pr-10 h-11 text-base focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300 bg-card/80 backdrop-blur-sm" 
+          className="pr-10 h-11 text-base focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300 bg-card/80 backdrop-blur-sm text-right" 
           value={searchQuery} 
           onChange={e => onSearchChange(e.target.value)} 
         />

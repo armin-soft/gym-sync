@@ -33,7 +33,7 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
       variants={container}
       initial="hidden"
       animate="show"
-      className="space-y-4 sm:space-y-6"
+      className="space-y-4 sm:space-y-6 text-right"
     >
       {sortedMealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter(meal => meal.type === type);

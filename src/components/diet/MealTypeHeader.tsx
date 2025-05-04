@@ -16,7 +16,7 @@ export const MealTypeHeader = ({ type, count }: MealTypeHeaderProps) => {
   
   return (
     <div className={`p-3 sm:p-4 ${styles?.bg} border-b ${styles?.border} backdrop-blur-sm`}>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 justify-start">
         <motion.div 
           whileHover={{ rotate: [0, -5, 5, -5, 0] }}
           transition={{ duration: 0.5 }}
@@ -26,7 +26,7 @@ export const MealTypeHeader = ({ type, count }: MealTypeHeaderProps) => {
             {getMealTypeIcon(type)}
           </div>
         </motion.div>
-        <div>
+        <div className="text-right">
           <h3 className="text-sm sm:text-base font-semibold text-foreground/90">
             {type}
           </h3>
