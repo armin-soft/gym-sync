@@ -88,6 +88,7 @@ export const MealDialog = ({
     
     console.log("Form submitted with data:", processedData);
     
+    // اکنون مستقیماً وعده غذایی را ذخیره می‌کنیم بدون بررسی تکراری بودن
     const result = onSave(processedData);
     
     // اگر ذخیره موفق بود، فرم را ریست کنیم
