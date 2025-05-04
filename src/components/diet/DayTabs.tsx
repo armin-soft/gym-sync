@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { ReactNode } from "react";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WeekDay } from "@/types/meal";
 import { cn } from "@/lib/utils";
@@ -8,9 +8,10 @@ interface DayTabsProps {
   weekDays: WeekDay[];
   selectedDay: WeekDay;
   onDayChange: (day: WeekDay) => void;
+  children?: ReactNode;
 }
 
-export const DayTabs = ({ weekDays, selectedDay, onDayChange }: DayTabsProps) => {
+export const DayTabs = ({ weekDays, selectedDay, onDayChange, children }: DayTabsProps) => {
   // Sort weekDays based on order
   const dayOrder: Record<WeekDay, number> = {
     'شنبه': 0,
@@ -45,6 +46,7 @@ export const DayTabs = ({ weekDays, selectedDay, onDayChange }: DayTabsProps) =>
           </TabsTrigger>
         ))}
       </TabsList>
+      {children}
     </div>
   );
 };
