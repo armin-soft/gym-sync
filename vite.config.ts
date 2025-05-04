@@ -26,17 +26,12 @@ const copyFilesPlugin = () => {
         console.log('Copied Manifest.json from public to dist root');
       }
 
-      // Copy service-worker.js to the root of dist
-      if (fs.existsSync('service-worker.js')) {
-        fs.copyFileSync('service-worker.js', 'dist/service-worker.js');
-        console.log('Copied service-worker.js to dist root');
+      // Copy Service-Worker.js to the root of dist
+      if (fs.existsSync('Service-Worker.js')) {
+        fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
+        console.log('Copied Service-Worker.js to dist root');
       }
 
-      // Copy Logo.ico to Assets/Image if it exists
-      if (fs.existsSync('src/Logo.ico')) {
-        fs.copyFileSync('src/Logo.ico', 'dist/Assets/Image/Logo.ico');
-      }
-      
       // Copy Logo.png to Assets/Image
       if (fs.existsSync('src/Logo.png')) {
         fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
@@ -84,24 +79,24 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         // Customize the output structure
-        entryFileNames: 'Assets/Script/[name]-[hash].js',
-        chunkFileNames: 'Assets/Script/[name]-[hash].js',
+        entryFileNames: 'Assets/Script/[name].js',
+        chunkFileNames: 'Assets/Script/[name].js',
         assetFileNames: (assetInfo) => {
           // Handle different asset types
           const info = assetInfo.name || '';
           
           // For CSS files
           if (info.endsWith('.css')) {
-            return 'Assets/Style/Menu-[hash].css';
+            return 'Assets/Style/Menu.css';
           }
           
           // For image files
           if (info.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
-            return 'Assets/Image/[name]-[hash][extname]';
+            return 'Assets/Image/[name][extname]';
           }
           
           // For other files
-          return 'Assets/[name]-[hash][extname]';
+          return 'Assets/[name][extname]';
         },
         // Improved manual chunks strategy to better split code
         manualChunks: (id) => {
@@ -109,45 +104,45 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/react/') || 
               id.includes('node_modules/react-dom/') || 
               id.includes('node_modules/scheduler/')) {
-            return 'react-core';
+            return 'React';
           }
           
           // React Router and related
           if (id.includes('node_modules/react-router') || 
               id.includes('node_modules/@remix-run')) {
-            return 'routing';
+            return 'Routing';
           }
           
           // UI Components - Radix UI, shadcn
           if (id.includes('node_modules/@radix-ui/') || 
               id.includes('/components/ui/')) {
-            return 'ui-components';
+            return 'UI';
           }
           
           // Chart libraries
           if (id.includes('recharts') || 
               id.includes('chart.js') || 
               id.includes('d3')) {
-            return 'charts';
+            return 'Charts';
           }
           
           // PDF generation
           if (id.includes('jspdf') || 
               id.includes('pdf-lib') || 
               id.includes('pdfmake')) {
-            return 'pdf';
+            return 'PDF';
           }
           
           // Animation libraries
           if (id.includes('framer-motion') || 
               id.includes('animation') || 
               id.includes('gsap')) {
-            return 'animations';
+            return 'Animation';
           }
           
           // Data management (Tanstack Query)
           if (id.includes('@tanstack/react-query')) {
-            return 'data-management';
+            return 'Data-Management';
           }
           
           // Utils libraries
@@ -155,35 +150,35 @@ export default defineConfig(({ mode }) => ({
               id.includes('node_modules/uuid') || 
               id.includes('node_modules/zod') ||
               id.includes('node_modules/clsx')) {
-            return 'utils';
+            return 'Utils';
           }
           
           // Feature-based code splitting for app code
           if (id.includes('/src/pages/')) {
             const page = id.split('/src/pages/')[1].split('/')[0];
-            return `page-${page}`;
+            return `Page-${page}`;
           }
           
           if (id.includes('/src/components/exercises/')) {
-            return 'feature-exercises';
+            return 'Feature-Exercises';
           }
           
           if (id.includes('/src/components/students/')) {
-            return 'feature-students';
+            return 'Feature-Students';
           }
           
           if (id.includes('/src/components/diet/') || 
               id.includes('/src/components/nutrition/')) {
-            return 'feature-nutrition';
+            return 'Feature-Nutrition';
           }
           
           // Other node_modules
           if (id.includes('node_modules/')) {
-            return 'vendors';
+            return 'Vendors';
           }
           
           // Main app code (everything else)
-          return 'app';
+          return 'App';
         },
       }
     },

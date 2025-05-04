@@ -28,7 +28,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
           // Register the service worker from root path with improved error handling
-          navigator.serviceWorker.register('./service-worker.js', { 
+          navigator.serviceWorker.register('./Service-Worker.js', { 
             scope: '/'
           })
             .then(function(registration) {
@@ -73,7 +73,7 @@
               
               // Try again once after a short delay
               setTimeout(() => {
-                navigator.serviceWorker.register('./service-worker.js')
+                navigator.serviceWorker.register('./Service-Worker.js')
                   .then(reg => console.log('ServiceWorker registration successful on retry'))
                   .catch(err => console.error('ServiceWorker registration failed on retry:', err));
               }, 3000);
