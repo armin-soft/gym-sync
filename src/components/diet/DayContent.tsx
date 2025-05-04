@@ -38,9 +38,7 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
       {sortedMealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter(meal => meal.type === type);
         
-        // Only render meal types that have meals for consistency across all days
-        if (typeMeals.length === 0) return null;
-        
+        // نمایش همه انواع وعده غذایی، حتی اگر وعده‌ای نداشته باشند
         return (
           <MealTypeSection
             key={type}
