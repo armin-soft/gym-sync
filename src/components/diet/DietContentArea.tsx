@@ -2,11 +2,11 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
 import { DayMeals } from "@/components/diet/DayMeals";
 import { MealList } from "@/components/diet/MealList";
 import { Meal, MealType, WeekDay } from "@/types/meal";
-import { DayTabs } from "./DayTabs";
+import { motion } from "framer-motion";
 
 interface DietContentAreaProps {
   meals: Meal[];
@@ -76,66 +76,37 @@ export const DietContentArea = ({
   };
 
   return (
-    <Card className="overflow-hidden border-primary/10 shadow-xl shadow-primary/5 hover:shadow-primary/10 transition-all duration-500 h-[calc(100vh-180px)]">
-      <ScrollArea className="h-full w-full">
-        <div className="p-6">
-          <Tabs defaultValue={selectedDay} value={selectedDay} className="w-full">
-            <DayTabs
-              weekDays={allWeekDays}
-              selectedDay={selectedDay}
-              onDayChange={onDayChange}
-            >
-              {allWeekDays.map((day) => {
-                // Filter meals for this specific day
-                const daySpecificMeals = meals.filter((meal) => meal.day === day);
-                // Sort these meals 
-                const sortedDayMeals = [...daySpecificMeals].sort((a, b) => {
-                  const typeOrderA = mealTypes.indexOf(a.type);
-                  const typeOrderB = mealTypes.indexOf(b.type);
-                  if (typeOrderA !== typeOrderB) {
-                    return typeOrderA - typeOrderB;
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="overflow-hidden border-primary/10 shadow-xl hover:shadow-primary/10 transition-all duration-500 backdrop-blur-sm bg-card/95">
+        <ScrollArea className="h-[calc(100vh-200px)] w-full">
+          <div className="p-4 sm:p-6">
+            {viewMode === "grid" ? (
+              <DayMeals
+                meals={meals}
+                mealTypes={mealTypes}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ) : (
+              <MealList
+                meals={getListMeals()}
+                onEdit={(listMeal) => {
+                  // Find the original meal to edit
+                  const originalMeal = sortedMeals.find(m => m.id === listMeal.id);
+                  if (originalMeal) {
+                    onEdit(originalMeal);
                   }
-                  const comparison = a.name.localeCompare(b.name);
-                  return sortOrder === "asc" ? comparison : -comparison;
-                });
-
-                return (
-                  <TabsContent key={day} value={day} className="mt-6">
-                    {viewMode === "grid" ? (
-                      <div className={daySpecificMeals.length === 0 ? "flex items-center justify-center py-10" : ""}>
-                        {daySpecificMeals.length > 0 ? (
-                          <DayMeals
-                            meals={sortedDayMeals}
-                            mealTypes={mealTypes}
-                            onEdit={onEdit}
-                            onDelete={onDelete}
-                          />
-                        ) : (
-                          <div className="text-muted-foreground text-lg text-center">
-                            برای روز {day} برنامه غذایی ثبت نشده است
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <MealList
-                        meals={getListMeals()}
-                        onEdit={(listMeal) => {
-                          // Find the original meal to edit
-                          const originalMeal = sortedDayMeals.find(m => m.id === listMeal.id);
-                          if (originalMeal) {
-                            onEdit(originalMeal);
-                          }
-                        }}
-                        onDelete={onDelete}
-                      />
-                    )}
-                  </TabsContent>
-                );
-              })}
-            </DayTabs>
-          </Tabs>
-        </div>
-      </ScrollArea>
-    </Card>
+                }}
+                onDelete={onDelete}
+              />
+            )}
+          </div>
+        </ScrollArea>
+      </Card>
+    </motion.div>
   );
 };

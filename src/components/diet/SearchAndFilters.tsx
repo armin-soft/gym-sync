@@ -1,10 +1,7 @@
 
-import React from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, LayoutGrid, ListFilter, ArrowDownAZ, ArrowUpZA } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Search, SortAsc, SortDesc, Grid, List } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface SearchAndFiltersProps {
@@ -22,88 +19,57 @@ export const SearchAndFilters = ({
   viewMode,
   onViewModeChange,
   sortOrder,
-  onSortOrderChange
+  onSortOrderChange,
 }: SearchAndFiltersProps) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-      className="flex flex-col sm:flex-row items-stretch gap-4"
+      transition={{ duration: 0.4, delay: 0.2 }}
+      className="flex flex-col sm:flex-row items-stretch gap-3 mb-4"
     >
       <div className="relative flex-1">
-        <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground/70 transition-colors group-hover:text-primary" />
+        <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground/70 transition-colors" />
         <Input 
           placeholder="جستجو در وعده های غذایی..." 
-          className="pr-10 h-11 text-base focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300" 
+          className="pr-10 h-11 text-base focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all duration-300 bg-card/80 backdrop-blur-sm" 
           value={searchQuery} 
           onChange={e => onSearchChange(e.target.value)} 
         />
       </div>
       
-      <div className="flex items-center gap-2 self-start">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className={cn(
-                  "h-11 w-11 border-muted", 
-                  viewMode === "grid" && "bg-primary/10 text-primary border-primary/30"
-                )} 
-                onClick={() => onViewModeChange("grid")}
-              >
-                <LayoutGrid className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p className="text-xs">نمایش شبکه‌ای</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className={cn(
-                  "h-11 w-11 border-muted", 
-                  viewMode === "list" && "bg-primary/10 text-primary border-primary/30"
-                )} 
-                onClick={() => onViewModeChange("list")}
-              >
-                <ListFilter className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p className="text-xs">نمایش لیستی</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-11 w-11 border-muted" 
-                onClick={onSortOrderChange}
-              >
-                {sortOrder === "asc" ? 
-                  <ArrowDownAZ className="h-5 w-5" /> : 
-                  <ArrowUpZA className="h-5 w-5" />
-                }
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p className="text-xs">تغییر ترتیب</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <div className="flex gap-2 justify-end">
+        <div className="bg-muted/40 backdrop-blur-sm border border-border/50 rounded-lg p-1 flex">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`h-9 w-9 rounded-md ${viewMode === "grid" ? "bg-card shadow-sm" : ""}`}
+            onClick={() => onViewModeChange("grid")}
+          >
+            <Grid className={`h-4 w-4 ${viewMode === "grid" ? "text-primary" : "text-muted-foreground"}`} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`h-9 w-9 rounded-md ${viewMode === "list" ? "bg-card shadow-sm" : ""}`}
+            onClick={() => onViewModeChange("list")}
+          >
+            <List className={`h-4 w-4 ${viewMode === "list" ? "text-primary" : "text-muted-foreground"}`} />
+          </Button>
+        </div>
+        
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-11 w-11 border-border/50 bg-card/80 backdrop-blur-sm"
+          onClick={onSortOrderChange}
+        >
+          {sortOrder === "asc" ? (
+            <SortAsc className="h-5 w-5 text-primary" />
+          ) : (
+            <SortDesc className="h-5 w-5 text-primary" />
+          )}
+        </Button>
       </div>
     </motion.div>
   );

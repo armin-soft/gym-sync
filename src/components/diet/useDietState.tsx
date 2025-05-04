@@ -1,107 +1,130 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { Meal, MealType, WeekDay } from "@/types/meal";
+import type { Meal, WeekDay } from "@/types/meal";
 
 export const useDietState = () => {
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
-  const [meals, setMeals] = useState<Meal[]>([]);
-  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
+  
+  // Dialog state
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>();
+  
+  // View mode and sorting state
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  // Load meals from localStorage on initial render
-  useEffect(() => {
+  
+  // Selected day state
+  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
+  
+  // Search query state
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  
+  // Meals state
+  const [meals, setMeals] = useState<Meal[]>(() => {
     try {
       const savedMeals = localStorage.getItem('meals');
-      if (savedMeals) {
-        setMeals(JSON.parse(savedMeals));
-      }
+      return savedMeals ? JSON.parse(savedMeals) : [];
     } catch (error) {
-      console.error('Error loading meals from localStorage:', error);
+      console.error('Error loading meals:', error);
+      return [];
     }
-  }, []);
-
-  // Save meals to localStorage when they change
+  });
+  
+  // Save meals to localStorage whenever they change
   useEffect(() => {
     try {
       localStorage.setItem('meals', JSON.stringify(meals));
     } catch (error) {
-      console.error('Error saving meals to localStorage:', error);
+      console.error('Error saving meals:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره سازی",
+        description: "مشکلی در ذخیره برنامه غذایی پیش آمده است"
+      });
     }
-  }, [meals]);
-
-  // Open dialog to add new meal
-  const handleOpen = useCallback(() => {
-    setSelectedMeal(null);
+  }, [meals, toast]);
+  
+  // Filter meals by search query
+  const filteredMeals = meals.filter(meal => 
+    meal.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    meal.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  // Toggle sort order
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
+  
+  // Handle adding a new meal
+  const handleOpen = () => {
+    setSelectedMeal(undefined);
     setOpen(true);
-  }, []);
-
-  // Open dialog to edit existing meal
-  const handleEdit = useCallback((meal: Meal) => {
+  };
+  
+  // Handle editing a meal
+  const handleEdit = (meal: Meal) => {
     setSelectedMeal(meal);
     setOpen(true);
-  }, []);
-
-  // Save new or edited meal
-  const handleSave = useCallback((data: Omit<Meal, "id">) => {
+  };
+  
+  // Handle saving a meal
+  const handleSave = (data: Omit<Meal, "id">) => {
+    let newMeals: Meal[];
+    
     if (selectedMeal) {
-      // Editing existing meal
-      setMeals(meals.map(meal => meal.id === selectedMeal.id ? { ...meal, ...data } : meal));
+      // Edit existing meal
+      newMeals = meals.map(m => m.id === selectedMeal.id ? {
+        ...data,
+        id: m.id
+      } : m);
+      
       toast({
         title: "ویرایش موفق",
         description: "وعده غذایی با موفقیت ویرایش شد",
         className: "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none"
       });
     } else {
-      // Adding new meal
-      const newId = Math.max(0, ...meals.map(meal => typeof meal.id === 'number' ? meal.id : 0)) + 1;
-      const newMeal: Meal = { id: newId, ...data };
-      setMeals([...meals, newMeal]);
+      // Add new meal
+      const newMeal = {
+        ...data,
+        id: Math.max(0, ...meals.map(m => m.id)) + 1
+      };
+      
+      newMeals = [...meals, newMeal];
+      
       toast({
         title: "افزودن موفق",
         description: "وعده غذایی جدید با موفقیت اضافه شد",
         className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
       });
     }
-    return true;
-  }, [meals, selectedMeal, toast]);
-
-  // Delete meal
-  const handleDelete = useCallback((id: number) => {
-    setMeals(meals.filter(meal => meal.id !== id));
+    
+    setMeals(newMeals);
+    setOpen(false);
+  };
+  
+  // Handle deleting a meal
+  const handleDelete = (id: number) => {
+    const updatedMeals = meals.filter(meal => meal.id !== id);
+    setMeals(updatedMeals);
+    
     toast({
       title: "حذف موفق",
       description: "وعده غذایی با موفقیت حذف شد",
       className: "bg-gradient-to-r from-red-500 to-red-600 text-white border-none"
     });
-  }, [meals, toast]);
-
-  // Toggle sort order
-  const toggleSortOrder = useCallback(() => {
-    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
-  }, []);
-
-  // Filter meals by search query
-  const filteredMeals = meals
-    .filter(meal => 
-      meal.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      meal.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
+  };
+  
   return {
     open,
     setOpen,
-    meals,
     selectedMeal,
     searchQuery,
     setSearchQuery,
     selectedDay,
     setSelectedDay,
-    viewMode,
+    viewMode, 
     setViewMode,
     sortOrder,
     filteredMeals,
