@@ -1,5 +1,4 @@
 
-import React, { useMemo } from "react";
 import { Tabs } from "@/components/ui/tabs";
 import { TabHeader } from "./TabHeader";
 import { TabContent } from "./TabContent";
@@ -36,41 +35,17 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
   selectedCategory,
   setSelectedCategory,
 }) => {
-  console.log("SupplementTabs received supplements:", supplements);
-  console.log("SupplementTabs categories:", categories);
-  
-  // فیلتر مکمل‌ها براساس تب فعال و دسته‌بندی انتخاب شده
-  const filteredSupplements = useMemo(() => {
-    let filtered = supplements;
-    
-    // فیلتر براساس نوع (مکمل یا ویتامین)
-    filtered = filtered.filter(item => item.type === activeTab);
-    
-    // فیلتر براساس دسته‌بندی انتخاب شده
-    if (selectedCategory) {
-      filtered = filtered.filter(item => item.category === selectedCategory);
-    }
-    
-    console.log(`Filtered ${activeTab}s:`, filtered);
-    return filtered;
-  }, [supplements, activeTab, selectedCategory]);
-
   return (
-    <Tabs 
-      defaultValue="supplement" 
-      value={activeTab}
-      onValueChange={onTabChange} 
-      className="flex-1 flex flex-col"
-    >
+    <Tabs value={activeTab} onValueChange={onTabChange} className="flex flex-col flex-1">
       <TabHeader activeTab={activeTab} />
       
-      <TabContent 
+      <TabContent
         isLoading={isLoading}
         categories={categories}
         onAddCategory={onAddCategory}
         onEditCategory={onEditCategory}
         onDeleteCategory={onDeleteCategory}
-        supplements={filteredSupplements}
+        supplements={supplements}
         onAddSupplement={onAddSupplement}
         onEditSupplement={onEditSupplement}
         onDeleteSupplement={onDeleteSupplement}
@@ -80,3 +55,5 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
     </Tabs>
   );
 };
+
+export { TabHeader, TabContent } from './';

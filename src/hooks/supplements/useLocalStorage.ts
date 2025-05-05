@@ -12,7 +12,7 @@ export const useLocalStorage = (initialTab: SupplementType = 'supplement') => {
   const [activeTab, setActiveTab] = useState<SupplementType>(initialTab);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  // استخراج دسته‌بندی‌های منحصر به فرد از مکمل‌ها
+  // Extract unique categories from supplements
   const extractCategoriesFromSupplements = (supplements: Supplement[]): SupplementCategory[] => {
     const uniqueCategories = new Map<string, {name: string, type: SupplementType}>();
     
@@ -45,48 +45,47 @@ export const useLocalStorage = (initialTab: SupplementType = 'supplement') => {
         console.log("Raw supplements from storage:", savedSupplements);
         console.log("Raw categories from storage:", savedCategories);
 
+        // Initialize empty arrays for supplements and categories
         let loadedSupplements: Supplement[] = [];
+        let loadedCategories: SupplementCategory[] = [];
+        
+        // Load supplements from localStorage
         if (savedSupplements) {
           loadedSupplements = JSON.parse(savedSupplements);
           console.log("Parsed supplements:", loadedSupplements);
           setSupplements(loadedSupplements);
-        } else {
-          console.log("No supplements found in localStorage");
-          setSupplements([]);
         }
 
+        // Load categories from localStorage
         if (savedCategories) {
           const parsedCategories = JSON.parse(savedCategories);
           console.log("Parsed categories:", parsedCategories);
           if (Array.isArray(parsedCategories) && parsedCategories.length > 0) {
-            setCategories(parsedCategories);
-            
-            const relevantCats = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
-            if (relevantCats.length > 0) {
-              setSelectedCategory(relevantCats[0].name);
-            }
-          } else {
-            // اگر دسته‌بندی‌ها وجود نداشتند، از مکمل‌ها استخراج می‌کنیم
+            loadedCategories = parsedCategories;
+            setCategories(loadedCategories);
+          } else if (loadedSupplements.length > 0) {
+            // Extract categories from supplements if categories don't exist
             const extractedCategories = extractCategoriesFromSupplements(loadedSupplements);
             console.log("Extracted categories from supplements:", extractedCategories);
+            loadedCategories = extractedCategories;
             setCategories(extractedCategories);
-            
-            const relevantCats = extractedCategories.filter(c => c.type === activeTab);
-            if (relevantCats.length > 0) {
-              setSelectedCategory(relevantCats[0].name);
-            }
           }
-        } else {
-          console.log("No categories found in localStorage, extracting from supplements");
+        } else if (loadedSupplements.length > 0) {
+          // Extract categories from supplements if categories don't exist in localStorage
           const extractedCategories = extractCategoriesFromSupplements(loadedSupplements);
           console.log("Extracted categories from supplements:", extractedCategories);
+          loadedCategories = extractedCategories;
           setCategories(extractedCategories);
-          
-          const relevantCats = extractedCategories.filter(c => c.type === activeTab);
-          if (relevantCats.length > 0) {
-            setSelectedCategory(relevantCats[0].name);
-          }
         }
+        
+        // Set selected category based on active tab
+        const relevantCats = loadedCategories.filter(c => c.type === activeTab);
+        if (relevantCats.length > 0) {
+          setSelectedCategory(relevantCats[0].name);
+        } else {
+          setSelectedCategory("");
+        }
+        
       } catch (error) {
         console.error('Error loading data:', error);
         toast({
@@ -113,7 +112,7 @@ export const useLocalStorage = (initialTab: SupplementType = 'supplement') => {
   const changeTab = (tab: SupplementType) => {
     setActiveTab(tab);
     
-    // در تغییر تب، دسته‌بندی مناسب را انتخاب می‌کنیم
+    // Select appropriate category when changing tabs
     const relevantCats = categories.filter(c => c.type === tab);
     if (relevantCats.length > 0) {
       setSelectedCategory(relevantCats[0].name);

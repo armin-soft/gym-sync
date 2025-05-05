@@ -1,113 +1,160 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Edit, Trash2, Plus, Beaker, AlignHorizontalJustifyStart } from "lucide-react";
-import type { SupplementCategory } from "@/types/supplement";
+import { Plus, Edit, Trash2, Info } from "lucide-react";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import type { SupplementCategory } from "@/types/supplement";
+import { cn } from "@/lib/utils";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface CategoryTableProps {
   categories: SupplementCategory[];
   onAdd: () => void;
   onEdit: (category: SupplementCategory) => void;
   onDelete: (category: SupplementCategory) => void;
-  selectedCategory?: string;
-  onSelectCategory?: (category: string) => void;
+  selectedCategory: string;
+  onSelectCategory: (category: string) => void;
 }
 
-export function CategoryTable({ categories, onAdd, onEdit, onDelete, selectedCategory, onSelectCategory }: CategoryTableProps) {
+export const CategoryTable = ({
+  categories,
+  onAdd,
+  onEdit,
+  onDelete,
+  selectedCategory,
+  onSelectCategory,
+}: CategoryTableProps) => {
+  const deviceInfo = useDeviceInfo();
+  
   return (
-    <Card className="overflow-hidden border-none shadow-xl bg-gradient-to-br from-white to-purple-50/30 rounded-2xl">
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-50 rounded-xl">
-              <AlignHorizontalJustifyStart className="w-6 h-6 text-purple-600" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-800">دسته بندی ها</h3>
-              <p className="text-sm text-gray-500 mt-1">مدیریت دسته بندی مکمل ها و ویتامین ها</p>
-            </div>
+    <Card className="bg-white shadow-md rounded-xl overflow-hidden border-0">
+      <div className="p-4 sm:p-6 flex items-center justify-between bg-gradient-to-r from-slate-50 to-purple-50/30 border-b">
+        <div className="flex items-center">
+          <div className="flex items-center justify-center p-2 rounded-lg bg-gradient-to-br from-purple-100/80 to-purple-50/40 ml-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
           </div>
-          <Button 
-            onClick={onAdd}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-purple-200 shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
-            size="sm"
-          >
-            <Plus className="w-5 h-5 ml-2" />
-            افزودن دسته بندی
-          </Button>
+          <div>
+            <h3 className="font-bold text-gray-900">دسته‌بندی‌ها</h3>
+            <p className="text-sm text-gray-500">مدیریت دسته‌بندی‌های موجود</p>
+          </div>
         </div>
+        <Button 
+          variant="default" 
+          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-colors duration-300 text-white shadow-sm"
+          size="sm"
+          onClick={onAdd}
+        >
+          <Plus className="ml-1 h-4 w-4" />
+          افزودن دسته
+        </Button>
+      </div>
 
-        <div className="grid gap-4">
-          {categories.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center p-12 bg-gradient-to-br from-purple-50 to-blue-50/30 rounded-2xl border-2 border-dashed border-purple-200"
+      <div className="p-4 sm:p-6">
+        {categories.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center p-6 text-center"
+          >
+            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
+              <Info className="h-6 w-6 text-purple-500" />
+            </div>
+            <h3 className="text-base font-medium text-gray-900 mb-1">هنوز دسته‌بندی وجود ندارد</h3>
+            <p className="text-sm text-gray-500 mb-4 max-w-md">
+              برای شروع، یک دسته‌بندی جدید ایجاد کنید تا بتوانید مکمل‌ها و ویتامین‌های خود را سازماندهی کنید.
+            </p>
+            <Button 
+              variant="outline"
+              size="sm" 
+              onClick={onAdd}
+              className="border-purple-200 text-purple-600 hover:bg-purple-50"
             >
-              <div className="p-4 bg-gradient-to-br from-purple-100 to-blue-50 rounded-full mb-4">
-                <Beaker className="w-8 h-8 text-purple-500" />
-              </div>
-              <p className="text-purple-600 font-medium">هیچ دسته بندی ثبت نشده است</p>
-              <p className="text-purple-400 text-sm mt-1">برای شروع، یک دسته بندی جدید اضافه کنید</p>
-            </motion.div>
-          ) : (
-            <AnimatePresence mode="popLayout">
+              <Plus className="ml-1 h-4 w-4" />
+              افزودن اولین دسته
+            </Button>
+          </motion.div>
+        ) : (
+          <AnimatePresence mode="popLayout">
+            <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
-                <motion.div
-                  key={category.id}
+                <motion.div 
+                  key={category.id} 
+                  initial={{ opacity: 0, scale: 0.9 }} 
+                  animate={{ opacity: 1, scale: 1 }} 
+                  exit={{ opacity: 0, scale: 0.9 }}
                   layout
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.2 }}
-                  className={`group bg-white p-4 rounded-xl border ${
-                    selectedCategory === category.name 
-                      ? "border-purple-300 shadow-lg ring-2 ring-purple-200 ring-opacity-50" 
-                      : "border-purple-100 hover:border-purple-200 hover:shadow-lg"
-                  } transition-all duration-300 hover:scale-[1.02] cursor-pointer`}
-                  onClick={() => onSelectCategory && onSelectCategory(category.name)}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg group-hover:from-purple-100 group-hover:to-blue-100 transition-colors">
-                        <Beaker className="w-5 h-5 text-purple-600" />
+                  <Badge 
+                    variant="outline"
+                    onClick={() => onSelectCategory(category.name)}
+                    className={cn(
+                      "py-2 px-3 cursor-pointer transition-all text-sm gap-2 flex items-center hover:bg-purple-50 border-purple-200",
+                      selectedCategory === category.name ? "bg-purple-100 border-purple-300 text-purple-700 hover:bg-purple-100" : ""
+                    )}
+                  >
+                    <span>{category.name}</span>
+                    {selectedCategory === category.name && (
+                      <div className="flex gap-1">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onEdit(category);
+                                }}
+                                className="h-5 w-5 p-0 mr-1 text-purple-600 hover:bg-purple-200/50 hover:text-purple-700"
+                              >
+                                <Edit className="h-3 w-3" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>ویرایش</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDelete(category);
+                                }}
+                                className="h-5 w-5 p-0 text-red-500 hover:bg-red-100/50 hover:text-red-600"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>حذف</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
-                      <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl text-sm font-medium shadow-sm group-hover:shadow-md transition-shadow">
-                        {category.name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-9 w-9 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(category);
-                        }}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-9 w-9 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDelete(category);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+                    )}
+                  </Badge>
                 </motion.div>
               ))}
-            </AnimatePresence>
-          )}
-        </div>
+            </div>
+          </AnimatePresence>
+        )}
       </div>
     </Card>
   );
-}
+};

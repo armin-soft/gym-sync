@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/useSupplementsManager";
 import { PageContainer } from "@/components/ui/page-container";
@@ -16,7 +16,7 @@ const SupplementsPage = () => {
   const [editingSupplement, setEditingSupplement] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
 
-  // استفاده از کاستوم هوک برای مدیریت مکمل‌ها
+  // Use the custom hook for supplements management
   const {
     supplements,
     categories,
@@ -41,7 +41,7 @@ const SupplementsPage = () => {
     deleteSupplement
   } = useSupplementsManager();
 
-  // مدیریت کننده‌های دیالوگ دسته‌بندی
+  // Category dialog handlers
   const handleAddCategory = () => {
     setEditingCategory(null);
     setCategoryDialogOpen(true);
@@ -52,7 +52,7 @@ const SupplementsPage = () => {
     setCategoryDialogOpen(true);
   };
 
-  // مدیریت کننده‌های دیالوگ مکمل‌ها
+  // Supplement dialog handlers
   const handleAddSupplement = () => {
     if (relevantCategories.length === 0) {
       toast({
@@ -71,7 +71,7 @@ const SupplementsPage = () => {
     setSupplementDialogOpen(true);
   };
 
-  // پردازش فرم دسته‌بندی
+  // Process category form
   const handleSubmitCategory = (name) => {
     if (editingCategory) {
       updateCategory(editingCategory.id, name);
@@ -81,7 +81,7 @@ const SupplementsPage = () => {
     setCategoryDialogOpen(false);
   };
 
-  // پردازش فرم مکمل
+  // Process supplement form
   const handleSubmitSupplement = (data) => {
     if (editingSupplement) {
       updateSupplement(editingSupplement.id, data);
@@ -97,7 +97,7 @@ const SupplementsPage = () => {
   console.log("Active tab:", activeTab);
   console.log("Selected category:", selectedCategory);
 
-  // انیمیشن برای محتوای صفحه
+  // Animation for page content
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
