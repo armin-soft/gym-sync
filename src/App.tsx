@@ -1,4 +1,5 @@
 
+import React, { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -6,10 +7,9 @@ import { AuthWrapper } from "@/components/AuthWrapper";
 import AppRoutes from "./AppRoutes";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import React from "react";
+import { ThemeProvider } from "@/hooks/use-theme";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
@@ -36,14 +36,16 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename="">
-        <AuthWrapper>
-          <Layout>
-            <AppRoutes />
-          </Layout>
-        </AuthWrapper>
-        <Toaster />
-      </BrowserRouter>
+      <ThemeProvider defaultTheme="light">
+        <BrowserRouter basename="">
+          <AuthWrapper>
+            <Layout>
+              <AppRoutes />
+            </Layout>
+          </AuthWrapper>
+          <Toaster />
+        </BrowserRouter>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
