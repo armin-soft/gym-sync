@@ -1,9 +1,11 @@
+
 import { FlaskConical, Pill, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CategoryTable } from "@/components/supplements/CategoryTable";
 import { SupplementContent } from "./SupplementContent";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
+import { useEffect, useMemo } from "react";
 
 interface SupplementTabsProps {
   activeTab: 'supplement' | 'vitamin';
@@ -38,6 +40,22 @@ export const SupplementTabs = ({
 }: SupplementTabsProps) => {
   console.log("SupplementTabs received supplements:", supplements);
   console.log("SupplementTabs categories:", categories);
+  
+  // فیلتر مکمل‌ها براساس تب فعال و دسته‌بندی انتخاب شده
+  const filteredSupplements = useMemo(() => {
+    let filtered = supplements;
+    
+    // فیلتر براساس نوع (مکمل یا ویتامین)
+    filtered = filtered.filter(item => item.type === activeTab);
+    
+    // فیلتر براساس دسته‌بندی انتخاب شده
+    if (selectedCategory) {
+      filtered = filtered.filter(item => item.category === selectedCategory);
+    }
+    
+    console.log(`Filtered ${activeTab}s:`, filtered);
+    return filtered;
+  }, [supplements, activeTab, selectedCategory]);
   
   // Animation variants
   const tabContentVariants = {
@@ -130,7 +148,7 @@ export const SupplementTabs = ({
                 transition={{ duration: 0.4 }}
               >
                 <CategoryTable 
-                  categories={categories}
+                  categories={categories.filter(c => c.type === 'supplement')}
                   onAdd={onAddCategory}
                   onEdit={onEditCategory}
                   onDelete={onDeleteCategory}
@@ -147,7 +165,7 @@ export const SupplementTabs = ({
               >
                 <SupplementContent 
                   type="supplement"
-                  supplements={supplements}
+                  supplements={filteredSupplements}
                   onAdd={onAddSupplement}
                   onEdit={onEditSupplement}
                   onDelete={onDeleteSupplement}
@@ -162,7 +180,7 @@ export const SupplementTabs = ({
                 transition={{ duration: 0.4 }}
               >
                 <CategoryTable 
-                  categories={categories}
+                  categories={categories.filter(c => c.type === 'vitamin')}
                   onAdd={onAddCategory}
                   onEdit={onEditCategory}
                   onDelete={onDeleteCategory}
@@ -179,7 +197,7 @@ export const SupplementTabs = ({
               >
                 <SupplementContent 
                   type="vitamin"
-                  supplements={supplements}
+                  supplements={filteredSupplements}
                   onAdd={onAddSupplement}
                   onEdit={onEditSupplement}
                   onDelete={onDeleteSupplement}
