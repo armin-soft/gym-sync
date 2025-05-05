@@ -13,14 +13,10 @@ interface KPIOverviewProps {
 
 export const KPIOverview = ({ data, growthData, isMobile }: KPIOverviewProps) => {
   const totalStudents = growthData?.شاگردان || 0;
-  const activeStudents = Math.round(totalStudents * 0.8); // Example: 80% active
+  const activeStudents = Math.round(totalStudents * 0.8); // تقریبا 80% از شاگردان فعال هستند
   const activePercentage = (activeStudents / totalStudents) * 100 || 0;
   
-  const avgDailyCalories = 2400; // Example data
-  const avgProteinIntake = 120; // Example data in grams
-  const avgWorkoutTime = 65; // Example data in minutes
-
-  // Activity metrics
+  // فقط شاخص‌های واقعی که در داده‌ها موجود است
   const metrics = [
     {
       label: "شاگردان فعال",
@@ -39,29 +35,21 @@ export const KPIOverview = ({ data, growthData, isMobile }: KPIOverviewProps) =>
       format: (val: number) => toPersianNumbers(val)
     },
     {
-      label: "میانگین کالری روزانه",
-      value: avgDailyCalories,
-      max: 3000,
-      percentage: (avgDailyCalories / 3000) * 100,
-      color: "bg-amber-500",
-      format: (val: number) => `${toPersianNumbers(val)} کالری`
+      label: "برنامه‌های تمرینی",
+      value: growthData?.تمرین || 0,
+      max: 100,
+      percentage: (growthData?.تمرین || 0) || 0,
+      color: "bg-orange-500",
+      format: (val: number) => toPersianNumbers(val)
     },
     {
-      label: "میانگین پروتئین روزانه",
-      value: avgProteinIntake,
-      max: 150,
-      percentage: (avgProteinIntake / 150) * 100,
+      label: "برنامه‌های غذایی",
+      value: growthData?.برنامه_غذایی || 0,
+      max: 100,
+      percentage: (growthData?.برنامه_غذایی || 0) || 0,
       color: "bg-emerald-500",
-      format: (val: number) => `${toPersianNumbers(val)} گرم`
-    },
-    {
-      label: "میانگین زمان تمرین",
-      value: avgWorkoutTime,
-      max: 90,
-      percentage: (avgWorkoutTime / 90) * 100,
-      color: "bg-rose-500",
-      format: (val: number) => `${toPersianNumbers(val)} دقیقه`
-    },
+      format: (val: number) => toPersianNumbers(val)
+    }
   ];
 
   return (
@@ -73,7 +61,7 @@ export const KPIOverview = ({ data, growthData, isMobile }: KPIOverviewProps) =>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {metrics.map((metric, index) => (
           <motion.div
             key={metric.label}

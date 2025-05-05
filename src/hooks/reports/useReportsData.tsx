@@ -15,20 +15,20 @@ export const useReportsData = () => {
   const loadData = () => {
     setIsRefreshing(true);
     try {
-      // Get actual data from localStorage
+      // دریافت داده‌های واقعی از localStorage
       const students = JSON.parse(localStorage.getItem('students') || '[]');
       const exercises = JSON.parse(localStorage.getItem('exercises') || '[]');
       const supplements = JSON.parse(localStorage.getItem('supplementList') || '[]');
       const meals = JSON.parse(localStorage.getItem('meals') || '[]');
       
-      console.log('Real data loaded:', { 
-        students: students.length, 
-        exercises: exercises.length, 
-        supplements: supplements.length, 
-        meals: meals.length 
+      console.log('داده‌های واقعی بارگذاری شدند:', { 
+        شاگردان: students.length, 
+        تمرین: exercises.length, 
+        مکمل: supplements.length, 
+        برنامه_غذایی: meals.length 
       });
       
-      // Process data based on time range
+      // پردازش داده‌ها بر اساس بازه زمانی انتخاب شده
       const processedData = processRealData(students, exercises, supplements, meals, timeRange);
       
       setMonthlyData(processedData.monthlyData);
@@ -42,7 +42,7 @@ export const useReportsData = () => {
         variant: "default",
       });
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('خطا در بارگذاری اطلاعات:', error);
       setIsLoading(false);
       setIsRefreshing(false);
       
@@ -54,9 +54,9 @@ export const useReportsData = () => {
     }
   };
 
-  // Process real data based on registration dates
+  // پردازش داده‌های واقعی بر اساس تاریخ‌های ثبت نام
   const processRealData = (students: any[], exercises: any[], supplements: any[], meals: any[], timeRange: string) => {
-    // Define time periods based on selected range
+    // تعیین بازه‌های زمانی بر اساس محدوده انتخاب شده
     let monthsToShow = 6;
     switch (timeRange) {
       case 'week':
@@ -81,7 +81,7 @@ export const useReportsData = () => {
     const today = new Date();
     const months: { [key: string]: any } = {};
     
-    // Create monthly buckets
+    // ایجاد دوره‌های ماهانه
     for (let i = 0; i < monthsToShow; i++) {
       const date = new Date(today);
       date.setMonth(today.getMonth() - i);
@@ -102,7 +102,7 @@ export const useReportsData = () => {
       };
     }
     
-    // Process student data
+    // پردازش داده‌های شاگردان
     students.forEach(student => {
       if (student.registrationDate) {
         const regDate = new Date(student.registrationDate);
@@ -110,12 +110,12 @@ export const useReportsData = () => {
         
         if (months[monthKey]) {
           months[monthKey].شاگردان += 1;
-          months[monthKey].درآمد += student.monthlyFee || 200000; // Use actual fee or default
+          months[monthKey].درآمد += student.monthlyFee || 200000; // استفاده از هزینه واقعی یا مقدار پیش‌فرض
         }
       }
     });
     
-    // Process exercise data
+    // پردازش داده‌های تمرین
     exercises.forEach(exercise => {
       if (exercise.createdAt) {
         const createdDate = new Date(exercise.createdAt);
@@ -127,7 +127,7 @@ export const useReportsData = () => {
       }
     });
     
-    // Process supplement data
+    // پردازش داده‌های مکمل
     supplements.forEach(supplement => {
       if (supplement.createdAt) {
         const createdDate = new Date(supplement.createdAt);
@@ -139,7 +139,7 @@ export const useReportsData = () => {
       }
     });
     
-    // Process meal data
+    // پردازش داده‌های غذایی
     meals.forEach(meal => {
       if (meal.createdAt) {
         const createdDate = new Date(meal.createdAt);
@@ -151,10 +151,10 @@ export const useReportsData = () => {
       }
     });
     
-    // Convert to array and sort by date (oldest to newest)
+    // تبدیل به آرایه و مرتب‌سازی بر اساس تاریخ (از قدیمی به جدید)
     const monthlyData = Object.values(months).reverse();
     
-    // Calculate growth rates
+    // محاسبه نرخ رشد
     const expandedData = monthlyData.map((item, index) => {
       if (index === 0) {
         return item;
@@ -174,19 +174,19 @@ export const useReportsData = () => {
     return { monthlyData, expandedData };
   };
   
-  // Helper function to calculate growth percentage
+  // تابع کمکی برای محاسبه درصد رشد
   const calculateGrowth = (current: number, previous: number) => {
     if (previous === 0) return current > 0 ? 100 : 0;
     return Math.round(((current - previous) / previous) * 100);
   };
 
-  // Load data effect
+  // اثر بارگذاری داده‌ها
   useEffect(() => {
     loadData();
     
-    // Update on localStorage changes
+    // به‌روزرسانی با تغییرات localStorage
     const handleStorageChange = () => {
-      console.log('Storage changed, reloading data');
+      console.log('تغییر در ذخیره‌سازی، بارگذاری مجدد داده‌ها');
       loadData();
     };
     
