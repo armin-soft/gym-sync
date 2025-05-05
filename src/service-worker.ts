@@ -4,7 +4,7 @@
 
 // Dynamically determine the base path where the app is running
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
-const CACHE_NAME = 'app-cache-v3';
+const CACHE_NAME = 'app-cache-v4';
 
 // Files to cache - use relative paths that will work in any environment
 const getUrlsToCache = () => {
@@ -30,17 +30,19 @@ self.addEventListener('install', (event: any) => {
         
         // Cache assets one by one to avoid a single failure breaking everything
         const cachePromises = urlsToCache.map((url: string) => {
+          // Remove any patternUrl variables from the URL to avoid caching issues
+          const cleanUrl = url.replace(/\${patternUrl}/g, '');
           // Try to fetch each resource and cache it
-          return fetch(new Request(url, { cache: 'reload' }))
+          return fetch(new Request(cleanUrl, { cache: 'reload' }))
             .then(response => {
               if (!response || response.status !== 200) {
-                console.log(`[Service Worker] Failed to cache: ${url} - Status: ${response ? response.status : 'unknown'}`);
+                console.log(`[Service Worker] Failed to cache: ${cleanUrl} - Status: ${response ? response.status : 'unknown'}`);
                 return;
               }
-              return cache.put(url, response);
+              return cache.put(cleanUrl, response);
             })
             .catch(err => {
-              console.log(`[Service Worker] Error caching ${url}: ${err}`);
+              console.log(`[Service Worker] Error caching ${cleanUrl}: ${err}`);
               // Continue despite errors
               return Promise.resolve();
             });
@@ -64,8 +66,18 @@ self.addEventListener('fetch', (event: any) => {
     return;
   }
 
+  // Clean pattern URLs
+  const cleanUrl = event.request.url.replace(/\${patternUrl}/g, '');
+  const cleanRequest = cleanUrl !== event.request.url ? 
+    new Request(cleanUrl, { 
+      method: event.request.method,
+      headers: event.request.headers,
+      mode: event.request.mode,
+      credentials: event.request.credentials
+    }) : event.request;
+
   event.respondWith(
-    caches.match(event.request)
+    caches.match(cleanRequest)
       .then((response) => {
         // Cache hit - return response
         if (response) {
@@ -73,7 +85,7 @@ self.addEventListener('fetch', (event: any) => {
         }
 
         // Clone the request - request can only be used once
-        const fetchRequest = event.request.clone();
+        const fetchRequest = cleanRequest.clone();
         
         return fetch(fetchRequest)
           .then(response => {
@@ -87,7 +99,7 @@ self.addEventListener('fetch', (event: any) => {
 
             caches.open(CACHE_NAME)
               .then(cache => {
-                cache.put(event.request, responseToCache);
+                cache.put(cleanRequest, responseToCache);
               })
               .catch(err => {
                 console.error('[Service Worker] Failed to cache response:', err);
@@ -98,7 +110,7 @@ self.addEventListener('fetch', (event: any) => {
           .catch(err => {
             console.log('[Service Worker] Fetch failed', err);
             // You might want to return a custom offline page here
-            if (event.request.mode === 'navigate') {
+            if (cleanRequest.mode === 'navigate') {
               return caches.match('/');
             }
             

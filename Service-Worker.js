@@ -1,7 +1,7 @@
 // This is the service worker for the application
 // It handles caching and offline functionality
 
-const CACHE_NAME = 'gym-sync-v3';
+const CACHE_NAME = 'gym-sync-v4';
 
 // Assets to cache - use relative paths instead of absolute
 const STATIC_ASSETS = [
@@ -93,15 +93,25 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  console.log('[Service Worker] Fetching', event.request.url);
+  // Remove any patternUrl variables from the URL to avoid caching issues
+  const cleanUrl = event.request.url.replace(/\${patternUrl}/g, '');
+  const cleanRequest = cleanUrl !== event.request.url ? 
+    new Request(cleanUrl, { 
+      method: event.request.method,
+      headers: event.request.headers,
+      mode: event.request.mode,
+      credentials: event.request.credentials
+    }) : event.request;
+
+  console.log('[Service Worker] Fetching', cleanUrl);
   
   event.respondWith(
-    caches.match(event.request)
+    caches.match(cleanRequest)
       .then(cachedResponse => {
         // Return cached response if available
         if (cachedResponse) {
           // In background, update the cache
-          fetch(event.request)
+          fetch(cleanRequest)
             .then(response => {
               if (!response || response.status !== 200 || response.type !== 'basic') {
                 return;
@@ -110,10 +120,10 @@ self.addEventListener('fetch', (event) => {
               const responseToCache = response.clone();
               caches.open(CACHE_NAME)
                 .then(cache => {
-                  cache.put(event.request, responseToCache);
+                  cache.put(cleanRequest, responseToCache);
                 })
                 .catch(err => {
-                  console.log('[Service Worker] Failed to update cache for:', event.request.url, err);
+                  console.log('[Service Worker] Failed to update cache for:', cleanUrl, err);
                 });
             })
             .catch(() => {
@@ -124,7 +134,7 @@ self.addEventListener('fetch', (event) => {
         }
 
         // Otherwise fetch from network
-        return fetch(event.request)
+        return fetch(cleanRequest)
           .then(response => {
             // Don't cache if response is not valid
             if (!response || response.status !== 200 || response.type !== 'basic') {
@@ -137,7 +147,7 @@ self.addEventListener('fetch', (event) => {
             // Add to cache
             caches.open(CACHE_NAME)
               .then(cache => {
-                cache.put(event.request, responseToCache);
+                cache.put(cleanRequest, responseToCache);
               })
               .catch(err => {
                 console.error('[Service Worker] Failed to cache response:', err);
@@ -147,7 +157,7 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(() => {
             // For navigation requests, return the offline page
-            if (event.request.mode === 'navigate') {
+            if (cleanRequest.mode === 'navigate') {
               return caches.match('./');
             }
             

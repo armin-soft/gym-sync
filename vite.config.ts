@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -83,6 +82,8 @@ export default defineConfig(({ mode }) => ({
     assetsDir: 'Assets',
     // Increase the warning limit to reduce noise during build
     chunkSizeWarningLimit: 800,
+    // Fix pattern URL resolution issue
+    assetsInlineLimit: 0,
     rollupOptions: {
       output: {
         // Customize the output structure
@@ -107,6 +108,9 @@ export default defineConfig(({ mode }) => ({
         },
         // Improved manual chunks strategy to better split code
         manualChunks: (id) => {
+          // Fix for the .tsx.js issue - strip the .tsx from chunk names
+          const cleanId = id.replace(/\.tsx$/, '');
+          
           // Core React libraries
           if (id.includes('node_modules/react/') || 
               id.includes('node_modules/react-dom/') || 
