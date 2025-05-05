@@ -75,8 +75,16 @@ const SupplementsPage = () => {
   const handleSubmitCategory = (name) => {
     if (editingCategory) {
       updateCategory(editingCategory.id, name);
+      toast({
+        title: "دسته بندی با موفقیت ویرایش شد",
+        variant: "default",
+      });
     } else {
       addCategory(name);
+      toast({
+        title: "دسته بندی جدید با موفقیت ایجاد شد",
+        variant: "default",
+      });
     }
     setCategoryDialogOpen(false);
   };
@@ -85,18 +93,20 @@ const SupplementsPage = () => {
   const handleSubmitSupplement = (data) => {
     if (editingSupplement) {
       updateSupplement(editingSupplement.id, data);
+      toast({
+        title: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} با موفقیت ویرایش شد`,
+        variant: "default",
+      });
     } else {
       addSupplement(data);
+      toast({
+        title: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} جدید با موفقیت اضافه شد`,
+        variant: "default",
+      });
     }
     setSupplementDialogOpen(false);
   };
-
-  console.log("Current supplements:", supplements);
-  console.log("Current categories:", categories);
-  console.log("Filtered supplements:", filteredSupplements);
-  console.log("Active tab:", activeTab);
-  console.log("Selected category:", selectedCategory);
-
+  
   // Animation for page content
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -109,53 +119,69 @@ const SupplementsPage = () => {
   };
 
   return (
-    <PageContainer className="container mx-auto py-2 sm:py-4 md:py-6 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8 max-w-7xl min-h-screen">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="space-y-4 sm:space-y-6 lg:space-y-8 h-full flex flex-col"
-      >
-        <SupplementsHeader />
+    <PageContainer 
+      className="mx-auto py-0 px-0 space-y-0 max-w-none min-h-screen"
+      fullWidth={true}
+      fullHeight={true}
+      withBackground={true}
+      noPadding={true}
+    >
+      <div className="relative w-full h-full flex flex-col overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
         
-        <SupplementTabs 
-          activeTab={activeTab}
-          onTabChange={(value) => {
-            // Ensure we only set valid values
-            setActiveTab(value as 'supplement' | 'vitamin');
-          }}
-          isLoading={isLoading}
-          categories={relevantCategories}
-          onAddCategory={handleAddCategory}
-          onEditCategory={handleEditCategory}
-          onDeleteCategory={deleteCategory}
-          supplements={filteredSupplements}
-          onAddSupplement={handleAddSupplement}
-          onEditSupplement={handleEditSupplement}
-          onDeleteSupplement={deleteSupplement}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
+        <div className="flex-1 flex flex-col h-full overflow-hidden p-3 sm:p-4 md:p-6">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-4 sm:space-y-6 h-full flex flex-col"
+          >
+            <SupplementsHeader />
+            
+            <div className="flex-1 overflow-hidden">
+              <SupplementTabs 
+                activeTab={activeTab}
+                onTabChange={(value) => {
+                  // Ensure we only set valid values
+                  setActiveTab(value as 'supplement' | 'vitamin');
+                }}
+                isLoading={isLoading}
+                categories={relevantCategories}
+                onAddCategory={handleAddCategory}
+                onEditCategory={handleEditCategory}
+                onDeleteCategory={deleteCategory}
+                supplements={filteredSupplements}
+                onAddSupplement={handleAddSupplement}
+                onEditSupplement={handleEditSupplement}
+                onDeleteSupplement={deleteSupplement}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Dialogs */}
+        <SupplementDialog
+          open={supplementDialogOpen}
+          onOpenChange={setSupplementDialogOpen}
+          onSubmit={handleSubmitSupplement}
+          defaultValues={editingSupplement || undefined}
+          mode={editingSupplement ? "edit" : "add"}
+          categories={categories.filter(c => c.type === activeTab)}
+          type={activeTab}
         />
-      </motion.div>
 
-      {/* Dialogs */}
-      <SupplementDialog
-        open={supplementDialogOpen}
-        onOpenChange={setSupplementDialogOpen}
-        onSubmit={handleSubmitSupplement}
-        defaultValues={editingSupplement || undefined}
-        mode={editingSupplement ? "edit" : "add"}
-        categories={categories.filter(c => c.type === activeTab)}
-        type={activeTab}
-      />
-
-      <CategoryDialog
-        open={categoryDialogOpen}
-        onOpenChange={setCategoryDialogOpen}
-        onSubmit={handleSubmitCategory}
-        defaultValue={editingCategory?.name}
-        mode={editingCategory ? "edit" : "add"}
-      />
+        <CategoryDialog
+          open={categoryDialogOpen}
+          onOpenChange={setCategoryDialogOpen}
+          onSubmit={handleSubmitCategory}
+          defaultValue={editingCategory?.name}
+          mode={editingCategory ? "edit" : "add"}
+        />
+      </div>
     </PageContainer>
   );
 };

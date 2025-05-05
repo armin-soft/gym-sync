@@ -3,6 +3,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { TabHeader } from "./TabHeader";
 import { TabContent } from "./TabContent";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
+import { motion } from "framer-motion";
 
 interface SupplementTabsProps {
   activeTab: 'supplement' | 'vitamin';
@@ -36,28 +37,33 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
   setSelectedCategory,
 }) => {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="flex flex-col flex-1">
-      <TabHeader activeTab={activeTab} />
-      
-      <TabContent
-        isLoading={isLoading}
-        categories={categories}
-        onAddCategory={onAddCategory}
-        onEditCategory={onEditCategory}
-        onDeleteCategory={onDeleteCategory}
-        supplements={supplements}
-        onAddSupplement={onAddSupplement}
-        onEditSupplement={onEditSupplement}
-        onDeleteSupplement={onDeleteSupplement}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
-    </Tabs>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col flex-1 h-full"
+    >
+      <Tabs value={activeTab} onValueChange={onTabChange} className="flex flex-col flex-1 h-full">
+        <TabHeader activeTab={activeTab} />
+        
+        <TabContent
+          isLoading={isLoading}
+          categories={categories}
+          onAddCategory={onAddCategory}
+          onEditCategory={onEditCategory}
+          onDeleteCategory={onDeleteCategory}
+          supplements={supplements}
+          onAddSupplement={onAddSupplement}
+          onEditSupplement={onEditSupplement}
+          onDeleteSupplement={onDeleteSupplement}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      </Tabs>
+    </motion.div>
   );
 };
 
-// Remove the circular export statement
-// export { TabHeader, TabContent } from './';
-// Instead, export them directly from their respective files
+// Export them directly from their respective files
 export { TabHeader } from './TabHeader';
 export { TabContent } from './TabContent';
