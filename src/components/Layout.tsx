@@ -3,9 +3,9 @@ import { useState, useEffect, Suspense, lazy, memo } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu, X, Bell, User } from "lucide-react";
 import { LoadingScreen } from "./LoadingScreen";
-import { Outlet } from "react-router-dom";
 import { AppIcon } from "./ui/app-icon";
-import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import { 
   Sheet, 
   SheetContent, 
@@ -34,6 +34,24 @@ export const Layout = memo(({ children }: LayoutProps) => {
   });
   const [scrolled, setScrolled] = useState(false);
   const deviceInfo = useDeviceInfo();
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    // Register toast function globally for service worker updates
+    window.showToast = (options) => {
+      if (options && options.title && options.description) {
+        toast({
+          title: options.title,
+          description: options.description,
+          action: options.action ? (
+            <ToastAction altText={options.action.label} onClick={options.action.onClick}>
+              {options.action.label}
+            </ToastAction>
+          ) : undefined,
+        });
+      }
+    };
+  }, [toast]);
   
   const loadProfile = () => {
     try {
@@ -83,7 +101,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
     window.location.reload();
   };
 
-  // تنظیمات ریسپانسیو برای هدر
+  // Responsive settings for the header
   const getHeaderHeight = () => {
     if (deviceInfo.isMobile) return "h-10";
     if (deviceInfo.isTablet) return "h-12";
@@ -133,8 +151,6 @@ export const Layout = memo(({ children }: LayoutProps) => {
   return (
     <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
-      
-      <Toaster />
       
       <motion.header 
         initial={{ y: -10, opacity: 0 }}

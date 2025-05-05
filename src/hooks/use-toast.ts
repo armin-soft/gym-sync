@@ -90,8 +90,6 @@ export const reducer = (state: State, action: Action): State => {
     case "DISMISS_TOAST": {
       const { toastId } = action
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
@@ -126,7 +124,7 @@ export const reducer = (state: State, action: Action): State => {
   }
 }
 
-// استفاده از یک آرایه برای مدیریت لیسنرها
+// Use an array to manage listeners
 const listeners: Array<(state: State) => void> = []
 
 let memoryState: State = { toasts: [] }
@@ -143,29 +141,30 @@ type Toast = Omit<ToastType, "id">
 // Custom variants to include "success" and "warning"
 type ToastVariant = "default" | "destructive" | "success" | "warning";
 
-// ثبت وضعیت نمایش آخرین اعلان برای جلوگیری از نمایش دوگانه
+// Track the last notification to prevent duplicates
 const toastHistory = new Map<string, number>();
 
+// Define toast function outside of the hook to avoid React hook rules violation
 function toast({ ...props }: { variant?: ToastVariant } & Toast) {
   const id = genId()
   
-  // ایجاد یک کلید منحصر به فرد برای این اعلان بر اساس محتوای آن
+  // Create a unique key for this notification based on content
   const toastKey = `${props.title}-${props.description}`;
   const now = Date.now();
   
-  // بررسی اعلان تکراری در بازه زمانی کوتاه (1 ثانیه)
+  // Check for duplicate notifications within a short time frame (1 second)
   if (toastHistory.has(toastKey)) {
     const lastShown = toastHistory.get(toastKey) || 0;
     if (now - lastShown < 1000) {
-      // اعلان مشابه اخیراً نمایش داده شده، از نمایش مجدد جلوگیری می‌کنیم
+      // Skip showing duplicates
       return { id, dismiss: () => {}, update: () => {} };
     }
   }
   
-  // ثبت این اعلان در تاریخچه
+  // Record this notification in history
   toastHistory.set(toastKey, now);
   
-  // پاکسازی اعلان‌های قدیمی از تاریخچه هر 30 ثانیه
+  // Clean up old notifications from history after 30 seconds
   setTimeout(() => {
     toastHistory.delete(toastKey);
   }, 30000);
@@ -193,7 +192,7 @@ function toast({ ...props }: { variant?: ToastVariant } & Toast) {
   // Auto dismiss after TOAST_REMOVE_DELAY
   setTimeout(() => {
     dismiss()
-  }, TOAST_REMOVE_DELAY - 100) // Dismiss slightly before removal to trigger animation
+  }, TOAST_REMOVE_DELAY - 100)
 
   return {
     id: id,
@@ -202,6 +201,7 @@ function toast({ ...props }: { variant?: ToastVariant } & Toast) {
   }
 }
 
+// This is a React hook that must be used within a React component
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 
