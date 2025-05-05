@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { SupplementList } from "@/components/supplements/SupplementList";
 import type { Supplement } from "@/types/supplement";
+import { useEffect } from "react";
 
 interface SupplementContentProps {
   type: 'supplement' | 'vitamin';
@@ -21,6 +22,11 @@ export const SupplementContent = ({
   onEdit,
   onDelete,
 }: SupplementContentProps) => {
+  // اضافه کردن یک log برای نمایش مکمل‌هایی که به کامپوننت رسیده‌اند
+  useEffect(() => {
+    console.log(`SupplementContent received ${type}s:`, supplements);
+  }, [supplements, type]);
+  
   return (
     <Card className="overflow-hidden border-none shadow-xl bg-gradient-to-br from-white to-blue-50/30 rounded-2xl h-full">
       <div className="p-6 sm:p-8 h-full flex flex-col">
