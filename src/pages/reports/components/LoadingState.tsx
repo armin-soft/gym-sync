@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { ChartBarIcon } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 export const LoadingState = () => {
   return (

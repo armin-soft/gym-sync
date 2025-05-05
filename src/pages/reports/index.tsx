@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Tabs } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { Filter } from "lucide-react";
 
 import { useReportsData } from "@/hooks/reports/useReportsData";
 import { StatsSummary } from "@/components/reports/StatsSummary";

@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface TimeRangeFiltersProps {
   filtersOpen: boolean;
@@ -39,7 +40,7 @@ export const TimeRangeFilters = ({
                     className="h-8 text-xs"
                     onClick={() => setTimeRange("3months")}
                   >
-                    ۳ ماه
+                    {toPersianNumbers(3)} ماه
                   </Button>
                   <Button 
                     size="sm" 
@@ -47,7 +48,7 @@ export const TimeRangeFilters = ({
                     className="h-8 text-xs"
                     onClick={() => setTimeRange("6months")}
                   >
-                    ۶ ماه
+                    {toPersianNumbers(6)} ماه
                   </Button>
                   <Button 
                     size="sm" 
@@ -55,7 +56,7 @@ export const TimeRangeFilters = ({
                     className="h-8 text-xs"
                     onClick={() => setTimeRange("1year")}
                   >
-                    ۱ سال
+                    {toPersianNumbers(1)} سال
                   </Button>
                 </div>
               </div>

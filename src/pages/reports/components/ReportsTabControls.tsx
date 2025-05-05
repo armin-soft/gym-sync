@@ -2,6 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartBarIcon, Wallet, ChartPieIcon } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ReportsTabControlsProps {
   onTabChange: (value: string) => void;

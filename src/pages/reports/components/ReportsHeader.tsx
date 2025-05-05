@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ChartBarIcon, Filter, RefreshCw, ArrowDown, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ReportsHeaderProps {
   isRefreshing: boolean;
