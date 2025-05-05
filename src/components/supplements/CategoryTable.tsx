@@ -10,9 +10,11 @@ interface CategoryTableProps {
   onAdd: () => void;
   onEdit: (category: SupplementCategory) => void;
   onDelete: (category: SupplementCategory) => void;
+  selectedCategory?: string;
+  onSelectCategory?: (category: string) => void;
 }
 
-export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryTableProps) {
+export function CategoryTable({ categories, onAdd, onEdit, onDelete, selectedCategory, onSelectCategory }: CategoryTableProps) {
   return (
     <Card className="overflow-hidden border-none shadow-xl bg-gradient-to-br from-white to-purple-50/30 rounded-2xl">
       <div className="p-8">
@@ -59,7 +61,12 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.2 }}
-                  className="group bg-white p-4 rounded-xl border border-purple-100 hover:border-purple-200 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                  className={`group bg-white p-4 rounded-xl border ${
+                    selectedCategory === category.name 
+                      ? "border-purple-300 shadow-lg ring-2 ring-purple-200 ring-opacity-50" 
+                      : "border-purple-100 hover:border-purple-200 hover:shadow-lg"
+                  } transition-all duration-300 hover:scale-[1.02] cursor-pointer`}
+                  onClick={() => onSelectCategory && onSelectCategory(category.name)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -75,7 +82,10 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
                         variant="ghost"
                         size="sm"
                         className="h-9 w-9 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
-                        onClick={() => onEdit(category)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(category);
+                        }}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -83,7 +93,10 @@ export function CategoryTable({ categories, onAdd, onEdit, onDelete }: CategoryT
                         variant="ghost"
                         size="sm"
                         className="h-9 w-9 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
-                        onClick={() => onDelete(category)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(category);
+                        }}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

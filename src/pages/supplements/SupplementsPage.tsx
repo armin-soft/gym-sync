@@ -115,7 +115,8 @@ const SupplementsPage = () => {
         <SupplementTabs 
           activeTab={activeTab}
           onTabChange={(value) => {
-            setActiveTab(value);
+            // Ensure we only set valid values
+            setActiveTab(value as 'supplement' | 'vitamin');
           }}
           isLoading={isLoading}
           categories={relevantCategories}
