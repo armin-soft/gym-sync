@@ -1,23 +1,24 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import AppRoutes from "./AppRoutes";
-import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import "./App.css";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
 
-function App() {
+function AppContent() {
   const { toast } = useToast();
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Register toast function globally for service worker updates
     window.showToast = (options) => {
       if (options && options.title && options.description) {
@@ -35,16 +36,24 @@ function App() {
   }, [toast]);
 
   return (
+    <AuthWrapper>
+      <Layout>
+        <AppRoutes />
+      </Layout>
+    </AuthWrapper>
+  );
+}
+
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
-        <BrowserRouter basename="">
-          <AuthWrapper>
-            <Layout>
-              <AppRoutes />
-            </Layout>
-          </AuthWrapper>
-          <Toaster />
-        </BrowserRouter>
+        <TooltipProvider>
+          <BrowserRouter basename="">
+            <AppContent />
+            <Toaster />
+          </BrowserRouter>
+        </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
