@@ -1,4 +1,5 @@
 
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -13,10 +14,7 @@ import Reports from "@/pages/reports";
 import BackupRestore from "@/pages/backup";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
-import React from "react";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
@@ -32,9 +30,13 @@ function App() {
           title: options.title,
           description: options.description,
           action: options.action ? (
-            <ToastAction altText={options.action.label} onClick={options.action.onClick}>
-              {options.action.label}
-            </ToastAction>
+            <React.Fragment>
+              {options.action.label && (
+                <button onClick={options.action.onClick}>
+                  {options.action.label}
+                </button>
+              )}
+            </React.Fragment>
           ) : undefined,
         });
       }
