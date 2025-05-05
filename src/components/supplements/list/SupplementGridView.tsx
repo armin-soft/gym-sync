@@ -1,0 +1,100 @@
+
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2, FileText } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
+import type { Supplement } from "@/types/supplement";
+import { cn } from "@/lib/utils";
+
+interface SupplementGridViewProps {
+  supplements: Supplement[];
+  onEdit: (supplement: Supplement) => void;
+  onDelete: (id: number) => void;
+}
+
+export const SupplementGridView = ({ supplements, onEdit, onDelete }: SupplementGridViewProps) => {
+  return (
+    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
+      <AnimatePresence mode="popLayout">
+        {supplements.map((supplement) => (
+          <motion.div
+            key={supplement.id}
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Card className="group overflow-hidden hover:shadow-xl transition-all duration-500 border-purple-100/50 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50/30 h-full">
+              <div className="relative p-3 sm:p-4 flex flex-col h-full">
+                <div className="absolute top-2 left-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onEdit(supplement)}
+                          className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                        >
+                          <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>ویرایش</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onDelete(supplement.id)}
+                          className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>حذف</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+
+                <div className="mb-2 sm:mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      "px-2 py-1 text-xs rounded-lg font-medium",
+                      supplement.type === "supplement" 
+                        ? "bg-purple-50 text-purple-600" 
+                        : "bg-blue-50 text-blue-600"
+                    )}>
+                      {supplement.category}
+                    </span>
+                  </div>
+                  <h4 className="text-sm sm:text-base font-bold mt-2 group-hover:text-purple-600 transition-colors line-clamp-1">
+                    {supplement.name}
+                  </h4>
+                </div>
+
+                <div className="space-y-2 text-sm mt-auto">
+                  {supplement.description && (
+                    <div className="flex items-start gap-2 text-gray-600">
+                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500 shrink-0 mt-0.5" />
+                      <span className="line-clamp-2 text-xs">{supplement.description}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+};
