@@ -19,8 +19,13 @@ import { cn } from "@/lib/utils";
 
 const LoadingFallback = memo(() => <LoadingScreen />);
 
+// Define the props interface explicitly to include children
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
 // Using memo to prevent unnecessary re-renders
-export const Layout = memo(() => {
+export const Layout = memo(({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
   const [trainerProfile, setTrainerProfile] = useState({
@@ -156,7 +161,7 @@ export const Layout = memo(() => {
       
       <main className="flex-1 overflow-hidden w-full max-w-full">
         <Suspense fallback={<LoadingFallback />}>
-          <Outlet />
+          {children}
         </Suspense>
       </main>
     </div>
