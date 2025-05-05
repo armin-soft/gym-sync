@@ -1,5 +1,5 @@
 
-import { FlaskConical, Pill } from "lucide-react";
+import { FlaskConical, Pill, Sparkles, Beaker } from "lucide-react";
 import { motion } from "framer-motion";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -32,8 +32,8 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ activeTab }) => {
             "relative gap-2 sm:gap-3 text-base sm:text-lg font-medium",
             "transition-all duration-300 ease-in-out",
             "data-[state=active]:text-white data-[state=active]:shadow-inner",
-            "hover:bg-purple-50 dark:hover:bg-purple-950/20",
-            "data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600"
+            "hover:bg-violet-50 dark:hover:bg-violet-950/20",
+            "data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-600"
           )}
         >
           <motion.div
@@ -42,16 +42,28 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ activeTab }) => {
             transition={{ duration: 0.3 }}
             className={cn(
               "rounded-full flex items-center justify-center",
-              activeTab === "supplement" ? "bg-white/20" : "bg-purple-100 dark:bg-purple-900/40",
+              activeTab === "supplement" ? "bg-white/20" : "bg-violet-100 dark:bg-violet-900/40",
               deviceInfo.isMobile ? "p-1" : "p-2"
             )}
           >
-            <FlaskConical className={cn(
+            <Beaker className={cn(
               getIconSize(),
-              activeTab === "supplement" ? "text-white" : "text-purple-600 dark:text-purple-400"
+              activeTab === "supplement" ? "text-white" : "text-violet-600 dark:text-violet-400"
             )} />
           </motion.div>
           مکمل ها
+          
+          {/* Animated sparkles for active tab */}
+          {activeTab === "supplement" && (
+            <motion.div 
+              className="absolute top-0 right-0 -mt-1 -mr-1"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Sparkles className="h-3 w-3 text-yellow-300" />
+            </motion.div>
+          )}
         </TabsTrigger>
         <TabsTrigger 
           value="vitamin" 
@@ -79,6 +91,18 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ activeTab }) => {
             )} />
           </motion.div>
           ویتامین ها
+          
+          {/* Animated sparkles for active tab */}
+          {activeTab === "vitamin" && (
+            <motion.div 
+              className="absolute top-0 right-0 -mt-1 -mr-1"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Sparkles className="h-3 w-3 text-yellow-300" />
+            </motion.div>
+          )}
         </TabsTrigger>
       </TabsList>
     </motion.div>
