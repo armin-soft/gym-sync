@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { TabsContent } from "@/components/ui/tabs";
 import { CategoryTable } from "@/components/supplements/CategoryTable";
-import { SupplementContent } from "../SupplementContent";
+import { SupplementContent } from "../supplement-content";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
