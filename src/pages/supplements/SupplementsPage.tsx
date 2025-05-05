@@ -108,6 +108,17 @@ const SupplementsPage = () => {
     }
     setSupplementDialogOpen(false);
   };
+  
+  // Animation for page content
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
   return (
     <PageContainer 
@@ -118,94 +129,24 @@ const SupplementsPage = () => {
       noPadding={true}
     >
       <div className="relative w-full h-full flex flex-col overflow-hidden">
-        {/* Animated background elements */}
-        <div className="fixed top-0 right-0 w-full h-full overflow-hidden -z-10">
-          <div className="absolute top-0 right-0 w-[80vh] h-[80vh] bg-violet-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-[pulse_8s_ease-in-out_infinite]" />
-          <div className="absolute bottom-0 left-0 w-[90vh] h-[90vh] bg-blue-500/5 rounded-full blur-3xl -ml-60 -mb-60 animate-[pulse_10s_ease-in-out_infinite_1s]" />
-          <div className="absolute top-1/2 left-1/4 w-[50vh] h-[50vh] bg-indigo-500/5 rounded-full blur-3xl animate-[pulse_7s_ease-in-out_infinite_0.5s]" />
-          
-          {/* Animated small orbs */}
-          <motion.div 
-            className="absolute top-[15%] right-[15%] w-16 h-16 rounded-full bg-gradient-to-r from-violet-400/10 to-pink-400/10"
-            animate={{
-              y: [0, -20, 0],
-              x: [0, 10, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          />
-          <motion.div 
-            className="absolute bottom-[25%] left-[10%] w-24 h-24 rounded-full bg-gradient-to-r from-blue-400/10 to-cyan-400/10"
-            animate={{
-              y: [0, 30, 0],
-              x: [0, -15, 0],
-              scale: [1, 1.15, 1],
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: 1
-            }}
-          />
-          <motion.div 
-            className="absolute top-[60%] right-[25%] w-20 h-20 rounded-full bg-gradient-to-r from-amber-400/10 to-orange-400/10"
-            animate={{
-              y: [0, -25, 0],
-              x: [0, -10, 0],
-              scale: [1, 1.08, 1],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: 0.5
-            }}
-          />
-        </div>
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
         
         <div className="flex-1 flex flex-col h-full overflow-hidden p-2 sm:p-3 md:p-4 lg:p-6">
           <motion.div
+            variants={containerVariants}
             initial="hidden"
             animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { 
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                  delayChildren: 0.2
-                }
-              }
-            }}
             className="space-y-3 sm:space-y-4 md:space-y-6 h-full flex flex-col"
           >
-            <motion.div 
-              variants={{
-                hidden: { opacity: 0, y: -20 },
-                visible: { opacity: 1, y: 0 }
-              }}
-            >
-              <SupplementsHeader />
-            </motion.div>
+            <SupplementsHeader />
             
-            <motion.div 
-              variants={{
-                hidden: { opacity: 0, scale: 0.98 },
-                visible: { opacity: 1, scale: 1 }
-              }}
-              className="flex-1 overflow-hidden"
-            >
+            <div className="flex-1 overflow-hidden">
               <SupplementTabs 
                 activeTab={activeTab}
                 onTabChange={(value) => {
                   setActiveTab(value as 'supplement' | 'vitamin');
-                  // Reset selected category when changing tabs
-                  setSelectedCategory('all');
                 }}
                 isLoading={isLoading}
                 categories={relevantCategories}
@@ -219,7 +160,7 @@ const SupplementsPage = () => {
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
               />
-            </motion.div>
+            </div>
           </motion.div>
         </div>
 

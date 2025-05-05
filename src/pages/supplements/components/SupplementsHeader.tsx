@@ -1,5 +1,5 @@
 
-import { FlaskConical, Pill, Package, Sparkles, Beaker, Star } from "lucide-react";
+import { FlaskConical, Pill, Package } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -40,10 +40,10 @@ export const SupplementsHeader = () => {
       transition={{ duration: 0.5 }}
       className="relative overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-violet-400/10 via-indigo-400/5 to-blue-400/10 rounded-xl sm:rounded-2xl lg:rounded-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 via-indigo-400/5 to-blue-400/10 rounded-xl sm:rounded-2xl lg:rounded-3xl" />
       
-      <div className="absolute right-0 top-0 h-24 w-24 md:h-40 md:w-40 bg-gradient-to-br from-violet-500/20 to-blue-500/10 rounded-full blur-2xl -mr-12 -mt-12" />
-      <div className="absolute left-0 bottom-0 h-20 w-20 md:h-32 md:w-32 bg-gradient-to-br from-blue-500/10 to-violet-500/20 rounded-full blur-xl -ml-10 -mb-10" />
+      <div className="absolute right-0 top-0 h-24 w-24 md:h-40 md:w-40 bg-gradient-to-br from-purple-500/20 to-blue-500/10 rounded-full blur-2xl -mr-12 -mt-12" />
+      <div className="absolute left-0 bottom-0 h-20 w-20 md:h-32 md:w-32 bg-gradient-to-br from-blue-500/10 to-purple-500/20 rounded-full blur-xl -ml-10 -mb-10" />
       
       <div className="relative backdrop-blur-sm p-4 sm:p-6 md:p-8 overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl border border-white/10 dark:border-gray-800/50 shadow-xl">
         <div className="grid grid-cols-6 gap-2 sm:gap-4">
@@ -53,8 +53,8 @@ export const SupplementsHeader = () => {
               whileTap={{ scale: 0.95 }}
               className="relative flex-shrink-0"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/80 to-indigo-600/80 blur-md rounded-2xl transform -rotate-3" />
-              <div className="relative p-2.5 sm:p-4 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-2xl shadow-2xl transform rotate-3">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/80 to-indigo-600/80 blur-md rounded-2xl transform -rotate-3" />
+              <div className="relative p-2.5 sm:p-4 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-2xl transform rotate-3">
                 <Package className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
             </motion.div>
@@ -62,7 +62,7 @@ export const SupplementsHeader = () => {
             <motion.div variants={container} initial="hidden" animate="visible">
               <motion.h2 
                 variants={item}
-                className={`${getHeaderSize()} font-extrabold tracking-tight text-gradient bg-gradient-to-r from-violet-700 to-blue-600 bg-clip-text text-transparent`}
+                className={`${getHeaderSize()} font-extrabold tracking-tight text-gradient bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent`}
               >
                 مکمل ها و ویتامین ها
               </motion.h2>
@@ -83,8 +83,8 @@ export const SupplementsHeader = () => {
                 transition={{ delay: 0.6, type: "spring" }}
                 className="relative flex-shrink-0"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/80 to-violet-600/80 blur-md rounded-full" />
-                <div className="relative p-2 bg-gradient-to-br from-violet-500 to-violet-600 rounded-full shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/80 to-purple-600/80 blur-md rounded-full" />
+                <div className="relative p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full shadow-lg">
                   <FlaskConical className="h-5 w-5 text-white" />
                 </div>
               </motion.div>
@@ -98,18 +98,6 @@ export const SupplementsHeader = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/80 to-blue-600/80 blur-md rounded-full" />
                 <div className="relative p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg">
                   <Pill className="h-5 w-5 text-white" />
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.8, type: "spring" }}
-                className="relative flex-shrink-0"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/80 to-indigo-600/80 blur-md rounded-full" />
-                <div className="relative p-2 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full shadow-lg">
-                  <Beaker className="h-5 w-5 text-white" />
                 </div>
               </motion.div>
             </div>
@@ -161,7 +149,7 @@ export const SupplementsHeader = () => {
             delay: 0.8
           }}
         >
-          <Sparkles size={30} />
+          <Package size={30} />
         </motion.div>
       </div>
     </motion.div>

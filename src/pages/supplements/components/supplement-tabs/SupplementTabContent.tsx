@@ -5,7 +5,6 @@ import { CategoryTable } from "@/components/supplements/CategoryTable";
 import { SupplementContent } from "../SupplementContent";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
 
 interface SupplementTabContentProps {
@@ -36,7 +35,6 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
   onSelectCategory,
 }) => {
   const deviceInfo = useDeviceInfo();
-  const [searchQuery, setSearchQuery] = useState('');
 
   const contentVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -61,9 +59,6 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
       "rounded-xl overflow-hidden"
     );
   };
-
-  // Filter categories for this tab
-  const tabCategories = categories.filter(c => c.type === type);
   
   return (
     <TabsContent value={type} className={getTabContentClass()}>
@@ -73,18 +68,29 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
         animate="visible"
         className="flex flex-col h-full space-y-4 sm:space-y-6"
       >
+        <motion.div variants={itemVariants} className="z-10">
+          <CategoryTable 
+            categories={categories.filter(c => c.type === type)}
+            onAdd={onAddCategory}
+            onEdit={onEditCategory}
+            onDelete={onDeleteCategory}
+            selectedCategory={selectedCategory}
+            onSelectCategory={onSelectCategory}
+          />
+        </motion.div>
+        
         <motion.div 
           variants={itemVariants}
           className={cn(
-            "flex-1 relative overflow-hidden transition-all rounded-3xl",
+            "flex-1 relative overflow-hidden transition-all rounded-2xl",
             deviceInfo.isMobile ? "-mt-2" : "-mt-3"
           )}
         >
           <div className={cn(
             "absolute inset-0",
             type === "supplement" 
-              ? "bg-gradient-to-br from-violet-50/30 to-indigo-100/30 dark:from-violet-950/10 dark:to-indigo-900/10" 
-              : "bg-gradient-to-br from-blue-50/30 to-indigo-100/30 dark:from-blue-950/10 dark:to-indigo-900/10"
+              ? "bg-gradient-to-br from-purple-50/50 to-violet-100/50 dark:from-purple-950/20 dark:to-violet-900/20" 
+              : "bg-gradient-to-br from-blue-50/50 to-indigo-100/50 dark:from-blue-950/20 dark:to-indigo-900/20"
           )} />
           
           <motion.div 
@@ -99,10 +105,6 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
               onAdd={onAddSupplement}
               onEdit={onEditSupplement}
               onDelete={onDeleteSupplement}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              selectedCategory={selectedCategory}
-              onSelectCategory={onSelectCategory}
             />
           </motion.div>
         </motion.div>
