@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronRight, TrendingUp } from "lucide-react";
+import { Calendar, ChevronRight, TrendingUp, Filter } from "lucide-react";
 import { MonthlyDataChart } from "@/components/reports/MonthlyDataChart";
 import { IncomeChart } from "@/components/reports/IncomeChart";
 import { ActivitiesChart } from "@/components/reports/ActivitiesChart";
