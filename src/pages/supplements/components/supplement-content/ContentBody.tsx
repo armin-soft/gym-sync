@@ -37,7 +37,7 @@ export const ContentBody = ({
       )}
       style={{
         // Apply scaling based on screen size with better performance
-        transform: deviceInfo.isMobile ? "scale(0.9)" : "none",
+        transform: deviceInfo.isMobile ? "scale(0.98)" : "none",
         transformOrigin: "top center"
       }}
     >

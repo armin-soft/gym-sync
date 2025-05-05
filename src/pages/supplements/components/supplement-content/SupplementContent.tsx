@@ -26,7 +26,7 @@ export const SupplementContent = ({
 }: SupplementContentProps) => {
   const deviceInfo = useDeviceInfo();
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [viewMode, setViewMode] = useState<"grid" | "list">(deviceInfo.isMobile ? "grid" : "list");
   const [showFilters, setShowFilters] = useState(false);
   
   // Filter supplements based on search query
@@ -49,7 +49,7 @@ export const SupplementContent = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="p-3 sm:p-4 md:p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex-1 overflow-hidden flex flex-col"
+          className="p-2 sm:p-3 md:p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex-1 overflow-hidden flex flex-col"
         >
           <ContentFilters 
             searchQuery={searchQuery}
@@ -66,6 +66,7 @@ export const SupplementContent = ({
             onEdit={onEdit}
             onDelete={onDelete}
             deviceInfo={deviceInfo}
+            viewMode={viewMode}
           />
         </motion.div>
       </AnimatePresence>
