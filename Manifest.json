@@ -1,0 +1,23 @@
+
+{
+  "name": "مدیریت برنامه",
+  "short_name": "مدیریت برنامه",
+  "description": "سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#7c3aed",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./Assets/Image/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "version": "1.2.3",
+  "lang": "fa-IR",
+  "dir": "rtl",
+  "prefer_related_applications": false,
+  "related_applications": []
+}
