@@ -76,7 +76,30 @@ export const formatJalaliDate = (date: Date): string => {
 /**
  * ایجاد داده‌های تاریخی
  */
-export const generateHistoricalData = (currentMonthStudents: any[], prevMonthStudents: any[], prevMonthSupplements: any[], prevMonthMeals: any[], exercises: any[], supplements: any[], meals: any[]) => {
+export const generateHistoricalData = (
+  currentMonthStudents: any[], 
+  prevMonthStudents: any[], 
+  prevMonthSupplements: any[], 
+  prevMonthMeals: any[], 
+  exercises: any[], 
+  supplements: any[], 
+  meals: any[],
+  timeRange: string = '6months'
+) => {
+  // تعیین تعداد ماه‌ها براساس بازه زمانی انتخاب شده
+  let monthCount = 6; // پیش فرض 6 ماه
+  
+  switch (timeRange) {
+    case '3months':
+      monthCount = 3;
+      break;
+    case '1year':
+      monthCount = 12;
+      break;
+    default:
+      monthCount = 6;
+  }
+  
   // ماه جاری
   const currentData = {
     name: "ماه جاری",
@@ -97,84 +120,42 @@ export const generateHistoricalData = (currentMonthStudents: any[], prevMonthStu
     برنامه_غذایی: prevMonthMeals.length
   };
 
-  // دو ماه قبل
-  const twoMonthsAgo = {
-    name: "دو ماه قبل",
-    شاگردان: Math.floor(prevMonthStudents.length * 0.85),
-    درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.85),
-    تمرین: Math.floor(exercises.length * 0.65),
-    مکمل: Math.floor(prevMonthSupplements.length * 0.8),
-    برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.75)
-  };
+  // ماه های قبلی به صورت پویا
+  const historicalData = [];
+  
+  for (let i = 2; i < monthCount; i++) {
+    const decayFactor = Math.pow(0.85, i-1); // ضریب کاهش برای ماه‌های قبلی
+    
+    historicalData.push({
+      name: `${monthCount - i + 1} ماه قبل`,
+      شاگردان: Math.floor(prevMonthStudents.length * decayFactor),
+      درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * decayFactor),
+      تمرین: Math.floor(exercises.length * decayFactor * 0.8),
+      مکمل: Math.floor(prevMonthSupplements.length * decayFactor),
+      برنامه_غذایی: Math.floor(prevMonthMeals.length * decayFactor)
+    });
+  }
 
-  // سه ماه قبل
-  const threeMonthsAgo = {
-    name: "سه ماه قبل",
-    شاگردان: Math.floor(prevMonthStudents.length * 0.7),
-    درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.7),
-    تمرین: Math.floor(exercises.length * 0.5),
-    مکمل: Math.floor(prevMonthSupplements.length * 0.6),
-    برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.55)
-  };
+  // مرتب‌سازی داده‌ها از قدیمی به جدید
+  const monthlyData = [...historicalData.reverse(), previousData, currentData];
 
-  // چهار ماه قبل
-  const fourMonthsAgo = {
-    name: "چهار ماه قبل",
-    شاگردان: Math.floor(prevMonthStudents.length * 0.6),
-    درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.6),
-    تمرین: Math.floor(exercises.length * 0.4),
-    مکمل: Math.floor(prevMonthSupplements.length * 0.5),
-    برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.4)
-  };
-
-  // پنج ماه قبل
-  const fiveMonthsAgo = {
-    name: "پنج ماه قبل",
-    شاگردان: Math.floor(prevMonthStudents.length * 0.5),
-    درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.45),
-    تمرین: Math.floor(exercises.length * 0.3),
-    مکمل: Math.floor(prevMonthSupplements.length * 0.35),
-    برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.3)
-  };
-
-  // شش ماه قبل
-  const sixMonthsAgo = {
-    name: "شش ماه قبل",
-    شاگردان: Math.floor(prevMonthStudents.length * 0.4),
-    درآمد: Math.floor(calculateTotalIncome(prevMonthStudents) * 0.35),
-    تمرین: Math.floor(exercises.length * 0.2),
-    مکمل: Math.floor(prevMonthSupplements.length * 0.25),
-    برنامه_غذایی: Math.floor(prevMonthMeals.length * 0.2)
-  };
-
-  // محاسبه رشد ماهانه برای داده‌های گسترده
-  const expandedDataWithGrowth = [
-    sixMonthsAgo,
-    fiveMonthsAgo,
-    fourMonthsAgo,
-    threeMonthsAgo,
-    twoMonthsAgo,
-    previousData,
-    currentData
-  ].map((data, index, array) => {
+  // افزودن اطلاعات رشد به داده‌ها برای نمودار گسترده
+  const expandedData = monthlyData.map((item, index) => {
     if (index === 0) {
       return {
-        ...data,
+        ...item,
         رشد_شاگردان: 0,
         رشد_درآمد: 0
       };
     }
     
-    const prevMonth = array[index - 1];
+    const prevItem = monthlyData[index - 1];
     return {
-      ...data,
-      رشد_شاگردان: calculateGrowth(data.شاگردان, prevMonth.شاگردان),
-      رشد_درآمد: calculateGrowth(data.درآمد, prevMonth.درآمد)
+      ...item,
+      رشد_شاگردان: calculateGrowth(item.شاگردان, prevItem.شاگردان),
+      رشد_درآمد: calculateGrowth(item.درآمد, prevItem.درآمد)
     };
   });
 
-  return {
-    expandedData: expandedDataWithGrowth,
-    monthlyData: [previousData, currentData]
-  };
+  return { monthlyData, expandedData };
 };
