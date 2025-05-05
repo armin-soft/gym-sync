@@ -126,6 +126,7 @@ export const reducer = (state: State, action: Action): State => {
   }
 }
 
+// استفاده از یک آرایه برای مدیریت لیسنرها
 const listeners: Array<(state: State) => void> = []
 
 let memoryState: State = { toasts: [] }
@@ -142,14 +143,39 @@ type Toast = Omit<ToastType, "id">
 // Custom variants to include "success" and "warning"
 type ToastVariant = "default" | "destructive" | "success" | "warning";
 
+// ثبت وضعیت نمایش آخرین اعلان برای جلوگیری از نمایش دوگانه
+const toastHistory = new Map<string, number>();
+
 function toast({ ...props }: { variant?: ToastVariant } & Toast) {
   const id = genId()
+  
+  // ایجاد یک کلید منحصر به فرد برای این اعلان بر اساس محتوای آن
+  const toastKey = `${props.title}-${props.description}`;
+  const now = Date.now();
+  
+  // بررسی اعلان تکراری در بازه زمانی کوتاه (1 ثانیه)
+  if (toastHistory.has(toastKey)) {
+    const lastShown = toastHistory.get(toastKey) || 0;
+    if (now - lastShown < 1000) {
+      // اعلان مشابه اخیراً نمایش داده شده، از نمایش مجدد جلوگیری می‌کنیم
+      return { id, dismiss: () => {}, update: () => {} };
+    }
+  }
+  
+  // ثبت این اعلان در تاریخچه
+  toastHistory.set(toastKey, now);
+  
+  // پاکسازی اعلان‌های قدیمی از تاریخچه هر 30 ثانیه
+  setTimeout(() => {
+    toastHistory.delete(toastKey);
+  }, 30000);
 
   const update = (props: Toast) =>
     dispatch({
       type: "UPDATE_TOAST",
       toast: { ...props, id },
     })
+    
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
 
   dispatch({
