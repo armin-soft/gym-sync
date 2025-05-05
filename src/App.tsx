@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 // Create a new query client instance
 const queryClient = new QueryClient();
 
-function App() {
+const App: React.FC = () => {
   const { toast } = useToast();
 
   React.useEffect(() => {
@@ -65,7 +65,7 @@ function App() {
       </BrowserRouter>
     </QueryClientProvider>
   );
-}
+};
 
 // Add window type augmentation for TypeScript
 declare global {
