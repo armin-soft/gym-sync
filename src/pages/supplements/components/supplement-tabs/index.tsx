@@ -56,4 +56,8 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
   );
 };
 
-export { TabHeader, TabContent } from './';
+// Remove the circular export statement
+// export { TabHeader, TabContent } from './';
+// Instead, export them directly from their respective files
+export { TabHeader } from './TabHeader';
+export { TabContent } from './TabContent';
