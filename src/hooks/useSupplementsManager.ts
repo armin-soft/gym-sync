@@ -26,28 +26,25 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
     const loadData = async () => {
       setIsLoading(true);
       try {
-        setTimeout(() => {
-          const savedSupplements = localStorage.getItem('supplements');
-          const savedCategories = localStorage.getItem('supplementCategories');
-  
-          if (savedSupplements) {
-            const parsedSupplements = JSON.parse(savedSupplements);
-            setSupplements(parsedSupplements);
+        const savedSupplements = localStorage.getItem('supplements');
+        const savedCategories = localStorage.getItem('supplementCategories');
+
+        if (savedSupplements) {
+          const parsedSupplements = JSON.parse(savedSupplements);
+          setSupplements(parsedSupplements);
+        }
+
+        if (savedCategories) {
+          const parsedCategories = JSON.parse(savedCategories);
+          setCategories(parsedCategories);
+          
+          const relevantCats = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
+          if (relevantCats.length > 0) {
+            setSelectedCategory(relevantCats[0].name);
+          } else {
+            setSelectedCategory("");
           }
-  
-          if (savedCategories) {
-            const parsedCategories = JSON.parse(savedCategories);
-            setCategories(parsedCategories);
-            
-            const relevantCats = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
-            if (relevantCats.length > 0) {
-              setSelectedCategory(relevantCats[0].name);
-            } else {
-              setSelectedCategory("");
-            }
-          }
-          setIsLoading(false);
-        }, 700); // Simulate loading delay
+        }
       } catch (error) {
         console.error('Error loading data:', error);
         toast({
@@ -55,6 +52,7 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
           title: "خطا در بارگذاری اطلاعات",
           description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
         });
+      } finally {
         setIsLoading(false);
       }
     };
@@ -64,27 +62,12 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
 
   // Save changes to localStorage
   useEffect(() => {
-    if (!isLoading) {
-      localStorage.setItem('supplements', JSON.stringify(supplements));
-      localStorage.setItem('supplementCategories', JSON.stringify(categories));
-    }
-  }, [supplements, categories, isLoading]);
+    localStorage.setItem('supplements', JSON.stringify(supplements));
+    localStorage.setItem('supplementCategories', JSON.stringify(categories));
+  }, [supplements, categories]);
 
   // Category operations
   const handleAddCategory = (name: string) => {
-    const existingCategory = categories.find(cat => 
-      cat.name.toLowerCase() === name.toLowerCase() && cat.type === activeTab
-    );
-    
-    if (existingCategory) {
-      toast({
-        variant: "destructive",
-        title: "خطا در افزودن دسته‌بندی",
-        description: "دسته‌بندی با این نام قبلاً وجود دارد"
-      });
-      return null;
-    }
-    
     const newCategory: SupplementCategory = {
       id: Math.max(0, ...categories.map((c) => c.id)) + 1,
       name,
@@ -103,22 +86,6 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
     const oldCategory = categories.find(c => c.id === categoryId);
     if (!oldCategory) return;
     
-    // Check for duplicate name
-    const existingCategory = categories.find(cat => 
-      cat.name.toLowerCase() === name.toLowerCase() && 
-      cat.type === activeTab &&
-      cat.id !== categoryId
-    );
-    
-    if (existingCategory) {
-      toast({
-        variant: "destructive",
-        title: "خطا در ویرایش دسته‌بندی",
-        description: "دسته‌بندی با این نام قبلاً وجود دارد"
-      });
-      return;
-    }
-    
     const updatedCategories = categories.map((category) =>
       category.id === categoryId ? { ...category, name } : category
     );
@@ -130,11 +97,6 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
         : supplement
     );
     setSupplements(updatedSupplements);
-    
-    // If the selected category was updated, select the new name
-    if (selectedCategory === oldCategory.name) {
-      setSelectedCategory(name);
-    }
 
     toast({
       title: "ویرایش دسته بندی",
@@ -143,29 +105,8 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
   };
 
   const handleDeleteCategory = (category: SupplementCategory) => {
-    const hasSupplements = supplements.some(s => 
-      s.category === category.name && s.type === category.type
-    );
-    
-    if (hasSupplements) {
-      toast({
-        variant: "destructive",
-        title: "خطا در حذف دسته‌بندی",
-        description: "این دسته‌بندی دارای مکمل یا ویتامین است و نمی‌توان آن را حذف کرد"
-      });
-      return;
-    }
-    
     setCategories(categories.filter((c) => c.id !== category.id));
-    
-    // If the selected category was deleted, clear the selection or select another category
-    if (selectedCategory === category.name) {
-      const remainingCategories = categories.filter(
-        c => c.type === activeTab && c.id !== category.id
-      );
-      
-      setSelectedCategory(remainingCategories.length > 0 ? remainingCategories[0].name : "");
-    }
+    setSupplements(supplements.filter((s) => s.category !== category.name));
     
     toast({
       title: "حذف دسته بندی",
@@ -203,13 +144,10 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
   };
 
   const handleDeleteSupplement = (id: number) => {
-    const supplementToDelete = supplements.find(s => s.id === id);
-    if (!supplementToDelete) return;
-    
     setSupplements(supplements.filter((s) => s.id !== id));
     toast({
-      title: `حذف ${supplementToDelete.type === 'supplement' ? 'مکمل' : 'ویتامین'}`,
-      description: `${supplementToDelete.type === 'supplement' ? 'مکمل' : 'ویتامین'} مورد نظر با موفقیت حذف شد`,
+      title: `حذف ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+      description: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} مورد نظر با موفقیت حذف شد`,
     });
   };
 

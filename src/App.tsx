@@ -1,5 +1,4 @@
 
-import * as React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -14,15 +13,18 @@ import Reports from "@/pages/reports";
 import BackupRestore from "@/pages/backup";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import React from "react";
 
 // Create a new query client instance
 const queryClient = new QueryClient();
 
-const App: React.FC = () => {
+function App() {
   const { toast } = useToast();
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Register toast function globally for service worker updates
     window.showToast = (options) => {
       if (options && options.title && options.description) {
@@ -30,13 +32,9 @@ const App: React.FC = () => {
           title: options.title,
           description: options.description,
           action: options.action ? (
-            <React.Fragment>
-              {options.action.label && (
-                <button onClick={options.action.onClick}>
-                  {options.action.label}
-                </button>
-              )}
-            </React.Fragment>
+            <ToastAction altText={options.action.label} onClick={options.action.onClick}>
+              {options.action.label}
+            </ToastAction>
           ) : undefined,
         });
       }
@@ -65,7 +63,7 @@ const App: React.FC = () => {
       </BrowserRouter>
     </QueryClientProvider>
   );
-};
+}
 
 // Add window type augmentation for TypeScript
 declare global {

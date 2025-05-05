@@ -1,198 +1,237 @@
-
 import { useState, useEffect } from "react";
-import { useSupplementsManager } from "@/hooks/useSupplementsManager";
+import { useToast } from "@/hooks/use-toast";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { motion } from "framer-motion";
+import { PageContainer } from "@/components/ui/page-container";
 import { SupplementsHeader } from "./components/SupplementsHeader";
-import { SupplementCategorySection } from "./components/SupplementCategorySection";
-import { SupplementsContent } from "./components/SupplementsContent";
-import { SupplementsEmptyState } from "./components/SupplementsEmptyState";
-import { SupplementDialog } from "./dialogs/SupplementDialog";
-import { CategoryDialog } from "./dialogs/CategoryDialog";
-import { SettingsDialog } from "./dialogs/SettingsDialog";
-import { Loader2, BellPlus } from "lucide-react";
+import { SupplementTabs } from "./components/SupplementTabs";
+import { SupplementDialog } from "@/components/supplements/SupplementDialog";
+import { CategoryDialog } from "@/components/supplements/CategoryDialog";
+import type { Supplement, SupplementCategory } from "@/types/supplement";
 
 const SupplementsPage = () => {
-  const deviceInfo = useDeviceInfo();
-  const {
-    supplements,
-    categories,
-    filteredSupplements,
-    relevantCategories,
-    activeTab,
-    selectedCategory,
-    isLoading,
-    
-    setActiveTab,
-    setSelectedCategory,
-    
-    addCategory,
-    updateCategory,
-    deleteCategory,
-    
-    addSupplement,
-    updateSupplement,
-    deleteSupplement
-  } = useSupplementsManager();
-  
+  const { toast } = useToast();
+  const [supplements, setSupplements] = useState<Supplement[]>([]);
+  const [categories, setCategories] = useState<SupplementCategory[]>([]);
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
-  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
-  const [editingSupplement, setEditingSupplement] = useState(null);
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
+  const [editingCategory, setEditingCategory] = useState<SupplementCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
 
-  // Variant for animations based on device
-  const getContainerVariants = () => ({
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: deviceInfo.isMobile ? 0.1 : 0.15,
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  });
-  
-  const getItemVariants = () => ({
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: "easeOut" }
-    }
-  });
-
-  // Dialog handlers
   const handleAddCategory = () => {
     setEditingCategory(null);
     setCategoryDialogOpen(true);
   };
 
-  const handleEditCategory = (category) => {
+  const handleEditCategory = (category: SupplementCategory) => {
     setEditingCategory(category);
     setCategoryDialogOpen(true);
   };
 
-  const handleDeleteCategory = (category) => {
-    deleteCategory(category);
+  const handleDeleteCategory = (category: SupplementCategory) => {
+    setCategories(categories.filter((c) => c.id !== category.id));
+    setSupplements(supplements.filter((s) => s.category !== category.name));
+    
+    toast({
+      title: "حذف دسته بندی",
+      description: "دسته بندی مورد نظر با موفقیت حذف شد",
+    });
   };
 
+  const handleEditSupplement = (supplement: Supplement) => {
+    setEditingSupplement(supplement);
+    setSupplementDialogOpen(true);
+  };
+
+  const handleDeleteSupplement = (id: number) => {
+    setSupplements(supplements.filter((s) => s.id !== id));
+    toast({
+      title: `حذف ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+      description: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} مورد نظر با موفقیت حذف شد`,
+    });
+  };
+
+  // Load data from localStorage
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        const savedSupplements = localStorage.getItem('supplements');
+        const savedCategories = localStorage.getItem('supplementCategories');
+
+        if (savedSupplements) {
+          const parsedSupplements = JSON.parse(savedSupplements);
+          setSupplements(parsedSupplements);
+        }
+
+        if (savedCategories) {
+          const parsedCategories = JSON.parse(savedCategories);
+          setCategories(parsedCategories);
+          
+          const relevantCategories = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
+          if (relevantCategories.length > 0) {
+            setSelectedCategory(relevantCategories[0].name);
+          } else {
+            setSelectedCategory("");
+          }
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        toast({
+          variant: "destructive",
+          title: "خطا در بارگذاری اطلاعات",
+          description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [activeTab, toast]);
+
+  // Save changes to localStorage
+  useEffect(() => {
+    localStorage.setItem('supplements', JSON.stringify(supplements));
+    localStorage.setItem('supplementCategories', JSON.stringify(categories));
+  }, [supplements, categories]);
+
   const handleAddSupplement = () => {
+    const relevantCategories = categories.filter(c => c.type === activeTab);
     if (relevantCategories.length === 0) {
-      // Show a toast notification and prompt to create a category first
-      setSettingsDialogOpen(true);
+      toast({
+        title: `خطا در افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+        description: "لطفاً ابتدا یک دسته بندی ایجاد کنید",
+        variant: "destructive",
+      });
       return;
     }
     setEditingSupplement(null);
     setSupplementDialogOpen(true);
   };
 
-  const handleEditSupplement = (supplement) => {
-    setEditingSupplement(supplement);
-    setSupplementDialogOpen(true);
-  };
-
-  const handleDeleteSupplement = (id) => {
-    deleteSupplement(id);
-  };
-
-  const handleCategorySubmit = (name) => {
-    if (editingCategory) {
-      updateCategory(editingCategory.id, name);
+  const handleSubmitSupplement = (data: Omit<Supplement, "id" | "type">) => {
+    if (editingSupplement) {
+      setSupplements(
+        supplements.map((supplement) =>
+          supplement.id === editingSupplement.id
+            ? { ...data, id: supplement.id, type: activeTab }
+            : supplement
+        )
+      );
+      toast({
+        title: `ویرایش ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+        description: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} مورد نظر با موفقیت ویرایش شد`,
+      });
     } else {
-      addCategory(name);
+      const newSupplement: Supplement = {
+        ...data,
+        id: Math.max(0, ...supplements.map((s) => s.id)) + 1,
+        type: activeTab,
+      };
+      setSupplements([...supplements, newSupplement]);
+      toast({
+        title: `افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+        description: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} جدید با موفقیت اضافه شد`,
+      });
+    }
+    setSupplementDialogOpen(false);
+  };
+
+  const handleSubmitCategory = (name: string) => {
+    if (editingCategory) {
+      const updatedCategories = categories.map((category) =>
+        category.id === editingCategory.id
+          ? { ...category, name }
+          : category
+      );
+      setCategories(updatedCategories);
+      
+      const updatedSupplements = supplements.map((supplement) =>
+        supplement.category === editingCategory.name
+          ? { ...supplement, category: name }
+          : supplement
+      );
+      setSupplements(updatedSupplements);
+
+      toast({
+        title: "ویرایش دسته بندی",
+        description: "دسته بندی مورد نظر با موفقیت ویرایش شد",
+      });
+    } else {
+      const newCategory: SupplementCategory = {
+        id: Math.max(0, ...categories.map((c) => c.id)) + 1,
+        name,
+        type: activeTab,
+      };
+      setCategories([...categories, newCategory]);
+      setSelectedCategory(name);
+      toast({
+        title: "افزودن دسته بندی",
+        description: "دسته بندی جدید با موفقیت اضافه شد",
+      });
     }
     setCategoryDialogOpen(false);
   };
 
-  const handleSupplementSubmit = (data) => {
-    if (editingSupplement) {
-      updateSupplement(editingSupplement.id, data);
-    } else {
-      addSupplement(data);
+  // Filter supplements by type and selected category
+  const filteredSupplements = supplements.filter((s) => {
+    const typeMatch = s.type === activeTab;
+    
+    // If no category is selected, show all supplements of the active tab
+    if (!selectedCategory) {
+      return typeMatch;
     }
-    setSupplementDialogOpen(false);
-  };
-  
-  return (
-    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 min-h-screen">
-      <SupplementsHeader activeTab={activeTab} setActiveTab={setActiveTab} />
-      
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-[60vh]">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <p className="mt-4 text-xl text-muted-foreground font-medium">در حال بارگذاری...</p>
-        </div>
-      ) : (
-        <motion.div 
-          initial="hidden"
-          animate="visible"
-          variants={getContainerVariants()}
-          className="mt-8 space-y-6"
-        >
-          {relevantCategories.length > 0 ? (
-            <>
-              <motion.div variants={getItemVariants()}>
-                <SupplementCategorySection 
-                  categories={relevantCategories}
-                  selectedCategory={selectedCategory}
-                  setSelectedCategory={setSelectedCategory}
-                  onAddCategory={handleAddCategory}
-                  onEditCategory={handleEditCategory}
-                  onDeleteCategory={handleDeleteCategory}
-                  activeTab={activeTab}
-                />
-              </motion.div>
-              
-              <motion.div variants={getItemVariants()}>
-                <SupplementsContent 
-                  supplements={filteredSupplements}
-                  onAddSupplement={handleAddSupplement}
-                  onEditSupplement={handleEditSupplement}
-                  onDeleteSupplement={handleDeleteSupplement}
-                  activeTab={activeTab}
-                />
-              </motion.div>
-            </>
-          ) : (
-            <motion.div variants={getItemVariants()}>
-              <SupplementsEmptyState 
-                activeTab={activeTab} 
-                onAddCategory={handleAddCategory}
-              />
-            </motion.div>
-          )}
-        </motion.div>
-      )}
+    
+    // Otherwise, show only supplements of the selected category
+    return typeMatch && s.category === selectedCategory;
+  });
 
-      {/* Dialogs */}
+  // Categories related to the active tab
+  const relevantCategories = categories.filter(c => c.type === activeTab);
+
+  return (
+    <PageContainer className="container mx-auto py-2 sm:py-4 md:py-6 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8 max-w-7xl">
+      <SupplementsHeader />
+      
+      <SupplementTabs 
+        activeTab={activeTab}
+        onTabChange={(value) => {
+          setActiveTab(value as 'supplement' | 'vitamin');
+          setSelectedCategory("");
+        }}
+        isLoading={isLoading}
+        categories={relevantCategories}
+        onAddCategory={handleAddCategory}
+        onEditCategory={handleEditCategory}
+        onDeleteCategory={handleDeleteCategory}
+        supplements={filteredSupplements}
+        onAddSupplement={handleAddSupplement}
+        onEditSupplement={handleEditSupplement}
+        onDeleteSupplement={handleDeleteSupplement}
+        selectedCategory={selectedCategory}
+      />
+
       <SupplementDialog
         open={supplementDialogOpen}
         onOpenChange={setSupplementDialogOpen}
-        onSubmit={handleSupplementSubmit}
+        onSubmit={handleSubmitSupplement}
         defaultValues={editingSupplement || undefined}
         mode={editingSupplement ? "edit" : "add"}
-        categories={relevantCategories}
+        categories={categories.filter(c => c.type === activeTab)}
         type={activeTab}
       />
 
       <CategoryDialog
         open={categoryDialogOpen}
         onOpenChange={setCategoryDialogOpen}
-        onSubmit={handleCategorySubmit}
+        onSubmit={handleSubmitCategory}
         defaultValue={editingCategory?.name}
         mode={editingCategory ? "edit" : "add"}
-        type={activeTab}
       />
-      
-      <SettingsDialog
-        open={settingsDialogOpen}
-        onOpenChange={setSettingsDialogOpen}
-        onAddCategory={handleAddCategory}
-      />
-    </div>
+    </PageContainer>
   );
 };
 
