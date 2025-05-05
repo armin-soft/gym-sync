@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/useSupplementsManager";
 import { PageContainer } from "@/components/ui/page-container";
@@ -8,9 +8,11 @@ import { SupplementTabs } from "./components/SupplementTabs";
 import { SupplementDialog } from "@/components/supplements/SupplementDialog";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
 import { useToast } from "@/hooks/use-toast";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const SupplementsPage = () => {
   const { toast } = useToast();
+  const deviceInfo = useDeviceInfo();
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState(null);
@@ -131,12 +133,12 @@ const SupplementsPage = () => {
         <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
         
-        <div className="flex-1 flex flex-col h-full overflow-hidden p-3 sm:p-4 md:p-6">
+        <div className="flex-1 flex flex-col h-full overflow-hidden p-2 sm:p-3 md:p-4 lg:p-6">
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-4 sm:space-y-6 h-full flex flex-col"
+            className="space-y-3 sm:space-y-4 md:space-y-6 h-full flex flex-col"
           >
             <SupplementsHeader />
             
@@ -144,7 +146,6 @@ const SupplementsPage = () => {
               <SupplementTabs 
                 activeTab={activeTab}
                 onTabChange={(value) => {
-                  // Ensure we only set valid values
                   setActiveTab(value as 'supplement' | 'vitamin');
                 }}
                 isLoading={isLoading}

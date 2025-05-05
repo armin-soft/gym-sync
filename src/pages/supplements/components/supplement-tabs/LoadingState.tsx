@@ -18,7 +18,7 @@ export const LoadingState = () => {
   };
   
   return (
-    <div className="flex-1 flex flex-col items-center justify-center">
+    <div className="flex-1 flex flex-col items-center justify-center w-full h-full">
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
@@ -49,7 +49,7 @@ export const LoadingState = () => {
         </motion.p>
       </motion.div>
       
-      <div className="mt-8">
+      <div className="mt-8 w-full max-w-md px-4">
         <div className="flex flex-col space-y-4">
           {[1, 2, 3].map(i => (
             <motion.div
@@ -64,8 +64,8 @@ export const LoadingState = () => {
                 repeatDelay: i * 0.1
               }}
               className={cn(
-                "bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 rounded-xl",
-                deviceInfo.isMobile ? "h-10 w-64" : "h-12 w-80"
+                "bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 rounded-xl mx-auto",
+                deviceInfo.isMobile ? "h-10 w-full" : "h-12 w-full"
               )}
             />
           ))}

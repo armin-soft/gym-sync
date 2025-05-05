@@ -41,9 +41,13 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col flex-1 h-full"
+      className="flex flex-col flex-1 h-full w-full overflow-hidden"
     >
-      <Tabs value={activeTab} onValueChange={onTabChange} className="flex flex-col flex-1 h-full">
+      <Tabs 
+        value={activeTab} 
+        onValueChange={onTabChange} 
+        className="flex flex-col flex-1 h-full w-full"
+      >
         <TabHeader activeTab={activeTab} />
         
         <TabContent
@@ -63,7 +67,3 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
     </motion.div>
   );
 };
-
-// Export them directly from their respective files
-export { TabHeader } from './TabHeader';
-export { TabContent } from './TabContent';

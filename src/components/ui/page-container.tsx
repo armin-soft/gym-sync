@@ -43,7 +43,7 @@ export const PageContainer = ({
   
   return (
     <div className={cn(
-      "w-full flex flex-col",
+      "w-full flex flex-col overflow-hidden",
       fullHeight || fullScreen ? "h-full min-h-screen" : "h-full",
       fullScreen && "fixed inset-0 z-50",
       withBackground && "relative",
