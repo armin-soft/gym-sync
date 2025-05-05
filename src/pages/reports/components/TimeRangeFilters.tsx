@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns-jalali";
-import { fa } from "date-fns/locale";
+import { faIR } from "date-fns/locale";
 
 interface TimeRangeFiltersProps {
   filtersOpen: boolean;
@@ -165,7 +165,7 @@ export const TimeRangeFilters = ({
                       selected={date}
                       onSelect={setDate}
                       numberOfMonths={2}
-                      locale={fa}
+                      locale={faIR}
                       classNames={{
                         caption_label: "text-sm font-medium",
                         caption: "flex justify-center pt-1 relative items-center",
