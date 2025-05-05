@@ -22,7 +22,7 @@ export const SupplementContent = ({
   onEdit,
   onDelete,
 }: SupplementContentProps) => {
-  // اضافه کردن یک log برای نمایش مکمل‌هایی که به کامپوننت رسیده‌اند
+  // Log supplements for debugging
   useEffect(() => {
     console.log(`SupplementContent received ${type}s:`, supplements);
   }, [supplements, type]);
@@ -87,11 +87,52 @@ export const SupplementContent = ({
           animate={{ opacity: 1 }}
           className="flex-1 overflow-auto"
         >
-          <SupplementList
-            supplements={supplements}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
+          {supplements.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center p-6">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
+                type === 'supplement' 
+                  ? 'bg-purple-100 text-purple-600' 
+                  : 'bg-blue-100 text-blue-600'
+              }`}>
+                {type === 'supplement' ? (
+                  <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 2v7.31" />
+                    <path d="M14 9.3V1.99" />
+                    <path d="M8.5 2h7" />
+                    <path d="M14 9.3a6.5 6.5 0 1 1-4 0" />
+                    <path d="M5.58 16.5h12.85" />
+                  </svg>
+                ) : (
+                  <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m12 2 8 5v10l-8 5-8-5V7l8-5Z" />
+                  </svg>
+                )}
+              </div>
+              <h3 className="text-lg font-medium text-gray-700 mb-2">
+                هنوز هیچ {type === 'supplement' ? 'مکملی' : 'ویتامینی'} اضافه نشده است
+              </h3>
+              <p className="text-gray-500 mb-6 max-w-md">
+                برای افزودن {type === 'supplement' ? 'مکمل' : 'ویتامین'} جدید، روی دکمه افزودن {type === 'supplement' ? 'مکمل' : 'ویتامین'} کلیک کنید
+              </p>
+              <Button
+                onClick={onAdd}
+                className={`${
+                  type === 'supplement'
+                    ? 'bg-purple-600 hover:bg-purple-700'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } text-white rounded-xl`}
+              >
+                <Plus className="w-5 h-5 ml-2" />
+                افزودن {type === 'supplement' ? 'مکمل' : 'ویتامین'}
+              </Button>
+            </div>
+          ) : (
+            <SupplementList
+              supplements={supplements}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          )}
         </motion.div>
       </div>
     </Card>
