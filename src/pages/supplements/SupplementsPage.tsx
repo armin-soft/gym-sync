@@ -16,7 +16,7 @@ const SupplementsPage = () => {
   const [editingSupplement, setEditingSupplement] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
 
-  // Использование кастомного хука для управления добавками
+  // استفاده از کاستوم هوک برای مدیریت مکمل‌ها
   const {
     supplements,
     categories,
@@ -41,7 +41,7 @@ const SupplementsPage = () => {
     deleteSupplement
   } = useSupplementsManager();
 
-  // Обработчики для диалогов категорий
+  // مدیریت کننده‌های دیالوگ دسته‌بندی
   const handleAddCategory = () => {
     setEditingCategory(null);
     setCategoryDialogOpen(true);
@@ -52,7 +52,7 @@ const SupplementsPage = () => {
     setCategoryDialogOpen(true);
   };
 
-  // Обработчики для диалогов добавок
+  // مدیریت کننده‌های دیالوگ مکمل‌ها
   const handleAddSupplement = () => {
     if (relevantCategories.length === 0) {
       toast({
@@ -71,7 +71,7 @@ const SupplementsPage = () => {
     setSupplementDialogOpen(true);
   };
 
-  // Обработка отправки формы категории
+  // پردازش فرم دسته‌بندی
   const handleSubmitCategory = (name) => {
     if (editingCategory) {
       updateCategory(editingCategory.id, name);
@@ -81,7 +81,7 @@ const SupplementsPage = () => {
     setCategoryDialogOpen(false);
   };
 
-  // Обработка отправки формы добавки
+  // پردازش فرم مکمل
   const handleSubmitSupplement = (data) => {
     if (editingSupplement) {
       updateSupplement(editingSupplement.id, data);
@@ -91,7 +91,13 @@ const SupplementsPage = () => {
     setSupplementDialogOpen(false);
   };
 
-  // Анимация для содержимого страницы
+  console.log("Current supplements:", supplements);
+  console.log("Current categories:", categories);
+  console.log("Filtered supplements:", filteredSupplements);
+  console.log("Active tab:", activeTab);
+  console.log("Selected category:", selectedCategory);
+
+  // انیمیشن برای محتوای صفحه
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

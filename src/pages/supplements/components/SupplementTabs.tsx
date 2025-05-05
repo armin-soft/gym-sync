@@ -37,6 +37,9 @@ export const SupplementTabs = ({
   selectedCategory,
   setSelectedCategory,
 }: SupplementTabsProps) => {
+  console.log("SupplementTabs received supplements:", supplements);
+  console.log("SupplementTabs categories:", categories);
+  
   // Animation variants
   const tabContentVariants = {
     hidden: { opacity: 0, y: 20 },

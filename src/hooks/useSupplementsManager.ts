@@ -26,16 +26,25 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
     const loadData = async () => {
       setIsLoading(true);
       try {
+        console.log("Loading supplements and categories from localStorage");
         const savedSupplements = localStorage.getItem('supplements');
         const savedCategories = localStorage.getItem('supplementCategories');
 
+        console.log("Raw supplements from storage:", savedSupplements);
+        console.log("Raw categories from storage:", savedCategories);
+
         if (savedSupplements) {
           const parsedSupplements = JSON.parse(savedSupplements);
+          console.log("Parsed supplements:", parsedSupplements);
           setSupplements(parsedSupplements);
+        } else {
+          console.log("No supplements found in localStorage");
+          setSupplements([]);
         }
 
         if (savedCategories) {
           const parsedCategories = JSON.parse(savedCategories);
+          console.log("Parsed categories:", parsedCategories);
           setCategories(parsedCategories);
           
           const relevantCats = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
@@ -44,6 +53,9 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
           } else {
             setSelectedCategory("");
           }
+        } else {
+          console.log("No categories found in localStorage");
+          setCategories([]);
         }
       } catch (error) {
         console.error('Error loading data:', error);
