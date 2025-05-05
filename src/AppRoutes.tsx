@@ -2,65 +2,57 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
 
-// Import page components directly from their index files
-import Students from "./pages/students";
-import AddEditStudent from "./pages/students/add-edit";
-import DietPlan from "./pages/diet";
+// Import page components
+import Index from "@/pages/Index";
+import TrainerProfile from "@/pages/trainer";
+import Students from "@/pages/students";
+import ExerciseMovements from "@/pages/exercises";
+import DietPlan from "@/pages/diet";
+import SupplementsVitamins from "@/pages/supplements";
+import Reports from "@/pages/reports";
+import BackupRestore from "@/pages/backup";
 
 const AppRoutes = () => {
-  // Create placeholders for the pages that are referenced but don't exist
-  const Home = () => <div>Home Page</div>;
-  const Login = () => <div>Login Page</div>;
-  const Register = () => <div>Register Page</div>;
-  const Profile = () => <div>Profile Page</div>;
-  const Exercises = () => <div>Exercises Page</div>;
-  const Nutrition = () => <div>Nutrition Page</div>;
-  const Settings = () => <div>Settings Page</div>;
-
   const routes = useRoutes([
     {
       path: "/",
-      element: <Home />,
+      element: <Index />,
     },
     {
-      path: "/login",
-      element: <Login />,
+      path: "/Coach-Profile",
+      element: <TrainerProfile />,
     },
     {
-      path: "/register",
-      element: <Register />,
-    },
-    {
-      path: "/profile",
-      element: <Profile />,
-    },
-    {
-      path: "/students",
+      path: "/Students",
       element: <Students />,
     },
     {
       path: "/students/add-edit",
-      element: <AddEditStudent />,
+      element: <Students />, // Redirecting to main student page
     },
     {
       path: "/students/add-edit/:id",
-      element: <AddEditStudent />,
+      element: <Students />, // Redirecting to main student page
     },
     {
-      path: "/exercises",
-      element: <Exercises />,
-    },
-    {
-      path: "/nutrition",
-      element: <Nutrition />,
+      path: "/Exercise-Movements",
+      element: <ExerciseMovements />,
     },
     {
       path: "/Diet-Plan",
       element: <DietPlan />,
     },
     {
-      path: "/settings",
-      element: <Settings />,
+      path: "/Supplements-Vitamins",
+      element: <SupplementsVitamins />,
+    },
+    {
+      path: "/Reports",
+      element: <Reports />,
+    },
+    {
+      path: "/Backup-Restore",
+      element: <BackupRestore />,
     },
   ]);
 
