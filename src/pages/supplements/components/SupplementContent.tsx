@@ -2,7 +2,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { PlusCircle, Plus, Search, Filter, SlidersHorizontal } from "lucide-react";
+import { PlusCircle, Plus, Search, Filter, SlidersHorizontal, FlaskConical, Pill } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
