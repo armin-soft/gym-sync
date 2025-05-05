@@ -18,12 +18,12 @@ export const ContentBody = ({
 }: ContentBodyProps) => {
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.1 }}
+      transition={{ duration: 0.3, delay: 0.1 }}
       className="flex-1 overflow-hidden w-full"
     >
-      <div className="h-full overflow-auto">
+      <div className="h-full overflow-auto pb-1">
         <SupplementList
           supplements={filteredSupplements}
           onEdit={onEdit}
