@@ -85,38 +85,49 @@ export const Layout = memo(({ children }: LayoutProps) => {
 
   // تنظیمات ریسپانسیو برای هدر
   const getHeaderHeight = () => {
-    if (deviceInfo.isMobile) return "h-12";
-    if (deviceInfo.isTablet) return "h-14";
-    return "h-16";
+    if (deviceInfo.isMobile) return "h-10";
+    if (deviceInfo.isTablet) return "h-12";
+    return "h-14";
   };
   
   const getHeaderPadding = () => {
-    if (deviceInfo.isMobile) return "px-2 xs:px-3";
-    if (deviceInfo.isTablet) return "px-3 sm:px-4";
-    return "px-4 md:px-6 lg:px-8";
+    if (deviceInfo.isMobile) return "px-1 xs:px-2";
+    if (deviceInfo.isTablet) return "px-2 sm:px-3";
+    return "px-3 md:px-4 lg:px-6";
   };
   
   const getButtonSize = () => {
-    if (deviceInfo.isMobile) return "p-1.5";
-    if (deviceInfo.isTablet) return "p-2";
+    if (deviceInfo.isMobile) return "p-1";
+    if (deviceInfo.isTablet) return "p-1.5";
     return "p-2";
   };
   
   const getIconSize = () => {
-    if (deviceInfo.isMobile) return "h-4 w-4";
-    if (deviceInfo.isTablet) return "h-5 w-5";
+    if (deviceInfo.isMobile) return "h-3.5 w-3.5";
+    if (deviceInfo.isTablet) return "h-4 w-4";
     return "h-5 w-5";
   };
   
   const getLogoGap = () => {
-    if (deviceInfo.isMobile) return "gap-1.5";
-    return "gap-2";
+    if (deviceInfo.isMobile) return "gap-1";
+    return "gap-1.5";
   };
   
   const getTitleSize = () => {
-    if (deviceInfo.isMobile) return "text-sm";
-    if (deviceInfo.isTablet) return "text-base";
-    return "text-lg";
+    if (deviceInfo.isMobile) return "text-xs";
+    if (deviceInfo.isTablet) return "text-sm";
+    return "text-base";
+  };
+
+  // Calculate optimal scale for the content based on device
+  const getContentStyle = () => {
+    if (deviceInfo.isMobile) {
+      return { 
+        fontSize: '90%',
+        padding: '0.25rem'
+      };
+    }
+    return {};
   };
 
   return (
@@ -140,7 +151,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
             <div className="flex items-center">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className={cn("mr-1 sm:mr-2 rounded-md hover:bg-accent", getButtonSize())}
+                className={cn("mr-1 rounded-md hover:bg-accent", getButtonSize())}
                 aria-label="Open menu"
               >
                 <Menu className={getIconSize()} />
@@ -159,7 +170,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
         </div>
       </motion.header>
       
-      <main className="flex-1 overflow-hidden w-full max-w-full">
+      <main className="flex-1 overflow-hidden w-full max-w-full" style={getContentStyle()}>
         <Suspense fallback={<LoadingFallback />}>
           {children}
         </Suspense>
