@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -28,21 +29,21 @@ export const ContentFilters = ({
 }: ContentFiltersProps) => {
   return (
     <>
-      <div className="flex items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
+      <div className="flex items-center gap-2 mb-3 sm:mb-4 md:mb-6">
         <div className="relative flex-1">
-          <Search className="absolute right-1.5 sm:right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+          <Search className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="جستجو..."
             className={cn(
-              "pr-6 sm:pr-8 text-right rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm",
-              deviceInfo.isMobile ? "h-7 text-xs" : "h-8 sm:h-9 text-sm"
+              "pr-7 sm:pr-10 text-right rounded-lg sm:rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm",
+              deviceInfo.isMobile ? "h-8 text-xs" : "h-9 sm:h-10 text-sm"
             )}
           />
         </div>
         
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 sm:gap-2">
           {!deviceInfo.isMobile && (
             <>
               <TooltipProvider>
@@ -52,13 +53,13 @@ export const ContentFilters = ({
                       variant="outline"
                       size="icon"
                       className={cn(
-                        "rounded-lg border-gray-200 dark:border-gray-700 shadow-sm transition-colors",
-                        "w-7 h-7 sm:w-8 sm:h-8",
+                        "rounded-lg sm:rounded-xl border-gray-200 dark:border-gray-700 shadow-sm transition-colors",
+                        "w-8 h-8 sm:w-9 sm:h-9",
                         viewMode === "grid" && "bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                       )}
                       onClick={() => setViewMode("grid")}
                     >
-                      <LayoutGrid className="h-3 w-3" />
+                      <LayoutGrid className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
@@ -74,13 +75,13 @@ export const ContentFilters = ({
                       variant="outline"
                       size="icon"
                       className={cn(
-                        "rounded-lg border-gray-200 dark:border-gray-700 shadow-sm transition-colors",
-                        "w-7 h-7 sm:w-8 sm:h-8",
+                        "rounded-lg sm:rounded-xl border-gray-200 dark:border-gray-700 shadow-sm transition-colors",
+                        "w-8 h-8 sm:w-9 sm:h-9",
                         viewMode === "list" && "bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                       )}
                       onClick={() => setViewMode("list")}
                     >
-                      <List className="h-3 w-3" />
+                      <List className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
@@ -98,13 +99,13 @@ export const ContentFilters = ({
                   variant="outline"
                   size="icon"
                   className={cn(
-                    "rounded-lg border-gray-200 dark:border-gray-700 shadow-sm transition-colors",
-                    "w-7 h-7 sm:w-8 sm:h-8",
+                    "rounded-lg sm:rounded-xl border-gray-200 dark:border-gray-700 shadow-sm transition-colors",
+                    "w-8 h-8 sm:w-9 sm:h-9",
                     showFilters && "bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                   )}
                   onClick={() => setShowFilters(!showFilters)}
                 >
-                  <SlidersHorizontal className="h-3 w-3" />
+                  <SlidersHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
@@ -122,18 +123,18 @@ export const ContentFilters = ({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="border-b border-gray-200 dark:border-gray-800 pb-2 sm:pb-3 mb-2 sm:mb-3 overflow-hidden"
+            className="border-b border-gray-200 dark:border-gray-800 pb-3 sm:pb-4 mb-3 sm:mb-4 overflow-hidden"
           >
-            <div className="p-1.5 sm:p-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-              <h4 className="text-2xs sm:text-xs font-medium mb-1.5">فیلترها</h4>
-              <div className="flex flex-wrap gap-1">
-                <Badge variant="outline" className="text-2xs sm:text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+            <div className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg sm:rounded-xl">
+              <h4 className="text-xs sm:text-sm font-medium mb-2">فیلترها</h4>
+              <div className="flex flex-wrap gap-1 sm:gap-1.5">
+                <Badge variant="outline" className="text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                   همه
                 </Badge>
-                <Badge variant="outline" className="text-2xs sm:text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Badge variant="outline" className="text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                   پروتئین
                 </Badge>
-                <Badge variant="outline" className="text-2xs sm:text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Badge variant="outline" className="text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                   کراتین
                 </Badge>
               </div>

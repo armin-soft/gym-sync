@@ -13,23 +13,23 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ activeTab }) => {
   const deviceInfo = useDeviceInfo();
   
   const getIconSize = () => {
-    if (deviceInfo.isMobile) return "w-3.5 h-3.5";
-    if (deviceInfo.isTablet) return "w-4 h-4";
-    return "w-5 h-5";
+    if (deviceInfo.isMobile) return "w-4 h-4";
+    if (deviceInfo.isTablet) return "w-5 h-5";
+    return "w-6 h-6";
   };
   
   return (
     <motion.div
-      initial={{ y: -15, opacity: 0 }}
+      initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4, delay: 0.1 }}
-      className="mb-3 md:mb-4"
+      transition={{ duration: 0.5, delay: 0.1 }}
+      className="mb-4 md:mb-6"
     >
-      <TabsList className="grid w-full grid-cols-2 h-10 sm:h-12 overflow-hidden rounded-xl shadow-lg border border-white/20 dark:border-gray-800/50 backdrop-blur-sm bg-white/70 dark:bg-gray-900/70">
+      <TabsList className="grid w-full grid-cols-2 h-12 sm:h-14 md:h-16 overflow-hidden rounded-2xl shadow-lg border border-white/20 dark:border-gray-800/50 backdrop-blur-sm bg-white/70 dark:bg-gray-900/70">
         <TabsTrigger 
           value="supplement" 
           className={cn(
-            "relative gap-1.5 sm:gap-2 text-sm sm:text-base font-medium",
+            "relative gap-2 sm:gap-3 text-base sm:text-lg font-medium",
             "transition-all duration-300 ease-in-out",
             "data-[state=active]:text-white data-[state=active]:shadow-inner",
             "hover:bg-purple-50 dark:hover:bg-purple-950/20",
@@ -43,7 +43,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ activeTab }) => {
             className={cn(
               "rounded-full flex items-center justify-center",
               activeTab === "supplement" ? "bg-white/20" : "bg-purple-100 dark:bg-purple-900/40",
-              deviceInfo.isMobile ? "p-0.5" : "p-1"
+              deviceInfo.isMobile ? "p-1" : "p-2"
             )}
           >
             <FlaskConical className={cn(
@@ -56,7 +56,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ activeTab }) => {
         <TabsTrigger 
           value="vitamin" 
           className={cn(
-            "relative gap-1.5 sm:gap-2 text-sm sm:text-base font-medium",
+            "relative gap-2 sm:gap-3 text-base sm:text-lg font-medium",
             "transition-all duration-300 ease-in-out",
             "data-[state=active]:text-white data-[state=active]:shadow-inner",
             "hover:bg-blue-50 dark:hover:bg-blue-950/20",
@@ -70,7 +70,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ activeTab }) => {
             className={cn(
               "rounded-full flex items-center justify-center",
               activeTab === "vitamin" ? "bg-white/20" : "bg-blue-100 dark:bg-blue-900/40",
-              deviceInfo.isMobile ? "p-0.5" : "p-1"
+              deviceInfo.isMobile ? "p-1" : "p-2"
             )}
           >
             <Pill className={cn(

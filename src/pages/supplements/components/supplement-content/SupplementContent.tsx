@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 import { Supplement } from "@/types/supplement";
 import { ContentHeader } from "./ContentHeader";
 import { ContentFilters } from "./ContentFilters";
@@ -36,7 +37,7 @@ export const SupplementContent = ({
   });
   
   return (
-    <Card className="overflow-hidden border-none shadow-lg backdrop-blur-sm rounded-lg sm:rounded-xl h-full flex flex-col w-full">
+    <Card className="overflow-hidden border-none shadow-xl backdrop-blur-sm rounded-xl sm:rounded-2xl h-full flex flex-col w-full">
       <ContentHeader 
         type={type} 
         onAdd={onAdd} 
@@ -48,7 +49,7 @@ export const SupplementContent = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="p-2 sm:p-3 md:p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex-1 overflow-hidden flex flex-col"
+          className="p-3 sm:p-4 md:p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex-1 overflow-hidden flex flex-col"
         >
           <ContentFilters 
             searchQuery={searchQuery}
