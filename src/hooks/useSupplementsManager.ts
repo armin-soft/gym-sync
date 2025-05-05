@@ -21,6 +21,27 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
   // Categories related to the active tab
   const relevantCategories = categories.filter(c => c.type === activeTab);
 
+  // استخراج دسته‌بندی‌های منحصر به فرد از مکمل‌ها
+  const extractCategoriesFromSupplements = (supplements: Supplement[]): SupplementCategory[] => {
+    const uniqueCategories = new Map<string, {name: string, type: 'supplement' | 'vitamin'}>();
+    
+    supplements.forEach(supplement => {
+      const key = `${supplement.category}-${supplement.type}`;
+      if (!uniqueCategories.has(key)) {
+        uniqueCategories.set(key, {
+          name: supplement.category,
+          type: supplement.type
+        });
+      }
+    });
+    
+    return Array.from(uniqueCategories.values()).map((cat, index) => ({
+      id: index + 1,
+      name: cat.name,
+      type: cat.type
+    }));
+  };
+
   // Load data from localStorage
   useEffect(() => {
     const loadData = async () => {
@@ -33,10 +54,11 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
         console.log("Raw supplements from storage:", savedSupplements);
         console.log("Raw categories from storage:", savedCategories);
 
+        let loadedSupplements: Supplement[] = [];
         if (savedSupplements) {
-          const parsedSupplements = JSON.parse(savedSupplements);
-          console.log("Parsed supplements:", parsedSupplements);
-          setSupplements(parsedSupplements);
+          loadedSupplements = JSON.parse(savedSupplements);
+          console.log("Parsed supplements:", loadedSupplements);
+          setSupplements(loadedSupplements);
         } else {
           console.log("No supplements found in localStorage");
           setSupplements([]);
@@ -45,17 +67,34 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
         if (savedCategories) {
           const parsedCategories = JSON.parse(savedCategories);
           console.log("Parsed categories:", parsedCategories);
-          setCategories(parsedCategories);
-          
-          const relevantCats = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
-          if (relevantCats.length > 0) {
-            setSelectedCategory(relevantCats[0].name);
+          if (Array.isArray(parsedCategories) && parsedCategories.length > 0) {
+            setCategories(parsedCategories);
+            
+            const relevantCats = parsedCategories.filter((c: SupplementCategory) => c.type === activeTab);
+            if (relevantCats.length > 0) {
+              setSelectedCategory(relevantCats[0].name);
+            }
           } else {
-            setSelectedCategory("");
+            // اگر دسته‌بندی‌ها وجود نداشتند، از مکمل‌ها استخراج می‌کنیم
+            const extractedCategories = extractCategoriesFromSupplements(loadedSupplements);
+            console.log("Extracted categories from supplements:", extractedCategories);
+            setCategories(extractedCategories);
+            
+            const relevantCats = extractedCategories.filter(c => c.type === activeTab);
+            if (relevantCats.length > 0) {
+              setSelectedCategory(relevantCats[0].name);
+            }
           }
         } else {
-          console.log("No categories found in localStorage");
-          setCategories([]);
+          console.log("No categories found in localStorage, extracting from supplements");
+          const extractedCategories = extractCategoriesFromSupplements(loadedSupplements);
+          console.log("Extracted categories from supplements:", extractedCategories);
+          setCategories(extractedCategories);
+          
+          const relevantCats = extractedCategories.filter(c => c.type === activeTab);
+          if (relevantCats.length > 0) {
+            setSelectedCategory(relevantCats[0].name);
+          }
         }
       } catch (error) {
         console.error('Error loading data:', error);
@@ -165,7 +204,14 @@ export const useSupplementsManager = (initialTab: 'supplement' | 'vitamin' = 'su
 
   const changeTab = (tab: 'supplement' | 'vitamin') => {
     setActiveTab(tab);
-    setSelectedCategory("");
+    
+    // در تغییر تب، دسته‌بندی مناسب را انتخاب می‌کنیم
+    const relevantCats = categories.filter(c => c.type === tab);
+    if (relevantCats.length > 0) {
+      setSelectedCategory(relevantCats[0].name);
+    } else {
+      setSelectedCategory("");
+    }
   };
 
   return {

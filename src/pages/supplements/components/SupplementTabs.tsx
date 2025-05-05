@@ -1,4 +1,3 @@
-
 import { FlaskConical, Pill, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -108,10 +107,9 @@ export const SupplementTabs = ({
         {isLoading ? (
           <motion.div
             key="loading"
-            variants={loadingVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center py-12 sm:py-16 md:py-20 flex-1"
           >
             <Loader2 className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 animate-spin text-purple-500 mb-4" />
@@ -120,10 +118,9 @@ export const SupplementTabs = ({
         ) : (
           <motion.div
             key="content"
-            variants={tabContentVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             className="space-y-4 sm:space-y-6 flex-1 flex flex-col"
           >
             <TabsContent value="supplement" className="space-y-4 sm:space-y-6 m-0 flex-1 flex flex-col">
@@ -142,22 +139,20 @@ export const SupplementTabs = ({
                 />
               </motion.div>
               
-              {categories.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
-                  className="flex-1"
-                >
-                  <SupplementContent 
-                    type="supplement"
-                    supplements={supplements}
-                    onAdd={onAddSupplement}
-                    onEdit={onEditSupplement}
-                    onDelete={onDeleteSupplement}
-                  />
-                </motion.div>
-              )}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="flex-1"
+              >
+                <SupplementContent 
+                  type="supplement"
+                  supplements={supplements}
+                  onAdd={onAddSupplement}
+                  onEdit={onEditSupplement}
+                  onDelete={onDeleteSupplement}
+                />
+              </motion.div>
             </TabsContent>
 
             <TabsContent value="vitamin" className="space-y-4 sm:space-y-6 m-0 flex-1 flex flex-col">
@@ -176,22 +171,20 @@ export const SupplementTabs = ({
                 />
               </motion.div>
               
-              {categories.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
-                  className="flex-1"
-                >
-                  <SupplementContent 
-                    type="vitamin"
-                    supplements={supplements}
-                    onAdd={onAddSupplement}
-                    onEdit={onEditSupplement}
-                    onDelete={onDeleteSupplement}
-                  />
-                </motion.div>
-              )}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="flex-1"
+              >
+                <SupplementContent 
+                  type="vitamin"
+                  supplements={supplements}
+                  onAdd={onAddSupplement}
+                  onEdit={onEditSupplement}
+                  onDelete={onDeleteSupplement}
+                />
+              </motion.div>
             </TabsContent>
           </motion.div>
         )}
