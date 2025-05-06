@@ -10,8 +10,15 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./App.css";
 
-// Create a new query client instance that will be used throughout the app
-const queryClient = new QueryClient();
+// Create a new query client instance with proper configuration
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 // Define the toast interface globally
 declare global {
@@ -28,7 +35,6 @@ declare global {
 }
 
 function AppContent() {
-  // The useToast hook will be used inside the Layout component instead
   return (
     <AuthWrapper>
       <Layout>
@@ -40,16 +46,18 @@ function AppContent() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <BrowserRouter basename="">
-            <AppContent />
-            <Toaster />
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <BrowserRouter basename="">
+              <AppContent />
+              <Toaster />
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
   );
 }
 

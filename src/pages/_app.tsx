@@ -1,6 +1,5 @@
 
-import { ReactNode, useState, useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactNode } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/hooks/use-theme';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -11,27 +10,14 @@ interface AppProps {
   pageProps?: Record<string, any>;
 }
 
+// Removed QueryClient from this component since we're using it in App.tsx
 export default function App({ Component, pageProps }: AppProps) {
-  const [queryClient] = useState(() => new QueryClient());
-  const [mounted, setMounted] = useState(false);
-
-  // Ensure we only render on the client
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <ThemeProvider defaultTheme="light">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Component {...pageProps} />
-          <Toaster />
-        </TooltipProvider>
-      </QueryClientProvider>
+      <TooltipProvider>
+        <Component {...pageProps} />
+        <Toaster />
+      </TooltipProvider>
     </ThemeProvider>
   );
 }
