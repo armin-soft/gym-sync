@@ -4,6 +4,13 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
+// Add type declaration for our custom window property
+declare global {
+  interface Window {
+    clearServiceWorkerCache: () => void;
+  }
+}
+
 // Make sure to use createRoot API properly
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Root element not found');
@@ -19,8 +26,8 @@ window.clearServiceWorkerCache = () => {
           if (event.data && event.data.result === 'success') {
             console.log('Cache cleared successfully');
             resolve(true);
-            // بازنشانی صفحه بعد از پاکسازی کش
-            window.location.reload(true);
+            // بازنشانی صفحه بعد از پاکسازی کش - fix the reload() call
+            window.location.reload();
           }
         };
         
@@ -47,4 +54,3 @@ if ('serviceWorker' in navigator) {
 }
 
 ReactDOM.createRoot(rootElement).render(<App />);
-
