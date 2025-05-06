@@ -40,6 +40,22 @@
               // Registration was successful
               console.log('ServiceWorker registration successful with scope: ', registration.scope);
               
+              // نگهداری نسخه فعلی برنامه
+              let currentVersion = '';
+              
+              // خواندن نسخه فعلی از مانیفست
+              fetch('./Manifest.json?t=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                  currentVersion = data.version || '';
+                  console.log('Current app version:', currentVersion);
+                  // ذخیره نسخه در localStorage
+                  localStorage.setItem('app_version', currentVersion);
+                })
+                .catch(err => {
+                  console.error('Failed to read manifest:', err);
+                });
+              
               // Handle service worker updates
               function handleServiceWorkerUpdate() {
                 // Check for updates when the page loads
@@ -71,6 +87,22 @@
               }
               
               handleServiceWorkerUpdate();
+              
+              // گوش دادن به پیام‌های سرویس ورکر
+              navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+                  console.log('Update available message received from SW:', event.data);
+                  
+                  // نمایش اعلان بروزرسانی فقط اگر نسخه جدید باشد
+                  const storedVersion = localStorage.getItem('app_version') || '';
+                  const newVersion = event.data.version;
+                  
+                  console.log('Comparing versions:', storedVersion, 'vs', newVersion);
+                  
+                  // نمایش اعلان بروزرسانی
+                  showUpdateNotification();
+                }
+              });
             })
             .catch(function(err) {
               // Registration failed
@@ -82,7 +114,7 @@
                   registration.unregister();
                 }
                 setTimeout(() => {
-                  window.location.reload(true);
+                  window.location.reload();
                 }, 1000);
               });
             });
@@ -93,7 +125,7 @@
             if (refreshing) return;
             refreshing = true;
             console.log('Controller changed, refreshing page...');
-            window.location.reload(true);
+            window.location.reload();
           });
         });
         
@@ -181,4 +213,3 @@
     <noscript>برای استفاده از این برنامه، لطفا جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
   </body>
 </html>
-

@@ -2,7 +2,7 @@
 // This is the service worker for the application
 // It handles caching and offline functionality
 
-const CACHE_NAME = 'gym-sync-v5'; // افزایش نسخه کش
+const CACHE_NAME = 'gym-sync-v6'; // افزایش نسخه کش
 
 // Assets to cache - use relative paths instead of absolute
 const STATIC_ASSETS = [
@@ -14,12 +14,26 @@ const STATIC_ASSETS = [
   './Assets/Style/Menu.css'
 ];
 
+// نسخه فعلی برنامه
+let currentAppVersion = '';
+
 // Install event
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing');
   
   // Skip waiting to activate immediately
   self.skipWaiting();
+  
+  // خواندن نسخه فعلی از مانیفست
+  fetch('./Manifest.json')
+    .then(response => response.json())
+    .then(data => {
+      currentAppVersion = data.version || '';
+      console.log('[Service Worker] Current app version:', currentAppVersion);
+    })
+    .catch(err => {
+      console.error('[Service Worker] Failed to read manifest:', err);
+    });
   
   // Use a more resilient caching strategy
   event.waitUntil(
@@ -94,6 +108,41 @@ self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('/api/') || 
       event.request.url.includes('analytics') || 
       event.request.url.includes('chrome-extension')) {
+    return;
+  }
+  
+  // اگر درخواست برای مانیفست است، نسخه را بروزرسانی کن
+  if (event.request.url.includes('Manifest.json')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (!response || response.status !== 200) {
+            return caches.match(event.request);
+          }
+          
+          // کلون کردن پاسخ برای پردازش
+          const clonedResponse = response.clone();
+          
+          // خواندن و ذخیره نسخه جدید
+          clonedResponse.json().then(data => {
+            const newVersion = data.version || '';
+            console.log('[Service Worker] Manifest fetched, version:', newVersion);
+            
+            // ذخیره نسخه جدید
+            currentAppVersion = newVersion;
+          });
+          
+          // کش کردن نسخه جدید مانیفست
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, response.clone());
+          });
+          
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
     return;
   }
 
@@ -228,6 +277,27 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+// بررسی آیا نسخه جدید است
+function isNewVersion(newVersion, currentVersion) {
+  if (!newVersion || !currentVersion) return false;
+  
+  // تبدیل نسخه‌ها به آرایه‌های عددی
+  const newParts = newVersion.split('.').map(Number);
+  const currentParts = currentVersion.split('.').map(Number);
+  
+  // مقایسه بخش‌های نسخه
+  for (let i = 0; i < Math.max(newParts.length, currentParts.length); i++) {
+    const newPart = newParts[i] || 0;
+    const currentPart = currentParts[i] || 0;
+    
+    if (newPart > currentPart) return true;
+    if (newPart < currentPart) return false;
+  }
+  
+  // اگر همه بخش‌ها برابر باشند
+  return false;
+}
+
 // Listen for messages from client
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
@@ -236,7 +306,36 @@ self.addEventListener('message', (event) => {
   
   if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
     console.log('[Service Worker] Checking for updates...');
-    self.registration.update();
+    
+    // دریافت نسخه جدید از مانیفست
+    fetch('./Manifest.json?t=' + new Date().getTime())
+      .then(response => response.json())
+      .then(data => {
+        const newVersion = data.version || '';
+        console.log('[Service Worker] Manifest version check - Current:', currentAppVersion, 'New:', newVersion);
+        
+        // فقط اگر نسخه جدید باشد، اعلان بروزرسانی نمایش داده شود
+        if (isNewVersion(newVersion, currentAppVersion)) {
+          console.log('[Service Worker] New version available:', newVersion);
+          self.clients.matchAll().then(clients => {
+            clients.forEach(client => {
+              client.postMessage({
+                type: 'UPDATE_AVAILABLE', 
+                version: newVersion,
+                currentVersion: currentAppVersion
+              });
+            });
+          });
+          
+          // بروزرسانی سرویس ورکر
+          self.registration.update();
+        } else {
+          console.log('[Service Worker] No new version available');
+        }
+      })
+      .catch(err => {
+        console.error('[Service Worker] Error checking for updates:', err);
+      });
   }
 
   // افزودن پیام برای پاکسازی کش
@@ -256,4 +355,3 @@ self.addEventListener('message', (event) => {
     });
   }
 });
-
