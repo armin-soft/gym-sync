@@ -53,7 +53,7 @@
     "date-fns-jalali": "^4.1.0-0",
     "date-fns-tz": "^3.2.0",
     "embla-carousel-react": "^8.3.0",
-    "esbuild": "^0.25.3",
+    "esbuild": "^0.25.4",
     "framer-motion": "^12.6.3",
     "html2canvas": "^1.4.1",
     "input-otp": "^1.2.4",
