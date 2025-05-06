@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -12,7 +11,7 @@ import { Card } from "@/components/ui/card";
 
 import { useReportsData } from "@/hooks/reports/useReportsData";
 import { ReportsHeader } from "./components/ReportsHeader";
-import { TimeRangeFilters } from "./components/TimeRangeFilters";
+import { TimeRangeFilter } from "./components/time-range-filters";
 import { ReportsTabControls } from "./components/ReportsTabControls";
 import { ReportsTabContent } from "./components/ReportsTabContent";
 import { StatCardGrid } from "./components/StatCardGrid";
@@ -137,7 +136,7 @@ const Reports = () => {
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <TimeRangeFilters
+                  <TimeRangeFilter
                     filtersOpen={filtersOpen}
                     timeRange={timeRange}
                     setTimeRange={setTimeRange}
