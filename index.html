@@ -20,10 +20,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <!-- جلوگیری از کش مرورگر با افزودن پارامتر زمان -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
   </head>
   <body>
     <div id="root"></div>
@@ -31,30 +27,11 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          // ثبت سرویس ورکر با پارامتر زمان برای جلوگیری از کش
-          const swUrl = './Service-Worker.js?v=' + new Date().getTime();
-          
           // Register the service worker from root path with improved error handling
-          navigator.serviceWorker.register(swUrl)
+          navigator.serviceWorker.register('./Service-Worker.js')
             .then(function(registration) {
               // Registration was successful
               console.log('ServiceWorker registration successful with scope: ', registration.scope);
-              
-              // نگهداری نسخه فعلی برنامه
-              let currentVersion = '';
-              
-              // خواندن نسخه فعلی از مانیفست
-              fetch('./Manifest.json?t=' + new Date().getTime())
-                .then(response => response.json())
-                .then(data => {
-                  currentVersion = data.version || '';
-                  console.log('Current app version:', currentVersion);
-                  // ذخیره نسخه در localStorage
-                  localStorage.setItem('app_version', currentVersion);
-                })
-                .catch(err => {
-                  console.error('Failed to read manifest:', err);
-                });
               
               // Handle service worker updates
               function handleServiceWorkerUpdate() {
@@ -87,36 +64,17 @@
               }
               
               handleServiceWorkerUpdate();
-              
-              // گوش دادن به پیام‌های سرویس ورکر
-              navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-                  console.log('Update available message received from SW:', event.data);
-                  
-                  // نمایش اعلان بروزرسانی فقط اگر نسخه جدید باشد
-                  const storedVersion = localStorage.getItem('app_version') || '';
-                  const newVersion = event.data.version;
-                  
-                  console.log('Comparing versions:', storedVersion, 'vs', newVersion);
-                  
-                  // نمایش اعلان بروزرسانی
-                  showUpdateNotification();
-                }
-              });
             })
             .catch(function(err) {
               // Registration failed
               console.error('ServiceWorker registration failed: ', err);
               
-              // پاکسازی کش سرویس ورکر در صورت خطا و تلاش مجدد
-              navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) {
-                  registration.unregister();
-                }
-                setTimeout(() => {
-                  window.location.reload();
-                }, 1000);
-              });
+              // Try again once after a short delay
+              setTimeout(() => {
+                navigator.serviceWorker.register('./Service-Worker.js')
+                  .then(reg => console.log('ServiceWorker registration successful on retry'))
+                  .catch(err => console.error('ServiceWorker registration failed on retry:', err));
+              }, 3000);
             });
             
           // Listen for controller change events
@@ -129,14 +87,14 @@
           });
         });
         
-        // Check for updates every 15 minutes
+        // Check for updates every hour
         setInterval(() => {
           if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
               type: 'CHECK_FOR_UPDATES'
             });
           }
-        }, 15 * 60 * 1000);
+        }, 60 * 60 * 1000); // 1 hour
         
         // Function to show update notification
         function showUpdateNotification() {
@@ -167,44 +125,6 @@
           }
         }
       }
-    </script>
-    <!-- دکمه پاکسازی کش برای مواقع ضروری -->
-    <script>
-      function addCacheClearButton() {
-        // فقط در صفحه گزارش‌ها اضافه می‌کنیم
-        if (window.location.pathname.includes('/Reports')) {
-          setTimeout(() => {
-            // اطمینان از لود شدن صفحه
-            const header = document.querySelector('header');
-            if (header && !document.getElementById('clear-cache-btn')) {
-              const btn = document.createElement('button');
-              btn.id = 'clear-cache-btn';
-              btn.innerText = 'پاکسازی کش';
-              btn.className = 'px-3 py-1 text-xs bg-red-500 text-white rounded-md ml-2';
-              btn.onclick = () => {
-                if (window.clearServiceWorkerCache) {
-                  window.clearServiceWorkerCache();
-                  alert('در حال پاکسازی کش و بارگذاری مجدد...');
-                }
-              };
-              header.appendChild(btn);
-            }
-          }, 1000);
-        }
-      }
-      
-      // اجرای تابع بعد از لود شدن صفحه و هنگام تغییر مسیر
-      window.addEventListener('load', addCacheClearButton);
-      window.addEventListener('popstate', addCacheClearButton);
-      
-      // برای SPAها، یک Observer اضافه می‌کنیم
-      const observer = new MutationObserver(addCacheClearButton);
-      window.addEventListener('load', () => {
-        const targetNode = document.body;
-        if (targetNode) {
-          observer.observe(targetNode, { childList: true, subtree: true });
-        }
-      });
     </script>
     <!-- Lovable required script -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
