@@ -1,61 +1,22 @@
 
-import { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { toPersianNumbers } from '@/lib/utils/numbers';
-
-export const useReportsData = () => {
-  const { toast } = useToast();
-  const [monthlyData, setMonthlyData] = useState<any[]>([]);
-  const [expandedData, setExpandedData] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [timeRange, setTimeRange] = useState("6months");
-  const [filtersOpen, setFiltersOpen] = useState(false);
-
-  const loadData = () => {
-    setIsRefreshing(true);
-    try {
-      // دریافت داده‌های واقعی از localStorage
-      const students = JSON.parse(localStorage.getItem('students') || '[]');
-      const exercises = JSON.parse(localStorage.getItem('exercises') || '[]');
-      const supplements = JSON.parse(localStorage.getItem('supplementList') || '[]');
-      const meals = JSON.parse(localStorage.getItem('meals') || '[]');
-      
-      console.log('داده‌های واقعی بارگذاری شدند:', { 
-        شاگردان: students.length, 
-        تمرین: exercises.length, 
-        مکمل: supplements.length, 
-        برنامه_غذایی: meals.length 
-      });
-      
-      // پردازش داده‌ها بر اساس بازه زمانی انتخاب شده
-      const processedData = processRealData(students, exercises, supplements, meals, timeRange);
-      
-      setMonthlyData(processedData.monthlyData);
-      setExpandedData(processedData.expandedData);
-      setIsLoading(false);
-      setIsRefreshing(false);
-      
-      toast({
-        title: "اطلاعات با موفقیت بارگذاری شد",
-        description: `${toPersianNumbers(processedData.monthlyData.length)} دوره زمانی بارگذاری شد`,
-        variant: "default",
-      });
-    } catch (error) {
-      console.error('خطا در بارگذاری اطلاعات:', error);
-      setIsLoading(false);
-      setIsRefreshing(false);
-      
-      toast({
-        title: "خطا در بارگذاری اطلاعات",
-        description: "لطفا مجددا تلاش کنید",
-        variant: "destructive",
-      });
-    }
+/**
+ * Hook for processing reports data
+ */
+export const useReportsProcessing = () => {
+  // تابع کمکی برای محاسبه درصد رشد
+  const calculateGrowth = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return Math.round(((current - previous) / previous) * 100);
   };
 
   // پردازش داده‌های واقعی بر اساس تاریخ‌های ثبت نام
-  const processRealData = (students: any[], exercises: any[], supplements: any[], meals: any[], timeRange: string) => {
+  const processRealData = (
+    students: any[], 
+    exercises: any[], 
+    supplements: any[], 
+    meals: any[], 
+    timeRange: string
+  ) => {
     // تعیین بازه‌های زمانی بر اساس محدوده انتخاب شده
     let monthsToShow = 6;
     switch (timeRange) {
@@ -173,49 +134,10 @@ export const useReportsData = () => {
     
     return { monthlyData, expandedData };
   };
-  
-  // تابع کمکی برای محاسبه درصد رشد
-  const calculateGrowth = (current: number, previous: number) => {
-    if (previous === 0) return current > 0 ? 100 : 0;
-    return Math.round(((current - previous) / previous) * 100);
-  };
-
-  // اثر بارگذاری داده‌ها
-  useEffect(() => {
-    loadData();
-    
-    // به‌روزرسانی با تغییرات localStorage
-    const handleStorageChange = () => {
-      console.log('تغییر در ذخیره‌سازی، بارگذاری مجدد داده‌ها');
-      loadData();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, [timeRange]);
-
-  const handleRefresh = () => {
-    loadData();
-  };
-
-  const toggleFilters = () => {
-    setFiltersOpen(!filtersOpen);
-  };
-
-  const closeFilters = () => {
-    setFiltersOpen(false);
-  };
 
   return {
-    monthlyData,
-    expandedData,
-    isLoading,
-    isRefreshing,
-    timeRange,
-    filtersOpen,
-    setTimeRange,
-    handleRefresh,
-    toggleFilters,
-    closeFilters
+    processRealData,
+    calculateGrowth
   };
 };
+
