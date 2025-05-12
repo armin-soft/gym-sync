@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dumbbell, Plus, Grid3X3, ListOrdered, Trash2, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
