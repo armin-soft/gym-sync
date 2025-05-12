@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Dumbbell, Plus, Grid3X3, ListOrdered, Trash2 } from "lucide-react";
+import { Dumbbell, Plus, Grid3X3, ListOrdered, Trash2, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
@@ -12,6 +11,8 @@ import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { SpeechToText } from "@/components/ui/speech-to-text";
+import { AnimatePresence } from "framer-motion";
 
 interface ExercisesStageProps {
   categoryId: string;
@@ -31,12 +32,14 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { exercises, categories, isLoading } = useExerciseData();
+  const [showQuickSpeech, setShowQuickSpeech] = useState(false);
   
   // State برای مدیریت دیالوگ‌ها
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
   const [formData, setFormData] = useState({ name: "", categoryId: parseInt(categoryId) || 0 });
+  const [quickSpeechText, setQuickSpeechText] = useState("");
 
   useEffect(() => {
     setFormData(prev => ({ ...prev, categoryId: parseInt(categoryId) || 0 }));
@@ -153,6 +156,26 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
     });
     setIsAddDialogOpen(true);
   };
+
+  // اضافه کردن سریع با استفاده از گفتار
+  const handleQuickAdd = () => {
+    if (!quickSpeechText.trim()) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "لطفاً نام حرکت را وارد کنید"
+      });
+      return;
+    }
+
+    handleSaveExercise({
+      name: quickSpeechText.trim(),
+      categoryId: parseInt(categoryId) || 0
+    }).then(() => {
+      setQuickSpeechText("");
+      setShowQuickSpeech(false);
+    });
+  };
   
   if (isLoading) {
     return (
@@ -204,6 +227,15 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
         <div className="flex items-center gap-2">
           <Button
             size="sm"
+            onClick={() => setShowQuickSpeech(!showQuickSpeech)}
+            className={showQuickSpeech ? "bg-purple-600 hover:bg-purple-700" : "bg-gradient-to-r from-purple-600 to-indigo-400 text-white"}
+          >
+            <Mic className="h-4 w-4 ml-2" />
+            افزودن با صدا
+          </Button>
+          
+          <Button
+            size="sm"
             onClick={handleAddExercise}
             className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white"
           >
@@ -226,6 +258,40 @@ export const ExercisesStage: React.FC<ExercisesStageProps> = ({
           </Tabs>
         </div>
       </div>
+
+      {/* نمایش SpeechToText برای افزودن سریع */}
+      <AnimatePresence>
+        {showQuickSpeech && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800/50 rounded-lg p-3 mb-2">
+              <div className="flex flex-col gap-3">
+                <div className="flex justify-between items-center">
+                  <Button
+                    size="sm"
+                    onClick={handleQuickAdd}
+                    disabled={!quickSpeechText.trim()}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    <Plus className="h-4 w-4 ml-1" />
+                    افزودن سریع
+                  </Button>
+                  <h4 className="font-medium text-sm text-purple-800 dark:text-purple-300">افزودن حرکت با صدا</h4>
+                </div>
+                <SpeechToText
+                  onTranscriptChange={setQuickSpeechText}
+                  value={quickSpeechText}
+                  placeholder="نام حرکت را بگویید..."
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="flex-1 min-h-0 overflow-y-auto">
         <motion.div 
