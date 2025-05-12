@@ -52,7 +52,7 @@ export const SpeechToText = ({
     if (!SpeechRecognition) return null;
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = true;
+    recognition.continuous = true; // برای ضبط مداوم
     recognition.interimResults = true;
     recognition.lang = "fa-IR"; // تنظیم زبان به فارسی
     recognition.maxAlternatives = 1;
@@ -65,13 +65,25 @@ export const SpeechToText = ({
       });
     };
 
+    // وقتی تشخیص به پایان می‌رسد، اما به دلیل continuous=true این مورد فقط در خطا یا توقف دستی فراخوانی می‌شود
     recognition.onend = () => {
       setIsListening(false);
+      console.log("Speech recognition ended");
+      
+      // اگر کاربر هنوز خواستار ضبط است، دوباره آن را شروع کنید
+      // این قسمت برای اطمینان از ضبط مداوم است، حتی اگر به دلایل فنی متوقف شود
+      if (isListening && recognitionRef.current) {
+        try {
+          console.log("Attempting to restart recognition automatically");
+          recognitionRef.current.start();
+        } catch (err) {
+          console.error("Couldn't restart recognition:", err);
+        }
+      }
     };
 
     recognition.onerror = (event: any) => {
       console.error("Speech recognition error", event.error);
-      setIsListening(false);
       
       if (event.error === "not-allowed") {
         toast({
@@ -79,12 +91,15 @@ export const SpeechToText = ({
           description: "لطفاً به مرورگر اجازه دسترسی به میکروفون را بدهید.",
           variant: "destructive",
         });
-      } else {
+        setIsListening(false);
+      } else if (event.error !== "aborted") {
+        // اگر خطا به دلیل قطع دستی نبود، پیام خطا نمایش داده شود
         toast({
           title: "خطا",
           description: "خطا در تشخیص گفتار. لطفاً دوباره تلاش کنید.",
           variant: "destructive",
         });
+        setIsListening(false);
       }
     };
 
@@ -109,7 +124,7 @@ export const SpeechToText = ({
     };
 
     return recognition;
-  }, [transcript, onTranscriptChange, toast]);
+  }, [transcript, onTranscriptChange, toast, isListening]);
 
   // اصلاح کلمات فارسی متداول و غلط‌های املایی رایج
   const correctPersianWords = (text: string): string => {
