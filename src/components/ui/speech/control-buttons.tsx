@@ -1,0 +1,73 @@
+
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Mic, MicOff, RefreshCw } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+interface ControlButtonsProps {
+  isListening: boolean;
+  isSupported: boolean;
+  hasContent: boolean;
+  onToggleListening: () => void;
+  onClearTranscript: () => void;
+}
+
+export const ControlButtons = ({
+  isListening,
+  isSupported,
+  hasContent,
+  onToggleListening,
+  onClearTranscript
+}: ControlButtonsProps) => {
+  return (
+    <div className="flex gap-1">
+      <Button
+        type="button"
+        size="icon"
+        disabled={!isSupported}
+        onClick={onToggleListening}
+        className={cn(
+          "transition-all",
+          isListening 
+            ? "bg-red-500 text-white hover:bg-red-600" 
+            : "bg-primary text-primary-foreground hover:bg-primary/90"
+        )}
+      >
+        <AnimatePresence mode="wait">
+          {isListening ? (
+            <motion.div
+              key="stop"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              className="flex items-center justify-center"
+            >
+              <MicOff className="h-4 w-4" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="mic"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              className="flex items-center justify-center"
+            >
+              <Mic className="h-4 w-4" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Button>
+      
+      <Button
+        type="button"
+        size="icon"
+        variant="outline"
+        onClick={onClearTranscript}
+        disabled={!hasContent}
+      >
+        <RefreshCw className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+};
