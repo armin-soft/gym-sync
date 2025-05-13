@@ -1,8 +1,8 @@
 
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { SpeechToText } from "@/components/ui/speech-to-text";
 
 interface QuickSpeechAddProps {
@@ -16,12 +16,20 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
   setQuickSpeechText,
   onQuickAdd
 }) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey && quickSpeechText.trim()) {
+      e.preventDefault();
+      onQuickAdd();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
       className="overflow-hidden"
+      onKeyDown={handleKeyDown}
     >
       <div className="bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800/50 rounded-lg p-3 mb-2">
         <div className="flex flex-col gap-3">

@@ -36,11 +36,20 @@ export const SpeechToText = ({
   });
 
   // شروع و پایان ضبط صدا
-  const toggleListening = () => {
+  const toggleListening = async () => {
     if (isListening) {
       stopListening();
     } else {
-      startListening();
+      try {
+        await startListening();
+      } catch (error) {
+        console.error("Error starting speech recognition:", error);
+        toast({
+          title: "خطا",
+          description: "خطا در شروع تشخیص گفتار. لطفاً دوباره تلاش کنید.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
