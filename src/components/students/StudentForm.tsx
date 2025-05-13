@@ -152,22 +152,29 @@ export const StudentForm = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Personal Info Section */}
-            <PersonalInfoSection 
-              control={form.control} 
-              itemVariants={itemVariants} 
-            />
+            <div className="space-y-4">
+              <PersonalInfoSection 
+                control={form.control} 
+                itemVariants={itemVariants} 
+              />
+            </div>
             
             {/* Measurements Section */}
-            <MeasurementsSection 
-              control={form.control} 
-              itemVariants={itemVariants} 
-            />
-
-            {/* Payment Field */}
-            <motion.div variants={itemVariants} className="md:col-span-2">
-              <PaymentField control={form.control} />
-            </motion.div>
+            <div>
+              <MeasurementsSection 
+                control={form.control} 
+                itemVariants={itemVariants} 
+              />
+            </div>
           </div>
+
+          {/* Payment Field */}
+          <motion.div variants={itemVariants} className="md:col-span-2">
+            <PaymentField 
+              control={form.control}
+              itemVariants={itemVariants}
+            />
+          </motion.div>
 
           {/* Form Actions */}
           <motion.div variants={itemVariants}>
