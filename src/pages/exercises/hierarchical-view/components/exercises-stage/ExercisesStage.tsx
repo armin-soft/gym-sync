@@ -67,8 +67,6 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
 
       <ExerciseHeader 
         exerciseCount={filteredExercises.length}
-        selectedExerciseIds={selectedExerciseIds}
-        onDeleteClick={() => setIsDeleteDialogOpen(true)}
         onAddExercise={handleAddExercise}
         viewMode={viewMode}
         setViewMode={setViewMode}
