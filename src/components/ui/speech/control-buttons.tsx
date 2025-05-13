@@ -11,6 +11,7 @@ interface ControlButtonsProps {
   hasContent: boolean;
   onToggleListening: () => void;
   onClearTranscript: () => void;
+  compact?: boolean;
 }
 
 export const ControlButtons = ({
@@ -18,7 +19,8 @@ export const ControlButtons = ({
   isSupported,
   hasContent,
   onToggleListening,
-  onClearTranscript
+  onClearTranscript,
+  compact = false
 }: ControlButtonsProps) => {
   return (
     <div className="flex gap-1">
