@@ -3,7 +3,7 @@ import React, { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
-import { SpeechToText } from "@/components/ui/speech-to-text";
+import { Textarea } from "@/components/ui/textarea";
 
 interface QuickSpeechAddProps {
   quickSpeechText: string;
@@ -29,7 +29,6 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
       className="overflow-hidden"
-      onKeyDown={handleKeyDown}
     >
       <div className="bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800/50 rounded-lg p-3 mb-2">
         <div className="flex flex-col gap-3">
@@ -43,12 +42,15 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
               <Plus className="h-4 w-4 ml-1" />
               افزودن سریع
             </Button>
-            <h4 className="font-medium text-sm text-purple-800 dark:text-purple-300">افزودن حرکت با صدا</h4>
+            <h4 className="font-medium text-sm text-purple-800 dark:text-purple-300">افزودن حرکت سریع</h4>
           </div>
-          <SpeechToText
-            onTranscriptChange={setQuickSpeechText}
+          <Textarea
             value={quickSpeechText}
-            placeholder="نام حرکت را بگویید..."
+            onChange={(e) => setQuickSpeechText(e.target.value)}
+            placeholder="نام حرکت را وارد کنید..."
+            className="min-h-[80px] focus-visible:ring-purple-400 text-right"
+            dir="rtl"
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
