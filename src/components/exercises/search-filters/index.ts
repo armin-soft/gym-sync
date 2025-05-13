@@ -1,10 +1,10 @@
 
-export { default as SearchInput } from './SearchInput';
-export { default as CategorySelector } from './CategorySelector';
-export { default as TypeSelector } from './TypeSelector';
-export { default as FilterButton } from './FilterButton';
-export { default as SortButton } from './SortButton';
-export { default as AdvancedSearchFilters } from './AdvancedSearchFilters';
-export { default as ActiveFilterTags } from './ActiveFilterTags';
-export { default as ExerciseSearchFilters } from './ExerciseSearchFilters';
-export { default as HierarchicalMenu } from './HierarchicalMenu';
+export { SearchInput } from './SearchInput';
+export { CategorySelector } from './CategorySelector';
+export { TypeSelector } from './TypeSelector';
+export { FilterButton } from './FilterButton';
+export { SortButton } from './SortButton';
+export { AdvancedSearchFilters } from './AdvancedSearchFilters';
+export { ActiveFilterTags } from './ActiveFilterTags';
+export { ExerciseSearchFilters } from './ExerciseSearchFilters';
+export { HierarchicalMenu } from './HierarchicalMenu';
