@@ -1,9 +1,9 @@
 
-import { useRef, useCallback, RefObject } from 'react';
+import { useRef, useCallback, RefObject, MutableRefObject } from 'react';
 import { RecognitionState } from './speech-recognition-types';
 
 interface UseRecognitionRestartProps {
-  recognition: SpeechRecognition | null;
+  recognition: any;
   state: RecognitionState;
   setState: (state: RecognitionState) => void;
 }
@@ -30,8 +30,7 @@ export const useRecognitionRestart = ({
       // Safely clear timeout reference
       if (restartTimeoutRef.current) {
         window.clearTimeout(restartTimeoutRef.current);
-        // Use type assertion to handle the read-only property
-        (restartTimeoutRef as { current: number | null }).current = null;
+        restartTimeoutRef.current = null;
       }
     } catch (error) {
       console.error('Error restarting recognition:', error);
@@ -46,7 +45,7 @@ export const useRecognitionRestart = ({
 
   return {
     handleRestart,
-    restartTimeoutRef: restartTimeoutRef as RefObject<number | null>,
+    restartTimeoutRef,
     restartCountRef,
   };
 };

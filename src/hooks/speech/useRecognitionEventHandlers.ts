@@ -3,7 +3,7 @@ import { RefObject, useEffect } from 'react';
 import { RecognitionEvent, RecognitionState } from './speech-recognition-types';
 
 interface UseRecognitionEventHandlersProps {
-  recognition: SpeechRecognition | null;
+  recognition: any;
   state: RecognitionState;
   setState: (state: RecognitionState) => void;
   onTextRecognized?: (text: string) => void;
@@ -56,13 +56,15 @@ export const useRecognitionEventHandlers = ({
           
           // Using non-null assertion here because we checked above
           if (restartCountRef.current !== null) {
-            restartCountRef.current += 1;
+            if (restartCountRef && typeof restartCountRef === 'object' && 'current' in restartCountRef) {
+              // Safe update using mutable ref
+              (restartCountRef as MutableRefObject<number>).current += 1;
+            }
           }
           
-          // Safely assign to current property only if it's writable
-          if (restartTimeoutRef && typeof restartTimeoutRef === 'object' && restartTimeoutRef.current !== null) {
-            // Use type assertion to handle the read-only property
-            (restartTimeoutRef as { current: number | null }).current = timeoutId;
+          // Safely assign to timeoutRef
+          if (restartTimeoutRef && typeof restartTimeoutRef === 'object' && 'current' in restartTimeoutRef) {
+            (restartTimeoutRef as MutableRefObject<number | null>).current = timeoutId;
           }
         } else {
           setState({
@@ -112,7 +114,7 @@ export const useRecognitionEventHandlers = ({
     recognition.onend = handleEnd;
     recognition.onresult = handleResult;
     recognition.onerror = handleError;
-
+    
     return () => {
       recognition.onstart = null;
       recognition.onend = null;
@@ -120,4 +122,16 @@ export const useRecognitionEventHandlers = ({
       recognition.onerror = null;
     };
   }, [recognition, state, setState, onTextRecognized, onError, onRestart, maxRestarts, restartTimeoutRef, restartCountRef]);
+  
+  // Add a cleanup utility function
+  const cleanupRestartTimers = () => {
+    if (restartTimeoutRef.current) {
+      window.clearTimeout(restartTimeoutRef.current);
+      if (restartTimeoutRef && typeof restartTimeoutRef === 'object' && 'current' in restartTimeoutRef) {
+        (restartTimeoutRef as MutableRefObject<number | null>).current = null;
+      }
+    }
+  };
+  
+  return { cleanupRestartTimers };
 };

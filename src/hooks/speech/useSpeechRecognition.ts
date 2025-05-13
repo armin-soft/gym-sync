@@ -2,13 +2,20 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { correctPersianWords } from "@/utils/persian-word-correction";
-import { UseSpeechRecognitionProps, UseSpeechRecognitionReturn } from "./speech-recognition-types";
+import { UseSpeechRecognitionProps, UseSpeechRecognitionReturn, RecognitionState } from "./speech-recognition-types";
 import { useMicrophonePermission } from "./useMicrophonePermission";
 import { useRecognitionSetup } from "./useRecognitionSetup";
 import { useSpeechRecognitionErrors } from "./useSpeechRecognitionErrors";
 import { useRecognitionRestart } from "./useRecognitionRestart";
 import { useRecognitionEventHandlers } from "./useRecognitionEventHandlers";
 import { useBrowserSupport } from "./useBrowserSupport";
+
+// Define RecognitionRestartProps to match what useRecognitionRestart actually expects
+interface RecognitionRestartProps {
+  recognition: any;
+  state: RecognitionState;
+  setState: (state: RecognitionState) => void;
+}
 
 export function useSpeechRecognition({
   lang = "fa-IR",
@@ -22,13 +29,25 @@ export function useSpeechRecognition({
   const [interimTranscript, setInterimTranscript] = useState("");
   const recognitionRef = useRef<any>(null);
   const restartTimeoutRef = useRef<number | null>(null);
+  const restartCountRef = useRef<number>(0);
+  
+  // Initialize a state object to match the RecognitionState type
+  const [recognitionState, setRecognitionState] = useState<RecognitionState>({
+    transcript: initialValue,
+    interimTranscript: "",
+    isRecording: false,
+    isStopped: false,
+    autoRestart: true,
+    error: "",
+    startTime: 0
+  });
   
   const { toast } = useToast();
   const { requestMicrophonePermission } = useMicrophonePermission();
   const { showRecordingStartedToast, showRecordingStoppedToast } = useSpeechRecognitionErrors();
   const { checkBrowserSupport } = useBrowserSupport();
   
-  // Set up recognition instance with all needed config and handlers
+  // Set up recognition instance with all needed config
   const setupRecognition = useRecognitionSetup({
     transcript,
     onTranscriptChange,
@@ -41,22 +60,26 @@ export function useSpeechRecognition({
   });
 
   // Configure restart functionality
-  const { handleRecognitionRestart } = useRecognitionRestart({
-    isListening,
-    recognitionRef,
-    startListening: async () => {}, // Placeholder - will be updated after function definition
-    restartTimeoutRef
+  const { handleRestart } = useRecognitionRestart({
+    recognition: recognitionRef.current,
+    state: recognitionState,
+    setState: setRecognitionState
   });
 
-  // شروع ضبط صدا
+  // Helper function for restarting recognition
+  const handleRecognitionRestart = useCallback(() => {
+    handleRestart();
+  }, [handleRestart]);
+
+  // Start listening function
   const startListening = useCallback(async () => {
     if (!isSupported) return Promise.reject("عدم پشتیبانی مرورگر");
 
-    // بررسی و درخواست دسترسی به میکروفون
+    // Check and request microphone access
     const hasPermission = await requestMicrophonePermission();
     if (!hasPermission) return Promise.reject("عدم دسترسی به میکروفون");
 
-    // توقف هر پردازش قبلی که ممکن است هنوز فعال باشد
+    // Stop any previous processing that might still be active
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
@@ -66,18 +89,24 @@ export function useSpeechRecognition({
       recognitionRef.current = null;
     }
 
-    // ایجاد یک نمونه جدید
+    // Create a new instance
     recognitionRef.current = setupRecognition();
     
     if (recognitionRef.current) {
       try {
         recognitionRef.current.start();
         setIsListening(true);
+        setRecognitionState({
+          ...recognitionState,
+          isRecording: true,
+          isStopped: false,
+          startTime: Date.now()
+        });
         showRecordingStartedToast();
         return Promise.resolve();
       } catch (err) {
         console.error("Error starting recognition:", err);
-        // در صورت بروز خطا، مجدداً تلاش کنید
+        // Try again after a short delay
         setTimeout(() => {
           recognitionRef.current = setupRecognition();
           try {
@@ -93,20 +122,9 @@ export function useSpeechRecognition({
       }
     }
     return Promise.reject("خطای ناشناخته");
-  }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast]);
+  }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast, recognitionState]);
 
-  // Update the restart reference with actual startListening function
-  useEffect(() => {
-    // @ts-ignore - This is a workaround for circular reference
-    useRecognitionRestart({
-      isListening,
-      recognitionRef,
-      startListening,
-      restartTimeoutRef
-    });
-  }, [startListening, isListening]);
-
-  // توقف ضبط صدا
+  // Stop listening function
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
       try {
@@ -115,32 +133,51 @@ export function useSpeechRecognition({
         console.error("Error stopping recognition:", err);
       }
       setIsListening(false);
+      setRecognitionState({
+        ...recognitionState,
+        isRecording: false,
+        isStopped: true
+      });
       showRecordingStoppedToast();
     }
     
-    // پاکسازی هر تایمری که برای راه‌اندازی مجدد تنظیم شده
+    // Clear any restart timers
     if (restartTimeoutRef.current !== null) {
       clearTimeout(restartTimeoutRef.current);
       restartTimeoutRef.current = null;
     }
-  }, [showRecordingStoppedToast]);
+  }, [showRecordingStoppedToast, recognitionState]);
 
-  // پاک کردن متن
+  // Reset transcript function
   const resetTranscript = useCallback(() => {
     setTranscript("");
     setInterimTranscript("");
     onTranscriptChange("");
   }, [onTranscriptChange]);
   
-  // Set up event handlers for error handling and automatic restarts
+  // Set up event handlers
   const { cleanupRestartTimers } = useRecognitionEventHandlers({
-    isListening,
-    recognitionRef,
+    recognition: recognitionRef.current,
+    state: recognitionState,
+    setState: setRecognitionState,
+    onTextRecognized: (text) => {
+      const newTranscript = transcript + text;
+      setTranscript(newTranscript);
+      onTranscriptChange(newTranscript);
+    },
+    onError: (errorMsg) => {
+      toast({
+        title: "خطا",
+        description: errorMsg,
+        variant: "destructive",
+      });
+    },
+    onRestart: handleRecognitionRestart,
     restartTimeoutRef,
-    handleRecognitionRestart
+    restartCountRef
   });
 
-  // تشخیص پشتیبانی مرورگر از Web Speech API
+  // Check browser support on mount
   useEffect(() => {
     const isSupportedByBrowser = checkBrowserSupport();
     setIsSupported(isSupportedByBrowser);
@@ -152,9 +189,9 @@ export function useSpeechRecognition({
       }
       
       // Clean up any timers
-      cleanupRestartTimers();
+      if (cleanupRestartTimers) cleanupRestartTimers();
     };
-  }, [toast, cleanupRestartTimers]);
+  }, [toast, checkBrowserSupport, cleanupRestartTimers]);
 
   return {
     transcript,
