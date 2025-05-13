@@ -26,14 +26,14 @@ export const TranscriptDisplay = ({
 
   return (
     <div 
-      className="flex-1 relative min-h-[120px] bg-white dark:bg-gray-950 border border-input rounded-md overflow-hidden"
+      className="flex-1 relative min-h-[150px] bg-white dark:bg-gray-950 border border-input rounded-md overflow-hidden"
       onKeyDown={onKeyDown}
       tabIndex={0}
       dir="rtl"
     >
       <div 
         ref={transcriptRef}
-        className="absolute inset-0 p-3 overflow-y-auto whitespace-pre-wrap text-right"
+        className="absolute inset-0 p-3 overflow-y-auto whitespace-pre-wrap text-right focus:outline-none"
       >
         {transcript || interimTranscript ? (
           <>

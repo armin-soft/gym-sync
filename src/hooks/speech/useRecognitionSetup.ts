@@ -87,11 +87,28 @@ export function useRecognitionSetup({
           const processedText = bestTranscript.trim();
           
           // تشخیص کلمات کلیدی برای اضافه کردن خط جدید
-          if (processedText.includes("حرکت بعدی") || 
-              processedText.includes("حرکت جدید") ||
-              processedText.includes("خط جدید")) {
+          const newLineKeywords = [
+            "حرکت بعدی", 
+            "حرکت جدید", 
+            "خط جدید", 
+            "بعدی", 
+            "جدید", 
+            "تمام شد",
+            "حرکت دیگر",
+            "بره خط بعد",
+            "برو خط بعد"
+          ];
+          
+          const hasNewLineCommand = newLineKeywords.some(keyword => 
+            processedText.toLowerCase().includes(keyword.toLowerCase())
+          );
+          
+          if (hasNewLineCommand) {
+            // افزودن یک خط جدید
             final += "\n";
+            console.log("Added new line based on voice command");
           } else {
+            // اضافه کردن متن به انتهای خط فعلی
             final += " " + processedText;
           }
           

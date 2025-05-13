@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { SpeechToText } from "@/components/ui/speech-to-text";
-import { Mic, ArrowDown, Enter } from "lucide-react";
+import { Mic, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface GroupExerciseFormProps {
@@ -67,12 +67,13 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
           value={value}
           onTranscriptChange={onChange}
           placeholder="برای افزودن حرکات با صدا، روی آیکون میکروفون کلیک کنید"
-          className="min-h-[150px]"
+          className="min-h-[200px]"
+          multiLine={true}
         />
       ) : (
         <>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
-            <Enter className="h-3.5 w-3.5 inline-block" />
+            <ArrowDown className="h-3.5 w-3.5 inline-block rotate-180" />
             <span>برای خط جدید از Ctrl+Enter استفاده کنید</span>
           </div>
           <Textarea
@@ -82,7 +83,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
 نشر از جلو دمبل
 پرس سرشانه هالتر
 نشر از جانب"
-            className="min-h-[150px] focus-visible:ring-blue-400 text-right"
+            className="min-h-[200px] focus-visible:ring-blue-400 text-right"
             onChange={(e) => onChange(e.target.value)}
             dir="rtl"
             onKeyDown={handleKeyDown}
