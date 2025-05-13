@@ -1,62 +1,123 @@
 
-import { useEffect } from "react";
-import { useSpeechRecognitionErrors } from "./useSpeechRecognitionErrors";
+import { RefObject, useEffect } from 'react';
+import { RecognitionEvent, RecognitionState } from './speech-recognition-types';
 
 interface UseRecognitionEventHandlersProps {
-  isListening: boolean;
-  recognitionRef: React.RefObject<any>;
-  restartTimeoutRef: React.RefObject<number | null>;
-  handleRecognitionRestart: (delay: number) => void;
+  recognition: SpeechRecognition | null;
+  state: RecognitionState;
+  setState: (state: RecognitionState) => void;
+  onTextRecognized?: (text: string) => void;
+  onError?: (error: string) => void;
+  onRestart?: () => void;
+  restartTimeoutRef: RefObject<number | null>;
+  maxRestarts?: number;
+  restartCountRef: RefObject<number>;
 }
 
-export function useRecognitionEventHandlers({
-  isListening,
-  recognitionRef,
+export const useRecognitionEventHandlers = ({
+  recognition,
+  state,
+  setState,
+  onTextRecognized,
+  onError,
+  onRestart,
   restartTimeoutRef,
-  handleRecognitionRestart,
-}: UseRecognitionEventHandlersProps) {
-  const { handleRecognitionError } = useSpeechRecognitionErrors();
-  
-  // Set up error and end event handlers
+  maxRestarts = 5,
+  restartCountRef,
+}: UseRecognitionEventHandlersProps) => {
   useEffect(() => {
-    if (!recognitionRef.current || !isListening) return;
-    
-    const recognition = recognitionRef.current;
-    
-    // Store original handlers if they exist
-    const originalErrorHandler = recognition.onerror || (() => {});
-    const originalEndHandler = recognition.onend || (() => {});
-    
-    // Error handler with automatic restart
-    recognition.onerror = (event: any) => {
-      originalErrorHandler(event);
-      handleRecognitionError(event.error);
-      
-      // Attempt to restart if still in listening mode
-      if (isListening) {
-        handleRecognitionRestart(1000);
+    if (!recognition) return;
+
+    const handleStart = () => {
+      setState({ ...state, isRecording: true, error: '' });
+    };
+
+    const handleEnd = () => {
+      // Reset restartCount if we've been recording for a while
+      if (state.isRecording && Date.now() - state.startTime > 10000) {
+        if (restartCountRef.current) {
+          restartCountRef.current = 0;
+        }
+      }
+
+      setState({ ...state, isRecording: false });
+
+      if (state.autoRestart && !state.isStopped) {
+        // Avoid memory leaks by clearing any existing timeout
+        if (restartTimeoutRef.current) {
+          window.clearTimeout(restartTimeoutRef.current);
+        }
+
+        // Only restart if we haven't exceeded maxRestarts
+        if (restartCountRef.current !== null && restartCountRef.current < maxRestarts) {
+          const timeoutId = window.setTimeout(() => {
+            if (onRestart) onRestart();
+          }, 300);
+          
+          // Using non-null assertion here because we checked above
+          if (restartCountRef.current !== null) {
+            restartCountRef.current += 1;
+          }
+          
+          // Safely assign to current property only if it's writable
+          if (restartTimeoutRef && typeof restartTimeoutRef === 'object' && restartTimeoutRef.current !== null) {
+            // Use type assertion to handle the read-only property
+            (restartTimeoutRef as { current: number | null }).current = timeoutId;
+          }
+        } else {
+          setState({
+            ...state,
+            error: 'تعداد تلاش‌های مجدد به حداکثر رسید. لطفاً مجدد تلاش کنید.',
+            isStopped: true,
+          });
+          if (onError) onError('تعداد تلاش‌های مجدد به حداکثر رسید. لطفاً مجدد تلاش کنید.');
+        }
       }
     };
-    
-    // End handler with automatic restart
-    recognition.onend = (event: any) => {
-      originalEndHandler(event);
-      
-      // Automatically restart if still in listening mode
-      if (isListening) {
-        handleRecognitionRestart(500);
+
+    const handleResult = (event: RecognitionEvent) => {
+      let interimTranscript = '';
+      let finalTranscript = state.transcript || '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+          // Call callback with recognized text
+          if (onTextRecognized) onTextRecognized(transcript);
+        } else {
+          interimTranscript += transcript;
+        }
       }
+
+      setState({
+        ...state,
+        transcript: finalTranscript,
+        interimTranscript,
+      });
     };
-    
-  }, [isListening, recognitionRef, handleRecognitionError, handleRecognitionRestart]);
-  
-  // Cleanup function to remove any pending restart timers
-  const cleanupRestartTimers = () => {
-    if (restartTimeoutRef.current !== null) {
-      clearTimeout(restartTimeoutRef.current);
-      restartTimeoutRef.current = null;
-    }
-  };
-  
-  return { cleanupRestartTimers };
-}
+
+    const handleError = (event: RecognitionEvent) => {
+      const errorMessage = event.error || 'خطای نامشخص در تشخیص گفتار';
+      setState({
+        ...state,
+        error: errorMessage,
+        isRecording: false,
+        isStopped: true,
+      });
+      if (onError) onError(errorMessage);
+    };
+
+    recognition.onstart = handleStart;
+    recognition.onend = handleEnd;
+    recognition.onresult = handleResult;
+    recognition.onerror = handleError;
+
+    return () => {
+      recognition.onstart = null;
+      recognition.onend = null;
+      recognition.onresult = null;
+      recognition.onerror = null;
+    };
+  }, [recognition, state, setState, onTextRecognized, onError, onRestart, maxRestarts, restartTimeoutRef, restartCountRef]);
+};

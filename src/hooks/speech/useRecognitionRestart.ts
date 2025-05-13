@@ -1,49 +1,52 @@
 
-import { useCallback, RefObject } from "react";
+import { useRef, useCallback, RefObject } from 'react';
+import { RecognitionState } from './speech-recognition-types';
 
 interface UseRecognitionRestartProps {
-  isListening: boolean;
-  recognitionRef: RefObject<any>;
-  startListening: () => Promise<void>;
-  restartTimeoutRef: RefObject<number | null>;
+  recognition: SpeechRecognition | null;
+  state: RecognitionState;
+  setState: (state: RecognitionState) => void;
 }
 
-export function useRecognitionRestart({
-  isListening,
-  recognitionRef,
-  startListening,
-  restartTimeoutRef,
-}: UseRecognitionRestartProps) {
-  
-  // Restart recognition after error or end
-  const handleRecognitionRestart = useCallback((delay: number = 500) => {
-    if (!isListening) return;
+export const useRecognitionRestart = ({
+  recognition,
+  state,
+  setState,
+}: UseRecognitionRestartProps) => {
+  const restartTimeoutRef = useRef<number | null>(null);
+  const restartCountRef = useRef<number>(0);
 
-    console.log("Attempting to restart recognition");
-    
-    // Clear any existing restart timers
-    if (restartTimeoutRef.current !== null) {
-      clearTimeout(restartTimeoutRef.current);
-    }
-    
-    // Set a new restart timer
-    restartTimeoutRef.current = window.setTimeout(() => {
-      if (isListening) {
-        if (recognitionRef.current) {
-          try {
-            recognitionRef.current.start();
-          } catch (err) {
-            console.error("Couldn't restart recognition:", err);
-            // Try with a fresh instance
-            startListening().catch(err => console.error("Failed to restart:", err));
-          }
-        } else {
-          // If no recognition instance exists, create a new one
-          startListening().catch(err => console.error("Failed to restart:", err));
-        }
+  const handleRestart = useCallback(() => {
+    if (!recognition || state.isStopped) return;
+
+    try {
+      recognition.start();
+      setState({
+        ...state,
+        isRecording: true,
+        startTime: Date.now(),
+      });
+      
+      // Safely clear timeout reference
+      if (restartTimeoutRef.current) {
+        window.clearTimeout(restartTimeoutRef.current);
+        // Use type assertion to handle the read-only property
+        (restartTimeoutRef as { current: number | null }).current = null;
       }
-    }, delay) as unknown as number;
-  }, [isListening, recognitionRef, restartTimeoutRef, startListening]);
-  
-  return { handleRecognitionRestart };
-}
+    } catch (error) {
+      console.error('Error restarting recognition:', error);
+      setState({
+        ...state,
+        error: 'خطا در شروع مجدد تشخیص گفتار',
+        isRecording: false,
+        isStopped: true,
+      });
+    }
+  }, [recognition, state, setState]);
+
+  return {
+    handleRestart,
+    restartTimeoutRef: restartTimeoutRef as RefObject<number | null>,
+    restartCountRef,
+  };
+};

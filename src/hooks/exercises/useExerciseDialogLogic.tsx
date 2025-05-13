@@ -94,29 +94,39 @@ export function useExerciseDialogLogic({
         setTotalToSave(exercises.length);
         setSkippedExercises([]);
         let savedCount = 0;
+        let skipped: string[] = [];
         
-        for (let i = 0; i < exercises.length; i++) {
-          const exercise = exercises[i];
-          setCurrentSaveIndex(i);
+        // ایجاد یک آرایه از وعده‌ها برای ذخیره همزمان حرکت‌ها
+        const savePromises = exercises.map(async (exercise, i) => {
           try {
-            await new Promise(resolve => setTimeout(resolve, 1));
+            setCurrentSaveIndex(i);
+            // کمی تأخیر برای جلوگیری از مسدود شدن رابط کاربری
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
             await onSave({
               name: exercise,
               categoryId: formData.categoryId
             });
+            
             savedCount++;
+            return { success: true, exercise };
           } catch (error) {
             console.error(`خطا در ذخیره حرکت "${exercise}"`, error);
-            setSkippedExercises(prev => [...prev, exercise]);
-            continue;
+            skipped.push(exercise);
+            return { success: false, exercise };
           }
-        }
+        });
+        
+        // انتظار برای تکمیل همه وعده‌ها
+        await Promise.all(savePromises);
+        
+        setSkippedExercises(skipped);
 
         // نمایش خلاصه نتایج
-        if (skippedExercises.length > 0) {
+        if (skipped.length > 0) {
           toast({
             title: "هشدار",
-            description: `${toPersianNumbers(savedCount)} حرکت با موفقیت اضافه شد. ${toPersianNumbers(skippedExercises.length)} حرکت به دلیل تکراری بودن رد شد.`,
+            description: `${toPersianNumbers(savedCount)} حرکت با موفقیت اضافه شد. ${toPersianNumbers(skipped.length)} حرکت به دلیل تکراری بودن رد شد.`,
           });
         } else {
           toast({

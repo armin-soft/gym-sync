@@ -1,6 +1,5 @@
 
 import React, { useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
 
 interface TranscriptDisplayProps {
   transcript: string;
@@ -35,7 +34,7 @@ export const TranscriptDisplay = ({
         {transcript || interimTranscript ? (
           <>
             {transcript && transcript.split('\n').map((line, index) => (
-              <React.Fragment key={index}>
+              <React.Fragment key={`line-${index}`}>
                 <span className="text-foreground font-medium">{line}</span>
                 {index < transcript.split('\n').length - 1 && <br />}
               </React.Fragment>
