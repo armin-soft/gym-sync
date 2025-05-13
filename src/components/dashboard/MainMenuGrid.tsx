@@ -7,7 +7,6 @@ import {
   Dumbbell, 
   UtensilsCrossed, 
   Pill, 
-  ChartBar, 
   Database, 
   HelpCircle,
   ArrowRight,
@@ -55,14 +54,6 @@ export const MainMenuGrid = () => {
       color: "from-pink-600 to-pink-400",
       shadowColor: "shadow-pink-500/20",
       bgColor: "bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-900/20 dark:to-rose-900/20"
-    },
-    { 
-      title: "گزارشات", 
-      icon: ChartBar, 
-      href: '/Reports', 
-      color: "from-indigo-600 to-indigo-400",
-      shadowColor: "shadow-indigo-500/20",
-      bgColor: "bg-gradient-to-br from-indigo-50/80 to-blue-50/80 dark:from-indigo-900/20 dark:to-blue-900/20"
     },
     { 
       title: "پشتیبان‌گیری و بازیابی", 

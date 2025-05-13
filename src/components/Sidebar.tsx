@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -9,7 +8,6 @@ import {
   Dumbbell,
   UtensilsCrossed,
   Pill,
-  LineChart,
   Database,
   ChevronLeft,
   Menu
@@ -64,12 +62,6 @@ const sidebarItems = [
     description: "مدیریت مکمل‌های ورزشی",
     href: "/Supplements-Vitamins",
     icon: Pill,
-  },
-  {
-    title: "گزارشات",
-    description: "آمار و گزارش‌گیری",
-    href: "/Reports",
-    icon: LineChart,
   },
   {
     title: "پشتیبان‌گیری و بازیابی",
