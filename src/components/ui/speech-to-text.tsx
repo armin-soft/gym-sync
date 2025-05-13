@@ -32,13 +32,18 @@ export const SpeechToText = ({
     resetTranscript
   } = useSpeechRecognition({
     initialValue: value,
-    onTranscriptChange
+    onTranscriptChange,
+    lang: "fa-IR" // تأکید بر زبان فارسی
   });
 
-  // شروع و پایان ضبط صدا
+  // شروع و پایان ضبط صدا با مدیریت خطاها
   const toggleListening = async () => {
     if (isListening) {
       stopListening();
+      toast({
+        title: "ضبط صدا متوقف شد",
+        description: "متن گفتار شما ثبت شد.",
+      });
     } else {
       try {
         await startListening();
@@ -53,7 +58,7 @@ export const SpeechToText = ({
     }
   };
 
-  // پاک کردن متن
+  // پاک کردن متن با بازخورد به کاربر
   const clearTranscript = () => {
     resetTranscript();
     toast({
@@ -72,7 +77,7 @@ export const SpeechToText = ({
   };
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-2", className)} dir="rtl">
       <div className="relative w-full flex gap-2 items-center">
         <TranscriptDisplay 
           transcript={transcript}
@@ -91,6 +96,13 @@ export const SpeechToText = ({
       </div>
       
       <RecordingIndicator isRecording={isListening} />
+      
+      {/* راهنمای استفاده بهینه برای کاربر */}
+      {isListening && (
+        <div className="text-xs text-muted-foreground text-right mt-1 pr-1">
+          <p>برای دقت بیشتر، لطفاً واضح و با سرعت معمولی صحبت کنید.</p>
+        </div>
+      )}
     </div>
   );
 };

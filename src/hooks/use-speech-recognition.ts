@@ -75,20 +75,33 @@ export function useSpeechRecognition({
     }
   }, [toast]);
 
-  // راه‌اندازی و پیکربندی Web Speech API
+  // راه‌اندازی و پیکربندی Web Speech API با تنظیمات بهینه برای زبان فارسی
   const setupRecognition = useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return null;
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = true; // برای ضبط مداوم
+    
+    // تنظیمات بهینه برای تشخیص زبان فارسی
+    recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = lang;
-    recognition.maxAlternatives = 1;
-
+    recognition.maxAlternatives = 3; // افزایش گزینه‌های جایگزین برای دقت بیشتر
+    
+    // تنظیم دقت تشخیص
+    if ((recognition as any).audioThreshold !== undefined) {
+      (recognition as any).audioThreshold = 0.1; // حساسیت صدا (در صورت پشتیبانی)
+    }
+    
     // سازگاری بیشتر با مرورگرها
     if (navigator.userAgent.indexOf("Edge") !== -1) {
       recognition.continuous = false; // در Edge مداوم کار نمی‌کند
+    }
+    
+    // برای مرورگر سافاری تنظیمات خاص
+    if (navigator.userAgent.indexOf("Safari") !== -1 && 
+        navigator.userAgent.indexOf("Chrome") === -1) {
+      recognition.interimResults = false; // در برخی نسخه‌های سافاری نتایج میانی خوب کار نمی‌کند
     }
 
     recognition.onstart = () => {
@@ -113,7 +126,7 @@ export function useSpeechRecognition({
             if (isListening) {
               recognitionRef.current.start();
             }
-          }, 300);
+          }, 250); // زمان انتظار کوتاه‌تر برای شروع مجدد سریع‌تر
         } catch (err) {
           console.error("Couldn't restart recognition:", err);
         }
@@ -137,6 +150,14 @@ export function useSpeechRecognition({
           variant: "destructive",
         });
         setIsListening(false);
+      } else if (event.error === "network") {
+        // خطای شبکه در برخی مرورگرها
+        toast({
+          title: "خطای شبکه",
+          description: "مشکلی در ارتباط با سرویس تشخیص گفتار وجود دارد.",
+          variant: "destructive",
+        });
+        setIsListening(false);
       } else if (event.error !== "aborted") {
         // اگر خطا به دلیل قطع دستی نبود، پیام خطا نمایش داده شود
         toast({
@@ -148,21 +169,41 @@ export function useSpeechRecognition({
       }
     };
 
+    // بهبود الگوریتم پردازش نتایج
     recognition.onresult = (event: any) => {
       let interim = "";
       let final = transcript;
+      let bestConfidence = 0;
+      let bestTranscript = "";
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
+        // انتخاب بهترین تشخیص با بالاترین دقت از بین چند گزینه
+        for (let j = 0; j < event.results[i].length; j++) {
+          const currentTranscript = event.results[i][j].transcript;
+          const confidence = event.results[i][j].confidence;
+          
+          // یافتن تشخیص با بالاترین دقت
+          if (confidence > bestConfidence) {
+            bestConfidence = confidence;
+            bestTranscript = currentTranscript;
+          }
+        }
+        
+        // استفاده از بهترین تشخیص
         if (event.results[i].isFinal) {
-          final += " " + transcript;
+          final += " " + bestTranscript;
           // اصلاح کلمات فارسی متداول
           final = correctPersianWords(final);
         } else {
-          interim += transcript;
+          interim = bestTranscript;
         }
+        
+        // بازنشانی برای نتایج بعدی
+        bestConfidence = 0;
+        bestTranscript = "";
       }
 
+      // اعمال نتایج نهایی
       setTranscript(final.trim());
       onTranscriptChange(final.trim());
       setInterimTranscript(interim);

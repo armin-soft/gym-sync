@@ -20,12 +20,15 @@ export const TranscriptDisplay = ({
       className="flex-1 relative min-h-[45px] bg-white dark:bg-gray-950 border border-input rounded-md overflow-hidden"
       onKeyDown={onKeyDown}
       tabIndex={0}
+      dir="rtl"
     >
       <div className="absolute inset-0 p-3 overflow-y-auto whitespace-pre-wrap text-right">
         {transcript || interimTranscript ? (
           <>
-            <span className="text-foreground">{transcript}</span>
-            <span className="text-muted-foreground">{interimTranscript}</span>
+            <span className="text-foreground font-medium">{transcript}</span>
+            {interimTranscript && (
+              <span className="text-muted-foreground font-normal"> {interimTranscript}</span>
+            )}
           </>
         ) : (
           <span className="text-muted-foreground">{placeholder}</span>

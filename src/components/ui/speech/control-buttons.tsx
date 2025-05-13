@@ -30,9 +30,10 @@ export const ControlButtons = ({
         className={cn(
           "transition-all",
           isListening 
-            ? "bg-red-500 text-white hover:bg-red-600" 
+            ? "bg-red-500 text-white hover:bg-red-600 shadow-md" 
             : "bg-primary text-primary-foreground hover:bg-primary/90"
         )}
+        aria-label={isListening ? "توقف ضبط صدا" : "شروع ضبط صدا"}
       >
         <AnimatePresence mode="wait">
           {isListening ? (
@@ -49,7 +50,10 @@ export const ControlButtons = ({
             <motion.div
               key="mic"
               initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              animate={{ 
+                scale: 1,
+                transition: { duration: 0.2 }
+              }}
               exit={{ scale: 0 }}
               className="flex items-center justify-center"
             >
@@ -65,6 +69,8 @@ export const ControlButtons = ({
         variant="outline"
         onClick={onClearTranscript}
         disabled={!hasContent}
+        aria-label="پاک کردن متن"
+        className="hover:bg-gray-100 dark:hover:bg-gray-800"
       >
         <RefreshCw className="h-4 w-4" />
       </Button>
