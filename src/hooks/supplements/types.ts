@@ -1,33 +1,20 @@
 
-import type { Supplement, SupplementCategory } from "@/types/supplement";
-
 export type SupplementType = 'supplement' | 'vitamin';
 
-export interface SupplementsState {
-  supplements: Supplement[];
-  categories: SupplementCategory[];
+export interface UseSupplementsManagerReturn {
+  supplements: any[];
+  categories: any[];
   activeTab: SupplementType;
   selectedCategory: string;
   isLoading: boolean;
-}
-
-export interface SupplementsActions {
-  // Tab actions
+  filteredSupplements: any[];
+  relevantCategories: any[];
   setActiveTab: (tab: SupplementType) => void;
   setSelectedCategory: (category: string) => void;
-  
-  // Category actions
-  addCategory: (name: string) => SupplementCategory;
-  updateCategory: (categoryId: number, name: string) => void;
-  deleteCategory: (category: SupplementCategory) => void;
-  
-  // Supplement actions
-  addSupplement: (data: Omit<Supplement, "id" | "type">) => Supplement;
-  updateSupplement: (supplementId: number, data: Omit<Supplement, "id" | "type">) => void;
+  addCategory: () => void;
+  editCategory: (category: any) => void;
+  deleteCategory: (category: any) => void;
+  addSupplement: () => void;
+  editSupplement: (supplement: any) => void;
   deleteSupplement: (id: number) => void;
-}
-
-export interface UseSupplementsManagerReturn extends SupplementsState, SupplementsActions {
-  filteredSupplements: Supplement[];
-  relevantCategories: SupplementCategory[];
 }

@@ -1,16 +1,19 @@
 
-export interface SupplementCategory {
-  id: number;
-  name: string;
-  type: 'supplement' | 'vitamin';
-}
-
 export interface Supplement {
   id: number;
   name: string;
-  category: string;
   type: 'supplement' | 'vitamin';
   description?: string;
   dosage?: string;
-  timing?: string;
+  image?: string;
+  frequency?: string;
+  categoryId?: string;
+  createdAt?: string;
+}
+
+export interface SupplementCategory {
+  id: string;
+  name: string;
+  type: 'supplement' | 'vitamin';
+  description?: string;
 }

@@ -1,7 +1,7 @@
 
-import { useMemo } from "react";
-import type { Supplement, SupplementCategory } from "@/types/supplement";
-import type { SupplementType } from "./types";
+import { useMemo } from 'react';
+import type { Supplement, SupplementCategory } from '@/types/supplement';
+import type { SupplementType } from './types';
 
 export const useFilteredData = (
   supplements: Supplement[],
@@ -9,20 +9,26 @@ export const useFilteredData = (
   activeTab: SupplementType,
   selectedCategory: string
 ) => {
-  // Filter supplements by type and selected category
+  
+  // Filter supplements by active tab type and selected category
   const filteredSupplements = useMemo(() => {
-    let filtered = supplements.filter((s) => s.type === activeTab);
+    let filtered = supplements.filter(s => s.type === activeTab);
     
     if (selectedCategory) {
-      filtered = filtered.filter((s) => s.category === selectedCategory);
+      filtered = filtered.filter(s => s.categoryId === selectedCategory);
     }
     
-    return filtered;
+    // Sort by creation date, newest first
+    return [...filtered].sort((a, b) => {
+      const dateA = new Date(a.createdAt || '').getTime();
+      const dateB = new Date(b.createdAt || '').getTime();
+      return dateB - dateA;
+    });
   }, [supplements, activeTab, selectedCategory]);
 
-  // Categories related to the active tab
+  // Get categories relevant to the current tab
   const relevantCategories = useMemo(() => {
-    return categories.filter(c => c.type === activeTab);
+    return categories.filter(cat => cat.type === activeTab);
   }, [categories, activeTab]);
 
   return {

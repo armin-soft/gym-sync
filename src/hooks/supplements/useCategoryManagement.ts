@@ -1,8 +1,9 @@
 
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import type { Supplement, SupplementCategory } from "@/types/supplement";
-import type { SupplementType } from "./types";
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import type { Supplement, SupplementCategory } from '@/types/supplement';
+import { useToast } from '@/hooks/use-toast';
+import { SupplementType } from './types';
 
 export const useCategoryManagement = (
   supplements: Supplement[],
@@ -13,56 +14,70 @@ export const useCategoryManagement = (
 ) => {
   const { toast } = useToast();
 
-  // Category operations
-  const handleAddCategory = (name: string) => {
-    const newCategory: SupplementCategory = {
-      id: Math.max(0, ...categories.map((c) => c.id)) + 1,
-      name,
-      type: activeTab,
-    };
-    setCategories([...categories, newCategory]);
-    toast({
-      title: "افزودن دسته بندی",
-      description: "دسته بندی جدید با موفقیت اضافه شد",
-    });
-    return newCategory;
+  const addCategory = () => {
+    // Create a prompt or dialog to get the category name
+    const categoryName = prompt(`نام دسته جدید ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} را وارد کنید:`);
+    if (categoryName && categoryName.trim() !== '') {
+      const newCategory: SupplementCategory = {
+        id: uuidv4(),
+        name: categoryName.trim(),
+        type: activeTab
+      };
+      
+      setCategories(prev => [...prev, newCategory]);
+      
+      toast({
+        title: "دسته جدید اضافه شد",
+        description: `دسته «${categoryName}» با موفقیت اضافه شد`,
+      });
+    }
   };
 
-  const handleUpdateCategory = (categoryId: number, name: string) => {
-    const oldCategory = categories.find(c => c.id === categoryId);
-    if (!oldCategory) return;
+  const editCategory = (category: SupplementCategory) => {
+    const updatedName = prompt('نام جدید دسته را وارد کنید:', category.name);
     
-    const updatedCategories = categories.map((category) =>
-      category.id === categoryId ? { ...category, name } : category
-    );
-    setCategories(updatedCategories);
-    
-    const updatedSupplements = supplements.map((supplement) =>
-      supplement.category === oldCategory.name
-        ? { ...supplement, category: name }
-        : supplement
-    );
-    setSupplements(updatedSupplements);
-
-    toast({
-      title: "ویرایش دسته بندی",
-      description: "دسته بندی مورد نظر با موفقیت ویرایش شد",
-    });
+    if (updatedName && updatedName.trim() !== '' && updatedName !== category.name) {
+      setCategories(prev => prev.map(cat => 
+        cat.id === category.id ? { ...cat, name: updatedName } : cat
+      ));
+      
+      toast({
+        title: "دسته ویرایش شد",
+        description: `نام دسته به «${updatedName}» تغییر یافت`,
+      });
+    }
   };
 
-  const handleDeleteCategory = (category: SupplementCategory) => {
-    setCategories(categories.filter((c) => c.id !== category.id));
-    setSupplements(supplements.filter((s) => s.category !== category.name));
+  const deleteCategory = (category: SupplementCategory) => {
+    const supplementsInCategory = supplements.filter(s => s.categoryId === category.id);
+    
+    if (supplementsInCategory.length > 0) {
+      const confirmDelete = window.confirm(
+        `این دسته حاوی ${supplementsInCategory.length} مورد است. حذف دسته باعث می‌شود این موارد بدون دسته‌بندی شوند. آیا مطمئن هستید؟`
+      );
+      
+      if (!confirmDelete) return;
+
+      // Update supplements to remove the category reference
+      setSupplements(prev => prev.map(supp => 
+        supp.categoryId === category.id ? { ...supp, categoryId: "" } : supp
+      ));
+    } else {
+      const confirmDelete = window.confirm(`آیا از حذف دسته «${category.name}» اطمینان دارید؟`);
+      if (!confirmDelete) return;
+    }
+    
+    setCategories(prev => prev.filter(cat => cat.id !== category.id));
     
     toast({
-      title: "حذف دسته بندی",
-      description: "دسته بندی مورد نظر با موفقیت حذف شد",
+      title: "دسته حذف شد",
+      description: `دسته «${category.name}» با موفقیت حذف شد`,
     });
   };
 
   return {
-    addCategory: handleAddCategory,
-    updateCategory: handleUpdateCategory,
-    deleteCategory: handleDeleteCategory,
+    addCategory,
+    editCategory,
+    deleteCategory
   };
 };
