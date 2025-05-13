@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { SupplementList } from "@/components/supplements/list";
+import { SupplementList } from "@/components/supplements/SupplementList";
 import { Supplement } from "@/types/supplement";
 import { cn } from "@/lib/utils";
 
@@ -42,14 +42,10 @@ export const ContentBody = ({
       }}
     >
       <div className="h-full overflow-auto">
-        <SupplementList 
+        <SupplementList
           supplements={filteredSupplements}
-          categories={[]} // Pass empty array as we don't need categories here
-          onEditSupplement={onEdit}
-          onDeleteSupplement={onDelete}
-          type={filteredSupplements[0]?.type || 'supplement'}
-          selectedCategory=""
-          setSelectedCategory={() => {}}
+          onEdit={onEdit}
+          onDelete={onDelete}
           viewMode={viewMode}
         />
       </div>

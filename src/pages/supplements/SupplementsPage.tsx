@@ -1,121 +1,188 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { useSupplementsManager } from "@/hooks/useSupplementsManager";
 import { PageContainer } from "@/components/ui/page-container";
-import { PageHeader } from "@/components/ui/page-header";
-import { Pill, Beaker, Search, Plus } from "lucide-react";
-import { SupplementTabs } from "./components/supplement-tabs";
-import { SupplementContent } from "./components/supplement-content";
-import { useSupplementsManager } from "@/hooks/supplements";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SupplementsHeader } from "./components/SupplementsHeader";
+import { SupplementTabs } from "./components/SupplementTabs";
+import { SupplementDialog } from "@/components/supplements/SupplementDialog";
+import { CategoryDialog } from "@/components/supplements/CategoryDialog";
+import { useToast } from "@/hooks/use-toast";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
-const SupplementsPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  
-  // Use the supplements manager hook
+const SupplementsPage = () => {
+  const { toast } = useToast();
+  const deviceInfo = useDeviceInfo();
+  const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [editingSupplement, setEditingSupplement] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
+
+  // Use the custom hook for supplements management
   const {
     supplements,
     categories,
+    filteredSupplements,
+    relevantCategories,
     activeTab,
     selectedCategory,
     isLoading,
-    filteredSupplements,
-    relevantCategories,
+    
+    // Tab actions
     setActiveTab,
     setSelectedCategory,
+    
+    // Category actions
     addCategory,
-    editCategory,
+    updateCategory,
     deleteCategory,
+    
+    // Supplement actions
     addSupplement,
-    editSupplement,
-    deleteSupplement,
+    updateSupplement,
+    deleteSupplement
   } = useSupplementsManager();
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  // Category dialog handlers
+  const handleAddCategory = () => {
+    setEditingCategory(null);
+    setCategoryDialogOpen(true);
   };
 
-  const getFilteredSupplements = () => {
-    if (!searchTerm) return filteredSupplements;
-    
-    return filteredSupplements.filter(supp => 
-      supp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (supp.description && supp.description.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+  const handleEditCategory = (category) => {
+    setEditingCategory(category);
+    setCategoryDialogOpen(true);
   };
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value as 'supplement' | 'vitamin');
-    setSelectedCategory("");
+  // Supplement dialog handlers
+  const handleAddSupplement = () => {
+    if (relevantCategories.length === 0) {
+      toast({
+        title: `خطا در افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+        description: "لطفاً ابتدا یک دسته بندی ایجاد کنید",
+        variant: "destructive",
+      });
+      return;
+    }
+    setEditingSupplement(null);
+    setSupplementDialogOpen(true);
+  };
+
+  const handleEditSupplement = (supplement) => {
+    setEditingSupplement(supplement);
+    setSupplementDialogOpen(true);
+  };
+
+  // Process category form
+  const handleSubmitCategory = (name) => {
+    if (editingCategory) {
+      updateCategory(editingCategory.id, name);
+      toast({
+        title: "دسته بندی با موفقیت ویرایش شد",
+        variant: "default",
+      });
+    } else {
+      addCategory(name);
+      toast({
+        title: "دسته بندی جدید با موفقیت ایجاد شد",
+        variant: "default",
+      });
+    }
+    setCategoryDialogOpen(false);
+  };
+
+  // Process supplement form
+  const handleSubmitSupplement = (data) => {
+    if (editingSupplement) {
+      updateSupplement(editingSupplement.id, data);
+      toast({
+        title: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} با موفقیت ویرایش شد`,
+        variant: "default",
+      });
+    } else {
+      addSupplement(data);
+      toast({
+        title: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} جدید با موفقیت اضافه شد`,
+        variant: "default",
+      });
+    }
+    setSupplementDialogOpen(false);
+  };
+  
+  // Animation for page content
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
   };
 
   return (
-    <PageContainer>
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="h-full flex flex-col"
-      >
-        <PageHeader
-          title="مدیریت مکمل‌ها و ویتامین‌ها"
-          subtitle="در این بخش می‌توانید مکمل‌ها و ویتامین‌های موجود را مدیریت کنید"
-          icon={<Pill className="w-5 h-5 md:w-6 md:h-6" />}
+    <PageContainer 
+      className="mx-auto py-0 px-0 space-y-0 max-w-none min-h-screen"
+      fullWidth={true}
+      fullHeight={true}
+      withBackground={true}
+      noPadding={true}
+    >
+      <div className="relative w-full h-full flex flex-col overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
+        
+        <div className="flex-1 flex flex-col h-full overflow-hidden p-2 sm:p-3 md:p-4 lg:p-6">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-3 sm:space-y-4 md:space-y-6 h-full flex flex-col"
+          >
+            <SupplementsHeader />
+            
+            <div className="flex-1 overflow-hidden">
+              <SupplementTabs 
+                activeTab={activeTab}
+                onTabChange={(value) => {
+                  setActiveTab(value as 'supplement' | 'vitamin');
+                }}
+                isLoading={isLoading}
+                categories={relevantCategories}
+                onAddCategory={handleAddCategory}
+                onEditCategory={handleEditCategory}
+                onDeleteCategory={deleteCategory}
+                supplements={filteredSupplements}
+                onAddSupplement={handleAddSupplement}
+                onEditSupplement={handleEditSupplement}
+                onDeleteSupplement={deleteSupplement}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Dialogs */}
+        <SupplementDialog
+          open={supplementDialogOpen}
+          onOpenChange={setSupplementDialogOpen}
+          onSubmit={handleSubmitSupplement}
+          defaultValues={editingSupplement || undefined}
+          mode={editingSupplement ? "edit" : "add"}
+          categories={categories.filter(c => c.type === activeTab)}
+          type={activeTab}
         />
 
-        <div className="mt-4 mb-6 flex flex-wrap gap-4 items-center">
-          <div className="relative flex-1 min-w-[250px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="جستجوی مکمل یا ویتامین..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="pl-10 w-full"
-            />
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={() => addCategory()}
-              className="flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden xs:inline">افزودن دسته</span>
-            </Button>
-            
-            <Button 
-              variant="default"
-              size="sm"
-              onClick={() => addSupplement()}
-              className="flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden xs:inline">افزودن {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}</span>
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <SupplementTabs
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            isLoading={isLoading}
-            categories={categories}
-            onAddCategory={addCategory}
-            onEditCategory={editCategory}
-            onDeleteCategory={deleteCategory}
-            supplements={getFilteredSupplements()}
-            onAddSupplement={addSupplement}
-            onEditSupplement={editSupplement}
-            onDeleteSupplement={deleteSupplement}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-        </div>
-      </motion.div>
+        <CategoryDialog
+          open={categoryDialogOpen}
+          onOpenChange={setCategoryDialogOpen}
+          onSubmit={handleSubmitCategory}
+          defaultValue={editingCategory?.name}
+          mode={editingCategory ? "edit" : "add"}
+        />
+      </div>
     </PageContainer>
   );
 };
