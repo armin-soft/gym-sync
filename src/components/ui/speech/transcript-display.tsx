@@ -17,7 +17,7 @@ export const TranscriptDisplay = ({
 }: TranscriptDisplayProps) => {
   const transcriptRef = useRef<HTMLDivElement>(null);
   
-  // اضافه کردن اسکرول خودکار به پایین متن هنگام تغییر
+  // اسکرول خودکار به پایین متن هنگام تغییر
   useEffect(() => {
     if (transcriptRef.current) {
       transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
@@ -26,7 +26,7 @@ export const TranscriptDisplay = ({
 
   return (
     <div 
-      className="flex-1 relative min-h-[150px] bg-white dark:bg-gray-950 border border-input rounded-md overflow-hidden"
+      className="flex-1 relative min-h-[200px] bg-white dark:bg-gray-950 border border-input rounded-md overflow-hidden"
       onKeyDown={onKeyDown}
       tabIndex={0}
       dir="rtl"
@@ -37,7 +37,12 @@ export const TranscriptDisplay = ({
       >
         {transcript || interimTranscript ? (
           <>
-            <span className="text-foreground font-medium">{transcript}</span>
+            {transcript && transcript.split('\n').map((line, index) => (
+              <React.Fragment key={index}>
+                <span className="text-foreground font-medium">{line}</span>
+                {index < transcript.split('\n').length - 1 && <br />}
+              </React.Fragment>
+            ))}
             {interimTranscript && (
               <span className="text-muted-foreground font-normal"> {interimTranscript}</span>
             )}

@@ -17,6 +17,7 @@ export function useSpeechRecognition({
   const [isSupported, setIsSupported] = useState(true);
   const [interimTranscript, setInterimTranscript] = useState("");
   const recognitionRef = useRef<any>(null);
+  const restartTimeoutRef = useRef<number | null>(null);
   
   const { toast } = useToast();
   const { requestMicrophonePermission } = useMicrophonePermission();
@@ -52,6 +53,10 @@ export function useSpeechRecognition({
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      // پاکسازی تایمر در هنگام خروج از کامپوننت
+      if (restartTimeoutRef.current !== null) {
+        clearTimeout(restartTimeoutRef.current);
+      }
     };
   }, [toast]);
 
@@ -63,23 +68,37 @@ export function useSpeechRecognition({
     const hasPermission = await requestMicrophonePermission();
     if (!hasPermission) return;
 
-    if (!recognitionRef.current) {
-      recognitionRef.current = setupRecognition();
+    // توقف هر پردازش قبلی که ممکن است هنوز فعال باشد
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {
+        console.error("Error stopping previous recognition instance:", err);
+      }
+      recognitionRef.current = null;
     }
+
+    // ایجاد یک نمونه جدید
+    recognitionRef.current = setupRecognition();
     
     if (recognitionRef.current) {
       try {
         recognitionRef.current.start();
+        setIsListening(true);
         showRecordingStartedToast();
       } catch (err) {
         console.error("Error starting recognition:", err);
-        // در صورت بروز خطا، مجدداً راه‌اندازی کنید
-        recognitionRef.current = setupRecognition();
-        if (recognitionRef.current) {
-          setTimeout(() => {
+        // در صورت بروز خطا، مجدداً تلاش کنید
+        setTimeout(() => {
+          recognitionRef.current = setupRecognition();
+          try {
             recognitionRef.current.start();
-          }, 200);
-        }
+            setIsListening(true);
+          } catch (secondErr) {
+            console.error("Failed to restart recognition after error:", secondErr);
+            setIsListening(false);
+          }
+        }, 300);
       }
     }
   }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast]);
@@ -87,9 +106,19 @@ export function useSpeechRecognition({
   // توقف ضبط صدا
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {
+        console.error("Error stopping recognition:", err);
+      }
       setIsListening(false);
       showRecordingStoppedToast();
+    }
+    
+    // پاکسازی هر تایمری که برای راه‌اندازی مجدد تنظیم شده
+    if (restartTimeoutRef.current !== null) {
+      clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
     }
   }, [showRecordingStoppedToast]);
 
@@ -107,38 +136,57 @@ export function useSpeechRecognition({
     onTranscriptChange(newTranscript);
   }, [transcript, onTranscriptChange]);
   
-  // اضافه کردن مدیریت خطای بهتر
+  // مدیریت خطا و راه‌اندازی مجدد خودکار
   useEffect(() => {
-    if (recognitionRef.current) {
-      const originalErrorHandler = recognitionRef.current.onerror;
+    if (recognitionRef.current && isListening) {
+      const recognition = recognitionRef.current;
       
-      recognitionRef.current.onerror = (event: any) => {
+      // مدیریت خطا
+      const originalErrorHandler = recognition.onerror || (() => {});
+      recognition.onerror = (event: any) => {
         originalErrorHandler(event);
         handleRecognitionError(event.error);
+        
+        // در صورت بروز خطا و هنوز فعال بودن وضعیت ضبط، تلاش مجدد
+        if (isListening) {
+          console.log("Attempting to restart after error");
+          if (restartTimeoutRef.current !== null) {
+            clearTimeout(restartTimeoutRef.current);
+          }
+          restartTimeoutRef.current = window.setTimeout(() => {
+            if (isListening) {
+              startListening();
+            }
+          }, 1000) as unknown as number;
+        }
       };
       
-      // restart logic for continuous operation
-      const originalEndHandler = recognitionRef.current.onend;
-      
-      recognitionRef.current.onend = (event: any) => {
+      // مدیریت پایان تشخیص صدا
+      const originalEndHandler = recognition.onend || (() => {});
+      recognition.onend = (event: any) => {
         originalEndHandler(event);
         
-        // اگر کاربر هنوز خواستار ضبط است، دوباره آن را شروع کنید
-        if (isListening && recognitionRef.current) {
-          try {
-            console.log("Attempting to restart recognition automatically");
-            setTimeout(() => {
-              if (isListening) {
-                recognitionRef.current.start();
-              }
-            }, 250);
-          } catch (err) {
-            console.error("Couldn't restart recognition:", err);
+        // راه‌اندازی مجدد خودکار تنها اگر هنوز در حالت ضبط هستیم
+        if (isListening) {
+          console.log("Recognition ended, attempting to restart");
+          if (restartTimeoutRef.current !== null) {
+            clearTimeout(restartTimeoutRef.current);
           }
+          restartTimeoutRef.current = window.setTimeout(() => {
+            if (isListening && recognitionRef.current) {
+              try {
+                recognitionRef.current.start();
+              } catch (err) {
+                console.error("Couldn't restart recognition:", err);
+                // تلاش دوباره با یک نمونه جدید
+                startListening();
+              }
+            }
+          }, 500) as unknown as number;
         }
       };
     }
-  }, [isListening, handleRecognitionError]);
+  }, [isListening, startListening, handleRecognitionError]);
 
   return {
     transcript,

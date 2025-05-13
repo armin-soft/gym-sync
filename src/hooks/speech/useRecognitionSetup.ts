@@ -32,11 +32,6 @@ export function useRecognitionSetup({
     recognition.lang = lang;
     recognition.maxAlternatives = 3; // افزایش گزینه‌های جایگزین برای دقت بیشتر
     
-    // تنظیم دقت تشخیص
-    if ((recognition as any).audioThreshold !== undefined) {
-      (recognition as any).audioThreshold = 0.1; // حساسیت صدا (در صورت پشتیبانی)
-    }
-    
     // سازگاری بیشتر با مرورگرها
     if (navigator.userAgent.indexOf("Edge") !== -1) {
       recognition.continuous = false; // در Edge مداوم کار نمی‌کند
@@ -62,49 +57,49 @@ export function useRecognitionSetup({
       setIsListening(false);
     };
 
+    // کلمات کلیدی برای تشخیص خط جدید
+    const newLineKeywords = [
+      "حرکت بعدی", 
+      "حرکت جدید", 
+      "خط جدید", 
+      "بعدی", 
+      "جدید", 
+      "تمام شد",
+      "حرکت دیگر",
+      "بره خط بعد",
+      "برو خط بعد"
+    ];
+
     // بهبود الگوریتم پردازش نتایج
     recognition.onresult = (event: any) => {
       let interim = "";
       let final = transcript;
-      let bestConfidence = 0;
-      let bestTranscript = "";
-
+      
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        // انتخاب بهترین تشخیص با بالاترین دقت از بین چند گزینه
+        // یافتن بهترین تشخیص با بالاترین دقت
+        let bestConfidence = 0;
+        let bestTranscript = "";
+
         for (let j = 0; j < event.results[i].length; j++) {
           const currentTranscript = event.results[i][j].transcript;
           const confidence = event.results[i][j].confidence;
           
-          // یافتن تشخیص با بالاترین دقت
           if (confidence > bestConfidence) {
             bestConfidence = confidence;
             bestTranscript = currentTranscript;
           }
         }
         
-        // استفاده از بهترین تشخیص
         if (event.results[i].isFinal) {
           const processedText = bestTranscript.trim();
           
-          // تشخیص کلمات کلیدی برای اضافه کردن خط جدید
-          const newLineKeywords = [
-            "حرکت بعدی", 
-            "حرکت جدید", 
-            "خط جدید", 
-            "بعدی", 
-            "جدید", 
-            "تمام شد",
-            "حرکت دیگر",
-            "بره خط بعد",
-            "برو خط بعد"
-          ];
-          
+          // بررسی کلمات کلیدی برای خط جدید
           const hasNewLineCommand = newLineKeywords.some(keyword => 
             processedText.toLowerCase().includes(keyword.toLowerCase())
           );
           
           if (hasNewLineCommand) {
-            // افزودن یک خط جدید
+            // افزودن خط جدید و جلوگیری از افزودن متن کلمات کلیدی
             final += "\n";
             console.log("Added new line based on voice command");
           } else {
@@ -114,13 +109,15 @@ export function useRecognitionSetup({
           
           // اصلاح کلمات فارسی متداول
           final = correctPersianWords(final);
+          
+          // تمیز کردن فضاهای خالی اضافی
+          final = final.replace(/\s+/g, " ")
+                       .replace(/\n +/g, "\n")
+                       .replace(/\n+/g, "\n")
+                       .trim();
         } else {
           interim = bestTranscript;
         }
-        
-        // بازنشانی برای نتایج بعدی
-        bestConfidence = 0;
-        bestTranscript = "";
       }
 
       // اعمال نتایج نهایی

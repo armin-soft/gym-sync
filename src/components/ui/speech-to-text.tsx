@@ -1,5 +1,5 @@
 
-import React, { KeyboardEvent } from "react";
+import React, { KeyboardEvent, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useSpeechRecognition } from "@/hooks/speech";
@@ -63,27 +63,26 @@ export const SpeechToText = ({
   };
 
   // پاک کردن متن با بازخورد به کاربر
-  const clearTranscript = () => {
+  const clearTranscript = useCallback(() => {
     resetTranscript();
     toast({
       title: "پاک شد",
       description: "متن پاک شد."
     });
-  };
+  }, [resetTranscript, toast]);
 
   // اضافه کردن قابلیت اینتر برای رفتن به خط بعدی
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       addNewLine();
       
-      // نمایش نوتیفیکیشن برای اطلاع‌رسانی به کاربر
       toast({
         title: "خط جدید",
         description: "حرکت جدیدی اضافه شد.",
       });
     }
-  };
+  }, [addNewLine, toast]);
 
   return (
     <div className={cn("space-y-2", className)} dir="rtl">

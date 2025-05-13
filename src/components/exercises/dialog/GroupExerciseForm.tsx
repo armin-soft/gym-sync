@@ -26,7 +26,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
 }) => {
   const [showSpeech, setShowSpeech] = useState(false);
   
-  // اضافه کردن قابلیت اینتر برای رفتن به خط بعدی در حالت متنی نیز
+  // اضافه کردن قابلیت اینتر برای رفتن به خط بعدی در حالت متنی
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && e.ctrlKey) {
       e.preventDefault();
@@ -52,9 +52,9 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
         <Button
           type="button"
           size="sm" 
-          variant="ghost"
+          variant={showSpeech ? "default" : "ghost"}
           onClick={() => setShowSpeech(!showSpeech)}
-          className="text-xs h-8 flex items-center gap-1.5"
+          className={`text-xs h-8 flex items-center gap-1.5 ${showSpeech ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
         >
           <Mic className="h-3.5 w-3.5" />
           {showSpeech ? "حالت متنی" : "گفتار به نوشتار"}
@@ -66,8 +66,8 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
         <SpeechToText
           value={value}
           onTranscriptChange={onChange}
-          placeholder="برای افزودن حرکات با صدا، روی آیکون میکروفون کلیک کنید"
-          className="min-h-[200px]"
+          placeholder="برای افزودن حرکات با صدا، روی آیکون میکروفون کلیک کنید. برای افزودن حرکت جدید، کلید Enter را فشار دهید یا بگویید 'حرکت بعدی'"
+          className="min-h-[250px]"
           multiLine={true}
         />
       ) : (
@@ -83,7 +83,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
 نشر از جلو دمبل
 پرس سرشانه هالتر
 نشر از جانب"
-            className="min-h-[200px] focus-visible:ring-blue-400 text-right"
+            className="min-h-[250px] focus-visible:ring-blue-400 text-right"
             onChange={(e) => onChange(e.target.value)}
             dir="rtl"
             onKeyDown={handleKeyDown}
