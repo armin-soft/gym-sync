@@ -1,4 +1,3 @@
-
 // Service worker implementation
 // This is the main service worker file that will be compiled during build
 
@@ -8,14 +7,13 @@ const CACHE_NAME = 'app-cache-v4';
 
 // Files to cache - use relative paths that will work in any environment
 const getUrlsToCache = () => {
-  const basePath = BASE_PATH;
   return [
-    `${basePath}`,
-    `${basePath}index.html`,
-    `${basePath}Assets/Image/Logo.png`,
-    `${basePath}Manifest.json`, // Single Manifest.json at root
-    `${basePath}Assets/Script/index.js`,
-    `${basePath}Assets/Style/Menu.css`,
+    `${BASE_PATH}`,
+    `${BASE_PATH}index.html`,
+    `${BASE_PATH}Assets/Image/Logo.png`, // Fixed path to avoid duplication
+    `${BASE_PATH}Manifest.json`, // Single Manifest.json at root
+    `${BASE_PATH}Assets/Script/index.js`,
+    `${BASE_PATH}Assets/Style/Menu.css`,
   ];
 };
 

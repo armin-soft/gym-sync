@@ -41,14 +41,17 @@ export function getBasePath(): string {
 
 /**
  * Gets the full URL for an asset based on the base path
+ * Ensures we don't have duplicate path segments like "Assets/Assets"
  */
 export function getAssetPath(assetPath: string): string {
   const basePath = getBasePath();
   // Remove any leading slash from asset path to avoid double slashes
   const cleanAssetPath = assetPath.startsWith('/') ? assetPath.substring(1) : assetPath;
   
-  // Create a clean path by ensuring we don't have duplicate slashes
-  const cleanedPath = `${basePath}${cleanAssetPath}`.replace(/([^:])\/+/g, '$1/');
+  // Prevent duplication of 'Assets' in the path
+  let cleanedPath = `${basePath}${cleanAssetPath}`.replace(/([^:])\/+/g, '$1/');
+  // Fix potential duplication of "Assets/Assets" in the path
+  cleanedPath = cleanedPath.replace(/Assets\/Assets\//g, 'Assets/');
   
   // For debugging
   console.log(`Asset path resolved: ${cleanedPath} from ${basePath} and ${assetPath}`);

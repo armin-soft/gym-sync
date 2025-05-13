@@ -1,3 +1,4 @@
+
 // This is the service worker for the application
 // It handles caching and offline functionality
 
@@ -8,7 +9,7 @@ const STATIC_ASSETS = [
   './',
   './index.html',
   './Manifest.json',
-  './Assets/Image/Logo.png',
+  './Assets/Image/Logo.png', // Fixed path to avoid duplication
   './Assets/Script/index.js',
   './Assets/Style/Menu.css'
 ];
