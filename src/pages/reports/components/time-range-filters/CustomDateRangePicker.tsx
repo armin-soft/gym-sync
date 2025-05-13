@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -15,11 +14,25 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export const CustomDateRangePicker = () => {
+interface CustomDateRangePickerProps {
+  onDateRangeChange: (startDate: Date, endDate: Date) => void;
+}
+
+export const CustomDateRangePicker = ({ onDateRangeChange }: CustomDateRangePickerProps) => {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),
   });
+
+  // Handle date range changes
+  const handleDateChange = (newDate: DateRange | undefined) => {
+    setDate(newDate);
+    
+    // Only trigger parent callback when we have complete date range
+    if (newDate?.from && newDate?.to) {
+      onDateRangeChange(newDate.from, newDate.to);
+    }
+  };
 
   return (
     <motion.div 
@@ -60,7 +73,7 @@ export const CustomDateRangePicker = () => {
               mode="range"
               defaultMonth={date?.from}
               selected={date}
-              onSelect={setDate}
+              onSelect={handleDateChange}
               numberOfMonths={2}
               locale={faIR}
               classNames={{
