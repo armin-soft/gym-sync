@@ -11,7 +11,7 @@ interface FormActionsProps {
 
 export const FormActions = ({ isEdit, onCancel }: FormActionsProps) => {
   return (
-    <div className="flex justify-end gap-4 pt-4">
+    <motion.div className="flex justify-end gap-4 pt-4">
       <Button 
         type="button" 
         variant="outline" 
@@ -28,6 +28,6 @@ export const FormActions = ({ isEdit, onCancel }: FormActionsProps) => {
         <Save className="h-4 w-4" />
         {isEdit ? "ذخیره تغییرات" : "افزودن شاگرد"}
       </Button>
-    </div>
+    </motion.div>
   );
 };

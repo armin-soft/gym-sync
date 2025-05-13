@@ -1,51 +1,42 @@
 
 import React from "react";
-import { Coins } from "lucide-react";
-import { 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormControl, 
-  FormMessage 
-} from "@/components/ui/form";
+import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
-import { toPersianNumbers } from "@/lib/utils/numbers";
-import { formatPayment } from "@/utils/studentUtils";
+import { Label } from "@/components/ui/label";
+import { Coins } from "lucide-react";
 
 interface PaymentFieldProps {
-  control: any; // Using any as the control type is complex
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  itemVariants: any;
 }
 
-export const PaymentField = ({ control }: PaymentFieldProps) => {
+export const PaymentField = ({ 
+  value, 
+  onChange, 
+  error,
+  itemVariants 
+}: PaymentFieldProps) => {
   return (
-    <FormField
-      control={control}
-      name="payment"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel className="flex items-center gap-2">
-            <Coins className="h-4 w-4 text-indigo-500" />
-            <span>مبلغ (تومان)</span>
-          </FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              dir="ltr"
-              className="text-left bg-slate-50 dark:bg-slate-800/50 focus-visible:ring-indigo-400"
-              placeholder="۵۰۰,۰۰۰"
-              value={toPersianNumbers(formatPayment(field.value || ''))}
-              onChange={(e) => {
-                const value = e.target.value
-                  .replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
-                  .replace(/\D/g, '');
-                field.onChange(value);
-              }}
-            />
-          </FormControl>
-          <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان</p>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <motion.div variants={itemVariants}>
+      <div>
+        <Label className="flex items-center gap-2 mb-2">
+          <Coins className="h-4 w-4 text-indigo-500" />
+          <span>مبلغ (تومان)</span>
+        </Label>
+        <Input
+          dir="ltr"
+          className={`text-left ${error ? "border-red-500 focus-visible:ring-red-400" : "focus-visible:ring-indigo-400"} bg-slate-50 dark:bg-slate-800/50`}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="۵۰۰,۰۰۰"
+        />
+        {error && (
+          <p className="text-sm text-red-500 mt-1">{error}</p>
+        )}
+        <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان</p>
+      </div>
+    </motion.div>
   );
 };
