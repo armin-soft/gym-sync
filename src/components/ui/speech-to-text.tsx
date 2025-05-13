@@ -29,7 +29,8 @@ export const SpeechToText = ({
     interimTranscript,
     startListening,
     stopListening,
-    resetTranscript
+    resetTranscript,
+    addNewLine
   } = useSpeechRecognition({
     initialValue: value,
     onTranscriptChange,
@@ -71,8 +72,7 @@ export const SpeechToText = ({
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      const newValue = transcript + "\n";
-      onTranscriptChange(newValue);
+      addNewLine();
     }
   };
 

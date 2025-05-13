@@ -100,6 +100,13 @@ export function useSpeechRecognition({
     onTranscriptChange("");
   }, [onTranscriptChange]);
 
+  // اضافه کردن خط جدید به متن
+  const addNewLine = useCallback(() => {
+    const newTranscript = transcript + "\n";
+    setTranscript(newTranscript);
+    onTranscriptChange(newTranscript);
+  }, [transcript, onTranscriptChange]);
+  
   // اضافه کردن مدیریت خطای بهتر
   useEffect(() => {
     if (recognitionRef.current) {
@@ -140,7 +147,8 @@ export function useSpeechRecognition({
     interimTranscript,
     startListening,
     stopListening,
-    resetTranscript
+    resetTranscript,
+    addNewLine
   };
 }
 

@@ -13,12 +13,5 @@ export interface UseSpeechRecognitionReturn {
   startListening: () => Promise<void>;
   stopListening: () => void;
   resetTranscript: () => void;
-}
-
-// Web Speech API definitions
-declare global {
-  interface Window {
-    SpeechRecognition?: any;
-    webkitSpeechRecognition?: any;
-  }
+  addNewLine: () => void; // اضافه کردن متد جدید برای افزودن خط جدید
 }

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { SpeechToText } from "@/components/ui/speech-to-text";
-import { Mic, ArrowLeft } from "lucide-react";
+import { Mic, ArrowLeft, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface GroupExerciseFormProps {
@@ -65,7 +65,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
       {showSpeech ? (
         <>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
-            <ArrowLeft className="h-3.5 w-3.5 inline-block" />
+            <ArrowDown className="h-3.5 w-3.5 inline-block" />
             <span>برای اضافه کردن حرکت در خط جدید، دکمه Enter را فشار دهید</span>
           </div>
           <SpeechToText
@@ -78,7 +78,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
       ) : (
         <>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
-            <ArrowLeft className="h-3.5 w-3.5 inline-block" />
+            <ArrowDown className="h-3.5 w-3.5 inline-block" />
             <span>برای خط جدید از Ctrl+Enter استفاده کنید</span>
           </div>
           <Textarea
