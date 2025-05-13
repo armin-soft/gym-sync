@@ -84,7 +84,17 @@ export function useRecognitionSetup({
         
         // استفاده از بهترین تشخیص
         if (event.results[i].isFinal) {
-          final += " " + bestTranscript;
+          const processedText = bestTranscript.trim();
+          
+          // تشخیص کلمات کلیدی برای اضافه کردن خط جدید
+          if (processedText.includes("حرکت بعدی") || 
+              processedText.includes("حرکت جدید") ||
+              processedText.includes("خط جدید")) {
+            final += "\n";
+          } else {
+            final += " " + processedText;
+          }
+          
           // اصلاح کلمات فارسی متداول
           final = correctPersianWords(final);
         } else {

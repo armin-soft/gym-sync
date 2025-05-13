@@ -6,6 +6,7 @@ import { useSpeechRecognition } from "@/hooks/speech";
 import { TranscriptDisplay } from "@/components/ui/speech/transcript-display";
 import { ControlButtons } from "@/components/ui/speech/control-buttons";
 import { RecordingIndicator } from "@/components/ui/speech/recording-indicator";
+import { Enter } from "lucide-react";
 
 interface SpeechToTextProps {
   onTranscriptChange: (transcript: string) => void;
@@ -73,26 +74,39 @@ export const SpeechToText = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       addNewLine();
+      
+      // نمایش نوتیفیکیشن برای اطلاع‌رسانی به کاربر
+      toast({
+        title: "خط جدید",
+        description: "حرکت جدیدی اضافه شد.",
+      });
     }
   };
 
   return (
     <div className={cn("space-y-2", className)} dir="rtl">
-      <div className="relative w-full flex gap-2 items-center">
-        <TranscriptDisplay 
-          transcript={transcript}
-          interimTranscript={interimTranscript}
-          placeholder={placeholder}
-          onKeyDown={handleKeyDown}
-        />
+      <div className="relative w-full flex flex-col gap-2">
+        <div className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground">
+          <span>برای افزودن حرکت جدید، دکمه Enter را فشار دهید</span>
+          <Enter className="h-3.5 w-3.5 inline-block" />
+        </div>
         
-        <ControlButtons 
-          isListening={isListening}
-          isSupported={isSupported}
-          hasContent={!!(transcript || interimTranscript)}
-          onToggleListening={toggleListening}
-          onClearTranscript={clearTranscript}
-        />
+        <div className="flex w-full gap-2 items-start">
+          <TranscriptDisplay 
+            transcript={transcript}
+            interimTranscript={interimTranscript}
+            placeholder={placeholder}
+            onKeyDown={handleKeyDown}
+          />
+          
+          <ControlButtons 
+            isListening={isListening}
+            isSupported={isSupported}
+            hasContent={!!(transcript || interimTranscript)}
+            onToggleListening={toggleListening}
+            onClearTranscript={clearTranscript}
+          />
+        </div>
       </div>
       
       <RecordingIndicator isRecording={isListening} />
@@ -101,7 +115,7 @@ export const SpeechToText = ({
       {isListening && (
         <div className="text-xs text-muted-foreground text-right mt-1 pr-1">
           <p>برای دقت بیشتر، لطفاً واضح و با سرعت معمولی صحبت کنید.</p>
-          <p className="mt-1">برای اضافه کردن حرکت جدید در خط جدید، دکمه Enter را فشار دهید.</p>
+          <p className="mt-1">برای اضافه کردن حرکت جدید، دکمه Enter را فشار دهید یا عبارت "حرکت بعدی" را بگویید.</p>
         </div>
       )}
     </div>
