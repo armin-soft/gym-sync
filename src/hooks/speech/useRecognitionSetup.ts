@@ -1,5 +1,6 @@
 
 import { useCallback } from "react";
+import { correctPersianWords } from "@/utils/persian-word-correction";
 
 interface UseRecognitionSetupProps {
   transcript: string;
@@ -8,7 +9,6 @@ interface UseRecognitionSetupProps {
   setInterimTranscript: (interim: string) => void;
   setIsListening: (isListening: boolean) => void;
   lang: string;
-  correctPersianWords: (text: string) => string;
   multiLine?: boolean;
 }
 
@@ -19,7 +19,7 @@ export function useRecognitionSetup({
   setInterimTranscript,
   setIsListening,
   lang,
-  correctPersianWords,
+  multiLine = false,
 }: UseRecognitionSetupProps) {
   return useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -93,6 +93,11 @@ export function useRecognitionSetup({
                        .replace(/\n +/g, "\n")
                        .replace(/\n+/g, "\n")
                        .trim();
+                       
+          // Handle multi-line formatting
+          if (!multiLine) {
+            final = final.replace(/\n/g, " ");
+          }
         } else {
           interim = bestTranscript;
         }
@@ -105,5 +110,5 @@ export function useRecognitionSetup({
     };
 
     return recognition;
-  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, correctPersianWords]);
+  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, multiLine]);
 }

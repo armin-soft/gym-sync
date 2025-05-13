@@ -1,4 +1,6 @@
 
+import { RefObject, MutableRefObject } from 'react';
+
 export interface UseSpeechRecognitionProps {
   lang?: string;
   onTranscriptChange: (transcript: string) => void;
@@ -32,8 +34,46 @@ export interface RecognitionEvent extends Event {
   error?: string;
 }
 
+export interface UseRecognitionRestartProps {
+  recognition: any;
+  state: RecognitionState;
+  setState: (state: RecognitionState) => void;
+}
+
+export interface UseRecognitionEventHandlersProps {
+  recognition: any;
+  state: RecognitionState;
+  setState: (state: RecognitionState) => void;
+  onTextRecognized?: (text: string) => void;
+  onError?: (error: string) => void;
+  onRestart?: () => void;
+  restartTimeoutRef: RefObject<number | null>;
+  maxRestarts?: number;
+  restartCountRef: RefObject<number>;
+}
+
+// Define the SpeechRecognitionResult interface
+export interface SpeechRecognitionResult {
+  readonly isFinal: boolean;
+  readonly length: number;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+// Define the SpeechRecognitionAlternative interface
+export interface SpeechRecognitionAlternative {
+  readonly transcript: string;
+  readonly confidence: number;
+}
+
+// Define the SpeechRecognitionResultList interface
+export interface SpeechRecognitionResultList {
+  readonly length: number;
+  [index: number]: SpeechRecognitionResult;
+  item(index: number): SpeechRecognitionResult;
+}
+
 // Define the SpeechRecognition interface
-interface SpeechRecognition extends EventTarget {
+export interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
@@ -55,7 +95,7 @@ interface SpeechRecognition extends EventTarget {
 }
 
 // Define the SpeechRecognition constructor
-interface SpeechRecognitionConstructor {
+export interface SpeechRecognitionConstructor {
   new (): SpeechRecognition;
   prototype: SpeechRecognition;
 }

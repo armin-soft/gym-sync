@@ -107,11 +107,3 @@ export const SpeechToText = ({
 };
 
 export default SpeechToText;
-
-// گسترش اینترفیس Window برای تعریف SpeechRecognition
-declare global {
-  interface Window {
-    SpeechRecognition?: any;
-    webkitSpeechRecognition?: any;
-  }
-}

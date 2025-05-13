@@ -1,18 +1,7 @@
 
-import { RefObject, useEffect, MutableRefObject } from 'react';
-import { RecognitionEvent, RecognitionState } from './speech-recognition-types';
-
-interface UseRecognitionEventHandlersProps {
-  recognition: any;
-  state: RecognitionState;
-  setState: (state: RecognitionState) => void;
-  onTextRecognized?: (text: string) => void;
-  onError?: (error: string) => void;
-  onRestart?: () => void;
-  restartTimeoutRef: RefObject<number | null>;
-  maxRestarts?: number;
-  restartCountRef: RefObject<number>;
-}
+import { useEffect } from 'react';
+import { UseRecognitionEventHandlersProps, RecognitionEvent } from './speech-recognition-types';
+import { MutableRefObject } from 'react';
 
 export const useRecognitionEventHandlers = ({
   recognition,
@@ -35,8 +24,8 @@ export const useRecognitionEventHandlers = ({
     const handleEnd = () => {
       // Reset restartCount if we've been recording for a while
       if (state.isRecording && Date.now() - state.startTime > 10000) {
-        if (restartCountRef.current) {
-          // Use non-null assertion to safely update the ref
+        if (restartCountRef && typeof restartCountRef === 'object' && 'current' in restartCountRef) {
+          // Use mutable ref to update the value
           (restartCountRef as MutableRefObject<number>).current = 0;
         }
       }
@@ -50,18 +39,21 @@ export const useRecognitionEventHandlers = ({
         }
 
         // Only restart if we haven't exceeded maxRestarts
-        if (restartCountRef.current !== null && restartCountRef.current < maxRestarts) {
+        const currentRestartCount = restartCountRef && typeof restartCountRef === 'object' && 'current' in restartCountRef 
+          ? (restartCountRef as MutableRefObject<number>).current
+          : 0;
+          
+        if (currentRestartCount < maxRestarts) {
           const timeoutId = window.setTimeout(() => {
             if (onRestart) onRestart();
           }, 300);
           
-          // Using non-null assertion here because we checked above
-          if (restartCountRef.current !== null) {
-            // Safe update using mutable ref
+          // Safely increment restart count
+          if (restartCountRef && typeof restartCountRef === 'object' && 'current' in restartCountRef) {
             (restartCountRef as MutableRefObject<number>).current += 1;
           }
           
-          // Safely assign to timeoutRef
+          // Update timeout ref if possible
           if (restartTimeoutRef && typeof restartTimeoutRef === 'object' && 'current' in restartTimeoutRef) {
             (restartTimeoutRef as MutableRefObject<number | null>).current = timeoutId;
           }

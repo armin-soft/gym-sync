@@ -1,14 +1,9 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { correctPersianWords } from "@/utils/persian-word-correction";
-import { UseSpeechRecognitionProps, UseSpeechRecognitionReturn, RecognitionState } from "./speech-recognition-types";
-import { useMicrophonePermission } from "./useMicrophonePermission";
+import { useCallback } from "react";
+import { UseSpeechRecognitionProps, UseSpeechRecognitionReturn } from "./speech-recognition-types";
+import { useRecognitionCore } from "./useRecognitionCore";
+import { useTranscriptManagement } from "./useTranscriptManagement";
 import { useRecognitionSetup } from "./useRecognitionSetup";
-import { useSpeechRecognitionErrors } from "./useSpeechRecognitionErrors";
-import { useRecognitionRestart } from "./useRecognitionRestart";
-import { useRecognitionEventHandlers } from "./useRecognitionEventHandlers";
-import { useBrowserSupport } from "./useBrowserSupport";
 
 export function useSpeechRecognition({
   lang = "fa-IR",
@@ -16,29 +11,36 @@ export function useSpeechRecognition({
   initialValue = "",
   multiLine = false,
 }: UseSpeechRecognitionProps): UseSpeechRecognitionReturn {
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState(initialValue);
-  const [isSupported, setIsSupported] = useState(true);
-  const [interimTranscript, setInterimTranscript] = useState("");
-  const recognitionRef = useRef<any>(null);
-  const restartTimeoutRef = useRef<number | null>(null);
-  const restartCountRef = useRef<number>(0);
+  // Use core recognition hooks
+  const {
+    isListening,
+    setIsListening,
+    isSupported,
+    recognitionRef,
+    recognitionState,
+    setRecognitionState,
+    restartTimeoutRef,
+    restartCountRef,
+    handleRestart,
+    requestMicrophonePermission,
+    showRecordingStartedToast,
+    showRecordingStoppedToast,
+    toast
+  } = useRecognitionCore();
   
-  // Initialize a state object to match the RecognitionState type
-  const [recognitionState, setRecognitionState] = useState<RecognitionState>({
-    transcript: initialValue,
-    interimTranscript: "",
-    isRecording: false,
-    isStopped: false,
-    autoRestart: true,
-    error: "",
-    startTime: 0
+  // Manage transcript state
+  const {
+    transcript,
+    interimTranscript,
+    setTranscript,
+    setInterimTranscript,
+    resetTranscript,
+    updateTranscript
+  } = useTranscriptManagement({
+    initialValue,
+    onTranscriptChange,
+    multiLine
   });
-  
-  const { toast } = useToast();
-  const { requestMicrophonePermission } = useMicrophonePermission();
-  const { showRecordingStartedToast, showRecordingStoppedToast } = useSpeechRecognitionErrors();
-  const { checkBrowserSupport } = useBrowserSupport();
   
   // Set up recognition instance with all needed config
   const setupRecognition = useRecognitionSetup({
@@ -48,22 +50,9 @@ export function useSpeechRecognition({
     setInterimTranscript,
     setIsListening,
     lang,
-    correctPersianWords,
     multiLine
   });
-
-  // Configure restart functionality
-  const { handleRestart } = useRecognitionRestart({
-    recognition: recognitionRef.current,
-    state: recognitionState,
-    setState: setRecognitionState
-  });
-
-  // Helper function for restarting recognition
-  const handleRecognitionRestart = useCallback(() => {
-    handleRestart();
-  }, [handleRestart]);
-
+  
   // Start listening function
   const startListening = useCallback(async () => {
     if (!isSupported) return Promise.reject("عدم پشتیبانی مرورگر");
@@ -115,7 +104,7 @@ export function useSpeechRecognition({
       }
     }
     return Promise.reject("خطای ناشناخته");
-  }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast, recognitionState]);
+  }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast, recognitionState, recognitionRef, setIsListening, setRecognitionState]);
 
   // Stop listening function
   const stopListening = useCallback(() => {
@@ -139,54 +128,7 @@ export function useSpeechRecognition({
       clearTimeout(restartTimeoutRef.current);
       restartTimeoutRef.current = null;
     }
-  }, [showRecordingStoppedToast, recognitionState]);
-
-  // Reset transcript function
-  const resetTranscript = useCallback(() => {
-    setTranscript("");
-    setInterimTranscript("");
-    onTranscriptChange("");
-  }, [onTranscriptChange]);
-  
-  // Set up event handlers
-  const eventHandlers = useRecognitionEventHandlers({
-    recognition: recognitionRef.current,
-    state: recognitionState,
-    setState: setRecognitionState,
-    onTextRecognized: (text) => {
-      const newTranscript = transcript + text;
-      setTranscript(newTranscript);
-      onTranscriptChange(newTranscript);
-    },
-    onError: (errorMsg) => {
-      toast({
-        title: "خطا",
-        description: errorMsg,
-        variant: "destructive",
-      });
-    },
-    onRestart: handleRecognitionRestart,
-    restartTimeoutRef,
-    restartCountRef
-  });
-
-  // Check browser support on mount
-  useEffect(() => {
-    const isSupportedByBrowser = checkBrowserSupport();
-    setIsSupported(isSupportedByBrowser);
-    
-    return () => {
-      // Stop recognition when unmounting
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      
-      // Clean up any timers
-      if (eventHandlers?.cleanupRestartTimers) {
-        eventHandlers.cleanupRestartTimers();
-      }
-    };
-  }, [toast, checkBrowserSupport, eventHandlers]);
+  }, [showRecordingStoppedToast, recognitionState, recognitionRef, setIsListening, setRecognitionState, restartTimeoutRef]);
 
   return {
     transcript,

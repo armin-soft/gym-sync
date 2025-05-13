@@ -1,54 +1,67 @@
 
-import React from "react";
+import { useState } from "react";
+import ReportsHeader from "./components/reports-header";
 import { ReportsLayout } from "./components/reports-layout";
-import { ReportsHeader } from "./components/reports-header";
-import { ReportsMain } from "./components/reports-content";
-import { useReportsData } from "@/hooks/reports";
 import { ReportsLoading } from "./components/loading";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useReportsUI } from "./components/hooks";
+import { ReportsMain } from "./components/reports-content";
 
 const Reports = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  
   const {
+    loading,
+    timeRange,
+    setTimeRange,
+    dashboardType,
+    setDashboardType,
     monthlyData,
     expandedData,
-    isLoading,
-    isRefreshing,
-    timeRange,
-    filtersOpen,
-    setTimeRange,
-    handleRefresh,
-    toggleFilters,
-    closeFilters
-  } = useReportsData();
-  
-  const deviceInfo = useDeviceInfo();
-  
-  // Mock data for current and previous month
-  const currentMonth = expandedData && expandedData.length > 0 ? 
-    expandedData[expandedData.length - 1] : null;
-  const previousMonth = expandedData && expandedData.length > 1 ?
-    expandedData[expandedData.length - 2] : null;
+    currentMonth,
+    previousMonth,
+    refreshData
+  } = useReportsUI();
+
+  // Handle refresh button click
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refreshData();
+    setIsRefreshing(false);
+  };
+
+  // Toggle filters panel
+  const toggleFilters = () => {
+    setFiltersOpen(!filtersOpen);
+  };
+
+  if (loading) {
+    return <ReportsLoading />;
+  }
 
   return (
     <ReportsLayout>
-      {isLoading ? (
-        <ReportsLoading />
-      ) : (
-        <ReportsMain
-          currentMonth={currentMonth}
-          previousMonth={previousMonth}
-          monthlyData={monthlyData}
-          expandedData={expandedData}
-          timeRange={timeRange}
-          isRefreshing={isRefreshing}
-          filtersOpen={filtersOpen}
-          handleRefresh={handleRefresh}
-          toggleFilters={toggleFilters}
-          closeFilters={closeFilters}
-          setTimeRange={setTimeRange}
-          deviceInfo={deviceInfo}
-        />
-      )}
+      <ReportsHeader
+        timeRange={timeRange}
+        onTimeRangeChange={setTimeRange}
+        dashboardType={dashboardType}
+        onDashboardTypeChange={setDashboardType}
+        onRefresh={handleRefresh}
+        isRefreshing={isRefreshing}
+        onToggleFilters={toggleFilters}
+      />
+      
+      <ReportsMain
+        currentMonth={currentMonth}
+        previousMonth={previousMonth}
+        dashboardType={dashboardType}
+        timeRange={timeRange}
+        monthlyData={monthlyData}
+        expandedData={expandedData}
+        isRefreshing={isRefreshing}
+        filtersOpen={filtersOpen}
+        onToggleFilters={toggleFilters}
+      />
     </ReportsLayout>
   );
 };
