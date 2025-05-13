@@ -33,16 +33,10 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
   onRepsChange
 }) => {
   return (
-    <motion.div 
-      whileHover={{ scale: isSelected ? 1 : 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className={cn(
-        "flex flex-col transition-all duration-300 overflow-hidden",
-        isSelected 
-          ? "ring-2 ring-indigo-500 dark:ring-indigo-400 rounded-lg shadow-[0_0_15px_rgba(79,70,229,0.2)]" 
-          : "hover:shadow-md"
-      )}
-    >
+    <div className={cn(
+      "flex flex-col transition-all duration-300",
+      isSelected ? "ring-2 ring-primary ring-offset-2" : "hover:shadow-md"
+    )}>
       <ExerciseCard
         exercise={exercise}
         category={category}
@@ -53,20 +47,20 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
       
       {isSelected && (
         <motion.div 
-          className="flex flex-col gap-3 px-4 py-3 bg-gradient-to-b from-white to-indigo-50/20 dark:from-gray-900 dark:to-indigo-900/5 border-t border-indigo-100 dark:border-indigo-900/30 rounded-b-lg"
+          className="flex flex-col gap-3 px-4 py-3 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-t border-gray-100 dark:border-gray-800 rounded-b-lg"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="text-xs font-medium text-indigo-700 dark:text-indigo-400 mb-2">
+          <div className="text-xs text-muted-foreground mb-2 font-medium">
             جزئیات تمرین
           </div>
           
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/50 rounded-full">
-                <Dumbbell className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+            <div className="flex items-center gap-1.5">
+              <div className="p-1 bg-primary/10 rounded-full">
+                <Dumbbell className="h-3.5 w-3.5 text-primary" />
               </div>
               <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                 تعداد ست:
@@ -84,9 +78,9 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
           
           {onRepsChange && (
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/50 rounded-full">
-                  <BarChart className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+              <div className="flex items-center gap-1.5">
+                <div className="p-1 bg-primary/10 rounded-full">
+                  <BarChart className="h-3.5 w-3.5 text-primary" />
                 </div>
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                   تکرار هر ست:
@@ -100,19 +94,8 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
               />
             </div>
           )}
-          
-          <motion.div 
-            className="mt-1 pt-2 border-t border-indigo-100/50 dark:border-indigo-900/20 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="text-[10px] text-indigo-600/70 dark:text-indigo-400/70">
-              {toPersianNumbers(sets)} ست × {reps} تکرار
-            </div>
-          </motion.div>
         </motion.div>
       )}
-    </motion.div>
+    </div>
   );
 };
