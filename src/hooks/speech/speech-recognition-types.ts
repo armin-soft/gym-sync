@@ -3,6 +3,7 @@ export interface UseSpeechRecognitionProps {
   lang?: string;
   onTranscriptChange: (transcript: string) => void;
   initialValue?: string;
+  multiLine?: boolean;
 }
 
 export interface UseSpeechRecognitionReturn {
