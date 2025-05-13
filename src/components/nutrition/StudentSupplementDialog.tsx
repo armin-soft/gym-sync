@@ -71,26 +71,9 @@ export function StudentSupplementDialog({
     });
   };
 
-  // Calculate dialog dimensions based on device
-  const getDialogWidth = () => {
-    if (deviceInfo.isMobile) return "w-[100vw]";
-    else if (deviceInfo.isTablet) return "w-[90vw]";
-    else if (deviceInfo.isSmallLaptop) return "w-[85vw]";
-    else return "w-[80vw]";
-  };
-
-  const getDialogHeight = () => {
-    return deviceInfo.isMobile ? "h-[100vh]" : "h-[90vh]";
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn(
-        "p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0",
-        deviceInfo.isMobile ? "rounded-none shadow-none max-w-[100vw]" : "rounded-xl shadow-xl",
-        getDialogWidth(),
-        getDialogHeight()
-      )} dir="rtl">
+      <DialogContent className="max-w-[100vw] p-0 m-0 h-[100vh] w-[100vw] rounded-none border-none overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 flex flex-col" dir="rtl">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "supplements" | "vitamins")} className="flex flex-col h-full w-full">
           {/* Header */}
           <div className={cn(
