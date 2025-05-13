@@ -2,11 +2,13 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Grid3X3, ListOrdered, Plus, ArrowLeft } from "lucide-react";
+import { Grid3X3, ListOrdered, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseHeaderProps {
   exerciseCount: number;
+  selectedExerciseIds: number[];
+  onDeleteClick: () => void;
   onAddExercise: () => void;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
@@ -14,6 +16,8 @@ interface ExerciseHeaderProps {
 
 const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
   exerciseCount,
+  selectedExerciseIds,
+  onDeleteClick,
   onAddExercise,
   viewMode,
   setViewMode
@@ -24,6 +28,18 @@ const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
         <h3 className="text-lg font-semibold">
           حرکات تمرینی ({toPersianNumbers(exerciseCount)})
         </h3>
+        
+        {selectedExerciseIds.length > 0 && (
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={onDeleteClick}
+            className="mr-2"
+          >
+            <Trash2 className="h-4 w-4 ml-2" />
+            حذف ({toPersianNumbers(selectedExerciseIds.length)})
+          </Button>
+        )}
       </div>
       
       <div className="flex items-center gap-2">
