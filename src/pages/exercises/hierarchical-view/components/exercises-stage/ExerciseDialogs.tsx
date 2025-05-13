@@ -1,0 +1,68 @@
+
+import React from "react";
+import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+
+interface ExerciseDialogsProps {
+  isAddDialogOpen: boolean;
+  setIsAddDialogOpen: (open: boolean) => void;
+  selectedExercise?: Exercise;
+  categories: ExerciseCategory[];
+  formData: { name: string; categoryId: number };
+  setFormData: (data: { name: string; categoryId: number }) => void;
+  onSave: (data: { name: string; categoryId: number }) => Promise<void>;
+  isDeleteDialogOpen: boolean;
+  setIsDeleteDialogOpen: (open: boolean) => void;
+  onDelete: () => void;
+  selectedExerciseIds: number[];
+}
+
+const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
+  isAddDialogOpen,
+  setIsAddDialogOpen,
+  selectedExercise,
+  categories,
+  formData,
+  setFormData,
+  onSave,
+  isDeleteDialogOpen,
+  setIsDeleteDialogOpen,
+  onDelete,
+  selectedExerciseIds
+}) => {
+  return (
+    <>
+      {/* Add/Edit Exercise Dialog */}
+      <ExerciseDialog 
+        isOpen={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        selectedExercise={selectedExercise}
+        categories={categories}
+        formData={formData}
+        onFormChange={setFormData}
+        onSave={onSave}
+        isEditing={!!selectedExercise}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={onDelete}
+        title="حذف حرکت"
+        description={
+          selectedExerciseIds.length > 1
+            ? `آیا از حذف ${toPersianNumbers(selectedExerciseIds.length)} حرکت انتخاب شده اطمینان دارید؟`
+            : "آیا از حذف این حرکت اطمینان دارید؟"
+        }
+        confirmText="حذف"
+        cancelText="انصراف"
+        variant="destructive"
+      />
+    </>
+  );
+};
+
+export default ExerciseDialogs;

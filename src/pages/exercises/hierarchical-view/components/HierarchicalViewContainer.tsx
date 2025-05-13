@@ -5,7 +5,7 @@ import { useHierarchicalView } from "../hooks/useHierarchicalView";
 import { ContentStages } from "./ContentStages";
 import TypeSelectionStage from "./TypeSelectionStage";
 import CategoriesStage from "./CategoriesStage";
-import ExercisesStage from "./ExercisesStage";
+import ExercisesStage from "./exercises-stage";
 import { PageContainer } from "@/components/ui/page-container";
 
 interface HierarchicalViewContainerProps {
