@@ -1,13 +1,28 @@
 
 import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export const ReportsLoading = () => {
+export function ReportsLoading() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center">
-      <div className="flex flex-col items-center">
-        <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-        <p className="mt-4 text-muted-foreground">در حال بارگذاری گزارشات...</p>
+    <div className="space-y-6">
+      {/* Header skeleton */}
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-10 w-40" />
+        <Skeleton className="h-10 w-56" />
+      </div>
+      
+      {/* Stats cards skeleton */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Skeleton key={`stat-${index}`} className="h-32 rounded-lg" />
+        ))}
+      </div>
+      
+      {/* Tabs skeleton */}
+      <div className="space-y-4">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-80 w-full rounded-lg" />
       </div>
     </div>
   );
-};
+}

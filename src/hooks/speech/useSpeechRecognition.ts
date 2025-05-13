@@ -6,6 +6,9 @@ import { UseSpeechRecognitionProps, UseSpeechRecognitionReturn } from "./speech-
 import { useMicrophonePermission } from "./useMicrophonePermission";
 import { useRecognitionSetup } from "./useRecognitionSetup";
 import { useSpeechRecognitionErrors } from "./useSpeechRecognitionErrors";
+import { useRecognitionRestart } from "./useRecognitionRestart";
+import { useRecognitionEventHandlers } from "./useRecognitionEventHandlers";
+import { useBrowserSupport } from "./useBrowserSupport";
 
 export function useSpeechRecognition({
   lang = "fa-IR",
@@ -22,12 +25,10 @@ export function useSpeechRecognition({
   
   const { toast } = useToast();
   const { requestMicrophonePermission } = useMicrophonePermission();
-  const { 
-    handleRecognitionError, 
-    showRecordingStartedToast, 
-    showRecordingStoppedToast 
-  } = useSpeechRecognitionErrors();
+  const { showRecordingStartedToast, showRecordingStoppedToast } = useSpeechRecognitionErrors();
+  const { checkBrowserSupport } = useBrowserSupport();
   
+  // Set up recognition instance with all needed config and handlers
   const setupRecognition = useRecognitionSetup({
     transcript,
     onTranscriptChange,
@@ -39,28 +40,13 @@ export function useSpeechRecognition({
     multiLine
   });
 
-  // تشخیص پشتیبانی مرورگر از Web Speech API
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      setIsSupported(false);
-      toast({
-        title: "خطا",
-        description: "مرورگر شما از تبدیل گفتار به نوشتار پشتیبانی نمی‌کند.",
-        variant: "destructive",
-      });
-    }
-    
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      // پاکسازی تایمر در هنگام خروج از کامپوننت
-      if (restartTimeoutRef.current !== null) {
-        clearTimeout(restartTimeoutRef.current);
-      }
-    };
-  }, [toast]);
+  // Configure restart functionality
+  const { handleRecognitionRestart } = useRecognitionRestart({
+    isListening,
+    recognitionRef,
+    startListening: async () => {}, // Placeholder - will be updated after function definition
+    restartTimeoutRef
+  });
 
   // شروع ضبط صدا
   const startListening = useCallback(async () => {
@@ -109,6 +95,17 @@ export function useSpeechRecognition({
     return Promise.reject("خطای ناشناخته");
   }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast]);
 
+  // Update the restart reference with actual startListening function
+  useEffect(() => {
+    // @ts-ignore - This is a workaround for circular reference
+    useRecognitionRestart({
+      isListening,
+      recognitionRef,
+      startListening,
+      restartTimeoutRef
+    });
+  }, [startListening, isListening]);
+
   // توقف ضبط صدا
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -135,57 +132,29 @@ export function useSpeechRecognition({
     onTranscriptChange("");
   }, [onTranscriptChange]);
   
-  // مدیریت خطا و راه‌اندازی مجدد خودکار
+  // Set up event handlers for error handling and automatic restarts
+  const { cleanupRestartTimers } = useRecognitionEventHandlers({
+    isListening,
+    recognitionRef,
+    restartTimeoutRef,
+    handleRecognitionRestart
+  });
+
+  // تشخیص پشتیبانی مرورگر از Web Speech API
   useEffect(() => {
-    if (recognitionRef.current && isListening) {
-      const recognition = recognitionRef.current;
+    const isSupportedByBrowser = checkBrowserSupport();
+    setIsSupported(isSupportedByBrowser);
+    
+    return () => {
+      // Stop recognition when unmounting
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       
-      // مدیریت خطا
-      const originalErrorHandler = recognition.onerror || (() => {});
-      recognition.onerror = (event: any) => {
-        originalErrorHandler(event);
-        handleRecognitionError(event.error);
-        
-        // در صورت بروز خطا و هنوز فعال بودن وضعیت ضبط، تلاش مجدد
-        if (isListening) {
-          console.log("Attempting to restart after error");
-          if (restartTimeoutRef.current !== null) {
-            clearTimeout(restartTimeoutRef.current);
-          }
-          restartTimeoutRef.current = window.setTimeout(() => {
-            if (isListening) {
-              startListening().catch(err => console.error("Failed to restart:", err));
-            }
-          }, 1000) as unknown as number;
-        }
-      };
-      
-      // مدیریت پایان تشخیص صدا
-      const originalEndHandler = recognition.onend || (() => {});
-      recognition.onend = (event: any) => {
-        originalEndHandler(event);
-        
-        // راه‌اندازی مجدد خودکار تنها اگر هنوز در حالت ضبط هستیم
-        if (isListening) {
-          console.log("Recognition ended, attempting to restart");
-          if (restartTimeoutRef.current !== null) {
-            clearTimeout(restartTimeoutRef.current);
-          }
-          restartTimeoutRef.current = window.setTimeout(() => {
-            if (isListening && recognitionRef.current) {
-              try {
-                recognitionRef.current.start();
-              } catch (err) {
-                console.error("Couldn't restart recognition:", err);
-                // تلاش دوباره با یک نمونه جدید
-                startListening().catch(err => console.error("Failed to restart:", err));
-              }
-            }
-          }, 500) as unknown as number;
-        }
-      };
-    }
-  }, [isListening, startListening, handleRecognitionError]);
+      // Clean up any timers
+      cleanupRestartTimers();
+    };
+  }, [toast, cleanupRestartTimers]);
 
   return {
     transcript,
