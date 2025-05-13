@@ -35,6 +35,7 @@ export const PasswordField = ({
           placeholder="رمز عبور خود را وارد کنید" 
           className="pl-12 pr-12 h-10 sm:h-12 border-muted bg-white/50 focus:bg-white/80 transition-all group-hover:border-primary/50 focus-within:border-primary shadow-sm" 
           required 
+          autoComplete="current-password"
         />
         <motion.span 
           className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-primary/40 to-violet-500/40 w-0 group-hover:w-full transition-all duration-500"

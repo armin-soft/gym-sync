@@ -73,6 +73,7 @@ export const FormField = ({
             dir === "ltr" ? "text-left" : ""
           )}
           required={required}
+          autoComplete={isPassword ? "new-password" : undefined}
         />
         
         {/* Show/hide password */}

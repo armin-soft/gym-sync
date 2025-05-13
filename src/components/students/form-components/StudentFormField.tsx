@@ -39,6 +39,10 @@ export const StudentFormField = ({
   onChange,
   description
 }: StudentFormFieldProps) => {
+  // Check if this is a password field to add appropriate autocomplete
+  const isPassword = name.toLowerCase().includes('password');
+  const autoCompleteValue = isPassword ? "new-password" : undefined;
+
   return (
     <FormField
       control={control}
@@ -59,6 +63,7 @@ export const StudentFormField = ({
               )}
               placeholder={placeholder}
               value={persianNumbers ? toPersianNumbers(field.value) : field.value}
+              autoComplete={autoCompleteValue}
               onChange={(e) => {
                 let value = e.target.value;
                 
