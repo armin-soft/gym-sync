@@ -5,6 +5,8 @@ export function useSpeechRecognitionErrors() {
   const { toast } = useToast();
   
   const handleRecognitionError = (error: string) => {
+    console.log("Recognition error:", error);
+    
     if (error === "not-allowed") {
       toast({
         title: "دسترسی به میکروفون",

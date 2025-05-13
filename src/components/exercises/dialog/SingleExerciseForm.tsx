@@ -30,9 +30,9 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
         <Button
           type="button"
           size="sm" 
-          variant="ghost"
+          variant={showSpeech ? "default" : "ghost"}
           onClick={() => setShowSpeech(!showSpeech)}
-          className="text-xs h-8"
+          className={`text-xs h-8 flex items-center gap-1.5 ${showSpeech ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
         >
           <Mic className="h-3.5 w-3.5 ml-1.5" />
           {showSpeech ? "حالت متنی" : "گفتار به نوشتار"}
@@ -45,6 +45,7 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
           value={value}
           onTranscriptChange={onChange}
           placeholder="برای افزودن حرکت با صدا، روی آیکون میکروفون کلیک کنید"
+          multiLine={false} // حالت تکی - فقط یک خط
         />
       ) : (
         <Input

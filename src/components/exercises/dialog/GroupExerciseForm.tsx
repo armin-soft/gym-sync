@@ -68,7 +68,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
           onTranscriptChange={onChange}
           placeholder="برای افزودن حرکات با صدا، روی آیکون میکروفون کلیک کنید. برای افزودن حرکت جدید، کلید Enter را فشار دهید یا بگویید 'حرکت بعدی'"
           className="min-h-[250px]"
-          multiLine={true}
+          multiLine={true} // حالت چند خطی برای گروهی
         />
       ) : (
         <>

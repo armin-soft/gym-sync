@@ -9,6 +9,7 @@ interface UseRecognitionSetupProps {
   setIsListening: (isListening: boolean) => void;
   lang: string;
   correctPersianWords: (text: string) => string;
+  multiLine?: boolean;
 }
 
 export function useRecognitionSetup({
@@ -18,7 +19,8 @@ export function useRecognitionSetup({
   setInterimTranscript,
   setIsListening,
   lang,
-  correctPersianWords
+  correctPersianWords,
+  multiLine = false
 }: UseRecognitionSetupProps) {
   return useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -44,12 +46,13 @@ export function useRecognitionSetup({
     }
 
     recognition.onstart = () => {
+      console.log("Speech recognition started");
       setIsListening(true);
     };
 
     recognition.onend = () => {
-      setIsListening(false);
       console.log("Speech recognition ended");
+      setIsListening(false);
     };
 
     recognition.onerror = (event: any) => {
@@ -57,7 +60,7 @@ export function useRecognitionSetup({
       setIsListening(false);
     };
 
-    // کلمات کلیدی برای تشخیص خط جدید
+    // کلمات کلیدی برای تشخیص خط جدید (فقط در حالت چند خطی)
     const newLineKeywords = [
       "حرکت بعدی", 
       "حرکت جدید", 
@@ -93,8 +96,8 @@ export function useRecognitionSetup({
         if (event.results[i].isFinal) {
           const processedText = bestTranscript.trim();
           
-          // بررسی کلمات کلیدی برای خط جدید
-          const hasNewLineCommand = newLineKeywords.some(keyword => 
+          // بررسی کلمات کلیدی برای خط جدید (فقط در حالت چند خطی)
+          const hasNewLineCommand = multiLine && newLineKeywords.some(keyword => 
             processedText.toLowerCase().includes(keyword.toLowerCase())
           );
           
@@ -127,5 +130,5 @@ export function useRecognitionSetup({
     };
 
     return recognition;
-  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, correctPersianWords]);
+  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, correctPersianWords, multiLine]);
 }

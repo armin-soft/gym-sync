@@ -51,6 +51,10 @@ export const SpeechToText = ({
     } else {
       try {
         await startListening();
+        toast({
+          title: "ضبط صدا شروع شد",
+          description: "در حال گوش دادن به صحبت شما...",
+        });
       } catch (error) {
         console.error("Error starting speech recognition:", error);
         toast({
@@ -71,9 +75,9 @@ export const SpeechToText = ({
     });
   }, [resetTranscript, toast]);
 
-  // اضافه کردن قابلیت اینتر برای رفتن به خط بعدی
+  // اضافه کردن قابلیت اینتر برای رفتن به خط بعدی (فقط در حالت گروهی)
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter") {
+    if (multiLine && e.key === "Enter") {
       e.preventDefault();
       addNewLine();
       
@@ -82,7 +86,7 @@ export const SpeechToText = ({
         description: "حرکت جدیدی اضافه شد.",
       });
     }
-  }, [addNewLine, toast]);
+  }, [addNewLine, toast, multiLine]);
 
   return (
     <div className={cn("space-y-2", className)} dir="rtl">

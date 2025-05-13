@@ -11,6 +11,7 @@ export function useSpeechRecognition({
   lang = "fa-IR",
   onTranscriptChange,
   initialValue = "",
+  multiLine = false,
 }: UseSpeechRecognitionProps): UseSpeechRecognitionReturn {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState(initialValue);
@@ -34,7 +35,8 @@ export function useSpeechRecognition({
     setInterimTranscript,
     setIsListening,
     lang,
-    correctPersianWords
+    correctPersianWords,
+    multiLine
   });
 
   // تشخیص پشتیبانی مرورگر از Web Speech API
@@ -62,11 +64,11 @@ export function useSpeechRecognition({
 
   // شروع ضبط صدا
   const startListening = useCallback(async () => {
-    if (!isSupported) return;
+    if (!isSupported) return Promise.reject("عدم پشتیبانی مرورگر");
 
     // بررسی و درخواست دسترسی به میکروفون
     const hasPermission = await requestMicrophonePermission();
-    if (!hasPermission) return;
+    if (!hasPermission) return Promise.reject("عدم دسترسی به میکروفون");
 
     // توقف هر پردازش قبلی که ممکن است هنوز فعال باشد
     if (recognitionRef.current) {
@@ -86,6 +88,7 @@ export function useSpeechRecognition({
         recognitionRef.current.start();
         setIsListening(true);
         showRecordingStartedToast();
+        return Promise.resolve();
       } catch (err) {
         console.error("Error starting recognition:", err);
         // در صورت بروز خطا، مجدداً تلاش کنید
@@ -94,13 +97,16 @@ export function useSpeechRecognition({
           try {
             recognitionRef.current.start();
             setIsListening(true);
+            return Promise.resolve();
           } catch (secondErr) {
             console.error("Failed to restart recognition after error:", secondErr);
             setIsListening(false);
+            return Promise.reject("خطا در شروع تشخیص گفتار");
           }
         }, 300);
       }
     }
+    return Promise.reject("خطای ناشناخته");
   }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast]);
 
   // توقف ضبط صدا
@@ -155,7 +161,7 @@ export function useSpeechRecognition({
           }
           restartTimeoutRef.current = window.setTimeout(() => {
             if (isListening) {
-              startListening();
+              startListening().catch(err => console.error("Failed to restart:", err));
             }
           }, 1000) as unknown as number;
         }
@@ -179,7 +185,7 @@ export function useSpeechRecognition({
               } catch (err) {
                 console.error("Couldn't restart recognition:", err);
                 // تلاش دوباره با یک نمونه جدید
-                startListening();
+                startListening().catch(err => console.error("Failed to restart:", err));
               }
             }
           }, 500) as unknown as number;
