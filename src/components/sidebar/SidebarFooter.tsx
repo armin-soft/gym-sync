@@ -52,7 +52,7 @@ export function SidebarFooter({ gymName }: SidebarFooterProps) {
         <div className="flex flex-col">
           <span className={cn("font-medium", getTextSize())}>{gymName}</span>
           <div className={cn("text-muted-foreground", getVersionSize())}>
-            <span>نسخه {toPersianNumbers(manifestData.version || "1.4.3")}</span>
+            <span>نسخه {toPersianNumbers(manifestData.version || "1.5.0")}</span>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 // This is the service worker for the application
 // It handles caching and offline functionality
 
-const CACHE_NAME = 'gym-sync-v5';
+const CACHE_NAME = 'gym-sync-v6';
 
 // Assets to cache - use relative paths instead of absolute
 const STATIC_ASSETS = [
