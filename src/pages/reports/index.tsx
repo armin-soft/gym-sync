@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import ReportsHeader from "./components/reports-header";
+import { ReportsHeader } from "./components/reports-header";
 import { ReportsLayout } from "./components/reports-layout";
 import { ReportsLoading } from "./components/loading";
 import { useReportsUI } from "./components/hooks";
@@ -54,13 +54,16 @@ const Reports = () => {
       <ReportsMain
         currentMonth={currentMonth}
         previousMonth={previousMonth}
-        dashboardType={dashboardType}
         timeRange={timeRange}
         monthlyData={monthlyData}
         expandedData={expandedData}
         isRefreshing={isRefreshing}
         filtersOpen={filtersOpen}
         onToggleFilters={toggleFilters}
+        handleRefresh={handleRefresh}
+        deviceInfo={{ isMobile: false }}
+        closeFilters={() => setFiltersOpen(false)}
+        setTimeRange={setTimeRange}
       />
     </ReportsLayout>
   );

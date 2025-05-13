@@ -6,9 +6,8 @@ import { TimeRangeFilter } from "../time-range-filters";
 import { StatCardGrid } from "../StatCardGrid";
 import { KPIOverview } from "../KPIOverview";
 import { ReportsChartTabs } from "./ReportsChartTabs";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 
-interface ReportsMainProps {
+export interface ReportsMainProps {
   currentMonth: any;
   previousMonth: any;
   expandedData: any[];
@@ -17,7 +16,7 @@ interface ReportsMainProps {
   filtersOpen: boolean;
   timeRange: string;
   handleRefresh: () => void;
-  toggleFilters: () => void;
+  onToggleFilters: () => void;
   closeFilters: () => void;
   setTimeRange: (range: string) => void;
   deviceInfo: any;
@@ -32,7 +31,7 @@ export const ReportsMain = ({
   filtersOpen,
   timeRange,
   handleRefresh,
-  toggleFilters,
+  onToggleFilters: toggleFilters,
   closeFilters,
   setTimeRange,
   deviceInfo

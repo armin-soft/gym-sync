@@ -1,5 +1,5 @@
 
-import { useCallback, RefObject, MutableRefObject } from 'react';
+import { useCallback, useRef, MutableRefObject } from 'react';
 import { RecognitionState } from './speech-recognition-types';
 
 interface UseRecognitionRestartProps {
