@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
@@ -53,6 +53,15 @@ export const SpeechToText = ({
     });
   };
 
+  // اضافه کردن قابلیت اینتر برای رفتن به خط بعدی
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      const newValue = transcript + "\n";
+      onTranscriptChange(newValue);
+    }
+  };
+
   return (
     <div className={cn("space-y-2", className)}>
       <div className="relative w-full flex gap-2 items-center">
@@ -60,6 +69,7 @@ export const SpeechToText = ({
           transcript={transcript}
           interimTranscript={interimTranscript}
           placeholder={placeholder}
+          onKeyDown={handleKeyDown}
         />
         
         <ControlButtons 

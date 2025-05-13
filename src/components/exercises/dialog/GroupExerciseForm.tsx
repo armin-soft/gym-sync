@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, KeyboardEvent } from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -25,6 +25,26 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
   skippedExercises,
 }) => {
   const [showSpeech, setShowSpeech] = useState(false);
+  
+  // اضافه کردن قابلیت اینتر برای رفتن به خط بعدی در حالت متنی نیز
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && e.ctrlKey) {
+      e.preventDefault();
+      const cursorPosition = e.currentTarget.selectionStart;
+      const textBeforeCursor = value.substring(0, cursorPosition);
+      const textAfterCursor = value.substring(cursorPosition);
+      
+      const newValue = textBeforeCursor + "\n" + textAfterCursor;
+      onChange(newValue);
+      
+      // تنظیم مجدد موقعیت مکان‌نما پس از اضافه کردن خط جدید
+      setTimeout(() => {
+        const textarea = e.currentTarget;
+        textarea.selectionStart = cursorPosition + 1;
+        textarea.selectionEnd = cursorPosition + 1;
+      }, 0);
+    }
+  };
   
   return (
     <div className="space-y-2 text-right">
@@ -60,11 +80,7 @@ export const GroupExerciseForm: React.FC<GroupExerciseFormProps> = ({
           className="min-h-[150px] focus-visible:ring-blue-400 text-right"
           onChange={(e) => onChange(e.target.value)}
           dir="rtl"
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && e.ctrlKey) {
-              e.preventDefault();
-            }
-          }}
+          onKeyDown={handleKeyDown}
         />
       )}
       
