@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { Exercise } from "@/types/exercise";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExerciseDialogsProps {
   isAddDialogOpen: boolean;
@@ -33,6 +34,33 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
 }) => {
   // Get categories from hook
   const { categories } = useExerciseData();
+  const { toast } = useToast();
+  
+  // اضافه کردن درخواست مجوز میکروفون هنگام باز شدن دیالوگ
+  useEffect(() => {
+    const requestMicrophonePermission = async () => {
+      if (isAddDialogOpen) {
+        try {
+          // درخواست دسترسی به میکروفون
+          await navigator.mediaDevices.getUserMedia({ audio: true })
+            .then((stream) => {
+              // پس از دریافت دسترسی، منابع را آزاد کنید
+              stream.getTracks().forEach(track => track.stop());
+              console.log("دسترسی به میکروفون با موفقیت انجام شد");
+            });
+        } catch (error) {
+          console.error("خطا در دسترسی به میکروفون:", error);
+          toast({
+            title: "خطا در دسترسی به میکروفون",
+            description: "لطفاً دسترسی به میکروفون را در تنظیمات مرورگر خود فعال کنید.",
+            variant: "destructive",
+          });
+        }
+      }
+    };
+    
+    requestMicrophonePermission();
+  }, [isAddDialogOpen, toast]);
   
   return (
     <>
