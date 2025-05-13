@@ -2,7 +2,7 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Grid3X3, ListOrdered, Plus, Trash2, Mic } from "lucide-react";
+import { Grid3X3, ListOrdered, Plus, Trash2 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseHeaderProps {
@@ -10,8 +10,6 @@ interface ExerciseHeaderProps {
   selectedExerciseIds: number[];
   onDeleteClick: () => void;
   onAddExercise: () => void;
-  showQuickSpeech: boolean;
-  toggleQuickSpeech: () => void;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
 }
@@ -21,8 +19,6 @@ const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
   selectedExerciseIds,
   onDeleteClick,
   onAddExercise,
-  showQuickSpeech,
-  toggleQuickSpeech,
   viewMode,
   setViewMode
 }) => {
@@ -47,15 +43,6 @@ const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
       </div>
       
       <div className="flex items-center gap-2">
-        <Button
-          size="sm"
-          onClick={toggleQuickSpeech}
-          className={showQuickSpeech ? "bg-purple-600 hover:bg-purple-700" : "bg-gradient-to-r from-purple-600 to-indigo-400 text-white"}
-        >
-          <Mic className="h-4 w-4 ml-2" />
-          افزودن با صدا
-        </Button>
-        
         <Button
           size="sm"
           onClick={onAddExercise}

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import ExerciseHeader from "./ExerciseHeader";
 import ExercisesList from "./ExercisesList";
 import ExerciseDialogs from "./ExerciseDialogs";
-import QuickSpeechAdd from "./QuickSpeechAdd";
 import { useExercisesStage } from "../../hooks/useExercisesStage";
 
 interface ExercisesStageProps {
@@ -28,8 +27,6 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
     setSelectedExerciseIds,
     viewMode,
     setViewMode,
-    showQuickSpeech,
-    setShowQuickSpeech,
     isAddDialogOpen,
     setIsAddDialogOpen,
     isDeleteDialogOpen,
@@ -37,13 +34,10 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
     selectedExercise,
     formData,
     setFormData,
-    quickSpeechText,
-    setQuickSpeechText,
     handleDeleteExercises,
     handleSaveExercise,
     handleEditExercise,
     handleAddExercise,
-    handleQuickAdd
   } = useExercisesStage({ categoryId });
   
   if (isLoading) {
@@ -76,20 +70,9 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
         selectedExerciseIds={selectedExerciseIds}
         onDeleteClick={() => setIsDeleteDialogOpen(true)}
         onAddExercise={handleAddExercise}
-        showQuickSpeech={showQuickSpeech}
-        toggleQuickSpeech={() => setShowQuickSpeech(!showQuickSpeech)}
         viewMode={viewMode}
         setViewMode={setViewMode}
       />
-
-      {/* Quick speech add component */}
-      {showQuickSpeech && (
-        <QuickSpeechAdd
-          quickSpeechText={quickSpeechText}
-          setQuickSpeechText={setQuickSpeechText}
-          onQuickAdd={handleQuickAdd}
-        />
-      )}
 
       {/* Exercise list component */}
       <ExercisesList
