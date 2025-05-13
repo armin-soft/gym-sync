@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useTheme } from "@/hooks/use-theme";
-import { ReportsHeader } from "../ReportsHeader";
+import { ReportsHeader } from "../reports-header";
 import { TimeRangeFilter } from "../time-range-filters";
 import { StatCardGrid } from "../StatCardGrid";
 import { KPIOverview } from "../KPIOverview";
