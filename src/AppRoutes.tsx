@@ -9,7 +9,6 @@ import Students from "@/pages/students";
 import ExerciseMovements from "@/pages/exercises";
 import DietPlan from "@/pages/diet";
 import SupplementsVitamins from "@/pages/supplements";
-import Reports from "@/pages/reports";
 import BackupRestore from "@/pages/backup";
 
 const AppRoutes = () => {
@@ -45,10 +44,6 @@ const AppRoutes = () => {
     {
       path: "/Supplements-Vitamins",
       element: <SupplementsVitamins />,
-    },
-    {
-      path: "/Reports",
-      element: <Reports />,
     },
     {
       path: "/Backup-Restore",
