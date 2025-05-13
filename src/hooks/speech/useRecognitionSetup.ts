@@ -20,7 +20,6 @@ export function useRecognitionSetup({
   setIsListening,
   lang,
   correctPersianWords,
-  multiLine = false
 }: UseRecognitionSetupProps) {
   return useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -60,19 +59,6 @@ export function useRecognitionSetup({
       setIsListening(false);
     };
 
-    // کلمات کلیدی برای تشخیص خط جدید (فقط در حالت چند خطی)
-    const newLineKeywords = [
-      "حرکت بعدی", 
-      "حرکت جدید", 
-      "خط جدید", 
-      "بعدی", 
-      "جدید", 
-      "تمام شد",
-      "حرکت دیگر",
-      "بره خط بعد",
-      "برو خط بعد"
-    ];
-
     // بهبود الگوریتم پردازش نتایج
     recognition.onresult = (event: any) => {
       let interim = "";
@@ -96,19 +82,8 @@ export function useRecognitionSetup({
         if (event.results[i].isFinal) {
           const processedText = bestTranscript.trim();
           
-          // بررسی کلمات کلیدی برای خط جدید (فقط در حالت چند خطی)
-          const hasNewLineCommand = multiLine && newLineKeywords.some(keyword => 
-            processedText.toLowerCase().includes(keyword.toLowerCase())
-          );
-          
-          if (hasNewLineCommand) {
-            // افزودن خط جدید و جلوگیری از افزودن متن کلمات کلیدی
-            final += "\n";
-            console.log("Added new line based on voice command");
-          } else {
-            // اضافه کردن متن به انتهای خط فعلی
-            final += " " + processedText;
-          }
+          // اضافه کردن متن به انتهای خط فعلی
+          final += " " + processedText;
           
           // اصلاح کلمات فارسی متداول
           final = correctPersianWords(final);
@@ -130,5 +105,5 @@ export function useRecognitionSetup({
     };
 
     return recognition;
-  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, correctPersianWords, multiLine]);
+  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, correctPersianWords]);
 }

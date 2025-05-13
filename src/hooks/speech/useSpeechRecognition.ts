@@ -134,13 +134,6 @@ export function useSpeechRecognition({
     setInterimTranscript("");
     onTranscriptChange("");
   }, [onTranscriptChange]);
-
-  // اضافه کردن خط جدید به متن
-  const addNewLine = useCallback(() => {
-    const newTranscript = transcript + "\n";
-    setTranscript(newTranscript);
-    onTranscriptChange(newTranscript);
-  }, [transcript, onTranscriptChange]);
   
   // مدیریت خطا و راه‌اندازی مجدد خودکار
   useEffect(() => {
@@ -201,8 +194,7 @@ export function useSpeechRecognition({
     interimTranscript,
     startListening,
     stopListening,
-    resetTranscript,
-    addNewLine
+    resetTranscript
   };
 }
 

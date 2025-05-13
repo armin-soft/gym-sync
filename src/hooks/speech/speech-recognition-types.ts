@@ -14,5 +14,4 @@ export interface UseSpeechRecognitionReturn {
   startListening: () => Promise<void>;
   stopListening: () => void;
   resetTranscript: () => void;
-  addNewLine: () => void; // اضافه کردن متد جدید برای افزودن خط جدید
 }
