@@ -2,7 +2,7 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Grid3X3, ListOrdered, Plus, Trash2, Enter } from "lucide-react";
+import { Grid3X3, ListOrdered, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseHeaderProps {
@@ -52,7 +52,7 @@ const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
           افزودن حرکت
           <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/75 text-xs text-white p-1 rounded whitespace-nowrap">
             <div className="flex items-center gap-1">
-              <Enter className="h-3 w-3" /> برای خط جدید
+              <ArrowLeft className="h-3 w-3" /> برای خط جدید
             </div>
           </div>
         </Button>
