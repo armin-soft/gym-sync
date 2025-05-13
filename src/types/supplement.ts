@@ -8,6 +8,8 @@ export interface Supplement {
   image?: string;
   frequency?: string;
   categoryId?: string;
+  category?: string;  // Add this property
+  timing?: string;    // Add this property
   createdAt?: string;
 }
 

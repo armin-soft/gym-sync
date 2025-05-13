@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Grid3X3, List, Filter, Plus } from "lucide-react";
+import { Search, Grid3X3, List } from "lucide-react";
 import { SupplementGridView } from "./SupplementGridView";
 import { SupplementListView } from "./SupplementListView";
 import { SupplementEmptyState } from "./SupplementEmptyState";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface SupplementListProps {
   supplements: Supplement[];
@@ -33,6 +34,7 @@ export const SupplementList: React.FC<SupplementListProps> = ({
   isLoading = false,
   type,
 }) => {
+  const deviceInfo = useDeviceInfo();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState("");
   
@@ -122,6 +124,7 @@ export const SupplementList: React.FC<SupplementListProps> = ({
                 onAddClick={onAddSupplement}
                 searchTerm={searchTerm}
                 selectedCategory={selectedCategory}
+                deviceInfo={deviceInfo}
               />
             </motion.div>
           ) : (
@@ -140,6 +143,7 @@ export const SupplementList: React.FC<SupplementListProps> = ({
                     onDelete={onDeleteSupplement}
                     isLoading={isLoading}
                     type={type}
+                    deviceInfo={deviceInfo}
                   />
                 </TabsContent>
                 <TabsContent value="list" className="mt-0 h-full">
@@ -149,6 +153,7 @@ export const SupplementList: React.FC<SupplementListProps> = ({
                     onDelete={onDeleteSupplement}
                     isLoading={isLoading}
                     type={type}
+                    deviceInfo={deviceInfo}
                   />
                 </TabsContent>
               </Tabs>

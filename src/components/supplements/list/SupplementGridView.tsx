@@ -6,14 +6,33 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { motion, AnimatePresence } from "framer-motion";
 import type { Supplement } from "@/types/supplement";
 import { cn } from "@/lib/utils";
+import { SupplementEmptyState } from './SupplementEmptyState';
 
-interface SupplementGridViewProps {
+export interface SupplementGridViewProps {
   supplements: Supplement[];
-  onEdit: (supplement: Supplement) => void;
-  onDelete: (id: number) => void;
+  onEdit?: (supplement: Supplement) => void;
+  onDelete?: (id: number) => void;
+  isLoading?: boolean;
+  type?: 'supplement' | 'vitamin';
+  deviceInfo?: any;
 }
 
-export const SupplementGridView = ({ supplements, onEdit, onDelete }: SupplementGridViewProps) => {
+export const SupplementGridView = ({ 
+  supplements, 
+  onEdit, 
+  onDelete,
+  isLoading,
+  type = 'supplement',
+  deviceInfo
+}: SupplementGridViewProps) => {
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (supplements.length === 0) {
+    return <SupplementEmptyState type={type} deviceInfo={deviceInfo} />;
+  }
+
   return (
     <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
       <AnimatePresence mode="popLayout">
@@ -29,41 +48,45 @@ export const SupplementGridView = ({ supplements, onEdit, onDelete }: Supplement
             <Card className="group overflow-hidden hover:shadow-xl transition-all duration-500 border-purple-100/50 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50/30 h-full">
               <div className="relative p-3 sm:p-4 flex flex-col h-full">
                 <div className="absolute top-2 left-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onEdit(supplement)}
-                          className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
-                        >
-                          <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>ویرایش</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  {onEdit && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onEdit(supplement)}
+                            className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                          >
+                            <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>ویرایش</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
 
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onDelete(supplement.id)}
-                          className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
-                        >
-                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>حذف</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  {onDelete && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onDelete(supplement.id)}
+                            className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
+                          >
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>حذف</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                 </div>
 
                 <div className="mb-2 sm:mb-3">
@@ -74,7 +97,7 @@ export const SupplementGridView = ({ supplements, onEdit, onDelete }: Supplement
                         ? "bg-purple-50 text-purple-600" 
                         : "bg-blue-50 text-blue-600"
                     )}>
-                      {supplement.category}
+                      {supplement.category || supplement.categoryId}
                     </span>
                   </div>
                   <h4 className="text-sm sm:text-base font-bold mt-2 group-hover:text-purple-600 transition-colors line-clamp-1">
