@@ -2,14 +2,14 @@
 import React from "react";
 import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { Exercise } from "@/types/exercise";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 
 interface ExerciseDialogsProps {
   isAddDialogOpen: boolean;
   setIsAddDialogOpen: (open: boolean) => void;
   selectedExercise?: Exercise;
-  categories: ExerciseCategory[];
   formData: { name: string; categoryId: number };
   setFormData: (data: { name: string; categoryId: number }) => void;
   onSave: (data: { name: string; categoryId: number }) => Promise<void>;
@@ -23,7 +23,6 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
   isAddDialogOpen,
   setIsAddDialogOpen,
   selectedExercise,
-  categories,
   formData,
   setFormData,
   onSave,
@@ -32,6 +31,9 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
   onDelete,
   selectedExerciseIds
 }) => {
+  // Get categories from hook
+  const { categories } = useExerciseData();
+  
   return (
     <>
       {/* Add/Edit Exercise Dialog */}
