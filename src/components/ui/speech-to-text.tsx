@@ -74,6 +74,9 @@ export const SpeechToText = ({
     });
   };
 
+  // بررسی اگر کلاس compact-speech درخواست شده است
+  const isCompact = className?.includes("compact-speech");
+
   return (
     <div className={cn("space-y-2", className)} dir="rtl">
       <div className="relative w-full flex flex-col gap-2">
@@ -82,6 +85,7 @@ export const SpeechToText = ({
             transcript={transcript}
             interimTranscript={interimTranscript}
             placeholder={placeholder}
+            className={isCompact ? "h-11 min-h-0" : ""}
           />
           
           <ControlButtons 
@@ -90,14 +94,15 @@ export const SpeechToText = ({
             hasContent={!!(transcript || interimTranscript)}
             onToggleListening={toggleListening}
             onClearTranscript={clearTranscript}
+            compact={isCompact}
           />
         </div>
       </div>
       
-      <RecordingIndicator isRecording={isListening} />
+      {!isCompact && <RecordingIndicator isRecording={isListening} />}
       
       {/* راهنمای استفاده بهینه برای کاربر */}
-      {isListening && (
+      {isListening && !isCompact && (
         <div className="text-xs text-muted-foreground text-right mt-1 pr-1">
           <p>برای دقت بیشتر، لطفاً واضح و با سرعت معمولی صحبت کنید.</p>
         </div>

@@ -41,12 +41,15 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
       </div>
       
       {showSpeech ? (
-        <SpeechToText
-          value={value}
-          onTranscriptChange={onChange}
-          placeholder="برای افزودن حرکت با صدا، روی آیکون میکروفون کلیک کنید"
-          multiLine={false} // حالت تکی - فقط یک خط
-        />
+        <div className="h-11">
+          <SpeechToText
+            value={value}
+            onTranscriptChange={onChange}
+            placeholder="برای افزودن حرکت با صدا، روی آیکون میکروفون کلیک کنید"
+            multiLine={false} // حالت تکی - فقط یک خط
+            className="h-11 compact-speech"
+          />
+        </div>
       ) : (
         <Input
           value={value}

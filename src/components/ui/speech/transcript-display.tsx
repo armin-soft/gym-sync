@@ -1,16 +1,19 @@
 
 import React, { useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface TranscriptDisplayProps {
   transcript: string;
   interimTranscript: string;
   placeholder: string;
+  className?: string;
 }
 
 export const TranscriptDisplay = ({
   transcript,
   interimTranscript,
-  placeholder
+  placeholder,
+  className
 }: TranscriptDisplayProps) => {
   const transcriptRef = useRef<HTMLDivElement>(null);
   
@@ -23,7 +26,10 @@ export const TranscriptDisplay = ({
 
   return (
     <div 
-      className="flex-1 relative min-h-[200px] bg-white dark:bg-gray-950 border border-input rounded-md overflow-hidden"
+      className={cn(
+        "flex-1 relative min-h-[200px] bg-white dark:bg-gray-950 border border-input rounded-md overflow-hidden",
+        className
+      )}
       tabIndex={0}
       dir="rtl"
     >
