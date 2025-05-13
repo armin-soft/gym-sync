@@ -7,8 +7,7 @@ import {
   Dumbbell, 
   UtensilsCrossed, 
   Pill, 
-  Database, 
-  HelpCircle,
+  Database,
   ArrowRight,
   Sparkles
 } from "lucide-react";
@@ -62,14 +61,6 @@ export const MainMenuGrid = () => {
       color: "from-cyan-600 to-cyan-400",
       shadowColor: "shadow-cyan-500/20",
       bgColor: "bg-gradient-to-br from-cyan-50/80 to-sky-50/80 dark:from-cyan-900/20 dark:to-sky-900/20"
-    },
-    { 
-      title: "راهنما و پشتیبانی", 
-      icon: HelpCircle, 
-      href: '/Help', 
-      color: "from-gray-600 to-gray-400",
-      shadowColor: "shadow-gray-500/20",
-      bgColor: "bg-gradient-to-br from-gray-50/80 to-slate-50/80 dark:from-gray-900/20 dark:to-slate-900/20"
     }
   ];
 

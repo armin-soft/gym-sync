@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -9,7 +10,7 @@ import {
   Dumbbell,
   UtensilsCrossed,
   Pill,
-  HelpCircle,
+  Database,
   Menu,
   ChevronLeft,
 } from "lucide-react";
@@ -58,15 +59,10 @@ const sidebarItems: SidebarItem[] = [
     icon: Pill,
   },
   {
-    title: "گزارشات",
-    href: "/Reports",
-    icon: LineChart,
-  },
-  {
-    title: "درباره",
-    href: "/About",
-    icon: HelpCircle,
-  },
+    title: "پشتیبان‌گیری",
+    href: "/Backup-Restore",
+    icon: Database,
+  }
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
