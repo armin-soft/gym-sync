@@ -1,17 +1,16 @@
 
 import { useState } from "react";
-import { ReportsHeader } from "./components/reports-header";
 import { ReportsLayout } from "./components/reports-layout";
 import { ReportsLoading } from "./components/loading";
 import { useReportsUI } from "./components/hooks";
 import { ReportsMain } from "./components/reports-content";
 
 const Reports = () => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  
   const {
     loading,
+    isRefreshing,
+    filtersOpen,
+    isMobile,
     timeRange,
     setTimeRange,
     dashboardType,
@@ -20,19 +19,13 @@ const Reports = () => {
     expandedData,
     currentMonth,
     previousMonth,
-    refreshData
+    handleRefresh,
+    toggleFilters
   } = useReportsUI();
 
-  // Handle refresh button click
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await refreshData();
-    setIsRefreshing(false);
-  };
-
-  // Toggle filters panel
-  const toggleFilters = () => {
-    setFiltersOpen(!filtersOpen);
+  // Handle closing filters
+  const closeFilters = () => {
+    toggleFilters();
   };
 
   if (loading) {
@@ -41,16 +34,6 @@ const Reports = () => {
 
   return (
     <ReportsLayout>
-      <ReportsHeader
-        timeRange={timeRange}
-        onTimeRangeChange={setTimeRange}
-        dashboardType={dashboardType}
-        onDashboardTypeChange={setDashboardType}
-        onRefresh={handleRefresh}
-        isRefreshing={isRefreshing}
-        onToggleFilters={toggleFilters}
-      />
-      
       <ReportsMain
         currentMonth={currentMonth}
         previousMonth={previousMonth}
@@ -61,8 +44,8 @@ const Reports = () => {
         filtersOpen={filtersOpen}
         onToggleFilters={toggleFilters}
         handleRefresh={handleRefresh}
-        deviceInfo={{ isMobile: false }}
-        closeFilters={() => setFiltersOpen(false)}
+        deviceInfo={{ isMobile }}
+        closeFilters={closeFilters}
         setTimeRange={setTimeRange}
       />
     </ReportsLayout>

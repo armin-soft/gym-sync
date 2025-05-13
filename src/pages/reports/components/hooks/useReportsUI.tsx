@@ -78,6 +78,11 @@ export const useReportsUI = () => {
     });
   };
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    refreshData();
+  };
+
   const toggleFilters = () => {
     setFiltersOpen(!filtersOpen);
   };
@@ -102,6 +107,7 @@ export const useReportsUI = () => {
     currentMonth,
     previousMonth,
     refreshData,
+    handleRefresh,
     handleTabChange,
     handleTimeRangeChange,
     toggleDatePicker,
