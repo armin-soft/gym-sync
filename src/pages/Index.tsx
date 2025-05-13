@@ -195,14 +195,16 @@ const Index = () => {
         </motion.div>
       </div>
       
-      {/* Add CSS for grid pattern */}
-      <style jsx global>{`
+      {/* Fix the style element by removing invalid jsx and global properties */}
+      <style>
+        {`
         .bg-grid-pattern {
           background-image: linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
                             linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
           background-size: 20px 20px;
         }
-      `}</style>
+        `}
+      </style>
     </PageContainer>
   );
 };
