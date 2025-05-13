@@ -1,4 +1,3 @@
-
 // This is the service worker for the application
 // It handles caching and offline functionality
 
@@ -94,17 +93,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Remove any patternUrl variables from the URL to avoid caching issues
-  const cleanUrl = event.request.url.replace(/\${patternUrl}/g, '');
-  const cleanRequest = cleanUrl !== event.request.url ? 
-    new Request(cleanUrl, { 
+  // Fix duplicate paths in URLs
+  let requestUrl = event.request.url;
+  const duplicatePattern = /Assets\/Assets\//g;
+  
+  if (duplicatePattern.test(requestUrl)) {
+    // Replace duplicate segments
+    requestUrl = requestUrl.replace(duplicatePattern, 'Assets/');
+    console.log('[Service Worker] Fixed duplicate path:', requestUrl);
+  }
+  
+  // Create a new request with the fixed URL if needed
+  const cleanRequest = requestUrl !== event.request.url ? 
+    new Request(requestUrl, { 
       method: event.request.method,
       headers: event.request.headers,
       mode: event.request.mode,
       credentials: event.request.credentials
     }) : event.request;
 
-  console.log('[Service Worker] Fetching', cleanUrl);
+  console.log('[Service Worker] Fetching', requestUrl);
   
   event.respondWith(
     caches.match(cleanRequest)
@@ -124,7 +132,7 @@ self.addEventListener('fetch', (event) => {
                   cache.put(cleanRequest, responseToCache);
                 })
                 .catch(err => {
-                  console.log('[Service Worker] Failed to update cache for:', cleanUrl, err);
+                  console.log('[Service Worker] Failed to update cache for:', requestUrl, err);
                 });
             })
             .catch(() => {

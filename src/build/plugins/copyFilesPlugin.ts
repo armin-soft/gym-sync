@@ -30,7 +30,7 @@ export const copyFilesPlugin = () => {
           console.log('Copied Service-Worker.js to dist root');
         }
 
-        // کپی Logo.png به Assets/Image
+        // کپی Logo.png به Assets/Image - از کپی مجدد به مسیر Assets/Assets جلوگیری می‌کنیم
         if (fs.existsSync('src/Logo.png')) {
           fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
           console.log('Copied Logo.png from src to dist/Assets/Image');

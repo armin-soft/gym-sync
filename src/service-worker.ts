@@ -1,17 +1,18 @@
+
 // Service worker implementation
 // This is the main service worker file that will be compiled during build
 
 // Dynamically determine the base path where the app is running
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
-const CACHE_NAME = 'app-cache-v4';
+const CACHE_NAME = 'app-cache-v5';
 
 // Files to cache - use relative paths that will work in any environment
 const getUrlsToCache = () => {
   return [
     `${BASE_PATH}`,
     `${BASE_PATH}index.html`,
-    `${BASE_PATH}Assets/Image/Logo.png`, // Fixed path to avoid duplication
-    `${BASE_PATH}Manifest.json`, // Single Manifest.json at root
+    `${BASE_PATH}Assets/Image/Logo.png`,
+    `${BASE_PATH}Manifest.json`,
     `${BASE_PATH}Assets/Script/index.js`,
     `${BASE_PATH}Assets/Style/Menu.css`,
   ];
@@ -28,8 +29,9 @@ self.addEventListener('install', (event: any) => {
         
         // Cache assets one by one to avoid a single failure breaking everything
         const cachePromises = urlsToCache.map((url: string) => {
-          // Remove any patternUrl variables from the URL to avoid caching issues
-          const cleanUrl = url.replace(/\${patternUrl}/g, '');
+          // Fix any duplicate Assets paths
+          const cleanUrl = url.replace(/Assets\/Assets\//g, 'Assets/');
+          
           // Try to fetch each resource and cache it
           return fetch(new Request(cleanUrl, { cache: 'reload' }))
             .then(response => {
@@ -64,10 +66,19 @@ self.addEventListener('fetch', (event: any) => {
     return;
   }
 
-  // Clean pattern URLs
-  const cleanUrl = event.request.url.replace(/\${patternUrl}/g, '');
-  const cleanRequest = cleanUrl !== event.request.url ? 
-    new Request(cleanUrl, { 
+  // Fix duplicate paths in URLs
+  let requestUrl = event.request.url;
+  const duplicatePattern = /Assets\/Assets\//g;
+  
+  if (duplicatePattern.test(requestUrl)) {
+    // Replace duplicate segments
+    requestUrl = requestUrl.replace(duplicatePattern, 'Assets/');
+    console.log('[Service Worker] Fixed duplicate path:', requestUrl);
+  }
+  
+  // Create a new request with the fixed URL if needed
+  const cleanRequest = requestUrl !== event.request.url ? 
+    new Request(requestUrl, { 
       method: event.request.method,
       headers: event.request.headers,
       mode: event.request.mode,

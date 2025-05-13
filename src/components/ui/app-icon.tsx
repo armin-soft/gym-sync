@@ -1,5 +1,6 @@
 
 import { cn } from "@/lib/utils";
+import { getAssetPath } from "@/utils/basePath";
 
 interface AppIconProps {
   size?: "sm" | "md" | "lg";
@@ -18,7 +19,7 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
       )}
     >
       <img
-        src="/Assets/Image/Logo.png" // Correct path without duplicated "Assets"
+        src="/Assets/Image/Logo.png" // Using root-relative path
         alt="لوگوی برنامه"
         className={cn(
           "rounded-xl",
@@ -26,6 +27,11 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
           size === "md" && "h-10 w-10",
           size === "lg" && "h-14 w-14"
         )}
+        onError={(e) => {
+          // Fallback if the path fails
+          console.log('Logo load error, trying alternate path');
+          e.currentTarget.src = "/Assets/Image/Logo.png";
+        }}
       />
     </div>
   );
