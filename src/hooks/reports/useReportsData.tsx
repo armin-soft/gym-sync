@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useReportsFilter } from './useReportsFilter';
 import { useReportsProcessing } from './useReportsProcessing';
@@ -18,30 +19,58 @@ export const useReportsData = () => {
     try {
       setIsRefreshing(true);
       
-      // Fetch students data from localStorage
-      const studentsData = localStorage.getItem('students') || '[]';
-      const students = JSON.parse(studentsData);
+      // Fetch students data from localStorage with safety checks
+      let students = [];
+      try {
+        const studentsData = localStorage.getItem('students') || '[]';
+        students = JSON.parse(studentsData);
+        if (!Array.isArray(students)) students = [];
+      } catch (error) {
+        console.error("Error parsing students data:", error);
+        students = [];
+      }
       
-      // Fetch exercises data from localStorage
-      const exercisesData = localStorage.getItem('studentExercises') || '[]';
-      const exercises = JSON.parse(exercisesData);
+      // Fetch exercises data from localStorage with safety checks
+      let exercises = [];
+      try {
+        const exercisesData = localStorage.getItem('studentExercises') || '[]';
+        exercises = JSON.parse(exercisesData);
+        if (!Array.isArray(exercises)) exercises = [];
+      } catch (error) {
+        console.error("Error parsing exercises data:", error);
+        exercises = [];
+      }
       
-      // Fetch supplements data from localStorage
-      const supplementsData = localStorage.getItem('studentSupplements') || '[]';
-      const supplements = JSON.parse(supplementsData);
+      // Fetch supplements data from localStorage with safety checks
+      let supplements = [];
+      try {
+        const supplementsData = localStorage.getItem('studentSupplements') || '[]';
+        supplements = JSON.parse(supplementsData);
+        if (!Array.isArray(supplements)) supplements = [];
+      } catch (error) {
+        console.error("Error parsing supplements data:", error);
+        supplements = [];
+      }
       
-      // Fetch diet/meal plans data from localStorage
-      const mealsData = localStorage.getItem('studentMeals') || '[]';
-      const meals = JSON.parse(mealsData);
+      // Fetch diet/meal plans data from localStorage with safety checks
+      let meals = [];
+      try {
+        const mealsData = localStorage.getItem('studentMeals') || '[]';
+        meals = JSON.parse(mealsData);
+        if (!Array.isArray(meals)) meals = [];
+      } catch (error) {
+        console.error("Error parsing meals data:", error);
+        meals = [];
+      }
       
       // Process the data based on the selected time range
-      const { monthlyData, expandedData } = processRealData(
+      const { monthlyData = [], expandedData = [] } = processRealData(
         students, 
         exercises, 
         supplements, 
         meals, 
         timeRange
-      );
+      ) || { monthlyData: [], expandedData: [] };
       
       setMonthlyData(monthlyData);
       setExpandedData(expandedData);
@@ -50,6 +79,8 @@ export const useReportsData = () => {
       
     } catch (error) {
       console.error("Error fetching or processing data:", error);
+      setMonthlyData([]);
+      setExpandedData([]);
       setIsLoading(false);
       setIsRefreshing(false);
     }

@@ -1,10 +1,18 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Tooltip, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useTheme } from "@/hooks/use-theme";
+
+// Extract chart rendering to separate components to avoid conditional hook calls
+const EmptyChartState = () => (
+  <div className="text-center">
+    <p className="text-muted-foreground">داده‌ای برای نمایش وجود ندارد</p>
+  </div>
+);
 
 interface ReportsTabContentProps {
   activeTab: string;
@@ -14,9 +22,6 @@ interface ReportsTabContentProps {
   isMobile: boolean;
 }
 
-const COLORS = ['#4f46e5', '#22c55e', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
-const DARK_COLORS = ['#818cf8', '#4ade80', '#fbbf24', '#f472b6', '#a78bfa', '#22d3ee'];
-
 export const ReportsTabContent = ({
   activeTab,
   monthlyData,
@@ -24,13 +29,16 @@ export const ReportsTabContent = ({
   chartConfig,
   isMobile
 }: ReportsTabContentProps) => {
+  // Always call hooks unconditionally
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const colors = isDark ? DARK_COLORS : COLORS;
-  
-  // Safe initialization
   const [chartHeight, setChartHeight] = useState(400);
   const [chartData, setChartData] = useState<any[]>([]);
+  
+  // Colors defined once
+  const COLORS = ['#4f46e5', '#22c55e', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+  const DARK_COLORS = ['#818cf8', '#4ade80', '#fbbf24', '#f472b6', '#a78bfa', '#22d3ee'];
+  const colors = isDark ? DARK_COLORS : COLORS;
   
   // Handle resize for chart height
   useEffect(() => {
@@ -50,7 +58,7 @@ export const ReportsTabContent = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Prepare chart data safely
+  // Prepare chart data safely - now using useMemo for better performance
   useEffect(() => {
     // Ensure we have data before processing
     if (!monthlyData || monthlyData.length === 0) {
@@ -125,36 +133,46 @@ export const ReportsTabContent = ({
     return null;
   };
 
-  // Create pie chart data safely
-  const pieData = activeTab === 'activities' && chartData.length > 0 ? [
-    { name: 'تمرین', value: chartData[chartData.length - 1]?.تمرین || 0 },
-    { name: 'مکمل', value: chartData[chartData.length - 1]?.مکمل || 0 },
-    { name: 'برنامه_غذایی', value: chartData[chartData.length - 1]?.برنامه_غذایی || 0 }
-  ] : [];
+  // Create pie chart data safely - use useMemo to avoid recalculation
+  const pieData = useMemo(() => {
+    if (activeTab === 'activities' && chartData.length > 0) {
+      return [
+        { name: 'تمرین', value: chartData[chartData.length - 1]?.تمرین || 0 },
+        { name: 'مکمل', value: chartData[chartData.length - 1]?.مکمل || 0 },
+        { name: 'برنامه_غذایی', value: chartData[chartData.length - 1]?.برنامه_غذایی || 0 }
+      ];
+    }
+    return [];
+  }, [activeTab, chartData]);
 
   // If we don't have data, show loading or empty state
   if (!chartData || chartData.length === 0) {
     return (
       <TabsContent value={activeTab} className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-muted-foreground">داده‌ای برای نمایش وجود ندارد</p>
-        </div>
+        <EmptyChartState />
       </TabsContent>
     );
   }
 
-  // Continue with regular rendering when we have data
-  
-  const renderActiveTabContent = () => {
+  // Motion variants for animations
+  const motionVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+    transition: { duration: 0.3 }
+  };
+
+  // Render appropriate content based on active tab
+  const renderTabContent = () => {
     switch (activeTab) {
       case 'income':
         return (
           <motion.div
             key="income-chart"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={motionVariants.initial}
+            animate={motionVariants.animate}
+            exit={motionVariants.exit}
+            transition={motionVariants.transition}
           >
             <div className="text-center mb-4">
               <h3 className="text-lg font-medium">گزارش درآمد</h3>
@@ -210,10 +228,10 @@ export const ReportsTabContent = ({
         return (
           <motion.div
             key="growth-chart"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={motionVariants.initial}
+            animate={motionVariants.animate}
+            exit={motionVariants.exit}
+            transition={motionVariants.transition}
           >
             <div className="text-center mb-4">
               <h3 className="text-lg font-medium">نرخ رشد</h3>
@@ -254,10 +272,10 @@ export const ReportsTabContent = ({
         return (
           <motion.div
             key="activities-chart"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={motionVariants.initial}
+            animate={motionVariants.animate}
+            exit={motionVariants.exit}
+            transition={motionVariants.transition}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6"
           >
             <div>
@@ -350,10 +368,10 @@ export const ReportsTabContent = ({
         return (
           <motion.div
             key="comparison-chart"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={motionVariants.initial}
+            animate={motionVariants.animate}
+            exit={motionVariants.exit}
+            transition={motionVariants.transition}
           >
             <div className="text-center mb-4">
               <h3 className="text-lg font-medium">مقایسه فعالیت‌ها</h3>
@@ -381,10 +399,10 @@ export const ReportsTabContent = ({
         return (
           <motion.div
             key="overview-chart"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={motionVariants.initial}
+            animate={motionVariants.animate}
+            exit={motionVariants.exit}
+            transition={motionVariants.transition}
           >
             <div className="text-center mb-4">
               <h3 className="text-lg font-medium">نمای کلی</h3>
@@ -483,7 +501,7 @@ export const ReportsTabContent = ({
   return (
     <AnimatePresence mode="wait">
       <TabsContent key={activeTab} value={activeTab} className="mt-0 outline-none">
-        {renderActiveTabContent()}
+        {renderTabContent()}
       </TabsContent>
     </AnimatePresence>
   );

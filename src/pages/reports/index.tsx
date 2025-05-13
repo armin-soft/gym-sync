@@ -16,12 +16,15 @@ import { StatCardGrid } from "./components/StatCardGrid";
 import { KPIOverview } from "./components/KPIOverview";
 
 const Reports = () => {
-  // Ensure hooks are always called in the same order
+  // These state variables must be declared in the same order on every render
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  
+  // Always call hooks at the top level, before any conditional rendering
   const { theme } = useTheme();
   const deviceInfo = useDeviceInfo();
   
+  // Call the useReportsData hook without any conditionals
   const {
     monthlyData,
     expandedData, 
@@ -59,8 +62,8 @@ const Reports = () => {
   }
 
   // Get latest data - make sure these are defined before using them
-  const currentMonth = monthlyData.length > 0 ? monthlyData[monthlyData.length - 1] : null;
-  const previousMonth = monthlyData.length > 1 ? monthlyData[monthlyData.length - 2] : null;
+  const currentMonth = monthlyData && monthlyData.length > 0 ? monthlyData[monthlyData.length - 1] : null;
+  const previousMonth = monthlyData && monthlyData.length > 1 ? monthlyData[monthlyData.length - 2] : null;
 
   // Chart configuration
   const chartConfig = {
@@ -161,7 +164,7 @@ const Reports = () => {
             )}
 
             {/* Integrated KPI Overview */}
-            {currentMonth && expandedData.length > 0 && (
+            {currentMonth && expandedData && expandedData.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -176,7 +179,7 @@ const Reports = () => {
             )}
 
             {/* Enhanced Chart Tabs with cleaner UI */}
-            {monthlyData.length > 0 && (
+            {monthlyData && monthlyData.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -189,9 +192,10 @@ const Reports = () => {
                   <div className="p-4 sm:p-6">
                     <AnimatePresence mode="wait">
                       <ReportsTabContent
+                        key={activeTab}
                         activeTab={activeTab}
                         monthlyData={monthlyData}
-                        expandedData={expandedData}
+                        expandedData={expandedData || []}
                         chartConfig={chartConfig}
                         isMobile={deviceInfo.isMobile}
                       />
