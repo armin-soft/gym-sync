@@ -1,5 +1,5 @@
 
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, MutableRefObject } from 'react';
 import { RecognitionEvent, RecognitionState } from './speech-recognition-types';
 
 interface UseRecognitionEventHandlersProps {
@@ -36,7 +36,8 @@ export const useRecognitionEventHandlers = ({
       // Reset restartCount if we've been recording for a while
       if (state.isRecording && Date.now() - state.startTime > 10000) {
         if (restartCountRef.current) {
-          restartCountRef.current = 0;
+          // Use non-null assertion to safely update the ref
+          (restartCountRef as MutableRefObject<number>).current = 0;
         }
       }
 
@@ -56,10 +57,8 @@ export const useRecognitionEventHandlers = ({
           
           // Using non-null assertion here because we checked above
           if (restartCountRef.current !== null) {
-            if (restartCountRef && typeof restartCountRef === 'object' && 'current' in restartCountRef) {
-              // Safe update using mutable ref
-              (restartCountRef as MutableRefObject<number>).current += 1;
-            }
+            // Safe update using mutable ref
+            (restartCountRef as MutableRefObject<number>).current += 1;
           }
           
           // Safely assign to timeoutRef

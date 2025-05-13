@@ -10,13 +10,6 @@ import { useRecognitionRestart } from "./useRecognitionRestart";
 import { useRecognitionEventHandlers } from "./useRecognitionEventHandlers";
 import { useBrowserSupport } from "./useBrowserSupport";
 
-// Define RecognitionRestartProps to match what useRecognitionRestart actually expects
-interface RecognitionRestartProps {
-  recognition: any;
-  state: RecognitionState;
-  setState: (state: RecognitionState) => void;
-}
-
 export function useSpeechRecognition({
   lang = "fa-IR",
   onTranscriptChange,
@@ -156,7 +149,7 @@ export function useSpeechRecognition({
   }, [onTranscriptChange]);
   
   // Set up event handlers
-  const { cleanupRestartTimers } = useRecognitionEventHandlers({
+  const eventHandlers = useRecognitionEventHandlers({
     recognition: recognitionRef.current,
     state: recognitionState,
     setState: setRecognitionState,
@@ -189,9 +182,11 @@ export function useSpeechRecognition({
       }
       
       // Clean up any timers
-      if (cleanupRestartTimers) cleanupRestartTimers();
+      if (eventHandlers?.cleanupRestartTimers) {
+        eventHandlers.cleanupRestartTimers();
+      }
     };
-  }, [toast, checkBrowserSupport, cleanupRestartTimers]);
+  }, [toast, checkBrowserSupport, eventHandlers]);
 
   return {
     transcript,
