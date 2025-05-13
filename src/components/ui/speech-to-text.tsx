@@ -101,6 +101,7 @@ export const SpeechToText = ({
       {isListening && (
         <div className="text-xs text-muted-foreground text-right mt-1 pr-1">
           <p>برای دقت بیشتر، لطفاً واضح و با سرعت معمولی صحبت کنید.</p>
+          <p className="mt-1">برای اضافه کردن حرکت جدید در خط جدید، دکمه Enter را فشار دهید.</p>
         </div>
       )}
     </div>
