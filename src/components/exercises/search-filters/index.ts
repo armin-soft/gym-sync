@@ -1,9 +1,10 @@
 
-export * from './ExerciseSearchFilters';
-export * from './ActiveFilterTags';
-export * from './CategorySelector';
-export * from './FilterButton';
-export * from './HierarchicalMenu';
-export * from './SortButton';
-export * from './TypeSelector';
-export * from './AdvancedSearchFilters';
+export { default as SearchInput } from './SearchInput';
+export { default as CategorySelector } from './CategorySelector';
+export { default as TypeSelector } from './TypeSelector';
+export { default as FilterButton } from './FilterButton';
+export { default as SortButton } from './SortButton';
+export { default as AdvancedSearchFilters } from './AdvancedSearchFilters';
+export { default as ActiveFilterTags } from './ActiveFilterTags';
+export { default as ExerciseSearchFilters } from './ExerciseSearchFilters';
+export { default as HierarchicalMenu } from './HierarchicalMenu';
