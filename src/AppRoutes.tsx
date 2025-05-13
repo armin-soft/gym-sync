@@ -28,11 +28,11 @@ const AppRoutes = () => {
     },
     {
       path: "/students/add-edit",
-      element: <Students />, 
+      element: <Students />, // Redirecting to main student page
     },
     {
       path: "/students/add-edit/:id",
-      element: <Students />, 
+      element: <Students />, // Redirecting to main student page
     },
     {
       path: "/Exercise-Movements",
