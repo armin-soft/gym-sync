@@ -2,7 +2,7 @@
 import React, { KeyboardEvent } from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
+import { useSpeechRecognition } from "@/hooks/speech";
 import { TranscriptDisplay } from "@/components/ui/speech/transcript-display";
 import { ControlButtons } from "@/components/ui/speech/control-buttons";
 import { RecordingIndicator } from "@/components/ui/speech/recording-indicator";
