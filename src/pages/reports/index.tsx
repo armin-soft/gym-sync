@@ -1,13 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
-import { cn } from "@/lib/utils";
-import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Card } from "@/components/ui/card";
+import { PageContainer } from "@/components/ui/page-container";
 
 import { useReportsData } from "@/hooks/reports/useReportsData";
 import { ReportsHeader } from "./components/ReportsHeader";
@@ -16,9 +14,14 @@ import { ReportsTabControls } from "./components/ReportsTabControls";
 import { ReportsTabContent } from "./components/ReportsTabContent";
 import { StatCardGrid } from "./components/StatCardGrid";
 import { KPIOverview } from "./components/KPIOverview";
-import { PageContainer } from "@/components/ui/page-container";
 
 const Reports = () => {
+  // Ensure hooks are always called in the same order
+  const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+  const { theme } = useTheme();
+  const deviceInfo = useDeviceInfo();
+  
   const {
     monthlyData,
     expandedData, 
@@ -31,11 +34,6 @@ const Reports = () => {
     toggleFilters,
     closeFilters
   } = useReportsData();
-  
-  const [activeTab, setActiveTab] = useState("overview");
-  const { theme } = useTheme();
-  const deviceInfo = useDeviceInfo();
-  const [mounted, setMounted] = useState(false);
 
   // Animation delays for staggered appearance
   const baseDelay = 0.1;
@@ -60,9 +58,9 @@ const Reports = () => {
     );
   }
 
-  // Get latest data
-  const currentMonth = monthlyData[monthlyData.length - 1];
-  const previousMonth = monthlyData[monthlyData.length - 2];
+  // Get latest data - make sure these are defined before using them
+  const currentMonth = monthlyData.length > 0 ? monthlyData[monthlyData.length - 1] : null;
+  const previousMonth = monthlyData.length > 1 ? monthlyData[monthlyData.length - 2] : null;
 
   // Chart configuration
   const chartConfig = {
@@ -148,39 +146,43 @@ const Reports = () => {
             </AnimatePresence>
 
             {/* Enhanced Summary Stats Cards with staggered animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: baseDelay + delayStep, duration: 0.5 }}
-            >
-              <StatCardGrid
-                currentMonth={currentMonth}
-                previousMonth={previousMonth}
-                deviceInfo={deviceInfo}
-              />
-            </motion.div>
+            {currentMonth && previousMonth && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: baseDelay + delayStep, duration: 0.5 }}
+              >
+                <StatCardGrid
+                  currentMonth={currentMonth}
+                  previousMonth={previousMonth}
+                  deviceInfo={deviceInfo}
+                />
+              </motion.div>
+            )}
 
             {/* Integrated KPI Overview */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: baseDelay + delayStep * 2, duration: 0.5 }}
-            >
-              <KPIOverview 
-                data={expandedData} 
-                growthData={currentMonth} 
-                isMobile={deviceInfo.isMobile} 
-              />
-            </motion.div>
+            {currentMonth && expandedData.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: baseDelay + delayStep * 2, duration: 0.5 }}
+              >
+                <KPIOverview 
+                  data={expandedData} 
+                  growthData={currentMonth} 
+                  isMobile={deviceInfo.isMobile} 
+                />
+              </motion.div>
+            )}
 
             {/* Enhanced Chart Tabs with cleaner UI */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: baseDelay + delayStep * 3, duration: 0.5 }}
-              className="relative z-10"
-            >
-              <Card className="overflow-hidden border-primary/10 shadow-xl hover:shadow-primary/5 transition-all duration-500">
+            {monthlyData.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: baseDelay + delayStep * 3, duration: 0.5 }}
+                className="relative z-10"
+              >
                 <Tabs defaultValue="overview" className="w-full" onValueChange={handleTabChange}>
                   <ReportsTabControls onTabChange={handleTabChange} />
 
@@ -196,8 +198,8 @@ const Reports = () => {
                     </AnimatePresence>
                   </div>
                 </Tabs>
-              </Card>
-            </motion.div>
+              </motion.div>
+            )}
           </div>
         </ScrollArea>
       </div>

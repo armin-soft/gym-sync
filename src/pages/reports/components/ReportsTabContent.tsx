@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Tooltip, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Cell } from 'recharts';
@@ -29,11 +28,12 @@ export const ReportsTabContent = ({
   const isDark = theme === 'dark';
   const colors = isDark ? DARK_COLORS : COLORS;
   
+  // Safe initialization
   const [chartHeight, setChartHeight] = useState(400);
   const [chartData, setChartData] = useState<any[]>([]);
   
+  // Handle resize for chart height
   useEffect(() => {
-    // Set chart height based on screen size
     const handleResize = () => {
       const width = window.innerWidth;
       if (width < 640) {
@@ -50,60 +50,71 @@ export const ReportsTabContent = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
+  // Prepare chart data safely
   useEffect(() => {
+    // Ensure we have data before processing
+    if (!monthlyData || monthlyData.length === 0) {
+      setChartData([]);
+      return;
+    }
+    
     // Prepare data for the active tab
     if (activeTab === 'income') {
       setChartData(monthlyData.map(month => ({
-        name: month.month,
-        درآمد: month.درآمد,
-        رشد: month.رشد_درآمد
+        name: month.name || '',
+        درآمد: month.درآمد || 0,
+        رشد: month.رشد_درآمد || 0
       })));
     } else if (activeTab === 'growth') {
       setChartData(monthlyData.map(month => ({
-        name: month.month,
-        رشد_شاگردان: month.رشد_شاگردان,
-        رشد_درآمد: month.رشد_درآمد
+        name: month.name || '',
+        رشد_شاگردان: month.رشد_شاگردان || 0,
+        رشد_درآمد: month.رشد_درآمد || 0
       })));
     } else if (activeTab === 'activities' || activeTab === 'comparison') {
       setChartData(monthlyData.map(month => ({
-        name: month.month,
-        تمرین: month.تمرین,
-        مکمل: month.مکمل,
-        برنامه_غذایی: month.برنامه_غذایی
+        name: month.name || '',
+        تمرین: month.تمرین || 0,
+        مکمل: month.مکمل || 0,
+        برنامه_غذایی: month.برنامه_غذایی || 0
       })));
     } else {
       // Overview tab
       setChartData(monthlyData.map(month => ({
-        name: month.month,
-        شاگردان: month.شاگردان,
-        درآمد: month.درآمد / 1000000 // Convert to millions for better scaling
+        name: month.name || '',
+        شاگردان: month.شاگردان || 0,
+        درآمد: (month.درآمد || 0) / 1000000 // Convert to millions for better scaling
       })));
     }
   }, [activeTab, monthlyData]);
 
+  // Safe tooltip formatter
   const formatTooltip = (value: number, name: string) => {
+    if (!value && value !== 0) return ['0', chartConfig[name]?.label || name];
+    
     if (name === 'درآمد' && activeTab === 'overview') {
-      return [`${toPersianNumbers(value)} میلیون`, chartConfig[name]?.label];
+      return [`${toPersianNumbers(value)} میلیون`, chartConfig[name]?.label || name];
     }
     if (name === 'درآمد') {
-      return [`${toPersianNumbers(value.toLocaleString())} تومان`, chartConfig[name]?.label];
+      return [`${toPersianNumbers(value.toLocaleString())} تومان`, chartConfig[name]?.label || name];
     }
     if (name.includes('رشد')) {
-      return [`${toPersianNumbers(value.toFixed(1))}%`, chartConfig[name]?.label];
+      return [`${toPersianNumbers(value.toFixed(1))}%`, chartConfig[name]?.label || name];
     }
-    return [toPersianNumbers(value), chartConfig[name]?.label];
+    return [toPersianNumbers(value), chartConfig[name]?.label || name];
   };
   
+  // Safe custom tooltip
   const customTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-card p-3 border border-border/30 rounded-lg shadow-lg">
-          <p className="text-sm font-medium mb-2 text-foreground">{label}</p>
+          <p className="text-sm font-medium mb-2 text-foreground">{label || ''}</p>
           <div className="space-y-1">
             {payload.map((entry: any, index: number) => (
               <div key={`tooltip-${index}`} className="flex items-center text-xs">
                 <div className="w-3 h-3 mr-2" style={{ backgroundColor: entry.color }} />
-                <span className="text-muted-foreground">{chartConfig[entry.name]?.label}: </span>
+                <span className="text-muted-foreground">{chartConfig[entry.name]?.label || entry.name}: </span>
                 <span className="font-medium ml-1">{formatTooltip(entry.value, entry.name)[0]}</span>
               </div>
             ))}
@@ -114,13 +125,26 @@ export const ReportsTabContent = ({
     return null;
   };
 
-  // Create pie chart data for the activities tab
-  const pieData = activeTab === 'activities' ? [
-    { name: 'تمرین', value: chartData.length > 0 ? chartData[chartData.length - 1]?.تمرین || 0 : 0 },
-    { name: 'مکمل', value: chartData.length > 0 ? chartData[chartData.length - 1]?.مکمل || 0 : 0 },
-    { name: 'برنامه_غذایی', value: chartData.length > 0 ? chartData[chartData.length - 1]?.برنامه_غذایی || 0 : 0 }
+  // Create pie chart data safely
+  const pieData = activeTab === 'activities' && chartData.length > 0 ? [
+    { name: 'تمرین', value: chartData[chartData.length - 1]?.تمرین || 0 },
+    { name: 'مکمل', value: chartData[chartData.length - 1]?.مکمل || 0 },
+    { name: 'برنامه_غذایی', value: chartData[chartData.length - 1]?.برنامه_غذایی || 0 }
   ] : [];
 
+  // If we don't have data, show loading or empty state
+  if (!chartData || chartData.length === 0) {
+    return (
+      <TabsContent value={activeTab} className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-muted-foreground">داده‌ای برای نمایش وجود ندارد</p>
+        </div>
+      </TabsContent>
+    );
+  }
+
+  // Continue with regular rendering when we have data
+  
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'income':
@@ -250,7 +274,7 @@ export const ReportsTabContent = ({
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, percent }) => `${chartConfig[name]?.label}: ${toPersianNumbers((percent * 100).toFixed(0))}%`}
+                      label={({ name, percent }) => `${chartConfig[name]?.label || name}: ${toPersianNumbers((percent * 100).toFixed(0))}%`}
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"

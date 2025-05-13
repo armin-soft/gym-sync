@@ -3,21 +3,27 @@
  * Hook for processing reports data
  */
 export const useReportsProcessing = () => {
-  // تابع کمکی برای محاسبه درصد رشد
+  // Helper function for calculating growth percentage
   const calculateGrowth = (current: number, previous: number) => {
     if (previous === 0) return current > 0 ? 100 : 0;
     return Math.round(((current - previous) / previous) * 100);
   };
 
-  // پردازش داده‌های واقعی بر اساس تاریخ‌های ثبت نام
+  // Process data based on the provided inputs
   const processRealData = (
-    students: any[], 
-    exercises: any[], 
-    supplements: any[], 
-    meals: any[], 
-    timeRange: string
+    students: any[] = [], 
+    exercises: any[] = [], 
+    supplements: any[] = [], 
+    meals: any[] = [], 
+    timeRange: string = '6months'
   ) => {
-    // تعیین بازه‌های زمانی بر اساس محدوده انتخاب شده
+    // Ensure we have arrays even if undefined was passed
+    const safeStudents = Array.isArray(students) ? students : [];
+    const safeExercises = Array.isArray(exercises) ? exercises : [];
+    const safeSupplements = Array.isArray(supplements) ? supplements : [];
+    const safeMeals = Array.isArray(meals) ? meals : [];
+
+    // Set time range
     let monthsToShow = 6;
     switch (timeRange) {
       case 'week':
@@ -42,7 +48,7 @@ export const useReportsProcessing = () => {
     const today = new Date();
     const months: { [key: string]: any } = {};
     
-    // ایجاد دوره‌های ماهانه
+    // Create monthly periods
     for (let i = 0; i < monthsToShow; i++) {
       const date = new Date(today);
       date.setMonth(today.getMonth() - i);
@@ -63,59 +69,75 @@ export const useReportsProcessing = () => {
       };
     }
     
-    // پردازش داده‌های شاگردان
-    students.forEach(student => {
-      if (student.registrationDate) {
-        const regDate = new Date(student.registrationDate);
-        const monthKey = `${regDate.getFullYear()}-${regDate.getMonth() + 1}`;
-        
-        if (months[monthKey]) {
-          months[monthKey].شاگردان += 1;
-          months[monthKey].درآمد += student.monthlyFee || 200000; // استفاده از هزینه واقعی یا مقدار پیش‌فرض
+    // Process student data
+    safeStudents.forEach(student => {
+      if (student && student.registrationDate) {
+        try {
+          const regDate = new Date(student.registrationDate);
+          const monthKey = `${regDate.getFullYear()}-${regDate.getMonth() + 1}`;
+          
+          if (months[monthKey]) {
+            months[monthKey].شاگردان += 1;
+            months[monthKey].درآمد += typeof student.monthlyFee === 'number' ? student.monthlyFee : 200000; 
+          }
+        } catch (error) {
+          console.error("Error processing student data:", error);
         }
       }
     });
     
-    // پردازش داده‌های تمرین
-    exercises.forEach(exercise => {
-      if (exercise.createdAt) {
-        const createdDate = new Date(exercise.createdAt);
-        const monthKey = `${createdDate.getFullYear()}-${createdDate.getMonth() + 1}`;
-        
-        if (months[monthKey]) {
-          months[monthKey].تمرین += 1;
+    // Process exercise data
+    safeExercises.forEach(exercise => {
+      if (exercise && exercise.createdAt) {
+        try {
+          const createdDate = new Date(exercise.createdAt);
+          const monthKey = `${createdDate.getFullYear()}-${createdDate.getMonth() + 1}`;
+          
+          if (months[monthKey]) {
+            months[monthKey].تمرین += 1;
+          }
+        } catch (error) {
+          console.error("Error processing exercise data:", error);
         }
       }
     });
     
-    // پردازش داده‌های مکمل
-    supplements.forEach(supplement => {
-      if (supplement.createdAt) {
-        const createdDate = new Date(supplement.createdAt);
-        const monthKey = `${createdDate.getFullYear()}-${createdDate.getMonth() + 1}`;
-        
-        if (months[monthKey]) {
-          months[monthKey].مکمل += 1;
+    // Process supplement data
+    safeSupplements.forEach(supplement => {
+      if (supplement && supplement.createdAt) {
+        try {
+          const createdDate = new Date(supplement.createdAt);
+          const monthKey = `${createdDate.getFullYear()}-${createdDate.getMonth() + 1}`;
+          
+          if (months[monthKey]) {
+            months[monthKey].مکمل += 1;
+          }
+        } catch (error) {
+          console.error("Error processing supplement data:", error);
         }
       }
     });
     
-    // پردازش داده‌های غذایی
-    meals.forEach(meal => {
-      if (meal.createdAt) {
-        const createdDate = new Date(meal.createdAt);
-        const monthKey = `${createdDate.getFullYear()}-${createdDate.getMonth() + 1}`;
-        
-        if (months[monthKey]) {
-          months[monthKey].برنامه_غذایی += 1;
+    // Process meal data
+    safeMeals.forEach(meal => {
+      if (meal && meal.createdAt) {
+        try {
+          const createdDate = new Date(meal.createdAt);
+          const monthKey = `${createdDate.getFullYear()}-${createdDate.getMonth() + 1}`;
+          
+          if (months[monthKey]) {
+            months[monthKey].برنامه_غذایی += 1;
+          }
+        } catch (error) {
+          console.error("Error processing meal data:", error);
         }
       }
     });
     
-    // تبدیل به آرایه و مرتب‌سازی بر اساس تاریخ (از قدیمی به جدید)
+    // Convert to array and sort from oldest to newest
     const monthlyData = Object.values(months).reverse();
     
-    // محاسبه نرخ رشد
+    // Calculate growth rates
     const expandedData = monthlyData.map((item, index) => {
       if (index === 0) {
         return item;
@@ -140,4 +162,3 @@ export const useReportsProcessing = () => {
     calculateGrowth
   };
 };
-

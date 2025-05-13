@@ -1,12 +1,13 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useReportsFilter } from './useReportsFilter';
 import { useReportsProcessing } from './useReportsProcessing';
 
 export const useReportsData = () => {
+  // Order of hooks matter, always keep them in same order
   const { timeRange, filtersOpen, setTimeRange, toggleFilters, closeFilters } = useReportsFilter();
   const { processRealData } = useReportsProcessing();
   
+  // State declarations - keep them consistent
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [expandedData, setExpandedData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,9 +61,9 @@ export const useReportsData = () => {
   }, [fetchData]);
   
   // Refresh data handler
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     fetchData();
-  };
+  }, [fetchData]);
   
   return {
     monthlyData,
