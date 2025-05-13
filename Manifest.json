@@ -19,5 +19,37 @@
   "lang": "fa-IR",
   "dir": "rtl",
   "prefer_related_applications": false,
-  "related_applications": []
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "پروفایل مربی",
+      "url": "./Coach-Profile",
+      "icons": []
+    },
+    {
+      "name": "شاگردان",
+      "url": "./Students",
+      "icons": []
+    },
+    {
+      "name": "تمرینات",
+      "url": "./Exercise-Movements",
+      "icons": []
+    },
+    {
+      "name": "برنامه غذایی",
+      "url": "./Diet-Plan",
+      "icons": []
+    },
+    {
+      "name": "مکمل‌ها",
+      "url": "./Supplements-Vitamins",
+      "icons": []
+    },
+    {
+      "name": "پشتیبان‌گیری",
+      "url": "./Backup-Restore",
+      "icons": []
+    }
+  ]
 }

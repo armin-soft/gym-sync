@@ -34,6 +34,26 @@
       "name": "شاگردان",
       "url": "./Students",
       "icons": []
+    },
+    {
+      "name": "تمرینات",
+      "url": "./Exercise-Movements",
+      "icons": []
+    },
+    {
+      "name": "برنامه غذایی",
+      "url": "./Diet-Plan",
+      "icons": []
+    },
+    {
+      "name": "مکمل‌ها",
+      "url": "./Supplements-Vitamins",
+      "icons": []
+    },
+    {
+      "name": "پشتیبان‌گیری",
+      "url": "./Backup-Restore",
+      "icons": []
     }
   ]
 }
