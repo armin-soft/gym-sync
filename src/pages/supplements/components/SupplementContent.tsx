@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -246,6 +245,7 @@ export const SupplementContent = ({
                 supplements={filteredSupplements.filter(s => s.type === type)}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                onAdd={onAdd}
               />
             </div>
           </motion.div>

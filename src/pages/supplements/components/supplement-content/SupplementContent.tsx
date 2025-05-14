@@ -17,7 +17,7 @@ export const SupplementContent = ({
   onAdd,
   onEdit,
   onDelete,
-  type = "supplements" 
+  type = "supplement" 
 }: SupplementContentProps) => {
   const deviceInfo = useDeviceInfo();
   
@@ -31,6 +31,7 @@ export const SupplementContent = ({
         supplements={supplements}
         onEdit={onEdit}
         onDelete={onDelete}
+        onAdd={onAdd}
         viewMode={deviceInfo.isMobile ? "grid" : "list"}
       />
     </div>

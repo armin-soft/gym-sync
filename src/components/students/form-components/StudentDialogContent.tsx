@@ -39,7 +39,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
     >
       <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-indigo-500 to-violet-600 -z-10" />
       
-      <StudentDialogHeader isEdit={!!student} itemVariants={itemVariants} />
+      <StudentDialogHeader isEdit={Boolean(student)} itemVariants={itemVariants} />
       
       <FormContainer onSubmit={handleSubmit}>
         <StudentImageUpload 
@@ -78,7 +78,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
           />
         </motion.div>
 
-        <FormActions isEdit={!!student} onCancel={onCancel} />
+        <FormActions isEdit={Boolean(student)} onCancel={onCancel} />
       </FormContainer>
     </motion.div>
   );

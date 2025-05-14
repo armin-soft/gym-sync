@@ -12,6 +12,7 @@ interface SupplementListProps {
   supplements: Supplement[];
   onEdit: (supplement: Supplement) => void;
   onDelete: (id: number) => void;
+  onAdd: () => void;
   viewMode?: "grid" | "list";
 }
 
@@ -19,6 +20,7 @@ export const SupplementList = ({
   supplements,
   onEdit,
   onDelete,
+  onAdd,
   viewMode = "list",
 }: SupplementListProps) => {
   const deviceInfo = useDeviceInfo();

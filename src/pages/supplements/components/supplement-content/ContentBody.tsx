@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { SupplementList } from "@/components/supplements/SupplementList";
+import { SupplementList } from "@/components/supplements/list/SupplementList";
 import { Supplement } from "@/types/supplement";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +8,7 @@ interface ContentBodyProps {
   filteredSupplements: Supplement[];
   onEdit: (supplement: Supplement) => void;
   onDelete: (id: number) => void;
+  onAdd: () => void;
   deviceInfo: any;
   viewMode?: "grid" | "list";
 }
@@ -16,6 +17,7 @@ export const ContentBody = ({
   filteredSupplements,
   onEdit,
   onDelete,
+  onAdd,
   deviceInfo,
   viewMode = "list"
 }: ContentBodyProps) => {
@@ -46,6 +48,7 @@ export const ContentBody = ({
           supplements={filteredSupplements}
           onEdit={onEdit}
           onDelete={onDelete}
+          onAdd={onAdd}
           viewMode={viewMode}
         />
       </div>
