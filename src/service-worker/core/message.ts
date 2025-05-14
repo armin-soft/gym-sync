@@ -3,6 +3,9 @@
 
 import { CACHE_NAME, getUrlsToCache } from './config';
 
+// Explicitly declare self as ServiceWorkerGlobalScope
+declare var self: ServiceWorkerGlobalScope;
+
 // Handle messages from clients
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
   console.log('[Service Worker] Received message', event.data);
@@ -17,7 +20,9 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
       
     case 'CHECK_FOR_UPDATES':
       console.log('[Service Worker] Checking for updates');
-      self.registration.update();
+      if (self.registration) {
+        self.registration.update();
+      }
       break;
 
     case 'REFRESH_CACHE':

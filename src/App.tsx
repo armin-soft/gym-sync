@@ -27,6 +27,8 @@ declare global {
     showToast: (options: {
       title: string;
       description: string;
+      variant?: "default" | "destructive" | "success" | "warning";
+      duration?: number;
       action?: {
         label: string;
         onClick: () => void;

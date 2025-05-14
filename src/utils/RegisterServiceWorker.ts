@@ -166,7 +166,7 @@ function showUpdateNotification(): void {
   showToast({
     title: 'بروزرسانی جدید',
     description: 'نسخه جدید برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.',
-    variant: 'info',
+    variant: 'warning',
     duration: 10000,
     action: {
       label: 'بروزرسانی',

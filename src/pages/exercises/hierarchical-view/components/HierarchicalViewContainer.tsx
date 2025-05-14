@@ -76,9 +76,7 @@ export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps>
             {currentStage === 'exercises' && selectedTypeId && selectedCategoryId && (
               <ExercisesStage 
                 typeId={selectedTypeId} 
-                categoryId={selectedCategoryId} 
-                onBack={handleBackToCategories} 
-                onExerciseSelect={handleExerciseSelect} 
+                categoryId={selectedCategoryId}
               />
             )}
           </div>

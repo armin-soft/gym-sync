@@ -7,40 +7,6 @@ import QuickSpeechAdd from "./QuickSpeechAdd";
 import ExerciseDialogs from "./ExerciseDialogs";
 import { Exercise } from "@/types/exercise";
 
-interface ExerciseHeaderProps {
-  onBack: () => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  exerciseCount: number;
-}
-
-interface ExercisesListProps {
-  isLoading: boolean;
-  selectedIds: number[];
-  onSelect: React.Dispatch<React.SetStateAction<number[]>>;
-  onEdit: (exercise: Exercise) => void;
-  onView: (exercise: Exercise) => void;
-  onDelete: (id: number) => void;
-  exercises: Exercise[];
-}
-
-interface QuickSpeechAddProps {
-  onQuickAdd: () => void;
-  quickSpeechText: string;
-  setQuickSpeechText: (text: string) => void;
-}
-
-interface ExerciseDialogsProps {
-  isAddOpen: boolean;
-  isEditOpen: boolean;
-  onAddClose: () => void;
-  onEditClose: () => void;
-  onSubmit: (data: any) => void;
-  activeExercise: Exercise | null;
-  categoryId: string;
-  typeId: string;
-}
-
 const ExercisesStage = ({ categoryId, typeId }: { categoryId: string; typeId: string }) => {
   const {
     isLoading,
@@ -57,6 +23,8 @@ const ExercisesStage = ({ categoryId, typeId }: { categoryId: string; typeId: st
     handleExerciseDialogClose,
     isAddExerciseDialogOpen,
     isEditExerciseDialogOpen,
+    isDeleteDialogOpen,
+    setIsDeleteDialogOpen,
     activeExercise,
     handleSubmit,
     handleViewExercise,
@@ -64,26 +32,33 @@ const ExercisesStage = ({ categoryId, typeId }: { categoryId: string; typeId: st
     setSearchQuery,
     quickSpeechText,
     setQuickSpeechText,
-    handleDeleteExercise
+    handleDeleteExercise,
+    viewMode,
+    setViewMode,
+    formData,
+    setFormData
   } = useExercisesStage({ categoryId, typeId });
 
   return (
     <div className="flex flex-col h-full">
       <ExerciseHeader
-        onBack={handleBack}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
         exerciseCount={exerciseCount}
+        selectedExerciseIds={selectedExerciseIds}
+        onDeleteClick={() => setIsDeleteDialogOpen(true)}
+        onAddExercise={handleExerciseDialogOpen}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
       />
 
       <ExercisesList
-        exercises={filteredExercises}
-        selectedIds={selectedExerciseIds}
-        onSelect={setSelectedExerciseIds}
-        onEdit={handleEditExercise}
-        onView={handleViewExercise}
-        onDelete={handleDeleteExercise}
-        isLoading={isLoading}
+        filteredExercises={filteredExercises}
+        selectedCategory={selectedCategory}
+        selectedExerciseIds={selectedExerciseIds}
+        setSelectedExerciseIds={setSelectedExerciseIds}
+        viewMode={viewMode}
+        onEditExercise={handleEditExercise}
+        onDeleteExercise={handleDeleteExercise}
+        onAddExercise={handleExerciseDialogOpen}
       />
 
       <QuickSpeechAdd
@@ -93,14 +68,16 @@ const ExercisesStage = ({ categoryId, typeId }: { categoryId: string; typeId: st
       />
 
       <ExerciseDialogs
-        isAddOpen={isAddExerciseDialogOpen}
-        isEditOpen={isEditExerciseDialogOpen}
-        onAddClose={handleExerciseDialogClose}
-        onEditClose={handleExerciseDialogClose}
-        onSubmit={handleSubmit}
-        activeExercise={activeExercise}
-        categoryId={categoryId}
-        typeId={typeId}
+        isAddDialogOpen={isAddExerciseDialogOpen}
+        setIsAddDialogOpen={handleExerciseDialogOpen}
+        selectedExercise={activeExercise}
+        formData={formData}
+        setFormData={setFormData}
+        onSave={handleSubmit}
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+        onDelete={handleDeleteExercise}
+        selectedExerciseIds={selectedExerciseIds}
       />
     </div>
   );

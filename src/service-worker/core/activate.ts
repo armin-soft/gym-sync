@@ -1,7 +1,9 @@
 
 // Service worker activation handling
-
 import { CACHE_NAME } from './config';
+
+// Explicitly declare self as ServiceWorkerGlobalScope
+declare var self: ServiceWorkerGlobalScope;
 
 // Activate the service worker
 self.addEventListener('activate', (event: ExtendableEvent) => {

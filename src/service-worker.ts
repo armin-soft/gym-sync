@@ -2,10 +2,8 @@
 // Main service worker entry point that imports and orchestrates all modules
 // This file serves as the entry point for the service worker
 
-// Type declaration for ServiceWorkerGlobalScope
-declare const self: ServiceWorkerGlobalScope;
-
 // Import service worker modules
+import './service-worker/core/service-worker-types';
 import './service-worker/core/install';
 import './service-worker/core/activate';
 import './service-worker/core/fetch';

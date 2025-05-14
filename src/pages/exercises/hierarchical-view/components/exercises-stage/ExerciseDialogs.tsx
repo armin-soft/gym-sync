@@ -17,7 +17,7 @@ interface ExerciseDialogsProps {
   onSave: (data: { name: string; categoryId: number }) => Promise<void>;
   isDeleteDialogOpen: boolean;
   setIsDeleteDialogOpen: (open: boolean) => void;
-  onDelete: () => void;
+  onDelete: (id: number) => void;
   selectedExerciseIds: number[];
 }
 
@@ -84,6 +84,12 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
       initiatePermissionRequest();
     }
   }, [isAddDialogOpen, toast, requestMicrophonePermission]);
+
+  const handleDelete = () => {
+    if (selectedExerciseIds.length === 1) {
+      onDelete(selectedExerciseIds[0]);
+    }
+  };
   
   return (
     <>
@@ -103,7 +109,7 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
       <ConfirmationDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={onDelete}
+        onConfirm={handleDelete}
         title="حذف حرکت"
         description={
           selectedExerciseIds.length > 1

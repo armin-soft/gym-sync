@@ -3,6 +3,9 @@
 
 import { CACHE_NAME, getUrlsToCache } from './config';
 
+// Explicitly declare self as ServiceWorkerGlobalScope
+declare var self: ServiceWorkerGlobalScope;
+
 // Install the service worker
 self.addEventListener('install', (event: ExtendableEvent) => {
   console.log('[Service Worker] Installing...');

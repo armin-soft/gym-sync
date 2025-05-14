@@ -7,14 +7,15 @@ import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 
 interface UseExercisesStageProps {
   categoryId: string;
+  typeId: string;
 }
 
-export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
+export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const { exercises, categories, isLoading } = useExerciseData();
+  const { exercises, categories, exerciseTypes, isLoading } = useExerciseData();
   const [showQuickSpeech, setShowQuickSpeech] = useState(false);
   
   // State for managing dialogs
@@ -23,6 +24,7 @@ export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
   const [formData, setFormData] = useState({ name: "", categoryId: parseInt(categoryId) || 0 });
   const [quickSpeechText, setQuickSpeechText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Update form data when category changes
   useEffect(() => {
@@ -30,9 +32,27 @@ export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
   }, [categoryId]);
   
   // Filter exercises based on selected category
-  const filteredExercises = exercises.filter(ex => ex.categoryId.toString() === categoryId);
+  const filteredExercises = exercises
+    .filter(ex => ex.categoryId.toString() === categoryId)
+    .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  
+  // Find selected category and type
+  const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
+  const selectedType = exerciseTypes.find(type => type.id === typeId);
+  const exerciseCount = filteredExercises.length;
+  
+  // Navigation
+  const handleBack = () => {
+    // Logic to navigate back
+    console.log("Navigate back to categories");
+  };
   
   // Delete exercises
+  const handleDeleteExercise = (id: number) => {
+    setSelectedExerciseIds([id]);
+    setIsDeleteDialogOpen(true);
+  };
+  
   const handleDeleteExercises = () => {
     try {
       const updatedExercises = exercises.filter(ex => !selectedExerciseIds.includes(ex.id));
@@ -58,8 +78,21 @@ export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
     }
   };
 
+  // Dialog management
+  const handleExerciseDialogOpen = () => setIsAddDialogOpen(true);
+  const handleExerciseDialogClose = () => {
+    setIsAddDialogOpen(false);
+    setSelectedExercise(undefined);
+  };
+  
+  // View exercise details
+  const handleViewExercise = (exercise: Exercise) => {
+    console.log("View exercise:", exercise);
+    // Implement view logic
+  };
+
   // Save new or edited exercise
-  const handleSaveExercise = async (data: { name: string; categoryId: number }) => {
+  const handleSubmit = async (data: { name: string; categoryId: number }) => {
     try {
       // Check for duplicate exercise name
       const exerciseExists = exercises.some(ex => 
@@ -131,16 +164,6 @@ export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
     setIsAddDialogOpen(true);
   };
 
-  // Add new exercise
-  const handleAddExercise = () => {
-    setSelectedExercise(undefined);
-    setFormData({
-      name: "",
-      categoryId: parseInt(categoryId) || 0
-    });
-    setIsAddDialogOpen(true);
-  };
-
   // Quick add with speech
   const handleQuickAdd = () => {
     if (!quickSpeechText.trim()) {
@@ -152,7 +175,7 @@ export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
       return;
     }
 
-    handleSaveExercise({
+    handleSubmit({
       name: quickSpeechText.trim(),
       categoryId: parseInt(categoryId) || 0
     }).then(() => {
@@ -161,14 +184,18 @@ export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
     });
   };
 
-  // Find selected category
-  const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
+  // Dialog state flags
+  const isAddExerciseDialogOpen = isAddDialogOpen;
+  const isEditExerciseDialogOpen = isAddDialogOpen && !!selectedExercise;
+  const activeExercise = selectedExercise;
 
   return {
     // Data
     isLoading,
     filteredExercises,
     selectedCategory,
+    selectedType,
+    exerciseCount,
     
     // State
     selectedExerciseIds,
@@ -179,23 +206,37 @@ export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
     setShowQuickSpeech,
     
     // Dialog state
-    isAddDialogOpen,
+    isAddExerciseDialogOpen,
+    isEditExerciseDialogOpen,
     setIsAddDialogOpen,
     isDeleteDialogOpen,
     setIsDeleteDialogOpen,
     selectedExercise,
+    activeExercise,
     formData,
     setFormData,
+    
+    // Navigation
+    handleBack,
+    
+    // Search
+    searchQuery,
+    setSearchQuery,
     
     // Quick speech
     quickSpeechText,
     setQuickSpeechText,
     
+    // Dialog handlers
+    handleExerciseDialogOpen,
+    handleExerciseDialogClose,
+    
     // Handlers
+    handleDeleteExercise,
     handleDeleteExercises,
-    handleSaveExercise,
+    handleSubmit,
     handleEditExercise,
-    handleAddExercise,
+    handleViewExercise,
     handleQuickAdd
   };
 };
