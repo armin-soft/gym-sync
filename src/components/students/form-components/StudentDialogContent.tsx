@@ -1,20 +1,19 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Form } from "@/components/ui/form";
-import { ImageIcon, User2 } from "lucide-react";
-import { studentFormSchema } from "@/lib/validations/student";
-import { FormActions } from "./FormActions";
-import { FormContainer, dialogVariants, itemVariants } from "./FormContainer";
-import { StudentDialogHeader } from "./StudentDialogHeader";
+import { Input } from "@/components/ui/input";
+import { Coins, Height, Phone, Ruler, User, Weight } from "lucide-react";
+import { studentFormSchema, StudentFormValues } from "@/lib/validations/student";
 import { Student } from "@/components/students/StudentTypes";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+import { StudentImageUpload } from "./StudentImageUpload";
+import { FormActions } from "./FormActions";
+import { dialogVariants, itemVariants } from "./FormContainer";
+import { StudentDialogHeader } from "./StudentDialogHeader";
 
 interface StudentDialogContentProps {
   student?: Student;
@@ -27,12 +26,11 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { theme } = useTheme();
   const { toast } = useToast();
   const [imageData, setImageData] = useState<string | null>(student?.image || null);
   const [imageError, setImageError] = useState<string | null>(null);
   
-  const form = useForm({
+  const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentFormSchema),
     defaultValues: {
       name: student?.name || "",
@@ -68,62 +66,47 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
     setImageError(null);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: StudentFormValues) => {
     // Merge form data with image data
     const formData = {
       ...data,
       image: imageData
     };
     
-    onSave(formData);
+    try {
+      onSave(formData);
+    } catch (error) {
+      console.error("Error saving student:", error);
+      toast({
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی اطلاعات دانش‌آموز پیش آمد. لطفا مجدد تلاش کنید.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <motion.div
-      className="relative flex flex-col rounded-md shadow-lg overflow-hidden w-full max-w-2xl mx-auto"
+      className="relative flex flex-col rounded-3xl shadow-2xl overflow-hidden w-full max-w-2xl mx-auto bg-white dark:bg-slate-900"
       initial="hidden"
       animate="visible"
       variants={dialogVariants}
     >
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-indigo-500 to-violet-600 -z-10" />
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-indigo-600 to-violet-600 -z-10" />
       
       <StudentDialogHeader isEdit={Boolean(student)} itemVariants={itemVariants} />
       
       <Form {...form}>
-        <FormContainer onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <motion.div variants={itemVariants} className="p-6 flex flex-col sm:flex-row gap-6">
             <div className="w-full sm:w-1/3 flex flex-col items-center gap-3">
-              <Avatar className="w-32 h-32 relative">
-                {imageData ? (
-                  <AvatarImage src={imageData} alt="Student Image" className="object-cover" />
-                ) : (
-                  <AvatarFallback>
-                    <User2 className="h-12 w-12 text-muted-foreground" />
-                  </AvatarFallback>
-                )}
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="absolute bottom-0 right-0 shadow-md"
-                  onClick={() => document.getElementById("image-upload")?.click()}
-                  type="button"
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  <Input
-                    type="file"
-                    id="image-upload"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </Button>
-              </Avatar>
-              
-              {imageError && <p className="text-red-500 text-sm">{imageError}</p>}
-              
-              <Button variant="link" onClick={handleResetImage} className="text-xs" type="button">
-                حذف تصویر
-              </Button>
+              <StudentImageUpload 
+                imageData={imageData}
+                onChange={handleImageChange}
+                onReset={handleResetImage}
+                error={imageError}
+                itemVariants={itemVariants}
+              />
             </div>
             
             <div className="w-full sm:w-2/3 flex flex-col gap-4">
@@ -132,9 +115,16 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>نام و نام خانوادگی</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-indigo-500" />
+                      نام و نام خانوادگی
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="نام و نام خانوادگی" {...field} />
+                      <Input 
+                        className="bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
+                        placeholder="نام و نام خانوادگی شاگرد" 
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -146,9 +136,21 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>شماره تماس</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-indigo-500" />
+                      شماره تماس
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="شماره تماس" {...field} />
+                      <Input 
+                        dir="ltr" 
+                        className="text-left bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
+                        placeholder="۰۹۱۲۳۴۵۶۷۸۹" 
+                        value={toPersianNumbers(field.value)}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,9 +163,21 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
                   name="height"
                   render={({ field }) => (
                     <FormItem className="w-1/2">
-                      <FormLabel>قد (سانتی‌متر)</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        <Ruler className="h-4 w-4 text-indigo-500" />
+                        قد (سانتی‌متر)
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="قد" {...field} />
+                        <Input 
+                          dir="ltr" 
+                          className="text-left bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
+                          placeholder="۱۷۵" 
+                          value={toPersianNumbers(field.value)}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                            field.onChange(value);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -175,9 +189,21 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
                   name="weight"
                   render={({ field }) => (
                     <FormItem className="w-1/2">
-                      <FormLabel>وزن (کیلوگرم)</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        <Weight className="h-4 w-4 text-indigo-500" />
+                        وزن (کیلوگرم)
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="وزن" {...field} />
+                        <Input 
+                          dir="ltr" 
+                          className="text-left bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
+                          placeholder="۸۰" 
+                          value={toPersianNumbers(field.value)}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                            field.onChange(value);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -190,11 +216,24 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
                 name="payment"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>مبلغ برنامه</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <Coins className="h-4 w-4 text-indigo-500" />
+                      مبلغ برنامه (تومان)
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="مبلغ برنامه" {...field} />
+                      <Input 
+                        dir="ltr" 
+                        className="text-left bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
+                        placeholder="۵۰۰,۰۰۰" 
+                        value={toPersianNumbers(field.value)}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
+                    <p className="text-xs text-muted-foreground mt-1">مبلغ دریافتی بابت صدور برنامه</p>
                   </FormItem>
                 )}
               />
@@ -202,7 +241,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
           </motion.div>
           
           <FormActions isEdit={Boolean(student)} onCancel={onCancel} />
-        </FormContainer>
+        </form>
       </Form>
     </motion.div>
   );

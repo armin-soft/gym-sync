@@ -1,39 +1,37 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { UserRound } from "lucide-react";
-import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { UserPlus, UserRound } from "lucide-react";
+import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface StudentDialogHeaderProps {
   isEdit: boolean;
   itemVariants: any;
 }
 
-export const StudentDialogHeader = ({ isEdit, itemVariants }: StudentDialogHeaderProps) => {
+export const StudentDialogHeader: React.FC<StudentDialogHeaderProps> = ({ isEdit, itemVariants }) => {
   return (
-    <DialogHeader className="pt-8 pb-4 px-6 text-white">
-      <motion.div variants={itemVariants} className="mb-10">
-        <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+    <motion.div variants={itemVariants} className="p-6 pb-0">
+      <DialogHeader>
+        <motion.div 
+          variants={itemVariants}
+          className="flex items-center gap-2"
+        >
           {isEdit ? (
-            <>
-              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                <UserRound className="h-4 w-4 text-white" />
-              </div>
-              <span>ویرایش شاگرد</span>
-            </>
+            <UserRound className="h-7 w-7 text-indigo-500" />
           ) : (
-            <>
-              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                <UserRound className="h-4 w-4 text-white" />
-              </div>
-              <span>افزودن شاگرد جدید</span>
-            </>
+            <UserPlus className="h-7 w-7 text-indigo-500" />
           )}
-        </DialogTitle>
-        <DialogDescription className="text-white/80 mt-2">
-          اطلاعات شاگرد را وارد کنید
-        </DialogDescription>
-      </motion.div>
-    </DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-foreground">
+            {isEdit ? "ویرایش اطلاعات شاگرد" : "افزودن شاگرد جدید"}
+          </DialogTitle>
+        </motion.div>
+        <motion.p variants={itemVariants} className="mt-2 text-muted-foreground text-sm">
+          {isEdit 
+            ? "اطلاعات شاگرد را ویرایش کنید" 
+            : "برای افزودن شاگرد جدید، فرم زیر را تکمیل کنید"}
+        </motion.p>
+      </DialogHeader>
+    </motion.div>
   );
 };

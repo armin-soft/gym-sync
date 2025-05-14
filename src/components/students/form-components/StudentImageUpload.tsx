@@ -1,72 +1,73 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { Upload } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { ImageIcon, User2 } from "lucide-react";
 
 interface StudentImageUploadProps {
-  image: string;
-  onImageChange: (imageUrl: string) => void;
-  error?: boolean;
+  imageData: string | null;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onReset: () => void;
+  error: string | null;
   itemVariants: any;
 }
 
 export const StudentImageUpload: React.FC<StudentImageUploadProps> = ({
-  image,
-  onImageChange,
+  imageData,
+  onChange,
+  onReset,
   error,
-  itemVariants
+  itemVariants,
 }) => {
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target && event.target.result) {
-          onImageChange(event.target.result.toString());
-        }
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
-
-  // Update to use the new image path in the Assets/Image directory
-  const defaultImage = image === "/placeholder.svg" ? "/Assets/Image/placeholder.svg" : image;
-
+  const inputRef = useRef<HTMLInputElement>(null);
+  
   return (
-    <motion.div variants={itemVariants}>
-      <div className="relative mx-auto w-24 h-24 mb-4">
-        <div
-          className={`w-24 h-24 rounded-full overflow-hidden border-2 ${
-            error ? "border-red-500" : "border-indigo-200"
-          }`}
+    <motion.div variants={itemVariants} className="flex flex-col items-center gap-3">
+      <Label htmlFor="student-image" className="cursor-pointer">
+        <Avatar className="w-28 h-28 relative ring-2 ring-offset-2 ring-offset-background ring-indigo-100 dark:ring-indigo-900/30">
+          {imageData ? (
+            <AvatarImage src={imageData} alt="تصویر شاگرد" className="object-cover" />
+          ) : (
+            <AvatarFallback className="bg-indigo-50 dark:bg-indigo-950/50">
+              <User2 className="h-12 w-12 text-indigo-400 dark:text-indigo-300" />
+            </AvatarFallback>
+          )}
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon"
+            className="absolute -bottom-1 -right-1 rounded-full shadow-md h-8 w-8"
+            onClick={() => inputRef.current?.click()}
+          >
+            <ImageIcon className="h-4 w-4" />
+          </Button>
+        </Avatar>
+      </Label>
+      
+      <input
+        ref={inputRef}
+        id="student-image"
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={onChange}
+      />
+      
+      {error && <p className="text-destructive text-xs font-medium">{error}</p>}
+      
+      {imageData && (
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          className="text-xs h-7 px-2 text-muted-foreground"
+          onClick={onReset}
         >
-          <img
-            src={defaultImage}
-            alt="Profile"
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // In case the new path also fails, set a simple fallback
-              const target = e.target as HTMLImageElement;
-              if (target.src !== 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXVzZXIiPjxwYXRoIGQ9Ik0xMiAyMnYtNm0wIDZIOC41YzAtMy44NTggMy4xNC03IDctN3M3IDMuMTQyIDcgN0gxNiIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTAiIHI9IjMiLz48L3N2Zz4=') {
-                target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXVzZXIiPjxwYXRoIGQ9Ik0xMiAyMnYtNm0wIDZIOC41YzAtMy44NTggMy4xNC03IDctN3M3IDMuMTQyIDcgN0gxNiIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTAiIHI9IjMiLz48L3N2Zz4=';
-              }
-            }}
-          />
-        </div>
-
-        <label
-          htmlFor="image-upload"
-          className="absolute bottom-0 right-0 p-1 bg-indigo-500 text-white rounded-full cursor-pointer shadow-lg hover:bg-indigo-600 transition-colors"
-        >
-          <Upload className="h-4 w-4" />
-          <input
-            id="image-upload"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-          />
-        </label>
-      </div>
+          حذف تصویر
+        </Button>
+      )}
     </motion.div>
   );
 };

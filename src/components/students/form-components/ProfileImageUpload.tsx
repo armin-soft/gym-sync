@@ -1,10 +1,10 @@
 
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Camera } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Camera, RefreshCw, User } from "lucide-react";
 
 interface ProfileImageUploadProps {
   previewImage: string;
@@ -12,83 +12,85 @@ interface ProfileImageUploadProps {
   error?: boolean;
 }
 
-export const ProfileImageUpload = ({ 
-  previewImage, 
+export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
+  previewImage,
   onChange,
-  error 
-}: ProfileImageUploadProps) => {
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-  
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast({
-          title: "خطا",
-          description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
-          variant: "destructive",
-        });
-        return;
-      }
+  error
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
 
-      setIsUploading(true);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        onChange(result);
-        setIsUploading(false);
-      };
-      reader.readAsDataURL(file);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert("حجم تصویر باید کمتر از ۵ مگابایت باشد");
+      return;
     }
+    
+    setIsLoading(true);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setIsLoading(false);
+      onChange(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
   };
-  
+
+  const handleReset = () => {
+    onChange("/placeholder.svg");
+  };
+
   return (
-    <div className="relative group">
-      <div className="relative">
-        <div className={cn(
-          "w-24 h-24 rounded-full overflow-hidden border-4",
-          error ? "border-red-500" : "border-white dark:border-slate-800"
-        )}>
-          <img
-            src={previewImage}
-            alt="تصویر پروفایل"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+    <div className="relative w-32 h-32 mx-auto">
+      <Avatar className={`w-32 h-32 mx-auto transition-all duration-300 ${error ? 'ring-2 ring-destructive' : ''}`}>
+        {isLoading ? (
+          <AvatarFallback className="bg-muted">
+            <RefreshCw className="h-8 w-8 text-muted-foreground animate-spin" />
+          </AvatarFallback>
+        ) : previewImage && previewImage !== "/placeholder.svg" ? (
+          <AvatarImage 
+            src={previewImage} 
+            alt="تصویر پروفایل" 
+            className="object-cover"
           />
-          {isUploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-              <svg className="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </div>
-          )}
-        </div>
-        <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </div>
-      <Button
-        type="button"
-        size="icon"
-        variant="secondary"
-        className="absolute bottom-0 right-0 h-8 w-8 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        onClick={handleImageClick}
-      >
-        <Camera className="h-4 w-4" />
-      </Button>
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept="image/*"
-        onChange={handleImageChange}
-      />
+        ) : (
+          <AvatarFallback className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950/50 dark:to-indigo-900/50">
+            <User className="h-12 w-12 text-indigo-500/70" />
+          </AvatarFallback>
+        )}
+      </Avatar>
       
-      <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-lg scale-90 -z-10" />
+      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+        <Button
+          type="button"
+          variant="secondary"
+          size="icon"
+          className="h-8 w-8 rounded-full shadow-lg bg-white dark:bg-slate-800"
+          onClick={() => document.getElementById("profile-image-upload")?.click()}
+        >
+          <Camera className="h-4 w-4" />
+          <Input
+            type="file"
+            id="profile-image-upload"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+        </Button>
+        
+        {previewImage && previewImage !== "/placeholder.svg" && (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 rounded-full shadow-lg bg-white dark:bg-slate-800"
+            onClick={handleReset}
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

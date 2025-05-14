@@ -7,26 +7,37 @@ import { Save, X } from "lucide-react";
 interface FormActionsProps {
   isEdit: boolean;
   onCancel: () => void;
+  className?: string;
 }
 
-export const FormActions = ({ isEdit, onCancel }: FormActionsProps) => {
+export const FormActions: React.FC<FormActionsProps> = ({ 
+  isEdit, 
+  onCancel,
+  className 
+}) => {
   return (
-    <motion.div className="flex justify-end gap-4 pt-4">
-      <Button 
-        type="button" 
-        variant="outline" 
-        onClick={onCancel} 
-        className="gap-2"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3 }}
+      className={`flex justify-end items-center gap-3 p-4 border-t bg-slate-50/80 dark:bg-slate-900/50 ${className || ''}`}
+    >
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onCancel}
+        className="gap-1"
       >
         <X className="h-4 w-4" />
-        انصراف
+        <span>انصراف</span>
       </Button>
-      <Button 
-        type="submit" 
-        className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
+      
+      <Button
+        type="submit"
+        className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 gap-1"
       >
         <Save className="h-4 w-4" />
-        {isEdit ? "ذخیره تغییرات" : "افزودن شاگرد"}
+        <span>{isEdit ? "ذخیره تغییرات" : "افزودن شاگرد"}</span>
       </Button>
     </motion.div>
   );

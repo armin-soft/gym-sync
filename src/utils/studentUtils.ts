@@ -1,53 +1,62 @@
 
-// Format payment value with thousands separator
-export const formatPayment = (value: string): string => {
-  const numericValue = value.replace(/\D/g, '');
-  return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
+import { toPersianNumbers, formatNumber } from "@/lib/utils/numbers";
 
-// Calculate student progress based on their data
-export const getStudentProgress = (student: any): number => {
-  let totalPoints = 0;
-  let earnedPoints = 0;
+/**
+ * Format payment with thousand separator
+ */
+export function formatPayment(payment: string | number | undefined): string {
+  if (!payment) return '';
   
-  // Basic info
-  if (student.name) earnedPoints += 1;
-  if (student.phone) earnedPoints += 1;
-  if (student.height) earnedPoints += 1;
-  if (student.weight) earnedPoints += 1;
-  if (student.payment) earnedPoints += 1;
-  totalPoints += 5;
+  const paymentString = payment.toString().replace(/[^\d]/g, '');
   
-  // Exercise program
-  if (student.exercises?.length || 
-      student.exercisesDay1?.length || 
-      student.exercisesDay2?.length || 
-      student.exercisesDay3?.length || 
-      student.exercisesDay4?.length) {
-    earnedPoints += 3;
+  try {
+    // Format with thousands separator
+    const formattedNumber = formatNumber(paymentString);
+    return formattedNumber;
+  } catch (error) {
+    console.error("Error formatting payment:", error);
+    return toPersianNumbers(paymentString);
   }
-  totalPoints += 3;
-  
-  // Diet program
-  if (student.meals?.length) {
-    earnedPoints += 2;
-  }
-  totalPoints += 2;
-  
-  // Supplements
-  if (student.supplements?.length || student.vitamins?.length) {
-    earnedPoints += 2;
-  }
-  totalPoints += 2;
-  
-  // Calculate percentage
-  return Math.round((earnedPoints / totalPoints) * 100);
-};
+}
 
-// Get color for progress bar based on percentage
-export const getProgressColor = (progress: number): string => {
-  if (progress < 30) return "text-red-500";
-  if (progress < 60) return "text-amber-500";
-  if (progress < 90) return "text-sky-500";
-  return "text-emerald-500";
-};
+/**
+ * Format measurements with Persian numbers
+ */
+export function formatMeasurement(value: string | number | undefined, unit: string): string {
+  if (!value) return '';
+  
+  try {
+    const persianValue = toPersianNumbers(value);
+    return `${persianValue} ${unit}`;
+  } catch (error) {
+    console.error("Error formatting measurement:", error);
+    return `${value} ${unit}`;
+  }
+}
+
+/**
+ * Calculate BMI
+ */
+export function calculateBMI(weight: string | number, height: string | number): number | null {
+  if (!weight || !height) return null;
+  
+  const weightValue = parseFloat(weight.toString());
+  const heightValue = parseFloat(height.toString()) / 100; // Convert to meters
+  
+  if (isNaN(weightValue) || isNaN(heightValue) || heightValue <= 0) return null;
+  
+  const bmi = weightValue / (heightValue * heightValue);
+  return Math.round(bmi * 10) / 10; // Round to 1 decimal place
+}
+
+/**
+ * Get BMI category in Persian
+ */
+export function getBMICategory(bmi: number): string {
+  if (bmi < 18.5) return 'کمبود وزن';
+  if (bmi < 25) return 'وزن طبیعی';
+  if (bmi < 30) return 'اضافه وزن';
+  if (bmi < 35) return 'چاقی درجه ۱';
+  if (bmi < 40) return 'چاقی درجه ۲';
+  return 'چاقی شدید';
+}

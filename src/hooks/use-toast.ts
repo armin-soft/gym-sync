@@ -1,32 +1,44 @@
 
-import * as React from "react"
-import { toast } from "./toast/toast-utils"
-import { listeners, memoryState } from "./toast/toast-reducer"
-import { State } from "./toast/toast-types"
+import { useToast as useToastOriginal } from "@/components/ui/use-toast";
 
-// This is a React hook that must be used within a React component
-function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
+// Re-export the toast components from our hook implementation
+export { useToast, toast } from "@/components/ui/use-toast";
 
-  React.useEffect(() => {
-    listeners.push(setState)
-    return () => {
-      const index = listeners.indexOf(setState)
-      if (index > -1) {
-        listeners.splice(index, 1)
-      }
-    }
-  }, [state])
-
+// Additional custom toast helpers
+export const useCustomToast = () => {
+  const { toast } = useToastOriginal();
+  
+  // Success toast
+  const successToast = (title: string, description?: string) => {
+    toast({
+      title,
+      description,
+      variant: "default",
+    });
+  };
+  
+  // Error toast
+  const errorToast = (title: string, description?: string) => {
+    toast({
+      title,
+      description,
+      variant: "destructive",
+    });
+  };
+  
+  // Warning toast
+  const warningToast = (title: string, description?: string) => {
+    toast({
+      title,
+      description,
+      variant: "warning",
+    });
+  };
+  
   return {
-    ...state,
     toast,
-    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
-  }
-}
-
-// Export function for direct access
-export { useToast, toast }
-
-// Need to import dispatch for the dismiss function
-import { dispatch } from "./toast/toast-reducer"
+    successToast,
+    errorToast,
+    warningToast
+  };
+};
