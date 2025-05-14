@@ -241,7 +241,6 @@ const StudentsPage = () => {
 
         {/* Dialog manager component that handles all dialogs */}
         <StudentDialogManagerWrapper
-          ref={dialogManagerRef}
           onSave={handleSave}
           onSaveExercises={handleSaveExercises}
           onSaveDiet={handleSaveDiet}

@@ -27,11 +27,11 @@ export const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({
     
     // Sort entries by date (newest first)
     const sortedEntries = [...historyEntries].sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      new Date(b.date).getTime() - new Date(a.date).getTime()
     );
     
     sortedEntries.forEach(entry => {
-      const dateKey = format(new Date(entry.timestamp), 'yyyy-MM-dd');
+      const dateKey = format(new Date(entry.date), 'yyyy-MM-dd');
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
@@ -45,9 +45,9 @@ export const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({
     }));
   }, [historyEntries]);
   
-  // Get appropriate icon for history entry type
-  const getEntryIcon = (type: string) => {
-    switch(type) {
+  // Get appropriate icon for history entry action
+  const getEntryIcon = (action: string) => {
+    switch(action) {
       case 'edit':
         return <Edit className="h-4 w-4 text-blue-500" />;
       case 'exercise':
@@ -105,6 +105,11 @@ export const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({
     );
   }
 
+  // Helper function to find student by ID
+  const getStudentById = (studentId: number): Student | undefined => {
+    return students.find(student => student.id === studentId);
+  };
+
   return (
     <Card className="flex-1 backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden">
       <ScrollArea className="h-full">
@@ -129,39 +134,44 @@ export const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({
                 </div>
                 
                 <div className="space-y-3 pb-2 pl-4 border-r border-dashed border-muted">
-                  {group.entries.map(entry => (
-                    <motion.div 
-                      key={entry.id}
-                      variants={itemVariants}
-                      className="relative"
-                    >
-                      <div className="absolute right-[-17px] top-2 rounded-full p-1 bg-background border border-muted">
-                        {getEntryIcon(entry.type)}
-                      </div>
-                      
-                      <Card className="overflow-hidden bg-card/50 hover:bg-card/80 transition-all">
-                        <div className="p-3 flex items-center gap-3">
-                          <Avatar className="h-8 w-8 border border-muted">
-                            <AvatarImage src={entry.student.image} alt={entry.student.name} />
-                            <AvatarFallback>{entry.student.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">
-                              {entry.student.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {entry.description}
-                            </p>
-                          </div>
-                          
-                          <div className="text-xs text-muted-foreground whitespace-nowrap">
-                            {format(new Date(entry.timestamp), 'HH:mm')}
-                          </div>
+                  {group.entries.map(entry => {
+                    const student = getStudentById(entry.studentId);
+                    if (!student) return null;
+                    
+                    return (
+                      <motion.div 
+                        key={entry.id}
+                        variants={itemVariants}
+                        className="relative"
+                      >
+                        <div className="absolute right-[-17px] top-2 rounded-full p-1 bg-background border border-muted">
+                          {getEntryIcon(entry.action)}
                         </div>
-                      </Card>
-                    </motion.div>
-                  ))}
+                        
+                        <Card className="overflow-hidden bg-card/50 hover:bg-card/80 transition-all">
+                          <div className="p-3 flex items-center gap-3">
+                            <Avatar className="h-8 w-8 border border-muted">
+                              <AvatarImage src={student.image} alt={student.name} />
+                              <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">
+                                {student.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {entry.details}
+                              </p>
+                            </div>
+                            
+                            <div className="text-xs text-muted-foreground whitespace-nowrap">
+                              {format(new Date(entry.date), 'HH:mm')}
+                            </div>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </motion.div>
             ))}
