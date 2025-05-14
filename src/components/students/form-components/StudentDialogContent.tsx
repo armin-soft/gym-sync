@@ -39,7 +39,10 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
       phone: student?.phone || "",
       height: student?.height || "",
       weight: student?.weight || "",
-      payment: student?.payment || ""
+      payment: student?.payment || "",
+      age: student?.age?.toString() || "",
+      grade: student?.grade || "",
+      group: student?.group || ""
     }
   });
 

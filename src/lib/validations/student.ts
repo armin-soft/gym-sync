@@ -8,6 +8,10 @@ export const studentFormSchema = z.object({
   age: z.string().optional(),
   grade: z.string().optional(),
   group: z.string().optional(),
+  phone: z.string().optional(),
+  height: z.string().optional(),
+  weight: z.string().optional(),
+  payment: z.string().optional(),
 });
 
 export type StudentFormValues = z.infer<typeof studentFormSchema>;
