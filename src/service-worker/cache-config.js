@@ -1,6 +1,6 @@
 
 // Cache configuration for the service worker
-export const CACHE_NAME = 'gym-sync-v10';
+export const CACHE_NAME = 'gym-sync-v11';
 
 // Assets to cache - using relative paths for better compatibility
 export const STATIC_ASSETS = [

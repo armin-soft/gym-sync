@@ -12,7 +12,7 @@ sw.importScripts('./Assets/Script/Fetch-Handler.js');
 sw.importScripts('./Assets/Script/Message-Handler.js');
 
 // Cache configuration
-const CACHE_NAME = 'gym-sync-v10'; // Increment cache version
+const CACHE_NAME = 'gym-sync-v11'; // Increment cache version
 const STATIC_ASSETS = [
   './',
   './index.html',
