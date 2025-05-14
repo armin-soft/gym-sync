@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { format, isToday, isYesterday } from "date-fns";
-import { fa } from "date-fns/locale";
+import { faIR } from "date-fns/locale";
 import { HistoryEntry } from "@/hooks/useStudentHistory";
 import { Student } from "@/components/students/StudentTypes";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -53,7 +53,7 @@ export const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({ historyEnt
     } else if (dateKey === "yesterday") {
       return "دیروز";
     } else {
-      return format(new Date(dateKey), 'd MMMM yyyy', { locale: fa });
+      return format(new Date(dateKey), 'd MMMM yyyy', { locale: faIR });
     }
   };
   
@@ -167,7 +167,7 @@ export const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({ historyEnt
                                   {getActionIcon(entry.action)}
                                 </div>
                                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  {format(new Date(entry.date), 'HH:mm', { locale: fa })}
+                                  {format(new Date(entry.date), 'HH:mm', { locale: faIR })}
                                 </span>
                               </div>
                             </div>

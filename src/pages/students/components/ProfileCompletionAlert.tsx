@@ -1,15 +1,15 @@
 
-import { useRouter } from "@/hooks/useRouter";
+import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Settings, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const ProfileCompletionAlert = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const navigateToProfile = () => {
-    router.push("/profile");
+    navigate("/profile");
   };
 
   return (
