@@ -38,12 +38,15 @@ interface ServiceWorkerGlobalScope {
 // Define 'self' for service worker scripts
 declare const self: ServiceWorkerGlobalScope;
 
+// Define toast variants to be consistent across the app
+type ToastVariant = "default" | "destructive" | "success" | "warning";
+
 // Extended window interface to include service worker registration
 interface Window {
   showToast?: (options: {
     title: string;
     description: string;
-    variant?: string;
+    variant?: ToastVariant;
     duration?: number;
     action?: {
       label: string;

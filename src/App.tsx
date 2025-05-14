@@ -21,21 +21,8 @@ const queryClient = new QueryClient({
   },
 });
 
-// Define the toast interface globally
-declare global {
-  interface Window {
-    showToast: (options: {
-      title: string;
-      description: string;
-      variant?: "default" | "destructive" | "success" | "warning";
-      duration?: number;
-      action?: {
-        label: string;
-        onClick: () => void;
-      };
-    }) => void;
-  }
-}
+// The global declaration is now handled in vite-env.d.ts
+// so we remove the redundant declaration here
 
 function AppContent() {
   return (
