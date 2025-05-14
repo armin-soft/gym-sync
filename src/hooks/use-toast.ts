@@ -1,6 +1,6 @@
 
 // Re-export the toast components from our internal hooks implementation
-import { toast } from "@/hooks/toast/toast-utils";
+import { useToast, toast } from "@/hooks/toast/toast-utils";
 
 // Additional custom toast helpers
 export const useCustomToast = () => {
@@ -41,6 +41,5 @@ export const useCustomToast = () => {
   };
 };
 
-// Export the useToast hook from our internal implementation
-export { useToast } from "@/hooks/toast/toast-utils";
-export { toast };
+// Export the hooks and utilities
+export { useToast, toast };

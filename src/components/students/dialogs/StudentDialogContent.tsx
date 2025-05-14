@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StudentDialog } from "@/components/StudentDialog";
+import { StudentDialog } from "@/components/students/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
 import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
 import { StudentSupplementDialog } from "@/components/nutrition/StudentSupplementDialog";
