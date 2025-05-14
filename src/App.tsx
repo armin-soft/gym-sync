@@ -46,8 +46,8 @@ function AppContent() {
 }
 
 function App() {
-  // Get the base path for the app - in development, this will be '/'
-  const basePath = process.env.NODE_ENV === 'development' ? '/' : getBasePath();
+  // Always use root path as base - this is safer for all environments
+  const basePath = '/';
   
   console.log("Using basename for router:", basePath);
   

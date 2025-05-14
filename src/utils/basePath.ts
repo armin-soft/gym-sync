@@ -4,43 +4,44 @@
  * Works for any deployment path including subdirectories
  */
 export function getBasePath(): string {
-  // In development environment or when window is not available, use root path
-  if (typeof window === 'undefined' || process.env.NODE_ENV === 'development') {
+  // In development environment, always use root path
+  if (process.env.NODE_ENV === 'development') {
     return '/';
   }
   
-  // Try to determine base path from the script tag
-  const scriptTags = document.getElementsByTagName('script');
-  for (let i = 0; i < scriptTags.length; i++) {
-    const src = scriptTags[i].getAttribute('src') || '';
-    // Look for main script patterns
-    if (src.includes('main.js') || src.includes('main.tsx') || src.includes('App.js')) {
-      // Extract directory path from script src
-      const urlObj = new URL(src, window.location.origin);
-      const pathParts = urlObj.pathname.split('/');
-      pathParts.pop(); // Remove file name
-      
-      // Remove common asset path segments if present
-      if (pathParts.length > 0 && 
-          (pathParts[pathParts.length - 1] === 'Script' || 
-           pathParts[pathParts.length - 1] === 'script' ||
-           pathParts[pathParts.length - 1] === 'Assets')) {
-        pathParts.pop();
-      }
-      
-      // Add trailing slash and return
-      let basePath = pathParts.join('/');
-      if (!basePath.endsWith('/')) basePath += '/';
-      
-      console.log("Base path determined from script:", basePath);
-      return basePath;
-    }
+  // When not in a browser environment
+  if (typeof window === 'undefined') {
+    return '/';
   }
-
-  // Fallback to current path segment extraction
+  
   try {
-    // Simple approach: just use root path as base
-    // This avoids routing issues when paths can't be determined
+    // For production: Get base URL from window location
+    // This is more reliable than parsing script tags
+    const pathName = window.location.pathname;
+    
+    // If we're at the root or a direct route
+    if (pathName === '/' || pathName.indexOf('.') !== -1) {
+      return '/';
+    }
+    
+    // Check for specific paths that should be excluded from the base path
+    const routePaths = [
+      '/Coach-Profile', 
+      '/Students', 
+      '/Exercise-Movements', 
+      '/Diet-Plan', 
+      '/Supplements-Vitamins', 
+      '/Backup-Restore'
+    ];
+    
+    // If the current path is one of our application routes, use root
+    for (const route of routePaths) {
+      if (pathName.startsWith(route)) {
+        return '/';
+      }
+    }
+    
+    console.log("Using root path as basename");
     return '/';
   } catch (e) {
     console.error("Error determining base path:", e);
