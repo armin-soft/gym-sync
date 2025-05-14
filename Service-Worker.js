@@ -12,7 +12,7 @@ sw.importScripts('./Assets/Script/Fetch-Handler.js');
 sw.importScripts('./Assets/Script/Message-Handler.js');
 
 // Cache configuration - updated version to force refresh
-const CACHE_NAME = 'gym-sync-v12'; 
+const CACHE_NAME = 'gym-sync-v13'; 
 
 // Update the static assets list with critical files
 const STATIC_ASSETS = [
