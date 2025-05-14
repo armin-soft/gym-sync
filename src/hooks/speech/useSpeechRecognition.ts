@@ -10,7 +10,6 @@ export function useSpeechRecognition({
   onTranscriptChange,
   initialValue = "",
   multiLine = false,
-  onInterimTranscriptChange
 }: UseSpeechRecognitionProps): UseSpeechRecognitionReturn {
   // Use core recognition hooks
   const {
@@ -26,8 +25,6 @@ export function useSpeechRecognition({
     requestMicrophonePermission,
     showRecordingStartedToast,
     showRecordingStoppedToast,
-    confidenceScore,
-    setConfidenceScore,
     toast
   } = useRecognitionCore();
   
@@ -42,8 +39,7 @@ export function useSpeechRecognition({
   } = useTranscriptManagement({
     initialValue,
     onTranscriptChange,
-    multiLine,
-    onInterimTranscriptChange
+    multiLine
   });
   
   // Set up recognition instance with all needed config
@@ -54,9 +50,7 @@ export function useSpeechRecognition({
     setInterimTranscript,
     setIsListening,
     lang,
-    multiLine,
-    setConfidenceScore,
-    onInterimTranscriptChange
+    multiLine
   });
   
   // Start listening function
@@ -141,7 +135,6 @@ export function useSpeechRecognition({
     isListening,
     isSupported,
     interimTranscript,
-    confidenceScore,
     startListening,
     stopListening,
     resetTranscript

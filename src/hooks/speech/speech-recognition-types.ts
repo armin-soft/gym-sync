@@ -6,7 +6,6 @@ export interface UseSpeechRecognitionProps {
   onTranscriptChange: (transcript: string) => void;
   initialValue?: string;
   multiLine?: boolean;
-  onInterimTranscriptChange?: (transcript: string, confidence?: number) => void;
 }
 
 export interface UseSpeechRecognitionReturn {
@@ -14,7 +13,6 @@ export interface UseSpeechRecognitionReturn {
   isListening: boolean;
   isSupported: boolean;
   interimTranscript: string;
-  confidenceScore?: number;
   startListening: () => Promise<void>;
   stopListening: () => void;
   resetTranscript: () => void;
@@ -28,7 +26,6 @@ export interface RecognitionState {
   autoRestart: boolean;
   error: string;
   startTime: number;
-  confidence?: number;
 }
 
 export interface RecognitionEvent extends Event {

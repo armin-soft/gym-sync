@@ -6,7 +6,6 @@ import { Exercise } from "@/types/exercise";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 import { useToast } from "@/hooks/use-toast";
-import { VoiceRecognitionDialog } from "@/components/ui/speech-to-text/voice-recognition-dialog";
 
 interface ExerciseDialogsProps {
   isAddDialogOpen: boolean;
@@ -19,8 +18,6 @@ interface ExerciseDialogsProps {
   setIsDeleteDialogOpen: (open: boolean) => void;
   onDelete: () => void;
   selectedExerciseIds: number[];
-  isVoiceRecognitionOpen: boolean;
-  setIsVoiceRecognitionOpen: (open: boolean) => void;
 }
 
 const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
@@ -33,9 +30,7 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
   isDeleteDialogOpen,
   setIsDeleteDialogOpen,
   onDelete,
-  selectedExerciseIds,
-  isVoiceRecognitionOpen,
-  setIsVoiceRecognitionOpen
+  selectedExerciseIds
 }) => {
   // Get categories from hook
   const { categories } = useExerciseData();
@@ -44,7 +39,7 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
   // اضافه کردن درخواست مجوز میکروفون هنگام باز شدن دیالوگ
   useEffect(() => {
     const requestMicrophonePermission = async () => {
-      if (isAddDialogOpen || isVoiceRecognitionOpen) {
+      if (isAddDialogOpen) {
         try {
           // درخواست دسترسی به میکروفون
           await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -65,39 +60,10 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
     };
     
     requestMicrophonePermission();
-  }, [isAddDialogOpen, isVoiceRecognitionOpen, toast]);
-
-  // دریافت متن از دیالوگ گفتار به نوشتار
-  const handleTranscriptChange = (transcript: string) => {
-    if (transcript) {
-      setFormData({
-        ...formData,
-        name: transcript
-      });
-    }
-  };
-
-  // زمانی که دیالوگ بسته می‌شود، اگر متن وجود داشته باشد دیالوگ افزودن را باز کنید
-  const handleVoiceDialogChange = (open: boolean) => {
-    setIsVoiceRecognitionOpen(open);
-    if (!open && formData.name) {
-      setTimeout(() => {
-        setIsAddDialogOpen(true);
-      }, 100);
-    }
-  };
+  }, [isAddDialogOpen, toast]);
   
   return (
     <>
-      {/* دیالوگ گفتار به نوشتار */}
-      <VoiceRecognitionDialog
-        isOpen={isVoiceRecognitionOpen}
-        onOpenChange={handleVoiceDialogChange}
-        onTranscriptChange={handleTranscriptChange}
-        initialValue=""
-        title="افزودن حرکت با گفتار"
-      />
-
       {/* Add/Edit Exercise Dialog */}
       <ExerciseDialog 
         isOpen={isAddDialogOpen}
