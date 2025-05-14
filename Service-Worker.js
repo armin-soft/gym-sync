@@ -1,9 +1,9 @@
 
-// Import modular components
-importScripts('./src/service-worker/cache-config.js');
-importScripts('./src/service-worker/cache-strategies.js');
-importScripts('./src/service-worker/fetch-handler.js');
-importScripts('./src/service-worker/message-handler.js');
+// Import modular components with updated paths
+importScripts('./Assets/Script/ServiceWorker/CacheConfig.js');
+importScripts('./Assets/Script/ServiceWorker/CacheStrategies.js');
+importScripts('./Assets/Script/ServiceWorker/FetchHandler.js');
+importScripts('./Assets/Script/ServiceWorker/MessageHandler.js');
 
 // Main service worker file combining all modules
 const { CACHE_NAME, STATIC_ASSETS } = self;
