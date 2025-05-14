@@ -1,47 +1,69 @@
 
-import React from "react";
+import React, { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { StudentSearchProps } from "./StudentSearchSortTypes";
-import { motion } from "framer-motion";
 
-export const StudentSearch = ({
+interface StudentSearchProps {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  onClearSearch?: () => void;
+}
+
+export const StudentSearch: React.FC<StudentSearchProps> = ({
   searchQuery,
   setSearchQuery,
-}: StudentSearchProps) => {
+  onClearSearch
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleClear = () => {
+    if (onClearSearch) {
+      onClearSearch();
+    } else {
+      setSearchQuery("");
+    }
+    inputRef.current?.focus();
+  };
+
   return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-      >
-        <Search className="h-4.5 w-4.5" />
-      </motion.div>
+    <div 
+      className={`
+        relative flex items-center rounded-lg border border-input bg-background 
+        shadow-sm transition-all duration-200
+        ${isFocused ? 'ring-1 ring-ring' : ''}
+        ${searchQuery ? 'pr-3' : 'pr-4'}
+      `}
+    >
+      <Search className="h-4 w-4 absolute right-3 text-muted-foreground" />
+      
       <Input
-        placeholder="جستجو بر اساس نام یا شماره موبایل..."
+        ref={inputRef}
+        type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="pl-4 pr-11 py-6 bg-transparent border-none focus-visible:ring-1 focus-visible:ring-indigo-500/20 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-800 dark:text-gray-200"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        placeholder="جستجوی شاگرد..."
+        className="border-0 focus-visible:ring-0 pr-9 text-sm bg-transparent shadow-none"
       />
-      {searchQuery && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 500, damping: 15 }}
-        >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300"
-            onClick={() => setSearchQuery('')}
+      
+      <AnimatePresence>
+        {searchQuery && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleClear}
+            className="absolute left-3 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="پاک کردن جستجو"
           >
             <X className="h-4 w-4" />
-          </Button>
-        </motion.div>
-      )}
-    </>
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
