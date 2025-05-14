@@ -1,12 +1,13 @@
 
 import fs from 'fs';
 import path from 'path';
+import { rm } from 'fs/promises';
 
-// پلاگین برای کپی فایل‌ها به پوشه dist
+// پلاگین برای کپی فایل‌ها به پوشه dist و حذف پوشه src اضافی
 export const copyFilesPlugin = () => {
   return {
     name: 'copy-files',
-    closeBundle: () => {
+    closeBundle: async () => {
       try {
         // اطمینان از وجود پوشه‌ها
         if (!fs.existsSync('dist/Assets')) {
@@ -78,6 +79,16 @@ export const copyFilesPlugin = () => {
         if (fs.existsSync(extraManifestPath)) {
           fs.unlinkSync(extraManifestPath);
           console.log('Removed duplicate Manifest.json from dist/Assets/');
+        }
+
+        // حذف پوشه src از dist بعد از کپی فایل‌های لازم
+        if (fs.existsSync('dist/src')) {
+          try {
+            await rm('dist/src', { recursive: true, force: true });
+            console.log('Successfully deleted dist/src directory');
+          } catch (err) {
+            console.error('Error removing dist/src directory:', err);
+          }
         }
         
         console.log('All files copied successfully!');
