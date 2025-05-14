@@ -35,3 +35,20 @@ interface ServiceWorkerGlobalScope {
   addEventListener(type: string, callback: EventListenerOrEventListenerObject): void;
 }
 
+// Define 'self' for service worker scripts
+declare const self: ServiceWorkerGlobalScope;
+
+// Extended window interface to include service worker registration
+interface Window {
+  showToast?: (options: {
+    title: string;
+    description: string;
+    variant?: string;
+    duration?: number;
+    action?: {
+      label: string;
+      onClick: () => void;
+    };
+  }) => void;
+  swRegistration?: ServiceWorkerRegistration;
+}
