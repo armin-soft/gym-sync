@@ -1,7 +1,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import type { ExerciseWithSets, ExerciseSets, ExerciseReps, ExerciseDaySelections } from './types';
+import type { ExerciseWithSets, ExerciseSets, ExerciseReps } from './types';
 
 interface UseExerciseSelectionProps {
   initialExercises?: number[];
@@ -44,7 +43,7 @@ export const useExerciseSelection = (props?: UseExerciseSelectionProps) => {
 
   // Initialize current day's exercises based on activeDay
   useEffect(() => {
-    const dayExercises = selectedExercises.filter(ex => ex.day === activeDay);
+    const dayExercises = selectedExercises.filter(ex => ex.day === Number(activeDay));
     setCurrentDayExercises(dayExercises);
   }, [activeDay, selectedExercises]);
 
@@ -53,7 +52,7 @@ export const useExerciseSelection = (props?: UseExerciseSelectionProps) => {
     const newExercise: ExerciseWithSets = {
       ...exercise,
       id: exercise.id,
-      day: activeDay,
+      day: Number(activeDay), // Convert to number for consistency
       sets: exercise.sets,
       reps: exercise.reps
     };
@@ -146,12 +145,12 @@ export const useExerciseSelection = (props?: UseExerciseSelectionProps) => {
 
   // Check if exercise is already selected
   const isExerciseSelected = useCallback((exerciseId: number) => {
-    return selectedExercises.some(ex => ex.id === exerciseId && ex.day === activeDay);
+    return selectedExercises.some(ex => ex.id === exerciseId && Number(ex.day) === Number(activeDay));
   }, [selectedExercises, activeDay]);
 
   // Get exercise count for each day
   const getDayExercisesCount = useCallback((day: string) => {
-    return selectedExercises.filter(ex => ex.day === day).length;
+    return selectedExercises.filter(ex => Number(ex.day) === Number(day)).length;
   }, [selectedExercises]);
 
   // Helper functions to get selected exercises with sets and reps information
@@ -159,7 +158,8 @@ export const useExerciseSelection = (props?: UseExerciseSelectionProps) => {
     return selectedExercisesDay1.map(id => ({
       id,
       sets: exerciseSetsDay1[id] || 3,
-      reps: exerciseRepsDay1[id] || "8-12"
+      reps: exerciseRepsDay1[id] || "8-12",
+      day: 1 // Explicitly set the day as a number
     }));
   }, [selectedExercisesDay1, exerciseSetsDay1, exerciseRepsDay1]);
 
@@ -167,7 +167,8 @@ export const useExerciseSelection = (props?: UseExerciseSelectionProps) => {
     return selectedExercisesDay2.map(id => ({
       id,
       sets: exerciseSetsDay2[id] || 3,
-      reps: exerciseRepsDay2[id] || "8-12"
+      reps: exerciseRepsDay2[id] || "8-12",
+      day: 2 // Explicitly set the day as a number
     }));
   }, [selectedExercisesDay2, exerciseSetsDay2, exerciseRepsDay2]);
 
@@ -175,7 +176,8 @@ export const useExerciseSelection = (props?: UseExerciseSelectionProps) => {
     return selectedExercisesDay3.map(id => ({
       id,
       sets: exerciseSetsDay3[id] || 3,
-      reps: exerciseRepsDay3[id] || "8-12"
+      reps: exerciseRepsDay3[id] || "8-12",
+      day: 3 // Explicitly set the day as a number
     }));
   }, [selectedExercisesDay3, exerciseSetsDay3, exerciseRepsDay3]);
 
@@ -183,7 +185,8 @@ export const useExerciseSelection = (props?: UseExerciseSelectionProps) => {
     return selectedExercisesDay4.map(id => ({
       id,
       sets: exerciseSetsDay4[id] || 3,
-      reps: exerciseRepsDay4[id] || "8-12"
+      reps: exerciseRepsDay4[id] || "8-12",
+      day: 4 // Explicitly set the day as a number
     }));
   }, [selectedExercisesDay4, exerciseSetsDay4, exerciseRepsDay4]);
 

@@ -6,7 +6,7 @@ export interface ExerciseWithSets {
   id: number;
   sets: number;
   reps: string;
-  day?: string; // Added day property as optional
+  day?: number; // Changed from string to number to match the type in exercise.ts
   rest?: string;
   weight?: string;
   intensity?: number;

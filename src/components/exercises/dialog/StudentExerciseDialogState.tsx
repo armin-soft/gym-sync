@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ExerciseWithSets } from "@/hooks/exercise-selection";
+import { ExerciseWithSets } from "@/hooks/exercise-selection/types";
 import { useStudentExerciseDialogState } from "@/hooks/exercises/useStudentExerciseDialogState";
 
 interface StudentExerciseDialogStateProps {
@@ -90,7 +90,7 @@ export const StudentExerciseDialogState: React.FC<StudentExerciseDialogStateProp
   });
 
   // Render the children function with all the state props
-  return children(stateProps);
+  return children(stateProps as any);
 };
 
 export default StudentExerciseDialogState;

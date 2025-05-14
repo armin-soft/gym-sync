@@ -1,5 +1,5 @@
 
-import { ExerciseWithSets } from "@/hooks/exercise-selection";
+import { ExerciseWithSets } from "@/hooks/exercise-selection/types";
 import { useExerciseDialogData } from "./useExerciseDialogData";
 import { useExerciseSelection } from "@/hooks/exercise-selection";
 import { useExerciseDialogState } from "./useExerciseDialogState";
@@ -127,7 +127,9 @@ export const useStudentExerciseDialogState = ({
     const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
     const dayNumber = parseInt(activeTab.replace("day", ""));
     
-    const success = handleSaveDay(selectedExercisesWithSets, onSave, dayNumber);
+    const typedOnSave = onSave as (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
+    const success = handleSaveDay(selectedExercisesWithSets, typedOnSave, dayNumber);
+    
     if (success) {
       // If this was the last day and all days are saved, close the dialog
       if (dayNumber === 4) {

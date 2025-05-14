@@ -1,60 +1,27 @@
 
-import React, { KeyboardEvent } from "react";
+import React from "react";
+import { Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { motion } from "framer-motion";
-import { Textarea } from "@/components/ui/textarea";
 
-interface QuickSpeechAddProps {
-  quickSpeechText: string;
-  setQuickSpeechText: (value: string) => void;
-  onQuickAdd: () => void;
+export interface QuickSpeechAddProps {
+  selectedType?: any;
 }
 
-const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
-  quickSpeechText,
-  setQuickSpeechText,
-  onQuickAdd
-}) => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey && quickSpeechText.trim()) {
-      e.preventDefault();
-      onQuickAdd();
-    }
+const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({ selectedType }) => {
+  // This is a placeholder component - actual implementation would require speech recognition
+  const handleClick = () => {
+    console.log("Quick speech add clicked for type:", selectedType);
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      className="overflow-hidden"
+    <Button
+      variant="outline"
+      size="icon"
+      className="bg-background/50 backdrop-blur-sm hover:bg-background/80"
+      onClick={handleClick}
     >
-      <div className="bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800/50 rounded-lg p-3 mb-2">
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-center">
-            <Button
-              size="sm"
-              onClick={onQuickAdd}
-              disabled={!quickSpeechText.trim()}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              <Plus className="h-4 w-4 ml-1" />
-              افزودن سریع
-            </Button>
-            <h4 className="font-medium text-sm text-purple-800 dark:text-purple-300">افزودن حرکت سریع</h4>
-          </div>
-          <Textarea
-            value={quickSpeechText}
-            onChange={(e) => setQuickSpeechText(e.target.value)}
-            placeholder="نام حرکت را وارد کنید..."
-            className="min-h-[80px] focus-visible:ring-purple-400 text-right"
-            dir="rtl"
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-      </div>
-    </motion.div>
+      <Mic className="h-4 w-4" />
+    </Button>
   );
 };
 

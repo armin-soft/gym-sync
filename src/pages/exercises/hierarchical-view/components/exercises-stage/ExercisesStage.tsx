@@ -8,35 +8,32 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useExercisesStage } from '../../hooks/useExercisesStage';
-import { ExerciseDialogs } from './ExerciseDialogs';
-import ExercisesList from './ExercisesList';
 import ExerciseHeader from './ExerciseHeader';
 import QuickSpeechAdd from './QuickSpeechAdd';
+import ExercisesList from './ExercisesList';
 
-const ExercisesStage = () => {
+interface ExercisesStageProps {
+  typeId: string;
+  categoryId: string;
+  onBack: () => void;
+  onExerciseSelect: (exerciseId: string) => void;
+}
+
+const ExercisesStage: React.FC<ExercisesStageProps> = ({
+  typeId,
+  categoryId,
+  onBack,
+  onExerciseSelect
+}) => {
   const navigate = useNavigate();
-  const {
-    exercises,
-    selectedCategory,
-    selectedType,
-    filteredExercises,
-    setFilteredExercises,
-    searchQuery,
-    setSearchQuery,
-    isAddDialogOpen,
-    setIsAddDialogOpen,
-    isEditDialogOpen,
-    setIsEditDialogOpen,
-    editingExercise,
-    setEditingExercise,
-    handleDeleteExercise,
-    handleAddExercise,
-    handleEditExercise,
-  } = useExercisesStage();
-
+  // Local state
+  const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [selectedType, setSelectedType] = useState<any>(null);
 
   // Filter options
   const [filters, setFilters] = useState({
@@ -47,23 +44,19 @@ const ExercisesStage = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-
-    if (!query.trim()) {
-      setFilteredExercises(exercises);
-      return;
-    }
-
-    const filtered = exercises.filter(
-      (exercise) =>
-        exercise.name.toLowerCase().includes(query.toLowerCase()) ||
-        exercise.description?.toLowerCase().includes(query.toLowerCase())
-    );
-
-    setFilteredExercises(filtered);
   };
 
-  const handleGoBack = () => {
-    navigate(-1);
+  const handleAddExercise = () => {
+    console.log("Adding exercise");
+    setIsAddDialogOpen(true);
+  };
+
+  const handleEditExercise = (exercise: any) => {
+    console.log("Editing exercise", exercise);
+  };
+
+  const handleDeleteExercise = (id: number) => {
+    console.log("Deleting exercise", id);
   };
 
   return (
@@ -81,11 +74,11 @@ const ExercisesStage = () => {
           <ExerciseHeader
             selectedCategory={selectedCategory}
             selectedType={selectedType}
-            onGoBack={handleGoBack}
+            onGoBack={onBack}
             viewMode={viewMode}
             setViewMode={setViewMode}
             setIsAddDialogOpen={setIsAddDialogOpen}
-            exercisesCount={filteredExercises.length}
+            exercisesCount={filteredExercises.length || 0}
           />
 
           {/* Search and filters */}
@@ -108,7 +101,7 @@ const ExercisesStage = () => {
               >
                 <Filter className="h-4 w-4" />
               </Button>
-              <QuickSpeechAdd onAddExercise={handleAddExercise} selectedType={selectedType} />
+              <QuickSpeechAdd />
             </div>
 
             {/* Filters panel */}
@@ -242,12 +235,8 @@ const ExercisesStage = () => {
           {/* Main content */}
           <div className="flex-1 overflow-auto px-2 sm:px-4 pb-4">
             <ExercisesList
-              exercises={filteredExercises}
               viewMode={viewMode}
-              onEdit={(exercise) => {
-                setEditingExercise(exercise);
-                setIsEditDialogOpen(true);
-              }}
+              onEdit={handleEditExercise}
               onDelete={handleDeleteExercise}
             />
 
@@ -293,19 +282,6 @@ const ExercisesStage = () => {
               </motion.div>
             )}
           </div>
-
-          {/* Dialogs */}
-          <ExerciseDialogs
-            isAddDialogOpen={isAddDialogOpen}
-            setIsAddDialogOpen={setIsAddDialogOpen}
-            isEditDialogOpen={isEditDialogOpen}
-            setIsEditDialogOpen={setIsEditDialogOpen}
-            editingExercise={editingExercise}
-            onAdd={handleAddExercise}
-            onEdit={handleEditExercise}
-            selectedCategory={selectedCategory}
-            selectedType={selectedType}
-          />
         </motion.div>
       </AnimatePresence>
     </div>

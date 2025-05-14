@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-import HierarchicalViewContainer from "./components/HierarchicalViewContainer";
+import { HierarchicalViewContainer } from "./components/HierarchicalViewContainer"; // Fixed import
 import { PageContainer } from "@/components/ui/page-container";
 
 const HierarchicalExercisesView = () => {
