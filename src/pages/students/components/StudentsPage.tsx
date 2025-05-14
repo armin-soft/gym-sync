@@ -10,7 +10,7 @@ import { useStudentDialogManagerWrapper } from "@/hooks/useStudentDialogManagerW
 import { useStudents } from "@/hooks/useStudents";
 import { StudentContent } from "./StudentContent";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
-import { StudentDialogManagerWrapper } from "@/components/students/StudentDialogManagerWrapper";
+import { StudentDialogManager } from "@/components/students/StudentDialogManager";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentSearch } from "@/components/students/search-sort/StudentSearch";
@@ -240,7 +240,8 @@ const StudentsPage = () => {
         </Tabs>
 
         {/* Dialog manager component that handles all dialogs */}
-        <StudentDialogManagerWrapper
+        <StudentDialogManager
+          ref={dialogManagerRef}
           onSave={handleSave}
           onSaveExercises={handleSaveExercises}
           onSaveDiet={handleSaveDiet}

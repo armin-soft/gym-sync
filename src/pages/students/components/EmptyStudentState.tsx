@@ -1,9 +1,8 @@
 
-import React from "react";
 import { motion } from "framer-motion";
+import { UserPlus, Search, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UserPlus, Users, Search, RefreshCw } from "lucide-react";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface EmptyStudentStateProps {
   isSearching: boolean;
@@ -11,133 +10,82 @@ interface EmptyStudentStateProps {
   onClearSearch: () => void;
 }
 
-export const EmptyStudentState = ({ isSearching, onAddStudent, onClearSearch }: EmptyStudentStateProps) => {
-  const deviceInfo = useDeviceInfo();
-  
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 300,
-        damping: 24
-      }
-    }
-  };
-
-  // Adjust sizes based on device type
-  const getIconSize = () => {
-    if (deviceInfo.isMobile) return "h-8 w-8";
-    if (deviceInfo.isTablet) return "h-9 w-9";
-    return "h-10 w-10";
-  };
-
-  const getContainerSize = () => {
-    if (deviceInfo.isMobile) return "w-16 h-16";
-    if (deviceInfo.isTablet) return "w-18 h-18";
-    return "w-20 h-20";
-  };
-
+export const EmptyStudentState: React.FC<EmptyStudentStateProps> = ({
+  isSearching,
+  onAddStudent,
+  onClearSearch
+}) => {
   return (
     <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="h-full min-h-[60vh] md:min-h-[70vh] flex flex-col items-center justify-center text-center rounded-xl md:rounded-2xl backdrop-blur-sm bg-white/20 dark:bg-slate-900/20 border-2 border-dashed border-muted w-full px-4"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-center justify-center h-full w-full p-4"
     >
-      {isSearching ? (
-        // Search with no results state
-        <>
-          <motion.div 
-            variants={itemVariants}
-            className="relative mb-3 md:mb-4"
-          >
-            <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-3xl opacity-30"></div>
-            <div className={`${getContainerSize()} rounded-full bg-amber-500/10 flex items-center justify-center relative`}>
-              <Search className={`${getIconSize()} text-amber-500`} />
-            </div>
-          </motion.div>
-          
-          <motion.h3 variants={itemVariants} className="text-lg md:text-xl font-bold text-foreground mb-1.5 md:mb-2">
-            نتیجه‌ای یافت نشد
-          </motion.h3>
-          
-          <motion.p variants={itemVariants} className="text-sm text-muted-foreground max-w-md mb-4 md:mb-6 px-2">
-            هیچ شاگردی با این مشخصات یافت نشد. لطفا جستجوی دیگری را امتحان کنید یا شاگرد جدیدی اضافه کنید.
-          </motion.p>
-          
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-2">
+      <Card className="max-w-md w-full backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border border-gray-200/60 dark:border-slate-800/60 shadow-xl">
+        <CardHeader className="text-center pb-2">
+          {isSearching ? (
+            <>
+              <CardTitle className="text-xl text-gray-800 dark:text-gray-200">نتیجه‌ای یافت نشد</CardTitle>
+              <CardDescription className="text-gray-500">
+                هیچ شاگردی با این مشخصات پیدا نشد
+              </CardDescription>
+            </>
+          ) : (
+            <>
+              <CardTitle className="text-xl text-gray-800 dark:text-gray-200">هنوز شاگردی اضافه نشده</CardTitle>
+              <CardDescription className="text-gray-500">
+                برای شروع، شاگرد جدید اضافه کنید
+              </CardDescription>
+            </>
+          )}
+        </CardHeader>
+
+        <CardContent className="flex justify-center py-6">
+          {isSearching ? (
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+            >
+              <Search className="h-10 w-10 text-gray-400" />
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="w-24 h-24 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center"
+            >
+              <UserPlus className="h-10 w-10 text-indigo-500 dark:text-indigo-400" />
+            </motion.div>
+          )}
+        </CardContent>
+
+        <CardFooter className="flex justify-center pb-6 gap-3">
+          {isSearching ? (
             <Button 
+              variant="outline" 
+              size="lg"
               onClick={onClearSearch}
-              size={deviceInfo.isMobile ? "default" : "lg"}
-              variant="outline"
-              className="gap-2"
+              className="gap-2 bg-white dark:bg-slate-900"
             >
-              <RefreshCw className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="text-sm md:text-base">پاک کردن جستجو</span>
+              <FilterX className="h-4 w-4" />
+              <span>پاک کردن جستجو</span>
             </Button>
-            
+          ) : (
             <Button 
+              size="lg"
               onClick={onAddStudent}
-              size={deviceInfo.isMobile ? "default" : "lg"}
-              className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md shadow-primary/20 relative overflow-hidden group"
+              className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white"
             >
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-700 to-violet-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-              <UserPlus className="h-4 w-4 md:h-5 md:w-5 relative z-10" />
-              <span className="relative z-10 text-sm md:text-base">افزودن شاگرد جدید</span>
-              <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
+              <UserPlus className="h-4 w-4" />
+              <span>افزودن شاگرد</span>
             </Button>
-          </motion.div>
-        </>
-      ) : (
-        // Empty state - no students
-        <>
-          <motion.div 
-            variants={itemVariants}
-            className="relative mb-3 md:mb-4"
-          >
-            <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl opacity-30"></div>
-            <div className={`${getContainerSize()} rounded-full bg-primary/10 flex items-center justify-center relative`}>
-              <Users className={`${getIconSize()} text-primary`} />
-            </div>
-          </motion.div>
-          
-          <motion.h3 variants={itemVariants} className="text-lg md:text-xl font-bold text-foreground mb-1.5 md:mb-2">
-            هنوز هیچ شاگردی اضافه نکرده‌اید
-          </motion.h3>
-          
-          <motion.p variants={itemVariants} className="text-sm text-muted-foreground max-w-md mb-4 md:mb-6 px-2">
-            برای شروع مدیریت شاگردان باشگاه، اولین شاگرد خود را اضافه کنید.
-          </motion.p>
-          
-          <motion.div variants={itemVariants}>
-            <Button 
-              onClick={onAddStudent}
-              size={deviceInfo.isMobile ? "default" : "lg"}
-              className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md shadow-primary/20 relative overflow-hidden group"
-            >
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-700 to-violet-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-              <UserPlus className="h-4 w-4 md:h-5 md:w-5 relative z-10" />
-              <span className="relative z-10 text-sm md:text-base">افزودن شاگرد جدید</span>
-              <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
-            </Button>
-          </motion.div>
-        </>
-      )}
+          )}
+        </CardFooter>
+      </Card>
     </motion.div>
   );
 };
