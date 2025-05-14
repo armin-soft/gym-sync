@@ -12,6 +12,7 @@ import SupplementsVitamins from "@/pages/supplements";
 import BackupRestore from "@/pages/backup";
 
 const AppRoutes = () => {
+  // Note: All routes are relative to the basename set in App.tsx
   const routes = useRoutes([
     {
       path: "/",
@@ -49,6 +50,11 @@ const AppRoutes = () => {
       path: "/Backup-Restore",
       element: <BackupRestore />,
     },
+    // Add a wildcard route to handle any unknown paths
+    {
+      path: "*",
+      element: <Index />, // Redirect to home on unknown routes
+    }
   ]);
 
   return routes;

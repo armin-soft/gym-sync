@@ -8,6 +8,7 @@ import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { getBasePath } from "./utils/basePath";
 import "./App.css";
 
 // Create a new query client instance with proper configuration
@@ -45,11 +46,14 @@ function AppContent() {
 }
 
 function App() {
+  // Get the base path for proper routing regardless of deployment path
+  const basePath = getBasePath();
+  
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <BrowserRouter basename="">
+          <BrowserRouter basename={basePath}>
             <AppContent />
             <Toaster />
           </BrowserRouter>

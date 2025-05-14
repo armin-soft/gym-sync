@@ -12,31 +12,73 @@ export function getBasePath(): string {
   const scriptTags = document.getElementsByTagName('script');
   for (let i = 0; i < scriptTags.length; i++) {
     const src = scriptTags[i].getAttribute('src') || '';
-    if (src.includes('Main.js') || src.includes('main.tsx') || src.includes('main.js')) {
+    if (src.includes('Main.js') || src.includes('main.tsx') || src.includes('main.js') || src.includes('App.js')) {
       // Extract directory path from script src
       const pathParts = src.split('/');
-      // Remove the filename and Assets/Scripts part if present
+      // Remove the filename and Assets/Script part if present
       pathParts.pop();
-      if (pathParts.length > 0 && pathParts[pathParts.length - 1] === 'Scripts') {
+      if (pathParts.length > 0 && 
+          (pathParts[pathParts.length - 1] === 'Script' || 
+           pathParts[pathParts.length - 1] === 'script')) {
         pathParts.pop();
       }
-      if (pathParts.length > 0 && pathParts[pathParts.length - 1] === 'Assets') {
+      if (pathParts.length > 0 && 
+          (pathParts[pathParts.length - 1] === 'Assets' || 
+           pathParts[pathParts.length - 1] === 'assets')) {
         pathParts.pop();
       }
+      
+      // For debugging
+      console.log("Script src detected:", src);
+      console.log("Base path from script:", pathParts.join('/') + '/');
+      
       // Join the parts back together and add a trailing slash
       return pathParts.join('/') + '/';
     }
   }
   
-  // Fallback to the pathname from the URL
-  const path = window.location.pathname;
-  // Get the path up to the last directory
-  const lastSlashIndex = path.lastIndexOf('/');
-  if (lastSlashIndex === -1) {
+  // Fallback: Use the current URL path up to the last segment
+  try {
+    // Get current path up to the last directory
+    const path = window.location.pathname;
+    console.log("Current window path:", path);
+    
+    // If this is already the root path or has no segments, just return "/"
+    if (path === "/" || path === "" || !path.includes("/")) {
+      return "/";
+    }
+    
+    // Find if the path includes any of our known routes
+    const knownRoutes = [
+      "/Coach-Profile", 
+      "/Students", 
+      "/Exercise-Movements", 
+      "/Diet-Plan", 
+      "/Supplements-Vitamins", 
+      "/Backup-Restore"
+    ];
+    
+    for (const route of knownRoutes) {
+      if (path.includes(route)) {
+        const basePath = path.split(route)[0];
+        console.log("Detected base path from route:", basePath);
+        return basePath;
+      }
+    }
+    
+    // Final fallback: try to get the directory path
+    const lastSlashIndex = path.lastIndexOf('/');
+    if (lastSlashIndex === -1) {
+      return '/';
+    }
+    
+    const basePath = path.substring(0, lastSlashIndex + 1);
+    console.log("Fallback base path:", basePath);
+    return basePath;
+  } catch (e) {
+    console.error("Error determining base path:", e);
     return '/';
   }
-  
-  return path.substring(0, lastSlashIndex + 1);
 }
 
 /**
