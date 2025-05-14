@@ -18,10 +18,6 @@ export const copyFilesPlugin = () => {
         if (!fs.existsSync('dist/Assets/Script')) {
           fs.mkdirSync('dist/Assets/Script', { recursive: true });
         }
-        // ایجاد پوشه برای service-worker با حروف بزرگ
-        if (!fs.existsSync('dist/Assets/Script/ServiceWorker')) {
-          fs.mkdirSync('dist/Assets/Script/ServiceWorker', { recursive: true });
-        }
 
         // کپی Manifest.json از src به ریشه dist، جلوگیری از تکرار
         if (fs.existsSync('src/Manifest.json')) {
@@ -40,7 +36,7 @@ export const copyFilesPlugin = () => {
           console.log('Copied Service-Worker.js to dist root and Assets/Script/ServiceWorker.js');
         }
         
-        // کپی ماژول‌های سرویس ورکر با نام‌های بزرگ
+        // کپی ماژول‌های سرویس ورکر با نام‌های بزرگ - مستقیماً به Assets/Script
         const serviceWorkerModules = [
           { source: 'cache-config.js', dest: 'CacheConfig.js' },
           { source: 'cache-strategies.js', dest: 'CacheStrategies.js' },
@@ -52,8 +48,8 @@ export const copyFilesPlugin = () => {
           const sourcePath = `src/service-worker/${module.source}`;
           // مسیر قدیمی برای سازگاری
           const oldDestPath = `dist/src/service-worker/${module.source}`;
-          // مسیر جدید با نام بزرگ
-          const newDestPath = `dist/Assets/Script/ServiceWorker/${module.dest}`;
+          // مسیر جدید با نام بزرگ - مستقیماً به Assets/Script
+          const newDestPath = `dist/Assets/Script/${module.dest}`;
           
           // ایجاد پوشه‌های لازم در مسیر قدیمی برای سازگاری
           const oldDir = path.dirname(oldDestPath);
