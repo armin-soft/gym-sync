@@ -8,3 +8,6 @@ export * from "./FormActions";
 export * from "./StudentDialogContent";
 export * from "./StudentDialogHeader";
 export * from "./StudentImageUpload";
+export * from "./StudentForm";
+export * from "./StudentImageSection";
+export * from "./StudentPersonalInfo";

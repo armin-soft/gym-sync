@@ -1,5 +1,5 @@
 
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/toast/toast-utils"
 import { ToastProvider } from "@/components/ui/toast"
 import { ToastContainer } from "./toast/toast-container"
 

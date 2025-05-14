@@ -1,12 +1,10 @@
 
-import { useToast as useToastOriginal } from "@/components/ui/toast";
-
-// Re-export the toast components from our hook implementation
+// Re-export the toast components from our internal hooks implementation
 export { useToast, toast } from "@/hooks/toast/toast-utils";
 
 // Additional custom toast helpers
 export const useCustomToast = () => {
-  const { toast } = useToastOriginal();
+  const { toast } = useToast();
   
   // Success toast
   const successToast = (title: string, description?: string) => {
