@@ -27,8 +27,11 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
+          // Get current script path for proper service worker scope
+          const scriptPath = './Service-Worker.js';
+          
           // Register the service worker from root path with improved error handling
-          navigator.serviceWorker.register('./Service-Worker.js')
+          navigator.serviceWorker.register(scriptPath, { scope: './' })
             .then(function(registration) {
               // Registration was successful
               console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -71,7 +74,7 @@
               
               // Try again once after a short delay
               setTimeout(() => {
-                navigator.serviceWorker.register('./Service-Worker.js')
+                navigator.serviceWorker.register(scriptPath, { scope: './' })
                   .then(reg => console.log('ServiceWorker registration successful on retry'))
                   .catch(err => console.error('ServiceWorker registration failed on retry:', err));
               }, 3000);

@@ -46,8 +46,10 @@ function AppContent() {
 }
 
 function App() {
-  // Get the base path for proper routing regardless of deployment path
-  const basePath = getBasePath();
+  // Get the base path for the app - in development, this will be '/'
+  const basePath = process.env.NODE_ENV === 'development' ? '/' : getBasePath();
+  
+  console.log("Using basename for router:", basePath);
   
   return (
     <QueryClientProvider client={queryClient}>
