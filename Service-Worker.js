@@ -1,5 +1,5 @@
 
-// Main service worker file that combines all modules
+// Main service worker file with enhanced offline functionality
 
 // Define self for TypeScript
 // @ts-ignore
@@ -11,31 +11,48 @@ sw.importScripts('./Assets/Script/Cache-Strategies.js');
 sw.importScripts('./Assets/Script/Fetch-Handler.js');
 sw.importScripts('./Assets/Script/Message-Handler.js');
 
-// Cache configuration - use the same version across all files
-const CACHE_NAME = 'gym-sync-v11'; 
+// Cache configuration - updated version to force refresh
+const CACHE_NAME = 'gym-sync-v12'; 
 
-// Update the static assets list
+// Update the static assets list with critical files
 const STATIC_ASSETS = [
   './',
   './index.html',
   './Assets/Image/Logo.png',
   './Manifest.json',
   './Assets/Script/index.js',
-  './Assets/Style/Menu.css'
+  './Assets/Style/Menu.css',
+  // Add more critical assets
+  './assets/index.css',
+  './assets/index.js'
 ];
 
-// Install event
+// Install event with improved error handling
 sw.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing');
   
   // Force activation for immediate control
   sw.skipWaiting();
   
-  // Cache static assets
+  // Cache static assets with better error handling
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[Service Worker] Caching Files');
-      return cache.addAll(STATIC_ASSETS);
+      
+      // Try bulk caching
+      return cache.addAll(STATIC_ASSETS)
+        .catch(bulkError => {
+          console.error('[Service Worker] Bulk caching failed:', bulkError);
+          
+          // Fall back to individual caching if bulk fails
+          return Promise.all(STATIC_ASSETS.map(url => 
+            fetch(url, { cache: 'reload' })
+              .then(response => {
+                if (response.ok) return cache.put(url, response);
+              })
+              .catch(err => console.log('[SW] Failed to cache:', url, err))
+          ));
+        });
     })
   );
 });
@@ -62,23 +79,49 @@ sw.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - use imported handler
+// Enhanced fetch event with better offline fallback
 sw.addEventListener('fetch', (event) => {
   // Use the fetch handler from the imported module
   if (typeof handleFetch === 'function') {
     handleFetch(event);
   } else {
     console.error('[Service Worker] Missing handleFetch function');
-    // Simple fallback fetch handler
+    // Improved fallback fetch handler
     event.respondWith(
       caches.match(event.request).then((response) => {
-        return response || fetch(event.request);
+        if (response) {
+          return response;
+        }
+        
+        return fetch(event.request).then(networkResponse => {
+          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+            return networkResponse;
+          }
+          
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+          
+          return networkResponse;
+        }).catch(() => {
+          // Return offline page for navigation
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+          
+          // Return simple text response for other resources
+          return new Response('برنامه در حالت آفلاین است', {
+            status: 200,
+            headers: {'Content-Type': 'text/plain; charset=UTF-8'}
+          });
+        });
       })
     );
   }
 });
 
-// Message event - use imported handler
+// Enhanced message event handling
 sw.addEventListener('message', (event) => {
   // Use the message handler from the imported module
   if (typeof handleMessage === 'function') {
@@ -86,12 +129,19 @@ sw.addEventListener('message', (event) => {
   } else {
     console.error('[Service Worker] Missing handleMessage function');
     
-    // Fallback message handler
+    // Enhanced fallback message handler
     if (!event.data) return;
     
     if (event.data.type === 'SKIP_WAITING') {
       console.log('[Service Worker] Skip waiting command received');
       sw.skipWaiting();
+    }
+    
+    if (event.data.type === 'REFRESH_CACHE') {
+      console.log('[Service Worker] Refreshing cache');
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll(STATIC_ASSETS);
+      });
     }
   }
 });

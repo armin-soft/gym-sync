@@ -1,8 +1,7 @@
-
 import { CACHE_NAME } from './cache-config.js';
 import { createCleanRequest } from './cache-strategies.js';
 
-// Handle fetch events for the service worker
+// Handle fetch events for the service worker with improved offline capabilities
 export function handleFetch(event) {
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
@@ -29,6 +28,27 @@ export function handleFetch(event) {
     fetchWithCacheFallback(cleanRequest)
       .catch(error => {
         console.error('[Service Worker] Error in fetch handler:', error);
+        
+        // For navigation requests, return the home page
+        if (cleanRequest.mode === 'navigate') {
+          return caches.match('./index.html')
+            .then(response => {
+              if (response) return response;
+              
+              // If index.html is not in cache, create a simple offline page
+              return new Response(
+                '<html><body dir="rtl">' +
+                '<h1>برنامه در حالت آفلاین</h1>' +
+                '<p>لطفا اتصال اینترنت خود را بررسی کنید.</p>' +
+                '</body></html>',
+                {
+                  status: 200,
+                  headers: { 'Content-Type': 'text/html; charset=UTF-8' }
+                }
+              );
+            });
+        }
+        
         return new Response('خطای سرویس ورکر', {
           status: 500,
           headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
@@ -37,19 +57,47 @@ export function handleFetch(event) {
   );
 }
 
-// Strategy: Try cache first, then network with background cache update
+// Enhanced strategy: Try cache first, then network with background cache update
 async function fetchWithCacheFallback(request) {
-  const cachedResponse = await caches.match(request);
+  try {
+    const cachedResponse = await caches.match(request);
+    
+    // Return cached response if available
+    if (cachedResponse) {
+      // In background, update the cache if online
+      updateCacheInBackground(request);
+      return cachedResponse;
+    }
   
-  // Return cached response if available
-  if (cachedResponse) {
-    // In background, update the cache
-    updateCacheInBackground(request);
-    return cachedResponse;
+    // Otherwise fetch from network
+    return await fetchAndCache(request);
   }
-
-  // Otherwise fetch from network
-  return fetchAndCache(request);
+  catch (error) {
+    console.error('[Service Worker] Error in fetchWithCacheFallback:', error);
+    
+    // Special handling for navigation requests
+    if (request.mode === 'navigate') {
+      const indexResponse = await caches.match('./index.html');
+      if (indexResponse) return indexResponse;
+    }
+    
+    // For other resources, try to find any cached version
+    const cachedFiles = await caches.open(CACHE_NAME);
+    const cachedKeys = await cachedFiles.keys();
+    
+    // Look for similar resources in cache (e.g. same pathname)
+    const requestUrl = new URL(request.url);
+    const similarPathRequest = cachedKeys.find(key => {
+      const keyUrl = new URL(key.url);
+      return keyUrl.pathname === requestUrl.pathname;
+    });
+    
+    if (similarPathRequest) {
+      return cachedFiles.match(similarPathRequest);
+    }
+    
+    throw error; // Re-throw if no fallback available
+  }
 }
 
 // Update cache in background without blocking response
@@ -71,10 +119,11 @@ function updateCacheInBackground(request) {
     })
     .catch(() => {
       // Network error, but we already have a cached version, so it's fine
+      console.log('[Service Worker] Failed to fetch for cache update (offline mode)');
     });
 }
 
-// Fetch from network and cache response
+// Enhanced fetch from network and cache response
 async function fetchAndCache(request) {
   try {
     const response = await fetch(request);
@@ -98,9 +147,12 @@ async function fetchAndCache(request) {
 
     return response;
   } catch (error) {
+    console.error('[Service Worker] Fetch failed for:', request.url, error);
+    
     // For navigation requests, return the offline page
     if (request.mode === 'navigate') {
-      return caches.match('./');
+      const indexResponse = await caches.match('./index.html');
+      if (indexResponse) return indexResponse;
     }
     
     // Otherwise return error response

@@ -1,4 +1,5 @@
-// Service worker implementation
+
+// Service worker implementation with enhanced offline capabilities
 // This is the main service worker file that will be compiled during build
 
 // Type declaration for ServiceWorkerGlobalScope
@@ -6,7 +7,7 @@ declare const self: ServiceWorkerGlobalScope;
 
 // Dynamically determine the base path where the app is running
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
-const CACHE_NAME = 'gym-sync-v11';
+const CACHE_NAME = 'gym-sync-v12'; // Increased version to force cache refresh
 
 // Files to cache - use relative paths that will work in any environment
 const getUrlsToCache = () => {
@@ -17,6 +18,11 @@ const getUrlsToCache = () => {
     `${BASE_PATH}Manifest.json`,
     `${BASE_PATH}Assets/Script/index.js`,
     `${BASE_PATH}Assets/Style/Menu.css`,
+    // Add additional critical assets for offline functionality
+    `${BASE_PATH}assets/index.css`,
+    `${BASE_PATH}assets/index.js`,
+    // Add offline fallback page
+    `${BASE_PATH}offline.html`
   ];
 };
 
@@ -64,7 +70,7 @@ self.addEventListener('install', (event: ExtendableEvent) => {
   );
 });
 
-// Cache and return requests
+// Enhanced cache and return requests with better offline handling
 self.addEventListener('fetch', (event: FetchEvent) => {
   // Don't attempt to cache API requests or external resources
   if (event.request.url.includes('/api/') || 
@@ -96,6 +102,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
       .then((response) => {
         // Cache hit - return response
         if (response) {
+          console.log('[Service Worker] Serving from cache:', cleanRequest.url);
           return response;
         }
 
@@ -114,6 +121,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
             caches.open(CACHE_NAME)
               .then(cache => {
+                console.log('[Service Worker] Caching new resource:', cleanRequest.url);
                 cache.put(cleanRequest, responseToCache);
               })
               .catch(err => {
@@ -124,9 +132,26 @@ self.addEventListener('fetch', (event: FetchEvent) => {
           })
           .catch(err => {
             console.log('[Service Worker] Fetch failed', err);
-            // You might want to return a custom offline page here
+            // Return offline page for navigation requests
             if (cleanRequest.mode === 'navigate') {
-              return caches.match('/');
+              return caches.match('/index.html')
+                .then(indexResponse => {
+                  if (indexResponse) {
+                    console.log('[Service Worker] Serving offline fallback page');
+                    return indexResponse;
+                  }
+                  // If we can't even find index.html in cache, create a simple response
+                  return new Response(
+                    '<html><body dir="rtl">' +
+                    '<h1>برنامه در حالت آفلاین</h1>' +
+                    '<p>لطفا اتصال اینترنت خود را بررسی کنید.</p>' +
+                    '</body></html>', 
+                    {
+                      status: 200,
+                      headers: { 'Content-Type': 'text/html; charset=UTF-8' }
+                    }
+                  );
+                });
             }
             
             return new Response('خطا در اتصال به شبکه', {
@@ -160,7 +185,7 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
   );
 });
 
-// Handle messages from clients
+// Improved message handling with periodic cache updates
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
   console.log('[Service Worker] Received message', event.data);
   
@@ -172,6 +197,28 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
   if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
     console.log('[Service Worker] Checking for updates');
     self.registration.update();
+  }
+
+  // Handle cache refresh requests
+  if (event.data && event.data.type === 'REFRESH_CACHE') {
+    console.log('[Service Worker] Refreshing cache');
+    event.waitUntil(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll(getUrlsToCache());
+      })
+    );
+  }
+});
+
+// Periodic background cache updates to ensure users have latest data
+self.addEventListener('periodicsync', (event: any) => {
+  if (event.tag === 'cache-update') {
+    console.log('[Service Worker] Periodic cache update');
+    event.waitUntil(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll(getUrlsToCache());
+      })
+    );
   }
 });
 

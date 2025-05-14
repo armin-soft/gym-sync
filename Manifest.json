@@ -25,6 +25,7 @@
   "lang": "fa-IR",
   "prefer_related_applications": false,
   "related_applications": [],
+  "offline_enabled": true,
   "shortcuts": [
     {
       "name": "پروفایل مربی",

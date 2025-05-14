@@ -23,7 +23,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Service Worker registration with improved version control -->
+    <!-- Enhanced Service Worker registration with improved offline handling -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
@@ -44,7 +44,7 @@
             }).catch(err => console.error('Error clearing caches:', err));
           }
           
-          // Register the service worker
+          // Register the service worker with improved error handling
           navigator.serviceWorker.register(scriptPath)
             .then(function(registration) {
               // Registration was successful
@@ -81,6 +81,12 @@
               }
               
               handleServiceWorkerUpdate();
+              
+              // Save registration to make it available throughout the app
+              window.swRegistration = registration;
+              
+              // Dispatch event to notify React app that service worker is ready
+              window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));
             })
             .catch(function(err) {
               // Registration failed
@@ -89,7 +95,11 @@
               // Try again once after a short delay
               setTimeout(() => {
                 navigator.serviceWorker.register(scriptPath)
-                  .then(reg => console.log('ServiceWorker registration successful on retry'))
+                  .then(reg => {
+                    console.log('ServiceWorker registration successful on retry');
+                    window.swRegistration = reg;
+                    window.dispatchEvent(new CustomEvent('swRegistered', { detail: reg }));
+                  })
                   .catch(err => console.error('ServiceWorker registration failed on retry:', err));
               }, 3000);
             });
@@ -112,6 +122,15 @@
             });
           }
         }, 5 * 60 * 1000); // 5 minutes
+        
+        // Add refresh cache capability every 30 minutes to ensure fresh data
+        setInterval(() => {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'REFRESH_CACHE'
+            });
+          }
+        }, 30 * 60 * 1000); // 30 minutes
         
         // Function to show update notification
         function showUpdateNotification() {
@@ -141,6 +160,33 @@
             }
           }
         }
+        
+        // Add offline detection and notification
+        window.addEventListener('online', () => {
+          console.log('Application is online');
+          document.body.classList.remove('offline-mode');
+          if (typeof window.showToast === 'function') {
+            window.showToast({
+              title: 'اتصال برقرار شد',
+              description: 'شما مجدداً به اینترنت متصل شدید.',
+              variant: 'success',
+              duration: 3000
+            });
+          }
+        });
+        
+        window.addEventListener('offline', () => {
+          console.log('Application is offline');
+          document.body.classList.add('offline-mode');
+          if (typeof window.showToast === 'function') {
+            window.showToast({
+              title: 'حالت آفلاین',
+              description: 'شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.',
+              variant: 'warning',
+              duration: 5000
+            });
+          }
+        });
       }
     </script>
     <!-- Lovable required script -->
