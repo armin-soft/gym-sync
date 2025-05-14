@@ -1,161 +1,163 @@
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import React from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
 import {
   LayoutDashboard,
-  User2,
   Users,
+  Settings,
+  Book,
   Dumbbell,
-  UtensilsCrossed,
-  Pill,
-  Database,
-  ChevronLeft,
-  Menu
+  Plus,
+  LogOut,
+  Menu,
+  Mic
 } from "lucide-react";
-import manifestData from "@/Manifest.json";
-import { Separator } from "@/components/ui/separator";
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { SidebarProfile } from "./sidebar/SidebarProfile";
-import { SidebarMenuList } from "./sidebar/SidebarMenuList";
-import { SidebarFooter } from "./sidebar/SidebarFooter";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const sidebarItems = [
-  {
-    title: "داشبورد",
-    description: "نمای کلی باشگاه و آمار",
-    href: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "پروفایل مربی",
-    description: "مدیریت اطلاعات شخصی",
-    href: "/Coach-Profile",
-    icon: User2,
-  },
-  {
-    title: "شاگردان",
-    description: "مدیریت ورزشکاران",
-    href: "/Students",
-    icon: Users,
-  },
-  {
-    title: "حرکات تمرینی",
-    description: "مدیریت حرکات و تمرینات",
-    href: "/Exercise-Movements",
-    icon: Dumbbell,
-  },
-  {
-    title: "برنامه های غذایی",
-    description: "مدیریت رژیم غذایی",
-    href: "/Diet-Plan",
-    icon: UtensilsCrossed,
-  },
-  {
-    title: "مکمل و ویتامین",
-    description: "مدیریت مکمل‌های ورزشی",
-    href: "/Supplements-Vitamins",
-    icon: Pill,
-  },
-  {
-    title: "پشتیبان‌گیری و بازیابی",
-    description: "مدیریت داده‌ها",
-    href: "/Backup-Restore",
-    icon: Database,
-  },
-];
-
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const [gymName, setGymName] = useState("مدیریت برنامه");
-  const [trainerProfile, setTrainerProfile] = useState({
-    name: "مربی",
-    image: "",
-    email: ""
-  });
+const Sidebar = () => {
+  const { signOut, user } = useAuth();
+  const pathname = usePathname();
+  const router = useRouter();
   const { toast } = useToast();
-  const deviceInfo = useDeviceInfo();
-  
-  const loadProfile = () => {
-    const savedProfile = localStorage.getItem('trainerProfile');
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        setTrainerProfile({
-          name: profile.name || "مربی",
-          image: profile.image || "",
-          email: profile.email || ""
-        });
-        if (profile.gymName) {
-          setGymName(`مدیریت برنامه ${profile.gymName}`);
-        }
-      } catch (error) {
-        console.error('Error loading profile from localStorage:', error);
-      }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push("/sign-in");
+      toast({
+        title: "خروج موفقیت آمیز",
+        description: "شما با موفقیت از حساب کاربری خود خارج شدید.",
+      });
+    } catch (error) {
+      console.error("Failed to sign out:", error);
+      toast({
+        title: "خطا در خروج",
+        description: "متاسفانه در هنگام خروج مشکلی پیش آمده است.",
+        variant: "destructive",
+      });
     }
   };
-  
-  useEffect(() => {
-    loadProfile();
-    
-    const handleStorageChange = () => {
-      loadProfile();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-  
-  // تنظیم عرض منو بر اساس نوع دستگاه
-  const getSidebarWidth = () => {
-    if (deviceInfo.isMobile) return "w-[280px]";
-    if (deviceInfo.isTablet) return "w-[320px]";
-    if (deviceInfo.isSmallLaptop) return "w-[350px]";
-    return "w-[380px]";
-  };
-  
+
+  const menuItems = [
+    {
+      icon: <LayoutDashboard size={20} />,
+      title: "داشبورد",
+      path: "/",
+    },
+    {
+      icon: <Users size={20} />,
+      title: "هنرجویان",
+      path: "/students",
+    },
+    {
+      icon: <Dumbbell size={20} />,
+      title: "تمرینات",
+      path: "/exercises",
+    },
+    {
+      icon: <Book size={20} />,
+      title: "مکمل ها",
+      path: "/supplements",
+    },
+    {
+      icon: <Mic size={20} />,
+      title: "گفتار به نوشتار",
+      path: "/speech-to-text",
+    },
+  ];
+
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent 
-        side="right" 
-        className={cn(
-          getSidebarWidth(),
-          "p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
-        )}
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          aria-label="منو"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-[300px] border-l-width-thin border-l-border"
       >
-        <div className="flex h-full flex-col overflow-hidden">
-          <SidebarProfile 
-            name={trainerProfile.name}
-            email={trainerProfile.email}
-            image={trainerProfile.image}
-            onClose={onClose}
-          />
-          
-          <div className="px-4 py-3 border-b bg-muted/30">
-            <h4 className={cn(
-              "text-sm font-medium text-center text-muted-foreground",
-              deviceInfo.isMobile ? "text-xs" : 
-              deviceInfo.isTablet ? "text-sm" : "text-base"
-            )}>
-              {gymName}
-            </h4>
+        <SheetHeader className="text-right">
+          <SheetTitle>منو</SheetTitle>
+          <SheetDescription>
+            دسترسی آسان به بخش‌های مختلف برنامه.
+          </SheetDescription>
+        </SheetHeader>
+        <Separator className="my-4" />
+        <NavigationMenu>
+          <NavigationMenuList className="flex flex-col gap-2">
+            {menuItems.map((item) => (
+              <NavigationMenuItem key={item.title}>
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "justify-start px-4 py-2 w-full font-medium text-sm",
+                    pathname === item.path
+                      ? "bg-secondary hover:bg-secondary/80"
+                      : "hover:bg-secondary/50"
+                  )}
+                  onClick={() => router.push(item.path)}
+                >
+                  {item.icon}
+                  <span className="mr-2">{item.title}</span>
+                </Button>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+        <Separator className="my-4" />
+        <div className="flex flex-col gap-4 px-4">
+          <div className="flex items-center gap-2">
+            {user ? (
+              <Avatar>
+                <AvatarImage src={user.image} alt={user.name} />
+                <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+              </Avatar>
+            ) : (
+              <Skeleton className="h-9 w-9 rounded-full" />
+            )}
+            <div className="flex flex-col text-right">
+              <span className="font-bold text-sm">{user?.name}</span>
+              <span className="text-xs text-muted-foreground">
+                {user?.email}
+              </span>
+            </div>
           </div>
-          
-          <ScrollArea className="flex-1">
-            <SidebarMenuList items={sidebarItems} onClose={onClose} />
-          </ScrollArea>
-          
-          <SidebarFooter gymName={gymName} />
+          <Button
+            variant="destructive"
+            className="justify-start"
+            onClick={handleSignOut}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            خروج
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
   );
-}
+};
+
+export default Sidebar;
