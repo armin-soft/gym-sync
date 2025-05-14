@@ -11,8 +11,10 @@ sw.importScripts('./Assets/Script/Cache-Strategies.js');
 sw.importScripts('./Assets/Script/Fetch-Handler.js');
 sw.importScripts('./Assets/Script/Message-Handler.js');
 
-// Cache configuration
-const CACHE_NAME = 'gym-sync-v11'; // Increment cache version
+// Cache configuration - use the same version across all files
+const CACHE_NAME = 'gym-sync-v11'; 
+
+// Update the static assets list
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -26,7 +28,7 @@ const STATIC_ASSETS = [
 sw.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing');
   
-  // Skip waiting to activate immediately
+  // Force activation for immediate control
   sw.skipWaiting();
   
   // Cache static assets
@@ -67,6 +69,12 @@ sw.addEventListener('fetch', (event) => {
     handleFetch(event);
   } else {
     console.error('[Service Worker] Missing handleFetch function');
+    // Simple fallback fetch handler
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return response || fetch(event.request);
+      })
+    );
   }
 });
 

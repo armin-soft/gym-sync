@@ -23,7 +23,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Service Worker registration -->
+    <!-- Service Worker registration with improved version control -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
@@ -31,6 +31,18 @@
           const timestamp = new Date().getTime();
           // Always use relative path for service worker with cache busting
           const scriptPath = './Service-Worker.js?v=' + timestamp;
+          
+          // Clear caches before registering to ensure fresh version
+          if ('caches' in window) {
+            caches.keys().then(function(cacheNames) {
+              cacheNames.forEach(function(cacheName) {
+                if (cacheName.includes('gym-sync')) {
+                  console.log('Clearing cache:', cacheName);
+                  caches.delete(cacheName);
+                }
+              });
+            }).catch(err => console.error('Error clearing caches:', err));
+          }
           
           // Register the service worker
           navigator.serviceWorker.register(scriptPath)
@@ -92,14 +104,14 @@
           });
         });
         
-        // Check for updates more frequently (every 15 minutes)
+        // Check for updates more frequently (every 5 minutes)
         setInterval(() => {
           if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
               type: 'CHECK_FOR_UPDATES'
             });
           }
-        }, 15 * 60 * 1000); // 15 minutes
+        }, 5 * 60 * 1000); // 5 minutes
         
         // Function to show update notification
         function showUpdateNotification() {
@@ -127,19 +139,6 @@
                 });
               }
             }
-          }
-        }
-        
-        // Force cache clearing for development
-        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-          // Clear caches in development
-          if ('caches' in window) {
-            caches.keys().then(function(cacheNames) {
-              cacheNames.forEach(function(cacheName) {
-                console.log('Clearing cache:', cacheName);
-                caches.delete(cacheName);
-              });
-            });
           }
         }
       }

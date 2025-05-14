@@ -21,6 +21,10 @@ const getUrlsToCache = () => {
 // Install a service worker
 self.addEventListener('install', (event: any) => {
   console.log('[Service Worker] Installing...', BASE_PATH);
+  
+  // Skip waiting to activate immediately
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -147,10 +151,11 @@ self.addEventListener('activate', (event: any) => {
           return null;
         })
       );
+    }).then(() => {
+      // Immediately claim clients so updated SW controls open pages
+      return (self as any).clients.claim();
     })
   );
-  // Immediately claim clients so updated SW controls open pages
-  event.waitUntil((self as any).clients.claim());
 });
 
 // Handle messages from clients
