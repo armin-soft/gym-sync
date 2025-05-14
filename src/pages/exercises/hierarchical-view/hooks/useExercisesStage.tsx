@@ -38,57 +38,40 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
   
   // Find selected category and type
   const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
-  const selectedType = exerciseTypes.find(type => type.id === typeId);
-  const exerciseCount = filteredExercises.length;
-  
-  // Navigation
-  const handleBack = () => {
-    // Logic to navigate back
-    console.log("Navigate back to categories");
-  };
   
   // Delete exercises
   const handleDeleteExercise = (id: number) => {
-    setSelectedExerciseIds([id]);
-    setIsDeleteDialogOpen(true);
-  };
-  
-  const handleDeleteExercises = () => {
     try {
-      const updatedExercises = exercises.filter(ex => !selectedExerciseIds.includes(ex.id));
+      const updatedExercises = exercises.filter(ex => ex.id !== id);
       localStorage.setItem("exercises", JSON.stringify(updatedExercises));
       queryClient.setQueryData(["exercises"], updatedExercises);
       
       toast({
         title: "موفقیت",
-        description: selectedExerciseIds.length > 1 
-          ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
-          : "حرکت با موفقیت حذف شد"
+        description: "حرکت با موفقیت حذف شد",
+        variant: "success",
       });
       
       setSelectedExerciseIds([]);
       setIsDeleteDialogOpen(false);
     } catch (error) {
-      console.error('Error deleting exercises:', error);
+      console.error('Error deleting exercise:', error);
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "خطا در حذف حرکت‌ها"
+        description: "خطا در حذف حرکت"
       });
     }
   };
 
-  // Dialog management
-  const handleExerciseDialogOpen = () => setIsAddDialogOpen(true);
-  const handleExerciseDialogClose = () => {
-    setIsAddDialogOpen(false);
-    setSelectedExercise(undefined);
-  };
-  
-  // View exercise details
-  const handleViewExercise = (exercise: Exercise) => {
-    console.log("View exercise:", exercise);
-    // Implement view logic
+  // Edit exercise
+  const handleEditExercise = (exercise: Exercise) => {
+    setSelectedExercise(exercise);
+    setFormData({
+      name: exercise.name,
+      categoryId: exercise.categoryId
+    });
+    setIsAddDialogOpen(true);
   };
 
   // Save new or edited exercise
@@ -119,7 +102,8 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
         
         toast({
           title: "موفقیت",
-          description: "حرکت با موفقیت ویرایش شد"
+          description: "حرکت با موفقیت ویرایش شد",
+          variant: "success",
         });
       } else {
         // Add new exercise
@@ -132,7 +116,8 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
         
         toast({
           title: "موفقیت",
-          description: "حرکت جدید با موفقیت اضافه شد"
+          description: "حرکت جدید با موفقیت اضافه شد",
+          variant: "success",
         });
       }
       
@@ -152,16 +137,6 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
       });
       return Promise.reject(error);
     }
-  };
-
-  // Edit exercise
-  const handleEditExercise = (exercise: Exercise) => {
-    setSelectedExercise(exercise);
-    setFormData({
-      name: exercise.name,
-      categoryId: exercise.categoryId
-    });
-    setIsAddDialogOpen(true);
   };
 
   // Quick add with speech
@@ -184,18 +159,11 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
     });
   };
 
-  // Dialog state flags
-  const isAddExerciseDialogOpen = isAddDialogOpen;
-  const isEditExerciseDialogOpen = isAddDialogOpen && !!selectedExercise;
-  const activeExercise = selectedExercise;
-
   return {
     // Data
     isLoading,
     filteredExercises,
     selectedCategory,
-    selectedType,
-    exerciseCount,
     
     // State
     selectedExerciseIds,
@@ -206,18 +174,13 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
     setShowQuickSpeech,
     
     // Dialog state
-    isAddExerciseDialogOpen,
-    isEditExerciseDialogOpen,
+    isAddDialogOpen,
     setIsAddDialogOpen,
     isDeleteDialogOpen,
     setIsDeleteDialogOpen,
     selectedExercise,
-    activeExercise,
     formData,
     setFormData,
-    
-    // Navigation
-    handleBack,
     
     // Search
     searchQuery,
@@ -227,16 +190,10 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
     quickSpeechText,
     setQuickSpeechText,
     
-    // Dialog handlers
-    handleExerciseDialogOpen,
-    handleExerciseDialogClose,
-    
     // Handlers
     handleDeleteExercise,
-    handleDeleteExercises,
     handleSubmit,
     handleEditExercise,
-    handleViewExercise,
     handleQuickAdd
   };
 };

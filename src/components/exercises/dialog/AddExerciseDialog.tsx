@@ -4,7 +4,8 @@ import {
   Dialog,
   DialogContent, 
   DialogHeader, 
-  DialogTitle 
+  DialogTitle,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SingleExerciseForm } from "./SingleExerciseForm";
@@ -46,13 +47,20 @@ export function AddExerciseDialog({
   activeTab,
   setActiveTab,
 }: AddExerciseDialogProps) {
+  const handleClose = () => {
+    if (!isSaving) {
+      onOpenChange(false);
+    }
+  };
+  
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-indigo-100/50 dark:border-indigo-900/30">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
             افزودن حرکت جدید
           </DialogTitle>
+          <DialogClose className="absolute top-2 right-2" />
         </DialogHeader>
         <div className="space-y-6 py-4 text-right">
           <Tabs 
@@ -141,7 +149,7 @@ export function AddExerciseDialog({
           </Tabs>
           
           <ExerciseFormActions
-            onCancel={() => onOpenChange(false)}
+            onCancel={handleClose}
             onSave={onSave}
             isSaving={isSaving}
             isDisabled={

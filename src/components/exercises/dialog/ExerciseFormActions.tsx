@@ -16,12 +16,27 @@ export const ExerciseFormActions: React.FC<ExerciseFormActionsProps> = ({
   isSaving,
   isDisabled = false,
 }) => {
+  const handleSave = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isSaving && !isDisabled) {
+      onSave();
+    }
+  };
+
+  const handleCancel = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onCancel();
+  };
+
   return (
     <div className="flex justify-end gap-3 mt-4">
       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
         <Button 
+          type="button"
           variant="outline" 
-          onClick={onCancel}
+          onClick={handleCancel}
           className="hover:bg-muted/50 transition-colors border-gray-200 dark:border-gray-700"
         >
           انصراف
@@ -30,7 +45,8 @@ export const ExerciseFormActions: React.FC<ExerciseFormActionsProps> = ({
       
       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
         <Button 
-          onClick={onSave}
+          type="button"
+          onClick={handleSave}
           disabled={isSaving || isDisabled}
           className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24 shadow-md hover:shadow-lg"
         >
