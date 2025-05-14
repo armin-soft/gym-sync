@@ -53,7 +53,7 @@ export function useSpeechRecognition({
     multiLine
   });
   
-  // Start listening function
+  // Start listening function with improved cross-browser handling
   const startListening = useCallback(async () => {
     if (!isSupported) return Promise.reject("عدم پشتیبانی مرورگر");
 
@@ -71,7 +71,14 @@ export function useSpeechRecognition({
       recognitionRef.current = null;
     }
 
-    // Create a new instance
+    // Create a new instance with additional delay for iOS devices
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    
+    if (isIOS) {
+      // iOS devices need a small delay before starting recognition
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
     recognitionRef.current = setupRecognition();
     
     if (recognitionRef.current) {
@@ -88,10 +95,14 @@ export function useSpeechRecognition({
         return Promise.resolve();
       } catch (err) {
         console.error("Error starting recognition:", err);
-        // Try again after a short delay
+        // Try again after a short delay with different settings
         setTimeout(() => {
           recognitionRef.current = setupRecognition();
           try {
+            // For some browsers, continuous mode causes issues
+            if (recognitionRef.current && 'continuous' in recognitionRef.current) {
+              recognitionRef.current.continuous = false;
+            }
             recognitionRef.current.start();
             setIsListening(true);
             return Promise.resolve();
@@ -106,13 +117,15 @@ export function useSpeechRecognition({
     return Promise.reject("خطای ناشناخته");
   }, [isSupported, setupRecognition, requestMicrophonePermission, showRecordingStartedToast, recognitionState, recognitionRef, setIsListening, setRecognitionState]);
 
-  // Stop listening function
+  // Stop listening function with improved error handling
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
       } catch (err) {
         console.error("Error stopping recognition:", err);
+        // Force state update even if stop fails
+        setIsListening(false);
       }
       setIsListening(false);
       setRecognitionState({

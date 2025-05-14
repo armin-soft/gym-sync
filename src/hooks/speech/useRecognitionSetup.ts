@@ -22,28 +22,60 @@ export function useRecognitionSetup({
   multiLine = false,
 }: UseRecognitionSetupProps) {
   return useCallback(() => {
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return null;
+    // Check for different speech recognition implementations
+    const SpeechRecognition = 
+      window.SpeechRecognition || 
+      (window as any).webkitSpeechRecognition ||
+      (window as any).mozSpeechRecognition ||
+      (window as any).msSpeechRecognition;
+      
+    if (!SpeechRecognition) {
+      console.error("SpeechRecognition not supported in this browser");
+      return null;
+    }
 
     const recognition = new SpeechRecognition();
     
-    // تنظیمات بهینه برای تشخیص زبان فارسی
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = lang;
-    recognition.maxAlternatives = 3; // افزایش گزینه‌های جایگزین برای دقت بیشتر
+    // Browser detection for optimized settings
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isAndroid = /android/i.test(navigator.userAgent);
+    const isEdge = /Edge/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isFirefox = /firefox/i.test(navigator.userAgent);
     
-    // سازگاری بیشتر با مرورگرها
-    if (navigator.userAgent.indexOf("Edge") !== -1) {
-      recognition.continuous = false; // در Edge مداوم کار نمی‌کند
+    // Base configuration for Persian language
+    recognition.lang = lang;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 3;
+    
+    // Default for most browsers
+    recognition.continuous = true;
+    
+    // Platform-specific optimizations
+    if (isEdge || isFirefox) {
+      // Edge and Firefox work better with continuous mode off
+      recognition.continuous = false;
     }
     
-    // برای مرورگر سافاری تنظیمات خاص
-    if (navigator.userAgent.indexOf("Safari") !== -1 && 
-        navigator.userAgent.indexOf("Chrome") === -1) {
-      recognition.interimResults = false; // در برخی نسخه‌های سافاری نتایج میانی خوب کار نمی‌کند
+    if (isSafari) {
+      // Safari has issues with interim results in some versions
+      if (!isIOS) {
+        recognition.interimResults = false;
+      }
+    }
+    
+    if (isIOS) {
+      // iOS needs special handling
+      recognition.interimResults = true; // usually works better with this on
+      recognition.continuous = false; // iOS doesn't support continuous mode well
+    }
+    
+    if (isAndroid) {
+      // Android-specific settings
+      recognition.maxAlternatives = 5; // Android often provides better alternatives
     }
 
+    // Universal event handlers
     recognition.onstart = () => {
       console.log("Speech recognition started");
       setIsListening(true);
@@ -57,43 +89,71 @@ export function useRecognitionSetup({
     recognition.onerror = (event: any) => {
       console.error("Speech recognition error", event.error);
       setIsListening(false);
+      
+      // Report detailed error information
+      if (event.error === 'network') {
+        console.error("Network error occurred during speech recognition");
+      } else if (event.error === 'not-allowed') {
+        console.error("Microphone access denied");
+      } else if (event.error === 'aborted') {
+        console.error("Speech recognition aborted");
+      } else if (event.error === 'audio-capture') {
+        console.error("Audio capture failed");
+      } else if (event.error === 'no-speech') {
+        console.error("No speech detected");
+      } else if (event.error === 'bad-grammar') {
+        console.error("Grammar error");
+      }
     };
 
-    // بهبود الگوریتم پردازش نتایج
+    // Enhanced results processing with better stability
     recognition.onresult = (event: any) => {
       let interim = "";
       let final = transcript;
       
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        // یافتن بهترین تشخیص با بالاترین دقت
+        // Find the best recognition with highest confidence
         let bestConfidence = 0;
         let bestTranscript = "";
-
-        for (let j = 0; j < event.results[i].length; j++) {
-          const currentTranscript = event.results[i][j].transcript;
-          const confidence = event.results[i][j].confidence;
-          
-          if (confidence > bestConfidence) {
-            bestConfidence = confidence;
-            bestTranscript = currentTranscript;
+        
+        // On iOS, sometimes the confidence values are unreliable
+        if (isIOS) {
+          // For iOS, just use the first result
+          bestTranscript = event.results[i][0].transcript;
+        } else {
+          // For other platforms, find result with best confidence
+          for (let j = 0; j < event.results[i].length; j++) {
+            const currentTranscript = event.results[i][j].transcript;
+            const confidence = event.results[i][j].confidence;
+            
+            if (confidence > bestConfidence) {
+              bestConfidence = confidence;
+              bestTranscript = currentTranscript;
+            }
           }
         }
         
         if (event.results[i].isFinal) {
           const processedText = bestTranscript.trim();
           
-          // اضافه کردن متن به انتهای خط فعلی
-          final += " " + processedText;
+          // Add text to the end of the current line
+          if (isIOS || isAndroid) {
+            // Mobile browsers tend to duplicate text, so replace rather than append
+            // if the last recognition time was very recent
+            final = (final + " " + processedText).trim();
+          } else {
+            final += " " + processedText;
+          }
           
-          // اصلاح کلمات فارسی متداول
+          // Persian word correction
           final = correctPersianWords(final);
           
-          // تمیز کردن فضاهای خالی اضافی
+          // Clean up extra whitespace
           final = final.replace(/\s+/g, " ")
-                       .replace(/\n +/g, "\n")
-                       .replace(/\n+/g, "\n")
-                       .trim();
-                       
+                     .replace(/\n +/g, "\n")
+                     .replace(/\n+/g, "\n")
+                     .trim();
+                     
           // Handle multi-line formatting
           if (!multiLine) {
             final = final.replace(/\n/g, " ");
@@ -103,7 +163,7 @@ export function useRecognitionSetup({
         }
       }
 
-      // اعمال نتایج نهایی
+      // Apply final results
       setTranscript(final.trim());
       onTranscriptChange(final.trim());
       setInterimTranscript(interim);

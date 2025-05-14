@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import WavesVisualizer from "./WavesVisualizer";
 import SpeechPopover from "./SpeechPopover";
+import { useBrowserSupport } from "@/hooks/speech/useBrowserSupport";
+import { useMicrophonePermission } from "@/hooks/speech/useMicrophonePermission";
 
 interface AdvancedSpeechInputProps {
   value: string;
@@ -21,13 +23,15 @@ export function AdvancedSpeechInput({
   placeholder = "نام حرکت را وارد کنید"
 }: AdvancedSpeechInputProps) {
   const [showPopover, setShowPopover] = useState(false);
+  const [showPermissionReminder, setShowPermissionReminder] = useState(false);
   const { toast } = useToast();
   const [animateButton, setAnimateButton] = useState(false);
+  const { isSupported } = useBrowserSupport();
+  const { permissionStatus, requestMicrophonePermission } = useMicrophonePermission();
 
   const {
     transcript,
     isListening,
-    isSupported,
     interimTranscript,
     startListening,
     stopListening,
@@ -38,6 +42,22 @@ export function AdvancedSpeechInput({
     lang: "fa-IR",
     multiLine: false
   });
+
+  // Device detection for platform-specific UI optimizations
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+  const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
+  const isMobile = isIOS || isAndroid;
+
+  useEffect(() => {
+    // Show permission reminder after a delay on mobile devices
+    if (isMobile && permissionStatus !== 'granted') {
+      const timer = setTimeout(() => {
+        setShowPermissionReminder(true);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, permissionStatus]);
 
   useEffect(() => {
     if (isListening) {
@@ -58,6 +78,8 @@ export function AdvancedSpeechInput({
       });
     } else {
       try {
+        // Request permission before starting
+        await requestMicrophonePermission();
         await startListening();
         toast({
           title: "ضبط صدا شروع شد",
@@ -188,6 +210,23 @@ export function AdvancedSpeechInput({
           </span>
         </motion.div>
       )}
+      
+      {/* Mobile permission reminder */}
+      <AnimatePresence>
+        {showPermissionReminder && isMobile && permissionStatus !== 'granted' && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-2 text-xs text-amber-600 dark:text-amber-500 text-center px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-md"
+          >
+            {isIOS ? 
+              "در iOS باید دسترسی میکروفون را در تنظیمات مرورگر خود فعال کنید" : 
+              "لطفاً به برنامه اجازه دسترسی به میکروفون را بدهید"
+            }
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
