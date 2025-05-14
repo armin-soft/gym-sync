@@ -1,14 +1,14 @@
 
 // Re-export the toast components from our internal hooks implementation
-export { useToast, toast } from "@/hooks/toast/toast-utils";
+import { toast } from "@/hooks/toast/toast-utils";
 
 // Additional custom toast helpers
 export const useCustomToast = () => {
-  const { toast } = useToast();
+  const { toast: toastFn } = useToast();
   
   // Success toast
   const successToast = (title: string, description?: string) => {
-    toast({
+    toastFn({
       title,
       description,
       variant: "default",
@@ -17,7 +17,7 @@ export const useCustomToast = () => {
   
   // Error toast
   const errorToast = (title: string, description?: string) => {
-    toast({
+    toastFn({
       title,
       description,
       variant: "destructive",
@@ -26,7 +26,7 @@ export const useCustomToast = () => {
   
   // Warning toast
   const warningToast = (title: string, description?: string) => {
-    toast({
+    toastFn({
       title,
       description,
       variant: "warning",
@@ -34,9 +34,13 @@ export const useCustomToast = () => {
   };
   
   return {
-    toast,
+    toast: toastFn,
     successToast,
     errorToast,
     warningToast
   };
 };
+
+// Export the useToast hook from our internal implementation
+export { useToast } from "@/hooks/toast/toast-utils";
+export { toast };
