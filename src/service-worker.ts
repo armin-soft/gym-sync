@@ -4,7 +4,7 @@
 
 // Dynamically determine the base path where the app is running
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
-const CACHE_NAME = 'app-cache-v7';
+const CACHE_NAME = 'gym-sync-v11';
 
 // Files to cache - use relative paths that will work in any environment
 const getUrlsToCache = () => {
