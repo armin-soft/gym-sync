@@ -2,6 +2,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Student } from "@/components/students/StudentTypes";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,6 +33,9 @@ export const StudentDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
+        <DialogTitle className="sr-only">
+          {student ? "ویرایش شاگرد" : "افزودن شاگرد جدید"}
+        </DialogTitle>
         <AnimatePresence mode="wait">
           <StudentDialogContent 
             student={student}

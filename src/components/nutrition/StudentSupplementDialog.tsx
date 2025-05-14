@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -74,6 +74,7 @@ export function StudentSupplementDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] p-0 m-0 h-[100vh] w-[100vw] rounded-none border-none overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 flex flex-col" dir="rtl">
+        <DialogTitle className="sr-only">انتخاب مکمل‌ها و ویتامین‌ها برای {studentName}</DialogTitle>
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "supplements" | "vitamins")} className="flex flex-col h-full w-full">
           {/* Header */}
           <div className={cn(
@@ -180,4 +181,4 @@ export function StudentSupplementDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};

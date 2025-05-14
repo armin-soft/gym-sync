@@ -1,87 +1,72 @@
 
-import React, { useRef } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Camera } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Upload } from "lucide-react";
 
 interface StudentImageUploadProps {
   image: string;
   onImageChange: (imageUrl: string) => void;
-  error?: string;
+  error?: boolean;
   itemVariants: any;
 }
 
-export const StudentImageUpload = ({ 
-  image, 
-  onImageChange, 
+export const StudentImageUpload: React.FC<StudentImageUploadProps> = ({
+  image,
+  onImageChange,
   error,
-  itemVariants 
-}: StudentImageUploadProps) => {
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast({
-          title: "خطا",
-          description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
-          variant: "destructive",
-        });
-        return;
-      }
-
+  itemVariants
+}) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        onImageChange(e.target?.result as string);
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          onImageChange(event.target.result.toString());
+        }
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
+  // Use a default image path that should be properly served from your public directory
+  const defaultImage = image === "/placeholder.svg" ? "/assets/images/placeholder.svg" : image;
+
   return (
-    <div className="flex justify-center -mt-16 mb-6">
-      <motion.div 
-        variants={itemVariants} 
-        className="relative group"
-      >
-        <div className="relative">
-          <img
-            src={image}
-            alt="تصویر پروفایل"
-            className={`w-24 h-24 rounded-full object-cover ring-4 ${
-              error 
-                ? "ring-red-200 border-red-500" 
-                : "ring-white dark:ring-slate-800"
-            } bg-white dark:bg-slate-800 shadow-xl transition-transform duration-300 group-hover:scale-105 z-10`}
-          />
-          <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20" />
-        </div>
-        <Button
-          type="button"
-          size="icon"
-          variant="secondary"
-          className="absolute bottom-0 right-0 h-8 w-8 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30"
-          onClick={handleImageClick}
+    <motion.div variants={itemVariants}>
+      <div className="relative mx-auto w-24 h-24 mb-4">
+        <div
+          className={`w-24 h-24 rounded-full overflow-hidden border-2 ${
+            error ? "border-red-500" : "border-indigo-200"
+          }`}
         >
-          <Camera className="h-4 w-4" />
-        </Button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-        
-        <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-lg scale-90 -z-10" />
-      </motion.div>
-    </div>
+          <img
+            src={defaultImage}
+            alt="Profile"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // In case the new path also fails, set a simple fallback
+              const target = e.target as HTMLImageElement;
+              if (target.src !== 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXVzZXIiPjxwYXRoIGQ9Ik0yMCA2TDkgMTdsLTUtNSIvPjwvc3ZnPg==') {
+                target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXVzZXIiPjxwYXRoIGQ9Ik0xMiAyMnYtNm0wIDZIOC41YzAtMy44NTggMy4xNC03IDctN3M3IDMuMTQyIDcgN0gxNiIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTAiIHI9IjMiLz48L3N2Zz4=';
+              }
+            }}
+          />
+        </div>
+
+        <label
+          htmlFor="image-upload"
+          className="absolute bottom-0 right-0 p-1 bg-indigo-500 text-white rounded-full cursor-pointer shadow-lg hover:bg-indigo-600 transition-colors"
+        >
+          <Upload className="h-4 w-4" />
+          <input
+            id="image-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
+        </label>
+      </div>
+    </motion.div>
   );
 };

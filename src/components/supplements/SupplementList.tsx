@@ -1,4 +1,4 @@
 
-import { SupplementList } from './list';
+import { SupplementContent } from '../supplements/supplement-content/SupplementContent';
 
-export { SupplementList };
+export { SupplementContent as SupplementList };
