@@ -1,16 +1,69 @@
 
-import React from 'react';
+import { Tabs } from "@/components/ui/tabs";
+import { TabHeader } from "./TabHeader";
+import { TabContent } from "./TabContent";
+import type { Supplement, SupplementCategory } from "@/types/supplement";
+import { motion } from "framer-motion";
 
-export interface SupplementTabsProps {
-  children?: React.ReactNode;
+interface SupplementTabsProps {
+  activeTab: 'supplement' | 'vitamin';
+  onTabChange: (value: string) => void;
+  isLoading: boolean;
+  categories: SupplementCategory[];
+  onAddCategory: () => void;
+  onEditCategory: (category: SupplementCategory) => void;
+  onDeleteCategory: (category: SupplementCategory) => void;
+  supplements: Supplement[];
+  onAddSupplement: () => void;
+  onEditSupplement: (supplement: Supplement) => void;
+  onDeleteSupplement: (id: number) => void;
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
 }
 
-export const SupplementTabs: React.FC<SupplementTabsProps> = ({ children }) => {
+export const SupplementTabs: React.FC<SupplementTabsProps> = ({
+  activeTab,
+  onTabChange,
+  isLoading,
+  categories,
+  onAddCategory,
+  onEditCategory,
+  onDeleteCategory,
+  supplements,
+  onAddSupplement,
+  onEditSupplement,
+  onDeleteSupplement,
+  selectedCategory,
+  setSelectedCategory,
+}) => {
   return (
-    <div className="supplement-tabs">
-      {children || "Supplement Tabs Placeholder"}
-    </div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col flex-1 h-full w-full overflow-hidden"
+    >
+      <Tabs 
+        value={activeTab} 
+        onValueChange={onTabChange} 
+        className="flex flex-col flex-1 h-full w-full"
+      >
+        <TabHeader activeTab={activeTab} />
+        
+        <TabContent
+          isLoading={isLoading}
+          categories={categories}
+          onAddCategory={onAddCategory}
+          onEditCategory={onEditCategory}
+          onDeleteCategory={onDeleteCategory}
+          supplements={supplements}
+          onAddSupplement={onAddSupplement}
+          onEditSupplement={onEditSupplement}
+          onDeleteSupplement={onDeleteSupplement}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      </Tabs>
+    </motion.div>
   );
 };
-
-export default SupplementTabs;

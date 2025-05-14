@@ -1,5 +1,5 @@
 
-import { ExerciseWithSets } from "@/hooks/exercise-selection/types";
+import { ExerciseWithSets } from "@/hooks/exercise-selection";
 import { useExerciseDialogData } from "./useExerciseDialogData";
 import { useExerciseSelection } from "@/hooks/exercise-selection";
 import { useExerciseDialogState } from "./useExerciseDialogState";
@@ -34,15 +34,6 @@ export const useStudentExerciseDialogState = ({
   const { exercises, categories, exerciseTypes, isLoading } = useExerciseDialogData();
 
   // Exercise selection state from hook
-  const exerciseSelection = useExerciseSelection({
-    initialExercises,
-    initialExercisesDay1,
-    initialExercisesDay2,
-    initialExercisesDay3,
-    initialExercisesDay4
-  });
-  
-  // Destructure the properties we need from exerciseSelection
   const {
     selectedExercisesDay1,
     selectedExercisesDay2,
@@ -72,7 +63,13 @@ export const useStudentExerciseDialogState = ({
     getSelectedExercisesWithSetsDay2,
     getSelectedExercisesWithSetsDay3,
     getSelectedExercisesWithSetsDay4
-  } = exerciseSelection;
+  } = useExerciseSelection({
+    initialExercises,
+    initialExercisesDay1,
+    initialExercisesDay2,
+    initialExercisesDay3,
+    initialExercisesDay4
+  });
 
   // Dialog state management
   const {
@@ -127,9 +124,7 @@ export const useStudentExerciseDialogState = ({
     const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
     const dayNumber = parseInt(activeTab.replace("day", ""));
     
-    const typedOnSave = onSave as (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-    const success = handleSaveDay(selectedExercisesWithSets, typedOnSave, dayNumber);
-    
+    const success = handleSaveDay(selectedExercisesWithSets, onSave, dayNumber);
     if (success) {
       // If this was the last day and all days are saved, close the dialog
       if (dayNumber === 4) {

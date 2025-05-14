@@ -1,76 +1,75 @@
 
 import React from "react";
-import { ArrowLeft, Grid, ListFilter } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Grid3X3, ListOrdered, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
-export interface ExerciseHeaderProps {
-  onGoBack: () => void;
+interface ExerciseHeaderProps {
+  exerciseCount: number;
+  selectedExerciseIds: number[];
+  onDeleteClick: () => void;
+  onAddExercise: () => void;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
-  setIsAddDialogOpen: (open: boolean) => void;
-  exercisesCount: number;
-  selectedCategory?: any;
-  selectedType?: any;
 }
 
 const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
-  onGoBack,
+  exerciseCount,
+  selectedExerciseIds,
+  onDeleteClick,
+  onAddExercise,
   viewMode,
-  setViewMode,
-  setIsAddDialogOpen,
-  exercisesCount,
-  selectedCategory,
-  selectedType,
+  setViewMode
 }) => {
   return (
-    <div className="flex items-center justify-between px-2 sm:px-4 py-3 border-b">
+    <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center gap-2">
+        <h3 className="text-lg font-semibold">
+          حرکات تمرینی ({toPersianNumbers(exerciseCount)})
+        </h3>
+        
+        {selectedExerciseIds.length > 0 && (
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={onDeleteClick}
+            className="mr-2"
+          >
+            <Trash2 className="h-4 w-4 ml-2" />
+            حذف ({toPersianNumbers(selectedExerciseIds.length)})
+          </Button>
+        )}
+      </div>
+      
       <div className="flex items-center gap-2">
         <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={onGoBack}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h3 className="text-lg font-semibold">
-            {selectedCategory?.name || "حرکات"}
-          </h3>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <span>{selectedType?.name || "همه"}</span>
-            <span className="text-[8px] opacity-60">•</span>
-            <Badge variant="secondary" className="text-xs font-normal py-0 px-1.5">
-              {exercisesCount}
-            </Badge>
-          </div>
-        </div>
-      </div>
-      <div className="flex gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className={`h-8 w-8 ${viewMode === "list" ? "bg-muted" : ""}`}
-          onClick={() => setViewMode("list")}
-        >
-          <ListFilter className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={`h-8 w-8 ${viewMode === "grid" ? "bg-muted" : ""}`}
-          onClick={() => setViewMode("grid")}
-        >
-          <Grid className="h-4 w-4" />
-        </Button>
-        <Button
           size="sm"
-          className="bg-gradient-to-r from-blue-600 to-indigo-600"
-          onClick={() => setIsAddDialogOpen(true)}
+          onClick={onAddExercise}
+          className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white group relative"
         >
-          افزودن
+          <Plus className="h-4 w-4 ml-2" />
+          افزودن حرکت
+          <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/75 text-xs text-white p-1 rounded whitespace-nowrap">
+            <div className="flex items-center gap-1">
+              <ArrowLeft className="h-3 w-3" /> برای خط جدید
+            </div>
+          </div>
         </Button>
+        
+        <Tabs
+          value={viewMode}
+          onValueChange={(value) => setViewMode(value as "grid" | "list")}
+        >
+          <TabsList className="bg-muted/30">
+            <TabsTrigger value="grid" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
+              <Grid3X3 className="h-4 w-4" />
+            </TabsTrigger>
+            <TabsTrigger value="list" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white">
+              <ListOrdered className="h-4 w-4" />
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );

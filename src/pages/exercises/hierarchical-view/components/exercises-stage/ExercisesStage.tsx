@@ -8,32 +8,35 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useExercisesStage } from '../../hooks/useExercisesStage';
+import { ExerciseDialogs } from './ExerciseDialogs';
+import ExercisesList from './ExercisesList';
 import ExerciseHeader from './ExerciseHeader';
 import QuickSpeechAdd from './QuickSpeechAdd';
-import ExercisesList from './ExercisesList';
 
-interface ExercisesStageProps {
-  typeId: string;
-  categoryId: string;
-  onBack: () => void;
-  onExerciseSelect: (exerciseId: string) => void;
-}
-
-const ExercisesStage: React.FC<ExercisesStageProps> = ({
-  typeId,
-  categoryId,
-  onBack,
-  onExerciseSelect
-}) => {
+const ExercisesStage = () => {
   const navigate = useNavigate();
-  // Local state
-  const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const {
+    exercises,
+    selectedCategory,
+    selectedType,
+    filteredExercises,
+    setFilteredExercises,
+    searchQuery,
+    setSearchQuery,
+    isAddDialogOpen,
+    setIsAddDialogOpen,
+    isEditDialogOpen,
+    setIsEditDialogOpen,
+    editingExercise,
+    setEditingExercise,
+    handleDeleteExercise,
+    handleAddExercise,
+    handleEditExercise,
+  } = useExercisesStage();
+
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
-  const [selectedType, setSelectedType] = useState<any>(null);
 
   // Filter options
   const [filters, setFilters] = useState({
@@ -44,19 +47,23 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
+
+    if (!query.trim()) {
+      setFilteredExercises(exercises);
+      return;
+    }
+
+    const filtered = exercises.filter(
+      (exercise) =>
+        exercise.name.toLowerCase().includes(query.toLowerCase()) ||
+        exercise.description?.toLowerCase().includes(query.toLowerCase())
+    );
+
+    setFilteredExercises(filtered);
   };
 
-  const handleAddExercise = () => {
-    console.log("Adding exercise");
-    setIsAddDialogOpen(true);
-  };
-
-  const handleEditExercise = (exercise: any) => {
-    console.log("Editing exercise", exercise);
-  };
-
-  const handleDeleteExercise = (id: number) => {
-    console.log("Deleting exercise", id);
+  const handleGoBack = () => {
+    navigate(-1);
   };
 
   return (
@@ -74,11 +81,11 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
           <ExerciseHeader
             selectedCategory={selectedCategory}
             selectedType={selectedType}
-            onGoBack={onBack}
+            onGoBack={handleGoBack}
             viewMode={viewMode}
             setViewMode={setViewMode}
             setIsAddDialogOpen={setIsAddDialogOpen}
-            exercisesCount={filteredExercises.length || 0}
+            exercisesCount={filteredExercises.length}
           />
 
           {/* Search and filters */}
@@ -101,7 +108,7 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
               >
                 <Filter className="h-4 w-4" />
               </Button>
-              <QuickSpeechAdd />
+              <QuickSpeechAdd onAddExercise={handleAddExercise} selectedType={selectedType} />
             </div>
 
             {/* Filters panel */}
@@ -235,8 +242,12 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
           {/* Main content */}
           <div className="flex-1 overflow-auto px-2 sm:px-4 pb-4">
             <ExercisesList
+              exercises={filteredExercises}
               viewMode={viewMode}
-              onEdit={handleEditExercise}
+              onEdit={(exercise) => {
+                setEditingExercise(exercise);
+                setIsEditDialogOpen(true);
+              }}
               onDelete={handleDeleteExercise}
             />
 
@@ -282,6 +293,19 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
               </motion.div>
             )}
           </div>
+
+          {/* Dialogs */}
+          <ExerciseDialogs
+            isAddDialogOpen={isAddDialogOpen}
+            setIsAddDialogOpen={setIsAddDialogOpen}
+            isEditDialogOpen={isEditDialogOpen}
+            setIsEditDialogOpen={setIsEditDialogOpen}
+            editingExercise={editingExercise}
+            onAdd={handleAddExercise}
+            onEdit={handleEditExercise}
+            selectedCategory={selectedCategory}
+            selectedType={selectedType}
+          />
         </motion.div>
       </AnimatePresence>
     </div>

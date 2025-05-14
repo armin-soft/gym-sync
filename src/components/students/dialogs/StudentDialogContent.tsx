@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { StudentDialog } from "@/components/students/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
@@ -7,7 +6,7 @@ import { StudentSupplementDialog } from "@/components/nutrition/StudentSupplemen
 import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
 import { Student } from "@/components/students/StudentTypes";
 import { Supplement, SupplementCategory } from "@/types/supplement";
-import { ExerciseWithSets } from "@/hooks/exercise-selection/types"; // Import from the hook's types
+import { ExerciseWithSets } from "@/types/exercise";
 
 interface StudentDialogContentProps {
   isDialogOpen: boolean;

@@ -9,42 +9,38 @@ import ExercisesStage from "./exercises-stage";
 import { PageContainer } from "@/components/ui/page-container";
 
 interface HierarchicalViewContainerProps {
-  currentStage?: 'types' | 'categories' | 'exercises';
+  currentStage: 'types' | 'categories' | 'exercises';
   selectedTypeName?: string;
   selectedCategoryName?: string;
-  selectedTypeId?: string | null;
-  selectedCategoryId?: string | null;
-  handleTypeSelect?: (typeId: string) => void;
-  handleCategorySelect?: (categoryId: string) => void;
-  handleBackToTypes?: () => void;
-  handleBackToCategories?: () => void;
-  handleExerciseSelect?: (exerciseId: string) => void;
-  handleAddClick?: () => void;
+  selectedTypeId: string | null;
+  selectedCategoryId: string | null;
+  handleTypeSelect: (typeId: string) => void;
+  handleCategorySelect: (categoryId: string) => void;
+  handleBackToTypes: () => void;
+  handleBackToCategories: () => void;
+  handleExerciseSelect: (exerciseId: string) => void;
+  handleAddClick: () => void;
   handleEditType?: (type: string) => void;
   handleDeleteType?: (type: string) => void;
-  handleEditCategory?: (category: any) => void;
+  handleEditCategory: (category: any) => void;
 }
 
-export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps> = (props) => {
-  // Use the provided props or the hook values
-  const hook = useHierarchicalView();
-  
-  const {
-    currentStage = hook.currentStage,
-    selectedTypeName,
-    selectedCategoryName,
-    selectedTypeId = hook.selectedTypeId,
-    selectedCategoryId = hook.selectedCategoryId,
-    handleTypeSelect = hook.handleTypeSelect,
-    handleCategorySelect = hook.handleCategorySelect,
-    handleBackToTypes = hook.handleBackToTypes,
-    handleBackToCategories = hook.handleBackToCategories,
-    handleExerciseSelect = hook.handleExerciseSelect,
-    handleAddClick = () => {},
-    handleEditType,
-    handleDeleteType,
-    handleEditCategory = () => {}
-  } = props;
+export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps> = ({
+  currentStage,
+  selectedTypeName,
+  selectedCategoryName,
+  selectedTypeId,
+  selectedCategoryId,
+  handleTypeSelect,
+  handleCategorySelect,
+  handleBackToTypes,
+  handleBackToCategories,
+  handleExerciseSelect,
+  handleAddClick,
+  handleEditType,
+  handleDeleteType,
+  handleEditCategory
+}) => {
 
   return (
     <PageContainer fullWidth>
@@ -79,8 +75,8 @@ export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps>
             
             {currentStage === 'exercises' && selectedTypeId && selectedCategoryId && (
               <ExercisesStage 
-                typeId={selectedTypeId.toString()}
-                categoryId={selectedCategoryId.toString()}
+                typeId={selectedTypeId} 
+                categoryId={selectedCategoryId} 
                 onBack={handleBackToCategories} 
                 onExerciseSelect={handleExerciseSelect} 
               />
@@ -91,5 +87,3 @@ export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps>
     </PageContainer>
   );
 };
-
-export default HierarchicalViewContainer;
