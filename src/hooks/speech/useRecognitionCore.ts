@@ -8,6 +8,7 @@ import { useSpeechRecognitionErrors } from "./useSpeechRecognitionErrors";
 export function useRecognitionCore() {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
+  const [confidenceScore, setConfidenceScore] = useState(0);
   const recognitionRef = useRef<any>(null);
   const restartTimeoutRef = useRef<number | null>(null);
   const restartCountRef = useRef<number>(0);
@@ -20,7 +21,8 @@ export function useRecognitionCore() {
     isStopped: false,
     autoRestart: true,
     error: "",
-    startTime: 0
+    startTime: 0,
+    confidence: 0
   });
   
   const { toast } = useToast();
@@ -92,6 +94,8 @@ export function useRecognitionCore() {
     requestMicrophonePermission,
     showRecordingStartedToast,
     showRecordingStoppedToast,
+    confidenceScore,
+    setConfidenceScore,
     toast
   };
 }

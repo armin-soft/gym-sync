@@ -6,25 +6,32 @@ interface UseTranscriptManagementProps {
   initialValue: string;
   onTranscriptChange: (transcript: string) => void;
   multiLine?: boolean;
+  onInterimTranscriptChange?: (transcript: string, confidenceScore?: number) => void;
 }
 
 export function useTranscriptManagement({
   initialValue,
   onTranscriptChange,
-  multiLine = false
+  multiLine = false,
+  onInterimTranscriptChange
 }: UseTranscriptManagementProps) {
   const [transcript, setTranscript] = useState(initialValue);
   const [interimTranscript, setInterimTranscript] = useState("");
+  const [confidenceScore, setConfidenceScore] = useState(0);
 
   // Reset transcript function
   const resetTranscript = useCallback(() => {
     setTranscript("");
     setInterimTranscript("");
+    setConfidenceScore(0);
     onTranscriptChange("");
-  }, [onTranscriptChange]);
+    if (onInterimTranscriptChange) {
+      onInterimTranscriptChange("", 0);
+    }
+  }, [onTranscriptChange, onInterimTranscriptChange]);
 
   // Update transcript with new content
-  const updateTranscript = useCallback((newText: string, isFinal: boolean) => {
+  const updateTranscript = useCallback((newText: string, isFinal: boolean, confidence?: number) => {
     if (isFinal) {
       let processedText = newText.trim();
       
@@ -47,14 +54,23 @@ export function useTranscriptManagement({
       onTranscriptChange(updatedTranscript);
     } else {
       setInterimTranscript(newText);
+      if (onInterimTranscriptChange) {
+        onInterimTranscriptChange(newText, confidence);
+      }
+      
+      if (confidence !== undefined) {
+        setConfidenceScore(confidence);
+      }
     }
-  }, [transcript, onTranscriptChange, multiLine]);
+  }, [transcript, onTranscriptChange, multiLine, onInterimTranscriptChange]);
 
   return {
     transcript,
     interimTranscript,
+    confidenceScore,
     setTranscript,
     setInterimTranscript,
+    setConfidenceScore,
     resetTranscript,
     updateTranscript
   };

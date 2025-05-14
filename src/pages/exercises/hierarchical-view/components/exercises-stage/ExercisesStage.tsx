@@ -38,6 +38,8 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
     handleSaveExercise,
     handleEditExercise,
     handleAddExercise,
+    isVoiceRecognitionOpen,
+    setIsVoiceRecognitionOpen,
   } = useExercisesStage({ categoryId });
   
   if (isLoading) {
@@ -72,6 +74,7 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
         onAddExercise={handleAddExercise}
         viewMode={viewMode}
         setViewMode={setViewMode}
+        onVoiceAdd={() => setIsVoiceRecognitionOpen(true)}
       />
 
       {/* Exercise list component */}
@@ -101,6 +104,8 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         onDelete={handleDeleteExercises}
         selectedExerciseIds={selectedExerciseIds}
+        isVoiceRecognitionOpen={isVoiceRecognitionOpen}
+        setIsVoiceRecognitionOpen={setIsVoiceRecognitionOpen}
       />
     </motion.div>
   );

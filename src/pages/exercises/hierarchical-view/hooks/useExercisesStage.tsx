@@ -1,9 +1,9 @@
 
-import { useState, useEffect } from "react";
-import { Exercise } from "@/types/exercise";
+import { useState, useEffect, useCallback } from "react";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
+import { useExerciseManagement } from "@/hooks/useExerciseManagement";
 
 interface UseExercisesStageProps {
   categoryId: string;
@@ -11,193 +11,109 @@ interface UseExercisesStageProps {
 
 export const useExercisesStage = ({ categoryId }: UseExercisesStageProps) => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const { exercises, categories, isLoading } = useExerciseData();
-  const [showQuickSpeech, setShowQuickSpeech] = useState(false);
+  const { categories, exercises, isLoading } = useExerciseData();
+  const { handleExerciseSave, handleDeleteExercises } = useExerciseManagement();
   
-  // State for managing dialogs
+  const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | null>(null);
+  const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
+  const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([]);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isVoiceRecognitionOpen, setIsVoiceRecognitionOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
-  const [formData, setFormData] = useState({ name: "", categoryId: parseInt(categoryId) || 0 });
-  const [quickSpeechText, setQuickSpeechText] = useState("");
+  const [formData, setFormData] = useState({ name: "", categoryId: Number(categoryId) || 0 });
 
-  // Update form data when category changes
+  // Load selected category and filter exercises on mount or when categoryId changes
   useEffect(() => {
-    setFormData(prev => ({ ...prev, categoryId: parseInt(categoryId) || 0 }));
-  }, [categoryId]);
-  
-  // Filter exercises based on selected category
-  const filteredExercises = exercises.filter(ex => ex.categoryId.toString() === categoryId);
-  
-  // Delete exercises
-  const handleDeleteExercises = () => {
-    try {
-      const updatedExercises = exercises.filter(ex => !selectedExerciseIds.includes(ex.id));
-      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
-      queryClient.setQueryData(["exercises"], updatedExercises);
+    if (!isLoading) {
+      const category = categories.find(c => c.id === Number(categoryId));
+      setSelectedCategory(category || null);
       
-      toast({
-        title: "موفقیت",
-        description: selectedExerciseIds.length > 1 
-          ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
-          : "حرکت با موفقیت حذف شد"
-      });
-      
-      setSelectedExerciseIds([]);
-      setIsDeleteDialogOpen(false);
-    } catch (error) {
-      console.error('Error deleting exercises:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در حذف حرکت‌ها"
-      });
-    }
-  };
-
-  // Save new or edited exercise
-  const handleSaveExercise = async (data: { name: string; categoryId: number }) => {
-    try {
-      // Check for duplicate exercise name
-      const exerciseExists = exercises.some(ex => 
-        ex.name.toLowerCase() === data.name.toLowerCase() && 
-        (selectedExercise ? ex.id !== selectedExercise.id : true)
-      );
-      
-      if (exerciseExists) {
+      if (category) {
+        const filtered = exercises.filter(ex => ex.categoryId === category.id);
+        setFilteredExercises(filtered);
+      } else {
+        setFilteredExercises([]);
         toast({
           variant: "destructive",
           title: "خطا",
-          description: "این حرکت قبلاً اضافه شده است"
-        });
-        return Promise.reject("نام تکراری");
-      }
-
-      let updatedExercises;
-      
-      if (selectedExercise) {
-        // Edit existing exercise
-        updatedExercises = exercises.map(ex =>
-          ex.id === selectedExercise.id ? { ...ex, ...data } : ex
-        );
-        
-        toast({
-          title: "موفقیت",
-          description: "حرکت با موفقیت ویرایش شد"
-        });
-      } else {
-        // Add new exercise
-        const timestamp = Date.now();
-        const newExercise: Exercise = {
-          id: timestamp,
-          ...data
-        };
-        updatedExercises = [...exercises, newExercise];
-        
-        toast({
-          title: "موفقیت",
-          description: "حرکت جدید با موفقیت اضافه شد"
+          description: "دسته‌بندی مورد نظر یافت نشد."
         });
       }
-      
-      // Save to localStorage and update react-query cache
-      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
-      queryClient.setQueryData(["exercises"], updatedExercises);
-      
-      setIsAddDialogOpen(false);
-      setSelectedExercise(undefined);
-      return Promise.resolve();
-    } catch (error) {
-      console.error('Error saving exercise:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره سازی حرکت"
-      });
-      return Promise.reject(error);
     }
-  };
+  }, [categoryId, categories, exercises, isLoading, toast]);
 
-  // Edit exercise
-  const handleEditExercise = (exercise: Exercise) => {
+  // Set default category ID in formData when selectedCategory changes
+  useEffect(() => {
+    if (selectedCategory) {
+      setFormData(prev => ({
+        ...prev,
+        categoryId: selectedCategory.id
+      }));
+    }
+  }, [selectedCategory]);
+
+  // Handler for adding a new exercise
+  const handleAddExercise = useCallback(() => {
+    setSelectedExercise(undefined);
+    setFormData({ name: "", categoryId: selectedCategory?.id || 0 });
+    setIsAddDialogOpen(true);
+  }, [selectedCategory]);
+
+  // Handler for editing an existing exercise
+  const handleEditExercise = useCallback((exercise: Exercise) => {
     setSelectedExercise(exercise);
     setFormData({
       name: exercise.name,
       categoryId: exercise.categoryId
     });
     setIsAddDialogOpen(true);
-  };
+  }, []);
 
-  // Add new exercise
-  const handleAddExercise = () => {
-    setSelectedExercise(undefined);
-    setFormData({
-      name: "",
-      categoryId: parseInt(categoryId) || 0
-    });
-    setIsAddDialogOpen(true);
-  };
-
-  // Quick add with speech
-  const handleQuickAdd = () => {
-    if (!quickSpeechText.trim()) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "لطفاً نام حرکت را وارد کنید"
-      });
-      return;
+  // Handler for deleting selected exercises
+  const handleDeleteSelectedExercises = useCallback(() => {
+    if (selectedExerciseIds.length > 0) {
+      handleDeleteExercises(selectedExerciseIds);
+      setSelectedExerciseIds([]);
+      setIsDeleteDialogOpen(false);
     }
+  }, [selectedExerciseIds, handleDeleteExercises]);
 
-    handleSaveExercise({
-      name: quickSpeechText.trim(),
-      categoryId: parseInt(categoryId) || 0
-    }).then(() => {
-      setQuickSpeechText("");
-      setShowQuickSpeech(false);
-    });
-  };
-
-  // Find selected category
-  const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
+  // Handler for saving an exercise
+  const handleSaveExercise = useCallback(async () => {
+    try {
+      await handleExerciseSave(formData);
+      setIsAddDialogOpen(false);
+      setIsVoiceRecognitionOpen(false);
+      setFormData({ name: "", categoryId: selectedCategory?.id || 0 });
+    } catch (error) {
+      console.error("Error saving exercise:", error);
+    }
+  }, [formData, handleExerciseSave, selectedCategory?.id]);
 
   return {
-    // Data
     isLoading,
     filteredExercises,
     selectedCategory,
-    
-    // State
     selectedExerciseIds,
     setSelectedExerciseIds,
     viewMode,
     setViewMode,
-    showQuickSpeech,
-    setShowQuickSpeech,
-    
-    // Dialog state
     isAddDialogOpen,
     setIsAddDialogOpen,
     isDeleteDialogOpen,
     setIsDeleteDialogOpen,
     selectedExercise,
+    setSelectedExercise,
     formData,
     setFormData,
-    
-    // Quick speech
-    quickSpeechText,
-    setQuickSpeechText,
-    
-    // Handlers
-    handleDeleteExercises,
+    handleDeleteExercises: handleDeleteSelectedExercises,
     handleSaveExercise,
     handleEditExercise,
     handleAddExercise,
-    handleQuickAdd
+    isVoiceRecognitionOpen,
+    setIsVoiceRecognitionOpen,
   };
 };
-
-export default useExercisesStage;

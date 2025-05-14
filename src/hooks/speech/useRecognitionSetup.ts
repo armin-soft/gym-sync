@@ -10,6 +10,8 @@ interface UseRecognitionSetupProps {
   setIsListening: (isListening: boolean) => void;
   lang: string;
   multiLine?: boolean;
+  setConfidenceScore?: (score: number) => void;
+  onInterimTranscriptChange?: (transcript: string, confidence?: number) => void;
 }
 
 export function useRecognitionSetup({
@@ -20,6 +22,8 @@ export function useRecognitionSetup({
   setIsListening,
   lang,
   multiLine = false,
+  setConfidenceScore,
+  onInterimTranscriptChange,
 }: UseRecognitionSetupProps) {
   return useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -31,7 +35,7 @@ export function useRecognitionSetup({
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = lang;
-    recognition.maxAlternatives = 3; // افزایش گزینه‌های جایگزین برای دقت بیشتر
+    recognition.maxAlternatives = 5; // افزایش گزینه‌های جایگزین برای دقت بیشتر
     
     // سازگاری بیشتر با مرورگرها
     if (navigator.userAgent.indexOf("Edge") !== -1) {
@@ -63,20 +67,25 @@ export function useRecognitionSetup({
     recognition.onresult = (event: any) => {
       let interim = "";
       let final = transcript;
+      let bestConfidence = 0;
       
       for (let i = event.resultIndex; i < event.results.length; i++) {
         // یافتن بهترین تشخیص با بالاترین دقت
-        let bestConfidence = 0;
+        let bestConfidenceForResult = 0;
         let bestTranscript = "";
 
         for (let j = 0; j < event.results[i].length; j++) {
           const currentTranscript = event.results[i][j].transcript;
           const confidence = event.results[i][j].confidence;
           
-          if (confidence > bestConfidence) {
-            bestConfidence = confidence;
+          if (confidence > bestConfidenceForResult) {
+            bestConfidenceForResult = confidence;
             bestTranscript = currentTranscript;
           }
+        }
+        
+        if (bestConfidenceForResult > bestConfidence) {
+          bestConfidence = bestConfidenceForResult;
         }
         
         if (event.results[i].isFinal) {
@@ -107,8 +116,17 @@ export function useRecognitionSetup({
       setTranscript(final.trim());
       onTranscriptChange(final.trim());
       setInterimTranscript(interim);
+      
+      // اعمال امتیاز اطمینان
+      if (setConfidenceScore && bestConfidence > 0) {
+        setConfidenceScore(bestConfidence);
+      }
+      
+      if (onInterimTranscriptChange && interim) {
+        onInterimTranscriptChange(interim, bestConfidence);
+      }
     };
 
     return recognition;
-  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, multiLine]);
+  }, [transcript, onTranscriptChange, setTranscript, setInterimTranscript, setIsListening, lang, multiLine, setConfidenceScore, onInterimTranscriptChange]);
 }
