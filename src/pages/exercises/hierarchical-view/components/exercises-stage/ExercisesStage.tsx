@@ -1,95 +1,37 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import ExerciseHeader from "./ExerciseHeader";
-import ExercisesList from "./ExercisesList";
-import ExerciseDialogs from "./ExerciseDialogs";
+import { ExerciseDialogs } from "./ExerciseDialogs";
+import { ExercisesList } from "./ExercisesList";
+import { ExerciseHeader } from "./ExerciseHeader";
 import { useExercisesStage } from "../../hooks/useExercisesStage";
+import { QuickSpeechAdd } from "./QuickSpeechAdd";
 
-interface ExercisesStageProps {
-  categoryId: string;
-  typeId: string;
-  onBack: () => void;
-  onExerciseSelect: (exerciseId: string) => void;
-}
-
-const ExercisesStage: React.FC<ExercisesStageProps> = ({
-  categoryId,
-  onBack,
-}) => {
-  // Use the custom hook to separate business logic
+export function ExercisesStage() {
   const {
-    isLoading,
-    filteredExercises,
-    selectedCategory,
-    selectedExerciseIds,
-    setSelectedExerciseIds,
-    viewMode,
-    setViewMode,
+    selectedExercise,
     isAddDialogOpen,
     setIsAddDialogOpen,
-    isDeleteDialogOpen,
-    setIsDeleteDialogOpen,
-    selectedExercise,
     formData,
     setFormData,
-    handleDeleteExercises,
     handleSaveExercise,
-    handleEditExercise,
-    handleAddExercise,
-  } = useExercisesStage({ categoryId });
-  
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="text-sm text-muted-foreground">در حال بارگذاری تمرین‌ها...</p>
-        </div>
-      </div>
-    );
-  }
+    isDeleteDialogOpen,
+    setIsDeleteDialogOpen,
+    handleDeleteExercise,
+    selectedExerciseIds,
+  } = useExercisesStage();
 
   return (
-    <motion.div 
-      className="h-full flex flex-col gap-3"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex items-center justify-between">
-        <Button variant="outline" size="sm" onClick={onBack}>
-          بازگشت به دسته‌بندی‌ها
-        </Button>
-      </div>
-
-      <ExerciseHeader 
-        exerciseCount={filteredExercises.length}
-        selectedExerciseIds={selectedExerciseIds}
-        onDeleteClick={() => setIsDeleteDialogOpen(true)}
-        onAddExercise={handleAddExercise}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
+    <div className="container px-4 py-4 mx-auto space-y-6">
+      <ExerciseHeader
+        onAddExercise={() => setIsAddDialogOpen(true)}
+        onDeleteSelected={() => setIsDeleteDialogOpen(true)}
+        selectedCount={selectedExerciseIds.length}
       />
 
-      {/* Exercise list component */}
-      <ExercisesList
-        filteredExercises={filteredExercises}
-        selectedCategory={selectedCategory}
-        selectedExerciseIds={selectedExerciseIds}
-        setSelectedExerciseIds={setSelectedExerciseIds}
-        viewMode={viewMode}
-        onEditExercise={handleEditExercise}
-        onDeleteExercise={(exerciseId) => {
-          setSelectedExerciseIds([exerciseId]);
-          setIsDeleteDialogOpen(true);
-        }}
-        onAddExercise={handleAddExercise}
-      />
+      <QuickSpeechAdd onAddExercise={handleSaveExercise} />
 
-      {/* Dialogs */}
+      <ExercisesList />
+
       <ExerciseDialogs
         isAddDialogOpen={isAddDialogOpen}
         setIsAddDialogOpen={setIsAddDialogOpen}
@@ -99,11 +41,11 @@ const ExercisesStage: React.FC<ExercisesStageProps> = ({
         onSave={handleSaveExercise}
         isDeleteDialogOpen={isDeleteDialogOpen}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
-        onDelete={handleDeleteExercises}
+        onDelete={handleDeleteExercise}
         selectedExerciseIds={selectedExerciseIds}
       />
-    </motion.div>
+    </div>
   );
-};
+}
 
 export default ExercisesStage;

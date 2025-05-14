@@ -1,2 +1,4 @@
 
-export { default as AdvancedSpeechInput } from './AdvancedSpeechInput';
+export { AdvancedSpeechInput } from "./AdvancedSpeechInput";
+export type { AdvancedSpeechInputProps } from "./AdvancedSpeechInput";
+

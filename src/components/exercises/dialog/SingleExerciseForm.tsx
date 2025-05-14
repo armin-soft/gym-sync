@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { ExerciseCategory } from "@/types/exercise";
 import { AdvancedSpeechInput } from "@/pages/exercises/hierarchical-view/components/exercises-stage/advanced-speech-input";
 
@@ -28,6 +27,7 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
           value={value}
           onChange={onChange}
           placeholder="نام حرکت را وارد کنید"
+          showRegularInput={true}
         />
       </div>
       

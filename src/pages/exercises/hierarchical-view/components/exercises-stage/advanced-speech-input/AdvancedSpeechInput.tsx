@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useSpeechRecognition } from "@/hooks/speech";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,16 +10,20 @@ import SpeechPopover from "./SpeechPopover";
 import { useBrowserSupport } from "@/hooks/speech/useBrowserSupport";
 import { useMicrophonePermission } from "@/hooks/speech/useMicrophonePermission";
 
-interface AdvancedSpeechInputProps {
+export interface AdvancedSpeechInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  className?: string;
+  showRegularInput?: boolean;
 }
 
 export function AdvancedSpeechInput({
   value,
   onChange,
-  placeholder = "نام حرکت را وارد کنید"
+  placeholder = "نام حرکت را وارد کنید",
+  className,
+  showRegularInput = false
 }: AdvancedSpeechInputProps) {
   const [showPopover, setShowPopover] = useState(false);
   const [showPermissionReminder, setShowPermissionReminder] = useState(false);
@@ -47,6 +50,14 @@ export function AdvancedSpeechInput({
   const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
   const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
   const isMobile = isIOS || isAndroid;
+  
+  // Local state for text input
+  const [textInputValue, setTextInputValue] = useState(value);
+
+  useEffect(() => {
+    // Keep local value in sync with external value 
+    setTextInputValue(value);
+  }, [value]);
 
   useEffect(() => {
     // Show permission reminder after a delay on mobile devices
@@ -98,14 +109,36 @@ export function AdvancedSpeechInput({
 
   const handleClearText = () => {
     resetTranscript();
+    setTextInputValue("");
+    onChange("");
     toast({
       title: "پاک شد",
       description: "متن پاک شد."
     });
   };
+  
+  // Handle text input change
+  const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setTextInputValue(newValue);
+    onChange(newValue);
+  };
 
   return (
-    <div className="relative">
+    <div className="relative space-y-2">
+      {/* Show text input if requested */}
+      {showRegularInput && (
+        <input
+          type="text"
+          value={textInputValue}
+          onChange={handleTextInputChange}
+          placeholder={placeholder}
+          className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow text-right"
+          dir="rtl"
+        />
+      )}
+      
+      {/* Speech input component */}
       <div className="flex items-stretch w-full">
         <div 
           className={cn(
