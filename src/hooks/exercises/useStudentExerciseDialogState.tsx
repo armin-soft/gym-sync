@@ -34,6 +34,15 @@ export const useStudentExerciseDialogState = ({
   const { exercises, categories, exerciseTypes, isLoading } = useExerciseDialogData();
 
   // Exercise selection state from hook
+  const exerciseSelection = useExerciseSelection({
+    initialExercises,
+    initialExercisesDay1,
+    initialExercisesDay2,
+    initialExercisesDay3,
+    initialExercisesDay4
+  });
+  
+  // Destructure the properties we need from exerciseSelection
   const {
     selectedExercisesDay1,
     selectedExercisesDay2,
@@ -63,13 +72,7 @@ export const useStudentExerciseDialogState = ({
     getSelectedExercisesWithSetsDay2,
     getSelectedExercisesWithSetsDay3,
     getSelectedExercisesWithSetsDay4
-  } = useExerciseSelection({
-    initialExercises,
-    initialExercisesDay1,
-    initialExercisesDay2,
-    initialExercisesDay3,
-    initialExercisesDay4
-  });
+  } = exerciseSelection;
 
   // Dialog state management
   const {
