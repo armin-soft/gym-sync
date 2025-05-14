@@ -1,6 +1,8 @@
-
 // Service worker implementation
 // This is the main service worker file that will be compiled during build
+
+// Type declaration for ServiceWorkerGlobalScope
+declare const self: ServiceWorkerGlobalScope;
 
 // Dynamically determine the base path where the app is running
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
@@ -19,7 +21,7 @@ const getUrlsToCache = () => {
 };
 
 // Install a service worker
-self.addEventListener('install', (event: any) => {
+self.addEventListener('install', (event: ExtendableEvent) => {
   console.log('[Service Worker] Installing...', BASE_PATH);
   
   // Skip waiting to activate immediately
@@ -63,7 +65,7 @@ self.addEventListener('install', (event: any) => {
 });
 
 // Cache and return requests
-self.addEventListener('fetch', (event: any) => {
+self.addEventListener('fetch', (event: FetchEvent) => {
   // Don't attempt to cache API requests or external resources
   if (event.request.url.includes('/api/') || 
       !event.request.url.startsWith(self.location.origin)) {
@@ -137,7 +139,7 @@ self.addEventListener('fetch', (event: any) => {
 });
 
 // Update a service worker
-self.addEventListener('activate', (event: any) => {
+self.addEventListener('activate', (event: ExtendableEvent) => {
   console.log('[Service Worker] Activating...');
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -153,23 +155,23 @@ self.addEventListener('activate', (event: any) => {
       );
     }).then(() => {
       // Immediately claim clients so updated SW controls open pages
-      return (self as any).clients.claim();
+      return self.clients.claim();
     })
   );
 });
 
 // Handle messages from clients
-self.addEventListener('message', (event: any) => {
+self.addEventListener('message', (event: ExtendableMessageEvent) => {
   console.log('[Service Worker] Received message', event.data);
   
   if (event.data && event.data.type === 'SKIP_WAITING') {
     console.log('[Service Worker] Skipping waiting');
-    (self as any).skipWaiting();
+    self.skipWaiting();
   }
   
   if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
     console.log('[Service Worker] Checking for updates');
-    (self as any).registration.update();
+    self.registration.update();
   }
 });
 
