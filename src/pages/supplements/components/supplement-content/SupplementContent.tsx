@@ -1,39 +1,74 @@
 
-import { Supplement } from "@/types/supplement";
-import { SupplementList } from "@/components/supplements/list/SupplementList";
-import { SupplementEmptyState } from "@/components/nutrition/supplements/SupplementEmptyState";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import type { Supplement } from "@/types/supplement";
+import { 
+  ContentHeader, 
+  SearchAndFilters, 
+  SupplementListContainer 
+} from "./components";
 
 export interface SupplementContentProps {
+  type: 'supplement' | 'vitamin';
   supplements: Supplement[];
   onAdd: () => void;
   onEdit: (supplement: Supplement) => void;
   onDelete: (id: number) => void;
-  type?: "supplement" | "vitamin";
 }
 
 export const SupplementContent = ({
+  type,
   supplements,
   onAdd,
   onEdit,
   onDelete,
-  type = "supplement" 
 }: SupplementContentProps) => {
   const deviceInfo = useDeviceInfo();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [showFilters, setShowFilters] = useState(false);
   
-  if (supplements.length === 0) {
-    return <SupplementEmptyState activeTab={type === "vitamin" ? "vitamins" : "supplements"} />;
-  }
-
+  // Filter supplements based on search query
+  const filteredSupplements = supplements.filter(item => {
+    if (!searchQuery.trim()) return true;
+    return item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+           item.category.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+  
   return (
-    <div className="p-4 sm:p-6">
-      <SupplementList
-        supplements={supplements}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onAdd={onAdd}
-        viewMode={deviceInfo.isMobile ? "grid" : "list"}
-      />
-    </div>
+    <Card className="overflow-hidden border-none shadow-xl backdrop-blur-sm rounded-xl sm:rounded-2xl h-full flex flex-col w-full">
+      <ContentHeader type={type} onAdd={onAdd} />
+
+      <AnimatePresence mode="wait">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="p-3 sm:p-4 md:p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex-1 overflow-hidden flex flex-col"
+        >
+          <SearchAndFilters 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+            type={type}
+            isMobile={deviceInfo.isMobile}
+          />
+
+          <SupplementListContainer
+            filteredSupplements={filteredSupplements}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onAdd={onAdd}
+            type={type}
+            viewMode={deviceInfo.isMobile ? "grid" : viewMode}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </Card>
   );
 };
