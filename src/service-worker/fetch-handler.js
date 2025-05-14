@@ -1,3 +1,4 @@
+
 import { CACHE_NAME } from './cache-config.js';
 import { createCleanRequest } from './cache-strategies.js';
 
@@ -109,3 +110,7 @@ async function fetchAndCache(request) {
     });
   }
 }
+
+// Make sure function is available in the global scope for Service-Worker.js
+// @ts-ignore
+self.handleFetch = handleFetch;

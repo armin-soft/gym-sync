@@ -18,3 +18,7 @@ export function handleMessage(event) {
       console.log('[Service Worker] Received message:', event.data);
   }
 }
+
+// Make sure function is available in the global scope for Service-Worker.js
+// @ts-ignore
+self.handleMessage = handleMessage;

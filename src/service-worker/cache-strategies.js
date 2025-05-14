@@ -82,3 +82,11 @@ export function createCleanRequest(originalRequest) {
   
   return originalRequest;
 }
+
+// Make these functions available in the global scope
+// @ts-ignore
+self.cleanupOldCaches = cleanupOldCaches;
+// @ts-ignore
+self.cacheStaticAssets = cacheStaticAssets;
+// @ts-ignore
+self.createCleanRequest = createCleanRequest;

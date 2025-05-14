@@ -27,8 +27,10 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          // Always use relative path for service worker
-          const scriptPath = './Service-Worker.js';
+          // Add timestamp to force new service worker
+          const timestamp = new Date().getTime();
+          // Always use relative path for service worker with cache busting
+          const scriptPath = './Service-Worker.js?v=' + timestamp;
           
           // Register the service worker
           navigator.serviceWorker.register(scriptPath)
@@ -90,14 +92,14 @@
           });
         });
         
-        // Check for updates every hour
+        // Check for updates more frequently (every 15 minutes)
         setInterval(() => {
           if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
               type: 'CHECK_FOR_UPDATES'
             });
           }
-        }, 60 * 60 * 1000); // 1 hour
+        }, 15 * 60 * 1000); // 15 minutes
         
         // Function to show update notification
         function showUpdateNotification() {
@@ -125,6 +127,19 @@
                 });
               }
             }
+          }
+        }
+        
+        // Force cache clearing for development
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+          // Clear caches in development
+          if ('caches' in window) {
+            caches.keys().then(function(cacheNames) {
+              cacheNames.forEach(function(cacheName) {
+                console.log('Clearing cache:', cacheName);
+                caches.delete(cacheName);
+              });
+            });
           }
         }
       }

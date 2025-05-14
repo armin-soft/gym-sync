@@ -1,6 +1,6 @@
 
 // Cache configuration for the service worker
-export const CACHE_NAME = 'gym-sync-v8';
+export const CACHE_NAME = 'gym-sync-v9';
 
 // Assets to cache - using relative paths for better compatibility
 export const STATIC_ASSETS = [
@@ -26,3 +26,9 @@ export function shouldCache(url) {
   }
   return true;
 }
+
+// Make variables available in the global scope for Service-Worker.js
+// @ts-ignore
+self.CACHE_NAME = CACHE_NAME;
+// @ts-ignore
+self.STATIC_ASSETS = STATIC_ASSETS;
