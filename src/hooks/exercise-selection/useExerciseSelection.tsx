@@ -1,81 +1,74 @@
 
-import { useState, useEffect } from 'react';
-import { ExerciseWithSets } from './types';
-import { useExerciseDaySelection } from './useExerciseDaySelection';
+import { useState, useCallback, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import type { ExerciseWithSets } from './types';
 
-interface UseExerciseSelectionProps {
-  initialExercises?: number[];
-  initialExercisesDay1?: number[];
-  initialExercisesDay2?: number[];
-  initialExercisesDay3?: number[];
-  initialExercisesDay4?: number[];
-}
+export const useExerciseSelection = (initialExercises: ExerciseWithSets[] = []) => {
+  const [selectedExercises, setSelectedExercises] = useState<ExerciseWithSets[]>(initialExercises);
+  const [currentDayExercises, setCurrentDayExercises] = useState<ExerciseWithSets[]>([]);
+  const [activeDay, setActiveDay] = useState<string>('saturday');
 
-export function useExerciseSelection({
-  initialExercises = [],
-  initialExercisesDay1 = [],
-  initialExercisesDay2 = [],
-  initialExercisesDay3 = [],
-  initialExercisesDay4 = []
-}: UseExerciseSelectionProps = {}) {
-  // Setup individual day hooks
-  const day1 = useExerciseDaySelection({ initialExercises: initialExercisesDay1 });
-  const day2 = useExerciseDaySelection({ initialExercises: initialExercisesDay2 });
-  const day3 = useExerciseDaySelection({ initialExercises: initialExercisesDay3 });
-  const day4 = useExerciseDaySelection({ initialExercises: initialExercisesDay4 });
-  
-  // For backward compatibility, also maintain the original exercise state
-  const mainSelection = useExerciseDaySelection({ initialExercises });
-
-  // Update state when initialExercises props change
+  // Initialize current day's exercises based on activeDay
   useEffect(() => {
-    // This effect ensures that when initialExercises props change, the state is updated accordingly
-  }, [initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
+    const dayExercises = selectedExercises.filter(ex => ex.day === activeDay);
+    setCurrentDayExercises(dayExercises);
+  }, [activeDay, selectedExercises]);
+
+  // Add exercise to the selected list
+  const addExercise = useCallback((exercise: ExerciseWithSets) => {
+    const newExercise = {
+      ...exercise,
+      id: exercise.id || uuidv4(),
+      day: activeDay,
+    };
+
+    setSelectedExercises(prev => [...prev, newExercise]);
+  }, [activeDay]);
+
+  // Remove exercise from the selected list
+  const removeExercise = useCallback((exerciseId: string) => {
+    setSelectedExercises(prev => prev.filter(ex => ex.id !== exerciseId));
+  }, []);
+
+  // Update exercise details
+  const updateExercise = useCallback((exerciseId: string, updatedData: Partial<ExerciseWithSets>) => {
+    setSelectedExercises(prev => 
+      prev.map(ex => ex.id === exerciseId ? { ...ex, ...updatedData } : ex)
+    );
+  }, []);
+
+  // Update sets for an exercise
+  const updateExerciseSets = useCallback((exerciseId: string, sets: number, reps: number) => {
+    setSelectedExercises(prev => 
+      prev.map(ex => ex.id === exerciseId ? { ...ex, sets, reps } : ex)
+    );
+  }, []);
+
+  // Change active day
+  const changeDay = useCallback((day: string) => {
+    setActiveDay(day);
+  }, []);
+
+  // Check if exercise is already selected
+  const isExerciseSelected = useCallback((exerciseId: string) => {
+    return selectedExercises.some(ex => ex.id === exerciseId && ex.day === activeDay);
+  }, [selectedExercises, activeDay]);
+
+  // Get exercise count for each day
+  const getDayExercisesCount = useCallback((day: string) => {
+    return selectedExercises.filter(ex => ex.day === day).length;
+  }, [selectedExercises]);
 
   return {
-    // Original selection
-    selectedExercises: mainSelection.selectedExercises,
-    toggleExercise: mainSelection.toggleExercise,
-    exerciseSets: mainSelection.exerciseSets,
-    handleSetsChange: mainSelection.handleSetsChange,
-    exerciseReps: mainSelection.exerciseReps,
-    handleRepsChange: mainSelection.handleRepsChange,
-    getSelectedExercisesWithSets: mainSelection.getSelectedExercisesWithSets,
-
-    // Day 1
-    selectedExercisesDay1: day1.selectedExercises,
-    toggleExerciseDay1: day1.toggleExercise,
-    exerciseSetsDay1: day1.exerciseSets,
-    handleSetsChangeDay1: day1.handleSetsChange,
-    exerciseRepsDay1: day1.exerciseReps,
-    handleRepsChangeDay1: day1.handleRepsChange,
-    getSelectedExercisesWithSetsDay1: day1.getSelectedExercisesWithSets,
-
-    // Day 2
-    selectedExercisesDay2: day2.selectedExercises,
-    toggleExerciseDay2: day2.toggleExercise,
-    exerciseSetsDay2: day2.exerciseSets,
-    handleSetsChangeDay2: day2.handleSetsChange,
-    exerciseRepsDay2: day2.exerciseReps,
-    handleRepsChangeDay2: day2.handleRepsChange,
-    getSelectedExercisesWithSetsDay2: day2.getSelectedExercisesWithSets,
-
-    // Day 3
-    selectedExercisesDay3: day3.selectedExercises,
-    toggleExerciseDay3: day3.toggleExercise,
-    exerciseSetsDay3: day3.exerciseSets,
-    handleSetsChangeDay3: day3.handleSetsChange,
-    exerciseRepsDay3: day3.exerciseReps,
-    handleRepsChangeDay3: day3.handleRepsChange,
-    getSelectedExercisesWithSetsDay3: day3.getSelectedExercisesWithSets,
-
-    // Day 4
-    selectedExercisesDay4: day4.selectedExercises,
-    toggleExerciseDay4: day4.toggleExercise,
-    exerciseSetsDay4: day4.exerciseSets,
-    handleSetsChangeDay4: day4.handleSetsChange,
-    exerciseRepsDay4: day4.exerciseReps,
-    handleRepsChangeDay4: day4.handleRepsChange,
-    getSelectedExercisesWithSetsDay4: day4.getSelectedExercisesWithSets,
+    selectedExercises,
+    currentDayExercises,
+    activeDay,
+    addExercise,
+    removeExercise,
+    updateExercise,
+    updateExerciseSets,
+    changeDay,
+    isExerciseSelected,
+    getDayExercisesCount,
   };
-}
+};
