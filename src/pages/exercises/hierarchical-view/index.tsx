@@ -1,56 +1,125 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
-import HierarchicalViewContainer from "./components/HierarchicalViewContainer";
-import { PageContainer } from "@/components/ui/page-container";
+import React, { useState } from "react";
+import { HierarchicalViewContainer } from "./components/HierarchicalViewContainer";
+import { TypeDialogManager } from "./components/dialogs/TypeDialogManager";
+import { CategoryDialogManager } from "./components/dialogs/CategoryDialogManager";
+import { DeleteTypeConfirmation } from "./components/dialogs/DeleteTypeConfirmation";
+import { useHierarchicalView } from "./hooks/useHierarchicalView";
+import { useExerciseData } from "@/hooks/exercises/useExerciseData";
+import { ExerciseCategory } from "@/types/exercise";
 
 const HierarchicalExercisesView = () => {
+  const { 
+    currentStage, 
+    selectedTypeId, 
+    selectedCategoryId,
+    handleTypeSelect,
+    handleCategorySelect,
+    handleBackToTypes,
+    handleBackToCategories,
+    handleExerciseSelect
+  } = useHierarchicalView();
+  
+  const { exerciseTypes, categories } = useExerciseData();
+  
+  // State for dialog management
+  const [isTypeDialogOpen, setIsTypeDialogOpen] = useState(false);
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const [editingType, setEditingType] = useState<string | null>(null);
+  const [editingCategory, setEditingCategory] = useState<ExerciseCategory | null>(null);
+  const [typeToDelete, setTypeToDelete] = useState<string | null>(null);
+  const [isDeleteTypeDialogOpen, setIsDeleteTypeDialogOpen] = useState(false);
+
+  // Selected type and category data
+  const selectedTypeName = selectedTypeId ? selectedTypeId : undefined;
+  const selectedCategory = selectedCategoryId ? categories.find(cat => cat.id.toString() === selectedCategoryId) : undefined;
+  
+  // Handle add button click based on the current stage
+  const handleAddClick = () => {
+    if (currentStage === 'types') {
+      setEditingType(null);
+      setIsTypeDialogOpen(true);
+    } else if (currentStage === 'categories' && selectedTypeId) {
+      setEditingCategory(null);
+      setIsCategoryDialogOpen(true);
+    }
+  };
+  
+  // Function to handle editing a type
+  const handleEditType = (type: string) => {
+    setEditingType(type);
+    setIsTypeDialogOpen(true);
+  };
+  
+  // Function to handle deleting a type
+  const handleDeleteType = (type: string) => {
+    setTypeToDelete(type);
+    setIsDeleteTypeDialogOpen(true);
+  };
+  
+  // Function to handle editing a category
+  const handleEditCategory = (category: ExerciseCategory) => {
+    setEditingCategory(category);
+    setIsCategoryDialogOpen(true);
+  };
+
+  // Function to handle completion of type operations
+  const handleTypeOperationComplete = () => {
+    setEditingType(null);
+    setTypeToDelete(null);
+    // If the deleted type was selected, go back to types list
+    if (typeToDelete === selectedTypeId) {
+      handleBackToTypes();
+    }
+  };
+  
+  // Function to handle completion of category operations
+  const handleCategoryOperationComplete = () => {
+    setEditingCategory(null);
+  };
+  
   return (
-    <PageContainer>
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full h-full relative"
-      >
-        {/* Background decorations */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full" />
-          <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-tr from-blue-500/10 to-teal-500/5 blur-3xl rounded-full" />
-          
-          {/* Animated sparkles */}
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                opacity: 0.5
-              }}
-              animate={{
-                opacity: [0.3, 0.6, 0.3],
-                scale: [0.8, 1, 0.8],
-                y: [0, Math.random() > 0.5 ? 10 : -10, 0]
-              }}
-              transition={{
-                duration: Math.random() * 3 + 2,
-                repeat: Infinity,
-                delay: Math.random() * 5
-              }}
-            >
-              <Sparkles className="w-3 h-3 text-indigo-400/30" />
-            </motion.div>
-          ))}
-        </div>
-        
-        {/* Main content */}
-        <div className="relative z-10 h-full">
-          <HierarchicalViewContainer />
-        </div>
-      </motion.div>
-    </PageContainer>
+    <>
+      <HierarchicalViewContainer 
+        currentStage={currentStage}
+        selectedTypeName={selectedTypeName}
+        selectedCategoryName={selectedCategory?.name}
+        selectedTypeId={selectedTypeId}
+        selectedCategoryId={selectedCategoryId}
+        handleTypeSelect={handleTypeSelect}
+        handleCategorySelect={handleCategorySelect}
+        handleBackToTypes={handleBackToTypes}
+        handleBackToCategories={handleBackToCategories}
+        handleExerciseSelect={handleExerciseSelect}
+        handleAddClick={handleAddClick}
+        handleEditType={handleEditType}
+        handleDeleteType={handleDeleteType}
+        handleEditCategory={handleEditCategory}
+      />
+      
+      {/* Dialog components */}
+      <TypeDialogManager
+        isOpen={isTypeDialogOpen}
+        onOpenChange={setIsTypeDialogOpen}
+        editingType={editingType}
+        onComplete={handleTypeOperationComplete}
+      />
+      
+      <CategoryDialogManager
+        isOpen={isCategoryDialogOpen}
+        onOpenChange={setIsCategoryDialogOpen}
+        editingCategory={editingCategory}
+        selectedTypeId={selectedTypeId}
+        onComplete={handleCategoryOperationComplete}
+      />
+      
+      <DeleteTypeConfirmation
+        isOpen={isDeleteTypeDialogOpen}
+        onOpenChange={setIsDeleteTypeDialogOpen}
+        typeToDelete={typeToDelete}
+        onComplete={handleTypeOperationComplete}
+      />
+    </>
   );
 };
 

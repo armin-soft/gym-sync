@@ -1,22 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { PageContainer } from "@/components/ui/page-container";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  Sparkles, 
-  ArrowRight, 
-  Bell, 
-  Calendar, 
-  Clock, 
-  TrendingUp,
-  Users,
-  Award
-} from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 // Import components
 import { HeroSection } from "@/components/dashboard/HeroSection";
@@ -25,20 +15,14 @@ import { RecentStudentsCard } from "@/components/dashboard/RecentStudentsCard";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { ProgressCard } from "@/components/dashboard/ProgressCard";
 import { ActivitySummaryCard } from "@/components/dashboard/ActivitySummaryCard";
-import { WelcomeMessage } from "@/components/dashboard/WelcomeMessage";
-import { QuickActions } from "@/components/dashboard/QuickActions";
-import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
-import { TipsCarousel } from "@/components/dashboard/TipsCarousel";
 
 const Index = () => {
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
   const deviceInfo = useDeviceInfo();
-  const { toast } = useToast();
   
   const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
-  const [showWelcome, setShowWelcome] = useState(true);
 
   useEffect(() => {
     try {
@@ -58,30 +42,7 @@ const Index = () => {
       console.error('Error loading students:', error);
       setStudents([]);
     }
-
-    // Auto-hide welcome message after 8 seconds
-    const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 8000);
-
-    return () => clearTimeout(timer);
   }, []);
-
-  // Send welcome notification
-  useEffect(() => {
-    const hasShownWelcome = sessionStorage.getItem('welcomeShown');
-    
-    if (!hasShownWelcome) {
-      setTimeout(() => {
-        toast({
-          title: `${trainerProfile.name ? `${trainerProfile.name} عزیز،` : 'مربی گرامی،'} خوش آمدید`,
-          description: "به پنل مدیریت برنامه خوش آمدید. برای شروع کار میتوانید از منوی اصلی استفاده کنید.",
-          variant: "default",
-        });
-        sessionStorage.setItem('welcomeShown', 'true');
-      }, 2000);
-    }
-  }, [toast, trainerProfile.name]);
 
   // Animation variants
   const fadeIn = {
@@ -109,11 +70,8 @@ const Index = () => {
       {/* Bottom left decoration */}
       <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-tr from-blue-500/10 to-teal-500/5 blur-3xl rounded-full" />
       
-      {/* Center decoration */}
-      <div className="absolute top-1/3 right-1/3 w-72 h-72 bg-gradient-to-tr from-pink-500/5 to-purple-500/10 blur-3xl rounded-full" />
-      
       {/* Animated sparkles that appear in random positions */}
-      {[...Array(8)].map((_, i) => (
+      {[...Array(5)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute"
@@ -124,8 +82,7 @@ const Index = () => {
           }}
           animate={{
             opacity: [0.4, 0.7, 0.4],
-            scale: [0.8, 1, 0.8],
-            y: [0, Math.random() > 0.5 ? 10 : -10, 0]
+            scale: [0.8, 1, 0.8]
           }}
           transition={{
             duration: Math.random() * 3 + 2,
@@ -141,10 +98,6 @@ const Index = () => {
 
   return (
     <PageContainer fullWidth noPadding>
-      <AnimatePresence>
-        {showWelcome && <WelcomeMessage trainerName={trainerProfile.name} onClose={() => setShowWelcome(false)} />}
-      </AnimatePresence>
-      
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -163,61 +116,20 @@ const Index = () => {
             trainerProfile={trainerProfile} 
           />
 
-          {/* Counter section */}
-          <div className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-3 md:gap-4">
-            <AnimatedCounter 
-              value={stats.totalStudents} 
-              label="شاگردان" 
-              icon={<Users className="w-4 h-4" />} 
-              color="blue" 
-            />
-            <AnimatedCounter 
-              value={stats.studentsProgress} 
-              label="پیشرفت" 
-              icon={<TrendingUp className="w-4 h-4" />} 
-              color="green"
-              suffix="%" 
-            />
-            <AnimatedCounter 
-              value={stats.totalDaysActive} 
-              label="روز فعالیت" 
-              icon={<Calendar className="w-4 h-4" />} 
-              color="purple" 
-            />
-          </div>
-
-          {/* Quick Actions */}
-          <motion.div 
-            {...fadeIn}
-            transition={{ delay: 0.1 }}
-            className="mt-4 sm:mt-5"
-          >
-            <QuickActions />
-          </motion.div>
-
           {/* Main Menu Grid */}
           <motion.div 
             {...fadeIn}
             transition={{ delay: 0.2 }}
-            className="mt-6 sm:mt-8"
+            className="mt-4 sm:mt-5 md:mt-6"
           >
             <MainMenuGrid />
-          </motion.div>
-
-          {/* Training Tips Carousel */}
-          <motion.div
-            {...fadeIn}
-            transition={{ delay: 0.3 }}
-            className="mt-6"
-          >
-            <TipsCarousel />
           </motion.div>
 
           {/* Stats and Recent Students */}
           <motion.div
             {...fadeIn}
             transition={{ delay: 0.4 }} 
-            className={`mt-6 sm:mt-8 grid ${getGridLayout()}`}
+            className={`mt-4 sm:mt-5 md:mt-6 grid ${getGridLayout()}`}
           >
             {/* First column on larger screens */}
             <motion.div 

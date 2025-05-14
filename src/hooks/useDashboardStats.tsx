@@ -1,111 +1,123 @@
-import { useState, useEffect } from "react";
+
+import { useEffect, useState, useCallback, useMemo } from "react";
 import type { DashboardStats } from "@/types/dashboard";
 
+// Initial empty stats to prevent repeated object creation
+const initialStats: DashboardStats = {
+  totalStudents: 0,
+  totalMeals: 0,
+  totalSupplements: 0,
+  studentsProgress: 0,
+  studentGrowth: 0,
+  mealGrowth: 0,
+  supplementGrowth: 0,
+  maxCapacity: 50,
+  mealCompletionRate: 0,
+  supplementCompletionRate: 0
+};
+
 export const useDashboardStats = () => {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalStudents: 0,
-    activeStudents: 0,
-    newStudentsThisWeek: 0,
-    newStudentsThisMonth: 0,
-    studentGrowth: 0,
-    mealCompletionRate: 0,
-    exerciseCompletionRate: 0,
-    supplementCompletionRate: 0,
-    studentsProgress: 0,
-    averageStudentRating: 0,
-    totalMeals: 0,
-    mealGrowth: 0,
-    totalExercises: 0,
-    exerciseGrowth: 0,
-    totalSupplements: 0,
-    supplementGrowth: 0,
-    maxCapacity: 100,
-    totalDaysActive: 0
-  });
+  const [stats, setStats] = useState<DashboardStats>(initialStats);
 
-  useEffect(() => {
+  // Memoize calculation function to prevent recreating on each render
+  const calculateStats = useCallback(() => {
     try {
-      // Calculate total students
-      const savedStudents = localStorage.getItem('students');
-      let students = [];
-      let totalStudents = 0;
+      // دریافت اطلاعات از localStorage - فقط خواندن داده‌های مورد نیاز
+      const students = JSON.parse(localStorage.getItem('students') || '[]');
+      const meals = JSON.parse(localStorage.getItem('meals') || '[]');
+      const supplements = JSON.parse(localStorage.getItem('supplements') || '[]');
+      const prevStudents = JSON.parse(localStorage.getItem('prevMonthStudents') || '[]');
+      const prevMeals = JSON.parse(localStorage.getItem('prevMonthMeals') || '[]');
+      const prevSupplements = JSON.parse(localStorage.getItem('prevMonthSupplements') || '[]');
       
-      if (savedStudents) {
-        students = JSON.parse(savedStudents);
-        if (Array.isArray(students)) {
-          totalStudents = students.length;
-        }
-      }
-      
-      // Calculate meals data
-      const savedMeals = localStorage.getItem('meals');
-      let meals = [];
-      let totalMeals = 0;
-      
-      if (savedMeals) {
-        meals = JSON.parse(savedMeals);
-        if (Array.isArray(meals)) {
-          totalMeals = meals.length;
-        }
-      }
-      
-      // Calculate supplements data
-      const savedSupplements = localStorage.getItem('supplements');
-      let supplements = [];
-      let totalSupplements = 0;
-      
-      if (savedSupplements) {
-        supplements = JSON.parse(savedSupplements);
-        if (Array.isArray(supplements)) {
-          totalSupplements = supplements.length;
-        }
-      }
-      
-      // Calculate student progress
-      const studentsProgress = totalStudents > 0 
-        ? Math.min(Math.round(Math.random() * 100), 100) // Placeholder random progress
-        : 0;
+      // محاسبه دقیق آمار - با بهینه‌سازی محاسبات
+      let totalProgress = 0;
+      let studentsWithMeals = 0;
+      let studentsWithSupplements = 0;
 
-      // Get first launch date
-      let firstLaunchDate = localStorage.getItem('firstLaunchDate');
-      if (!firstLaunchDate) {
-        firstLaunchDate = new Date().toISOString();
-        localStorage.setItem('firstLaunchDate', firstLaunchDate);
-      }
+      // فقط یکبار چک شود که آیا آرایه‌ها خالی هستند
+      const studentsExist = Array.isArray(students) && students.length > 0;
       
-      // Calculate days active
-      const daysSinceFirstLaunch = Math.ceil(
-        (new Date().getTime() - new Date(firstLaunchDate).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const totalDaysActive = Math.max(1, daysSinceFirstLaunch);
+      if (studentsExist) {
+        // استفاده از map و reduce برای بهبود عملکرد
+        const progressValues = students.map((student: any) => {
+          // بررسی دانش‌آموزان دارای برنامه غذایی
+          if (Array.isArray(student.meals) && student.meals.length > 0) {
+            studentsWithMeals++;
+          }
+          
+          // بررسی دانش‌آموزان دارای مکمل و ویتامین
+          if ((Array.isArray(student.supplements) && student.supplements.length > 0) || 
+              (Array.isArray(student.vitamins) && student.vitamins.length > 0)) {
+            studentsWithSupplements++;
+          }
+          
+          return student.progress || 0;
+        });
+        
+        // محاسبه مجموع پیشرفت
+        totalProgress = progressValues.reduce((sum: number, val: number) => sum + val, 0);
+      }
 
-      // Update all stats
+      // محاسبه میانگین و درصدها
+      const studentsLength = studentsExist ? students.length : 0;
+      const averageProgress = studentsLength ? Math.round(totalProgress / studentsLength) : 0;
+      const mealCompletionRate = studentsLength ? Math.round((studentsWithMeals / studentsLength) * 100) : 0;
+      const supplementCompletionRate = studentsLength ? Math.round((studentsWithSupplements / studentsLength) * 100) : 0;
+
+      // محاسبه نرخ رشد - فقط اگر آرایه‌های قبلی وجود داشته باشند
+      const calculateGrowth = (current: number, previous: number) => {
+        return previous > 0 ? Math.round(((current - previous) / previous) * 100) : 0;
+      };
+
       setStats({
-        totalStudents,
-        activeStudents: Math.round(totalStudents * 0.8), // Assume 80% are active
-        newStudentsThisWeek: Math.min(Math.round(totalStudents * 0.2), 10), // Random placeholder
-        newStudentsThisMonth: Math.min(Math.round(totalStudents * 0.4), 20), // Random placeholder
-        studentGrowth: totalStudents > 0 ? Math.min(Math.round(Math.random() * 40), 40) : 0, // Random placeholder
-        mealCompletionRate: totalStudents > 0 ? Math.min(Math.round((totalMeals / totalStudents) * 100), 100) : 0,
-        exerciseCompletionRate: totalStudents > 0 ? Math.min(Math.round(Math.random() * 100), 100) : 0, // Random placeholder
-        supplementCompletionRate: totalStudents > 0 ? Math.min(Math.round((totalSupplements / totalStudents) * 100), 100) : 0,
-        studentsProgress,
-        averageStudentRating: Math.round((3.5 + Math.random() * 1.5) * 10) / 10, // Random between 3.5 and 5
-        totalMeals,
-        mealGrowth: totalMeals > 0 ? Math.min(Math.round(Math.random() * 30), 30) : 0, // Random placeholder
-        totalExercises: totalStudents * 5, // Assuming 5 exercises per student
-        exerciseGrowth: Math.min(Math.round(Math.random() * 25), 25), // Random placeholder
-        totalSupplements,
-        supplementGrowth: totalSupplements > 0 ? Math.min(Math.round(Math.random() * 20), 20) : 0, // Random placeholder
-        maxCapacity: 100, // Placeholder max capacity
-        totalDaysActive
+        totalStudents: studentsLength,
+        totalMeals: Array.isArray(meals) ? meals.length : 0,
+        totalSupplements: Array.isArray(supplements) ? supplements.length : 0,
+        studentsProgress: averageProgress,
+        studentGrowth: calculateGrowth(studentsLength, Array.isArray(prevStudents) ? prevStudents.length : 0),
+        mealGrowth: calculateGrowth(
+          Array.isArray(meals) ? meals.length : 0, 
+          Array.isArray(prevMeals) ? prevMeals.length : 0
+        ),
+        supplementGrowth: calculateGrowth(
+          Array.isArray(supplements) ? supplements.length : 0, 
+          Array.isArray(prevSupplements) ? prevSupplements.length : 0
+        ),
+        maxCapacity: 50, // ثابت
+        mealCompletionRate,
+        supplementCompletionRate
       });
     } catch (error) {
-      console.error('Error calculating dashboard stats:', error);
+      console.error('Error calculating stats:', error);
+      // در صورت خطا، آمار خالی برگرداند
+      setStats(initialStats);
     }
   }, []);
 
+  useEffect(() => {
+    // محاسبه اولیه آمار
+    calculateStats();
+
+    // استفاده از ترکیبی از رویدادها برای بروزرسانی آمار
+    const storageHandler = (e: StorageEvent) => {
+      // بهینه‌سازی: فقط وقتی کلیدهای مرتبط تغییر می‌کنند، محاسبه مجدد انجام شود
+      if (['students', 'meals', 'supplements', 'prevMonthStudents', 
+           'prevMonthMeals', 'prevMonthSupplements'].includes(e.key || '')) {
+        calculateStats();
+      }
+    };
+
+    window.addEventListener('storage', storageHandler);
+    
+    // بروزرسانی با فاصله زمانی مناسب برای بهبود عملکرد
+    const updateInterval = setInterval(calculateStats, 5000); // کاهش فرکانس آپدیت به 5 ثانیه
+
+    return () => {
+      window.removeEventListener('storage', storageHandler);
+      clearInterval(updateInterval);
+    };
+  }, [calculateStats]);
+
   return stats;
 };
-
-export default useDashboardStats;
