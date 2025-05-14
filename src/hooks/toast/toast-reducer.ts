@@ -1,56 +1,20 @@
 
-import { Action, State, actionTypes } from "./toast-types";
+import * as React from "react"
+import { actionTypes, type State, type Action, type ToastType } from "./toast-types"
 
-// Toast configuration values
-export const TOAST_LIMIT = 5
-export const TOAST_REMOVE_DELAY = 2000 // 2 seconds auto-dismiss time
-
-// Track timeouts for toast removal
-export const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
-
-export const addToRemoveQueue = (toastId: string) => {
-  if (toastTimeouts.has(toastId)) {
-    return
-  }
-
-  const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId)
-    dispatch({
-      type: "REMOVE_TOAST",
-      toastId: toastId,
-    })
-  }, TOAST_REMOVE_DELAY)
-
-  toastTimeouts.set(toastId, timeout)
+// Generate a unique toast id
+export const genId = () => {
+  return Math.random().toString(36).substring(2, 9)
 }
 
-// Generate unique IDs for toasts
-let count = 0
-export function genId() {
-  count = (count + 1) % Number.MAX_VALUE
-  return count.toString()
-}
-
-// Use an array to manage listeners
-export const listeners: Array<(state: State) => void> = []
-export let memoryState: State = { toasts: [] }
-
-export function dispatch(action: Action) {
-  memoryState = reducer(memoryState, action)
-  listeners.forEach((listener) => {
-    listener(memoryState)
-  })
-}
-
-// Reducer function for toast state management
+// Reducer for toast state management
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case actionTypes.ADD_TOAST:
       return {
         ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
+        toasts: [...state.toasts, action.toast],
       }
-
     case actionTypes.UPDATE_TOAST:
       return {
         ...state,
@@ -58,27 +22,25 @@ export const reducer = (state: State, action: Action): State => {
           t.id === action.toast.id ? { ...t, ...action.toast } : t
         ),
       }
-
     case actionTypes.DISMISS_TOAST: {
       const { toastId } = action
 
-      if (toastId) {
-        addToRemoveQueue(toastId)
-      } else {
-        state.toasts.forEach((toast) => {
-          addToRemoveQueue(toast.id)
-        })
+      // If no id is provided, dismiss all
+      if (toastId === undefined) {
+        return {
+          ...state,
+          toasts: state.toasts.map((t) => ({
+            ...t,
+            open: false,
+          })),
+        }
       }
 
+      // Dismiss by id
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === toastId || toastId === undefined
-            ? {
-                ...t,
-                open: false,
-              }
-            : t
+          t.id === toastId ? { ...t, open: false } : t
         ),
       }
     }
@@ -93,5 +55,22 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
+  }
+}
+
+// Create toast context
+const ToastContext = React.createContext<{
+  state: State
+  dispatch: React.Dispatch<Action>
+}>({
+  state: { toasts: [] },
+  dispatch: () => null,
+})
+
+// Action dispatcher for toast operations
+export const dispatch = (action: Action) => {
+  if (typeof window !== "undefined") {
+    const event = new CustomEvent("toast", { detail: action })
+    window.dispatchEvent(event)
   }
 }

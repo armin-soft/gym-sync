@@ -61,3 +61,12 @@ export function toast({ ...props }: { variant?: ToastVariant } & Toast) {
     update,
   }
 }
+
+// Hook for toast functionality
+export function useToast() {
+  return {
+    toast,
+    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    toasts: [] // This will be populated from the context provider
+  }
+}

@@ -1,8 +1,8 @@
 
-import { useToast as useToastOriginal } from "@/components/ui/use-toast";
+import { useToast as useToastOriginal } from "@/components/ui/toast";
 
 // Re-export the toast components from our hook implementation
-export { useToast, toast } from "@/components/ui/use-toast";
+export { useToast, toast } from "@/hooks/toast/toast-utils";
 
 // Additional custom toast helpers
 export const useCustomToast = () => {

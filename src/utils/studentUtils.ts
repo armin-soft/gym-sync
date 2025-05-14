@@ -1,5 +1,6 @@
 
 import { toPersianNumbers, formatNumber } from "@/lib/utils/numbers";
+import { Student } from "@/components/students/StudentTypes";
 
 /**
  * Format payment with thousand separator
@@ -59,4 +60,48 @@ export function getBMICategory(bmi: number): string {
   if (bmi < 35) return 'چاقی درجه ۱';
   if (bmi < 40) return 'چاقی درجه ۲';
   return 'چاقی شدید';
+}
+
+/**
+ * Calculate student progress percentage based on profile completion
+ */
+export function getStudentProgress(student: Student): number {
+  // Define the required fields for a complete profile
+  const requiredFields = ['name', 'phone', 'height', 'weight'];
+  const optionalFields = ['payment', 'image', 'exercises', 'meals', 'supplements', 'vitamins'];
+  
+  // Count how many required fields are filled
+  const requiredCount = requiredFields.filter(field => 
+    student[field as keyof Student] && 
+    String(student[field as keyof Student]).trim() !== ''
+  ).length;
+  
+  // Count how many optional fields are filled
+  const optionalCount = optionalFields.filter(field => {
+    const value = student[field as keyof Student];
+    if (Array.isArray(value)) return value.length > 0;
+    return value && String(value).trim() !== '';
+  }).length;
+  
+  // Calculate basic profile completion percentage (based on required fields)
+  const basicProgress = (requiredCount / requiredFields.length) * 70;
+  
+  // Calculate extra profile completion percentage (based on optional fields)
+  const extraProgress = (optionalCount / optionalFields.length) * 30;
+  
+  // Total progress
+  const totalProgress = Math.min(100, Math.round(basicProgress + extraProgress));
+  
+  return totalProgress;
+}
+
+/**
+ * Get appropriate color for progress bar based on completion percentage
+ */
+export function getProgressColor(progress: number): string {
+  if (progress < 30) return 'text-red-500';
+  if (progress < 60) return 'text-orange-500';
+  if (progress < 80) return 'text-yellow-500';
+  if (progress < 100) return 'text-blue-500';
+  return 'text-green-500';
 }

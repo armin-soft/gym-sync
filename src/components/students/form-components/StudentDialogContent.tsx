@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Coins, Height, Phone, Ruler, User, Weight } from "lucide-react";
+import { Coins, Ruler, Phone, User, Weight } from "lucide-react";
 import { studentFormSchema, StudentFormValues } from "@/lib/validations/student";
 import { Student } from "@/components/students/StudentTypes";
 import { toPersianNumbers } from "@/lib/utils/numbers";
