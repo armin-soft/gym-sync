@@ -38,10 +38,10 @@ export const copyFilesPlugin = () => {
         
         // کپی ماژول‌های سرویس ورکر با نام‌های بزرگ - مستقیماً به Assets/Script
         const serviceWorkerModules = [
-          { source: 'cache-config.js', dest: 'CacheConfig.js' },
-          { source: 'cache-strategies.js', dest: 'CacheStrategies.js' },
-          { source: 'fetch-handler.js', dest: 'FetchHandler.js' },
-          { source: 'message-handler.js', dest: 'MessageHandler.js' }
+          { source: 'cache-config.js', dest: 'Cache-Config.js' },
+          { source: 'cache-strategies.js', dest: 'Cache-Strategies.js' },
+          { source: 'fetch-handler.js', dest: 'Fetch-Handler.js' },
+          { source: 'message-handler.js', dest: 'Message-Handler.js' }
         ];
         
         for (const module of serviceWorkerModules) {
