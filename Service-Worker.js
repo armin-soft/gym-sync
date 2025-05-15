@@ -13,7 +13,12 @@ importScripts('./src/service-worker/cache/cache-core.js');
 importScripts('./src/service-worker/cache/cache-strategies.js');
 importScripts('./src/service-worker/offline/offline-response.js');
 
-// Import event handlers
+// Import event handlers (this now imports all the individual handler modules)
+importScripts('./src/service-worker/event-handlers/install-handler.js');
+importScripts('./src/service-worker/event-handlers/activate-handler.js');
+importScripts('./src/service-worker/event-handlers/fetch-handler.js');
+importScripts('./src/service-worker/event-handlers/message-handler.js');
+importScripts('./src/service-worker/event-handlers/sync-handler.js');
 importScripts('./src/service-worker/event-handlers.js');
 
 // Log initialization
