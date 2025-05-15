@@ -40,8 +40,8 @@ export async function checkMicrophoneAvailability(): Promise<boolean | null> {
     } else {
       // تلاش برای دسترسی مستقیم به میکروفون در مرورگرهایی که از enumerateDevices پشتیبانی نمی‌کنند
       try {
-        // Ensure mediaDevices exists and has getUserMedia - with proper TypeScript checks
-        if (navigator.mediaDevices && 'getUserMedia' in navigator.mediaDevices) {
+        // Ensure mediaDevices exists and has getUserMedia - fix the TypeScript error
+        if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           stream.getTracks().forEach(track => track.stop());
           return true;
@@ -49,7 +49,6 @@ export async function checkMicrophoneAvailability(): Promise<boolean | null> {
           console.error("getUserMedia is not available on this browser");
           return false;
         }
-        return false;
       } catch (directAccessError) {
         console.error("خطا در دسترسی مستقیم به میکروفون:", directAccessError);
         // اگر خطای دسترسی نباشد، میکروفون احتمالاً وجود ندارد
