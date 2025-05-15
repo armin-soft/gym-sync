@@ -1,5 +1,5 @@
 
-import { useState, useEffect, Suspense, lazy, memo } from "react";
+import { useState, useEffect, Suspense, lazy, memo, useMemo, CSSProperties } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu, X, Bell, User } from "lucide-react";
 import { LoadingScreen } from "./LoadingScreen";
@@ -109,7 +109,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
     iconSize,
     logoGap,
     titleSize
-  } = React.useMemo(() => {
+  } = useMemo(() => {
     return {
       headerHeight: deviceInfo.isMobile ? "h-10" : deviceInfo.isTablet ? "h-12" : "h-14",
       headerPadding: deviceInfo.isMobile ? "px-1 xs:px-2" : deviceInfo.isTablet ? "px-2 sm:px-3" : "px-3 md:px-4 lg:px-6",
@@ -120,11 +120,11 @@ export const Layout = memo(({ children }: LayoutProps) => {
     };
   }, [deviceInfo.isMobile, deviceInfo.isTablet]);
 
-  // Fixed content style to prevent layout jumps
-  const contentStyle = React.useMemo(() => {
+  // Fixed content style to prevent layout jumps - using proper typings
+  const contentStyle: CSSProperties = useMemo(() => {
     return deviceInfo.isMobile ? { 
       fontSize: '90%', 
-      overflowX: 'hidden',
+      overflowX: 'hidden' as const,
       height: 'calc(100% - 40px)' // 40px is the header height for mobile
     } : {
       height: deviceInfo.isTablet ? 'calc(100% - 48px)' : 'calc(100% - 56px)'
@@ -178,3 +178,4 @@ export const Layout = memo(({ children }: LayoutProps) => {
 Layout.displayName = "Layout";
 
 export default Layout;
+
