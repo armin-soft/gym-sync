@@ -1,5 +1,9 @@
 
 // Service worker event handlers for install, activate, fetch and message events
+import * as logger from './utils/logger.js';
+import { cacheInitialAssets, cleanupOldCaches, refreshCache } from './cache/cache-core.js';
+import { fetchWithCacheFallback } from './cache/cache-strategies.js';
+import { createOfflineResponse } from './offline/offline-response.js';
 
 // Install the service worker
 self.addEventListener('install', (event) => {
@@ -8,18 +12,19 @@ self.addEventListener('install', (event) => {
     .then(response => response.json())
     .then(manifest => {
       const version = manifest.version || '1.0.0';
-      console.log(`[Service Worker] Installing v${version}`);
+      logger.initLogger(version);
+      logger.info(`Installing v${version}`);
     })
     .catch(err => {
-      console.log('[Service Worker] Installing (version fetch failed)');
+      logger.info('Installing (version fetch failed)');
     });
   
   self.skipWaiting(); // Force activation
   
   event.waitUntil(
-    self.cacheStaticAssets()
+    cacheInitialAssets(self.CACHE_NAME, self.STATIC_ASSETS)
       .catch(error => {
-        console.error('[Service Worker] Cache failed', error);
+        logger.error('Cache failed', error);
         return Promise.resolve();
       })
   );
@@ -27,19 +32,10 @@ self.addEventListener('install', (event) => {
 
 // Activate the service worker
 self.addEventListener('activate', (event) => {
-  // Get version dynamically
-  fetch('./Manifest.json')
-    .then(response => response.json())
-    .then(manifest => {
-      const version = manifest.version || '1.0.0';
-      console.log(`[Service Worker] Activated v${version}`);
-    })
-    .catch(err => {
-      console.log('[Service Worker] Activated (version fetch failed)');
-    });
+  logger.info('Activating service worker');
   
   event.waitUntil(
-    self.cleanupOldCaches()
+    cleanupOldCaches(self.CACHE_NAME)
       .then(() => {
         return self.clients.claim();
       })
@@ -59,14 +55,14 @@ self.addEventListener('fetch', (event) => {
   const cleanRequest = self.createCleanRequest(event.request);
 
   event.respondWith(
-    self.fetchWithCacheFallback(cleanRequest)
+    fetchWithCacheFallback(cleanRequest, self.CACHE_NAME)
       .catch(error => handleFetchError(error, cleanRequest))
   );
 });
 
 // Handle fetch errors with appropriate fallbacks
 async function handleFetchError(error, request) {
-  console.error('[Service Worker] Fetch failed:', error);
+  logger.error('Fetch failed:', error);
   
   // For navigation requests, return the offline page
   if (request.mode === 'navigate') {
@@ -74,11 +70,11 @@ async function handleFetchError(error, request) {
     if (indexResponse) return indexResponse;
     
     // If index.html is not in cache, create a simple offline page
-    return self.createOfflineResponse(true);
+    return createOfflineResponse(true);
   }
   
   // For other resources
-  return self.createOfflineResponse(false);
+  return createOfflineResponse(false);
 }
 
 // Handle messages from clients
@@ -96,7 +92,7 @@ self.addEventListener('message', (event) => {
     
   switch (event.data.type) {
     case 'SKIP_WAITING':
-      console.log(`[Service Worker] Skip waiting command received (v${appVersion})`);
+      logger.info(`Skip waiting command received (v${appVersion})`);
       self.skipWaiting();
       break;
     case 'CHECK_FOR_UPDATES':
@@ -105,14 +101,11 @@ self.addEventListener('message', (event) => {
       }
       break;
     case 'REFRESH_CACHE':
-      caches.open(self.CACHE_NAME)
-        .then(cache => {
-          return cache.addAll(self.STATIC_ASSETS);
-        })
-        .then(() => console.log(`[Service Worker] Cache refreshed (v${appVersion})`));
+      refreshCache(self.CACHE_NAME, self.STATIC_ASSETS)
+        .then(() => logger.info(`Cache refreshed (v${appVersion})`));
       break;
     default:
-      console.log(`[Service Worker] Unhandled message type: ${event.data.type}`);
+      logger.info(`Unhandled message type: ${event.data.type}`);
   }
 });
 
@@ -124,17 +117,14 @@ self.addEventListener('periodicsync', (event) => {
       .then(response => response.json())
       .then(manifest => {
         const version = manifest.version || '1.0.0';
-        console.log(`[Service Worker] Periodic cache update (v${version})`);
+        logger.info(`Periodic cache update (v${version})`);
       })
       .catch(() => {
-        console.log('[Service Worker] Periodic cache update');
+        logger.info('Periodic cache update');
       });
       
     event.waitUntil(
-      caches.open(self.CACHE_NAME)
-        .then(cache => {
-          return cache.addAll(self.STATIC_ASSETS);
-        })
+      refreshCache(self.CACHE_NAME, self.STATIC_ASSETS)
     );
   }
 });

@@ -2,9 +2,18 @@
 // Main service worker entry point that orchestrates all modules
 // This file now imports functionality from modular files
 
-// Import core modules
+// Import core configuration module
 importScripts('./src/service-worker/service-worker-config.js');
-importScripts('./src/service-worker/cache-handlers.js');
+
+// Import utility modules
+importScripts('./src/service-worker/utils/logger.js');
+
+// Import cache modules
+importScripts('./src/service-worker/cache/cache-core.js');
+importScripts('./src/service-worker/cache/cache-strategies.js');
+importScripts('./src/service-worker/offline/offline-response.js');
+
+// Import event handlers
 importScripts('./src/service-worker/event-handlers.js');
 
 // Log initialization

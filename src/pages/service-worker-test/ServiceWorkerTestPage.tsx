@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +22,7 @@ const ServiceWorkerTestPage = () => {
       toast({
         title: "اتصال برقرار شد",
         description: "شما مجدداً به اینترنت متصل شدید.",
-        variant: "success"
+        variant: "default"
       });
     };
 
@@ -100,7 +99,7 @@ const ServiceWorkerTestPage = () => {
         if (registration) {
           toast({
             title: "بررسی سرویس ورکر",
-            description: "وضعیت سرویس ورکر بروزرسانی شد.",
+            description: "وضعتیت سرویس ورکر بروزرسانی شد.",
             variant: "default"
           });
         }
@@ -199,21 +198,21 @@ const ServiceWorkerTestPage = () => {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <span>وضعیت اتصال:</span>
-              <Badge variant={isOnline ? "success" : "destructive"}>
+              <Badge variant={isOnline ? "default" : "destructive"}>
                 {isOnline ? "آنلاین" : "آفلاین"}
               </Badge>
             </div>
             
             <div className="flex items-center justify-between">
               <span>سرویس ورکر نصب شده:</span>
-              <Badge variant={swRegistered ? "success" : "destructive"}>
+              <Badge variant={swRegistered ? "default" : "destructive"}>
                 {swRegistered ? "فعال" : "غیرفعال"}
               </Badge>
             </div>
             
             <div className="flex items-center justify-between">
               <span>کنترل صفحه توسط سرویس ورکر:</span>
-              <Badge variant={swController ? "success" : "destructive"}>
+              <Badge variant={swController ? "default" : "destructive"}>
                 {swController ? "فعال" : "غیرفعال"}
               </Badge>
             </div>
@@ -254,7 +253,7 @@ const ServiceWorkerTestPage = () => {
               <h3 className="font-medium">تست وضعیت اتصال</h3>
               <div className="flex space-x-2 rtl:space-x-reverse">
                 <Button onClick={simulateOffline} variant="destructive">شبیه‌سازی حالت آفلاین</Button>
-                <Button onClick={simulateOnline} variant="success">شبیه‌سازی حالت آنلاین</Button>
+                <Button onClick={simulateOnline} variant="secondary">شبیه‌سازی حالت آنلاین</Button>
               </div>
             </div>
 
