@@ -1,60 +1,90 @@
 
-import React from 'react';
+import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
-import StudentGridView from './StudentGridView';
+import { StudentTable } from "@/components/students/StudentTable";
+import { EmptyStudentState } from "./EmptyStudentState";
+import { StudentGridView } from "./StudentGridView";
 
 interface StudentsListProps {
   students: Student[];
+  searchQuery: string;
+  viewMode: "table" | "grid";
   isProfileComplete: boolean;
+  refreshTrigger?: number;
+  onAddStudent: () => void;
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
-  setStudents?: React.Dispatch<React.SetStateAction<Student[]>>;
-  searchQuery?: string;
-  viewMode?: "table" | "grid";
-  refreshTrigger?: number;
-  onAddStudent?: () => void;
-  onClearSearch?: () => void;
+  onClearSearch: () => void;
   onDownload?: (student: Student) => void;
 }
 
-const StudentsList: React.FC<StudentsListProps> = ({
+export const StudentsList: React.FC<StudentsListProps> = ({
   students,
+  searchQuery,
+  viewMode,
   isProfileComplete,
+  refreshTrigger = 0,
+  onAddStudent,
   onEdit,
   onDelete,
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  setStudents,
-  searchQuery,
-  viewMode = "grid",
-  onAddStudent,
   onClearSearch,
   onDownload
 }) => {
-  if (!students.length) {
+  if (students.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-center text-gray-500">هیچ شاگردی وجود ندارد. شاگرد جدید اضافه کنید.</p>
-      </div>
+      <EmptyStudentState 
+        isSearching={searchQuery.length > 0} 
+        onAddStudent={onAddStudent} 
+        onClearSearch={onClearSearch}
+      />
     );
   }
 
   return (
-    <StudentGridView
-      students={students}
-      isProfileComplete={isProfileComplete}
-      onEdit={onEdit}
-      onDelete={onDelete}
-      onAddExercise={onAddExercise}
-      onAddDiet={onAddDiet}
-      onAddSupplement={onAddSupplement}
-      setStudents={setStudents || (() => {})}
-    />
+    <div className="w-full h-full flex-1 overflow-auto">
+      <motion.div 
+        key={viewMode}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className="h-full"
+      >
+        {viewMode === "grid" ? (
+          <StudentGridView
+            students={students}
+            isProfileComplete={isProfileComplete}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onAddExercise={onAddExercise}
+            onAddDiet={onAddDiet}
+            onAddSupplement={onAddSupplement}
+          />
+        ) : (
+          <StudentTable 
+            students={students}
+            sortedAndFilteredStudents={students}
+            searchQuery={searchQuery}
+            refreshTrigger={refreshTrigger}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onAddExercise={onAddExercise}
+            onAddDiet={onAddDiet}
+            onAddSupplement={onAddSupplement}
+            onDownload={onDownload}
+            onAddStudent={onAddStudent}
+            onClearSearch={onClearSearch}
+            viewMode={viewMode}
+            isProfileComplete={isProfileComplete}
+          />
+        )}
+      </motion.div>
+    </div>
   );
 };
-
-export default StudentsList;

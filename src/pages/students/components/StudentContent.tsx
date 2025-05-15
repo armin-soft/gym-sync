@@ -1,7 +1,7 @@
 
 import { TabsContent } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
-import StudentsList from "./StudentsList";
+import { StudentsList } from "./StudentsList";
 import { Student } from "@/components/students/StudentTypes";
 import { StudentHistoryTab } from "./StudentHistoryTab";
 import { HistoryEntry } from "@/hooks/useStudentHistory";

@@ -3,7 +3,6 @@ export interface SupplementCategory {
   id: number;
   name: string;
   type: 'supplement' | 'vitamin';
-  description?: string;
 }
 
 export interface Supplement {

@@ -1,10 +1,10 @@
 
 import React from "react";
+import { ListFilter, LayoutGrid, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { LayoutGrid, List, SlidersHorizontal } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SupplementViewToggleProps {
   viewMode: "grid" | "list";
@@ -20,21 +20,8 @@ export const SupplementViewToggle: React.FC<SupplementViewToggleProps> = ({
   setShowFilters
 }) => {
   const deviceInfo = useDeviceInfo();
-
-  if (deviceInfo.isMobile) {
-    return (
-      <div className="flex items-center">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <SlidersHorizontal className="h-4 w-4" />
-        </Button>
-      </div>
-    );
-  }
+  
+  if (deviceInfo.isMobile) return null;
   
   return (
     <div className="flex items-center gap-2">
@@ -73,7 +60,7 @@ export const SupplementViewToggle: React.FC<SupplementViewToggleProps> = ({
               )} 
               onClick={() => setViewMode("list")}
             >
-              <List className={deviceInfo.isMobile ? "h-3 w-3" : "h-4 w-4"} />
+              <ListFilter className={deviceInfo.isMobile ? "h-3 w-3" : "h-4 w-4"} />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">

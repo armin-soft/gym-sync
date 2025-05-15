@@ -1,260 +1,160 @@
-
-import React, { useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { FormInfoSection } from "@/components/students/dialogs/FormInfoSection";
-import { FormExerciseSection } from "@/components/students/dialogs/FormExerciseSection";
-import { FormMealsSection } from "@/components/students/dialogs/FormMealsSection";
-import { FormSupplementsSection } from "@/components/students/dialogs/FormSupplementsSection";
-import { FormActionArea } from "@/components/students/dialogs/FormActionArea";
-import { Student } from "../StudentTypes";
-import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog";
+import React, { useEffect, useState } from "react";
+import { StudentDialog } from "@/components/students/StudentDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
-import { StudentDietDialog } from "@/components/diet/StudentDietDialog";
+import { StudentDietDialog } from "@/components/nutrition/StudentDietDialog";
+import { StudentSupplementDialog } from "@/components/nutrition/StudentSupplementDialog";
+import { StudentDownloadDialog } from "@/components/students/StudentDownloadDialog";
+import { Student } from "@/components/students/StudentTypes";
+import { Supplement, SupplementCategory } from "@/types/supplement";
+import { ExerciseWithSets } from "@/types/exercise";
 
-interface DialogContentCoreProps {
-  student?: Student;
-  onSave: (student: Student) => void;
-  onClose: () => void;
-  loading?: boolean;
+interface StudentDialogContentProps {
+  isDialogOpen: boolean;
+  setIsDialogOpen: (open: boolean) => void;
+  isExerciseDialogOpen: boolean;
+  setIsExerciseDialogOpen: (open: boolean) => void;
+  isDietDialogOpen: boolean;
+  setIsDietDialogOpen: (open: boolean) => void;
+  isSupplementDialogOpen: boolean;
+  setIsSupplementDialogOpen: (open: boolean) => void;
+  isDownloadDialogOpen: boolean;
+  setIsDownloadDialogOpen: (open: boolean) => void;
+  selectedStudent?: Student;
+  selectedStudentForExercise: Student | null;
+  selectedStudentForDiet: Student | null;
+  selectedStudentForSupplement: Student | null;
+  selectedStudentForDownload: Student | null;
+  handleSaveWrapper: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">) => void;
+  handleSaveExercisesWrapper: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
+  handleSaveDietWrapper: (mealIds: number[]) => boolean;
+  handleSaveSupplementsWrapper: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  exercises: any[];
+  meals: any[];
+  supplements: any[];
 }
 
-export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
-  student,
-  onSave,
-  onClose,
-  loading = false,
+export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
+  isDialogOpen,
+  setIsDialogOpen,
+  isExerciseDialogOpen,
+  setIsExerciseDialogOpen,
+  isDietDialogOpen,
+  setIsDietDialogOpen,
+  isSupplementDialogOpen,
+  setIsSupplementDialogOpen,
+  isDownloadDialogOpen,
+  setIsDownloadDialogOpen,
+  selectedStudent,
+  selectedStudentForExercise,
+  selectedStudentForDiet,
+  selectedStudentForSupplement,
+  selectedStudentForDownload,
+  handleSaveWrapper,
+  handleSaveExercisesWrapper,
+  handleSaveDietWrapper,
+  handleSaveSupplementsWrapper,
+  exercises,
+  meals,
+  supplements
 }) => {
-  const [activeTab, setActiveTab] = useState<string>("info");
-  
-  const [name, setName] = useState<string>(student?.name || "");
-  const [age, setAge] = useState<string>(student?.age !== undefined ? student.age.toString() : "");
-  const [height, setHeight] = useState<string>(student?.height?.toString() || "");
-  const [weight, setWeight] = useState<string>(student?.weight?.toString() || "");
-  const [wrist, setWrist] = useState<string>(student?.wrist || "");
-  const [phone, setPhone] = useState<string>(student?.phone || "");
-  const [goal, setGoal] = useState<string>(student?.goal || "");
-  const [exercises, setExercises] = useState<number[]>(student?.exercises || []);
-  const [exercisesDay1, setExercisesDay1] = useState<number[]>(
-    student?.exercisesDay1 || []
-  );
-  const [exercisesDay2, setExercisesDay2] = useState<number[]>(
-    student?.exercisesDay2 || []
-  );
-  const [exercisesDay3, setExercisesDay3] = useState<number[]>(
-    student?.exercisesDay3 || []
-  );
-  const [exercisesDay4, setExercisesDay4] = useState<number[]>(
-    student?.exercisesDay4 || []
-  );
-  const [meals, setMeals] = useState<number[]>(student?.meals || []);
-  const [supplements, setSupplements] = useState<number[]>(
-    student?.supplements || []
-  );
-  const [vitamins, setVitamins] = useState<number[]>(student?.vitamins || []);
-  const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
-  const [exercisesDialogOpen, setExercisesDialogOpen] = useState(false);
-  const [exercisesDayDialogOpen, setExercisesDayDialogOpen] = useState({
-    isOpen: false,
-    day: 0,
-  });
-  const [mealsDialogOpen, setMealsDialogOpen] = useState(false);
+  const [localSupplements, setLocalSupplements] = useState<Supplement[]>([]);
+  const [localCategories, setLocalCategories] = useState<SupplementCategory[]>([]);
+  const [supplementsLoaded, setSupplementsLoaded] = useState(false);
 
-  const handleSave = () => {
-    // Calculate progress value
-    let progressCount = 0;
-    if (exercises?.length) progressCount++;
-    if (exercisesDay1?.length || exercisesDay2?.length || exercisesDay3?.length || exercisesDay4?.length) {
-      progressCount++;
-    }
-    if (meals?.length) progressCount++;
-    if (supplements?.length || vitamins?.length) progressCount++;
-    
-    const progress = Math.round((progressCount / 4) * 100);
-    
-    // Parse numeric values - convert string values to numbers if provided
-    const parsedAge = age ? parseInt(age) : undefined;
-    
-    // Create new student object or update existing one
-    const updatedStudent: Student = {
-      id: student?.id || Date.now(),
-      name,
-      age: parsedAge,
-      height: height || undefined,
-      weight: weight || undefined,
-      wrist,
-      phone,
-      goal,
-      exercises,
-      exercisesDay1,
-      exercisesDay2,
-      exercisesDay3,
-      exercisesDay4,
-      meals,
-      supplements,
-      vitamins,
-      progress,
-    };
-    
-    onSave(updatedStudent);
-  };
-
-  const handleSaveExercises = (exercisesWithSets: any[], dayNumber?: number) => {
-    if (dayNumber) {
-      switch(dayNumber) {
-        case 1:
-          setExercisesDay1(exercisesWithSets.map(e => e.id));
-          break;
-        case 2:
-          setExercisesDay2(exercisesWithSets.map(e => e.id));
-          break;
-        case 3:
-          setExercisesDay3(exercisesWithSets.map(e => e.id));
-          break;
-        case 4:
-          setExercisesDay4(exercisesWithSets.map(e => e.id));
-          break;
+  // بارگذاری مکمل‌ها و دسته‌بندی‌ها از localStorage
+  useEffect(() => {
+    const loadSupplementsData = () => {
+      try {
+        const savedSupplements = localStorage.getItem('supplements');
+        const savedCategories = localStorage.getItem('supplementCategories');
+        
+        if (savedSupplements) {
+          const parsedSupplements = JSON.parse(savedSupplements);
+          console.log("Loaded supplements from localStorage in DialogContent:", parsedSupplements);
+          setLocalSupplements(parsedSupplements);
+        } else if (supplements && supplements.length > 0) {
+          console.log("Using supplements from props:", supplements);
+          setLocalSupplements(supplements);
+        }
+        
+        if (savedCategories) {
+          const parsedCategories = JSON.parse(savedCategories);
+          console.log("Loaded categories from localStorage in DialogContent:", parsedCategories);
+          setLocalCategories(parsedCategories);
+        }
+        
+        setSupplementsLoaded(true);
+      } catch (error) {
+        console.error("Error loading supplements data:", error);
       }
-    } else {
-      setExercises(exercisesWithSets.map(e => e.id));
+    };
+
+    loadSupplementsData();
+  }, [supplements, isSupplementDialogOpen]);
+
+  // اطلاعات دیالوگ‌های مکمل‌ها و ویتامین‌ها در کنسول برای اشکال‌زدایی
+  useEffect(() => {
+    if (isSupplementDialogOpen && selectedStudentForSupplement) {
+      console.log("Opening supplement dialog for student:", selectedStudentForSupplement);
+      console.log("Student supplements:", selectedStudentForSupplement.supplements || []);
+      console.log("Student vitamins:", selectedStudentForSupplement.vitamins || []);
+      console.log("Available supplements:", localSupplements);
+      console.log("Available categories:", localCategories);
     }
-    return true;
-  };
-
-  const handleSaveMeals = (mealIds: number[]) => {
-    setMeals(mealIds);
-    return true;
-  };
-
-  const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}) => {
-    setSupplements(data.supplements);
-    setVitamins(data.vitamins);
-    return true;
-  };
+  }, [isSupplementDialogOpen, selectedStudentForSupplement, localSupplements, localCategories]);
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="flex-1 flex flex-col"
-        >
-          <div className="px-6 border-b">
-            <TabsList className="grid w-full grid-cols-4 h-12">
-              <TabsTrigger value="info">اطلاعات اولیه</TabsTrigger>
-              <TabsTrigger value="exercises">تمرین‌ها</TabsTrigger>
-              <TabsTrigger value="meals">تغذیه</TabsTrigger>
-              <TabsTrigger value="supplements">مکمل‌ها</TabsTrigger>
-            </TabsList>
-          </div>
-
-          <div className="flex-1 overflow-hidden pt-6">
-            <FormInfoSection
-              active={activeTab === "info"}
-              name={name}
-              setName={setName}
-              age={age}
-              setAge={setAge}
-              height={height}
-              setHeight={setHeight}
-              weight={weight}
-              setWeight={setWeight}
-              wrist={wrist}
-              setWrist={setWrist}
-              phone={phone}
-              setPhone={setPhone}
-              goal={goal}
-              setGoal={setGoal}
-            />
-
-            <FormExerciseSection
-              active={activeTab === "exercises"}
-              exercises={exercises}
-              setExercises={setExercises}
-              exercisesDay1={exercisesDay1}
-              setExercisesDay1={setExercisesDay1}
-              exercisesDay2={exercisesDay2}
-              setExercisesDay2={setExercisesDay2}
-              exercisesDay3={exercisesDay3}
-              setExercisesDay3={setExercisesDay3}
-              exercisesDay4={exercisesDay4}
-              setExercisesDay4={setExercisesDay4}
-              setExercisesDialogOpen={setExercisesDialogOpen}
-              exercisesDialogOpen={exercisesDialogOpen}
-              setExercisesDayDialogOpen={setExercisesDayDialogOpen}
-              exercisesDayDialogOpen={exercisesDayDialogOpen}
-            />
-
-            <FormMealsSection
-              active={activeTab === "meals"}
-              meals={meals}
-              setMeals={setMeals}
-              mealsDialogOpen={mealsDialogOpen}
-              setMealsDialogOpen={setMealsDialogOpen}
-            />
-
-            <FormSupplementsSection
-              active={activeTab === "supplements"}
-              supplements={supplements}
-              vitamins={vitamins}
-              onOpenDialog={() => setSupplementDialogOpen(true)}
-            />
-          </div>
-        </Tabs>
-      </div>
-
-      <FormActionArea
-        loading={loading}
-        onSave={handleSave}
-        onCancel={onClose}
+    <>
+      <StudentDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSave={handleSaveWrapper}
+        student={selectedStudent}
       />
 
-      {/* Exercise Dialog */}
       <StudentExerciseDialog
-        open={exercisesDialogOpen}
-        onOpenChange={setExercisesDialogOpen}
-        studentName={name || 'شاگرد جدید'}
-        onSave={handleSaveExercises}
-        initialExercises={exercises}
+        open={isExerciseDialogOpen}
+        onOpenChange={setIsExerciseDialogOpen}
+        studentName={selectedStudentForExercise?.name || ""}
+        onSave={handleSaveExercisesWrapper}
+        initialExercises={selectedStudentForExercise?.exercises || []}
+        initialExercisesDay1={selectedStudentForExercise?.exercisesDay1 || []}
+        initialExercisesDay2={selectedStudentForExercise?.exercisesDay2 || []}
+        initialExercisesDay3={selectedStudentForExercise?.exercisesDay3 || []}
+        initialExercisesDay4={selectedStudentForExercise?.exercisesDay4 || []}
       />
       
-      {/* Day-specific exercise dialogs */}
-      {exercisesDayDialogOpen.isOpen && (
-        <StudentExerciseDialog
-          open={exercisesDayDialogOpen.isOpen}
-          onOpenChange={(open) => setExercisesDayDialogOpen({ ...exercisesDayDialogOpen, isOpen: open })}
-          studentName={name || 'شاگرد جدید'}
-          onSave={(exercises) => handleSaveExercises(exercises, exercisesDayDialogOpen.day)}
-          initialExercises={
-            exercisesDayDialogOpen.day === 1 ? exercisesDay1 :
-            exercisesDayDialogOpen.day === 2 ? exercisesDay2 :
-            exercisesDayDialogOpen.day === 3 ? exercisesDay3 :
-            exercisesDay4
-          }
+      <StudentDietDialog
+        open={isDietDialogOpen}
+        onOpenChange={setIsDietDialogOpen}
+        studentName={selectedStudentForDiet?.name || ""}
+        onSave={handleSaveDietWrapper}
+        initialMeals={selectedStudentForDiet?.meals || []}
+      />
+
+      {/* استفاده از حالت بارگذاری برای اطمینان از بارگذاری داده‌ها قبل از نمایش دیالوگ */}
+      {supplementsLoaded && (
+        <StudentSupplementDialog
+          open={isSupplementDialogOpen}
+          onOpenChange={setIsSupplementDialogOpen}
+          studentName={selectedStudentForSupplement?.name || ""}
+          onSave={handleSaveSupplementsWrapper}
+          initialSupplements={selectedStudentForSupplement?.supplements || []}
+          initialVitamins={selectedStudentForSupplement?.vitamins || []}
+          supplements={localSupplements.length > 0 ? localSupplements : supplements}
+          categories={localCategories}
         />
       )}
-      
-      {/* Diet Dialog */}
-      <StudentDietDialog
-        open={mealsDialogOpen}
-        onOpenChange={setMealsDialogOpen}
-        studentName={name || 'شاگرد جدید'}
-        initialMeals={meals}
-        onSave={handleSaveMeals}
-      />
 
-      {/* Supplement Dialog */}
-      <ModernStudentSupplementDialog
-        open={supplementDialogOpen}
-        onOpenChange={setSupplementDialogOpen}
-        studentName={name || 'شاگرد جدید'}
-        initialSupplements={supplements}
-        initialVitamins={vitamins}
-        onSave={handleSaveSupplements}
+      <StudentDownloadDialog
+        open={isDownloadDialogOpen}
+        onOpenChange={setIsDownloadDialogOpen}
+        student={selectedStudentForDownload as any} // Using type assertion to bypass the strict type checking
+        exercises={exercises}
+        meals={meals}
+        supplements={localSupplements.length > 0 ? localSupplements : supplements}
+        vitamins={localSupplements.filter(item => item.type === 'vitamin')}
       />
-    </div>
+    </>
   );
 };
-
-export { DialogContentCore as StudentDialogContent };

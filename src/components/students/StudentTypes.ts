@@ -1,4 +1,3 @@
-
 export interface Student {
   id: number;
   name: string;
@@ -55,7 +54,6 @@ export interface Student {
   payment?: string;
   grade?: string; // Added grade property
   group?: string; // Added group property
-  wrist?: string; // Add wrist property
 }
 
 // مدل‌های تمرین، غذا و مکمل که باید اضافه شوند

@@ -1,90 +1,76 @@
 
 import React from "react";
+import { motion } from "framer-motion";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Student } from "@/components/students/StudentTypes";
+import { StudentCardHeader } from "./card/StudentCardHeader";
+import { StudentCardStats } from "./card/StudentCardStats";
+import { StudentProgressBar } from "./card/StudentProgressBar";
+import { StudentStatBadges } from "./card/StudentStatBadges";
+import { StudentCardFooter } from "./card/StudentCardFooter";
 
 interface StudentCardProps {
   student: Student;
   onEdit: () => void;
   onDelete: () => void;
-  setStudents: React.Dispatch<React.SetStateAction<Student[]>> | (() => void);
-  students: Student[];
-  onAddExercise?: () => void;
-  onAddDiet?: () => void;
-  onAddSupplement?: () => void;
-  isProfileComplete?: boolean;
+  onAddExercise: () => void;
+  onAddDiet: () => void;
+  onAddSupplement: () => void;
+  isProfileComplete: boolean;
 }
 
-// Create a simple StudentCard component that can be enhanced later
 export const StudentCard: React.FC<StudentCardProps> = ({
   student,
   onEdit,
   onDelete,
-  setStudents,
-  students,
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  isProfileComplete = true
+  isProfileComplete
 }) => {
+  // Add some debugging to see what's happening with the meal data
+  console.log(`StudentCard for ${student.name}, meals:`, student.meals);
+  
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden h-full flex flex-col">
-      <div className="p-4 flex-1">
-        <h3 className="text-lg font-medium">{student.name}</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{student.phone}</p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      layout
+      className="h-full"
+    >
+      <Card className="h-full backdrop-blur-sm bg-white/60 dark:bg-slate-900/60 border border-gray-200/60 dark:border-slate-800/60 hover:shadow-md transition-all duration-300">
+        <CardHeader className="p-4 pb-0">
+          <StudentCardHeader
+            student={student}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onAddExercise={onAddExercise}
+            onAddDiet={onAddDiet}
+            onAddSupplement={onAddSupplement}
+            isProfileComplete={isProfileComplete}
+          />
+        </CardHeader>
         
-        {student.height && student.weight && (
-          <div className="mt-2 text-sm">
-            <span>قد: {student.height} سانتی‌متر</span>
-            <span className="mx-2">|</span>
-            <span>وزن: {student.weight} کیلوگرم</span>
-          </div>
-        )}
-      </div>
-      
-      <div className="border-t border-gray-200 dark:border-gray-700 p-3 flex justify-between">
-        <button 
-          className="text-blue-600 hover:text-blue-800 text-sm"
-          onClick={onEdit}
-        >
-          ویرایش
-        </button>
-        <button 
-          className="text-red-600 hover:text-red-800 text-sm"
-          onClick={onDelete}
-        >
-          حذف
-        </button>
-      </div>
-      
-      {onAddExercise && (
-        <div className="border-t border-gray-200 dark:border-gray-700 p-3 flex justify-between">
-          <button 
-            className="text-green-600 hover:text-green-800 text-sm"
-            onClick={onAddExercise}
-          >
-            افزودن تمرین
-          </button>
-          {onAddDiet && (
-            <button 
-              className="text-orange-600 hover:text-orange-800 text-sm"
-              onClick={onAddDiet}
-            >
-              افزودن غذا
-            </button>
-          )}
-        </div>
-      )}
-      
-      {onAddSupplement && (
-        <div className="border-t border-gray-200 dark:border-gray-700 p-3 flex justify-center">
-          <button 
-            className="text-purple-600 hover:text-purple-800 text-sm"
-            onClick={onAddSupplement}
-          >
-            افزودن مکمل
-          </button>
-        </div>
-      )}
-    </div>
+        <CardContent className="p-4 pt-2">
+          <StudentCardStats 
+            height={student.height} 
+            weight={student.weight} 
+          />
+          
+          <StudentProgressBar progress={student.progress || 0} />
+          
+          <StudentStatBadges 
+            exercises={student.exercises} 
+            meals={student.meals} 
+            supplements={student.supplements} 
+          />
+        </CardContent>
+        
+        <CardFooter className="p-3 pt-0 flex justify-between">
+          <StudentCardFooter onEdit={onEdit} />
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 };

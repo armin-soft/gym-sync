@@ -1,8 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Check, Star, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import type { Supplement } from "@/types/supplement";
@@ -41,7 +40,7 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
           <div 
             className={cn(
               "border transition-all cursor-pointer shadow-sm hover:shadow",
-              deviceInfo.isMobile ? "p-3 rounded-lg" : "p-4 rounded-xl",
+              deviceInfo.isMobile ? "p-2 rounded-lg" : "p-4 rounded-xl",
               isSelected(item.id) 
                 ? activeTab === "supplements"
                   ? "border-violet-300 bg-violet-50 dark:border-violet-700 dark:bg-violet-900/20"
@@ -62,7 +61,7 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
               )}>
                 {isSelected(item.id) && <Check className={deviceInfo.isMobile ? "h-2 w-2" : "h-3 w-3"} color="white" />}
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1 sm:space-y-2">
                 <div>
                   <h4 className={cn(
                     "font-medium text-foreground",
@@ -72,7 +71,8 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
                   </h4>
                   <div className="flex flex-wrap gap-1 mt-1">
                     <span className={cn(
-                      "px-2 py-0.5 rounded-full border text-xs",
+                      "px-2 py-0.5 rounded-full border",
+                      deviceInfo.isMobile ? "text-[0.65rem]" : "text-xs",
                       activeTab === "supplements"
                         ? "bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-400 border-violet-200 dark:border-violet-800"
                         : "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border-blue-200 dark:border-blue-800"
@@ -82,13 +82,13 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
                   </div>
                 </div>
                 {(item.dosage || item.timing) && (
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {item.dosage && (
                       <div className={cn(
                         "flex items-center gap-1",
                         deviceInfo.isMobile ? "text-[0.65rem]" : "text-xs"
                       )}>
-                        <Star className="text-amber-500" size={deviceInfo.isMobile ? 12 : 14} />
+                        <span className="font-medium text-foreground">دوز مصرف:</span>
                         <span className="text-muted-foreground">{item.dosage}</span>
                       </div>
                     )}
@@ -97,18 +97,10 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
                         "flex items-center gap-1",
                         deviceInfo.isMobile ? "text-[0.65rem]" : "text-xs"
                       )}>
-                        <Clock className="text-blue-500" size={deviceInfo.isMobile ? 12 : 14} />
+                        <span className="font-medium text-foreground">زمان مصرف:</span>
                         <span className="text-muted-foreground">{item.timing}</span>
                       </div>
                     )}
-                  </div>
-                )}
-                {item.description && (
-                  <div className={cn(
-                    "text-muted-foreground line-clamp-2",
-                    deviceInfo.isMobile ? "text-[0.65rem]" : "text-xs"
-                  )}>
-                    {item.description}
                   </div>
                 )}
               </div>
