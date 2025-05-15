@@ -42,7 +42,7 @@ export const StudentImageSection: React.FC<StudentImageSectionProps> = ({
   const handleResetImage = () => {
     setImageData(null);
     setImageError(null);
-    form.setValue("image", "/Assets/Image/placeholder.svg");
+    form.setValue("image", "/Assets/Image/Place-Holder.svg");
   };
 
   return (
