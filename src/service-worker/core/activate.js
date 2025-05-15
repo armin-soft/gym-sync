@@ -5,7 +5,16 @@ import { CACHE_NAME } from './config.js';
 
 // Activate the service worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activated v1.9.0');
+  // Get version dynamically from manifest
+  fetch('./Manifest.json')
+    .then(response => response.json())
+    .then(manifest => {
+      const version = manifest.version || '1.0.0';
+      console.log(`[Service Worker] Activated v${version}`);
+    })
+    .catch(() => {
+      console.log('[Service Worker] Activated (version fetch failed)');
+    });
   
   // Clean up old caches
   event.waitUntil(

@@ -1,4 +1,3 @@
-
 // Main service worker entry point that orchestrates all modules
 // This file serves as the entry point for the service worker
 

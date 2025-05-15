@@ -20,6 +20,7 @@ import { SidebarProfile } from "./sidebar/SidebarProfile";
 import { SidebarMenuList } from "./sidebar/SidebarMenuList";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface SidebarProps {
   isOpen: boolean;

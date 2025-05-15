@@ -14,8 +14,8 @@ import './service-worker/core/fetch';
 import './service-worker/core/message';
 import './service-worker/core/periodic-sync';
 
-// Log service worker initialization
-console.log('[Service Worker] Initializing service worker v1.9.0');
+// Get version from manifest at runtime - logging will happen in install handler
+console.log('[Service Worker] Initializing service worker');
 
 // Export empty object to satisfy TypeScript module requirements
 export {};

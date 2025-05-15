@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -15,6 +14,8 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import manifestData from "@/Manifest.json";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -132,7 +133,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">مدیریت فیکس</span>
-                <span className="text-xs text-muted-foreground">نسخه ۱.۹.۰</span>
+                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "1.0.0")}</span>
               </div>
             </div>
           </div>
