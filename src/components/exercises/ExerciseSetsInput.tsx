@@ -6,34 +6,47 @@ import { Minus, Plus } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseSetsInputProps {
-  exerciseId: number;
+  exerciseId?: number;
   sets: number;
-  onSetsChange: (exerciseId: number, sets: number) => void;
+  onSetsChange?: (exerciseId: number, sets: number) => void;
+  onChange?: (sets: number) => void;
   className?: string;
+  size?: "sm" | "md" | "lg";
 }
 
 export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
   exerciseId,
   sets,
   onSetsChange,
+  onChange,
   className,
+  size = "md",
 }) => {
   const handleDecrement = () => {
     if (sets > 1) {
-      onSetsChange(exerciseId, sets - 1);
+      if (onSetsChange && exerciseId !== undefined) {
+        onSetsChange(exerciseId, sets - 1);
+      } else if (onChange) {
+        onChange(sets - 1);
+      }
     }
   };
 
   const handleIncrement = () => {
     if (sets < 10) {
-      onSetsChange(exerciseId, sets + 1);
+      if (onSetsChange && exerciseId !== undefined) {
+        onSetsChange(exerciseId, sets + 1);
+      } else if (onChange) {
+        onChange(sets + 1);
+      }
     }
   };
 
   return (
     <div
       className={cn(
-        "flex items-center h-8 rounded-md bg-muted/40 border border-border/50 p-1 select-none",
+        "flex items-center rounded-md bg-muted/40 border border-border/50 p-1 select-none",
+        size === "sm" ? "h-7" : "h-8",
         className
       )}
     >
@@ -45,7 +58,7 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
         onClick={handleDecrement}
         disabled={sets <= 1}
       >
-        <Minus className="h-3 w-3" />
+        <Minus className={size === "sm" ? "h-2.5 w-2.5" : "h-3 w-3"} />
         <span className="sr-only">کاهش</span>
       </Button>
       
@@ -61,7 +74,7 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
         onClick={handleIncrement}
         disabled={sets >= 10}
       >
-        <Plus className="h-3 w-3" />
+        <Plus className={size === "sm" ? "h-2.5 w-2.5" : "h-3 w-3"} />
         <span className="sr-only">افزایش</span>
       </Button>
     </div>

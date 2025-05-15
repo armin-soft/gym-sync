@@ -6,17 +6,21 @@ import { Minus, Plus } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseRepsInputProps {
-  exerciseId: number;
+  exerciseId?: number;
   reps: string;
-  onRepsChange: (exerciseId: number, reps: string) => void;
+  onRepsChange?: (exerciseId: number, reps: string) => void;
+  onChange?: (reps: string) => void;
   className?: string;
+  size?: "sm" | "md" | "lg";
 }
 
 export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
   exerciseId,
   reps,
   onRepsChange,
+  onChange,
   className,
+  size = "md",
 }) => {
   // تبدیل رشته به عدد برای محاسبات
   const parseReps = (): number => {
@@ -33,13 +37,23 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
   
   const handleDecrement = () => {
     if (currentReps > 1) {
-      onRepsChange(exerciseId, String(currentReps - 1));
+      const newValue = String(currentReps - 1);
+      if (onRepsChange && exerciseId !== undefined) {
+        onRepsChange(exerciseId, newValue);
+      } else if (onChange) {
+        onChange(newValue);
+      }
     }
   };
 
   const handleIncrement = () => {
-    if (currentReps < 10) {
-      onRepsChange(exerciseId, String(currentReps + 1));
+    if (currentReps < 30) {
+      const newValue = String(currentReps + 1);
+      if (onRepsChange && exerciseId !== undefined) {
+        onRepsChange(exerciseId, newValue);
+      } else if (onChange) {
+        onChange(newValue);
+      }
     }
   };
 
@@ -55,7 +69,8 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
   return (
     <div
       className={cn(
-        "flex items-center h-8 rounded-md bg-muted/40 border border-border/50 p-1 select-none",
+        "flex items-center rounded-md bg-muted/40 border border-border/50 p-1 select-none",
+        size === "sm" ? "h-7" : "h-8",
         className
       )}
     >
@@ -67,7 +82,7 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
         onClick={handleDecrement}
         disabled={currentReps <= 1}
       >
-        <Minus className="h-3 w-3" />
+        <Minus className={size === "sm" ? "h-2.5 w-2.5" : "h-3 w-3"} />
         <span className="sr-only">کاهش</span>
       </Button>
       
@@ -81,9 +96,9 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
         size="icon"
         className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
         onClick={handleIncrement}
-        disabled={currentReps >= 10}
+        disabled={currentReps >= 30}
       >
-        <Plus className="h-3 w-3" />
+        <Plus className={size === "sm" ? "h-2.5 w-2.5" : "h-3 w-3"} />
         <span className="sr-only">افزایش</span>
       </Button>
     </div>

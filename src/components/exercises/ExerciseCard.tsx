@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Exercise } from "@/types/exercise";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { ExerciseSetsInput } from "./ExerciseSetsInput";
 import { ExerciseRepsInput } from "./ExerciseRepsInput";
 import { CheckCircle } from "lucide-react";
@@ -10,25 +10,40 @@ import { cn } from "@/lib/utils";
 
 interface ExerciseCardProps {
   exercise: Exercise;
+  category?: ExerciseCategory;
   isSelected: boolean;
   onToggle: () => void;
-  sets: number;
-  onSetsChange: (value: number) => void;
-  reps: string;
-  onRepsChange: (value: string) => void;
+  sets?: number;
+  onSetsChange?: (value: number) => void;
+  reps?: string;
+  onRepsChange?: (value: string) => void;
   isTemporary?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  viewMode?: "grid" | "list";
+  onClick?: () => void;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
+  category,
   isSelected,
   onToggle,
-  sets,
+  sets = 3,
   onSetsChange,
-  reps,
+  reps = "8",
   onRepsChange,
-  isTemporary = false
+  isTemporary = false,
+  onEdit,
+  onDelete,
+  viewMode,
+  onClick
 }) => {
+  const handleClick = () => {
+    if (onClick) onClick();
+    if (onToggle) onToggle();
+  };
+  
   return (
     <Card 
       className={cn(
@@ -44,7 +59,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           <div className="flex items-center">
             <CheckCircle 
               className={`h-5 w-5 mr-2 cursor-pointer ${isSelected ? "text-blue-500 fill-blue-500" : "text-gray-300 dark:text-gray-600"}`}
-              onClick={onToggle}
+              onClick={handleClick}
             />
           </div>
           <div className="text-right">
@@ -61,7 +76,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           <div className="flex flex-col gap-2 mt-2">
             <div className="flex justify-between items-center">
               <ExerciseSetsInput
-                sets={sets}
+                sets={sets || 3}
                 onChange={onSetsChange}
               />
               <span className="text-sm text-gray-500 dark:text-gray-400">تعداد ست</span>
@@ -69,7 +84,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
             
             <div className="flex justify-between items-center">
               <ExerciseRepsInput
-                reps={reps}
+                reps={reps || "8"}
                 onChange={onRepsChange}
               />
               <span className="text-sm text-gray-500 dark:text-gray-400">تکرار</span>

@@ -7,7 +7,7 @@ import { ExerciseCategory } from "@/types/exercise";
 
 interface DayTabContentProps {
   day: string;
-  dayNumber: number;  // Added dayNumber property
+  dayNumber: number;
   filteredExercises: Exercise[];
   viewMode: "grid" | "list";
   selectedExercises: number[];
@@ -22,7 +22,7 @@ interface DayTabContentProps {
 
 export const DayTabContent: React.FC<DayTabContentProps> = ({
   day,
-  dayNumber,  // Added dayNumber parameter
+  dayNumber,
   filteredExercises,
   viewMode,
   selectedExercises,
@@ -40,16 +40,16 @@ export const DayTabContent: React.FC<DayTabContentProps> = ({
       className="flex-1 overflow-auto mt-0 p-0 border-none data-[state=active]:h-full"
     >
       <ExerciseTabContent
-        filteredExercises={filteredExercises}
-        viewMode={viewMode}
+        exercises={filteredExercises}
         selectedExercises={selectedExercises}
         toggleExercise={toggleExercise}
-        categories={categories}
-        handleClearSearch={handleClearSearch}
         exerciseSets={exerciseSets}
-        onSetsChange={onSetsChange}
-        repsInfo={repsInfo}
-        onRepsChange={onRepsChange}
+        handleSetsChange={onSetsChange || (() => {})}
+        exerciseReps={repsInfo}
+        handleRepsChange={onRepsChange || (() => {})}
+        viewMode={viewMode}
+        categories={categories}
+        filteredExercises={filteredExercises}
       />
     </TabsContent>
   );

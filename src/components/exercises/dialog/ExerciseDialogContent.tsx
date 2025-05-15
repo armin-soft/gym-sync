@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ExerciseSearchFilters } from "@/components/exercises/search-filters";
 import { ExerciseTabContent } from "@/components/exercises/ExerciseTabContent";
-import { ExerciseDayTabs } from "@/components/exercises/ExerciseDayTabs";
+import ExerciseDayTabs from "@/components/exercises/ExerciseDayTabs";
 import { ExerciseCategory, Exercise } from "@/types/exercise";
 import SpeechExerciseInput from "./SpeechExerciseInput";
 import { ExerciseWithSets } from "@/hooks/exercise-selection";
@@ -261,6 +260,7 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
           handleRepsChange={handleRepsChangeDay1}
           viewMode={viewMode}
           temporaryExercise={activeTab === "day1" ? quickAddExercise : null}
+          categories={categories}
         />
       </TabsContent>
 
@@ -275,6 +275,7 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
           handleRepsChange={handleRepsChangeDay2}
           viewMode={viewMode}
           temporaryExercise={activeTab === "day2" ? quickAddExercise : null}
+          categories={categories}
         />
       </TabsContent>
 
@@ -289,6 +290,7 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
           handleRepsChange={handleRepsChangeDay3}
           viewMode={viewMode}
           temporaryExercise={activeTab === "day3" ? quickAddExercise : null}
+          categories={categories}
         />
       </TabsContent>
 
@@ -303,6 +305,7 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
           handleRepsChange={handleRepsChangeDay4}
           viewMode={viewMode}
           temporaryExercise={activeTab === "day4" ? quickAddExercise : null}
+          categories={categories}
         />
       </TabsContent>
     </Tabs>

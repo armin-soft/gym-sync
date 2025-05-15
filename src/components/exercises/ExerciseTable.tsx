@@ -69,7 +69,7 @@ export const ExerciseTable: React.FC<ExerciseTableProps> = ({
               <td className="p-2 text-center">
                 {selectedExercises.includes(exercise.id) && (
                   <ExerciseSetsInput
-                    sets={exerciseSets[exercise.id] || 0}
+                    sets={exerciseSets[exercise.id] || 3}
                     onChange={(value) => onSetsChange(exercise.id, value)}
                     size="sm"
                   />
@@ -78,7 +78,7 @@ export const ExerciseTable: React.FC<ExerciseTableProps> = ({
               <td className="p-2 text-center">
                 {selectedExercises.includes(exercise.id) && (
                   <ExerciseRepsInput
-                    reps={exerciseReps[exercise.id] || ""}
+                    reps={exerciseReps[exercise.id] || "8"}
                     onChange={(value) => onRepsChange(exercise.id, value)}
                     size="sm"
                   />

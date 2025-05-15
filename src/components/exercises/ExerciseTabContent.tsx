@@ -3,7 +3,7 @@ import React from "react";
 import { ExerciseCard } from "./ExerciseCard";
 import { ExerciseTable } from "./ExerciseTable";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Exercise } from "@/types/exercise";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { cn } from "@/lib/utils";
 
 interface ExerciseTabContentProps {
@@ -15,7 +15,9 @@ interface ExerciseTabContentProps {
   exerciseReps: Record<number, string>;
   handleRepsChange: (id: number, reps: string) => void;
   viewMode: "grid" | "list";
-  temporaryExercise: Exercise | null;
+  temporaryExercise?: Exercise | null;
+  categories?: ExerciseCategory[];
+  filteredExercises?: Exercise[];
 }
 
 export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
@@ -27,15 +29,20 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   exerciseReps,
   handleRepsChange,
   viewMode,
-  temporaryExercise
+  temporaryExercise,
+  categories,
+  filteredExercises
 }) => {
+  // Use passed exercises as the default
+  const allExercises = filteredExercises || exercises;
+  
   // Combine regular exercises with any temporary exercises
   const combinedExercises = React.useMemo(() => {
-    if (temporaryExercise && !exercises.some(e => e.id === temporaryExercise.id)) {
-      return [...exercises, temporaryExercise];
+    if (temporaryExercise && !allExercises.some(e => e.id === temporaryExercise.id)) {
+      return [...allExercises, temporaryExercise];
     }
-    return exercises;
-  }, [exercises, temporaryExercise]);
+    return allExercises;
+  }, [allExercises, temporaryExercise]);
   
   // Filter to show only selected exercises
   const displayedExercises = combinedExercises.filter(
@@ -57,6 +64,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
               <ExerciseCard
                 key={exercise.id}
                 exercise={exercise}
+                category={categories?.find(c => c.id === exercise.categoryId)}
                 isSelected={selectedExercises.includes(exercise.id)}
                 onToggle={() => toggleExercise(exercise.id)}
                 sets={exerciseSets[exercise.id] || 0}
