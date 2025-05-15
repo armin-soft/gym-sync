@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { Search, Filter, LayoutGrid, LayoutList, ArrowUp, ArrowDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useExercisesStage } from "../../hooks/useExercisesStage";
 
 interface ExercisesStageProps {
   categoryId: string;
@@ -18,41 +19,38 @@ interface ExercisesStageProps {
 }
 
 const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
-  const {
-    exercises,
-    categories,
-    isLoading,
-    filteredExercises,
-    filteredCategories,
-    searchQuery,
-    setSearchQuery,
-    selectedCategoryId,
-    setSelectedCategoryId,
-    sortOrder,
-    toggleSortOrder,
-    viewMode,
-    setViewMode,
-    selectedExerciseIds,
-    toggleExerciseSelection
-  } = useExerciseDialogData();
-
   const deviceInfo = useDeviceInfo();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-
-  // Filter exercises by type
-  const typeFilteredExercises = exercises.filter(exercise => {
-    const category = categories.find(c => c.id === exercise.categoryId);
-    return category && category.type === typeId;
-  });
-
-  // Additional filter by category if active
-  const displayedExercises = activeCategory 
-    ? typeFilteredExercises.filter(ex => ex.categoryId === parseInt(activeCategory)) 
-    : typeFilteredExercises;
+  
+  // Use our custom hook for managing exercise state and operations
+  const {
+    isLoading,
+    filteredExercises,
+    selectedCategory,
+    selectedExerciseIds,
+    viewMode,
+    setViewMode,
+    searchQuery,
+    setSearchQuery,
+    handleDeleteExercise,
+    handleEditExercise,
+    handleSubmit
+  } = useExercisesStage({ categoryId, typeId });
 
   // Get categories for this type
-  const typeCategories = categories.filter(cat => cat.type === typeId);
+  const typeCategories = selectedCategory ? [selectedCategory] : [];
+
+  const toggleExerciseSelection = (id: number) => {
+    // If already selected, remove, otherwise add
+    if (selectedExerciseIds.includes(id)) {
+      const newSelected = selectedExerciseIds.filter(exerciseId => exerciseId !== id);
+      setViewMode(viewMode); // Pass the current viewMode to maintain it
+    } else {
+      const newSelected = [...selectedExerciseIds, id];
+      setViewMode(viewMode); // Pass the current viewMode to maintain it
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -94,7 +92,7 @@ const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
             <Button
               variant={viewMode === "grid" ? "default" : "ghost"}
               size="icon"
-              onClick={() => setViewMode("grid")}
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
               className={`h-8 w-8 ${viewMode === "grid" ? "" : "hover:bg-transparent hover:text-primary"}`}
             >
               <LayoutGrid size={16} />
@@ -102,7 +100,7 @@ const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
             <Button
               variant={viewMode === "list" ? "default" : "ghost"}
               size="icon"
-              onClick={() => setViewMode("list")}
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
               className={`h-8 w-8 ${viewMode === "list" ? "" : "hover:bg-transparent hover:text-primary"}`}
             >
               <LayoutList size={16} />
@@ -152,7 +150,7 @@ const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
             <div className="loading-spinner"></div>
             <span className="ml-2">در حال بارگذاری...</span>
           </div>
-        ) : displayedExercises.length === 0 ? (
+        ) : filteredExercises.length === 0 ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
             <div className="w-16 h-16 mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
               <Search className="text-gray-400" size={24} />
@@ -167,8 +165,9 @@ const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
           </div>
         ) : (
           <StudentExerciseListWrapper viewMode={viewMode}>
-            {displayedExercises.map((exercise) => {
-              const category = categories.find((c) => c.id === exercise.categoryId);
+            {filteredExercises.map((exercise) => {
+              // Find the category for this exercise
+              const category = typeCategories.find((c) => c.id === exercise.categoryId);
               return (
                 <StudentExerciseCard
                   key={exercise.id}

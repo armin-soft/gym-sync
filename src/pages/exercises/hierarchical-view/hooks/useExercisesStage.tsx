@@ -17,6 +17,7 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { exercises, categories, exerciseTypes, isLoading } = useExerciseData();
   const [showQuickSpeech, setShowQuickSpeech] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   
   // State for managing dialogs
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -38,6 +39,11 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
   
   // Find selected category and type
   const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
+
+  // Toggle sort order function
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
   
   // Delete exercises
   const handleDeleteExercise = (id: number) => {
@@ -172,6 +178,8 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
     setViewMode,
     showQuickSpeech,
     setShowQuickSpeech,
+    sortOrder,
+    toggleSortOrder,
     
     // Dialog state
     isAddDialogOpen,
