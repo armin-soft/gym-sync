@@ -19,8 +19,6 @@ interface ExerciseSearchFiltersProps {
   handleClearSearch: () => void;
   toggleSortOrder: () => void;
   sortOrder: "asc" | "desc";
-  viewMode: "grid" | "list"; // Added viewMode property
-  setViewMode: (mode: "grid" | "list") => void; // Added setViewMode property
 }
 
 export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
@@ -36,8 +34,6 @@ export const ExerciseSearchFilters: React.FC<ExerciseSearchFiltersProps> = ({
   handleClearSearch,
   toggleSortOrder,
   sortOrder,
-  viewMode, // Include it in the function parameters
-  setViewMode, // Include it in the function parameters
 }) => {
   const hasFilters = selectedExerciseType || selectedCategoryId;
   const activeFilterCount = [

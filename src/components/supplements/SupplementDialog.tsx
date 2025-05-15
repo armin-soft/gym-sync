@@ -1,181 +1,203 @@
 
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { CheckSquare, Square, Search } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SupplementType } from "@/hooks/supplements/types";
-import { SupplementCategory } from "@/types/supplement";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import type { SupplementCategory } from "@/types/supplement";
+import { 
+  FlaskConical, 
+  Pill, 
+  ListTodo,
+  Save,
+  X
+} from "lucide-react";
+
+const supplementFormSchema = z.object({
+  name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
+  category: z.string().min(1, "انتخاب دسته بندی الزامی است"),
+});
 
 interface SupplementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: any) => void;
-  defaultValues?: any;
+  onSubmit: (data: z.infer<typeof supplementFormSchema>) => void;
+  defaultValues?: z.infer<typeof supplementFormSchema>;
   mode: "add" | "edit";
   categories: SupplementCategory[];
-  type: SupplementType;
+  type: 'supplement' | 'vitamin';
 }
 
-export const SupplementDialog: React.FC<SupplementDialogProps> = ({
+export const SupplementDialog = ({
   open,
   onOpenChange,
   onSubmit,
   defaultValues,
   mode,
   categories,
-  type
-}) => {
-  const [activeTab, setActiveTab] = useState("supplements");
-  const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
-  const [selectedVitamins, setSelectedVitamins] = useState<number[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  type,
+}: SupplementDialogProps) => {
+  const form = useForm<z.infer<typeof supplementFormSchema>>({
+    resolver: zodResolver(supplementFormSchema),
+    defaultValues: defaultValues || {
+      name: "",
+      category: "",
+    },
+  });
 
   useEffect(() => {
-    if (open && defaultValues) {
-      // Initialize form with default values if provided
-      setSelectedSupplements(defaultValues.supplements || []);
-      setSelectedVitamins(defaultValues.vitamins || []);
+    if (mode === "add") {
+      // در حالت افزودن، دسته‌بندی اول را به صورت پیش‌فرض انتخاب می‌کنیم اگر وجود داشته باشد
+      if (categories.length > 0) {
+        form.reset({
+          name: "",
+          category: categories[0].name,
+        });
+      } else {
+        form.reset({
+          name: "",
+          category: "",
+        });
+      }
+    } else if (defaultValues) {
+      form.reset(defaultValues);
     }
-  }, [open, defaultValues]);
+  }, [defaultValues, form, mode, categories]);
 
-  const handleToggleSupplement = (id: number) => {
-    if (activeTab === "supplements") {
-      setSelectedSupplements(prev => 
-        prev.includes(id) 
-          ? prev.filter(itemId => itemId !== id)
-          : [...prev, id]
-      );
-    } else {
-      setSelectedVitamins(prev => 
-        prev.includes(id) 
-          ? prev.filter(itemId => itemId !== id)
-          : [...prev, id]
-      );
+  const placeholders = {
+    supplement: {
+      name: "نام مکمل را وارد کنید (مثال: کراتین مونوهیدرات)",
+    },
+    vitamin: {
+      name: "نام ویتامین را وارد کنید (مثال: ویتامین D3)",
     }
   };
 
-  const handleSave = () => {
-    onSubmit({
-      supplements: selectedSupplements,
-      vitamins: selectedVitamins
-    });
-  };
-
-  // Filter supplements based on search query and active tab
-  const filteredItems = (categories || []).filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeTab === "supplements" 
-      ? item.type === "supplement"
-      : item.type === "vitamin";
-    return matchesSearch && matchesCategory;
-  });
+  const currentPlaceholders = placeholders[type];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>
-            {mode === "add" ? "افزودن" : "ویرایش"} {type === "supplement" ? "مکمل" : "ویتامین"}
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            {type === 'supplement' ? (
+              <FlaskConical className="h-5 w-5 text-purple-500" />
+            ) : (
+              <Pill className="h-5 w-5 text-blue-500" />
+            )}
+            {mode === "edit" ? 
+              `ویرایش ${type === 'supplement' ? 'مکمل' : 'ویتامین'}` : 
+              `افزودن ${type === 'supplement' ? 'مکمل' : 'ویتامین'} جدید`
+            }
           </DialogTitle>
         </DialogHeader>
-
-        <Tabs defaultValue="supplements" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 mb-4">
-            <TabsTrigger value="supplements">مکمل‌ها</TabsTrigger>
-            <TabsTrigger value="vitamins">ویتامین‌ها</TabsTrigger>
-          </TabsList>
-          
-          <div className="relative mb-4">
-            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="جستجوی مکمل یا ویتامین..."
-              className="pr-9"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    {type === 'supplement' ? 
+                      <FlaskConical className="h-4 w-4 text-purple-500" /> : 
+                      <Pill className="h-4 w-4 text-blue-500" />
+                    }
+                    نام {type === 'supplement' ? 'مکمل' : 'ویتامین'}
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder={currentPlaceholders.name}
+                      className="border-purple-200 focus-visible:ring-purple-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <TabsContent value="supplements" className="m-0">
-            <div className="max-h-96 overflow-y-auto">
-              {filteredItems.length > 0 ? (
-                <div className="space-y-2">
-                  {filteredItems.map(item => (
-                    <div
-                      key={item.id}
-                      className="flex items-center p-3 border rounded hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleToggleSupplement(item.id)}
-                    >
-                      <div className="mr-2">
-                        {selectedSupplements.includes(item.id) ? (
-                          <CheckSquare className="h-5 w-5 text-blue-600" />
-                        ) : (
-                          <Square className="h-5 w-5 text-gray-400" />
-                        )}
-                      </div>
-                      <div>
-                        <div className="font-medium">{item.name}</div>
-                        {/* No longer referencing the description property */}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  مکملی با این مشخصات یافت نشد
-                </div>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <ListTodo className="h-4 w-4 text-purple-500" />
+                    دسته بندی
+                  </FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value || (categories.length > 0 ? categories[0].name : "")}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="border-purple-200 focus:ring-purple-500">
+                        <SelectValue placeholder="دسته بندی را انتخاب کنید" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem 
+                          key={category.id} 
+                          value={category.name}
+                          className="focus:bg-purple-50"
+                        >
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="vitamins" className="m-0">
-            <div className="max-h-96 overflow-y-auto">
-              {filteredItems.length > 0 ? (
-                <div className="space-y-2">
-                  {filteredItems.map(item => (
-                    <div
-                      key={item.id}
-                      className="flex items-center p-3 border rounded hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleToggleSupplement(item.id)}
-                    >
-                      <div className="mr-2">
-                        {selectedVitamins.includes(item.id) ? (
-                          <CheckSquare className="h-5 w-5 text-blue-600" />
-                        ) : (
-                          <Square className="h-5 w-5 text-gray-400" />
-                        )}
-                      </div>
-                      <div>
-                        <div className="font-medium">{item.name}</div>
-                        {/* No longer referencing the description property */}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  ویتامینی با این مشخصات یافت نشد
-                </div>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+            />
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="ml-2">
-            انصراف
-          </Button>
-          <Button onClick={handleSave}>
-            ذخیره
-          </Button>
-        </DialogFooter>
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="gap-2 hover:border-purple-200 hover:bg-purple-50"
+              >
+                <X className="h-4 w-4" />
+                انصراف
+              </Button>
+              <Button 
+                type="submit"
+                className={`gap-2 bg-gradient-to-r ${
+                  type === 'supplement' 
+                    ? 'from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600' 
+                    : 'from-blue-600 to-purple-500 hover:from-blue-700 hover:to-purple-600'
+                }`}
+              >
+                <Save className="h-4 w-4" />
+                {mode === "edit" ? "ویرایش" : "افزودن"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

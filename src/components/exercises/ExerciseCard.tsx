@@ -1,97 +1,156 @@
 
 import React from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
-import { ExerciseSetsInput } from "./ExerciseSetsInput";
-import { ExerciseRepsInput } from "./ExerciseRepsInput";
-import { CheckCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Edit, Trash2, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseCardProps {
   exercise: Exercise;
   category?: ExerciseCategory;
-  isSelected: boolean;
-  onToggle: () => void;
-  sets?: number;
-  onSetsChange?: (value: number) => void;
-  reps?: string;
-  onRepsChange?: (value: string) => void;
-  isTemporary?: boolean;
+  isSelected?: boolean;
+  viewMode: "grid" | "list";
+  onClick?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
-  viewMode?: "grid" | "list";
-  onClick?: () => void;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
   category,
-  isSelected,
-  onToggle,
-  sets = 3,
-  onSetsChange,
-  reps = "8",
-  onRepsChange,
-  isTemporary = false,
+  isSelected = false,
+  viewMode,
+  onClick,
   onEdit,
   onDelete,
-  viewMode,
-  onClick
 }) => {
-  const handleClick = () => {
-    if (onClick) onClick();
-    if (onToggle) onToggle();
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEdit) onEdit();
   };
-  
-  return (
-    <Card 
-      className={cn(
-        "border overflow-hidden transition-all duration-300", 
-        isSelected ? "border-blue-400 dark:border-blue-500" : "border-gray-200 dark:border-gray-800",
-        isTemporary ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800" : ""
-      )}
-    >
-      <div
-        className="p-4 flex flex-col gap-2"
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDelete) onDelete();
+  };
+
+  if (viewMode === "list") {
+    return (
+      <motion.div 
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        transition={{ duration: 0.2 }}
       >
-        <div className="flex justify-between items-start">
-          <div className="flex items-center">
-            <CheckCircle 
-              className={`h-5 w-5 mr-2 cursor-pointer ${isSelected ? "text-blue-500 fill-blue-500" : "text-gray-300 dark:text-gray-600"}`}
-              onClick={handleClick}
-            />
-          </div>
-          <div className="text-right">
-            <h3 className="font-medium truncate max-w-[200px]">{exercise.name}</h3>
-            {isTemporary && (
-              <Badge className="mt-1 bg-purple-500 hover:bg-purple-600">
-                حرکت گفتاری
-              </Badge>
-            )}
-          </div>
-        </div>
-        
-        {isSelected && (
-          <div className="flex flex-col gap-2 mt-2">
-            <div className="flex justify-between items-center">
-              <ExerciseSetsInput
-                sets={sets || 3}
-                onChange={onSetsChange}
-              />
-              <span className="text-sm text-gray-500 dark:text-gray-400">تعداد ست</span>
+        <Card 
+          onClick={onClick}
+          className={cn(
+            "cursor-pointer hover:shadow-md transition-all duration-300 mb-2 border-l-4",
+            isSelected ? "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 dark:border-indigo-400" : "border-transparent hover:border-indigo-300 dark:hover:border-indigo-700"
+          )}
+        >
+          <div className="flex items-center justify-between p-3 sm:p-4">
+            <div className="flex items-center gap-3 text-right">
+              <div className="flex-shrink-0 bg-indigo-100 dark:bg-indigo-900/50 p-2 rounded-full">
+                <Activity className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-medium">{exercise.name}</h4>
+                {category && (
+                  <p className="text-xs text-muted-foreground">{category.name}</p>
+                )}
+              </div>
             </div>
             
-            <div className="flex justify-between items-center">
-              <ExerciseRepsInput
-                reps={reps || "8"}
-                onChange={onRepsChange}
-              />
-              <span className="text-sm text-gray-500 dark:text-gray-400">تکرار</span>
+            <div className="flex items-center gap-1">
+              {onEdit && (
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-8 w-8 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+                  onClick={handleEdit}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              )}
+              
+              {onDelete && (
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-8 w-8 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
+        </Card>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div 
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.2 }}
+    >
+      <Card 
+        onClick={onClick}
+        className={cn(
+          "cursor-pointer overflow-hidden h-full shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-100 dark:border-indigo-800/50",
+          isSelected && "ring-2 ring-indigo-500 dark:ring-indigo-400"
         )}
-      </div>
-    </Card>
+      >
+        <CardHeader className={cn(
+          "p-3 pb-2 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/50 dark:to-violet-950/50",
+          isSelected && "bg-gradient-to-r from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30"
+        )}>
+          <div className="flex items-center justify-between">
+            <div className="bg-white/80 dark:bg-gray-800/80 p-1.5 rounded-full">
+              <Activity className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            
+            <div className="text-xs font-medium px-2 py-1 rounded-full bg-white/80 dark:bg-gray-800/80 text-indigo-700 dark:text-indigo-300">
+              {category?.name || "دسته‌بندی نشده"}
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="p-3 pt-2 text-center">
+          <h4 className="font-medium line-clamp-2 min-h-[2.5rem]">{exercise.name}</h4>
+        </CardContent>
+        
+        {(onEdit || onDelete) && (
+          <CardFooter className="p-2 flex justify-center gap-2 border-t border-indigo-50 dark:border-indigo-900/50">
+            {onEdit && (
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+                onClick={handleEdit}
+              >
+                <Edit className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            
+            {onDelete && (
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+                onClick={handleDelete}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </CardFooter>
+        )}
+      </Card>
+    </motion.div>
   );
 };

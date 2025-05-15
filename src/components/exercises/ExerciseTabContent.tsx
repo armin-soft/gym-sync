@@ -1,98 +1,148 @@
 
 import React from "react";
-import { ExerciseCard } from "./ExerciseCard";
-import { ExerciseTable } from "./ExerciseTable";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { Exercise } from "@/types/exercise";
+import { ExerciseCategory } from "@/types/exercise";
+import { StudentExerciseCard } from "./StudentExerciseCard";
+import { Check, SearchX } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 interface ExerciseTabContentProps {
-  exercises: Exercise[];
+  filteredExercises: Exercise[];
+  viewMode: "grid" | "list";
   selectedExercises: number[];
   toggleExercise: (id: number) => void;
-  exerciseSets: Record<number, number>;
-  handleSetsChange: (id: number, sets: number) => void;
-  exerciseReps: Record<number, string>;
-  handleRepsChange: (id: number, reps: string) => void;
-  viewMode: "grid" | "list";
-  temporaryExercise?: Exercise | null;
-  categories?: ExerciseCategory[];
-  filteredExercises?: Exercise[];
+  categories: ExerciseCategory[];
+  handleClearSearch: () => void;
+  exerciseSets?: Record<number, number>;
+  onSetsChange?: (exerciseId: number, sets: number) => void;
+  repsInfo?: Record<number, string>;  
+  onRepsChange?: (exerciseId: number, reps: string) => void;  
 }
 
 export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
-  exercises,
+  filteredExercises,
+  viewMode,
   selectedExercises,
   toggleExercise,
-  exerciseSets,
-  handleSetsChange,
-  exerciseReps,
-  handleRepsChange,
-  viewMode,
-  temporaryExercise,
   categories,
-  filteredExercises
+  handleClearSearch,
+  exerciseSets = {},
+  onSetsChange,
+  repsInfo = {},  
+  onRepsChange
 }) => {
-  // Use passed exercises as the default
-  const allExercises = filteredExercises || exercises;
-  
-  // Combine regular exercises with any temporary exercises
-  const combinedExercises = React.useMemo(() => {
-    if (temporaryExercise && !allExercises.some(e => e.id === temporaryExercise.id)) {
-      return [...allExercises, temporaryExercise];
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
     }
-    return allExercises;
-  }, [allExercises, temporaryExercise]);
-  
-  // Filter to show only selected exercises
-  const displayedExercises = combinedExercises.filter(
-    exercise => selectedExercises.includes(exercise.id)
-  );
-  
-  // Check if we have any exercises to display
-  const hasExercises = displayedExercises.length > 0;
-  
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 100, damping: 15 }
+    }
+  };
+
+  if (filteredExercises.length === 0) {
+    return (
+      <motion.div 
+        className="flex flex-col items-center justify-center h-64 gap-3 mt-8"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center">
+          <SearchX className="h-10 w-10 text-muted-foreground/40" />
+        </div>
+        <h3 className="text-lg font-medium text-center mt-2">هیچ تمرینی پیدا نشد</h3>
+        <p className="text-sm text-muted-foreground text-center max-w-md">
+          تمرینی با این فیلترها پیدا نشد. لطفا فیلترها را تغییر دهید یا جستجوی جدیدی انجام دهید.
+        </p>
+        <Button
+          onClick={handleClearSearch}
+          variant="outline"
+          className="mt-3 bg-background/50 border-dashed"
+          size="sm"
+        >
+          پاک کردن جستجو
+        </Button>
+      </motion.div>
+    );
+  }
+
+  const selectedCount = selectedExercises.length;
+
   return (
-    <ScrollArea className="h-full">
-      <div className={cn(
-        "p-4", 
-        viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" : ""
-      )}>
-        {hasExercises ? (
-          viewMode === "grid" ? (
-            displayedExercises.map(exercise => (
-              <ExerciseCard
-                key={exercise.id}
-                exercise={exercise}
-                category={categories?.find(c => c.id === exercise.categoryId)}
-                isSelected={selectedExercises.includes(exercise.id)}
-                onToggle={() => toggleExercise(exercise.id)}
-                sets={exerciseSets[exercise.id] || 0}
-                onSetsChange={(sets) => handleSetsChange(exercise.id, sets)}
-                reps={exerciseReps[exercise.id] || ""}
-                onRepsChange={(reps) => handleRepsChange(exercise.id, reps)}
-                isTemporary={temporaryExercise?.id === exercise.id}
-              />
-            ))
-          ) : (
-            <ExerciseTable
-              exercises={displayedExercises}
-              selectedExercises={selectedExercises}
-              onToggleExercise={toggleExercise}
-              exerciseSets={exerciseSets}
-              onSetsChange={handleSetsChange}
-              exerciseReps={exerciseReps}
-              onRepsChange={handleRepsChange}
-              temporaryExerciseId={temporaryExercise?.id}
-            />
-          )
-        ) : (
-          <div className="flex flex-col items-center justify-center h-40 text-center p-4">
-            <p className="text-muted-foreground">هیچ تمرینی برای این روز انتخاب نشده است.</p>
-            <p className="text-sm text-muted-foreground mt-2">تمرین‌های مورد نظر خود را از لیست انتخاب کنید یا با گفتار اضافه کنید.</p>
+    <>
+      {selectedCount > 0 && (
+        <motion.div 
+          className="mb-4 py-2 px-3 bg-primary/5 border border-primary/10 rounded-lg flex items-center justify-between"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+        >
+          <div className="flex items-center gap-2">
+            <div className="bg-primary/10 rounded-full p-1">
+              <Check className="h-4 w-4 text-primary" />
+            </div>
+            <span className="text-sm font-medium text-primary">
+              {selectedCount} تمرین انتخاب شده
+            </span>
           </div>
+        </motion.div>
+      )}
+      
+      <motion.div
+        className={cn(
+          "grid gap-4 pb-6",
+          viewMode === "grid"
+            ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+            : "grid-cols-1"
         )}
-      </div>
-    </ScrollArea>
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {filteredExercises.map((exercise) => {
+          const category = categories.find((c) => c.id === exercise.categoryId);
+          const isSelected = selectedExercises.includes(exercise.id);
+          const sets = exerciseSets[exercise.id] || 3;
+          const reps = repsInfo[exercise.id] || '12-15';  
+
+          return (
+            <motion.div
+              key={exercise.id}
+              variants={itemVariants}
+              className={cn(
+                "group transition-all duration-300",
+                isSelected ? "scale-[1.02]" : "hover:scale-[1.01]"
+              )}
+            >
+              <StudentExerciseCard
+                exercise={exercise}
+                category={category}
+                isSelected={isSelected}
+                viewMode={viewMode}
+                onClick={() => toggleExercise(exercise.id)}
+                sets={sets}
+                onSetsChange={onSetsChange}
+                reps={reps}
+                onRepsChange={onRepsChange}
+              />
+            </motion.div>
+          );
+        })}
+      </motion.div>
+    </>
   );
 };

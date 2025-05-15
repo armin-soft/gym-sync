@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 interface ExerciseDayTabsProps {
   activeTab: string;
-  setActiveTab: (tab: string) => void;  // Changed from onChange to setActiveTab
+  setActiveTab: (tab: string) => void;
   selectedExercisesDay1: number[];
   selectedExercisesDay2: number[];
   selectedExercisesDay3: number[];

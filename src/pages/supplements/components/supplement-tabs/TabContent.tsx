@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LoadingState } from "./LoadingState";
 import { SupplementTabContent } from "./SupplementTabContent";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
-import { Tabs } from "@/components/ui/tabs"; // Import Tabs component
 
 interface TabContentProps {
   isLoading: boolean;
@@ -55,36 +54,33 @@ export const TabContent: React.FC<TabContentProps> = ({
             transition={{ duration: 0.4 }}
             className="h-full flex flex-col"
           >
-            {/* Wrap both TabContent components within a Tabs component */}
-            <Tabs defaultValue="supplement" className="flex-1">
-              <SupplementTabContent
-                type="supplement"
-                categories={categories}
-                onAddCategory={onAddCategory}
-                onEditCategory={onEditCategory}
-                onDeleteCategory={onDeleteCategory}
-                supplements={supplements}
-                onAddSupplement={onAddSupplement}
-                onEditSupplement={onEditSupplement}
-                onDeleteSupplement={onDeleteSupplement}
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
-              />
-              
-              <SupplementTabContent
-                type="vitamin"
-                categories={categories}
-                onAddCategory={onAddCategory}
-                onEditCategory={onEditCategory}
-                onDeleteCategory={onDeleteCategory}
-                supplements={supplements}
-                onAddSupplement={onAddSupplement}
-                onEditSupplement={onEditSupplement}
-                onDeleteSupplement={onDeleteSupplement}
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
-              />
-            </Tabs>
+            <SupplementTabContent
+              type="supplement"
+              categories={categories}
+              onAddCategory={onAddCategory}
+              onEditCategory={onEditCategory}
+              onDeleteCategory={onDeleteCategory}
+              supplements={supplements}
+              onAddSupplement={onAddSupplement}
+              onEditSupplement={onEditSupplement}
+              onDeleteSupplement={onDeleteSupplement}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+            />
+            
+            <SupplementTabContent
+              type="vitamin"
+              categories={categories}
+              onAddCategory={onAddCategory}
+              onEditCategory={onEditCategory}
+              onDeleteCategory={onDeleteCategory}
+              supplements={supplements}
+              onAddSupplement={onAddSupplement}
+              onEditSupplement={onEditSupplement}
+              onDeleteSupplement={onDeleteSupplement}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+            />
           </motion.div>
         )}
       </AnimatePresence>

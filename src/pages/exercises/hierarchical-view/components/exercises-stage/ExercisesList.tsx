@@ -62,14 +62,13 @@ const ExercisesList: React.FC<ExercisesListProps> = ({
                   category={selectedCategory}
                   isSelected={isSelected}
                   viewMode={viewMode}
-                  onToggle={() => {
+                  onClick={() => {
                     setSelectedExerciseIds(prev => 
                       isSelected 
                         ? prev.filter(id => id !== exercise.id)
                         : [...prev, exercise.id]
                     );
                   }}
-                  onClick={() => onEditExercise(exercise)}
                   onEdit={() => onEditExercise(exercise)}
                   onDelete={() => onDeleteExercise(exercise.id)}
                 />

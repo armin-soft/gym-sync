@@ -11,7 +11,7 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentExerciseCardProps {
   exercise: Exercise;
-  category?: ExerciseCategory;
+  category: ExerciseCategory | undefined;
   isSelected: boolean;
   viewMode: "grid" | "list";
   onClick: () => void;
@@ -42,7 +42,7 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
         category={category}
         isSelected={isSelected}
         viewMode={viewMode}
-        onToggle={onClick}
+        onClick={onClick}
       />
       
       {isSelected && (
