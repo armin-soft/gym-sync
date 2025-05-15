@@ -8,7 +8,9 @@ interface SupplementEmptyStateProps {
   activeTab: "supplements" | "vitamins";
 }
 
-export const SupplementEmptyState: React.FC<SupplementEmptyStateProps> = ({ activeTab }) => {
+export const SupplementEmptyState: React.FC<SupplementEmptyStateProps> = ({
+  activeTab
+}) => {
   const deviceInfo = useDeviceInfo();
   
   return (
@@ -21,9 +23,9 @@ export const SupplementEmptyState: React.FC<SupplementEmptyStateProps> = ({ acti
           : "bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900"
       )}>
         {activeTab === "supplements" ? (
-          <Beaker className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color="text-violet-500 dark:text-violet-400" />
+          <Beaker className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color={activeTab === "supplements" ? "#8b5cf6" : "#3b82f6"} />
         ) : (
-          <Pill className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color="text-blue-500 dark:text-blue-400" />
+          <Pill className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color={activeTab === "supplements" ? "#8b5cf6" : "#3b82f6"} />
         )}
       </div>
       <h3 className={cn(
@@ -32,6 +34,9 @@ export const SupplementEmptyState: React.FC<SupplementEmptyStateProps> = ({ acti
       )}>
         هیچ {activeTab === "supplements" ? "مکملی" : "ویتامینی"} یافت نشد
       </h3>
+      <p className="text-sm text-muted-foreground mt-2">
+        لطفاً جستجوی خود را تغییر دهید یا فیلترها را بررسی کنید
+      </p>
     </div>
   );
 };
