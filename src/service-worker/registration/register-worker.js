@@ -1,7 +1,7 @@
 
 import { clearCaches } from './cache-utils.js';
 import { handleServiceWorkerUpdate } from './update-handler.js';
-import { showToast } from './notification.js';
+import { showToast, showUpdateNotification } from './notification.js';
 
 // Main function to register the service worker
 export function registerServiceWorker(manifestData) {

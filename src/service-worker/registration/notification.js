@@ -30,3 +30,17 @@ export function showUpdateNotification(version) {
     }
   }
 }
+
+// Adding the missing export for showToast
+export function showToast(options) {
+  if (typeof window.showToast === 'function') {
+    window.showToast(options);
+  } else {
+    console.log(`${options.title}: ${options.description}`);
+    
+    // Fallback to alert for critical messages
+    if (options.variant === 'destructive') {
+      alert(`${options.title}: ${options.description}`);
+    }
+  }
+}
