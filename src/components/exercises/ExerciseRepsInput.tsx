@@ -1,91 +1,62 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Minus, Plus } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { SimpleSpeechInput } from "@/pages/exercises/hierarchical-view/components/exercises-stage/advanced-speech-input";
 
 interface ExerciseRepsInputProps {
   exerciseId: number;
-  reps: string;
+  repsValue: string;
   onRepsChange: (exerciseId: number, reps: string) => void;
+  label?: string;
   className?: string;
+  showLabel?: boolean;
+  useSpeech?: boolean;
 }
 
 export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
   exerciseId,
-  reps,
+  repsValue = "",
   onRepsChange,
-  className,
+  label = "تعداد تکرارها",
+  className = "",
+  showLabel = true,
+  useSpeech = false
 }) => {
-  // تبدیل رشته به عدد برای محاسبات
-  const parseReps = (): number => {
-    // اگر رشته حاوی خط تیره باشد، میانگین مقادیر را برمی‌گرداند
-    if (reps.includes('-')) {
-      const [min, max] = reps.split('-').map(Number);
-      return Math.round((min + max) / 2);
-    }
-    // در غیر این صورت مقدار عددی را برمی‌گرداند یا مقدار پیش‌فرض 8
-    return parseInt(reps) || 8;
+  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onRepsChange(exerciseId, e.target.value);
   };
 
-  const currentReps = parseReps();
-  
-  const handleDecrement = () => {
-    if (currentReps > 1) {
-      onRepsChange(exerciseId, String(currentReps - 1));
-    }
-  };
-
-  const handleIncrement = () => {
-    if (currentReps < 10) {
-      onRepsChange(exerciseId, String(currentReps + 1));
-    }
-  };
-
-  // تبدیل اعداد به فارسی برای نمایش
-  const displayReps = () => {
-    if (reps.includes('-')) {
-      const [min, max] = reps.split('-');
-      return `${toPersianNumbers(max)}-${toPersianNumbers(min)}`;
-    }
-    return toPersianNumbers(reps);
+  const handleSpeechChange = (value: string) => {
+    onRepsChange(exerciseId, value);
   };
 
   return (
-    <div
-      className={cn(
-        "flex items-center h-8 rounded-md bg-muted/40 border border-border/50 p-1 select-none",
-        className
+    <div className={cn("space-y-1.5", className)}>
+      {showLabel && (
+        <Label htmlFor={`exercise-reps-${exerciseId}`} className="text-sm">
+          {label}
+        </Label>
       )}
-    >
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
-        onClick={handleDecrement}
-        disabled={currentReps <= 1}
-      >
-        <Minus className="h-3 w-3" />
-        <span className="sr-only">کاهش</span>
-      </Button>
       
-      <div className="flex-1 flex items-center justify-center text-sm font-medium">
-        {displayReps()}
-      </div>
-      
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
-        onClick={handleIncrement}
-        disabled={currentReps >= 10}
-      >
-        <Plus className="h-3 w-3" />
-        <span className="sr-only">افزایش</span>
-      </Button>
+      {useSpeech ? (
+        <SimpleSpeechInput
+          value={repsValue}
+          onChange={(value) => handleSpeechChange(value)}
+          placeholder="وارد کنید..."
+          className="w-full text-right"
+        />
+      ) : (
+        <Input
+          id={`exercise-reps-${exerciseId}`}
+          value={repsValue}
+          onChange={handleRepsChange}
+          className="h-8 text-center"
+          placeholder="وارد کنید..."
+          dir="rtl"
+        />
+      )}
     </div>
   );
 };
