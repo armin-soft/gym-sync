@@ -1,185 +1,101 @@
 
-import React, { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import { Check, Minus, Plus } from "lucide-react";
+import React from "react";
+import { ExerciseCard } from "./ExerciseCard";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { ExerciseSetsInput } from "./ExerciseSetsInput";
 import { ExerciseRepsInput } from "./ExerciseRepsInput";
-import { Button } from "@/components/ui/button";
-import { Exercise } from "@/types/exercise";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Dumbbell, BarChart } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentExerciseCardProps {
   exercise: Exercise;
+  category: ExerciseCategory | undefined;
   isSelected: boolean;
-  sets: number;
-  reps: string;
+  viewMode: "grid" | "list";
   onClick: () => void;
-  onSetsChange: (exerciseId: number, sets: number) => void;
-  onRepsChange: (exerciseId: number, reps: string) => void;
-  viewMode?: "grid" | "list";
-  categories: any[];
-  className?: string;
+  sets: number;
+  onSetsChange?: (exerciseId: number, sets: number) => void;
+  reps?: string;  
+  onRepsChange?: (exerciseId: number, reps: string) => void;  
 }
 
 export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
   exercise,
+  category,
   isSelected,
-  sets,
-  reps,
+  viewMode,
   onClick,
+  sets = 3,
   onSetsChange,
-  onRepsChange,
-  viewMode = "grid",
-  categories,
-  className,
+  reps = '8',
+  onRepsChange
 }) => {
-  const [useSpeech, setUseSpeech] = useState(false);
-  
-  const category = categories.find((c) => c.id === exercise.categoryId);
-  const categoryName = category?.name || "";
-
-  const handleSetsChange = (id: number, value: number) => {
-    onSetsChange(id, value);
-  };
-
-  const handleRepsChange = (id: number, value: string) => {
-    onRepsChange(id, value);
-  };
-
-  const toggleSpeech = () => {
-    setUseSpeech(!useSpeech);
-  };
-
-  if (viewMode === "list") {
-    return (
-      <Card
-        className={cn(
-          "relative p-2 border transition-colors",
-          isSelected
-            ? "border-primary bg-primary/5 dark:bg-primary/10"
-            : "hover:border-gray-400 dark:hover:border-gray-600",
-          className
-        )}
-      >
-        <div className="flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant={isSelected ? "default" : "outline"}
-              className={cn(
-                "w-8 h-8 p-0",
-                isSelected
-                  ? "text-white bg-primary hover:bg-primary/90"
-                  : "text-muted-foreground"
-              )}
-              onClick={onClick}
-            >
-              {isSelected ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-            </Button>
-            <div className="text-right">
-              <h3 className="text-base font-medium">{exercise.name}</h3>
-              <Badge variant="outline" className="text-xs bg-muted/30">
-                {categoryName}
-              </Badge>
-            </div>
+  return (
+    <div className={cn(
+      "flex flex-col transition-all duration-300",
+      isSelected ? "ring-2 ring-primary ring-offset-2" : "hover:shadow-md"
+    )}>
+      <ExerciseCard
+        exercise={exercise}
+        category={category}
+        isSelected={isSelected}
+        viewMode={viewMode}
+        onClick={onClick}
+      />
+      
+      {isSelected && (
+        <motion.div 
+          className="flex flex-col gap-3 px-4 py-3 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-t border-gray-100 dark:border-gray-800 rounded-b-lg"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="text-xs text-muted-foreground mb-2 font-medium">
+            جزئیات تمرین
           </div>
           
-          {isSelected && (
-            <div className="flex flex-wrap items-center gap-3">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={toggleSpeech}
-                className="h-7 px-2 text-xs"
-              >
-                {useSpeech ? "ورود دستی" : "ورود با گفتار"}
-              </Button>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-1.5">
+              <div className="p-1 bg-primary/10 rounded-full">
+                <Dumbbell className="h-3.5 w-3.5 text-primary" />
+              </div>
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                تعداد ست:
+              </span>
+            </div>
+            {onSetsChange && (
               <ExerciseSetsInput
                 exerciseId={exercise.id}
-                setsValue={sets}
-                onSetsChange={handleSetsChange}
-                showLabel={false}
-                className="w-20"
-                useSpeech={useSpeech}
+                sets={sets}
+                onSetsChange={onSetsChange}
+                className="w-28"
               />
+            )}
+          </div>
+          
+          {onRepsChange && (
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5">
+                <div className="p-1 bg-primary/10 rounded-full">
+                  <BarChart className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                  تکرار هر ست:
+                </span>
+              </div>
               <ExerciseRepsInput
                 exerciseId={exercise.id}
-                repsValue={reps}
-                onRepsChange={handleRepsChange}
-                showLabel={false}
-                className="w-32"
-                useSpeech={useSpeech}
+                reps={reps}
+                onRepsChange={onRepsChange}
+                className="w-28"
               />
             </div>
           )}
-        </div>
-      </Card>
-    );
-  }
-
-  return (
-    <Card
-      className={cn(
-        "flex flex-col h-full transition-colors",
-        isSelected
-          ? "border-primary bg-primary/5 dark:bg-primary/10"
-          : "hover:border-gray-400 dark:hover:border-gray-600",
-        className
+        </motion.div>
       )}
-    >
-      <div
-        className="p-3 text-right flex-1 flex flex-col cursor-pointer"
-        onClick={onClick}
-      >
-        <div className="flex justify-between items-start mb-2">
-          <Button
-            size="sm"
-            variant={isSelected ? "default" : "ghost"}
-            className={cn(
-              "w-8 h-8 p-0 mr-auto",
-              isSelected && "text-primary-foreground"
-            )}
-          >
-            {isSelected ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-          </Button>
-          <Badge variant="outline" className="text-xs bg-muted/30">
-            {categoryName}
-          </Badge>
-        </div>
-        <h3 className="text-base font-medium mt-1">{exercise.name}</h3>
-      </div>
-
-      {isSelected && (
-        <div className="p-3 pt-0">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={toggleSpeech}
-            className="mb-2 h-7 px-2 text-xs w-full"
-          >
-            {useSpeech ? "ورود دستی" : "ورود با گفتار"}
-          </Button>
-          <div className="flex items-center gap-2">
-            <ExerciseSetsInput
-              exerciseId={exercise.id}
-              setsValue={sets}
-              onSetsChange={handleSetsChange}
-              showLabel={true}
-              className="w-full"
-              useSpeech={useSpeech}
-            />
-            <ExerciseRepsInput
-              exerciseId={exercise.id}
-              repsValue={reps}
-              onRepsChange={handleRepsChange}
-              showLabel={true}
-              className="w-full"
-              useSpeech={useSpeech}
-            />
-          </div>
-        </div>
-      )}
-    </Card>
+    </div>
   );
 };

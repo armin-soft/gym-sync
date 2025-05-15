@@ -1,29 +1,38 @@
 
-import React, { ReactNode } from "react";
-import { useStudentExerciseDialogState } from "@/hooks/exercises/useStudentExerciseDialogState";
-import { StudentExerciseDialogProps } from "./StudentExerciseDialogProps";
+import React from "react";
 import { ExerciseWithSets } from "@/hooks/exercise-selection";
+import { useStudentExerciseDialogState } from "@/hooks/exercises/useStudentExerciseDialogState";
 
-interface StudentExerciseDialogStateProps extends StudentExerciseDialogProps {
+interface StudentExerciseDialogStateProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  studentName: string;
+  onSave: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
+  initialExercises?: number[];
+  initialExercisesDay1?: number[];
+  initialExercisesDay2?: number[];
+  initialExercisesDay3?: number[];
+  initialExercisesDay4?: number[];
   children: (props: {
     isLoading: boolean;
+    exercises: any[];
+    categories: any[];
+    exerciseTypes: string[];
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
     searchQuery: string;
     setSearchQuery: (query: string) => void;
-    selectedExerciseType: string;
-    setSelectedExerciseType: (type: string) => void;
     selectedCategoryId: number | null;
     setSelectedCategoryId: (id: number | null) => void;
-    exerciseTypes: string[];
-    categories: any[];
-    filteredCategories: any[];
-    handleClearSearch: () => void;
-    toggleSortOrder: () => void;
+    selectedExerciseType: string;
+    setSelectedExerciseType: (type: string) => void;
     sortOrder: "asc" | "desc";
+    toggleSortOrder: () => void;
     viewMode: "grid" | "list";
     setViewMode: (mode: "grid" | "list") => void;
     filteredExercises: any[];
-    activeTab: string;
-    setActiveTab: (tab: string) => void;
+    filteredCategories: any[];
+    handleClearSearch: () => void;
     selectedExercisesDay1: number[];
     selectedExercisesDay2: number[];
     selectedExercisesDay3: number[];
@@ -49,9 +58,10 @@ interface StudentExerciseDialogStateProps extends StudentExerciseDialogProps {
     handleRepsChangeDay3: (exerciseId: number, reps: string) => void;
     handleRepsChangeDay4: (exerciseId: number, reps: string) => void;
     getActiveTabSelectedExercises: () => number[];
+    getActiveTabSelectedExercisesWithSets: () => ExerciseWithSets[];
     handleSave: () => boolean;
     handleSaveDay: (exercisesWithSets: ExerciseWithSets[], onSave: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean, dayNumber: number) => boolean;
-  }) => ReactNode;
+  }) => React.ReactNode;
 }
 
 export const StudentExerciseDialogState: React.FC<StudentExerciseDialogStateProps> = ({
@@ -66,7 +76,8 @@ export const StudentExerciseDialogState: React.FC<StudentExerciseDialogStateProp
   initialExercisesDay4 = [],
   children
 }) => {
-  const dialogState = useStudentExerciseDialogState({
+  // Use the custom hook to manage all state
+  const stateProps = useStudentExerciseDialogState({
     open,
     onOpenChange,
     studentName,
@@ -77,10 +88,9 @@ export const StudentExerciseDialogState: React.FC<StudentExerciseDialogStateProp
     initialExercisesDay3,
     initialExercisesDay4
   });
-  
-  return (
-    <>
-      {children(dialogState)}
-    </>
-  );
+
+  // Render the children function with all the state props
+  return children(stateProps);
 };
+
+export default StudentExerciseDialogState;

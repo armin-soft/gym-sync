@@ -1,66 +1,69 @@
 
 import React from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { SimpleSpeechInput } from "@/pages/exercises/hierarchical-view/components/exercises-stage/advanced-speech-input";
+import { Minus, Plus } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseSetsInputProps {
   exerciseId: number;
-  setsValue: number;
+  sets: number;
   onSetsChange: (exerciseId: number, sets: number) => void;
-  label?: string;
   className?: string;
-  showLabel?: boolean;
-  useSpeech?: boolean;
 }
 
 export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
   exerciseId,
-  setsValue = 3,
+  sets,
   onSetsChange,
-  label = "تعداد ست‌ها",
-  className = "",
-  showLabel = true,
-  useSpeech = false
+  className,
 }) => {
-  const handleSetsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 1;
-    onSetsChange(exerciseId, value);
+  const handleDecrement = () => {
+    if (sets > 1) {
+      onSetsChange(exerciseId, sets - 1);
+    }
   };
 
-  const handleSpeechChange = (value: string) => {
-    const numValue = parseInt(value) || 1;
-    onSetsChange(exerciseId, numValue);
+  const handleIncrement = () => {
+    if (sets < 10) {
+      onSetsChange(exerciseId, sets + 1);
+    }
   };
 
   return (
-    <div className={cn("space-y-1.5", className)}>
-      {showLabel && (
-        <Label htmlFor={`exercise-sets-${exerciseId}`} className="text-sm">
-          {label}
-        </Label>
+    <div
+      className={cn(
+        "flex items-center h-8 rounded-md bg-muted/40 border border-border/50 p-1 select-none",
+        className
       )}
+    >
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
+        onClick={handleDecrement}
+        disabled={sets <= 1}
+      >
+        <Minus className="h-3 w-3" />
+        <span className="sr-only">کاهش</span>
+      </Button>
       
-      {useSpeech ? (
-        <SimpleSpeechInput
-          value={setsValue.toString()}
-          onChange={(value) => handleSpeechChange(value)}
-          placeholder="وارد کنید..."
-          className="w-full text-right"
-        />
-      ) : (
-        <Input
-          id={`exercise-sets-${exerciseId}`}
-          type="number"
-          value={setsValue}
-          onChange={handleSetsChange}
-          className="h-8 text-center"
-          min={1}
-          max={20}
-          dir="ltr"
-        />
-      )}
+      <div className="flex-1 flex items-center justify-center text-sm font-medium">
+        {toPersianNumbers(sets)}
+      </div>
+      
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
+        onClick={handleIncrement}
+        disabled={sets >= 10}
+      >
+        <Plus className="h-3 w-3" />
+        <span className="sr-only">افزایش</span>
+      </Button>
     </div>
   );
 };
