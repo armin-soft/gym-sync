@@ -44,8 +44,9 @@ export function useMicrophonePermission() {
         // تلاش برای دسترسی مستقیم به میکروفون در مرورگرهایی که از enumerateDevices پشتیبانی نمی‌کنند
         try {
           // Ensure mediaDevices exists and has getUserMedia
-          if (navigator.mediaDevices && 'getUserMedia' in navigator.mediaDevices) {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const mediaDevices = navigator.mediaDevices;
+          if (mediaDevices && 'getUserMedia' in mediaDevices) {
+            const stream = await mediaDevices.getUserMedia({ audio: true });
             stream.getTracks().forEach(track => track.stop());
             setIsDeviceAvailable(true);
             return true;
@@ -118,11 +119,17 @@ export function useMicrophonePermission() {
     try {
       // Always try to get actual access even if we checked permissions API
       // Make sure navigator.mediaDevices exists
-      if (!navigator.mediaDevices || !('getUserMedia' in navigator.mediaDevices)) {
+      if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
         throw new Error('MediaDevices API not supported in this browser');
       }
       
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      // Ensure getUserMedia exists before calling it
+      const mediaDevices = navigator.mediaDevices;
+      if (!('getUserMedia' in mediaDevices)) {
+        throw new Error('getUserMedia is not available in this browser');
+      }
+      
+      const stream = await mediaDevices.getUserMedia({ 
         audio: { 
           echoCancellation: true,
           noiseSuppression: true,
