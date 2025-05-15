@@ -1,8 +1,8 @@
 
 import React from "react";
-import { ListFilter, LayoutGrid, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { LayoutGrid, ListFilter, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
@@ -20,8 +20,6 @@ export const SupplementViewToggle: React.FC<SupplementViewToggleProps> = ({
   setShowFilters
 }) => {
   const deviceInfo = useDeviceInfo();
-  
-  if (deviceInfo.isMobile) return null;
   
   return (
     <div className="flex items-center gap-2">
