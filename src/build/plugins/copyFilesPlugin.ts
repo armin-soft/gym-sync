@@ -22,6 +22,9 @@ export const copyFilesPlugin = () => {
         if (!fs.existsSync('dist/service-worker')) {
           fs.mkdirSync('dist/service-worker', { recursive: true });
         }
+        if (!fs.existsSync('dist/service-worker/event-handlers')) {
+          fs.mkdirSync('dist/service-worker/event-handlers', { recursive: true });
+        }
         
         // کپی Manifest.json از src به ریشه dist، جلوگیری از تکرار
         if (fs.existsSync('src/Manifest.json')) {
@@ -36,16 +39,30 @@ export const copyFilesPlugin = () => {
         fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
         console.log('Copied Service-Worker.js to dist root');
 
-        // کپی ماژول‌های سرویس ورکر
+        // کپی ماژول‌های سرویس ورکر اصلی
         if (fs.existsSync('public/service-worker')) {
-          const serviceWorkerFiles = fs.readdirSync('public/service-worker');
-          serviceWorkerFiles.forEach(file => {
+          const serviceWorkerRootFiles = fs.readdirSync('public/service-worker')
+            .filter(file => !fs.statSync(path.join('public/service-worker', file)).isDirectory());
+            
+          serviceWorkerRootFiles.forEach(file => {
             fs.copyFileSync(
               `public/service-worker/${file}`, 
               `dist/service-worker/${file}`
             );
             console.log(`Copied service worker module: ${file}`);
           });
+          
+          // کپی فایل‌های زیرپوشه event-handlers
+          if (fs.existsSync('public/service-worker/event-handlers')) {
+            const handlerFiles = fs.readdirSync('public/service-worker/event-handlers');
+            handlerFiles.forEach(file => {
+              fs.copyFileSync(
+                `public/service-worker/event-handlers/${file}`, 
+                `dist/service-worker/event-handlers/${file}`
+              );
+              console.log(`Copied event handler: ${file}`);
+            });
+          }
         }
 
         // کپی همچنین به مسیر Assets/Script
