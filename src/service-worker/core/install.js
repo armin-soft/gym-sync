@@ -5,7 +5,7 @@ import { CACHE_NAME, STATIC_ASSETS } from './config.js';
 
 // Install the service worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v1.7.8');
+  console.log('[Service Worker] Installing v1.8.0');
   
   // Force activation for immediate control
   self.skipWaiting();

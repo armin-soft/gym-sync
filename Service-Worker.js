@@ -11,4 +11,4 @@ import './src/service-worker/core/message.js';
 import './src/service-worker/core/periodic-sync.js';
 
 // Log service worker initialization
-console.log('[Service Worker] Starting Service Worker v1.7.8');
+console.log('[Service Worker] Starting Service Worker v1.8.0');

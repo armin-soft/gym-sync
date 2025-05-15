@@ -132,7 +132,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">مدیریت فیکس</span>
-                <span className="text-xs text-muted-foreground">نسخه ۱.۰.۰</span>
+                <span className="text-xs text-muted-foreground">نسخه ۱.۸.۰</span>
               </div>
             </div>
           </div>
