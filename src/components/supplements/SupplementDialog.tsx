@@ -11,25 +11,27 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CheckSquare, Square, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { SupplementType } from "@/hooks/supplements/types";
+import { SupplementCategory } from "@/types/supplement";
 
 interface SupplementDialogProps {
   open: boolean;
-  onClose: () => void;
-  onSave: (data: { supplements: number[]; vitamins: number[] }) => boolean;
-  studentName: string;
-  initialSupplements: number[];
-  initialVitamins: number[];
-  supplements: any[];
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: any) => void;
+  defaultValues?: any;
+  mode: "add" | "edit";
+  categories: SupplementCategory[];
+  type: SupplementType;
 }
 
 export const SupplementDialog: React.FC<SupplementDialogProps> = ({
   open,
-  onClose,
-  onSave,
-  studentName,
-  initialSupplements,
-  initialVitamins,
-  supplements
+  onOpenChange,
+  onSubmit,
+  defaultValues,
+  mode,
+  categories,
+  type
 }) => {
   const [activeTab, setActiveTab] = useState("supplements");
   const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
@@ -37,11 +39,12 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (open) {
-      setSelectedSupplements(initialSupplements || []);
-      setSelectedVitamins(initialVitamins || []);
+    if (open && defaultValues) {
+      // Initialize form with default values if provided
+      setSelectedSupplements(defaultValues.supplements || []);
+      setSelectedVitamins(defaultValues.vitamins || []);
     }
-  }, [open, initialSupplements, initialVitamins]);
+  }, [open, defaultValues]);
 
   const handleToggleSupplement = (id: number) => {
     if (activeTab === "supplements") {
@@ -60,29 +63,28 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
   };
 
   const handleSave = () => {
-    const success = onSave({
+    onSubmit({
       supplements: selectedSupplements,
       vitamins: selectedVitamins
     });
-    if (success) {
-      onClose();
-    }
   };
 
   // Filter supplements based on search query and active tab
-  const filteredItems = supplements.filter(item => {
+  const filteredItems = (categories || []).filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeTab === "supplements" 
-      ? item.category === "supplement"
-      : item.category === "vitamin";
+      ? item.type === "supplement"
+      : item.type === "vitamin";
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>انتخاب مکمل‌ها و ویتامین‌ها برای {studentName}</DialogTitle>
+          <DialogTitle>
+            {mode === "add" ? "افزودن" : "ویرایش"} {type === "supplement" ? "مکمل" : "ویتامین"}
+          </DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="supplements" value={activeTab} onValueChange={setActiveTab}>
@@ -167,11 +169,11 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
         </Tabs>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} className="ml-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="ml-2">
             انصراف
           </Button>
           <Button onClick={handleSave}>
-            ذخیره مکمل‌ها و ویتامین‌ها
+            ذخیره
           </Button>
         </DialogFooter>
       </DialogContent>
