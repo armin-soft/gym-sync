@@ -81,7 +81,7 @@ export class OfflineSpeechRecognition {
         'automatic-speech-recognition',
         this.modelName,
         {
-          quantized: true, // مدل فشرده برای کارایی بهتر
+          // Use options compatible with the library
           progress_callback: (progress: any) => {
             // پیشرفت بارگذاری مدل را محاسبه می‌کنیم
             if (progress.status === 'progress' && progress.total > 0) {

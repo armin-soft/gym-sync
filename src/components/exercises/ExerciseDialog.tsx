@@ -5,11 +5,21 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Category } from "@/types/category";
-import { Exercise } from "@/types/exercise";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SpeechToText from "@/components/ui/speech-to-text";
 import { OfflineSpeechInput } from "@/components/ui/offline-speech/OfflineSpeechInput";
+import { useAutoSpeechMode } from "@/hooks/speech/useAutoSpeechMode";
+
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Exercise {
+  id: number;
+  name: string;
+  categoryId: number;
+}
 
 interface ExerciseDialogProps {
   isOpen: boolean;
@@ -33,7 +43,7 @@ export function ExerciseDialog({
   isEditing = false
 }: ExerciseDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [inputMode, setInputMode] = useState<'speech' | 'offline' | 'text'>('speech');
+  const { inputMode, setInputMode, isOffline } = useAutoSpeechMode();
 
   const handleInputChange = (name: string) => {
     onFormChange({ ...formData, name });
@@ -76,7 +86,9 @@ export function ExerciseDialog({
             >
               <div className="flex items-center justify-center mb-3">
                 <TabsList className="grid grid-cols-3 w-full">
-                  <TabsTrigger value="speech">تشخیص آنلاین</TabsTrigger>
+                  <TabsTrigger value="speech" disabled={isOffline}>
+                    {isOffline ? "آفلاین هستید" : "تشخیص آنلاین"}
+                  </TabsTrigger>
                   <TabsTrigger value="offline">تشخیص آفلاین</TabsTrigger>
                   <TabsTrigger value="text">متن</TabsTrigger>
                 </TabsList>
