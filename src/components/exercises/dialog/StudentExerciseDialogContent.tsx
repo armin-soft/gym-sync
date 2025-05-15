@@ -1,7 +1,12 @@
 
 import React from "react";
-import ExerciseDialogContent from "../dialog/ExerciseDialogContent";
-import { ExerciseCategory, Exercise } from "@/types/exercise";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ExerciseSearchFilters } from "../search-filters";
+import { cn } from "@/lib/utils";
+import ExerciseDayTabs from "../ExerciseDayTabs";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface StudentExerciseDialogContentProps {
   isLoading: boolean;
@@ -94,51 +99,72 @@ const StudentExerciseDialogContent: React.FC<StudentExerciseDialogContentProps> 
   handleRepsChangeDay4,
   handleSaveExercises
 }) => {
+  const deviceInfo = useDeviceInfo();
+
   return (
-    <ExerciseDialogContent
-      searchQuery={searchQuery}
-      setSearchQuery={setSearchQuery}
-      selectedExerciseType={selectedExerciseType}
-      setSelectedExerciseType={setSelectedExerciseType}
-      selectedCategoryId={selectedCategoryId}
-      setSelectedCategoryId={setSelectedCategoryId}
-      exerciseTypes={exerciseTypes}
-      categories={categories}
-      filteredCategories={filteredCategories}
-      handleClearSearch={handleClearSearch}
-      toggleSortOrder={toggleSortOrder}
-      sortOrder={sortOrder}
-      viewMode={viewMode}
-      setViewMode={setViewMode}
-      filteredExercises={filteredExercises}
-      activeTab={activeTab}
-      setActiveTab={setActiveTab}
-      selectedExercisesDay1={selectedExercisesDay1}
-      selectedExercisesDay2={selectedExercisesDay2}
-      selectedExercisesDay3={selectedExercisesDay3}
-      selectedExercisesDay4={selectedExercisesDay4}
-      toggleExerciseDay1={toggleExerciseDay1}
-      toggleExerciseDay2={toggleExerciseDay2}
-      toggleExerciseDay3={toggleExerciseDay3}
-      toggleExerciseDay4={toggleExerciseDay4}
-      exerciseSetsDay1={exerciseSetsDay1}
-      exerciseSetsDay2={exerciseSetsDay2}
-      exerciseSetsDay3={exerciseSetsDay3}
-      exerciseSetsDay4={exerciseSetsDay4}
-      handleSetsChangeDay1={handleSetsChangeDay1}
-      handleSetsChangeDay2={handleSetsChangeDay2}
-      handleSetsChangeDay3={handleSetsChangeDay3}
-      handleSetsChangeDay4={handleSetsChangeDay4}
-      exerciseRepsDay1={exerciseRepsDay1}
-      exerciseRepsDay2={exerciseRepsDay2}
-      exerciseRepsDay3={exerciseRepsDay3}
-      exerciseRepsDay4={exerciseRepsDay4}
-      handleRepsChangeDay1={handleRepsChangeDay1}
-      handleRepsChangeDay2={handleRepsChangeDay2}
-      handleRepsChangeDay3={handleRepsChangeDay3}
-      handleRepsChangeDay4={handleRepsChangeDay4}
-      handleSaveExercises={handleSaveExercises}
-    />
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className={cn(
+        "sticky top-0 z-10 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shadow-sm",
+        deviceInfo.isMobile ? "px-3 py-2" : "px-4 py-3"
+      )}>
+        <ExerciseSearchFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedExerciseType={selectedExerciseType}
+          setSelectedExerciseType={setSelectedExerciseType}
+          selectedCategoryId={selectedCategoryId}
+          setSelectedCategoryId={setSelectedCategoryId}
+          exerciseTypes={exerciseTypes}
+          categories={categories}
+          filteredCategories={filteredCategories}
+          handleClearSearch={handleClearSearch}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+        />
+      </div>
+
+      <ScrollArea className="flex-1 overflow-y-auto">
+        <Tabs value={activeTab} className="h-full">
+          <ExerciseDayTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            selectedExercisesDay1={selectedExercisesDay1}
+            selectedExercisesDay2={selectedExercisesDay2}
+            selectedExercisesDay3={selectedExercisesDay3}
+            selectedExercisesDay4={selectedExercisesDay4}
+            toggleExerciseDay1={toggleExerciseDay1}
+            toggleExerciseDay2={toggleExerciseDay2}
+            toggleExerciseDay3={toggleExerciseDay3}
+            toggleExerciseDay4={toggleExerciseDay4}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            filteredExercises={filteredExercises}
+            categories={categories}
+            handleClearSearch={handleClearSearch}
+            selectedCategoryId={selectedCategoryId}
+            toggleSortOrder={toggleSortOrder}
+            sortOrder={sortOrder}
+            exerciseSetsDay1={exerciseSetsDay1}
+            exerciseSetsDay2={exerciseSetsDay2}
+            exerciseSetsDay3={exerciseSetsDay3}
+            exerciseSetsDay4={exerciseSetsDay4}
+            handleSetsChangeDay1={handleSetsChangeDay1}
+            handleSetsChangeDay2={handleSetsChangeDay2}
+            handleSetsChangeDay3={handleSetsChangeDay3}
+            handleSetsChangeDay4={handleSetsChangeDay4}
+            exerciseRepsDay1={exerciseRepsDay1}
+            exerciseRepsDay2={exerciseRepsDay2}
+            exerciseRepsDay3={exerciseRepsDay3}
+            exerciseRepsDay4={exerciseRepsDay4}
+            handleRepsChangeDay1={handleRepsChangeDay1}
+            handleRepsChangeDay2={handleRepsChangeDay2}
+            handleRepsChangeDay3={handleRepsChangeDay3}
+            handleRepsChangeDay4={handleRepsChangeDay4}
+            handleSaveExercises={handleSaveExercises}
+          />
+        </Tabs>
+      </ScrollArea>
+    </div>
   );
 };
 

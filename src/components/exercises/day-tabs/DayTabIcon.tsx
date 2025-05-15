@@ -1,23 +1,33 @@
 
 import React from "react";
+import { Calendar, CalendarCheck, CalendarClock, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Dumbbell } from "lucide-react";
 
 interface DayTabIconProps {
-  active: boolean;
+  tabId: string;
+  isActive: boolean;
 }
 
-const DayTabIcon: React.FC<DayTabIconProps> = ({ active }) => {
-  return (
-    <div className={cn(
-      "w-4 h-4 rounded-full flex items-center justify-center",
-      active 
-        ? "bg-gradient-to-br from-indigo-500 to-violet-600 text-white" 
-        : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-    )}>
-      <Dumbbell className="w-2.5 h-2.5" />
-    </div>
-  );
+const DayTabIcon: React.FC<DayTabIconProps> = ({ tabId, isActive }) => {
+  const getIconProps = () => ({
+    className: cn(
+      "h-4 w-4",
+      isActive ? "text-primary" : "text-muted-foreground"
+    )
+  });
+  
+  switch(tabId) {
+    case "day1":
+      return <Calendar {...getIconProps()} />;
+    case "day2":
+      return <CalendarCheck {...getIconProps()} />;
+    case "day3":
+      return <CalendarDays {...getIconProps()} />;
+    case "day4":
+      return <CalendarClock {...getIconProps()} />;
+    default:
+      return <Calendar {...getIconProps()} />;
+  }
 };
 
 export default DayTabIcon;
