@@ -50,7 +50,7 @@ export function SidebarFooter({ gymName }: SidebarFooterProps) {
           <Dumbbell className="h-5 w-5 text-primary" />
         </div>
         <div className="flex flex-col">
-          <span className={cn("font-medium", getTextSize())}>{gymName}</span>
+          <span className={cn("font-medium", getTextSize())}>{gymName || "برنامه مدیریت"}</span>
           <div className={cn("text-muted-foreground", getVersionSize())}>
             <span>نسخه {toPersianNumbers(manifestData.version || "1.0.0")}</span>
           </div>

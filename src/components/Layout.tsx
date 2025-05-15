@@ -178,7 +178,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
                   "font-semibold hidden xs:block",
                   getTitleSize()
                 )}>
-                  {gymName ? `مدیریت برنامه ${gymName}` : 'مدیریت برنامه'}
+                  {gymName ? gymName : 'برنامه مدیریت'}
                 </h1>
               </div>
             </div>

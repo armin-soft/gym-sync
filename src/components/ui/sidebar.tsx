@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -68,6 +69,22 @@ const sidebarItems: SidebarItem[] = [
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const [gymName, setGymName] = React.useState("");
+  
+  // بارگیری نام باشگاه از پروفایل مربی
+  React.useEffect(() => {
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        if (profile.gymName) {
+          setGymName(profile.gymName);
+        }
+      } catch (error) {
+        console.error('Error loading gym name:', error);
+      }
+    }
+  }, []);
   
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -132,7 +149,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <Dumbbell className="h-5 w-5 text-primary" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">مدیریت فیکس</span>
+                <span className="text-sm font-medium">{gymName || "برنامه مدیریت"}</span>
                 <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "1.0.0")}</span>
               </div>
             </div>

@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -15,7 +16,7 @@ import {
 import manifestData from "@/Manifest.json";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { SidebarProfile } from "./sidebar/SidebarProfile";
 import { SidebarMenuList } from "./sidebar/SidebarMenuList";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
@@ -73,7 +74,7 @@ const sidebarItems = [
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const [gymName, setGymName] = useState("مدیریت برنامه");
+  const [gymName, setGymName] = useState("");
   const [trainerProfile, setTrainerProfile] = useState({
     name: "مربی",
     image: "",
@@ -93,7 +94,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           email: profile.email || ""
         });
         if (profile.gymName) {
-          setGymName(`مدیریت برنامه ${profile.gymName}`);
+          setGymName(profile.gymName);
         }
       } catch (error) {
         console.error('Error loading profile from localStorage:', error);
@@ -146,7 +147,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               deviceInfo.isMobile ? "text-xs" : 
               deviceInfo.isTablet ? "text-sm" : "text-base"
             )}>
-              {gymName}
+              {gymName || "برنامه مدیریت"}
             </h4>
           </div>
           
