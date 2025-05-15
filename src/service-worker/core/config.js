@@ -11,7 +11,7 @@ export const CACHE_NAME = 'gym-sync-v15';
 export const STATIC_ASSETS = [
   './',
   './index.html',
-  './offline.html',
+  './Offline.html',
   './Assets/Image/Logo.png',
   './Assets/Image/Place-Holder.svg',
   './Manifest.json',
@@ -28,4 +28,3 @@ self.CACHE_NAME = CACHE_NAME;
 self.STATIC_ASSETS = STATIC_ASSETS;
 // @ts-ignore
 self.BASE_PATH = BASE_PATH;
-

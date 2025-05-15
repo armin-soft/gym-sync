@@ -28,7 +28,7 @@ export function cleanRequestUrl(url) {
 export function createOfflineResponse(isNavigationRequest = false) {
   if (isNavigationRequest) {
     // For navigation requests (page loads), return the offline HTML page
-    return caches.match('./offline.html')
+    return caches.match('./Offline.html')
       .then(response => {
         if (response) return response;
         
@@ -127,4 +127,3 @@ self.createCleanRequest = createCleanRequest;
 self.cleanRequestUrl = cleanRequestUrl;
 // @ts-ignore
 self.createOfflineResponse = createOfflineResponse;
-
