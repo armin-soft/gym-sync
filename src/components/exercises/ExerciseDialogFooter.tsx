@@ -31,16 +31,25 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
     }
   };
 
-  const buttonSize = deviceInfo.isMobile ? "sm" : "default";
-  const iconSize = deviceInfo.isMobile ? 16 : 18;
+  // Responsive class helpers
+  const getFooterClass = () => {
+    return cn(
+      "border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 w-full",
+      deviceInfo.isMobile ? "p-3" : "p-4 sm:p-6"
+    );
+  };
 
+  const getIconSize = () => {
+    return deviceInfo.isMobile ? "h-4 w-4" : "h-5 w-5";
+  };
+
+  const getButtonSize = () => {
+    return deviceInfo.isMobile ? "sm" : "default";
+  };
+  
   return (
     <motion.div
-      className={cn(
-        "border-t border-gray-200 dark:border-gray-800",
-        "bg-gradient-to-t from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 w-full",
-        deviceInfo.isMobile ? "p-3" : "p-4 sm:p-6"
-      )}
+      className={getFooterClass()}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -49,11 +58,10 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
         <div className="flex items-center gap-2 flex-1">
           <Button 
             variant="outline" 
-            size={buttonSize}
+            size={getButtonSize()}
             onClick={onCancel}
-            className="border-gray-200 dark:border-gray-800 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20 dark:hover:text-red-400 transition-all"
           >
-            <X size={iconSize} className="ml-1.5" />
+            <X className={`${getIconSize()} ml-1`} />
             انصراف
           </Button>
           
@@ -61,7 +69,7 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2 }}
-            className={`${deviceInfo.isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground mr-2 bg-gray-100/80 dark:bg-gray-800/80 px-3 py-1 rounded-full`}
+            className={`${deviceInfo.isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground mr-2`}
           >
             {selectedExercisesCount} تمرین انتخاب شده
           </motion.div>
@@ -70,17 +78,12 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
         <div className="flex justify-end flex-1">
           <Button 
             variant="default" 
-            size={buttonSize}
+            size={getButtonSize()}
             onClick={onSave}
             disabled={selectedExercisesCount === 0}
-            className={cn(
-              selectedExercisesCount === 0 
-                ? 'opacity-50 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-md hover:shadow-lg',
-              "transition-all duration-300"
-            )}
+            className={`${selectedExercisesCount === 0 ? 'opacity-50 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'} transition-all duration-300`}
           >
-            <Save size={iconSize} className="ml-1.5" />
+            <Save className={`${getIconSize()} ml-1`} />
             ذخیره تمرین‌های {getDayText(activeTab)}
           </Button>
         </div>

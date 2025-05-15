@@ -1,64 +1,57 @@
 
 import React from "react";
 import { TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import DayTabIcon from "./DayTabIcon";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface DayTabTriggerProps {
-  tabId: string;
+  value: string;
+  active: boolean;
   count: number;
-  isActive: boolean;
+  dayNumber: number;
 }
 
 const DayTabTrigger: React.FC<DayTabTriggerProps> = ({
-  tabId,
+  value,
+  active,
   count,
-  isActive
+  dayNumber
 }) => {
-  const deviceInfo = useDeviceInfo();
-  
-  const getDayName = (id: string) => {
-    switch(id) {
-      case "day1": return "روز اول";
-      case "day2": return "روز دوم";
-      case "day3": return "روز سوم";
-      case "day4": return "روز چهارم";
-      default: return id;
+  const getDayName = () => {
+    switch (dayNumber) {
+      case 1: return "روز اول";
+      case 2: return "روز دوم";
+      case 3: return "روز سوم";
+      case 4: return "روز چهارم";
+      default: return "";
     }
-  };
-  
-  const getCountBadge = () => {
-    if (count === 0) return null;
-    
-    return (
-      <motion.span
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className={cn(
-          "absolute -top-1.5 -right-1.5 flex items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground min-w-[1.25rem] h-5 px-1.5",
-          isActive ? "bg-white text-primary" : ""
-        )}
-      >
-        {count}
-      </motion.span>
-    );
   };
 
   return (
-    <TabsTrigger
-      value={tabId}
+    <TabsTrigger 
+      value={value}
       className={cn(
-        "relative flex items-center gap-2 transition-all duration-300",
-        deviceInfo.isMobile ? "flex-1 py-1.5 text-xs" : "py-2 px-4"
+        "relative h-9 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300",
+        active ? "bg-white dark:bg-gray-900 text-indigo-700 dark:text-indigo-400 shadow-sm" : 
+        "text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50"
       )}
     >
-      <DayTabIcon tabId={tabId} isActive={isActive} />
-      <span className={deviceInfo.isMobile ? "text-xs" : "text-sm"}>
-        {getDayName(tabId)}
-      </span>
-      {getCountBadge()}
+      <div className="flex items-center gap-1.5">
+        <DayTabIcon active={active} />
+        <span>{getDayName()}</span>
+      </div>
+      
+      {count > 0 && (
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 500 }}
+          className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 text-[10px] font-bold rounded-full bg-indigo-600 dark:bg-indigo-500 text-white"
+        >
+          {count}
+        </motion.div>
+      )}
     </TabsTrigger>
   );
 };

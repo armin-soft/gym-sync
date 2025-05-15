@@ -1,36 +1,30 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Dumbbell } from "lucide-react";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { ListFilter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseCountBadgeProps {
   count: number;
+  className?: string;
 }
 
-export const ExerciseCountBadge: React.FC<ExerciseCountBadgeProps> = ({ count }) => {
-  const deviceInfo = useDeviceInfo();
-  
+export const ExerciseCountBadge: React.FC<ExerciseCountBadgeProps> = ({ count, className }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.1 }}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
       className={cn(
-        "flex items-center gap-2 px-3 py-1.5 rounded-md bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/50 dark:to-violet-950/50 border border-indigo-100 dark:border-indigo-900",
-        deviceInfo.isMobile ? "text-xs" : "text-sm"
+        "bg-gradient-to-r from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30 rounded-lg py-1.5 px-3 flex items-center gap-1.5 shadow-sm",
+        className
       )}
     >
-      <Dumbbell className={cn(
-        "text-indigo-600 dark:text-indigo-400",
-        deviceInfo.isMobile ? "h-3.5 w-3.5" : "h-4 w-4"
-      )} />
-      <span className="font-medium text-indigo-700 dark:text-indigo-300">
-        {count} تمرین انتخاب شده
+      <ListFilter className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+      <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
+        {toPersianNumbers(count)} تمرین انتخاب شده
       </span>
     </motion.div>
   );
 };
-
-export default ExerciseCountBadge;
