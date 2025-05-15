@@ -1,6 +1,16 @@
 
 import { Exercise } from '@/types/exercise';
 
+// Record of exercise IDs to number of sets
+export interface ExerciseSets {
+  [exerciseId: number]: number;
+}
+
+// Record of exercise IDs to reps (as string)
+export interface ExerciseReps {
+  [exerciseId: number]: string;
+}
+
 // Interface for exercise with sets and reps information
 export interface ExerciseWithSets {
   id: number;

@@ -2,7 +2,6 @@
 import { useState, useRef } from "react";
 import { StudentDialog } from "@/components/students/StudentDialog";
 import EnhancedExerciseDialog from "@/components/exercises/enhanced-dialog/EnhancedExerciseDialog"; 
-import { ExerciseDialogState } from "@/hooks/exercise-selection";
 import { Student } from "@/components/students/StudentTypes";
 import { DietDialog } from "@/components/diet/DietDialog";
 import { SupplementDialog } from "@/components/supplements/SupplementDialog";
@@ -134,7 +133,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
       {/* Supplement dialog */}
       {selectedStudentForSupplement && (
         <SupplementDialog
-          isOpen={isSupplementDialogOpen}
+          open={isSupplementDialogOpen}
           onClose={handleCloseSupplement}
           onSave={handleSaveSupplementsWrapper}
           studentName={selectedStudentForSupplement?.name || ""}
