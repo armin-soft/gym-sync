@@ -5,14 +5,13 @@ import ExerciseHeader from "./ExerciseHeader";
 import ExercisesList from "./ExercisesList";
 import QuickSpeechAdd from "./QuickSpeechAdd";
 import ExerciseDialogs from "./ExerciseDialogs";
-import { Exercise } from "@/types/exercise";
 
 interface ExercisesStageProps {
   categoryId: string;
   typeId: string;
 }
 
-const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
+const ExercisesStage = React.memo(({ categoryId, typeId }: ExercisesStageProps) => {
   const {
     isLoading,
     filteredExercises,
@@ -38,8 +37,9 @@ const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
     setShowQuickSpeech
   } = useExercisesStage({ categoryId, typeId });
 
+  // اطمینان از ثابت بودن ابعاد صفحه برای جلوگیری از پریدن
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       <ExerciseHeader
         exerciseCount={filteredExercises.length}
         selectedExerciseIds={selectedExerciseIds}
@@ -49,23 +49,27 @@ const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
         setViewMode={setViewMode}
       />
 
-      <ExercisesList
-        filteredExercises={filteredExercises}
-        selectedCategory={selectedCategory}
-        selectedExerciseIds={selectedExerciseIds}
-        setSelectedExerciseIds={setSelectedExerciseIds}
-        viewMode={viewMode}
-        onEditExercise={handleEditExercise}
-        onDeleteExercise={handleDeleteExercise}
-        onAddExercise={() => setIsAddDialogOpen(true)}
-      />
+      <div className="flex-1 overflow-hidden">
+        <ExercisesList
+          filteredExercises={filteredExercises}
+          selectedCategory={selectedCategory}
+          selectedExerciseIds={selectedExerciseIds}
+          setSelectedExerciseIds={setSelectedExerciseIds}
+          viewMode={viewMode}
+          onEditExercise={handleEditExercise}
+          onDeleteExercise={handleDeleteExercise}
+          onAddExercise={() => setIsAddDialogOpen(true)}
+        />
+      </div>
 
       {showQuickSpeech && (
-        <QuickSpeechAdd
-          onQuickAdd={handleQuickAdd}
-          quickSpeechText={quickSpeechText}
-          setQuickSpeechText={setQuickSpeechText}
-        />
+        <div className="sticky bottom-0 w-full">
+          <QuickSpeechAdd
+            onQuickAdd={handleQuickAdd}
+            quickSpeechText={quickSpeechText}
+            setQuickSpeechText={setQuickSpeechText}
+          />
+        </div>
       )}
 
       <ExerciseDialogs
@@ -82,6 +86,8 @@ const ExercisesStage = ({ categoryId, typeId }: ExercisesStageProps) => {
       />
     </div>
   );
-};
+});
+
+ExercisesStage.displayName = "ExercisesStage";
 
 export default ExercisesStage;

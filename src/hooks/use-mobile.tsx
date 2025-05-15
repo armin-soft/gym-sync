@@ -13,86 +13,156 @@ export const BREAKPOINTS = {
   "4xl": 1920, // Ultra wide screens
 };
 
+// Memoize breakpoint values to prevent re-renders
+const memoizedBreakpoints = Object.freeze(BREAKPOINTS);
+
 export function useBreakpoint(breakpoint: keyof typeof BREAKPOINTS) {
   const [isAboveBreakpoint, setIsAboveBreakpoint] = React.useState<boolean | undefined>(undefined);
 
   React.useEffect(() => {
-    const handleResize = () => {
-      setIsAboveBreakpoint(window.innerWidth >= BREAKPOINTS[breakpoint]);
+    // Initial check function
+    const checkBreakpoint = () => {
+      const windowWidth = window.innerWidth;
+      const breakpointValue = memoizedBreakpoints[breakpoint];
+      const newValue = windowWidth >= breakpointValue;
+      
+      // Only update state if value has changed
+      if (isAboveBreakpoint !== newValue) {
+        setIsAboveBreakpoint(newValue);
+      }
     };
     
     // Initial check
-    handleResize();
+    checkBreakpoint();
+    
+    // Use a debounced resize handler to prevent excessive updates
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(checkBreakpoint, 150); // debounce by 150ms
+    };
     
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [breakpoint]);
+    
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [breakpoint, isAboveBreakpoint]);
 
   return isAboveBreakpoint;
 }
 
-// Improved isMobile hook with additional device type detection
+// Improved isMobile hook with stable state updates
 export function useIsMobile() {
   const [deviceType, setDeviceType] = React.useState<{
     isMobile: boolean;
     isTablet: boolean;
     isDesktop: boolean;
-  }>({
-    isMobile: false,
-    isTablet: false,
-    isDesktop: true
+  }>(() => {
+    // Default to desktop until we can check
+    return {
+      isMobile: false,
+      isTablet: false,
+      isDesktop: true
+    };
   });
 
   React.useEffect(() => {
-    const handleResize = () => {
+    // Initial check function
+    const checkDeviceType = () => {
       const width = window.innerWidth;
-      setDeviceType({
-        isMobile: width < BREAKPOINTS.md,
-        isTablet: width >= BREAKPOINTS.md && width < BREAKPOINTS.lg,
-        isDesktop: width >= BREAKPOINTS.lg
-      });
+      const newDeviceType = {
+        isMobile: width < memoizedBreakpoints.md,
+        isTablet: width >= memoizedBreakpoints.md && width < memoizedBreakpoints.lg,
+        isDesktop: width >= memoizedBreakpoints.lg
+      };
+      
+      // Only update if values changed
+      if (
+        newDeviceType.isMobile !== deviceType.isMobile ||
+        newDeviceType.isTablet !== deviceType.isTablet ||
+        newDeviceType.isDesktop !== deviceType.isDesktop
+      ) {
+        setDeviceType(newDeviceType);
+      }
     };
     
     // Initial check
-    handleResize();
+    checkDeviceType();
+    
+    // Debounced resize handler
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(checkDeviceType, 150); // debounce by 150ms
+    };
     
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [deviceType]);
 
+  // Return the stable boolean value
   return deviceType.isMobile;
 }
 
-// New hook to get detailed device information
+// Memoized device info for more stable component rendering
 export function useDeviceInfo() {
-  const [deviceInfo, setDeviceInfo] = React.useState({
+  const [deviceInfo, setDeviceInfo] = React.useState(() => ({
     isMobile: false,
     isTablet: false,
     isSmallLaptop: false,
     isDesktop: false,
     isLargeDesktop: false,
-    currentWidth: 0
-  });
+    currentWidth: typeof window !== 'undefined' ? window.innerWidth : 0
+  }));
 
   React.useEffect(() => {
-    const handleResize = () => {
+    // Initial check function
+    const checkDeviceInfo = () => {
       const width = window.innerWidth;
-      setDeviceInfo({
-        isMobile: width < BREAKPOINTS.sm,
-        isTablet: width >= BREAKPOINTS.sm && width < BREAKPOINTS.lg,
-        isSmallLaptop: width >= BREAKPOINTS.lg && width < BREAKPOINTS.xl,
-        isDesktop: width >= BREAKPOINTS.xl && width < BREAKPOINTS["2xl"],
-        isLargeDesktop: width >= BREAKPOINTS["2xl"],
+      const newDeviceInfo = {
+        isMobile: width < memoizedBreakpoints.sm,
+        isTablet: width >= memoizedBreakpoints.sm && width < memoizedBreakpoints.lg,
+        isSmallLaptop: width >= memoizedBreakpoints.lg && width < memoizedBreakpoints.xl,
+        isDesktop: width >= memoizedBreakpoints.xl && width < memoizedBreakpoints["2xl"],
+        isLargeDesktop: width >= memoizedBreakpoints["2xl"],
         currentWidth: width
-      });
+      };
+      
+      // Check if anything actually changed before updating state
+      if (
+        newDeviceInfo.isMobile !== deviceInfo.isMobile ||
+        newDeviceInfo.isTablet !== deviceInfo.isTablet ||
+        newDeviceInfo.isSmallLaptop !== deviceInfo.isSmallLaptop ||
+        newDeviceInfo.isDesktop !== deviceInfo.isDesktop ||
+        newDeviceInfo.isLargeDesktop !== deviceInfo.isLargeDesktop ||
+        Math.abs(newDeviceInfo.currentWidth - deviceInfo.currentWidth) > 10 // Only update width if changed by more than 10px
+      ) {
+        setDeviceInfo(newDeviceInfo);
+      }
     };
     
     // Initial check
-    handleResize();
+    checkDeviceInfo();
+    
+    // Debounced resize handler
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(checkDeviceInfo, 150); // debounce by 150ms
+    };
     
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [deviceInfo]);
 
-  return deviceInfo;
+  // Memoize the result to prevent unnecessary re-renders
+  return React.useMemo(() => deviceInfo, [deviceInfo]);
 }
