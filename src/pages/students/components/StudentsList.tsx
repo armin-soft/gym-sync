@@ -19,6 +19,7 @@ interface StudentsListProps {
   onAddSupplement: (student: Student) => void;
   onClearSearch: () => void;
   onDownload?: (student: Student) => void;
+  setStudents?: React.Dispatch<React.SetStateAction<Student[]>>; // Make setStudents optional in this component
 }
 
 export const StudentsList: React.FC<StudentsListProps> = ({
@@ -34,7 +35,8 @@ export const StudentsList: React.FC<StudentsListProps> = ({
   onAddDiet,
   onAddSupplement,
   onClearSearch,
-  onDownload
+  onDownload,
+  setStudents // Include setStudents even though it might be undefined
 }) => {
   if (students.length === 0) {
     return (
@@ -59,6 +61,7 @@ export const StudentsList: React.FC<StudentsListProps> = ({
         {viewMode === "grid" ? (
           <StudentGridView
             students={students}
+            setStudents={setStudents || (() => {})} // Provide a no-op function if setStudents is undefined
             isProfileComplete={isProfileComplete}
             onEdit={onEdit}
             onDelete={onDelete}

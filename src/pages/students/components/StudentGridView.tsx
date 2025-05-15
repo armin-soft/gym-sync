@@ -7,7 +7,7 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface StudentGridViewProps {
   students: Student[];
-  setStudents: React.Dispatch<React.SetStateAction<Student[]>>;
+  setStudents: React.Dispatch<React.SetStateAction<Student[]>> | (() => void); // Make it accept a no-op function
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
   onAddExercise?: (student: Student) => void;
@@ -21,6 +21,9 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
   setStudents,
   onEdit,
   onDelete,
+  onAddExercise = () => {}, // Provide default functions for optional props
+  onAddDiet = () => {},
+  onAddSupplement = () => {},
   isProfileComplete = true,
 }) => {
   const deviceInfo = useDeviceInfo();
@@ -78,6 +81,10 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
               onDelete={() => onDelete(student.id)}
               setStudents={setStudents}
               students={students}
+              onAddExercise={() => onAddExercise(student)}
+              onAddDiet={() => onAddDiet(student)}
+              onAddSupplement={() => onAddSupplement(student)}
+              isProfileComplete={isProfileComplete}
             />
           </motion.div>
         ))}

@@ -77,7 +77,7 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
     
     const progress = Math.round((progressCount / 4) * 100);
     
-    // Parse numeric values
+    // Parse numeric values - convert string values to numbers if provided
     const parsedAge = age ? parseInt(age) : undefined;
     const parsedHeight = height ? parseInt(height) : undefined;
     const parsedWeight = weight ? parseInt(weight) : undefined;
@@ -87,9 +87,10 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
       id: student?.id || Date.now(),
       name,
       age: parsedAge,
-      height: parsedHeight,
-      weight: parsedWeight,
-      wrist, // Store wrist as string to match Student type
+      // Convert number values to strings to match the expected types
+      height: height || undefined, // Store height as string
+      weight: weight || undefined, // Store weight as string
+      wrist, // Store wrist as string
       phone,
       goal,
       exercises,

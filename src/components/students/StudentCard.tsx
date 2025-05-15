@@ -1,131 +1,90 @@
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Student } from "./StudentTypes";
-import { Progress } from "@/components/ui/progress";
-import { Edit, Trash2 } from "lucide-react";
-import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog";
-import { useStudentSupplements } from "@/hooks/students/useStudentSupplements";
-import { useToast } from "@/hooks/use-toast";
-import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
+import { Student } from "@/components/students/StudentTypes";
 
 interface StudentCardProps {
   student: Student;
   onEdit: () => void;
   onDelete: () => void;
-  setStudents: React.Dispatch<React.SetStateAction<Student[]>>;
+  setStudents: React.Dispatch<React.SetStateAction<Student[]>> | (() => void);
   students: Student[];
+  onAddExercise?: () => void;
+  onAddDiet?: () => void;
+  onAddSupplement?: () => void;
+  isProfileComplete?: boolean;
 }
 
+// Create a simple StudentCard component that can be enhanced later
 export const StudentCard: React.FC<StudentCardProps> = ({
   student,
   onEdit,
   onDelete,
   setStudents,
   students,
+  onAddExercise,
+  onAddDiet,
+  onAddSupplement,
+  isProfileComplete = true
 }) => {
-  const { toast } = useToast();
-  const [showSupplementsDialog, setShowSupplementsDialog] = React.useState(false);
-  const [showMealsDialog, setShowMealsDialog] = React.useState(false);
-  const [showExercisesDialog, setShowExercisesDialog] = React.useState(false);
-  
-  const { handleSaveSupplements, supplements } = useStudentSupplements(students, setStudents);
-  
   return (
-    <>
-      <Card className="shadow-sm hover:shadow-md transition-shadow">
-        <CardContent className="p-4 sm:p-5">
-          <div className="flex flex-col space-y-3">
-            <div className="flex justify-between items-center">
-              <h3 className="font-bold text-lg">{student.name}</h3>
-              <div className="flex space-x-2 rtl:space-x-reverse">
-                <Button variant="outline" size="icon" onClick={onEdit}>
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20" 
-                  onClick={onDelete}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="text-sm text-muted-foreground">
-              {student.age && <p>سن: {student.age}</p>}
-              {student.phone && <p>شماره تماس: {student.phone}</p>}
-              {student.goal && <p>هدف: {student.goal}</p>}
-            </div>
-
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">پیشرفت برنامه</span>
-                <span className="text-sm text-muted-foreground">{student.progress}%</span>
-              </div>
-              <Progress value={student.progress} className="h-2" />
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 pt-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowExercisesDialog(true)}
-                className="text-xs"
-              >
-                تمرین‌ها
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowMealsDialog(true)}
-                className="text-xs"
-              >
-                تغذیه
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowSupplementsDialog(true)}
-                className="text-xs"
-              >
-                مکمل‌ها
-              </Button>
-            </div>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden h-full flex flex-col">
+      <div className="p-4 flex-1">
+        <h3 className="text-lg font-medium">{student.name}</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{student.phone}</p>
+        
+        {student.height && student.weight && (
+          <div className="mt-2 text-sm">
+            <span>قد: {student.height} سانتی‌متر</span>
+            <span className="mx-2">|</span>
+            <span>وزن: {student.weight} کیلوگرم</span>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* New Modern Supplement Dialog */}
-      <ModernStudentSupplementDialog
-        open={showSupplementsDialog}
-        onOpenChange={setShowSupplementsDialog}
-        studentName={student.name}
-        initialSupplements={student.supplements || []}
-        initialVitamins={student.vitamins || []}
-        onSave={(data) => handleSaveSupplements(data, student.id)}
-        supplements={supplements}
-      />
+        )}
+      </div>
       
-      <StudentExerciseDialog
-        open={showExercisesDialog}
-        onOpenChange={setShowExercisesDialog}
-        studentName={student.name}
-        initialExercises={student.exercises || []}
-        initialExercisesDay1={student.exercisesDay1 || []}
-        initialExercisesDay2={student.exercisesDay2 || []}
-        initialExercisesDay3={student.exercisesDay3 || []}
-        initialExercisesDay4={student.exercisesDay4 || []}
-        onSave={(exercisesWithSets, dayNumber) => {
-          // TODO: Handle this properly with the student exercise hook when created
-          toast({
-            description: "تمرینات ذخیره شد"
-          });
-          return true;
-        }}
-      />
-    </>
+      <div className="border-t border-gray-200 dark:border-gray-700 p-3 flex justify-between">
+        <button 
+          className="text-blue-600 hover:text-blue-800 text-sm"
+          onClick={onEdit}
+        >
+          ویرایش
+        </button>
+        <button 
+          className="text-red-600 hover:text-red-800 text-sm"
+          onClick={onDelete}
+        >
+          حذف
+        </button>
+      </div>
+      
+      {onAddExercise && (
+        <div className="border-t border-gray-200 dark:border-gray-700 p-3 flex justify-between">
+          <button 
+            className="text-green-600 hover:text-green-800 text-sm"
+            onClick={onAddExercise}
+          >
+            افزودن تمرین
+          </button>
+          {onAddDiet && (
+            <button 
+              className="text-orange-600 hover:text-orange-800 text-sm"
+              onClick={onAddDiet}
+            >
+              افزودن غذا
+            </button>
+          )}
+        </div>
+      )}
+      
+      {onAddSupplement && (
+        <div className="border-t border-gray-200 dark:border-gray-700 p-3 flex justify-center">
+          <button 
+            className="text-purple-600 hover:text-purple-800 text-sm"
+            onClick={onAddSupplement}
+          >
+            افزودن مکمل
+          </button>
+        </div>
+      )}
+    </div>
   );
 };

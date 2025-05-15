@@ -1,4 +1,3 @@
-
 import React, { forwardRef, useImperativeHandle } from "react";
 import { Student } from "./StudentTypes";
 import { StudentDialog } from "./StudentDialog";
@@ -13,6 +12,19 @@ export interface StudentDialogManagerRef {
   handleAddDiet: (student: Student) => void;
   handleAddSupplement: (student: Student) => void;
   handleDownload: (student: Student) => void;
+}
+
+// Define StudentFormData interface to match what StudentDialog expects
+interface StudentFormData {
+  name: string;
+  phone: string;
+  height?: string;
+  weight?: string;
+  image?: string;
+  payment?: string;
+  age?: string;
+  grade?: string;
+  group?: string;
 }
 
 interface StudentDialogManagerProps {
@@ -68,8 +80,30 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
       handleDownload
     }));
 
-    const handleSaveWrapper = (student: Student) => {
-      onSave(student);
+    // Create a wrapper function to adapt the expected types
+    const handleSaveWrapper = (formData: StudentFormData) => {
+      // If selectedStudent exists, merge the form data with it
+      // Otherwise, create a new student object
+      if (selectedStudent) {
+        onSave({
+          ...selectedStudent,
+          ...formData
+        });
+      } else {
+        // Create a new student with default values and the form data
+        onSave({
+          id: Date.now(), // Generate a new ID
+          ...formData,
+          exercises: [],
+          exercisesDay1: [],
+          exercisesDay2: [],
+          exercisesDay3: [],
+          exercisesDay4: [],
+          meals: [],
+          supplements: [],
+          vitamins: []
+        } as Student);
+      }
       setIsDialogOpen(false);
     };
 
@@ -98,7 +132,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         {selectedStudent && (
           <StudentDialogContentWrapper
             student={selectedStudent}
-            onSave={handleSaveWrapper}
+            onSave={onSave}
             onClose={() => setIsDialogOpen(false)}
           />
         )}
