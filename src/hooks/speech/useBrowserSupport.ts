@@ -1,56 +1,68 @@
 
-import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
 
 export function useBrowserSupport() {
-  const { toast } = useToast();
   const [isSupported, setIsSupported] = useState(true);
-  
-  // More comprehensive browser support check
-  useEffect(() => {
-    const checkBrowserSupport = () => {
-      const SpeechRecognition = 
-        window.SpeechRecognition || 
-        (window as any).webkitSpeechRecognition ||
-        (window as any).mozSpeechRecognition ||
-        (window as any).msSpeechRecognition;
-        
-      // iOS Safari specific support check
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      const isIOSSafari = isIOS && isSafari;
-      
-      // iOS 14.5+ has better support for speech recognition
-      const isModernIOS = isIOS && parseInt((navigator.userAgent.match(/OS (\d+)_/) || [])[1] || '0', 10) >= 14;
-      
-      if (!SpeechRecognition) {
-        console.error("SpeechRecognition not supported in this browser");
-        setIsSupported(false);
-        
-        // Only show toast if not handled by a fallback
-        toast({
-          title: "توجه",
-          description: "مرورگر شما از تبدیل گفتار به نوشتار پشتیبانی نمی‌کند. لطفاً از Chrome، Edge یا Safari استفاده کنید.",
-          variant: "destructive",
-        });
-        return false;
-      }
-      
-      // Show optimized guidance for iOS users
-      if (isIOSSafari && !isModernIOS) {
-        toast({
-          title: "توجه برای کاربران iOS",
-          description: "در دستگاه‌های iOS، برای عملکرد بهتر از Safari استفاده کنید و اطمینان حاصل کنید که iOS 14.5 یا بالاتر نصب شده باشد.",
-          duration: 6000,
-        });
-      }
-      
-      setIsSupported(true);
-      return true;
-    };
+  const [supportDetails, setSupportDetails] = useState({
+    hasSpeechRecognition: false,
+    hasWebkitSpeechRecognition: false,
+    hasMozillaSpeechRecognition: false,
+    hasMsSpeechRecognition: false,
+    hasGetUserMedia: false,
+    hasMediaDevices: false,
+    hasEnumerateDevices: false,
+    canUseVoiceRecognition: false
+  });
+
+  const checkBrowserSupport = () => {
+    if (typeof window === 'undefined') {
+      return false;
+    }
     
-    checkBrowserSupport();
-  }, [toast]);
+    // بررسی پشتیبانی از تشخیص گفتار
+    const hasSpeechRecognition = 'SpeechRecognition' in window;
+    const hasWebkitSpeechRecognition = 'webkitSpeechRecognition' in window;
+    const hasMozillaSpeechRecognition = 'mozSpeechRecognition' in window;
+    const hasMsSpeechRecognition = 'msSpeechRecognition' in window;
+    
+    // بررسی دسترسی به میکروفون
+    const hasGetUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    const hasMediaDevices = 'mediaDevices' in navigator;
+    const hasEnumerateDevices = !!(navigator.mediaDevices && navigator.mediaDevices.enumerateDevices);
+    
+    // آیا تشخیص گفتار کاملاً پشتیبانی می‌شود؟
+    const canUseVoiceRecognition = hasSpeechRecognition || 
+                                 hasWebkitSpeechRecognition || 
+                                 hasMozillaSpeechRecognition ||
+                                 hasMsSpeechRecognition;
+    
+    // ذخیره جزئیات پشتیبانی
+    setSupportDetails({
+      hasSpeechRecognition,
+      hasWebkitSpeechRecognition,
+      hasMozillaSpeechRecognition,
+      hasMsSpeechRecognition,
+      hasGetUserMedia,
+      hasMediaDevices,
+      hasEnumerateDevices,
+      canUseVoiceRecognition
+    });
+    
+    // آیا مرورگر می‌تواند از قابلیت تشخیص گفتار استفاده کند؟
+    const isBrowserSupported = canUseVoiceRecognition && hasGetUserMedia;
+    setIsSupported(isBrowserSupported);
+    
+    return isBrowserSupported;
+  };
   
-  return { isSupported, checkBrowserSupport: () => isSupported };
+  // بررسی پشتیبانی مرورگر در زمان بارگذاری
+  useEffect(() => {
+    checkBrowserSupport();
+  }, []);
+  
+  return {
+    isSupported,
+    supportDetails,
+    checkBrowserSupport
+  };
 }

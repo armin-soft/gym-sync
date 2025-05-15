@@ -36,16 +36,31 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
   // Get categories from hook
   const { categories } = useExerciseData();
   const { toast } = useToast();
-  const { requestMicrophonePermission } = useMicrophonePermission();
+  const { requestMicrophonePermission, checkMicrophoneAvailability } = useMicrophonePermission();
   
   // Request microphone permission when dialog opens with enhanced cross-platform handling
   useEffect(() => {
     if (isAddDialogOpen) {
       const initiatePermissionRequest = async () => {
         try {
+          // بررسی وجود میکروفون قبل از درخواست دسترسی
+          const hasMicrophone = await checkMicrophoneAvailability();
+          
+          if (hasMicrophone === false) {
+            toast({
+              title: "میکروفون یافت نشد",
+              description: "هیچ میکروفونی به دستگاه متصل نیست یا توسط سیستم‌عامل شناسایی نشده است. می‌توانید از ورودی متنی استفاده کنید.",
+              variant: "destructive",
+              duration: 6000,
+            });
+            return;
+          }
+          
           // Check user agent to adapt behavior
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
           const isAndroid = /android/i.test(navigator.userAgent);
+          const isChrome = typeof navigator !== 'undefined' && /Chrome/.test(navigator.userAgent) && !/Edge/.test(navigator.userAgent);
+          const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
           
           if (isIOS) {
             // On iOS, show a message first to improve UX
@@ -62,28 +77,35 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
           const hasPermission = await requestMicrophonePermission();
           
           if (!hasPermission) {
-            if (isAndroid) {
+            // راهنمایی‌های مخصوص هر مرورگر
+            if (isAndroid && isChrome) {
               toast({
-                title: "کاربران اندروید",
-                description: "اگر گزینه‌ای برای دسترسی به میکروفون ندیدید، ممکن است نیاز به بررسی مجوزهای برنامه در تنظیمات مرورگر داشته باشید.",
+                title: "راهنمایی کاربران Android با Chrome",
+                description: "لطفا روی آیکون قفل در نوار آدرس کلیک کرده و دسترسی میکروفون را فعال کنید.",
                 duration: 6000,
               });
-            } else if (isIOS) {
+            } else if (isIOS && isSafari) {
               toast({
-                title: "کاربران iOS",
-                description: "در صورت عدم نمایش گزینه دسترسی، به تنظیمات Safari در دستگاه خود بروید و دسترسی میکروفون را فعال کنید.",
+                title: "راهنمایی کاربران iOS با Safari",
+                description: "در تنظیمات Safari > بخش دسترسی‌های وب‌سایت، دسترسی به میکروفون را برای این سایت فعال کنید.",
+                duration: 6000,
+              });
+            } else if (isChrome) {
+              toast({
+                title: "راهنمایی کاربران Chrome",
+                description: "برای فعال کردن میکروفون، روی آیکون دوربین/میکروفون در نوار آدرس کلیک کنید.",
                 duration: 6000,
               });
             }
           }
         } catch (error) {
-          console.error("Error requesting microphone permission:", error);
+          console.error("خطا در درخواست دسترسی به میکروفون:", error);
         }
       };
       
       initiatePermissionRequest();
     }
-  }, [isAddDialogOpen, toast, requestMicrophonePermission]);
+  }, [isAddDialogOpen, toast, requestMicrophonePermission, checkMicrophoneAvailability]);
 
   const handleDelete = () => {
     if (selectedExerciseIds.length === 1) {

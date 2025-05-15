@@ -30,9 +30,9 @@ export function AdvancedSpeechInput({
   const [showPermissionReminder, setShowPermissionReminder] = useState(false);
   const { toast } = useToast();
   const [animateButton, setAnimateButton] = useState(false);
-  const { isSupported } = useBrowserSupport();
-  const { permissionStatus, requestMicrophonePermission } = useMicrophonePermission();
-  const [isMicrophoneAvailable, setIsMicrophoneAvailable] = useState(true);
+  const { isSupported, supportDetails } = useBrowserSupport();
+  const { permissionStatus, requestMicrophonePermission, isDeviceAvailable, checkMicrophoneAvailability } = useMicrophonePermission();
+  const [isMicrophoneAvailable, setIsMicrophoneAvailable] = useState<boolean | null>(null);
 
   const {
     transcript,
@@ -51,6 +51,9 @@ export function AdvancedSpeechInput({
   // Device detection for platform-specific UI optimizations
   const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
   const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
+  const isChrome = typeof navigator !== 'undefined' && /Chrome/.test(navigator.userAgent) && !/Edge/.test(navigator.userAgent);
+  const isFirefox = typeof navigator !== 'undefined' && /Firefox/.test(navigator.userAgent);
+  const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isMobile = isIOS || isAndroid;
   
   // Local state for text input
@@ -61,37 +64,65 @@ export function AdvancedSpeechInput({
     setTextInputValue(value);
   }, [value]);
 
-  // Check if microphone is available
+  // بررسی وجود میکروفون در هنگام بارگذاری کامپوننت
   useEffect(() => {
-    const checkMicrophoneAvailability = async () => {
+    // بررسی اولیه وجود و دسترسی به میکروفون
+    const checkMicAvailability = async () => {
       try {
-        if ('mediaDevices' in navigator && 'enumerateDevices' in navigator.mediaDevices) {
-          const devices = await navigator.mediaDevices.enumerateDevices();
-          const hasAudioInput = devices.some(device => device.kind === 'audioinput');
-          setIsMicrophoneAvailable(hasAudioInput);
-          
-          if (!hasAudioInput) {
-            setShowPermissionReminder(true);
-          }
+        const available = await checkMicrophoneAvailability();
+        setIsMicrophoneAvailable(available);
+        
+        if (available === false) {
+          setShowPermissionReminder(true);
+          // نمایش پیام در مورد عدم وجود میکروفون
+          toast({
+            title: "میکروفون یافت نشد",
+            description: "هیچ میکروفونی به دستگاه متصل نیست یا توسط سیستم‌عامل شناسایی نشده است.",
+            variant: "destructive",
+          });
         }
       } catch (error) {
-        console.error("Error checking microphone availability:", error);
+        console.error("خطا در بررسی میکروفون:", error);
       }
     };
     
-    checkMicrophoneAvailability();
-  }, []);
+    // بررسی پشتیبانی مرورگر
+    if (!isSupported) {
+      toast({
+        title: "عدم پشتیبانی مرورگر",
+        description: "مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند. از Chrome، Edge، Safari یا Firefox استفاده کنید.",
+        variant: "destructive",
+      });
+    } else {
+      checkMicAvailability();
+    }
+  }, [isSupported, toast, checkMicrophoneAvailability]);
 
+  // راهنمایی‌های مخصوص مرورگرها
   useEffect(() => {
-    // Show permission reminder after a delay on mobile devices
     if (isMobile && permissionStatus !== 'granted') {
+      // راهنمایی‌های مرورگرهای موبایل
       const timer = setTimeout(() => {
         setShowPermissionReminder(true);
+        
+        if (isIOS && isSafari) {
+          toast({
+            title: "نکته برای کاربران iOS در Safari",
+            description: "برای فعال‌سازی میکروفون در Safari، به تنظیمات سایت بروید و دسترسی میکروفون را فعال کنید.",
+            duration: 6000,
+          });
+        } else if (isAndroid && isChrome) {
+          toast({
+            title: "نکته برای کاربران Android",
+            description: "اگر پنجره‌ای برای دسترسی میکروفون ندیدید، روی آیکون قفل در نوار آدرس کلیک کنید.",
+            duration: 6000,
+          });
+        }
       }, 2000);
       
       return () => clearTimeout(timer);
     }
-  }, [isMobile, permissionStatus]);
+  }, [isMobile, permissionStatus, isIOS, isAndroid, isChrome, isSafari, toast]);
 
   useEffect(() => {
     if (isListening) {
@@ -112,18 +143,19 @@ export function AdvancedSpeechInput({
       });
     } else {
       try {
-        // Check if microphone is available first
-        if (!isMicrophoneAvailable) {
+        // بررسی مجدد وجود میکروفون قبل از شروع به کار
+        const micAvailable = await checkMicrophoneAvailability();
+        
+        if (!micAvailable) {
           toast({
             title: "میکروفون یافت نشد",
-            description: "هیچ میکروفونی به سیستم شما متصل نیست یا مرورگر قادر به شناسایی آن نیست.",
+            description: "لطفاً اتصال میکروفون خود را بررسی کنید و مطمئن شوید که به درستی به سیستم متصل شده است.",
             variant: "destructive",
           });
           return;
         }
         
-        // Request permission before starting
-        await requestMicrophonePermission();
+        // شروع ضبط صدا
         await startListening();
         toast({
           title: "ضبط صدا شروع شد",
@@ -225,10 +257,10 @@ export function AdvancedSpeechInput({
               isListening 
                 ? "bg-red-500 hover:bg-red-600" 
                 : "bg-indigo-600 hover:bg-indigo-700",
-              (!isSupported || !isMicrophoneAvailable) && "opacity-50 cursor-not-allowed"
+              (!isSupported || isMicrophoneAvailable === false) && "opacity-50 cursor-not-allowed"
             )}
-            onClick={() => isSupported && isMicrophoneAvailable && handleToggleListen()}
-            disabled={!isSupported || !isMicrophoneAvailable}
+            onClick={() => isSupported && isMicrophoneAvailable !== false && handleToggleListen()}
+            disabled={!isSupported || isMicrophoneAvailable === false}
             onMouseEnter={() => setShowPopover(true)}
             onMouseLeave={() => setShowPopover(false)}
             aria-label={isListening ? "توقف ضبط صدا" : "شروع ضبط صدا"}
@@ -277,21 +309,48 @@ export function AdvancedSpeechInput({
         </motion.div>
       )}
       
-      {/* Mobile permission reminder or microphone not found */}
+      {/* نمایش وضعیت دسترسی میکروفون یا هشدارها */}
       <AnimatePresence>
-        {(showPermissionReminder && ((isMobile && permissionStatus !== 'granted') || !isMicrophoneAvailable)) && (
+        {(showPermissionReminder && ((isMobile && permissionStatus !== 'granted') || isMicrophoneAvailable === false)) && (
           <motion.div
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             className="mt-2 text-xs text-amber-600 dark:text-amber-500 text-center px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-md"
           >
-            {!isMicrophoneAvailable ? (
-              "هیچ میکروفونی به سیستم متصل نیست یا شناسایی نشده است"
-            ) : isIOS ? 
-              "در iOS باید دسترسی میکروفون را در تنظیمات مرورگر خود فعال کنید" : 
+            {isMicrophoneAvailable === false ? (
+              <>
+                <p className="font-bold mb-1">میکروفونی یافت نشد</p>
+                <p>لطفاً اتصال میکروفون خود را بررسی کرده و از اتصال صحیح آن به دستگاه اطمینان حاصل کنید.</p>
+              </>
+            ) : isIOS ? (
+              <>
+                <p className="font-bold mb-1">راهنمای دسترسی میکروفون در iOS</p>
+                <p>لطفاً به تنظیمات Safari بروید و دسترسی به میکروفون را برای این وب‌سایت فعال کنید.</p>
+              </>
+            ) : isAndroid ? (
+              <>
+                <p className="font-bold mb-1">راهنمای دسترسی میکروفون در Android</p>
+                <p>روی آیکون قفل/دوربین در نوار آدرس کلیک کرده و دسترسی به میکروفون را فعال کنید.</p>
+              </>
+            ) : (
               "لطفاً به برنامه اجازه دسترسی به میکروفون را بدهید"
-            }
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* اگر مرورگر تشخیص گفتار را پشتیبانی نمی‌کند */}
+      <AnimatePresence>
+        {!isSupported && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-2 text-xs text-rose-600 dark:text-rose-500 text-center px-2 py-1 bg-rose-50 dark:bg-rose-900/20 rounded-md"
+          >
+            <p className="font-bold mb-1">مرورگر شما تشخیص گفتار را پشتیبانی نمی‌کند</p>
+            <p>لطفاً از مرورگرهای Chrome، Edge، Firefox یا Safari به‌روز استفاده کنید.</p>
           </motion.div>
         )}
       </AnimatePresence>

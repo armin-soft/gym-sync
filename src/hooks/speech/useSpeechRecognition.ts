@@ -55,24 +55,17 @@ export function useSpeechRecognition({
   
   // Start listening function with improved cross-browser handling
   const startListening = useCallback(async () => {
-    if (!isSupported) return Promise.reject("عدم پشتیبانی مرورگر");
+    if (!isSupported) {
+      toast({
+        title: "عدم پشتیبانی مرورگر",
+        description: "مرورگر شما از قابلیت تشخیص گفتار پشتیبانی نمی‌کند. لطفاً از مرورگر دیگری استفاده کنید.",
+        variant: "destructive",
+      });
+      return Promise.reject("عدم پشتیبانی مرورگر");
+    }
 
     try {
-      // First check if microphone devices are available
-      if ('mediaDevices' in navigator && 'enumerateDevices' in navigator.mediaDevices) {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasAudioInput = devices.some(device => device.kind === 'audioinput');
-        
-        if (!hasAudioInput) {
-          toast({
-            title: "میکروفون یافت نشد",
-            description: "هیچ میکروفون یا دستگاه ورودی صدایی به سیستم متصل نیست.",
-            variant: "destructive",
-          });
-          return Promise.reject("میکروفون یافت نشد");
-        }
-      }
-      
+      // اطمینان از وجود میکروفون قبل از درخواست دسترسی
       // Check and request microphone access
       const hasPermission = await requestMicrophonePermission();
       if (!hasPermission) return Promise.reject("عدم دسترسی به میکروفون");
