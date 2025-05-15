@@ -1,13 +1,14 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { FormInfoSection } from "./FormInfoSection";
-import { FormExerciseSection } from "./FormExerciseSection";
-import { FormMealsSection } from "./FormMealsSection";
-import { FormSupplementsSection } from "./FormSupplementsSection";
-import { FormActionArea } from "./FormActionArea";
+import { FormInfoSection } from "@/components/students/dialogs/FormInfoSection";
+import { FormExerciseSection } from "@/components/students/dialogs/FormExerciseSection";
+import { FormMealsSection } from "@/components/students/dialogs/FormMealsSection";
+import { FormSupplementsSection } from "@/components/students/dialogs/FormSupplementsSection";
+import { FormActionArea } from "@/components/students/dialogs/FormActionArea";
 import { Student } from "../StudentTypes";
-import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog"; // Update import
+import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog";
 
 interface DialogContentCoreProps {
   student?: Student;
@@ -16,7 +17,7 @@ interface DialogContentCoreProps {
   loading?: boolean;
 }
 
-// Update Student type if wrist is missing
+// Update Student type declaration
 declare module "@/components/students/StudentTypes" {
   interface Student {
     wrist?: string;
@@ -35,7 +36,7 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
   const [age, setAge] = useState<string>(student?.age?.toString() || "");
   const [height, setHeight] = useState<string>(student?.height?.toString() || "");
   const [weight, setWeight] = useState<string>(student?.weight?.toString() || "");
-  const [wrist, setWrist] = useState<string>(student?.wrist?.toString() || "");
+  const [wrist, setWrist] = useState<string>(student?.wrist || "");
   const [phone, setPhone] = useState<string>(student?.phone || "");
   const [goal, setGoal] = useState<string>(student?.goal || "");
   const [exercises, setExercises] = useState<number[]>(student?.exercises || []);
@@ -80,7 +81,6 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
     const parsedAge = age ? parseInt(age) : undefined;
     const parsedHeight = height ? parseInt(height) : undefined;
     const parsedWeight = weight ? parseInt(weight) : undefined;
-    const parsedWrist = wrist ? parseInt(wrist) : undefined;
     
     // Create new student object or update existing one
     const updatedStudent: Student = {
@@ -89,7 +89,7 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
       age: parsedAge,
       height: parsedHeight,
       weight: parsedWeight,
-      wrist: parsedWrist?.toString(), // Store as string to match Student type
+      wrist, // Store wrist as string to match Student type
       phone,
       goal,
       exercises,
@@ -202,3 +202,5 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
     </div>
   );
 };
+
+export { DialogContentCore as StudentDialogContent };

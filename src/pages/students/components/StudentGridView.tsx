@@ -7,22 +7,21 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface StudentGridViewProps {
   students: Student[];
-  isProfileComplete: boolean;
+  setStudents: React.Dispatch<React.SetStateAction<Student[]>>;
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
-  onAddExercise: (student: Student) => void;
-  onAddDiet: (student: Student) => void;
-  onAddSupplement: (student: Student) => void;
+  onAddExercise?: (student: Student) => void;
+  onAddDiet?: (student: Student) => void;
+  onAddSupplement?: (student: Student) => void;
+  isProfileComplete?: boolean;
 }
 
 export const StudentGridView: React.FC<StudentGridViewProps> = ({
   students,
-  isProfileComplete,
+  setStudents,
   onEdit,
   onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
+  isProfileComplete = true,
 }) => {
   const deviceInfo = useDeviceInfo();
   
@@ -77,10 +76,8 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
               student={student}
               onEdit={() => onEdit(student)}
               onDelete={() => onDelete(student.id)}
-              onAddExercise={() => onAddExercise(student)}
-              onAddDiet={() => onAddDiet(student)}
-              onAddSupplement={() => onAddSupplement(student)}
-              isProfileComplete={isProfileComplete}
+              setStudents={setStudents}
+              students={students}
             />
           </motion.div>
         ))}

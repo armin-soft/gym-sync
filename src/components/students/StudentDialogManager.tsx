@@ -1,20 +1,10 @@
 
 import React, { forwardRef, useImperativeHandle } from "react";
-import { Student } from "@/components/students/StudentTypes";
+import { Student } from "./StudentTypes";
+import { StudentDialog } from "./StudentDialog";
+import { ExerciseWithSets } from "@/hooks/exercise-selection";
 import { useStudentDialogs } from "@/hooks/useStudentDialogs";
-import { useStudentDialogHandlers, DialogHandlerOptions } from "@/hooks/useStudentDialogHandlers";
-import { StudentDialogContent } from "@/components/students/dialogs/StudentDialogContent";
-import { ExerciseWithSets } from "@/types/exercise";
-
-interface StudentDialogManagerProps {
-  onSave: (data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => boolean;
-  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: number[], studentId: number) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
-  exercises: any[];
-  meals: any[];
-  supplements: any[];
-}
+import { StudentDialogContent as StudentDialogContentWrapper } from "@/components/students/dialogs/StudentDialogContent";
 
 export interface StudentDialogManagerRef {
   handleAdd: () => void;
@@ -25,99 +15,96 @@ export interface StudentDialogManagerRef {
   handleDownload: (student: Student) => void;
 }
 
-export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentDialogManagerProps>(({
-  onSave,
-  onSaveExercises,
-  onSaveDiet,
-  onSaveSupplements,
-  exercises,
-  meals,
-  supplements
-}, ref) => {
-  const {
-    // Dialog states
-    selectedStudent,
-    isDialogOpen,
-    setIsDialogOpen,
-    isExerciseDialogOpen,
-    setIsExerciseDialogOpen,
-    isDietDialogOpen,
-    setIsDietDialogOpen,
-    isSupplementDialogOpen,
-    setIsSupplementDialogOpen,
-    isDownloadDialogOpen,
-    setIsDownloadDialogOpen,
-    
-    // Selected students for different dialogs
-    selectedStudentForExercise,
-    selectedStudentForDiet,
-    selectedStudentForSupplement,
-    selectedStudentForDownload,
-    
-    // Handler functions
-    handleEdit,
-    handleAdd,
-    handleAddExercise,
-    handleAddDiet,
-    handleAddSupplement,
-    handleDownload
-  } = useStudentDialogs();
+interface StudentDialogManagerProps {
+  onSave: (student: Student) => void;
+  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
+  onSaveDiet: (mealIds: number[], studentId: number) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
+  exercises: any[];
+  meals: any[];
+  supplements: any[];
+}
 
-  const handlerOptions: DialogHandlerOptions = {
-    onSave,
-    onSaveExercises,
-    onSaveDiet,
+export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentDialogManagerProps>(
+  ({ 
+    onSave, 
+    onSaveExercises, 
+    onSaveDiet, 
     onSaveSupplements,
-    selectedStudent,
-    selectedStudentForExercise,
-    selectedStudentForDiet,
-    selectedStudentForSupplement,
-    setIsExerciseDialogOpen,
-    setIsDietDialogOpen,
-    setIsSupplementDialogOpen,
-    setIsDialogOpen
-  };
+    exercises,
+    meals,
+    supplements 
+  }, ref) => {
+    const {
+      selectedStudent,
+      isDialogOpen,
+      setIsDialogOpen,
+      isExerciseDialogOpen,
+      setIsExerciseDialogOpen,
+      isDietDialogOpen,
+      setIsDietDialogOpen,
+      isSupplementDialogOpen,
+      setIsSupplementDialogOpen,
+      isDownloadDialogOpen,
+      setIsDownloadDialogOpen,
+      selectedStudentForExercise,
+      selectedStudentForDiet,
+      selectedStudentForSupplement,
+      selectedStudentForDownload,
+      handleEdit,
+      handleAdd,
+      handleAddExercise,
+      handleAddDiet,
+      handleAddSupplement,
+      handleDownload
+    } = useStudentDialogs();
 
-  const {
-    handleSaveWrapper,
-    handleSaveExercisesWrapper,
-    handleSaveDietWrapper,
-    handleSaveSupplementsWrapper
-  } = useStudentDialogHandlers(handlerOptions);
+    useImperativeHandle(ref, () => ({
+      handleAdd,
+      handleEdit,
+      handleAddExercise,
+      handleAddDiet,
+      handleAddSupplement,
+      handleDownload
+    }));
 
-  useImperativeHandle(ref, () => ({
-    handleAdd,
-    handleEdit,
-    handleAddExercise,
-    handleAddDiet,
-    handleAddSupplement,
-    handleDownload
-  }));
+    const handleSaveWrapper = (student: Student) => {
+      onSave(student);
+      setIsDialogOpen(false);
+    };
 
-  return (
-    <StudentDialogContent
-      isDialogOpen={isDialogOpen}
-      setIsDialogOpen={setIsDialogOpen}
-      isExerciseDialogOpen={isExerciseDialogOpen}
-      setIsExerciseDialogOpen={setIsExerciseDialogOpen}
-      isDietDialogOpen={isDietDialogOpen}
-      setIsDietDialogOpen={setIsDietDialogOpen}
-      isSupplementDialogOpen={isSupplementDialogOpen}
-      setIsSupplementDialogOpen={setIsSupplementDialogOpen}
-      isDownloadDialogOpen={isDownloadDialogOpen}
-      setIsDownloadDialogOpen={setIsDownloadDialogOpen}
-      selectedStudent={selectedStudent}
-      selectedStudentForExercise={selectedStudentForExercise}
-      selectedStudentForDiet={selectedStudentForDiet}
-      selectedStudentForSupplement={selectedStudentForSupplement}
-      selectedStudentForDownload={selectedStudentForDownload}
-      handleSaveWrapper={handleSaveWrapper}
-      handleSaveExercisesWrapper={handleSaveExercisesWrapper}
-      handleSaveDietWrapper={handleSaveDietWrapper}
-      handleSaveSupplementsWrapper={handleSaveSupplementsWrapper}
-      exercises={exercises}
-      meals={meals}
-      supplements={supplements}
-    />
-  );
-});
+    const handleSaveExercisesWrapper = (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+      return onSaveExercises(exercisesWithSets, studentId, dayNumber);
+    };
+
+    const handleSaveDietWrapper = (mealIds: number[], studentId: number) => {
+      return onSaveDiet(mealIds, studentId);
+    };
+
+    const handleSaveSupplementsWrapper = (data: {supplements: number[], vitamins: number[]}, studentId: number) => {
+      return onSaveSupplements(data, studentId);
+    };
+
+    return (
+      <>
+        <StudentDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onSave={handleSaveWrapper}
+          student={selectedStudent}
+        />
+        
+        {/* Render StudentDialogContentWrapper with the appropriate props */}
+        {selectedStudent && (
+          <StudentDialogContentWrapper
+            student={selectedStudent}
+            onSave={handleSaveWrapper}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        )}
+      </>
+    );
+  }
+);
+
+StudentDialogManager.displayName = "StudentDialogManager";

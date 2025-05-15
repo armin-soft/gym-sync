@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DumbellIcon } from "lucide-react";
+import { Dumbbell } from "lucide-react"; // Changed to Dumbbell which is the correct name
 
 interface FormExerciseSectionProps {
   active: boolean;
@@ -22,18 +22,6 @@ interface FormExerciseSectionProps {
   setExercisesDayDialogOpen: React.Dispatch<React.SetStateAction<{isOpen: boolean; day: number}>>;
   exercisesDayDialogOpen: {isOpen: boolean; day: number};
 }
-
-// Custom dumbell icon since Lucide doesn't have one
-const DumbellIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M6.5 6.5h11"></path>
-    <path d="M6.5 17.5h11"></path>
-    <path d="M4 8v8"></path>
-    <path d="M9 5v14"></path>
-    <path d="M15 5v14"></path>
-    <path d="M20 8v8"></path>
-  </svg>
-);
 
 export const FormExerciseSection: React.FC<FormExerciseSectionProps> = ({
   active,
@@ -61,7 +49,7 @@ export const FormExerciseSection: React.FC<FormExerciseSectionProps> = ({
         <div className="flex-1 pt-4">
           <TabsContent value="general" className="mt-0">
             <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg bg-muted/50">
-              <DumbellIcon />
+              <Dumbbell />
               <h3 className="mt-4 text-lg font-medium">تمرین‌های عمومی</h3>
               <p className="mt-2 text-sm text-muted-foreground text-center">
                 برنامه تمرینی عمومی برای شاگرد
@@ -128,7 +116,7 @@ const ExerciseDaySection: React.FC<{
 }> = ({ dayNumber, exercisesCount, onAddExercise }) => {
   return (
     <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg bg-muted/50">
-      <DumbellIcon />
+      <Dumbbell />
       <h3 className="mt-4 text-lg font-medium">تمرین‌های روز {dayNumber}</h3>
       <p className="mt-2 text-sm text-muted-foreground text-center">
         برنامه تمرینی روز {dayNumber} برای شاگرد

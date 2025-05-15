@@ -5,11 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Student } from "./StudentTypes";
 import { Progress } from "@/components/ui/progress";
 import { Edit, Trash2 } from "lucide-react";
-import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog"; // Update import
+import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog";
 import { useStudentSupplements } from "@/hooks/students/useStudentSupplements";
 import { useToast } from "@/hooks/use-toast";
-import { useStudentMeals } from "@/hooks/students/useStudentMeals";
-import { AddMealDialog } from "@/components/diet/AddMealDialog";
 import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
 
 interface StudentCardProps {
@@ -32,7 +30,6 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   const [showMealsDialog, setShowMealsDialog] = React.useState(false);
   const [showExercisesDialog, setShowExercisesDialog] = React.useState(false);
   
-  const { handleSaveMeals } = useStudentMeals(students, setStudents);
   const { handleSaveSupplements, supplements } = useStudentSupplements(students, setStudents);
   
   return (
@@ -111,20 +108,17 @@ export const StudentCard: React.FC<StudentCardProps> = ({
         onSave={(data) => handleSaveSupplements(data, student.id)}
         supplements={supplements}
       />
-
-      <AddMealDialog 
-        open={showMealsDialog}
-        onOpenChange={setShowMealsDialog}
-        onSave={(meals) => handleSaveMeals(meals, student.id)}
-        studentName={student.name}
-        initialMeals={student.meals || []}
-      />
       
       <StudentExerciseDialog
         open={showExercisesDialog}
         onOpenChange={setShowExercisesDialog}
-        student={student}
-        onSave={(type, exercises) => {
+        studentName={student.name}
+        initialExercises={student.exercises || []}
+        initialExercisesDay1={student.exercisesDay1 || []}
+        initialExercisesDay2={student.exercisesDay2 || []}
+        initialExercisesDay3={student.exercisesDay3 || []}
+        initialExercisesDay4={student.exercisesDay4 || []}
+        onSave={(exercisesWithSets, dayNumber) => {
           // TODO: Handle this properly with the student exercise hook when created
           toast({
             description: "تمرینات ذخیره شد"
