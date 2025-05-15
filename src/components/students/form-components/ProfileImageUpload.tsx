@@ -38,7 +38,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   };
 
   const handleReset = () => {
-    onChange("/placeholder.svg");
+    onChange("/Assets/Image/placeholder.svg");
   };
 
   return (
@@ -48,7 +48,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
           <AvatarFallback className="bg-muted">
             <RefreshCw className="h-8 w-8 text-muted-foreground animate-spin" />
           </AvatarFallback>
-        ) : previewImage && previewImage !== "/placeholder.svg" ? (
+        ) : previewImage && previewImage !== "/Assets/Image/placeholder.svg" ? (
           <AvatarImage 
             src={previewImage} 
             alt="تصویر پروفایل" 
@@ -79,7 +79,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
           />
         </Button>
         
-        {previewImage && previewImage !== "/placeholder.svg" && (
+        {previewImage && previewImage !== "/Assets/Image/placeholder.svg" && (
           <Button
             type="button"
             variant="outline"
