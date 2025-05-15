@@ -1,54 +1,23 @@
-
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import { Layout } from "@/components/Layout";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "@/hooks/use-theme";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { getBasePath } from "./utils/basePath";
-import "./App.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "@/routes/AppRoutes";
+import { OfflineSpeechProvider } from "@/providers/OfflineSpeechProvider";
 
-// Create a new query client instance with proper configuration
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1,
-    },
-  },
-});
-
-// The global declaration is now handled in vite-env.d.ts
-// so we remove the redundant declaration here
-
-function AppContent() {
-  return (
-    <AuthWrapper>
-      <Layout>
-        <AppRoutes />
-      </Layout>
-    </AuthWrapper>
-  );
-}
+const queryClient = new QueryClient();
 
 function App() {
-  // Always use root path as base - this is safer for all environments
-  const basePath = '/';
-  
-  console.log("Using basename for router:", basePath);
-  
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <BrowserRouter basename={basePath}>
-            <AppContent />
-            <Toaster />
-          </BrowserRouter>
-        </TooltipProvider>
+      <ThemeProvider defaultTheme="light" storageKey="gym-sync-theme">
+        <Toaster />
+        <OfflineSpeechProvider>
+          <Router>
+            <AppRoutes />
+          </Router>
+        </OfflineSpeechProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
