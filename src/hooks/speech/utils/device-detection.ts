@@ -40,9 +40,10 @@ export async function checkMicrophoneAvailability(): Promise<boolean | null> {
     } else {
       // تلاش برای دسترسی مستقیم به میکروفون در مرورگرهایی که از enumerateDevices پشتیبانی نمی‌کنند
       try {
-        // Ensure mediaDevices exists and has getUserMedia - fix the TypeScript error
-        if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Cast mediaDevices to any to avoid TypeScript issues with getUserMedia
+        const mediaDevices = navigator.mediaDevices as any;
+        if (mediaDevices && typeof mediaDevices.getUserMedia === 'function') {
+          const stream = await mediaDevices.getUserMedia({ audio: true });
           stream.getTracks().forEach(track => track.stop());
           return true;
         } else {
