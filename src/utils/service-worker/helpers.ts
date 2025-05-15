@@ -48,6 +48,7 @@ export function showUpdateNotification(): void {
   const currentTime = new Date().getTime();
   
   // Only show notification if 1 hour has passed since the last one
+  // Also prevent showing update notifications too frequently (within 10 minutes)
   if (currentTime - lastNotificationTime > 60 * 60 * 1000) {
     showToast({
       title: 'بروزرسانی جدید',
@@ -57,6 +58,9 @@ export function showUpdateNotification(): void {
       action: {
         label: 'بروزرسانی',
         onClick: () => {
+          // Set a flag to prevent multiple refreshes
+          localStorage.setItem('manual_refresh_triggered', 'true');
+          
           if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
               type: 'SKIP_WAITING'
@@ -70,3 +74,4 @@ export function showUpdateNotification(): void {
     localStorage.setItem('update_notification_time', currentTime.toString());
   }
 }
+

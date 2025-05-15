@@ -1,3 +1,4 @@
+
 // Main service worker entry point that orchestrates all modules
 // This file now uses simpler imports to avoid evaluation issues
 
@@ -44,8 +45,8 @@ self.createCleanRequest = function(originalRequest) {
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing...');
   
-  // Skip waiting to activate immediately
-  self.skipWaiting();
+  // Skip waiting to activate immediately - only on initial install
+  // self.skipWaiting(); - Removing automatic skipWaiting to prevent refreshes
   
   event.waitUntil(
     cacheInitialAssets()

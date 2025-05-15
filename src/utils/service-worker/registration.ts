@@ -130,10 +130,14 @@ function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration, curr
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (refreshing) return;
     
-    // Only refresh the page if the version has actually changed
-    if (lastKnownVersion !== currentVersion) {
+    // Only refresh if manual update was triggered or version changed
+    const manualRefreshTriggered = localStorage.getItem('manual_refresh_triggered') === 'true';
+    
+    if (manualRefreshTriggered || (lastKnownVersion !== currentVersion)) {
       refreshing = true;
       console.log('Controller changed, refreshing page...');
+      // Clear the manual refresh flag
+      localStorage.removeItem('manual_refresh_triggered');
       window.location.reload();
     } else {
       console.log('Controller changed but version is the same, not refreshing');
