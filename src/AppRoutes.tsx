@@ -10,6 +10,7 @@ import ExerciseMovements from "@/pages/exercises";
 import DietPlan from "@/pages/diet";
 import SupplementsVitamins from "@/pages/supplements";
 import BackupRestore from "@/pages/backup";
+import ServiceWorkerTest from "@/pages/service-worker-test";
 
 const AppRoutes = () => {
   // Note: All routes are relative to the basename set in App.tsx
@@ -49,6 +50,10 @@ const AppRoutes = () => {
     {
       path: "/Backup-Restore",
       element: <BackupRestore />,
+    },
+    {
+      path: "/service-worker-test",
+      element: <ServiceWorkerTest />,
     },
     // Add a wildcard route to handle any unknown paths
     {

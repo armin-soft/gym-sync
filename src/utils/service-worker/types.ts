@@ -3,11 +3,14 @@
  * Type definitions for service worker functionality
  */
 
+// Define toast variants to match the application's toast system
+export type ToastVariant = "default" | "destructive" | "success" | "warning";
+
 // Toast notification options
 export interface ToastOptions {
   title: string;
   description: string;
-  variant?: "default" | "destructive" | "success" | "warning" | "info";
+  variant?: ToastVariant;
   duration?: number;
   action?: {
     label: string;
@@ -18,7 +21,7 @@ export interface ToastOptions {
 // Extend Window interface to include service worker registration
 declare global {
   interface Window {
-    swRegistration: ServiceWorkerRegistration;
-    showToast: (options: ToastOptions) => void;
+    swRegistration?: ServiceWorkerRegistration;
+    showToast?: (options: ToastOptions) => void;
   }
 }

@@ -3,7 +3,7 @@
  * Helper functions for service worker registration
  */
 
-import { ToastOptions } from './types';
+import { ToastOptions, ToastVariant } from './types';
 import manifestData from '@/Manifest.json';
 
 /**
