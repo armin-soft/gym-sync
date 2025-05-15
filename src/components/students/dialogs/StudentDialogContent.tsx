@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -10,14 +9,21 @@ import { FormActionArea } from "./FormActionArea";
 import { Student } from "../StudentTypes";
 import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog"; // Update import
 
-interface StudentDialogContentProps {
+interface DialogContentCoreProps {
   student?: Student;
   onSave: (student: Student) => void;
   onClose: () => void;
   loading?: boolean;
 }
 
-export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
+// Update Student type if wrist is missing
+declare module "@/components/students/StudentTypes" {
+  interface Student {
+    wrist?: string;
+  }
+}
+
+export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
   student,
   onSave,
   onClose,
@@ -70,14 +76,20 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
     
     const progress = Math.round((progressCount / 4) * 100);
     
+    // Parse numeric values
+    const parsedAge = age ? parseInt(age) : undefined;
+    const parsedHeight = height ? parseInt(height) : undefined;
+    const parsedWeight = weight ? parseInt(weight) : undefined;
+    const parsedWrist = wrist ? parseInt(wrist) : undefined;
+    
     // Create new student object or update existing one
     const updatedStudent: Student = {
       id: student?.id || Date.now(),
       name,
-      age: age ? parseInt(age) : undefined,
-      height: height ? parseInt(height) : undefined,
-      weight: weight ? parseInt(weight) : undefined,
-      wrist: wrist ? parseInt(wrist) : undefined,
+      age: parsedAge,
+      height: parsedHeight,
+      weight: parsedWeight,
+      wrist: parsedWrist?.toString(), // Store as string to match Student type
       phone,
       goal,
       exercises,

@@ -81,14 +81,14 @@ export const SupplementListView: React.FC<SupplementListViewProps> = ({
                   )}>
                     {item.dosage && (
                       <div className="flex items-center gap-1">
-                        <Star className={deviceInfo.isMobile ? "h-3 w-3" : "h-3.5 w-3.5"} className="text-amber-500" />
+                        <Star size={deviceInfo.isMobile ? 12 : 14} className="text-amber-500" />
                         <span className="text-muted-foreground">{item.dosage}</span>
                       </div>
                     )}
                     
                     {item.timing && (
                       <div className="flex items-center gap-1">
-                        <Clock className={deviceInfo.isMobile ? "h-3 w-3" : "h-3.5 w-3.5"} className="text-blue-500" />
+                        <Clock size={deviceInfo.isMobile ? 12 : 14} className="text-blue-500" />
                         <span className="text-muted-foreground">{item.timing}</span>
                       </div>
                     )}

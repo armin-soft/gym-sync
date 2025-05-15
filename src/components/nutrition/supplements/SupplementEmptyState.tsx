@@ -25,7 +25,7 @@ export const SupplementEmptyState: React.FC<SupplementEmptyStateProps> = ({
         {activeTab === "supplements" ? (
           <Beaker className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color={activeTab === "supplements" ? "#8b5cf6" : "#3b82f6"} />
         ) : (
-          <Pill className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color={activeTab === "supplements" ? "#8b5cf6" : "#3b82f6"} />
+          <Pill className={deviceInfo.isMobile ? "h-6 w-6" : "h-8 w-8"} color={activeTab === "vitamins" ? "#3b82f6" : "#8b5cf6"} />
         )}
       </div>
       <h3 className={cn(

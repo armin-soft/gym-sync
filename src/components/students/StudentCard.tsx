@@ -10,7 +10,7 @@ import { useStudentSupplements } from "@/hooks/students/useStudentSupplements";
 import { useToast } from "@/hooks/use-toast";
 import { useStudentMeals } from "@/hooks/students/useStudentMeals";
 import { AddMealDialog } from "@/components/diet/AddMealDialog";
-import { StudentExerciseDialog } from "@/components/exercises/StudentExerciseDialog";
+import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
 
 interface StudentCardProps {
   student: Student;

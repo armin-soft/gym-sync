@@ -88,7 +88,7 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
                         "flex items-center gap-1",
                         deviceInfo.isMobile ? "text-[0.65rem]" : "text-xs"
                       )}>
-                        <Star className={deviceInfo.isMobile ? "h-3 w-3" : "h-3.5 w-3.5"} className="text-amber-500" />
+                        <Star className="text-amber-500" size={deviceInfo.isMobile ? 12 : 14} />
                         <span className="text-muted-foreground">{item.dosage}</span>
                       </div>
                     )}
@@ -97,7 +97,7 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
                         "flex items-center gap-1",
                         deviceInfo.isMobile ? "text-[0.65rem]" : "text-xs"
                       )}>
-                        <Clock className={deviceInfo.isMobile ? "h-3 w-3" : "h-3.5 w-3.5"} className="text-blue-500" />
+                        <Clock className="text-blue-500" size={deviceInfo.isMobile ? 12 : 14} />
                         <span className="text-muted-foreground">{item.timing}</span>
                       </div>
                     )}
