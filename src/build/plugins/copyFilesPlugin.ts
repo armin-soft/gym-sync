@@ -19,6 +19,9 @@ export const copyFilesPlugin = () => {
         if (!fs.existsSync('dist/Assets/Script')) {
           fs.mkdirSync('dist/Assets/Script', { recursive: true });
         }
+        if (!fs.existsSync('dist/service-worker')) {
+          fs.mkdirSync('dist/service-worker', { recursive: true });
+        }
         
         // کپی Manifest.json از src به ریشه dist، جلوگیری از تکرار
         if (fs.existsSync('src/Manifest.json')) {
@@ -32,6 +35,18 @@ export const copyFilesPlugin = () => {
         // کپی Service-Worker.js به dist root 
         fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
         console.log('Copied Service-Worker.js to dist root');
+
+        // کپی ماژول‌های سرویس ورکر
+        if (fs.existsSync('public/service-worker')) {
+          const serviceWorkerFiles = fs.readdirSync('public/service-worker');
+          serviceWorkerFiles.forEach(file => {
+            fs.copyFileSync(
+              `public/service-worker/${file}`, 
+              `dist/service-worker/${file}`
+            );
+            console.log(`Copied service worker module: ${file}`);
+          });
+        }
 
         // کپی همچنین به مسیر Assets/Script
         fs.copyFileSync('Service-Worker.js', 'dist/Assets/Script/ServiceWorker.js');
