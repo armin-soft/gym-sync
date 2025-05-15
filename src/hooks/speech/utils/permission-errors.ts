@@ -1,5 +1,5 @@
 
-import { type Toast as ToastProps } from "@/hooks/toast/toast-types";
+import type { Toast } from "@/hooks/toast/toast-types";
 
 interface BrowserInfo {
   isChrome: boolean;
@@ -42,7 +42,7 @@ export function getBrowserSpecificPermissionInstructions(): string {
 /**
  * Generate error toast message based on the error type
  */
-export function getErrorToast(error: any): ToastProps {
+export function getErrorToast(error: any): Toast {
   if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
     const browserSpecificMsg = getBrowserSpecificPermissionInstructions();
     

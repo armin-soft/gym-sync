@@ -1,60 +1,32 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useMicrophonePermission } from "./useMicrophonePermission";
 import { useBrowserSupport } from "./useBrowserSupport";
 import { useSpeechRecognitionErrors } from "./useSpeechRecognitionErrors";
+import { useRecognitionRestart } from "./useRecognitionRestart";
+import { useRecognitionState } from "./useRecognitionState";
 
 export function useRecognitionCore() {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const recognitionRef = useRef<any>(null);
-  const restartTimeoutRef = useRef<number | null>(null);
-  const restartCountRef = useRef<number>(0);
   
-  // Initialize a state object for recognition state
-  const [recognitionState, setRecognitionState] = useState({
-    transcript: "",
-    interimTranscript: "",
-    isRecording: false,
-    isStopped: false,
-    autoRestart: true,
-    error: "",
-    startTime: 0
-  });
-  
+  const { recognitionState, setRecognitionState } = useRecognitionState();
   const { toast } = useToast();
   const { requestMicrophonePermission } = useMicrophonePermission();
   const { showRecordingStartedToast, showRecordingStoppedToast } = useSpeechRecognitionErrors();
   const { checkBrowserSupport } = useBrowserSupport();
   
-  // Helper function to restart recognition
-  const handleRestart = useCallback(() => {
-    if (!recognitionRef.current || recognitionState.isStopped) return;
-
-    try {
-      recognitionRef.current.start();
-      setRecognitionState({
-        ...recognitionState,
-        isRecording: true,
-        startTime: Date.now(),
-      });
-      
-      // Safely clear timeout reference
-      if (restartTimeoutRef.current) {
-        window.clearTimeout(restartTimeoutRef.current);
-        restartTimeoutRef.current = null;
-      }
-    } catch (error) {
-      console.error('Error restarting recognition:', error);
-      setRecognitionState({
-        ...recognitionState,
-        error: 'خطا در شروع مجدد تشخیص گفتار',
-        isRecording: false,
-        isStopped: true,
-      });
-    }
-  }, [recognitionRef.current, recognitionState]);
+  const { 
+    handleRestart, 
+    restartTimeoutRef, 
+    restartCountRef 
+  } = useRecognitionRestart({
+    recognition: recognitionRef.current,
+    state: recognitionState,
+    setState: setRecognitionState
+  });
 
   // Check browser support on mount
   useEffect(() => {

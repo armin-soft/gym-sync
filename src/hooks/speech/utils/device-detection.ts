@@ -42,10 +42,8 @@ export async function checkMicrophoneAvailability(): Promise<boolean | null> {
       try {
         // Ensure mediaDevices exists and has getUserMedia
         if ('mediaDevices' in navigator) {
-          const mediaDevices = navigator.mediaDevices;
-          
-          if (mediaDevices && typeof mediaDevices.getUserMedia === 'function') {
-            const stream = await mediaDevices.getUserMedia({ audio: true });
+          if ('getUserMedia' in navigator.mediaDevices) {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             stream.getTracks().forEach(track => track.stop());
             return true;
           } else {
