@@ -6,7 +6,7 @@
 const APP_VERSION = 'gym-sync'; // Base name, version will be appended
 
 // Define global scope for TypeScript
-self.CACHE_NAME = `${APP_VERSION}-v16`;
+self.CACHE_NAME = `${APP_VERSION}-v17`;
 self.BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 
 // Core service worker functionality

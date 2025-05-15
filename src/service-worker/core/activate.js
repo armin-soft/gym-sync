@@ -5,7 +5,7 @@ import { CACHE_NAME } from './config.js';
 
 // Activate the service worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activated v1.8.0');
+  console.log('[Service Worker] Activated v1.9.0');
   
   // Clean up old caches
   event.waitUntil(

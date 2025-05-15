@@ -15,7 +15,7 @@ import './service-worker/core/message';
 import './service-worker/core/periodic-sync';
 
 // Log service worker initialization
-console.log('[Service Worker] Initializing service worker v1.8.0');
+console.log('[Service Worker] Initializing service worker v1.9.0');
 
 // Export empty object to satisfy TypeScript module requirements
 export {};

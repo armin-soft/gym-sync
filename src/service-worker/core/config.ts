@@ -5,7 +5,7 @@
 export const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 
 // Cache name with version - update this to force cache refresh
-export const CACHE_NAME = 'gym-sync-v16';
+export const CACHE_NAME = 'gym-sync-v17';
 
 // Function to fetch manifest and get version
 export async function getAppVersion(): Promise<string> {
