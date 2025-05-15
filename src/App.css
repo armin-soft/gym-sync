@@ -5,8 +5,57 @@
   margin: 0;
   padding: 0;
   text-align: center;
+  will-change: transform; /* بهبود عملکرد رندر */
+  -webkit-overflow-scrolling: touch; /* بهبود اسکرول در دستگاه‌های لمسی */
 }
 
+/* بهینه‌سازی انیمیشن‌ها برای عملکرد بهتر */
+@keyframes smooth-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* کلاس‌های کمکی برای بهبود عملکرد */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.stable-render {
+  contain: paint;
+}
+
+/* حالت بارگذاری */
+body.loading {
+  overflow: hidden;
+}
+
+.app-content {
+  will-change: opacity;
+  animation: smooth-fade-in 0.2s ease forwards;
+  animation-play-state: paused;
+}
+
+body:not(.loading) .app-content {
+  animation-play-state: running;
+}
+
+/* برای اندروید - حذف پرش‌های صفحه */
+@supports (-webkit-appearance:none) and (not (overflow:-webkit-marquee)) and (not (-ms-ime-align:auto)) and (not (-moz-appearance:none)) {
+  .android-optimized {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+}
+
+/* سایر استایل‌های موجود */
 .logo {
   height: 6em;
   padding: 1.5em;
