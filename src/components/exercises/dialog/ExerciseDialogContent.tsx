@@ -218,11 +218,40 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
       <div className="flex items-start md:items-center justify-between gap-2 px-4 py-2 border-b">
         <ExerciseDayTabs 
           activeTab={activeTab}
-          onChange={setActiveTab}
+          setActiveTab={setActiveTab} // Updated from onChange to setActiveTab
           selectedExercisesDay1={selectedExercisesDay1}
           selectedExercisesDay2={selectedExercisesDay2}
           selectedExercisesDay3={selectedExercisesDay3}
           selectedExercisesDay4={selectedExercisesDay4}
+          toggleExerciseDay1={toggleExerciseDay1}
+          toggleExerciseDay2={toggleExerciseDay2}
+          toggleExerciseDay3={toggleExerciseDay3}
+          toggleExerciseDay4={toggleExerciseDay4}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          filteredExercises={filteredExercises}
+          categories={categories}
+          handleClearSearch={handleClearSearch}
+          selectedCategoryId={selectedCategoryId}
+          toggleSortOrder={toggleSortOrder}
+          sortOrder={sortOrder}
+          exerciseSetsDay1={exerciseSetsDay1}
+          exerciseSetsDay2={exerciseSetsDay2}
+          exerciseSetsDay3={exerciseSetsDay3}
+          exerciseSetsDay4={exerciseSetsDay4}
+          handleSetsChangeDay1={handleSetsChangeDay1}
+          handleSetsChangeDay2={handleSetsChangeDay2}
+          handleSetsChangeDay3={handleSetsChangeDay3}
+          handleSetsChangeDay4={handleSetsChangeDay4}
+          exerciseRepsDay1={exerciseRepsDay1}
+          exerciseRepsDay2={exerciseRepsDay2}
+          exerciseRepsDay3={exerciseRepsDay3}
+          exerciseRepsDay4={exerciseRepsDay4}
+          handleRepsChangeDay1={handleRepsChangeDay1}
+          handleRepsChangeDay2={handleRepsChangeDay2}
+          handleRepsChangeDay3={handleRepsChangeDay3}
+          handleRepsChangeDay4={handleRepsChangeDay4}
+          handleSaveExercises={handleSaveExercises}
         />
         
         <div className="flex items-center gap-2">
@@ -244,8 +273,8 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
           handleClearSearch={handleClearSearch}
           toggleSortOrder={toggleSortOrder}
           sortOrder={sortOrder}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
+          viewMode={viewMode}  // Added this property
+          setViewMode={setViewMode}  // Added this property
         />
       </div>
 

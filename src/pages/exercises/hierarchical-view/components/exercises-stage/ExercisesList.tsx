@@ -69,6 +69,7 @@ const ExercisesList: React.FC<ExercisesListProps> = ({
                         : [...prev, exercise.id]
                     );
                   }}
+                  onClick={() => onEditExercise(exercise)}
                   onEdit={() => onEditExercise(exercise)}
                   onDelete={() => onDeleteExercise(exercise.id)}
                 />

@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tag, FolderTree, Activity, Search, Grid3X3, ListFilter, LayoutGrid, ListOrdered, Plus, Filter, ArrowUpDown, Dumbbell } from "lucide-react";
@@ -508,6 +507,7 @@ const ExercisesPage = () => {
                               category={categories.find(cat => cat.id === exercise.categoryId)}
                               isSelected={false}
                               viewMode="grid"
+                              onToggle={() => {}} // Added empty onToggle handler to satisfy the prop requirement
                               onClick={() => {
                                 setSelectedExercise(exercise);
                                 setExerciseFormData({
