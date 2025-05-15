@@ -5,6 +5,7 @@ import ExerciseHeader from "./ExerciseHeader";
 import ExercisesList from "./ExercisesList";
 import QuickSpeechAdd from "./QuickSpeechAdd";
 import ExerciseDialogs from "./ExerciseDialogs";
+import { Exercise } from "@/types/exercise";
 
 interface ExercisesStageProps {
   categoryId: string;
