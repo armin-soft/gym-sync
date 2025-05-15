@@ -15,7 +15,13 @@ export function useMicrophonePermission() {
   
   // بررسی وجود میکروفون در دستگاه
   const checkMicrophoneAvailability = useCallback(async () => {
-    if (typeof navigator === 'undefined' || !('mediaDevices' in navigator)) {
+    if (typeof navigator === 'undefined') {
+      setIsDeviceAvailable(false);
+      return false;
+    }
+
+    // First, check if mediaDevices exists
+    if (!('mediaDevices' in navigator)) {
       setIsDeviceAvailable(false);
       return false;
     }
@@ -37,10 +43,17 @@ export function useMicrophonePermission() {
       } else {
         // تلاش برای دسترسی مستقیم به میکروفون در مرورگرهایی که از enumerateDevices پشتیبانی نمی‌کنند
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          stream.getTracks().forEach(track => track.stop());
-          setIsDeviceAvailable(true);
-          return true;
+          // Ensure mediaDevices exists and has getUserMedia
+          if (navigator.mediaDevices && 'getUserMedia' in navigator.mediaDevices) {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            stream.getTracks().forEach(track => track.stop());
+            setIsDeviceAvailable(true);
+            return true;
+          } else {
+            console.error("getUserMedia is not available on this browser");
+            setIsDeviceAvailable(false);
+            return false;
+          }
         } catch (directAccessError) {
           console.error("خطا در دسترسی مستقیم به میکروفون:", directAccessError);
           // اگر خطای دسترسی نباشد، میکروفون احتمالاً وجود ندارد
@@ -104,6 +117,11 @@ export function useMicrophonePermission() {
     
     try {
       // Always try to get actual access even if we checked permissions API
+      // Make sure navigator.mediaDevices exists
+      if (!navigator.mediaDevices || !('getUserMedia' in navigator.mediaDevices)) {
+        throw new Error('MediaDevices API not supported in this browser');
+      }
+      
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: { 
           echoCancellation: true,
