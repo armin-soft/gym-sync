@@ -3,9 +3,23 @@
 
 import { CACHE_NAME, STATIC_ASSETS } from './config.js';
 
+// Function to fetch manifest and get version
+async function getAppVersion() {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version || '1.0.0';
+  } catch (error) {
+    console.error('[Service Worker] Error fetching manifest:', error);
+    return '1.0.0';
+  }
+}
+
 // Install the service worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v1.8.0');
+  getAppVersion().then(version => {
+    console.log(`[Service Worker] Installing v${version}`);
+  });
   
   // Force activation for immediate control
   self.skipWaiting();

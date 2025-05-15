@@ -2,13 +2,25 @@
 // Main service worker entry point that orchestrates all modules
 // This file serves as the entry point for the service worker
 
+// Import app version from manifest
+const APP_VERSION = 'gym-sync'; // Base name, version will be appended
+
 // Define global scope for TypeScript
-self.CACHE_NAME = 'gym-sync-v16';
+self.CACHE_NAME = `${APP_VERSION}-v16`;
 self.BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 
 // Core service worker functionality
 self.addEventListener('install', event => {
-  console.log('[Service Worker] Installing v1.8.0');
+  // Get version dynamically
+  fetch('./Manifest.json')
+    .then(response => response.json())
+    .then(manifest => {
+      const version = manifest.version || '1.0.0';
+      console.log(`[Service Worker] Installing v${version}`);
+    })
+    .catch(err => {
+      console.log('[Service Worker] Installing (version fetch failed)');
+    });
   
   event.waitUntil(
     caches.open(self.CACHE_NAME)
@@ -32,7 +44,16 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  console.log('[Service Worker] Activated v1.8.0');
+  // Get version dynamically
+  fetch('./Manifest.json')
+    .then(response => response.json())
+    .then(manifest => {
+      const version = manifest.version || '1.0.0';
+      console.log(`[Service Worker] Activated v${version}`);
+    })
+    .catch(err => {
+      console.log('[Service Worker] Activated (version fetch failed)');
+    });
   
   event.waitUntil(
     caches.keys()
@@ -117,9 +138,18 @@ self.addEventListener('fetch', event => {
 self.addEventListener('message', event => {
   if (!event.data) return;
   
+  // Get version dynamically for logs
+  let appVersion = '1.0.0';
+  fetch('./Manifest.json')
+    .then(response => response.json())
+    .then(manifest => {
+      appVersion = manifest.version || '1.0.0';
+    })
+    .catch(() => {});
+    
   switch (event.data.type) {
     case 'SKIP_WAITING':
-      console.log('[Service Worker] Skip waiting command received');
+      console.log(`[Service Worker] Skip waiting command received (v${appVersion})`);
       self.skipWaiting();
       break;
     case 'CHECK_FOR_UPDATES':
@@ -137,16 +167,26 @@ self.addEventListener('message', event => {
             './assets/index.js'
           ]);
         })
-        .then(() => console.log('[Service Worker] Cache refreshed'));
+        .then(() => console.log(`[Service Worker] Cache refreshed (v${appVersion})`));
       break;
     default:
-      console.log('[Service Worker] Unhandled message type:', event.data.type);
+      console.log(`[Service Worker] Unhandled message type: ${event.data.type}`);
   }
 });
 
 self.addEventListener('periodicsync', event => {
   if (event.tag === 'cache-update') {
-    console.log('[Service Worker] Periodic cache update');
+    // Get version dynamically for logs
+    fetch('./Manifest.json')
+      .then(response => response.json())
+      .then(manifest => {
+        const version = manifest.version || '1.0.0';
+        console.log(`[Service Worker] Periodic cache update (v${version})`);
+      })
+      .catch(() => {
+        console.log('[Service Worker] Periodic cache update');
+      });
+      
     event.waitUntil(
       caches.open(self.CACHE_NAME)
         .then(cache => {
@@ -163,4 +203,13 @@ self.addEventListener('periodicsync', event => {
   }
 });
 
-console.log('[Service Worker] Starting Service Worker v1.8.0');
+// Get version for startup log
+fetch('./Manifest.json')
+  .then(response => response.json())
+  .then(manifest => {
+    const version = manifest.version || '1.0.0';
+    console.log(`[Service Worker] Starting Service Worker v${version}`);
+  })
+  .catch(() => {
+    console.log('[Service Worker] Starting Service Worker');
+  });

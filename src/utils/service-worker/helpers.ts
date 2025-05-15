@@ -30,10 +30,17 @@ export const showToast = (options: ToastOptions): void => {
 };
 
 /**
+ * Get current app version from manifest
+ */
+export const getAppVersion = (): string => {
+  return manifestData.version || '1.0.0';
+};
+
+/**
  * Show notification about available updates
  */
 export function showUpdateNotification(): void {
-  const version = manifestData.version || '1.8.0';
+  const version = getAppVersion();
   const currentVersion = localStorage.getItem('app_version') || version;
   
   // Check if the update notification has been shown recently

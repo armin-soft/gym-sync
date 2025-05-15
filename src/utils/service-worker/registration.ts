@@ -3,8 +3,7 @@
  * Service Worker registration module
  */
 
-import { isServiceWorkerSupported, showUpdateNotification } from './helpers';
-import manifestData from '@/Manifest.json';
+import { isServiceWorkerSupported, showUpdateNotification, getAppVersion } from './helpers';
 
 /**
  * Register the service worker
@@ -18,7 +17,7 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
 
   try {
     // Save the current app version from manifest
-    const currentVersion = manifestData.version || '1.8.0';
+    const currentVersion = getAppVersion();
     
     // Get the last known version from localStorage (if any)
     const lastKnownVersion = localStorage.getItem('last_sw_version') || '';

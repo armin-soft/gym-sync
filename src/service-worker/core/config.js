@@ -4,7 +4,19 @@
 // Dynamically determine the base path where the app is running
 export const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 
-// Cache name with version - update this to force cache refresh
+// Function to fetch manifest and get version
+async function getAppVersion() {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version || '1.0.0';
+  } catch (error) {
+    console.error('[Service Worker] Error fetching manifest:', error);
+    return '1.0.0';
+  }
+}
+
+// Cache name with version - will be dynamically updated when possible
 export const CACHE_NAME = 'gym-sync-v16';
 
 // Files to cache - use relative paths that will work in any environment
@@ -28,3 +40,8 @@ self.CACHE_NAME = CACHE_NAME;
 self.STATIC_ASSETS = STATIC_ASSETS;
 // @ts-ignore
 self.BASE_PATH = BASE_PATH;
+
+// Initialize with version from manifest when possible
+getAppVersion().then(version => {
+  console.log(`[Service Worker] Configuration initialized with version ${version}`);
+});

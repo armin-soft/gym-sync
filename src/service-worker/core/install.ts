@@ -6,9 +6,23 @@ import { CACHE_NAME, getUrlsToCache } from './config';
 // Explicitly declare self as ServiceWorkerGlobalScope
 declare var self: ServiceWorkerGlobalScope;
 
+// Function to fetch manifest and get version
+async function getAppVersion(): Promise<string> {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version || '1.0.0';
+  } catch (error) {
+    console.error('[Service Worker] Error fetching manifest:', error);
+    return '1.0.0';
+  }
+}
+
 // Install the service worker
 self.addEventListener('install', (event: ExtendableEvent) => {
-  console.log('[Service Worker] Installing...');
+  getAppVersion().then(version => {
+    console.log(`[Service Worker] Installing v${version}...`);
+  });
   
   // Skip waiting to activate immediately
   self.skipWaiting();
