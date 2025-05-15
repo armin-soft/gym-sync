@@ -9,7 +9,7 @@ import { ToastOptions } from './types';
  * Check if service workers are supported in current browser
  */
 export const isServiceWorkerSupported = (): boolean => {
-  return 'serviceWorker' in navigator;
+  return 'serviceWorker' in navigator && 'ServiceWorkerRegistration' in window;
 };
 
 /**
@@ -20,6 +20,11 @@ export const showToast = (options: ToastOptions): void => {
     window.showToast(options);
   } else {
     console.log(`${options.title}: ${options.description}`);
+    
+    // Fallback to alert for critical messages
+    if (options.variant === 'destructive') {
+      alert(`${options.title}: ${options.description}`);
+    }
   }
 };
 

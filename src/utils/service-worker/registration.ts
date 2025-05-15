@@ -16,12 +16,14 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
   }
 
   try {
-    // Use the Service-Worker.js file from the root directory (simpler approach)
-    const scriptPath = './Service-Worker.js';
+    // Use the Service-Worker.js file from the root directory with a timestamp to prevent caching
+    const timestamp = new Date().getTime();
+    const scriptPath = `./Service-Worker.js?v=${timestamp}`;
     
     // Register the service worker
     const registration = await navigator.serviceWorker.register(scriptPath, {
-      scope: './'
+      scope: './',
+      updateViaCache: 'none'
     });
     
     console.log('ServiceWorker registration successful with scope:', registration.scope);
@@ -39,8 +41,12 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
   } catch (error) {
     console.error('ServiceWorker registration failed:', error);
     
-    // Try once more with a simpler approach
+    // Try once more with a simpler approach (absolute path)
     try {
+      // Force clear any existing registrations first
+      const existingRegistrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(existingRegistrations.map(reg => reg.unregister()));
+      
       // Try to register with absolute path
       const retryRegistration = await navigator.serviceWorker.register('/Service-Worker.js');
       console.log('ServiceWorker registration successful on retry');
@@ -48,7 +54,17 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
       return retryRegistration;
     } catch (retryError) {
       console.error('ServiceWorker registration failed on retry:', retryError);
-      return null;
+      
+      // One final attempt with a different path
+      try {
+        const finalRegistration = await navigator.serviceWorker.register('./Assets/Script/ServiceWorker.js');
+        console.log('ServiceWorker registration successful with alternate path');
+        window.swRegistration = finalRegistration;
+        return finalRegistration;
+      } catch (finalError) {
+        console.error('All ServiceWorker registration attempts failed');
+        return null;
+      }
     }
   }
 };

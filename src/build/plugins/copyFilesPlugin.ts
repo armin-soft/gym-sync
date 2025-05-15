@@ -29,39 +29,14 @@ export const copyFilesPlugin = () => {
           console.log('Copied Manifest.json from public to dist root');
         }
 
-        // کپی Service-Worker.js با نام بزرگ
-        if (fs.existsSync('Service-Worker.js')) {
-          fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
-          // همچنین کپی به مسیر جدید
-          fs.copyFileSync('Service-Worker.js', 'dist/Assets/Script/ServiceWorker.js');
-          console.log('Copied Service-Worker.js to dist root and Assets/Script/ServiceWorker.js');
-        }
-        
-        // کپی ماژول‌های سرویس ورکر به مسیرشان در dist
-        const serviceWorkerModules = [
-          { source: 'src/service-worker/core/config.js', dest: 'dist/src/service-worker/core/config.js' },
-          { source: 'src/service-worker/core/install.js', dest: 'dist/src/service-worker/core/install.js' },
-          { source: 'src/service-worker/core/activate.js', dest: 'dist/src/service-worker/core/activate.js' },
-          { source: 'src/service-worker/core/fetch.js', dest: 'dist/src/service-worker/core/fetch.js' },
-          { source: 'src/service-worker/core/message.js', dest: 'dist/src/service-worker/core/message.js' },
-          { source: 'src/service-worker/core/periodic-sync.js', dest: 'dist/src/service-worker/core/periodic-sync.js' }
-        ];
-        
-        // ایجاد پوشه‌های لازم برای سرویس ورکر
-        if (!fs.existsSync('dist/src/service-worker/core')) {
-          fs.mkdirSync('dist/src/service-worker/core', { recursive: true });
-        }
-        
-        // کپی ماژول‌ها
-        for (const module of serviceWorkerModules) {
-          if (fs.existsSync(module.source)) {
-            fs.copyFileSync(module.source, module.dest);
-            console.log(`Copied ${module.source} to ${module.dest}`);
-          } else {
-            console.warn(`Service worker module not found: ${module.source}`);
-          }
-        }
+        // کپی Service-Worker.js به dist root 
+        fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
+        console.log('Copied Service-Worker.js to dist root');
 
+        // کپی همچنین به مسیر Assets/Script
+        fs.copyFileSync('Service-Worker.js', 'dist/Assets/Script/ServiceWorker.js');
+        console.log('Copied Service-Worker.js to Assets/Script/ServiceWorker.js');
+        
         // کپی Logo.png به Assets/Image
         if (fs.existsSync('src/Logo.png')) {
           fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
@@ -69,6 +44,12 @@ export const copyFilesPlugin = () => {
         } else if (fs.existsSync('public/Assets/Image/Logo.png')) {
           fs.copyFileSync('public/Assets/Image/Logo.png', 'dist/Assets/Image/Logo.png');
           console.log('Copied Logo.png from public to dist/Assets/Image');
+        }
+        
+        // کپی Offline.html برای حالت آفلاین
+        if (fs.existsSync('public/Offline.html')) {
+          fs.copyFileSync('public/Offline.html', 'dist/Offline.html');
+          console.log('Copied Offline.html to dist root');
         }
         
         // حذف فایل Manifest اضافی در Assets

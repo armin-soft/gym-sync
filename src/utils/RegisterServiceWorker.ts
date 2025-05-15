@@ -8,6 +8,7 @@ import { isServiceWorkerSupported } from './service-worker/helpers';
 import { registerServiceWorker } from './service-worker/registration';
 import { setupOfflineDetection } from './service-worker/offline-detection';
 import { ToastOptions } from './service-worker/types';
+import { showToast } from './service-worker/helpers';
 
 // Re-export for backward compatibility
 export { isServiceWorkerSupported };
@@ -18,6 +19,29 @@ export type { ToastOptions };
  * Best called from the main entry point of the app (e.g., main.tsx)
  */
 export const initializeServiceWorker = async (): Promise<void> => {
-  await registerServiceWorker();
-  setupOfflineDetection();
+  try {
+    if (!isServiceWorkerSupported()) {
+      console.log('Service workers are not supported in this browser');
+      return;
+    }
+    
+    const registration = await registerServiceWorker();
+    
+    if (registration) {
+      setupOfflineDetection();
+      console.log('Service worker registered successfully');
+    } else {
+      console.log('App will work without offline capabilities');
+    }
+  } catch (error) {
+    console.error('Failed to initialize service worker:', error);
+    
+    // Show a toast notification to user about offline functionality
+    showToast({
+      title: "اطلاعیه",
+      description: "امکان کارکرد برنامه در حالت آفلاین فعال نشد. برنامه همچنان در حالت آنلاین کار خواهد کرد.",
+      variant: "warning",
+      duration: 5000
+    });
+  }
 };

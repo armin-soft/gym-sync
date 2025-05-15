@@ -21,6 +21,9 @@ window.addEventListener('load', () => {
   // Delay service worker registration slightly to prioritize UI rendering
   setTimeout(() => {
     initializeServiceWorker()
-      .catch(error => console.error('Failed to register service worker:', error));
+      .catch(error => {
+        console.error('Failed to register service worker:', error);
+        // App will continue to work without offline capabilities
+      });
   }, 1000);
 });
