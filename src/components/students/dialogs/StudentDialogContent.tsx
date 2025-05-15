@@ -134,12 +134,15 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
       {selectedStudentForSupplement && (
         <SupplementDialog
           open={isSupplementDialogOpen}
-          onClose={handleCloseSupplement}
-          onSave={handleSaveSupplementsWrapper}
-          studentName={selectedStudentForSupplement?.name || ""}
-          initialSupplements={selectedStudentForSupplement?.supplements || []}
-          initialVitamins={selectedStudentForSupplement?.vitamins || []}
-          supplements={supplements}
+          onOpenChange={handleCloseSupplement}
+          onSubmit={(data) => handleSaveSupplementsWrapper(data)}
+          defaultValues={{
+            supplements: selectedStudentForSupplement?.supplements || [],
+            vitamins: selectedStudentForSupplement?.vitamins || []
+          }}
+          mode="edit"
+          categories={supplements.map(s => ({ id: s.id, name: s.name, type: s.type }))}
+          type="supplement"
         />
       )}
       

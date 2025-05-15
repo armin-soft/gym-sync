@@ -122,7 +122,7 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
                       </div>
                       <div>
                         <div className="font-medium">{item.name}</div>
-                        <div className="text-sm text-gray-500">{item.description}</div>
+                        {/* No longer referencing the description property */}
                       </div>
                     </div>
                   ))}
@@ -154,7 +154,7 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
                       </div>
                       <div>
                         <div className="font-medium">{item.name}</div>
-                        <div className="text-sm text-gray-500">{item.description}</div>
+                        {/* No longer referencing the description property */}
                       </div>
                     </div>
                   ))}
