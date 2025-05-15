@@ -42,6 +42,21 @@ export function useMicrophonePermission() {
     }
     
     try {
+      // First check if any media devices exist
+      if ('mediaDevices' in navigator) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasAudioInput = devices.some(device => device.kind === 'audioinput');
+        
+        if (!hasAudioInput) {
+          toast({
+            title: "میکروفون یافت نشد",
+            description: "هیچ میکروفون یا دستگاه ورودی صدایی به سیستم متصل نیست.",
+            variant: "destructive",
+          });
+          return false;
+        }
+      }
+      
       // Always try to get actual access even if we checked permissions API
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: { 
@@ -74,8 +89,8 @@ export function useMicrophonePermission() {
         });
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
         toast({
-          title: "خطا",
-          description: "هیچ میکروفونی در دستگاه شما پیدا نشد. لطفاً اتصال میکروفون را بررسی کنید.",
+          title: "میکروفون یافت نشد",
+          description: "هیچ میکروفونی به سیستم شما متصل نیست یا مرورگر قادر به شناسایی آن نیست.",
           variant: "destructive",
         });
       } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {

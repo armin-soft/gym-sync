@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useSpeechRecognition } from "@/hooks/speech";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,6 +32,7 @@ export function AdvancedSpeechInput({
   const [animateButton, setAnimateButton] = useState(false);
   const { isSupported } = useBrowserSupport();
   const { permissionStatus, requestMicrophonePermission } = useMicrophonePermission();
+  const [isMicrophoneAvailable, setIsMicrophoneAvailable] = useState(true);
 
   const {
     transcript,
@@ -58,6 +60,27 @@ export function AdvancedSpeechInput({
     // Keep local value in sync with external value 
     setTextInputValue(value);
   }, [value]);
+
+  // Check if microphone is available
+  useEffect(() => {
+    const checkMicrophoneAvailability = async () => {
+      try {
+        if ('mediaDevices' in navigator && 'enumerateDevices' in navigator.mediaDevices) {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const hasAudioInput = devices.some(device => device.kind === 'audioinput');
+          setIsMicrophoneAvailable(hasAudioInput);
+          
+          if (!hasAudioInput) {
+            setShowPermissionReminder(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking microphone availability:", error);
+      }
+    };
+    
+    checkMicrophoneAvailability();
+  }, []);
 
   useEffect(() => {
     // Show permission reminder after a delay on mobile devices
@@ -89,6 +112,16 @@ export function AdvancedSpeechInput({
       });
     } else {
       try {
+        // Check if microphone is available first
+        if (!isMicrophoneAvailable) {
+          toast({
+            title: "میکروفون یافت نشد",
+            description: "هیچ میکروفونی به سیستم شما متصل نیست یا مرورگر قادر به شناسایی آن نیست.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
         // Request permission before starting
         await requestMicrophonePermission();
         await startListening();
@@ -192,10 +225,10 @@ export function AdvancedSpeechInput({
               isListening 
                 ? "bg-red-500 hover:bg-red-600" 
                 : "bg-indigo-600 hover:bg-indigo-700",
-              !isSupported && "opacity-50 cursor-not-allowed"
+              (!isSupported || !isMicrophoneAvailable) && "opacity-50 cursor-not-allowed"
             )}
-            onClick={() => isSupported && handleToggleListen()}
-            disabled={!isSupported}
+            onClick={() => isSupported && isMicrophoneAvailable && handleToggleListen()}
+            disabled={!isSupported || !isMicrophoneAvailable}
             onMouseEnter={() => setShowPopover(true)}
             onMouseLeave={() => setShowPopover(false)}
             aria-label={isListening ? "توقف ضبط صدا" : "شروع ضبط صدا"}
@@ -244,16 +277,18 @@ export function AdvancedSpeechInput({
         </motion.div>
       )}
       
-      {/* Mobile permission reminder */}
+      {/* Mobile permission reminder or microphone not found */}
       <AnimatePresence>
-        {showPermissionReminder && isMobile && permissionStatus !== 'granted' && (
+        {(showPermissionReminder && ((isMobile && permissionStatus !== 'granted') || !isMicrophoneAvailable)) && (
           <motion.div
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             className="mt-2 text-xs text-amber-600 dark:text-amber-500 text-center px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-md"
           >
-            {isIOS ? 
+            {!isMicrophoneAvailable ? (
+              "هیچ میکروفونی به سیستم متصل نیست یا شناسایی نشده است"
+            ) : isIOS ? 
               "در iOS باید دسترسی میکروفون را در تنظیمات مرورگر خود فعال کنید" : 
               "لطفاً به برنامه اجازه دسترسی به میکروفون را بدهید"
             }
