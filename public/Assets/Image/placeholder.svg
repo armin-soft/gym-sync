@@ -1,7 +1,36 @@
 
-<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none">
-  <rect width="100" height="100" rx="50" fill="#F3F4F6"/>
-  <path d="M50 63V50M50 63H40C40 56.373 45.373 50 52 50C58.627 50 64 56.373 64 63H50Z" stroke="#9CA3AF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="50" cy="38" r="10" stroke="#9CA3AF" stroke-width="4"/>
-  <path d="M28 85C28 70.088 37.6112 60 50 60C62.3888 60 72 70.088 72 85" stroke="#9CA3AF" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none">
+  <!-- Background gradient -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
+      <stop offset="0" stop-color="#9b87f5" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0.05"/>
+    </radialGradient>
+    
+    <linearGradient id="paint1_linear" x1="70" y1="60" x2="130" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D6BCFA" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#9b87f5" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background circle -->
+  <circle cx="100" cy="100" r="98" fill="url(#paint0_radial)" stroke="#9b87f5" stroke-width="2"/>
+  
+  <!-- User icon with gradient -->
+  <circle cx="100" cy="80" r="26" fill="url(#paint1_linear)" stroke="#8B5CF6" stroke-width="2"/>
+  
+  <!-- Body silhouette -->
+  <path d="M100 110C78 110 60 124 60 154H140C140 124 122 110 100 110Z" fill="url(#paint1_linear)" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="65" cy="65" r="6" fill="#D946EF" fill-opacity="0.4"/>
+  <circle cx="135" cy="65" r="6" fill="#D946EF" fill-opacity="0.4"/>
+  <circle cx="50" cy="100" r="4" fill="#9b87f5" fill-opacity="0.6"/>
+  <circle cx="150" cy="100" r="4" fill="#9b87f5" fill-opacity="0.6"/>
+  <circle cx="70" cy="140" r="5" fill="#D6BCFA" fill-opacity="0.5"/>
+  <circle cx="130" cy="140" r="5" fill="#D6BCFA" fill-opacity="0.5"/>
+  
+  <!-- Subtle wave pattern at the bottom -->
+  <path d="M40 160C50 150 70 160 90 150C110 140 130 150 150 145C170 140 180 150 190 148" stroke="#9b87f5" stroke-width="2" stroke-opacity="0.3" stroke-linecap="round"/>
+  <path d="M30 170C50 165 70 175 90 165C110 155 130 165 150 160C170 155 180 165 190 163" stroke="#D6BCFA" stroke-width="2" stroke-opacity="0.2" stroke-linecap="round"/>
 </svg>
