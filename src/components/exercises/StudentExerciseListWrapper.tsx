@@ -19,7 +19,7 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
   return (
     <ScrollArea
       className={cn(
-        "flex-1 p-4 overflow-auto",
+        "flex-1 overflow-auto",
         className
       )}
       style={{ maxHeight }}
@@ -27,7 +27,9 @@ export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProp
       <div
         className={cn(
           "w-full", 
-          viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col space-y-3"
+          viewMode === "grid" 
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4" 
+            : "flex flex-col space-y-4 p-4"
         )}
       >
         {children}
