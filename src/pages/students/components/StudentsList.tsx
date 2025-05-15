@@ -12,6 +12,12 @@ interface StudentsListProps {
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
   setStudents?: React.Dispatch<React.SetStateAction<Student[]>>;
+  searchQuery?: string;
+  viewMode?: "table" | "grid";
+  refreshTrigger?: number;
+  onAddStudent?: () => void;
+  onClearSearch?: () => void;
+  onDownload?: (student: Student) => void;
 }
 
 const StudentsList: React.FC<StudentsListProps> = ({
@@ -22,7 +28,12 @@ const StudentsList: React.FC<StudentsListProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  setStudents
+  setStudents,
+  searchQuery,
+  viewMode = "grid",
+  onAddStudent,
+  onClearSearch,
+  onDownload
 }) => {
   if (!students.length) {
     return (

@@ -8,7 +8,7 @@ import { StudentSearchSort } from "@/components/students/StudentSearchSort";
 import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
-import { StudentsList } from "./StudentsList";
+import StudentsList from "./StudentsList";
 import { StudentDialogManagerWrapper } from "@/components/students/StudentDialogManagerWrapper";
 import { ExerciseWithSets } from "@/types/exercise";
 

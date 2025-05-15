@@ -11,7 +11,7 @@ export interface StudentGridViewProps {
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
-  setStudents: React.Dispatch<React.SetStateAction<Student[]>>;
+  setStudents: React.Dispatch<React.SetStateAction<Student[]>> | (() => void);
 }
 
 const StudentGridView: React.FC<StudentGridViewProps> = ({
@@ -21,7 +21,8 @@ const StudentGridView: React.FC<StudentGridViewProps> = ({
   onDelete,
   onAddExercise,
   onAddDiet,
-  onAddSupplement
+  onAddSupplement,
+  setStudents
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
@@ -34,6 +35,8 @@ const StudentGridView: React.FC<StudentGridViewProps> = ({
           onAddExercise={() => onAddExercise(student)}
           onAddDiet={() => onAddDiet(student)}
           onAddSupplement={() => onAddSupplement(student)}
+          setStudents={setStudents}
+          students={students}
           isProfileComplete={isProfileComplete}
         />
       ))}
