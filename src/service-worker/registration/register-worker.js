@@ -5,7 +5,7 @@ import { showToast } from './notification.js';
 
 // Main function to register the service worker
 export function registerServiceWorker(manifestData) {
-  const currentVersion = manifestData.version || '1.8.0';
+  const currentVersion = manifestData.version;
   const lastKnownVersion = localStorage.getItem('last_sw_version') || currentVersion;
   
   // Add timestamp to force new service worker

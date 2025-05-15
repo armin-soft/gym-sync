@@ -9,10 +9,10 @@ async function getAppVersion() {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
-    return manifest.version || '1.0.0';
+    return manifest.version;
   } catch (error) {
     console.error('[Service Worker] Error fetching manifest:', error);
-    return '1.0.0';
+    return '';
   }
 }
 

@@ -22,7 +22,7 @@ console.log('[Service Worker] Initialized');
 fetch('./Manifest.json')
   .then(response => response.json())
   .then(manifest => {
-    const version = manifest.version || '1.9.5';
+    const version = manifest.version;
     self.APP_VERSION = `gym-sync-${version}`;
     self.CACHE_NAME = `gym-sync-v${version.replace(/\./g, '')}`;
     console.log(`[Service Worker] Configuration updated with version ${version}`);

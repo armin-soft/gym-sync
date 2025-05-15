@@ -33,7 +33,7 @@ export const showToast = (options: ToastOptions): void => {
  * Get current app version from manifest
  */
 export const getAppVersion = (): string => {
-  return manifestData.version || '1.0.0';
+  return manifestData.version;
 };
 
 /**
@@ -74,4 +74,3 @@ export function showUpdateNotification(): void {
     localStorage.setItem('update_notification_time', currentTime.toString());
   }
 }
-

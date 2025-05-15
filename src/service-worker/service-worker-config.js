@@ -24,7 +24,7 @@ self.STATIC_ASSETS = [
 fetch('./Manifest.json')
   .then(response => response.json())
   .then(manifest => {
-    const version = manifest.version || '1.0.0';
+    const version = manifest.version;
     self.APP_VERSION = `gym-sync-${version}`;
     console.log(`[Service Worker] Config initialized with version ${version}`);
   })
