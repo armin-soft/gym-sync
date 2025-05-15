@@ -1,26 +1,84 @@
 
-// Utility functions for handling requests in the service worker
+// Utility functions for handling requests in service worker
 
-// Fix URL paths with duplicates (Assets/Assets)
-export function cleanRequestUrl(url: string): string {
-  const duplicatePattern = /Assets\/Assets\//g;
-  
-  if (duplicatePattern.test(url)) {
-    // Replace duplicate segments
-    return url.replace(duplicatePattern, 'Assets/');
-  }
-  
-  return url;
-}
-
-// Helper function to create offline response
-export function createOfflineResponse(isHtml: boolean = false): Response {
-  if (isHtml) {
+// Create a simple offline response when network is not available
+export function createOfflineResponse(isNavigationRequest: boolean = false): Response {
+  if (isNavigationRequest) {
+    // For navigation requests (page loads), return the offline HTML page
     return new Response(
-      '<html><body dir="rtl">' +
-      '<h1>برنامه در حالت آفلاین</h1>' +
-      '<p>لطفا اتصال اینترنت خود را بررسی کنید.</p>' +
-      '</body></html>',
+      `
+      <!DOCTYPE html>
+      <html lang="fa" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>حالت آفلاین - GymSync</title>
+        <style>
+          body {
+            font-family: 'Vazirmatn', system-ui, sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            text-align: center;
+          }
+          .container {
+            max-width: 28rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          }
+          h1 {
+            color: #7c3aed;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+          }
+          p {
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+          }
+          .button {
+            background-color: #7c3aed;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+          }
+          .button:hover {
+            background-color: #6d28d9;
+          }
+          .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #7c3aed;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="icon">⚡️</div>
+          <h1>حالت آفلاین</h1>
+          <p>شما در حال حاضر به اینترنت متصل نیستید، اما نگران نباشید! تمام امکانات برنامه در حالت آفلاین نیز در دسترس هستند.</p>
+          <p>پس از اتصال مجدد به اینترنت، تغییرات به صورت خودکار همگام‌سازی خواهند شد.</p>
+          <button class="button" onclick="window.location.href='./'">بازگشت به برنامه</button>
+        </div>
+        <script>
+          window.addEventListener('online', function() {
+            window.location.reload();
+          });
+        </script>
+      </body>
+      </html>
+      `,
       {
         status: 200,
         headers: { 'Content-Type': 'text/html; charset=UTF-8' }
@@ -28,8 +86,15 @@ export function createOfflineResponse(isHtml: boolean = false): Response {
     );
   }
   
-  return new Response('خطا در اتصال به شبکه. برنامه در حالت آفلاین است.', {
-    status: 408,
+  // For non-navigation requests (assets, API calls, etc.)
+  return new Response('آفلاین - داده در دسترس نیست', {
+    status: 503,
     headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
   });
+}
+
+// Clean up request URLs with duplicate paths (like Assets/Assets/)
+export function cleanRequestUrl(url: string): string {
+  // Fix duplicate Assets path issue
+  return url.replace(/Assets\/Assets\//g, 'Assets/');
 }

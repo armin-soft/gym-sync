@@ -1,38 +1,35 @@
 
 // Main service worker file with enhanced offline functionality
 
-// Define self for TypeScript
-// @ts-ignore
-const sw = self;
-
-// Fix imports with correct paths that will work in the built version
-sw.importScripts('./Assets/Script/Cache-Config.js');
-sw.importScripts('./Assets/Script/Cache-Strategies.js');
-sw.importScripts('./Assets/Script/Fetch-Handler.js');
-sw.importScripts('./Assets/Script/Message-Handler.js');
+// Log service worker initialization
+console.log('[Service Worker] Starting Service Worker');
 
 // Cache configuration - updated version to force refresh
-const CACHE_NAME = 'gym-sync-v13'; 
+const CACHE_NAME = 'gym-sync-v14';
+
+// Define base path for assets
+const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 
 // Update the static assets list with critical files
 const STATIC_ASSETS = [
   './',
   './index.html',
+  './offline.html',
   './Assets/Image/Logo.png',
+  './Assets/Image/Place-Holder.svg',
   './Manifest.json',
   './Assets/Script/index.js',
   './Assets/Style/Menu.css',
-  // Add more critical assets
   './assets/index.css',
   './assets/index.js'
 ];
 
 // Install event with improved error handling
-sw.addEventListener('install', (event) => {
+self.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing');
   
   // Force activation for immediate control
-  sw.skipWaiting();
+  self.skipWaiting();
   
   // Cache static assets with better error handling
   event.waitUntil(
@@ -58,7 +55,7 @@ sw.addEventListener('install', (event) => {
 });
 
 // Activate event
-sw.addEventListener('activate', (event) => {
+self.addEventListener('activate', (event) => {
   console.log('[Service Worker] Activated');
   
   // Clean up old caches
@@ -74,74 +71,154 @@ sw.addEventListener('activate', (event) => {
       );
     }).then(() => {
       // Claim clients so the SW controls open pages
-      return sw.clients.claim();
+      return self.clients.claim();
     })
   );
 });
 
+// Function to create a clean request object if needed
+function createCleanRequest(originalRequest) {
+  const requestUrl = originalRequest.url;
+  const cleanUrl = requestUrl.replace(/Assets\/Assets\//g, 'Assets/');
+  
+  if (cleanUrl !== requestUrl) {
+    console.log('[Service Worker] Fixed duplicate path:', cleanUrl);
+    return new Request(cleanUrl, {
+      method: originalRequest.method,
+      headers: originalRequest.headers,
+      mode: originalRequest.mode,
+      credentials: originalRequest.credentials
+    });
+  }
+  
+  return originalRequest;
+}
+
 // Enhanced fetch event with better offline fallback
-sw.addEventListener('fetch', (event) => {
-  // Use the fetch handler from the imported module
-  if (typeof handleFetch === 'function') {
-    handleFetch(event);
-  } else {
-    console.error('[Service Worker] Missing handleFetch function');
-    // Improved fallback fetch handler
-    event.respondWith(
-      caches.match(event.request).then((response) => {
-        if (response) {
-          return response;
-        }
+self.addEventListener('fetch', (event) => {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  // Skip analytics, API calls, etc.
+  if (event.request.url.includes('/api/') || 
+      event.request.url.includes('analytics') || 
+      event.request.url.includes('chrome-extension')) {
+    return;
+  }
+
+  // Create a clean request with fixed paths if needed
+  const cleanRequest = createCleanRequest(event.request);
+  
+  event.respondWith(
+    caches.match(cleanRequest).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Update cache in background
+        fetch(cleanRequest).then(response => {
+          if (!response || response.status !== 200) return;
+          
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(cleanRequest, responseToCache);
+          });
+        }).catch(() => {});
         
-        return fetch(event.request).then(networkResponse => {
-          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-            return networkResponse;
+        return cachedResponse;
+      }
+      
+      // If not in cache, fetch from network
+      return fetch(cleanRequest)
+        .then(response => {
+          // Don't cache if response is not valid
+          if (!response || response.status !== 200) {
+            return response;
           }
           
-          const responseToCache = networkResponse.clone();
+          const responseToCache = response.clone();
+          
+          // Add to cache
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
+            cache.put(cleanRequest, responseToCache);
           });
           
-          return networkResponse;
-        }).catch(() => {
-          // Return offline page for navigation
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
+          return response;
+        })
+        .catch((error) => {
+          console.error('[Service Worker] Fetch failed:', error);
+          
+          // For navigation requests, return the offline page
+          if (cleanRequest.mode === 'navigate') {
+            return caches.match('./offline.html')
+              .then(response => {
+                if (response) return response;
+                
+                // If offline.html is not in cache, create a simple offline page
+                return new Response(
+                  '<html><body dir="rtl">' +
+                  '<h1>برنامه در حالت آفلاین</h1>' +
+                  '<p>لطفا اتصال اینترنت خود را بررسی کنید.</p>' +
+                  '</body></html>',
+                  {
+                    status: 200,
+                    headers: { 'Content-Type': 'text/html; charset=UTF-8' }
+                  }
+                );
+              });
           }
           
-          // Return simple text response for other resources
-          return new Response('برنامه در حالت آفلاین است', {
-            status: 200,
-            headers: {'Content-Type': 'text/plain; charset=UTF-8'}
+          // For other resources
+          return new Response('آفلاین - داده در دسترس نیست', {
+            status: 503,
+            headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
           });
         });
-      })
-    );
-  }
+    })
+  );
 });
 
 // Enhanced message event handling
-sw.addEventListener('message', (event) => {
-  // Use the message handler from the imported module
-  if (typeof handleMessage === 'function') {
-    handleMessage(event);
-  } else {
-    console.error('[Service Worker] Missing handleMessage function');
-    
-    // Enhanced fallback message handler
-    if (!event.data) return;
-    
-    if (event.data.type === 'SKIP_WAITING') {
-      console.log('[Service Worker] Skip waiting command received');
-      sw.skipWaiting();
-    }
-    
-    if (event.data.type === 'REFRESH_CACHE') {
-      console.log('[Service Worker] Refreshing cache');
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.addAll(STATIC_ASSETS);
-      });
-    }
+self.addEventListener('message', (event) => {
+  if (!event.data) return;
+  
+  if (event.data.type === 'SKIP_WAITING') {
+    console.log('[Service Worker] Skip waiting command received');
+    self.skipWaiting();
+  }
+  
+  if (event.data.type === 'REFRESH_CACHE') {
+    console.log('[Service Worker] Refreshing cache');
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS);
+    });
   }
 });
+
+// Periodic sync event (supports background sync when browser is closed)
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'sync-data') {
+    console.log('[Service Worker] Performing periodic sync');
+    event.waitUntil(syncData());
+  }
+});
+
+// Function to sync data when online
+async function syncData() {
+  console.log('[Service Worker] Syncing data');
+  
+  // Here we would normally sync pending changes with the server
+  // For now we just refresh the cached assets
+  const cache = await caches.open(CACHE_NAME);
+  await Promise.all(STATIC_ASSETS.map(url => 
+    fetch(url, { cache: 'reload' })
+      .then(response => {
+        if (response.ok) return cache.put(url, response);
+      })
+      .catch(err => console.log('[SW] Failed to refresh cache during sync:', url, err))
+  ));
+}

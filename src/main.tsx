@@ -16,6 +16,11 @@ root.render(
   </React.StrictMode>
 );
 
-// Initialize service worker after app renders
-initializeServiceWorker()
-  .catch(error => console.error('Failed to register service worker:', error));
+// Initialize service worker after app renders to avoid blocking the main thread
+window.addEventListener('load', () => {
+  // Delay service worker registration slightly to prioritize UI rendering
+  setTimeout(() => {
+    initializeServiceWorker()
+      .catch(error => console.error('Failed to register service worker:', error));
+  }, 1000);
+});
