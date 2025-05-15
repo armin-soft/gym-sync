@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { AccountLockedView } from "./AccountLockedView";
 import { LoginFormView } from "./LoginFormView";

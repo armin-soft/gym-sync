@@ -2,7 +2,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { componentTagger } from 'lovable-tagger'
 import { copyFilesPlugin } from './src/build/plugins/copyFilesPlugin'
 import { buildOptions } from './src/build/config/buildOptions'
 import { rollupOutputOptions } from './src/build/config/rollupOutputOptions'
@@ -32,7 +31,6 @@ export default defineConfig(({ mode }) => {
           ]
         }
       }),
-      mode === 'development' && componentTagger(),
       copyFilesPlugin()
     ].filter(Boolean),
     resolve: {
