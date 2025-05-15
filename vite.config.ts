@@ -5,6 +5,7 @@ import path from 'path'
 import { copyFilesPlugin } from './src/build/plugins/copyFilesPlugin'
 import { buildOptions } from './src/build/config/buildOptions'
 import { rollupOutputOptions } from './src/build/config/rollupOutputOptions'
+import { componentTagger } from 'lovable-tagger'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -31,6 +32,7 @@ export default defineConfig(({ mode }) => {
           ]
         }
       }),
+      mode === 'development' && componentTagger(),
       copyFilesPlugin()
     ].filter(Boolean),
     resolve: {
@@ -39,7 +41,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: 8080
+      port: 8080,
+      host: "::"
     },
     build: buildWithRollupOptions
   };
