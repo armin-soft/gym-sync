@@ -4,6 +4,7 @@
  */
 
 import { isServiceWorkerSupported, showUpdateNotification } from './helpers';
+import manifestData from '@/Manifest.json';
 
 /**
  * Register the service worker
@@ -16,6 +17,9 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
   }
 
   try {
+    // Save the current app version from manifest
+    const currentVersion = manifestData.version || '1.8.0';
+    
     // Use the Service-Worker.js file from the root directory with a timestamp to prevent caching
     const timestamp = new Date().getTime();
     const scriptPath = `./Service-Worker.js?v=${timestamp}`;
@@ -28,8 +32,11 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
     
     console.log('ServiceWorker registration successful with scope:', registration.scope);
     
-    // Set up update handling
-    setupServiceWorkerUpdates(registration);
+    // Store the current version in localStorage to compare on future loads
+    localStorage.setItem('app_version', currentVersion);
+    
+    // Set up update handling with version check
+    setupServiceWorkerUpdates(registration, currentVersion);
     
     // Save registration to make it available throughout the app
     window.swRegistration = registration;
@@ -72,14 +79,25 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
 /**
  * Set up handlers for service worker updates and messages
  * @param {ServiceWorkerRegistration} registration 
+ * @param {string} currentVersion Current app version
  */
-function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration): void {
+function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration, currentVersion: string): void {
+  // Get the last known version from localStorage (if any)
+  const lastKnownVersion = localStorage.getItem('last_sw_version') || currentVersion;
+  
   // Function to handle updates
   const handleServiceWorkerUpdate = () => {
     // When a new service worker is waiting to be activated
     if (registration.waiting) {
       console.log('New version available! Ready to update.');
-      showUpdateNotification();
+      
+      // Check if versions are different before showing notification
+      if (lastKnownVersion !== currentVersion) {
+        showUpdateNotification();
+        localStorage.setItem('last_sw_version', currentVersion);
+      } else {
+        console.log('Service worker updated, but app version unchanged.');
+      }
     }
     
     // When a new service worker is detected
@@ -90,7 +108,14 @@ function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration): voi
       newWorker.addEventListener('statechange', () => {
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
           console.log('New version installed! Ready to update.');
-          showUpdateNotification();
+          
+          // Check if versions are different before showing notification
+          if (lastKnownVersion !== currentVersion) {
+            showUpdateNotification();
+            localStorage.setItem('last_sw_version', currentVersion);
+          } else {
+            console.log('Service worker updated, but app version unchanged.');
+          }
         }
       });
     });

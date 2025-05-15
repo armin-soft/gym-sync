@@ -4,6 +4,7 @@
  */
 
 import { ToastOptions } from './types';
+import manifestData from '@/Manifest.json';
 
 /**
  * Check if service workers are supported in current browser
@@ -32,10 +33,12 @@ export const showToast = (options: ToastOptions): void => {
  * Show notification about available updates
  */
 export function showUpdateNotification(): void {
+  const version = manifestData.version || '1.8.0';
+  
   showToast({
     title: 'بروزرسانی جدید',
-    description: 'نسخه جدید برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.',
-    variant: 'warning',
+    description: `نسخه ${version} برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.`,
+    variant: "warning",
     duration: 10000,
     action: {
       label: 'بروزرسانی',

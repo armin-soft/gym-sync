@@ -27,91 +27,111 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          // Add timestamp to force new service worker
-          const timestamp = new Date().getTime();
-          // Always use relative path for service worker with cache busting
-          const scriptPath = './Service-Worker.js?v=' + timestamp;
-          
-          // Clear caches before registering to ensure fresh version
-          if ('caches' in window) {
-            caches.keys().then(function(cacheNames) {
-              cacheNames.forEach(function(cacheName) {
-                if (cacheName.includes('gym-sync')) {
-                  console.log('Clearing cache:', cacheName);
-                  caches.delete(cacheName);
-                }
-              });
-            }).catch(err => console.error('Error clearing caches:', err));
-          }
-          
-          // Register the service worker with improved error handling
-          navigator.serviceWorker.register(scriptPath)
-            .then(function(registration) {
-              // Registration was successful
-              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          // Get app version from manifest
+          fetch('./Manifest.json')
+            .then(response => response.json())
+            .then(manifestData => {
+              const currentVersion = manifestData.version || '1.8.0';
+              const lastKnownVersion = localStorage.getItem('last_sw_version') || currentVersion;
               
-              // Handle service worker updates
-              function handleServiceWorkerUpdate() {
-                // Check for updates when the page loads
-                navigator.serviceWorker.ready.then(registration => {
-                  registration.update().catch(err => {
-                    console.error('Service worker update failed:', err);
-                  });
-                });
-                
-                // When a new service worker is waiting to be activated
-                if (registration.waiting) {
-                  console.log('New version available! Ready to update.');
-                  // Notify the user about update
-                  showUpdateNotification();
-                }
-                
-                // When a new service worker is detected
-                registration.addEventListener('updatefound', () => {
-                  const newWorker = registration.installing;
-                  if (!newWorker) return;
-                  
-                  newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                      console.log('New version installed! Ready to update.');
-                      showUpdateNotification();
+              // Add timestamp to force new service worker
+              const timestamp = new Date().getTime();
+              // Always use relative path for service worker with cache busting
+              const scriptPath = './Service-Worker.js?v=' + timestamp;
+              
+              // Clear caches before registering to ensure fresh version
+              if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                  cacheNames.forEach(function(cacheName) {
+                    if (cacheName.includes('gym-sync')) {
+                      console.log('Clearing cache:', cacheName);
+                      caches.delete(cacheName);
                     }
                   });
-                });
+                }).catch(err => console.error('Error clearing caches:', err));
               }
               
-              handleServiceWorkerUpdate();
-              
-              // Save registration to make it available throughout the app
-              window.swRegistration = registration;
-              
-              // Dispatch event to notify React app that service worker is ready
-              window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));
+              // Register the service worker with improved error handling
+              navigator.serviceWorker.register(scriptPath)
+                .then(function(registration) {
+                  // Registration was successful
+                  console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                  
+                  // Handle service worker updates
+                  function handleServiceWorkerUpdate() {
+                    // Check for updates when the page loads
+                    navigator.serviceWorker.ready.then(registration => {
+                      registration.update().catch(err => {
+                        console.error('Service worker update failed:', err);
+                      });
+                    });
+                    
+                    // When a new service worker is waiting to be activated
+                    if (registration.waiting) {
+                      console.log('New version available! Ready to update.');
+                      
+                      // Only show notification if versions are different
+                      if (lastKnownVersion !== currentVersion) {
+                        showUpdateNotification(currentVersion);
+                        localStorage.setItem('last_sw_version', currentVersion);
+                      }
+                    }
+                    
+                    // When a new service worker is detected
+                    registration.addEventListener('updatefound', () => {
+                      const newWorker = registration.installing;
+                      if (!newWorker) return;
+                      
+                      newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                          console.log('New version installed! Ready to update.');
+                          
+                          // Only show notification if versions are different
+                          if (lastKnownVersion !== currentVersion) {
+                            showUpdateNotification(currentVersion);
+                            localStorage.setItem('last_sw_version', currentVersion);
+                          }
+                        }
+                      });
+                    });
+                  }
+                  
+                  handleServiceWorkerUpdate();
+                  
+                  // Save registration to make it available throughout the app
+                  window.swRegistration = registration;
+                  
+                  // Dispatch event to notify React app that service worker is ready
+                  window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));
+                })
+                .catch(function(err) {
+                  // Registration failed
+                  console.error('ServiceWorker registration failed: ', err);
+                  
+                  // Try again once after a short delay
+                  setTimeout(() => {
+                    navigator.serviceWorker.register(scriptPath)
+                      .then(reg => {
+                        console.log('ServiceWorker registration successful on retry');
+                        window.swRegistration = reg;
+                        window.dispatchEvent(new CustomEvent('swRegistered', { detail: reg }));
+                      })
+                      .catch(err => console.error('ServiceWorker registration failed on retry:', err));
+                  }, 3000);
+                });
+                
+              // Listen for controller change events
+              let refreshing = false;
+              navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                console.log('Controller changed, refreshing page...');
+                window.location.reload();
+              });
             })
-            .catch(function(err) {
-              // Registration failed
-              console.error('ServiceWorker registration failed: ', err);
-              
-              // Try again once after a short delay
-              setTimeout(() => {
-                navigator.serviceWorker.register(scriptPath)
-                  .then(reg => {
-                    console.log('ServiceWorker registration successful on retry');
-                    window.swRegistration = reg;
-                    window.dispatchEvent(new CustomEvent('swRegistered', { detail: reg }));
-                  })
-                  .catch(err => console.error('ServiceWorker registration failed on retry:', err));
-              }, 3000);
+            .catch(error => {
+              console.error('Failed to fetch manifest:', error);
             });
-            
-          // Listen for controller change events
-          let refreshing = false;
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (refreshing) return;
-            refreshing = true;
-            console.log('Controller changed, refreshing page...');
-            window.location.reload();
-          });
         });
         
         // Check for updates more frequently (every 5 minutes)
@@ -132,13 +152,14 @@
           }
         }, 30 * 60 * 1000); // 30 minutes
         
-        // Function to show update notification
-        function showUpdateNotification() {
+        // Function to show update notification with version
+        function showUpdateNotification(version) {
           // Simple notification implementation
           if (typeof window.showToast === 'function') {
             window.showToast({
               title: 'بروزرسانی جدید',
-              description: 'نسخه جدید برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.',
+              description: `نسخه ${version} برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.`,
+              variant: 'warning',
               action: {
                 label: 'بروزرسانی',
                 onClick: () => {
@@ -151,7 +172,7 @@
               }
             });
           } else {
-            if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
+            if (confirm(`نسخه ${version} برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟`)) {
               if (navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
                   type: 'SKIP_WAITING'
