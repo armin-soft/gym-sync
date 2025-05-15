@@ -1,6 +1,6 @@
 
 // Cache configuration for the service worker
-export const CACHE_NAME = 'gym-sync-v13'; // Increment version to force cache refresh
+export const CACHE_NAME = 'gym-sync-v15'; // Increment version to force cache refresh
 
 // Assets to cache - using relative paths for better compatibility
 export const STATIC_ASSETS = [

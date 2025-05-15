@@ -2,10 +2,10 @@
 // Main service worker file with enhanced offline functionality
 
 // Log service worker initialization
-console.log('[Service Worker] Starting Service Worker');
+console.log('[Service Worker] Starting Service Worker v1.7.5');
 
 // Cache configuration - updated version to force refresh
-const CACHE_NAME = 'gym-sync-v14';
+const CACHE_NAME = 'gym-sync-v15';
 
 // Define base path for assets
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
@@ -26,7 +26,7 @@ const STATIC_ASSETS = [
 
 // Install event with improved error handling
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing');
+  console.log('[Service Worker] Installing v1.7.5');
   
   // Force activation for immediate control
   self.skipWaiting();
@@ -56,7 +56,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activated');
+  console.log('[Service Worker] Activated v1.7.5');
   
   // Clean up old caches
   event.waitUntil(
