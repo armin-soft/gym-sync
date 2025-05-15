@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,7 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
   const [activeTab, setActiveTab] = useState<string>("info");
   
   const [name, setName] = useState<string>(student?.name || "");
-  const [age, setAge] = useState<string>(student?.age?.toString() || "");
+  const [age, setAge] = useState<string>(student?.age !== undefined ? student.age.toString() : "");
   const [height, setHeight] = useState<string>(student?.height?.toString() || "");
   const [weight, setWeight] = useState<string>(student?.weight?.toString() || "");
   const [wrist, setWrist] = useState<string>(student?.wrist || "");
@@ -79,18 +78,16 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
     
     // Parse numeric values - convert string values to numbers if provided
     const parsedAge = age ? parseInt(age) : undefined;
-    const parsedHeight = height ? parseInt(height) : undefined;
-    const parsedWeight = weight ? parseInt(weight) : undefined;
     
     // Create new student object or update existing one
     const updatedStudent: Student = {
       id: student?.id || Date.now(),
       name,
       age: parsedAge,
-      // Convert number values to strings to match the expected types
-      height: height || undefined, // Store height as string
-      weight: weight || undefined, // Store weight as string
-      wrist, // Store wrist as string
+      // Properly handle the string types for height and weight
+      height: height || undefined,
+      weight: weight || undefined,
+      wrist,
       phone,
       goal,
       exercises,

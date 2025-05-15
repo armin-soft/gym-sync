@@ -1,3 +1,4 @@
+
 import React, { forwardRef, useImperativeHandle } from "react";
 import { Student } from "./StudentTypes";
 import { StudentDialog } from "./StudentDialog";
@@ -82,18 +83,29 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
 
     // Create a wrapper function to adapt the expected types
     const handleSaveWrapper = (formData: StudentFormData) => {
+      // Parse age to number if it exists
+      const parsedAge = formData.age ? parseInt(formData.age) : undefined;
+      
       // If selectedStudent exists, merge the form data with it
-      // Otherwise, create a new student object
       if (selectedStudent) {
         onSave({
           ...selectedStudent,
-          ...formData
+          ...formData,
+          age: parsedAge
         });
       } else {
         // Create a new student with default values and the form data
-        onSave({
+        const newStudent: Student = {
           id: Date.now(), // Generate a new ID
-          ...formData,
+          name: formData.name,
+          phone: formData.phone,
+          height: formData.height,
+          weight: formData.weight,
+          image: formData.image || '/Assets/Image/Place-Holder.svg',
+          payment: formData.payment,
+          age: parsedAge,
+          grade: formData.grade,
+          group: formData.group,
           exercises: [],
           exercisesDay1: [],
           exercisesDay2: [],
@@ -102,7 +114,9 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
           meals: [],
           supplements: [],
           vitamins: []
-        } as Student);
+        };
+        
+        onSave(newStudent);
       }
       setIsDialogOpen(false);
     };
