@@ -25,54 +25,56 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
     // Store the current version in localStorage for future comparisons
     localStorage.setItem('app_version', currentVersion);
     
-    // Use the Service-Worker.js file from the root directory with a timestamp to prevent caching
+    // Use a simpler approach with better error handling
     const timestamp = new Date().getTime();
-    const scriptPath = `./Service-Worker.js?v=${timestamp}`;
     
-    // Check if a service worker is already active
-    const existingRegistration = await navigator.serviceWorker.getRegistration();
-    
-    // Only register a new service worker if one doesn't exist or the version has changed
-    if (!existingRegistration || lastKnownVersion !== currentVersion) {
-      // Register the service worker
+    // First try to use the service worker at the project root
+    try {
+      const scriptPath = `/Service-Worker.js?v=${timestamp}`;
+      const registration = await navigator.serviceWorker.register(scriptPath, {
+        scope: '/',
+        updateViaCache: 'none'
+      });
+      
+      console.log('ServiceWorker registration successful with scope:', registration.scope);
+      setupServiceWorkerUpdates(registration, currentVersion, lastKnownVersion);
+      window.swRegistration = registration;
+      window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));
+      return registration;
+    } catch (rootError) {
+      console.warn('Could not register service worker at root path:', rootError);
+      
+      // Try with relative path as fallback
+      const scriptPath = `./Service-Worker.js?v=${timestamp}`;
       const registration = await navigator.serviceWorker.register(scriptPath, {
         scope: './',
         updateViaCache: 'none'
       });
       
-      console.log('ServiceWorker registration successful with scope:', registration.scope);
-      
-      // Set up update handling with version check
+      console.log('ServiceWorker registration successful with relative path:', registration.scope);
       setupServiceWorkerUpdates(registration, currentVersion, lastKnownVersion);
-      
-      // Save registration to make it available throughout the app
       window.swRegistration = registration;
-      
-      // Notify React app that service worker is ready
       window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));
-      
       return registration;
-    } else {
-      console.log('Using existing service worker registration');
-      window.swRegistration = existingRegistration;
-      return existingRegistration;
     }
   } catch (error) {
     console.error('ServiceWorker registration failed:', error);
     
-    // Try once more with a simpler approach (absolute path)
+    // Last resort attempt with minimal configuration
     try {
       // Force clear any existing registrations first
       const existingRegistrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(existingRegistrations.map(reg => reg.unregister()));
       
-      // Try to register with absolute path
-      const retryRegistration = await navigator.serviceWorker.register('/Service-Worker.js');
-      console.log('ServiceWorker registration successful on retry');
+      // Try with the simplest possible registration
+      const retryRegistration = await navigator.serviceWorker.register('./Service-Worker.js', {
+        updateViaCache: 'none'
+      });
+      console.log('ServiceWorker registration successful on final retry');
       window.swRegistration = retryRegistration;
       return retryRegistration;
     } catch (retryError) {
-      console.error('ServiceWorker registration failed on retry:', retryError);
+      console.error('ServiceWorker registration failed on all attempts:', retryError);
       return null;
     }
   }
@@ -124,7 +126,6 @@ function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration, curr
   handleServiceWorkerUpdate();
   
   // Listen for controller change events - prevent immediate refresh
-  // Only refresh if we have an actual version update
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (refreshing) return;

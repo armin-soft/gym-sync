@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +15,8 @@ const ServiceWorkerTestPage = () => {
   const [swVersion, setSwVersion] = useState<string>('نامشخص');
   const [cacheKeys, setCacheKeys] = useState<string[]>([]);
   const [cacheItems, setCacheItems] = useState<number>(0);
+  const [loadingState, setLoadingState] = useState<string>('');
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
   
   // Setup event listeners for online/offline status
   useEffect(() => {
@@ -48,6 +51,8 @@ const ServiceWorkerTestPage = () => {
   useEffect(() => {
     const checkServiceWorker = async () => {
       try {
+        setLoadingState('در حال بررسی سرویس ورکر...');
+        
         // App version
         const version = getAppVersion();
         setSwVersion(version);
@@ -69,20 +74,30 @@ const ServiceWorkerTestPage = () => {
 
         // Check caches
         if ('caches' in window) {
-          const keys = await caches.keys();
-          setCacheKeys(keys);
-          
-          // Count cached items
-          let totalItems = 0;
-          for (const key of keys) {
-            const cache = await caches.open(key);
-            const requests = await cache.keys();
-            totalItems += requests.length;
+          try {
+            const keys = await caches.keys();
+            setCacheKeys(keys);
+            
+            // Count cached items
+            let totalItems = 0;
+            for (const key of keys) {
+              const cache = await caches.open(key);
+              const requests = await cache.keys();
+              totalItems += requests.length;
+            }
+            setCacheItems(totalItems);
+          } catch (cacheError) {
+            console.error('Error accessing caches:', cacheError);
+            setCacheKeys([]);
+            setCacheItems(0);
           }
-          setCacheItems(totalItems);
         }
+        
+        setLoadingState('');
       } catch (error) {
+        setRegistrationError(error instanceof Error ? error.message : 'Unknown error');
         console.error('Error checking service worker:', error);
+        setLoadingState('');
       }
     };
 
@@ -91,6 +106,8 @@ const ServiceWorkerTestPage = () => {
 
   const refreshServiceWorkerStatus = async () => {
     try {
+      setLoadingState('در حال بروزرسانی وضعیت...');
+      
       if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.getRegistration();
         setSwRegistered(registration !== undefined);
@@ -107,24 +124,36 @@ const ServiceWorkerTestPage = () => {
 
       // Refresh caches info
       if ('caches' in window) {
-        const keys = await caches.keys();
-        setCacheKeys(keys);
-        
-        let totalItems = 0;
-        for (const key of keys) {
-          const cache = await caches.open(key);
-          const requests = await cache.keys();
-          totalItems += requests.length;
+        try {
+          const keys = await caches.keys();
+          setCacheKeys(keys);
+          
+          let totalItems = 0;
+          for (const key of keys) {
+            const cache = await caches.open(key);
+            const requests = await cache.keys();
+            totalItems += requests.length;
+          }
+          setCacheItems(totalItems);
+        } catch (cacheError) {
+          console.error('Error accessing caches:', cacheError);
+          setCacheKeys([]);
+          setCacheItems(0);
         }
-        setCacheItems(totalItems);
       }
+      
+      setLoadingState('');
     } catch (error) {
+      setRegistrationError(error instanceof Error ? error.message : 'Unknown error');
       console.error('Error refreshing service worker status:', error);
+      setLoadingState('');
     }
   };
 
   const clearAllCaches = async () => {
     try {
+      setLoadingState('در حال پاکسازی کش...');
+      
       if ('caches' in window) {
         const keys = await caches.keys();
         await Promise.all(keys.map(key => caches.delete(key)));
@@ -136,6 +165,8 @@ const ServiceWorkerTestPage = () => {
           variant: "success"
         });
       }
+      
+      setLoadingState('');
     } catch (error) {
       console.error('Error clearing caches:', error);
       toast({
@@ -143,6 +174,59 @@ const ServiceWorkerTestPage = () => {
         description: "پاکسازی کش با مشکل مواجه شد.",
         variant: "destructive"
       });
+      setLoadingState('');
+    }
+  };
+
+  const registerSW = async () => {
+    try {
+      setLoadingState('در حال ثبت سرویس ورکر...');
+      setRegistrationError(null);
+      
+      if ('serviceWorker' in navigator) {
+        // Unregister any existing service workers
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(reg => reg.unregister()));
+        
+        // Register a new service worker
+        const timestamp = new Date().getTime();
+        const registration = await navigator.serviceWorker.register('./Service-Worker.js?v=' + timestamp, {
+          scope: './',
+          updateViaCache: 'none'
+        });
+        
+        setSwRegistered(true);
+        
+        // Force activate the service worker
+        if (registration.installing) {
+          registration.installing.addEventListener('statechange', () => {
+            if (registration.active) {
+              setSwController(true);
+              navigator.serviceWorker.controller?.postMessage({ type: 'REFRESH_CACHE' });
+            }
+          });
+        }
+        
+        toast({
+          title: "ثبت سرویس ورکر",
+          description: "سرویس ورکر با موفقیت ثبت شد.",
+          variant: "success"
+        });
+        
+        // Refresh status after a short delay
+        setTimeout(refreshServiceWorkerStatus, 1000);
+      }
+      
+      setLoadingState('');
+    } catch (error) {
+      setRegistrationError(error instanceof Error ? error.message : 'Unknown error');
+      console.error('Error registering service worker:', error);
+      toast({
+        title: "خطا",
+        description: "ثبت سرویس ورکر با مشکل مواجه شد.",
+        variant: "destructive"
+      });
+      setLoadingState('');
     }
   };
 
@@ -157,6 +241,12 @@ const ServiceWorkerTestPage = () => {
         description: "درخواست بروزرسانی سرویس ورکر ارسال شد.",
         variant: "default"
       });
+    } else {
+      toast({
+        title: "خطا",
+        description: "سرویس ورکر فعالی وجود ندارد.",
+        variant: "warning"
+      });
     }
   };
 
@@ -170,6 +260,12 @@ const ServiceWorkerTestPage = () => {
         title: "بروزرسانی کش",
         description: "درخواست بروزرسانی کش ارسال شد.",
         variant: "default"
+      });
+    } else {
+      toast({
+        title: "خطا",
+        description: "سرویس ورکر فعالی وجود ندارد.",
+        variant: "warning"
       });
     }
   };
@@ -187,6 +283,21 @@ const ServiceWorkerTestPage = () => {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">ابزار تست سرویس ورکر و حالت آفلاین</h1>
+      
+      {loadingState && (
+        <Alert className="mb-4">
+          <AlertDescription>{loadingState}</AlertDescription>
+        </Alert>
+      )}
+      
+      {registrationError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertTitle>خطا در ثبت سرویس ورکر</AlertTitle>
+          <AlertDescription className="mt-2 text-sm font-mono break-all overflow-x-auto">
+            {registrationError}
+          </AlertDescription>
+        </Alert>
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Status Card */}
@@ -263,9 +374,10 @@ const ServiceWorkerTestPage = () => {
               <h3 className="font-medium">مدیریت سرویس ورکر</h3>
               <div className="flex flex-wrap gap-2">
                 <Button onClick={refreshServiceWorkerStatus}>بررسی وضعیت</Button>
-                <Button onClick={updateServiceWorker}>بروزرسانی سرویس ورکر</Button>
+                <Button onClick={registerSW} variant="outline">ثبت سرویس ورکر</Button>
+                <Button onClick={updateServiceWorker} disabled={!swRegistered}>بروزرسانی سرویس ورکر</Button>
                 <Button onClick={clearAllCaches} variant="destructive">حذف تمام کش‌ها</Button>
-                <Button onClick={refreshCache}>بروزرسانی کش</Button>
+                <Button onClick={refreshCache} disabled={!swRegistered}>بروزرسانی کش</Button>
               </div>
             </div>
 
