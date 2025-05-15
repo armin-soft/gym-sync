@@ -16,8 +16,15 @@ root.render(
   </React.StrictMode>
 );
 
+// Flag to prevent multiple service worker initializations
+let serviceWorkerInitialized = false;
+
 // Initialize service worker after app renders to avoid blocking the main thread
 window.addEventListener('load', () => {
+  // Prevent double initialization
+  if (serviceWorkerInitialized) return;
+  serviceWorkerInitialized = true;
+  
   // Delay service worker registration slightly to prioritize UI rendering
   setTimeout(() => {
     initializeServiceWorker()

@@ -20,31 +20,44 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
     // Save the current app version from manifest
     const currentVersion = manifestData.version || '1.8.0';
     
+    // Get the last known version from localStorage (if any)
+    const lastKnownVersion = localStorage.getItem('last_sw_version') || '';
+    
+    // Store the current version in localStorage for future comparisons
+    localStorage.setItem('app_version', currentVersion);
+    
     // Use the Service-Worker.js file from the root directory with a timestamp to prevent caching
     const timestamp = new Date().getTime();
     const scriptPath = `./Service-Worker.js?v=${timestamp}`;
     
-    // Register the service worker
-    const registration = await navigator.serviceWorker.register(scriptPath, {
-      scope: './',
-      updateViaCache: 'none'
-    });
+    // Check if a service worker is already active
+    const existingRegistration = await navigator.serviceWorker.getRegistration();
     
-    console.log('ServiceWorker registration successful with scope:', registration.scope);
-    
-    // Store the current version in localStorage to compare on future loads
-    localStorage.setItem('app_version', currentVersion);
-    
-    // Set up update handling with version check
-    setupServiceWorkerUpdates(registration, currentVersion);
-    
-    // Save registration to make it available throughout the app
-    window.swRegistration = registration;
-    
-    // Notify React app that service worker is ready
-    window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));
-    
-    return registration;
+    // Only register a new service worker if one doesn't exist or the version has changed
+    if (!existingRegistration || lastKnownVersion !== currentVersion) {
+      // Register the service worker
+      const registration = await navigator.serviceWorker.register(scriptPath, {
+        scope: './',
+        updateViaCache: 'none'
+      });
+      
+      console.log('ServiceWorker registration successful with scope:', registration.scope);
+      
+      // Set up update handling with version check
+      setupServiceWorkerUpdates(registration, currentVersion, lastKnownVersion);
+      
+      // Save registration to make it available throughout the app
+      window.swRegistration = registration;
+      
+      // Notify React app that service worker is ready
+      window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));
+      
+      return registration;
+    } else {
+      console.log('Using existing service worker registration');
+      window.swRegistration = existingRegistration;
+      return existingRegistration;
+    }
   } catch (error) {
     console.error('ServiceWorker registration failed:', error);
     
@@ -80,11 +93,9 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
  * Set up handlers for service worker updates and messages
  * @param {ServiceWorkerRegistration} registration 
  * @param {string} currentVersion Current app version
+ * @param {string} lastKnownVersion Last known app version
  */
-function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration, currentVersion: string): void {
-  // Get the last known version from localStorage (if any)
-  const lastKnownVersion = localStorage.getItem('last_sw_version') || currentVersion;
-  
+function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration, currentVersion: string, lastKnownVersion: string): void {
   // Function to handle updates
   const handleServiceWorkerUpdate = () => {
     // When a new service worker is waiting to be activated
@@ -123,12 +134,19 @@ function setupServiceWorkerUpdates(registration: ServiceWorkerRegistration, curr
   
   handleServiceWorkerUpdate();
   
-  // Listen for controller change events
+  // Listen for controller change events - prevent immediate refresh
+  // Only refresh if we have an actual version update
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (refreshing) return;
-    refreshing = true;
-    console.log('Controller changed, refreshing page...');
-    window.location.reload();
+    
+    // Only refresh the page if the version has actually changed
+    if (lastKnownVersion !== currentVersion) {
+      refreshing = true;
+      console.log('Controller changed, refreshing page...');
+      window.location.reload();
+    } else {
+      console.log('Controller changed but version is the same, not refreshing');
+    }
   });
 }

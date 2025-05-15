@@ -14,11 +14,22 @@ import { showToast } from './service-worker/helpers';
 export { isServiceWorkerSupported };
 export type { ToastOptions };
 
+// Flag to prevent multiple initializations
+let serviceWorkerInitialized = false;
+
 /**
  * Initialize service worker and offline detection
  * Best called from the main entry point of the app (e.g., main.tsx)
  */
 export const initializeServiceWorker = async (): Promise<void> => {
+  // Prevent multiple initializations
+  if (serviceWorkerInitialized) {
+    console.log('Service worker already initialized, skipping');
+    return;
+  }
+  
+  serviceWorkerInitialized = true;
+  
   try {
     if (!isServiceWorkerSupported()) {
       console.log('Service workers are not supported in this browser');

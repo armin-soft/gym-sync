@@ -9,7 +9,6 @@ self.BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 // Core service worker functionality
 self.addEventListener('install', event => {
   console.log('[Service Worker] Installing v1.8.0');
-  self.skipWaiting();
   
   event.waitUntil(
     caches.open(self.CACHE_NAME)
@@ -120,6 +119,7 @@ self.addEventListener('message', event => {
   
   switch (event.data.type) {
     case 'SKIP_WAITING':
+      console.log('[Service Worker] Skip waiting command received');
       self.skipWaiting();
       break;
     case 'CHECK_FOR_UPDATES':

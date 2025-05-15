@@ -34,21 +34,32 @@ export const showToast = (options: ToastOptions): void => {
  */
 export function showUpdateNotification(): void {
   const version = manifestData.version || '1.8.0';
+  const currentVersion = localStorage.getItem('app_version') || version;
   
-  showToast({
-    title: 'بروزرسانی جدید',
-    description: `نسخه ${version} برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.`,
-    variant: "warning",
-    duration: 10000,
-    action: {
-      label: 'بروزرسانی',
-      onClick: () => {
-        if (navigator.serviceWorker.controller) {
-          navigator.serviceWorker.controller.postMessage({
-            type: 'SKIP_WAITING'
-          });
+  // Check if the update notification has been shown recently
+  const lastNotificationTime = parseInt(localStorage.getItem('update_notification_time') || '0');
+  const currentTime = new Date().getTime();
+  
+  // Only show notification if 1 hour has passed since the last one
+  if (currentTime - lastNotificationTime > 60 * 60 * 1000) {
+    showToast({
+      title: 'بروزرسانی جدید',
+      description: `نسخه ${version} برنامه در دسترس است. برای اعمال تغییرات، صفحه را بروزرسانی کنید.`,
+      variant: "warning",
+      duration: 10000,
+      action: {
+        label: 'بروزرسانی',
+        onClick: () => {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SKIP_WAITING'
+            });
+          }
         }
       }
-    }
-  });
+    });
+    
+    // Update the last notification time
+    localStorage.setItem('update_notification_time', currentTime.toString());
+  }
 }
