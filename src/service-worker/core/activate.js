@@ -5,7 +5,7 @@ import { CACHE_NAME } from './config.js';
 
 // Activate the service worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activated v1.7.5');
+  console.log('[Service Worker] Activated v1.7.8');
   
   // Clean up old caches
   event.waitUntil(
@@ -35,4 +35,3 @@ async function cleanupOldCaches() {
 // Make function available in the global scope
 // @ts-ignore
 self.cleanupOldCaches = cleanupOldCaches;
-

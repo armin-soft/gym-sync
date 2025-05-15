@@ -5,7 +5,7 @@ import { CACHE_NAME, STATIC_ASSETS } from './config.js';
 
 // Install the service worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v1.7.5');
+  console.log('[Service Worker] Installing v1.7.8');
   
   // Force activation for immediate control
   self.skipWaiting();
@@ -44,4 +44,3 @@ async function cacheStaticAssets() {
 // Make function available in the global scope
 // @ts-ignore
 self.cacheStaticAssets = cacheStaticAssets;
-
