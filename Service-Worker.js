@@ -12,4 +12,3 @@ import './src/service-worker/core/periodic-sync.js';
 
 // Log service worker initialization
 console.log('[Service Worker] Starting Service Worker v1.7.5');
-

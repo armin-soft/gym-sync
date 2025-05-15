@@ -19,12 +19,8 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
     // Use the Service-Worker.js file from the root directory (simpler approach)
     const scriptPath = './Service-Worker.js';
     
-    // Add timestamp to force new service worker
-    const timestamp = new Date().getTime();
-    const cacheBustedPath = `${scriptPath}?v=${timestamp}`;
-    
     // Register the service worker
-    const registration = await navigator.serviceWorker.register(cacheBustedPath, {
+    const registration = await navigator.serviceWorker.register(scriptPath, {
       scope: './'
     });
     
@@ -43,13 +39,12 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
   } catch (error) {
     console.error('ServiceWorker registration failed:', error);
     
-    // Try once more after a short delay with a simpler approach
+    // Try once more with a simpler approach
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      const retryRegistration = await navigator.serviceWorker.register('./Service-Worker.js');
+      // Try to register with absolute path
+      const retryRegistration = await navigator.serviceWorker.register('/Service-Worker.js');
       console.log('ServiceWorker registration successful on retry');
       window.swRegistration = retryRegistration;
-      window.dispatchEvent(new CustomEvent('swRegistered', { detail: retryRegistration }));
       return retryRegistration;
     } catch (retryError) {
       console.error('ServiceWorker registration failed on retry:', retryError);

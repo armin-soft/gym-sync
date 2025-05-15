@@ -19,11 +19,7 @@ export const copyFilesPlugin = () => {
         if (!fs.existsSync('dist/Assets/Script')) {
           fs.mkdirSync('dist/Assets/Script', { recursive: true });
         }
-        // پوشه سرویس ورکر
-        if (!fs.existsSync('dist/src/service-worker/core')) {
-          fs.mkdirSync('dist/src/service-worker/core', { recursive: true });
-        }
-
+        
         // کپی Manifest.json از src به ریشه dist، جلوگیری از تکرار
         if (fs.existsSync('src/Manifest.json')) {
           fs.copyFileSync('src/Manifest.json', 'dist/Manifest.json');
@@ -41,29 +37,28 @@ export const copyFilesPlugin = () => {
           console.log('Copied Service-Worker.js to dist root and Assets/Script/ServiceWorker.js');
         }
         
-        // کپی ماژول‌های سرویس ورکر
-        const serviceWorkerFiles = [
+        // کپی ماژول‌های سرویس ورکر به مسیرشان در dist
+        const serviceWorkerModules = [
           { source: 'src/service-worker/core/config.js', dest: 'dist/src/service-worker/core/config.js' },
           { source: 'src/service-worker/core/install.js', dest: 'dist/src/service-worker/core/install.js' },
           { source: 'src/service-worker/core/activate.js', dest: 'dist/src/service-worker/core/activate.js' },
           { source: 'src/service-worker/core/fetch.js', dest: 'dist/src/service-worker/core/fetch.js' },
           { source: 'src/service-worker/core/message.js', dest: 'dist/src/service-worker/core/message.js' },
-          { source: 'src/service-worker/core/periodic-sync.js', dest: 'dist/src/service-worker/core/periodic-sync.js' },
-          { source: 'src/service-worker/utils.js', dest: 'dist/src/service-worker/utils.js' },
+          { source: 'src/service-worker/core/periodic-sync.js', dest: 'dist/src/service-worker/core/periodic-sync.js' }
         ];
         
-        for (const file of serviceWorkerFiles) {
-          if (fs.existsSync(file.source)) {
-            // ایجاد پوشه‌های لازم
-            const dir = path.dirname(file.dest);
-            if (!fs.existsSync(dir)) {
-              fs.mkdirSync(dir, { recursive: true });
-            }
-            
-            fs.copyFileSync(file.source, file.dest);
-            console.log(`Copied ${file.source} to ${file.dest}`);
+        // ایجاد پوشه‌های لازم برای سرویس ورکر
+        if (!fs.existsSync('dist/src/service-worker/core')) {
+          fs.mkdirSync('dist/src/service-worker/core', { recursive: true });
+        }
+        
+        // کپی ماژول‌ها
+        for (const module of serviceWorkerModules) {
+          if (fs.existsSync(module.source)) {
+            fs.copyFileSync(module.source, module.dest);
+            console.log(`Copied ${module.source} to ${module.dest}`);
           } else {
-            console.warn(`Source file not found: ${file.source}`);
+            console.warn(`Service worker module not found: ${module.source}`);
           }
         }
 
@@ -83,19 +78,7 @@ export const copyFilesPlugin = () => {
           console.log('Removed duplicate Manifest.json from dist/Assets/');
         }
 
-        // حذف پوشه src از dist بعد از کپی فایل‌های لازم - بجز پوشه سرویس ورکر
-        /* این کد غیرفعال شده تا فایل‌های سرویس ورکر در مسیر صحیح باقی بمانند
-        if (fs.existsSync('dist/src')) {
-          try {
-            await rm('dist/src', { recursive: true, force: true });
-            console.log('Successfully deleted dist/src directory');
-          } catch (err) {
-            console.error('Error removing dist/src directory:', err);
-          }
-        }
-        */
-        
-        console.log('All files copied successfully!');
+        console.log('All service worker files copied successfully!');
       } catch (error) {
         console.error('Error during file copying:', error);
       }

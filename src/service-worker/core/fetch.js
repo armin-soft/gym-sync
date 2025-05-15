@@ -1,10 +1,9 @@
 // Service worker fetch event handling
 
-import { CACHE_NAME } from './config';
-import { cleanRequestUrl, createOfflineResponse } from '../utils/request-utils';
+import { CACHE_NAME } from './config.js';
 
 // Handle fetch events
-self.addEventListener('fetch', (event: FetchEvent) => {
+self.addEventListener('fetch', (event) => {
   // Don't attempt to cache API requests or external resources
   if (event.request.url.includes('/api/') || 
       !event.request.url.startsWith(self.location.origin)) {
@@ -21,9 +20,10 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 });
 
 // Create a clean request object if needed
-function createCleanRequest(originalRequest: Request): Request {
+function createCleanRequest(originalRequest) {
   const requestUrl = originalRequest.url;
-  const cleanUrl = cleanRequestUrl(requestUrl);
+  // Fix duplicate Assets paths
+  const cleanUrl = requestUrl.replace(/Assets\/Assets\//g, 'Assets/');
   
   if (cleanUrl !== requestUrl) {
     console.log('[Service Worker] Fixed duplicate path:', cleanUrl);
@@ -39,7 +39,7 @@ function createCleanRequest(originalRequest: Request): Request {
 }
 
 // Enhanced strategy: Try cache first, then network with background cache update
-async function fetchWithCacheFallback(request: Request): Promise<Response> {
+async function fetchWithCacheFallback(request) {
   try {
     const cachedResponse = await caches.match(request);
     
@@ -60,7 +60,7 @@ async function fetchWithCacheFallback(request: Request): Promise<Response> {
 }
 
 // Update cache in background without blocking response
-function updateCacheInBackground(request: Request): void {
+function updateCacheInBackground(request) {
   fetch(request)
     .then(response => {
       if (!response || response.status !== 200 || response.type !== 'basic') {
@@ -83,7 +83,7 @@ function updateCacheInBackground(request: Request): void {
 }
 
 // Enhanced fetch from network and cache response
-async function fetchAndCache(request: Request): Promise<Response> {
+async function fetchAndCache(request) {
   try {
     const response = await fetch(request);
     
@@ -112,7 +112,7 @@ async function fetchAndCache(request: Request): Promise<Response> {
 }
 
 // Handle fetch errors with appropriate fallbacks
-async function handleFetchError(error: Error, request: Request): Promise<Response> {
+async function handleFetchError(error, request) {
   console.error('[Service Worker] Fetch failed:', error);
   
   // For navigation requests, return the offline page
@@ -121,9 +121,12 @@ async function handleFetchError(error: Error, request: Request): Promise<Respons
     if (indexResponse) return indexResponse;
     
     // If index.html is not in cache, create a simple offline page
-    return createOfflineResponse(true);
+    return new Response(
+      '<html><head><title>Offline</title></head><body><h1>Offline</h1><p>The app is currently offline.</p></body></html>',
+      { headers: { 'Content-Type': 'text/html' } }
+    );
   }
   
   // For other resources
-  return createOfflineResponse();
+  return new Response('Offline content not available');
 }

@@ -1,7 +1,10 @@
+
 // Service worker fetch event handling
 
 import { CACHE_NAME } from './config';
-import { cleanRequestUrl, createOfflineResponse } from '../utils/request-utils';
+
+// Explicitly declare self as ServiceWorkerGlobalScope
+declare var self: ServiceWorkerGlobalScope;
 
 // Handle fetch events
 self.addEventListener('fetch', (event: FetchEvent) => {
@@ -23,7 +26,8 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 // Create a clean request object if needed
 function createCleanRequest(originalRequest: Request): Request {
   const requestUrl = originalRequest.url;
-  const cleanUrl = cleanRequestUrl(requestUrl);
+  // Fix duplicate Assets paths
+  const cleanUrl = requestUrl.replace(/Assets\/Assets\//g, 'Assets/');
   
   if (cleanUrl !== requestUrl) {
     console.log('[Service Worker] Fixed duplicate path:', cleanUrl);
@@ -109,6 +113,17 @@ async function fetchAndCache(request: Request): Promise<Response> {
     console.error('[Service Worker] Fetch failed for:', request.url, error);
     throw error;
   }
+}
+
+// Create a simple offline response
+function createOfflineResponse(isHtml: boolean = false): Response {
+  if (isHtml) {
+    return new Response(
+      '<html><head><title>Offline</title></head><body><h1>Offline</h1><p>The app is currently offline.</p></body></html>',
+      { headers: { 'Content-Type': 'text/html' } }
+    );
+  }
+  return new Response('Offline content not available');
 }
 
 // Handle fetch errors with appropriate fallbacks
