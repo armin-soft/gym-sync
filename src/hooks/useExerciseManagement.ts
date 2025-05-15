@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Exercise } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { safeJSONParse, safeJSONSave, notifyDataChange } from "@/utils/database";
 
 export const useExerciseManagement = () => {
   const { toast } = useToast();
@@ -12,20 +13,13 @@ export const useExerciseManagement = () => {
   const [isExerciseDialogOpen, setIsExerciseDialogOpen] = useState(false);
   const [isAscending, setIsAscending] = useState(true);
 
-  // بارگذاری اطلاعات از localStorage با استفاده از React Query
+  // بارگذاری اطلاعات از localStorage با استفاده از React Query و خطایابی بهتر
   const { data: exercises = [], isLoading } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
       try {
         console.log("Loading exercises in useExerciseManagement");
-        const savedExercises = localStorage.getItem("exercises");
-        if (!savedExercises) {
-          console.log("No exercises found in localStorage");
-          return [];
-        }
-        const exs = JSON.parse(savedExercises);
-        console.log("Loaded exercises in useExerciseManagement:", exs);
-        return exs;
+        return safeJSONParse<Exercise[]>("exercises", []);
       } catch (error) {
         console.error("Error loading exercises from localStorage:", error);
         toast({
@@ -43,7 +37,7 @@ export const useExerciseManagement = () => {
     setIsAscending(!isAscending);
   }, [isAscending]);
 
-  // افزودن یا ویرایش حرکت
+  // افزودن یا ویرایش حرکت با مدیریت خطای بهتر
   const handleExerciseSave = useCallback(async (formData: { name: string; categoryId: number }) => {
     try {
       // بررسی تکراری بودن نام حرکت
@@ -89,7 +83,8 @@ export const useExerciseManagement = () => {
       }
       
       // ذخیره در localStorage و به‌روزرسانی کش react-query
-      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
+      safeJSONSave("exercises", updatedExercises);
+      notifyDataChange("exercises");
       queryClient.setQueryData(["exercises"], updatedExercises);
       
       setIsExerciseDialogOpen(false);
@@ -105,19 +100,24 @@ export const useExerciseManagement = () => {
     }
   }, [exercises, selectedExercise, queryClient, toast]);
 
-  // حذف حرکات
+  // حذف حرکات با مدیریت خطای بهتر
   const handleDeleteExercises = useCallback((selectedIds: number[]) => {
     try {
       const updatedExercises = exercises.filter(ex => !selectedIds.includes(ex.id));
-      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
-      queryClient.setQueryData(["exercises"], updatedExercises);
       
-      toast({
-        title: "موفقیت",
-        description: selectedIds.length > 1 
-          ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
-          : "حرکت با موفقیت حذف شد"
-      });
+      if (safeJSONSave("exercises", updatedExercises)) {
+        notifyDataChange("exercises");
+        queryClient.setQueryData(["exercises"], updatedExercises);
+        
+        toast({
+          title: "موفقیت",
+          description: selectedIds.length > 1 
+            ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
+            : "حرکت با موفقیت حذف شد"
+        });
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error('Error deleting exercises:', error);
       toast({
@@ -125,13 +125,15 @@ export const useExerciseManagement = () => {
         title: "خطا",
         description: "خطا در حذف حرکت‌ها"
       });
+      return false;
     }
   }, [exercises, queryClient, toast]);
 
   return {
     exercises,
     setExercises: (newExercises: Exercise[]) => {
-      localStorage.setItem("exercises", JSON.stringify(newExercises));
+      safeJSONSave("exercises", newExercises);
+      notifyDataChange("exercises");
       queryClient.setQueryData(["exercises"], newExercises);
     },
     selectedExercise,

@@ -2,9 +2,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
+import { safeJSONParse } from "@/utils/database";
 
 /**
- * Hook to fetch exercises data from localStorage
+ * Hook to fetch exercises data from localStorage with improved performance
  */
 export const useExerciseData = () => {
   const { toast } = useToast();
@@ -15,14 +16,7 @@ export const useExerciseData = () => {
     queryFn: () => {
       try {
         console.log("Loading exercises from localStorage");
-        const exercisesData = localStorage.getItem("exercises");
-        if (!exercisesData) {
-          console.log("No exercises data found in localStorage");
-          return [];
-        }
-        const parsedData = JSON.parse(exercisesData);
-        console.log("Loaded exercises:", parsedData);
-        return parsedData;
+        return safeJSONParse<Exercise[]>("exercises", []);
       } catch (error) {
         console.error("Error loading exercises:", error);
         toast({
@@ -41,14 +35,7 @@ export const useExerciseData = () => {
     queryFn: () => {
       try {
         console.log("Loading categories from localStorage");
-        const categoriesData = localStorage.getItem("exerciseCategories");
-        if (!categoriesData) {
-          console.log("No categories data found in localStorage");
-          return [];
-        }
-        const parsedData = JSON.parse(categoriesData);
-        console.log("Loaded categories:", parsedData);
-        return parsedData;
+        return safeJSONParse<ExerciseCategory[]>("exerciseCategories", []);
       } catch (error) {
         console.error("Error loading categories:", error);
         toast({
@@ -67,14 +54,7 @@ export const useExerciseData = () => {
     queryFn: () => {
       try {
         console.log("Loading exercise types from localStorage");
-        const typesData = localStorage.getItem("exerciseTypes");
-        if (!typesData) {
-          console.log("No exercise types data found in localStorage");
-          return [];
-        }
-        const parsedData = JSON.parse(typesData);
-        console.log("Loaded exercise types:", parsedData);
-        return parsedData;
+        return safeJSONParse<any[]>("exerciseTypes", []);
       } catch (error) {
         console.error("Error loading exercise types:", error);
         toast({

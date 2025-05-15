@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import type { Supplement, SupplementCategory } from "@/types/supplement";
 import type { SupplementType } from "./types";
+import { safeJSONParse, safeJSONSave } from "@/utils/database";
 
 export const useLocalStorage = (initialTab: SupplementType = 'supplement') => {
   const { toast } = useToast();
@@ -39,47 +40,30 @@ export const useLocalStorage = (initialTab: SupplementType = 'supplement') => {
       setIsLoading(true);
       try {
         console.log("Loading supplements and categories from localStorage");
-        const savedSupplements = localStorage.getItem('supplements');
-        const savedCategories = localStorage.getItem('supplementCategories');
-
-        console.log("Raw supplements from storage:", savedSupplements);
-        console.log("Raw categories from storage:", savedCategories);
-
-        // Initialize empty arrays for supplements and categories
-        let loadedSupplements: Supplement[] = [];
-        let loadedCategories: SupplementCategory[] = [];
         
         // Load supplements from localStorage
-        if (savedSupplements) {
-          loadedSupplements = JSON.parse(savedSupplements);
-          console.log("Parsed supplements:", loadedSupplements);
-          setSupplements(loadedSupplements);
-        }
-
-        // Load categories from localStorage
-        if (savedCategories) {
-          const parsedCategories = JSON.parse(savedCategories);
-          console.log("Parsed categories:", parsedCategories);
-          if (Array.isArray(parsedCategories) && parsedCategories.length > 0) {
-            loadedCategories = parsedCategories;
-            setCategories(loadedCategories);
-          } else if (loadedSupplements.length > 0) {
-            // Extract categories from supplements if categories don't exist
-            const extractedCategories = extractCategoriesFromSupplements(loadedSupplements);
-            console.log("Extracted categories from supplements:", extractedCategories);
-            loadedCategories = extractedCategories;
-            setCategories(extractedCategories);
-          }
+        const loadedSupplements = safeJSONParse<Supplement[]>('supplements', []);
+        console.log("Parsed supplements:", loadedSupplements);
+        setSupplements(loadedSupplements);
+        
+        // Load categories from localStorage or extract from supplements
+        const loadedCategories = safeJSONParse<SupplementCategory[]>('supplementCategories', []);
+        
+        if (Array.isArray(loadedCategories) && loadedCategories.length > 0) {
+          console.log("Parsed categories:", loadedCategories);
+          setCategories(loadedCategories);
         } else if (loadedSupplements.length > 0) {
-          // Extract categories from supplements if categories don't exist in localStorage
+          // Extract categories from supplements if categories don't exist
           const extractedCategories = extractCategoriesFromSupplements(loadedSupplements);
           console.log("Extracted categories from supplements:", extractedCategories);
-          loadedCategories = extractedCategories;
           setCategories(extractedCategories);
+          safeJSONSave('supplementCategories', extractedCategories);
         }
         
         // Set selected category based on active tab
-        const relevantCats = loadedCategories.filter(c => c.type === activeTab);
+        const relevantCats = (loadedCategories.length > 0 ? loadedCategories : extractCategoriesFromSupplements(loadedSupplements))
+          .filter(c => c.type === activeTab);
+          
         if (relevantCats.length > 0) {
           setSelectedCategory(relevantCats[0].name);
         } else {
@@ -104,8 +88,8 @@ export const useLocalStorage = (initialTab: SupplementType = 'supplement') => {
   // Save changes to localStorage
   useEffect(() => {
     if (!isLoading) {
-      localStorage.setItem('supplements', JSON.stringify(supplements));
-      localStorage.setItem('supplementCategories', JSON.stringify(categories));
+      safeJSONSave('supplements', supplements);
+      safeJSONSave('supplementCategories', categories);
     }
   }, [supplements, categories, isLoading]);
 

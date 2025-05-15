@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Student } from '@/components/students/StudentTypes';
+import { safeJSONParse, safeJSONSave } from '@/utils/database';
 
 // Define and export the HistoryEntry type
 export interface HistoryEntry {
@@ -14,29 +15,29 @@ export interface HistoryEntry {
 export const useStudentHistory = () => {
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
 
-  // Load history entries from localStorage
+  // Load history entries from localStorage with improved error handling
   useEffect(() => {
     try {
-      const savedHistory = localStorage.getItem('studentHistory');
-      if (savedHistory) {
-        const parsedHistory = JSON.parse(savedHistory);
-        if (Array.isArray(parsedHistory)) {
-          setHistoryEntries(parsedHistory);
-        }
-      }
+      const entries = safeJSONParse<HistoryEntry[]>('studentHistory', []);
+      setHistoryEntries(entries);
     } catch (error) {
       console.error('Error loading student history:', error);
+      setHistoryEntries([]);
     }
   }, []);
 
-  // Save history entries to localStorage whenever they change
+  // Save history entries to localStorage with debounce for better performance
   useEffect(() => {
     if (historyEntries.length > 0) {
-      localStorage.setItem('studentHistory', JSON.stringify(historyEntries));
+      const saveTimeout = setTimeout(() => {
+        safeJSONSave('studentHistory', historyEntries);
+      }, 300); // Debounce by 300ms
+      
+      return () => clearTimeout(saveTimeout);
     }
   }, [historyEntries]);
 
-  // Add a new history entry
+  // Add a new history entry with optimized implementation
   const addHistoryEntry = useCallback((
     student: Student,
     action: 'edit' | 'exercise' | 'diet' | 'supplement',
@@ -50,7 +51,7 @@ export const useStudentHistory = () => {
       details,
     };
     
-    setHistoryEntries(prev => [newEntry, ...prev]);
+    setHistoryEntries(prev => [newEntry, ...prev.slice(0, 99)]); // Keep only the last 100 entries for performance
     return newEntry;
   }, []);
 
