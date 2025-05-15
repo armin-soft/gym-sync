@@ -19,17 +19,12 @@ import { cn } from "@/lib/utils";
 
 const LoadingFallback = memo(() => <LoadingScreen />);
 
-// استفاده از محافظه نمایش (will-change) برای بهبود عملکرد رندر
-const stableVariants = {
-  initial: { opacity: 0, y: 0 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.2 } },
-  exit: { opacity: 0, y: 0, transition: { duration: 0.2 } }
-};
-
+// Define the props interface explicitly to include children
 interface LayoutProps {
   children: React.ReactNode;
 }
 
+// Using memo to prevent unnecessary re-renders
 export const Layout = memo(({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
@@ -38,7 +33,6 @@ export const Layout = memo(({ children }: LayoutProps) => {
     image: "",
   });
   const [scrolled, setScrolled] = useState(false);
-  const [isReady, setIsReady] = useState(false); // برای جلوگیری از نمایش زودهنگام محتوا
   const deviceInfo = useDeviceInfo();
   const { toast } = useToast();
   
@@ -57,13 +51,6 @@ export const Layout = memo(({ children }: LayoutProps) => {
         });
       }
     };
-    
-    // اجازه دادن به پیش بارگذاری فونت‌ها و منابع قبل از نمایش محتوا
-    const readyTimer = setTimeout(() => {
-      setIsReady(true);
-    }, 100);
-    
-    return () => clearTimeout(readyTimer);
   }, [toast]);
   
   const loadProfile = () => {
@@ -162,14 +149,14 @@ export const Layout = memo(({ children }: LayoutProps) => {
   };
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col will-change-transform" dir="rtl">
+    <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       
       <motion.header 
-        variants={stableVariants}
-        initial="initial"
-        animate="animate"
-        className={`sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0 will-change-transform ${
+        initial={{ y: -10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className={`sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0 ${
           scrolled 
             ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" 
             : "bg-background"
@@ -199,9 +186,9 @@ export const Layout = memo(({ children }: LayoutProps) => {
         </div>
       </motion.header>
       
-      <main className="flex-1 overflow-hidden w-full max-w-full will-change-transform" style={getContentStyle()}>
+      <main className="flex-1 overflow-hidden w-full max-w-full" style={getContentStyle()}>
         <Suspense fallback={<LoadingFallback />}>
-          {isReady ? children : <LoadingScreen />}
+          {children}
         </Suspense>
       </main>
     </div>

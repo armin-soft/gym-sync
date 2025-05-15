@@ -2,12 +2,12 @@
 import { useState, useEffect } from 'react';
 
 export const useLoadingState = () => {
-  const [progress, setProgress] = useState(10); // شروع از 10% برای کاهش پرش صفحه
+  const [progress, setProgress] = useState(0);
   const [gymName, setGymName] = useState("");
   const [loadingText, setLoadingText] = useState("در حال آماده‌سازی برنامه");
   
   useEffect(() => {
-    // بارگذاری نام باشگاه از پروفایل مربی - بدون تاخیر
+    // بارگذاری نام باشگاه از پروفایل مربی
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
@@ -20,44 +20,31 @@ export const useLoadingState = () => {
       console.error('Error loading gym name:', error);
     }
     
-    // کاهش تعداد تغییرات متن بارگذاری
-    const textTimers = [
-      setTimeout(() => setLoadingText("در حال بارگذاری تنظیمات"), 400),
-      setTimeout(() => setLoadingText("در حال آماده‌سازی داده‌ها"), 1200),
-      setTimeout(() => setLoadingText("آماده‌سازی کامل شد"), 2000)
-    ];
+    // شبیه‌سازی مراحل بارگذاری با متن‌های مختلف
+    setTimeout(() => setLoadingText("در حال بارگذاری تنظیمات"), 800);
+    setTimeout(() => setLoadingText("در حال آماده‌سازی داده‌ها"), 1800);
+    setTimeout(() => setLoadingText("آماده‌سازی کامل شد"), 2800);
     
-    // شبیه‌سازی پیشرفت بارگذاری با تمرکز بر عملکرد بهتر
-    const startProgress = 10;
+    // شبیه‌سازی پیشرفت بارگذاری به صورت روان
+    let currentProgress = 0;
     const targetProgress = 100;
-    const duration = 2500; // کاهش به 2.5 ثانیه برای بهبود سرعت
-    const totalSteps = Math.min(15, Math.floor(duration / 100)); // محدود کردن تعداد مراحل به حداکثر 15
-    const stepSize = (targetProgress - startProgress) / totalSteps;
-    const stepDuration = duration / totalSteps;
+    const duration = 3000; // 3 ثانیه کل
+    const interval = 30; // هر 30 میلی‌ثانیه بررسی شود
     
-    let currentProgress = startProgress;
-    const progressTimers = [];
-    
-    // استفاده از تعداد محدودتری از مراحل برای کاهش پرش صفحه
-    for (let step = 0; step < totalSteps; step++) {
-      const timer = setTimeout(() => {
-        currentProgress = Math.min(startProgress + stepSize * (step + 1), step === totalSteps - 1 ? 100 : 95);
-        setProgress(Math.floor(currentProgress));
-      }, stepDuration * step);
+    const timer = setInterval(() => {
+      // افزایش تدریجی پیشرفت
+      const increment = (targetProgress - currentProgress) * 0.05;
+      currentProgress += Math.max(0.5, increment);
       
-      progressTimers.push(timer);
-    }
+      if (currentProgress >= targetProgress) {
+        currentProgress = targetProgress;
+        clearInterval(timer);
+      }
+      
+      setProgress(Math.min(Math.floor(currentProgress), targetProgress));
+    }, interval);
     
-    // اطمینان از رسیدن به 100٪ در انتها
-    const finalTimer = setTimeout(() => {
-      setProgress(100);
-    }, duration);
-    
-    return () => {
-      textTimers.forEach(clearTimeout);
-      progressTimers.forEach(clearTimeout);
-      clearTimeout(finalTimer);
-    };
+    return () => clearInterval(timer);
   }, []);
   
   return {

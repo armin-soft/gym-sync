@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -21,27 +21,14 @@ const queryClient = new QueryClient({
   },
 });
 
-// اضافه کردن کلاس برای بهینه‌سازی نمایش در اندروید
+// The global declaration is now handled in vite-env.d.ts
+// so we remove the redundant declaration here
+
 function AppContent() {
-  const [isAppReady, setIsAppReady] = useState(false);
-  
-  useEffect(() => {
-    // اجازه دادن به سیستم برای پیش‌بارگیری منابع قبل از نمایش محتوا
-    const readyTimer = setTimeout(() => {
-      setIsAppReady(true);
-      // حذف کلاس loading از body پس از آماده شدن اپ
-      document.body.classList.remove('loading');
-    }, 200);
-    
-    return () => clearTimeout(readyTimer);
-  }, []);
-  
   return (
     <AuthWrapper>
       <Layout>
-        <div className={`app-content ${isAppReady ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
-          <AppRoutes />
-        </div>
+        <AppRoutes />
       </Layout>
     </AuthWrapper>
   );
@@ -52,14 +39,6 @@ function App() {
   const basePath = '/';
   
   console.log("Using basename for router:", basePath);
-  
-  // افزودن کلاس loading به body هنگام بارگذاری
-  useEffect(() => {
-    document.body.classList.add('loading');
-    return () => {
-      document.body.classList.remove('loading');
-    };
-  }, []);
   
   return (
     <QueryClientProvider client={queryClient}>

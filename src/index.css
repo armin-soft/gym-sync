@@ -1,7 +1,8 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -282,64 +283,4 @@
 .animate-wave {
   animation: wave 1.5s infinite;
   transform-origin: 70% 70%;
-}
-
-/* Content fade-in animation only for Android */
-@supports (-webkit-appearance:none) and (not (overflow:-webkit-marquee)) and (not (-ms-ime-align:auto)) and (not (-moz-appearance:none)) {
-  body.loading .app-content {
-    opacity: 0;
-  }
-
-  body .app-content {
-    opacity: 1;
-    transition: opacity 0.2s ease-in;
-  }
-}
-
-/* Prevent layout shifts during font loading */
-html {
-  font-display: swap;
-}
-
-/* Optimize rendering performance */
-.will-change-transform {
-  will-change: transform;
-  backface-visibility: hidden;
-}
-
-/* Prevent content flashing */
-.persian-numbers {
-  font-feature-settings: "ss01";
-}
-
-/* Apply Persian numbers globally */
-.persian-numbers {
-  font-feature-settings: "ss01";
-}
-
-/* Use this class for elements with heavy animations */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Prevent layout shift for elements with dynamic content */
-.stable-height {
-  min-height: 1.5em;
-}
-
-/* Add optimized rendering for mobile devices */
-@media screen and (max-width: 768px) {
-  body {
-    text-size-adjust: 100%;
-  }
-  
-  .gpu-accelerated-mobile {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
-  
-  .avoid-overflow-repaint {
-    isolation: isolate;
-  }
 }
