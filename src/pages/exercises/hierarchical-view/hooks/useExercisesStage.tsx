@@ -1,201 +1,95 @@
 
 import { useState, useEffect } from "react";
-import { Exercise } from "@/types/exercise";
-import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 
-interface UseExercisesStageProps {
-  categoryId: string;
-  typeId: string;
-}
-
-export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps) => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const { exercises, categories, exerciseTypes, isLoading } = useExerciseData();
-  const [showQuickSpeech, setShowQuickSpeech] = useState(false);
+export const useExercisesStage = (typeId: string, categoryId: string) => {
+  const { exercises: allExercises, categories } = useExerciseData();
   
-  // State for managing dialogs
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
-  const [formData, setFormData] = useState({ name: "", categoryId: parseInt(categoryId) || 0 });
-  const [quickSpeechText, setQuickSpeechText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
 
-  // Update form data when category changes
-  useEffect(() => {
-    setFormData(prev => ({ ...prev, categoryId: parseInt(categoryId) || 0 }));
-  }, [categoryId]);
-  
-  // Filter exercises based on selected category
-  const filteredExercises = exercises
-    .filter(ex => ex.categoryId.toString() === categoryId)
-    .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  
-  // Find selected category and type
-  const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
-  
-  // Delete exercises
-  const handleDeleteExercise = (id: number) => {
-    try {
-      const updatedExercises = exercises.filter(ex => ex.id !== id);
-      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
-      queryClient.setQueryData(["exercises"], updatedExercises);
+  // Filter exercises by type and category
+  const categoryExercises = allExercises.filter(
+    (exercise) => 
+      exercise.categoryId.toString() === categoryId
+  );
+
+  // Filter exercises by search query and active category
+  const filteredExercises = categoryExercises.filter((exercise) => {
+    const matchesSearch = 
+      !searchQuery || 
+      exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
       
-      toast({
-        title: "موفقیت",
-        description: "حرکت با موفقیت حذف شد",
-        variant: "success",
-      });
+    const matchesCategory = 
+      !activeCategory || 
+      exercise.categoryId.toString() === activeCategory;
       
-      setSelectedExerciseIds([]);
-      setIsDeleteDialogOpen(false);
-    } catch (error) {
-      console.error('Error deleting exercise:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در حذف حرکت"
-      });
+    return matchesSearch && matchesCategory;
+  });
+
+  // Sort exercises based on sortOrder
+  const sortedExercises = [...filteredExercises].sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a.name.localeCompare(b.name);
+    } else {
+      return b.name.localeCompare(a.name);
     }
+  });
+
+  // Toggle sort order
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
-  // Edit exercise
-  const handleEditExercise = (exercise: Exercise) => {
-    setSelectedExercise(exercise);
-    setFormData({
-      name: exercise.name,
-      categoryId: exercise.categoryId
-    });
-    setIsAddDialogOpen(true);
-  };
-
-  // Save new or edited exercise
-  const handleSubmit = async (data: { name: string; categoryId: number }) => {
-    try {
-      // Check for duplicate exercise name
-      const exerciseExists = exercises.some(ex => 
-        ex.name.toLowerCase() === data.name.toLowerCase() && 
-        (selectedExercise ? ex.id !== selectedExercise.id : true)
-      );
-      
-      if (exerciseExists) {
-        toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "این حرکت قبلاً اضافه شده است"
-        });
-        return Promise.reject("نام تکراری");
-      }
-
-      let updatedExercises;
-      
-      if (selectedExercise) {
-        // Edit existing exercise
-        updatedExercises = exercises.map(ex =>
-          ex.id === selectedExercise.id ? { ...ex, ...data } : ex
-        );
-        
-        toast({
-          title: "موفقیت",
-          description: "حرکت با موفقیت ویرایش شد",
-          variant: "success",
-        });
+  // Handle exercise selection
+  const handleExerciseSelect = (exerciseId: string) => {
+    setSelectedExercises((prev) => {
+      if (prev.includes(exerciseId)) {
+        return prev.filter((id) => id !== exerciseId);
       } else {
-        // Add new exercise
-        const timestamp = Date.now();
-        const newExercise: Exercise = {
-          id: timestamp,
-          ...data
-        };
-        updatedExercises = [...exercises, newExercise];
-        
-        toast({
-          title: "موفقیت",
-          description: "حرکت جدید با موفقیت اضافه شد",
-          variant: "success",
-        });
+        // If max selection reached, don't add
+        if (prev.length >= 5) return prev;
+        return [...prev, exerciseId];
       }
-      
-      // Save to localStorage and update react-query cache
-      localStorage.setItem("exercises", JSON.stringify(updatedExercises));
-      queryClient.setQueryData(["exercises"], updatedExercises);
-      
-      setIsAddDialogOpen(false);
-      setSelectedExercise(undefined);
-      return Promise.resolve();
-    } catch (error) {
-      console.error('Error saving exercise:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره سازی حرکت"
-      });
-      return Promise.reject(error);
-    }
-  };
-
-  // Quick add with speech
-  const handleQuickAdd = () => {
-    if (!quickSpeechText.trim()) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "لطفاً نام حرکت را وارد کنید"
-      });
-      return;
-    }
-
-    handleSubmit({
-      name: quickSpeechText.trim(),
-      categoryId: parseInt(categoryId) || 0
-    }).then(() => {
-      setQuickSpeechText("");
-      setShowQuickSpeech(false);
     });
   };
+
+  // Clear selection
+  const clearSelection = () => {
+    setSelectedExercises([]);
+  };
+
+  // Confirm selection
+  const confirmSelection = () => {
+    // This would be implemented based on your app's requirements
+    console.log("Selected exercises:", selectedExercises);
+  };
+
+  // Get relevant categories for the current type
+  const relevantCategories = categories.filter(
+    (category) => category.type === typeId
+  );
 
   return {
-    // Data
-    isLoading,
-    filteredExercises,
-    selectedCategory,
-    
-    // State
-    selectedExerciseIds,
-    setSelectedExerciseIds,
-    viewMode,
-    setViewMode,
-    showQuickSpeech,
-    setShowQuickSpeech,
-    
-    // Dialog state
-    isAddDialogOpen,
-    setIsAddDialogOpen,
-    isDeleteDialogOpen,
-    setIsDeleteDialogOpen,
-    selectedExercise,
-    formData,
-    setFormData,
-    
-    // Search
     searchQuery,
     setSearchQuery,
-    
-    // Quick speech
-    quickSpeechText,
-    setQuickSpeechText,
-    
-    // Handlers
-    handleDeleteExercise,
-    handleSubmit,
-    handleEditExercise,
-    handleQuickAdd
+    viewMode,
+    setViewMode,
+    showFilters,
+    setShowFilters,
+    activeCategory,
+    setActiveCategory,
+    sortOrder,
+    toggleSortOrder,
+    exercises: sortedExercises,
+    categories: relevantCategories,
+    selectedExercises,
+    handleExerciseSelect,
+    clearSelection,
+    confirmSelection
   };
 };
-
-export default useExercisesStage;

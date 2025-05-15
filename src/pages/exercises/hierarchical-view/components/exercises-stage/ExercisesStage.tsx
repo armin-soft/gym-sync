@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { 
   Filter, 
@@ -19,28 +20,31 @@ import { ExerciseGrid } from "../exercise-grid";
 import { ExerciseList } from "../exercise-list";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useExercisesStage } from "../../hooks/useExercisesStage";
 
-// Add these states and handlers to fix the build errors
 const ExercisesStage = ({ 
-  searchQuery,
-  setSearchQuery,
-  activeCategory,
-  setActiveCategory,
-  categories,
-  exercises,
-  onSelect,
-  initialSelection = [],
-  maxSelection = 5
+  typeId,
+  categoryId,
 }) => {
   const deviceInfo = useDeviceInfo();
-  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
-  const [showFilters, setShowFilters] = useState(false);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  
-  // Function to toggle sort order
-  const toggleSortOrder = () => {
-    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
-  };
+  const {
+    searchQuery,
+    setSearchQuery,
+    viewMode,
+    setViewMode,
+    showFilters,
+    setShowFilters,
+    activeCategory,
+    setActiveCategory,
+    sortOrder,
+    toggleSortOrder,
+    exercises,
+    categories,
+    selectedExercises,
+    handleExerciseSelect,
+    clearSelection,
+    confirmSelection
+  } = useExercisesStage(typeId, categoryId);
   
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -84,7 +88,7 @@ const ExercisesStage = ({
               variant="ghost"
               size="icon"
               className={sortOrder === "asc" ? "opacity-70" : ""}
-              onClick={toggleSortOrder}
+              onClick={() => toggleSortOrder()}
             >
               <ArrowUpDown className="h-4 w-4" />
             </Button>
@@ -131,7 +135,7 @@ const ExercisesStage = ({
           </div>
         </div>
         
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {showFilters && (
             <motion.div
               key="filters"
@@ -145,8 +149,8 @@ const ExercisesStage = ({
                 {categories.map(category => (
                   <Badge
                     key={category.id}
-                    variant={activeCategory === category.id ? "default" : "outline"}
-                    onClick={() => setActiveCategory(category.id)}
+                    variant={activeCategory === category.id.toString() ? "default" : "outline"}
+                    onClick={() => setActiveCategory(category.id.toString())}
                     className="cursor-pointer"
                   >
                     {category.name}
@@ -157,20 +161,27 @@ const ExercisesStage = ({
           )}
         </AnimatePresence>
         
+        <SelectionControls
+          selectedCount={selectedExercises.length}
+          maxSelection={5}
+          onClearSelection={clearSelection}
+          onConfirmSelection={confirmSelection}
+        />
+        
         <div className="flex-1 overflow-hidden">
           {viewMode === "grid" ? (
             <ExerciseGrid
               exercises={exercises}
-              onSelect={onSelect}
-              initialSelection={initialSelection}
-              maxSelection={maxSelection}
+              onSelect={handleExerciseSelect}
+              initialSelection={selectedExercises}
+              maxSelection={5}
             />
           ) : (
             <ExerciseList
               exercises={exercises}
-              onSelect={onSelect}
-              initialSelection={initialSelection}
-              maxSelection={maxSelection}
+              onSelect={handleExerciseSelect}
+              initialSelection={selectedExercises}
+              maxSelection={5}
             />
           )}
         </div>
