@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -8,19 +9,14 @@ import { FormSupplementsSection } from "@/components/students/dialogs/FormSupple
 import { FormActionArea } from "@/components/students/dialogs/FormActionArea";
 import { Student } from "../StudentTypes";
 import { ModernStudentSupplementDialog } from "@/components/nutrition/ModernStudentSupplementDialog";
+import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
+import { StudentDietDialog } from "@/components/diet/StudentDietDialog";
 
 interface DialogContentCoreProps {
   student?: Student;
   onSave: (student: Student) => void;
   onClose: () => void;
   loading?: boolean;
-}
-
-// Update Student type declaration
-declare module "@/components/students/StudentTypes" {
-  interface Student {
-    wrist?: string;
-  }
 }
 
 export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
@@ -51,7 +47,7 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
   const [exercisesDay4, setExercisesDay4] = useState<number[]>(
     student?.exercisesDay4 || []
   );
-  const [meals, setMeals] = useState<any[]>(student?.meals || []);
+  const [meals, setMeals] = useState<number[]>(student?.meals || []);
   const [supplements, setSupplements] = useState<number[]>(
     student?.supplements || []
   );
@@ -84,7 +80,6 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
       id: student?.id || Date.now(),
       name,
       age: parsedAge,
-      // Properly handle the string types for height and weight
       height: height || undefined,
       weight: weight || undefined,
       wrist,
@@ -102,6 +97,33 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
     };
     
     onSave(updatedStudent);
+  };
+
+  const handleSaveExercises = (exercisesWithSets: any[], dayNumber?: number) => {
+    if (dayNumber) {
+      switch(dayNumber) {
+        case 1:
+          setExercisesDay1(exercisesWithSets.map(e => e.id));
+          break;
+        case 2:
+          setExercisesDay2(exercisesWithSets.map(e => e.id));
+          break;
+        case 3:
+          setExercisesDay3(exercisesWithSets.map(e => e.id));
+          break;
+        case 4:
+          setExercisesDay4(exercisesWithSets.map(e => e.id));
+          break;
+      }
+    } else {
+      setExercises(exercisesWithSets.map(e => e.id));
+    }
+    return true;
+  };
+
+  const handleSaveMeals = (mealIds: number[]) => {
+    setMeals(mealIds);
+    return true;
   };
 
   const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}) => {
@@ -188,7 +210,41 @@ export const DialogContentCore: React.FC<DialogContentCoreProps> = ({
         onCancel={onClose}
       />
 
-      {/* New Modern Supplement Dialog */}
+      {/* Exercise Dialog */}
+      <StudentExerciseDialog
+        open={exercisesDialogOpen}
+        onOpenChange={setExercisesDialogOpen}
+        studentName={name || 'شاگرد جدید'}
+        onSave={handleSaveExercises}
+        initialExercises={exercises}
+      />
+      
+      {/* Day-specific exercise dialogs */}
+      {exercisesDayDialogOpen.isOpen && (
+        <StudentExerciseDialog
+          open={exercisesDayDialogOpen.isOpen}
+          onOpenChange={(open) => setExercisesDayDialogOpen({ ...exercisesDayDialogOpen, isOpen: open })}
+          studentName={name || 'شاگرد جدید'}
+          onSave={(exercises) => handleSaveExercises(exercises, exercisesDayDialogOpen.day)}
+          initialExercises={
+            exercisesDayDialogOpen.day === 1 ? exercisesDay1 :
+            exercisesDayDialogOpen.day === 2 ? exercisesDay2 :
+            exercisesDayDialogOpen.day === 3 ? exercisesDay3 :
+            exercisesDay4
+          }
+        />
+      )}
+      
+      {/* Diet Dialog */}
+      <StudentDietDialog
+        open={mealsDialogOpen}
+        onOpenChange={setMealsDialogOpen}
+        studentName={name || 'شاگرد جدید'}
+        initialMeals={meals}
+        onSave={handleSaveMeals}
+      />
+
+      {/* Supplement Dialog */}
       <ModernStudentSupplementDialog
         open={supplementDialogOpen}
         onOpenChange={setSupplementDialogOpen}
