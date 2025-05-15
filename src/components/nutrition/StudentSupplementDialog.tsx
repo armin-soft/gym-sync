@@ -7,16 +7,15 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence } from "framer-motion";
 import { Pill, Beaker } from "lucide-react";
 import { Supplement, SupplementCategory } from "@/types/supplement";
-import { useStudentSupplements } from "@/hooks/supplements/useSupplementDialog";
 
-// Import components
+// Import refactored components
 import { SupplementDialogHeader } from "./supplements/SupplementDialogHeader";
 import { SupplementDialogSearch } from "./supplements/SupplementDialogSearch";
 import { SupplementCategoryFilter } from "./supplements/SupplementCategoryFilter";
 import { SupplementContent } from "./supplements/SupplementContent";
 import { SupplementDialogFooter } from "./supplements/SupplementDialogFooter";
 import { SupplementViewToggle } from "./supplements/SupplementViewToggle";
-import { SupplementEmptyState } from "./supplements/SupplementEmptyState";
+import { useSupplementDialog } from "./supplements/useSupplementDialog";
 
 interface StudentSupplementDialogProps {
   open: boolean;
@@ -39,40 +38,43 @@ export function StudentSupplementDialog({
   onSave,
   initialSupplements = [],
   initialVitamins = [],
-  supplements: externalSupplements = [],
-  categories: externalCategories = []
+  supplements = [],
+  categories = []
 }: StudentSupplementDialogProps) {
   const deviceInfo = useDeviceInfo();
   
   const {
-    activeTab,
-    setActiveTab,
     selectedSupplements,
     selectedVitamins,
     searchQuery,
     setSearchQuery,
     filteredItems,
-    viewMode,
-    setViewMode,
+    activeTab,
+    setActiveTab,
     showFilters,
     setShowFilters,
+    viewMode,
+    setViewMode,
     selectedCategory,
     setSelectedCategory,
     toggleItem,
     isSelected,
     relevantCategories,
-    getSelectedCount,
-    handleSave
-  } = useStudentSupplements(initialSupplements, initialVitamins, deviceInfo.isMobile);
+    getSelectedCount
+  } = useSupplementDialog(initialSupplements, initialVitamins, deviceInfo.isMobile);
+
+  // Handle save
+  const handleSave = () => {
+    return onSave({
+      supplements: selectedSupplements,
+      vitamins: selectedVitamins
+    });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn(
-        "p-0 overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-primary/10 flex flex-col m-0",
-        deviceInfo.isMobile ? "rounded-none shadow-none max-w-[100vw] h-[100vh] w-[100vw]" : "rounded-xl shadow-xl max-w-[90vw] max-h-[90vh] w-[90vw]"
-      )} dir="rtl">
+      <DialogContent className="max-w-[100vw] p-0 m-0 h-[100vh] w-[100vw] rounded-none border-none overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 flex flex-col" dir="rtl">
         <DialogTitle className="sr-only">انتخاب مکمل‌ها و ویتامین‌ها برای {studentName}</DialogTitle>
-        
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "supplements" | "vitamins")} className="flex flex-col h-full w-full">
           {/* Header */}
           <div className={cn(
@@ -148,25 +150,31 @@ export function StudentSupplementDialog({
           </AnimatePresence>
 
           {/* Content */}
-          <div className="flex-1 overflow-hidden">
-            {filteredItems.length === 0 ? (
-              <SupplementEmptyState activeTab={activeTab} />
-            ) : (
-              <SupplementContent 
-                filteredItems={filteredItems}
-                activeTab={activeTab}
-                isSelected={isSelected}
-                toggleItem={toggleItem}
-                viewMode={viewMode}
-              />
-            )}
-          </div>
+          <TabsContent value="supplements" className="h-full m-0 p-0">
+            <SupplementContent
+              filteredItems={filteredItems}
+              activeTab="supplements"
+              isSelected={isSelected}
+              toggleItem={toggleItem}
+              viewMode={viewMode}
+            />
+          </TabsContent>
+          
+          <TabsContent value="vitamins" className="h-full m-0 p-0">
+            <SupplementContent
+              filteredItems={filteredItems}
+              activeTab="vitamins"
+              isSelected={isSelected}
+              toggleItem={toggleItem}
+              viewMode={viewMode}
+            />
+          </TabsContent>
 
           {/* Footer */}
           <SupplementDialogFooter
             activeTab={activeTab}
             selectedCount={getSelectedCount()}
-            onSave={() => handleSave(onSave)}
+            onSave={handleSave}
             onCancel={() => onOpenChange(false)}
           />
         </Tabs>
