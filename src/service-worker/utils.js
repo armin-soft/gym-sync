@@ -1,0 +1,130 @@
+
+// Utility functions for service worker
+
+// Function to create a clean request object if needed
+export function createCleanRequest(originalRequest) {
+  const requestUrl = originalRequest.url;
+  const cleanUrl = cleanRequestUrl(requestUrl);
+  
+  if (cleanUrl !== requestUrl) {
+    console.log('[Service Worker] Fixed duplicate path:', cleanUrl);
+    return new Request(cleanUrl, {
+      method: originalRequest.method,
+      headers: originalRequest.headers,
+      mode: originalRequest.mode,
+      credentials: originalRequest.credentials
+    });
+  }
+  
+  return originalRequest;
+}
+
+// Clean up request URLs with duplicate paths (like Assets/Assets/)
+export function cleanRequestUrl(url) {
+  return url.replace(/Assets\/Assets\//g, 'Assets/');
+}
+
+// Create a simple offline response when network is not available
+export function createOfflineResponse(isNavigationRequest = false) {
+  if (isNavigationRequest) {
+    // For navigation requests (page loads), return the offline HTML page
+    return caches.match('./offline.html')
+      .then(response => {
+        if (response) return response;
+        
+        // If offline.html is not in cache, create a simple offline page
+        return new Response(
+          `<!DOCTYPE html>
+          <html lang="fa" dir="rtl">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>حالت آفلاین - GymSync</title>
+            <style>
+              body {
+                font-family: 'Vazirmatn', system-ui, sans-serif;
+                background-color: #f9fafb;
+                color: #1f2937;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                padding: 1rem;
+                text-align: center;
+              }
+              .container {
+                max-width: 28rem;
+                padding: 2rem;
+                background-color: white;
+                border-radius: 0.75rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+              }
+              h1 {
+                color: #7c3aed;
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+              }
+              p {
+                margin-bottom: 1.5rem;
+                line-height: 1.5;
+              }
+              .button {
+                background-color: #7c3aed;
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.2s;
+              }
+              .button:hover {
+                background-color: #6d28d9;
+              }
+              .icon {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                color: #7c3aed;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="icon">⚡️</div>
+              <h1>حالت آفلاین</h1>
+              <p>شما در حال حاضر به اینترنت متصل نیستید، اما نگران نباشید! تمام امکانات برنامه در حالت آفلاین نیز در دسترس هستند.</p>
+              <p>پس از اتصال مجدد به اینترنت، تغییرات به صورت خودکار همگام‌سازی خواهند شد.</p>
+              <button class="button" onclick="window.location.href='./'">بازگشت به برنامه</button>
+            </div>
+            <script>
+              window.addEventListener('online', function() {
+                window.location.reload();
+              });
+            </script>
+          </body>
+          </html>`,
+          {
+            status: 200,
+            headers: { 'Content-Type': 'text/html; charset=UTF-8' }
+          }
+        );
+      });
+  }
+  
+  // For non-navigation requests (assets, API calls, etc.)
+  return new Response('آفلاین - داده در دسترس نیست', {
+    status: 503,
+    headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
+  });
+}
+
+// Make functions available in the global scope
+// @ts-ignore
+self.createCleanRequest = createCleanRequest;
+// @ts-ignore
+self.cleanRequestUrl = cleanRequestUrl;
+// @ts-ignore
+self.createOfflineResponse = createOfflineResponse;
+
