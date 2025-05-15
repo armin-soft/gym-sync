@@ -73,17 +73,7 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
       return retryRegistration;
     } catch (retryError) {
       console.error('ServiceWorker registration failed on retry:', retryError);
-      
-      // One final attempt with a different path
-      try {
-        const finalRegistration = await navigator.serviceWorker.register('./Assets/Script/ServiceWorker.js');
-        console.log('ServiceWorker registration successful with alternate path');
-        window.swRegistration = finalRegistration;
-        return finalRegistration;
-      } catch (finalError) {
-        console.error('All ServiceWorker registration attempts failed');
-        return null;
-      }
+      return null;
     }
   }
 };

@@ -1,13 +1,13 @@
 
 /**
- * Type definitions for Service Worker utilities
+ * Type definitions for service worker functionality
  */
 
-// Interface for toast notification options
+// Toast notification options
 export interface ToastOptions {
   title: string;
   description: string;
-  variant?: 'default' | 'destructive' | 'success' | 'warning';
+  variant?: "default" | "destructive" | "success" | "warning" | "info";
   duration?: number;
   action?: {
     label: string;
@@ -15,10 +15,10 @@ export interface ToastOptions {
   };
 }
 
-// Declare window extensions for TypeScript
+// Extend Window interface to include service worker registration
 declare global {
   interface Window {
-    showToast?: (options: ToastOptions) => void;
-    swRegistration?: ServiceWorkerRegistration;
+    swRegistration: ServiceWorkerRegistration;
+    showToast: (options: ToastOptions) => void;
   }
 }
