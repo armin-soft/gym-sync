@@ -32,7 +32,7 @@ export const useStudentManagement = () => {
           phone: student.phone || '',
           height: student.height || '',
           weight: student.weight || '',
-          image: student.image || '/placeholder.svg',
+          image: student.image || '/Assets/Image/Place-Holder.svg',
           payment: student.payment || '', 
           exercises: student.exercises || [],
           exercisesDay1: student.exercisesDay1 || [],

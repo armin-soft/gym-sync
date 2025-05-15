@@ -81,7 +81,7 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
           whileTap={{ scale: 0.97 }}
         >
           {/* Image or placeholder */}
-          {image === "/placeholder.svg" ? (
+          {image === "/Assets/Image/Place-Holder.svg" ? (
             <ImagePlaceholder />
           ) : (
             <img 

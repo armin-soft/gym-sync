@@ -29,7 +29,7 @@ export const studentFormSchema = z.object({
     .refine(val => /^\d+$/.test(val), { 
       message: "وزن باید عدد باشد" 
     }),
-  image: z.string().default("/placeholder.svg"),
+  image: z.string().default("/Assets/Image/Place-Holder.svg"),
   payment: z.string()
     .transform(numberPreprocessor)
     .refine(val => /^\d+$/.test(val), { 

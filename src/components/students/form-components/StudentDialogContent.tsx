@@ -24,7 +24,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
     try {
       onSave({
         ...formData,
-        image: formData.image || student?.image || "/placeholder.svg"
+        image: formData.image || student?.image || "/Assets/Image/Place-Holder.svg"
       });
     } catch (error) {
       console.error("Error saving student:", error);
