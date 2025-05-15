@@ -41,7 +41,8 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 8080,
-      host: "::"
+      host: "::",
+      open: false // غیرفعال کردن باز شدن خودکار مرورگر یا DevTools
     },
     build: buildWithRollupOptions
   };
