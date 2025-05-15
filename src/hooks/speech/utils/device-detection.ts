@@ -21,7 +21,7 @@ export async function checkMicrophoneAvailability(): Promise<boolean | null> {
   }
 
   // First, check if mediaDevices exists
-  if (!('mediaDevices' in navigator)) {
+  if (!navigator.mediaDevices) {
     return false;
   }
 
@@ -40,16 +40,14 @@ export async function checkMicrophoneAvailability(): Promise<boolean | null> {
     } else {
       // تلاش برای دسترسی مستقیم به میکروفون در مرورگرهایی که از enumerateDevices پشتیبانی نمی‌کنند
       try {
-        // Ensure mediaDevices exists and has getUserMedia
-        if ('mediaDevices' in navigator) {
-          if ('getUserMedia' in navigator.mediaDevices) {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            stream.getTracks().forEach(track => track.stop());
-            return true;
-          } else {
-            console.error("getUserMedia is not available on this browser");
-            return false;
-          }
+        // Ensure mediaDevices exists and has getUserMedia - with proper TypeScript checks
+        if (navigator.mediaDevices && 'getUserMedia' in navigator.mediaDevices) {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach(track => track.stop());
+          return true;
+        } else {
+          console.error("getUserMedia is not available on this browser");
+          return false;
         }
         return false;
       } catch (directAccessError) {
