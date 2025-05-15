@@ -1,5 +1,5 @@
 
-import { ToastProps } from "@/hooks/use-toast";
+import { type Toast as ToastProps } from "@/hooks/toast/toast-types";
 
 interface BrowserInfo {
   isChrome: boolean;
