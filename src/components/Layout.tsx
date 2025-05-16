@@ -36,23 +36,6 @@ export const Layout = memo(({ children }: LayoutProps) => {
   const deviceInfo = useDeviceInfo();
   const { toast } = useToast();
   
-  useEffect(() => {
-    // Register toast function globally for service worker updates
-    window.showToast = (options) => {
-      if (options && options.title && options.description) {
-        toast({
-          title: options.title,
-          description: options.description,
-          action: options.action ? (
-            <ToastAction altText={options.action.label} onClick={options.action.onClick}>
-              {options.action.label}
-            </ToastAction>
-          ) : undefined,
-        });
-      }
-    };
-  }, [toast]);
-  
   const loadProfile = () => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
@@ -178,4 +161,3 @@ export const Layout = memo(({ children }: LayoutProps) => {
 Layout.displayName = "Layout";
 
 export default Layout;
-
