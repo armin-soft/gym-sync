@@ -47,13 +47,19 @@ export const registerServiceWorker = async (): Promise<void> => {
         });
       }, 30 * 60 * 1000);
 
-      // گوش دادن به تغییر کنترل‌کننده
+      // گوش دادن به تغییر کنترل‌کننده - با مکانیزم جلوگیری از رفرش مکرر
       let refreshing = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (refreshing) return;
         refreshing = true;
-        console.log('کنترل‌کننده تغییر کرد، در حال بروزرسانی صفحه...');
-        window.location.reload();
+        
+        // بررسی کنیم آیا این تغییر کنترل از نصب اولیه است یا بروزرسانی
+        if (document.readyState === 'complete' && lastKnownVersion) {
+          console.log('کنترل‌کننده تغییر کرد، در حال بروزرسانی صفحه...');
+          window.location.reload();
+        } else {
+          console.log('نصب اولیه سرویس ورکر، بدون بروزرسانی صفحه');
+        }
       });
 
       // ذخیره نسخه فعلی اگر تازه نصب شده است

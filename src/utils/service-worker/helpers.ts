@@ -19,7 +19,16 @@ export const getAppVersion = (): string => '1.0.0';
 
 // نمایش اعلان بروزرسانی
 export function showUpdateNotification(): void {
-  if (window.confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه بروزرسانی شود؟')) {
-    window.location.reload();
+  // برای جلوگیری از نمایش مکرر اعلان در زمان بارگیری
+  const lastPromptTime = parseInt(sessionStorage.getItem('update_prompt_time') || '0');
+  const currentTime = new Date().getTime();
+  
+  // فقط اگر 10 دقیقه از آخرین نمایش گذشته باشد مجدداً نمایش دهد
+  if (currentTime - lastPromptTime > 10 * 60 * 1000) {
+    if (window.confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه بروزرسانی شود؟')) {
+      window.location.reload();
+    }
+    // ثبت زمان نمایش اعلان
+    sessionStorage.setItem('update_prompt_time', currentTime.toString());
   }
 }

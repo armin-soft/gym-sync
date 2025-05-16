@@ -20,15 +20,18 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] نصب سرویس ورکر');
   
-  // اعمال فوری سرویس ورکر بدون انتظار
-  self.skipWaiting();
-  
   // کش کردن فایل‌های اصلی
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('[Service Worker] کش کردن فایل‌های اصلی');
         return cache.addAll(STATIC_ASSETS);
+      })
+      .then(() => {
+        // فقط در صورتی که قبلاً سرویس ورکری فعال نبوده باشد skipWaiting را فراخوانی می‌کنیم
+        if (!self.registration.active) {
+          return self.skipWaiting();
+        }
       })
   );
 });
@@ -49,8 +52,13 @@ self.addEventListener('activate', (event) => {
         })
       );
     }).then(() => {
-      // اعمال کنترل فوری روی تمام صفحات
-      return self.clients.claim();
+      // اعمال کنترل فقط در صورت نیاز
+      return self.clients.matchAll().then(clients => {
+        if (clients.length === 0) {
+          // اگر هیچ کلاینت نبود، کنترل را بگیر
+          return self.clients.claim();
+        }
+      });
     })
   );
 });
