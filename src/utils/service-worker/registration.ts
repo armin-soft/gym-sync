@@ -2,10 +2,20 @@
 /**
  * سرویس ورکر ساده‌شده - فقط پشتیبانی آفلاین و بروزرسانی
  */
+import { showUpdateNotification } from './helpers';
+
 export const registerServiceWorker = async (): Promise<void> => {
   if ('serviceWorker' in navigator) {
     try {
-      // ثبت سرویس ورکر با یک تایم‌استمپ برای اطمینان از بروزبودن
+      // دریافت نسخه کنونی از مانیفست
+      const manifestResponse = await fetch('./Manifest.json');
+      const manifestData = await manifestResponse.json();
+      const currentVersion = manifestData.version || '1.0.0';
+      
+      // آخرین نسخه شناخته شده از localStorage
+      const lastKnownVersion = localStorage.getItem('app_version') || '';
+      
+      // ثبت سرویس ورکر با تایم‌استمپ برای اطمینان از بروزرسانی
       const timestamp = new Date().getTime();
       const registration = await navigator.serviceWorker.register('./Service-Worker.js?v=' + timestamp);
       console.log('سرویس ورکر با موفقیت ثبت شد:', registration.scope);
@@ -19,9 +29,12 @@ export const registerServiceWorker = async (): Promise<void> => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
             console.log('نسخه جدید نصب شد و آماده استفاده است!');
             
-            // نمایش اعلان بروزرسانی
-            if (window.confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه بروزرسانی شود؟')) {
-              window.location.reload();
+            // فقط اگر نسخه‌ها متفاوت باشند اعلان نمایش داده شود
+            if (lastKnownVersion !== currentVersion) {
+              // نمایش اعلان بروزرسانی
+              showUpdateNotification();
+              // ذخیره نسخه جدید
+              localStorage.setItem('app_version', currentVersion);
             }
           }
         });
@@ -42,6 +55,11 @@ export const registerServiceWorker = async (): Promise<void> => {
         console.log('کنترل‌کننده تغییر کرد، در حال بروزرسانی صفحه...');
         window.location.reload();
       });
+
+      // ذخیره نسخه فعلی اگر تازه نصب شده است
+      if (!lastKnownVersion) {
+        localStorage.setItem('app_version', currentVersion);
+      }
 
     } catch (error) {
       console.error('خطا در ثبت سرویس ورکر:', error);
