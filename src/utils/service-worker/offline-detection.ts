@@ -1,33 +1,27 @@
 
 /**
- * Offline detection and notification functionality
+ * تشخیص و اعلان وضعیت آفلاین
  */
 
-import { showToast } from './helpers';
-
 /**
- * Setup offline detection and notification
+ * راه‌اندازی تشخیص وضعیت آفلاین و آنلاین
  */
 export const setupOfflineDetection = (): void => {
   window.addEventListener('online', () => {
-    console.log('Application is online');
+    console.log('اتصال به اینترنت برقرار شد');
     document.body.classList.remove('offline-mode');
-    showToast({
-      title: 'اتصال برقرار شد',
-      description: 'شما مجدداً به اینترنت متصل شدید.',
-      variant: 'success',
-      duration: 3000
-    });
+    // نمایش پیام اتصال مجدد
+    if (typeof window.alert === 'function') {
+      window.alert('شما مجدداً به اینترنت متصل شدید.');
+    }
   });
   
   window.addEventListener('offline', () => {
-    console.log('Application is offline');
+    console.log('اتصال به اینترنت قطع شد');
     document.body.classList.add('offline-mode');
-    showToast({
-      title: 'حالت آفلاین',
-      description: 'شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.',
-      variant: 'warning',
-      duration: 5000
-    });
+    // نمایش پیام قطع اتصال
+    if (typeof window.alert === 'function') {
+      window.alert('شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.');
+    }
   });
 };

@@ -1,9 +1,20 @@
 
 /**
- * Service Worker Registration has been removed
+ * راه‌اندازی سرویس ورکر ساده‌شده
  */
+import { registerServiceWorker } from './service-worker/registration';
+import { setupOfflineDetection } from './service-worker/offline-detection';
 
 export const initializeServiceWorker = async (): Promise<void> => {
-  // Service worker functionality has been removed
-  console.log('Service worker registration is disabled');
+  try {
+    // ثبت سرویس ورکر برای پشتیبانی آفلاین و بروزرسانی
+    await registerServiceWorker();
+    
+    // راه‌اندازی تشخیص وضعیت آفلاین
+    setupOfflineDetection();
+    
+    console.log('سرویس ورکر با موفقیت راه‌اندازی شد');
+  } catch (error) {
+    console.error('خطا در راه‌اندازی سرویس ورکر:', error);
+  }
 };
