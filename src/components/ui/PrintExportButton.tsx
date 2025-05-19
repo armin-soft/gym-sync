@@ -1,10 +1,24 @@
 
 import React, { useState } from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
-import { PrintExportModal, PrintExportOptions } from "@/components/ui/PrintExportModal";
-import { Download, FileDown, Share2, FileText } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 import { generateOutput } from "@/utils/pdf-export";
+import { FilePdf, Printer, Download, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+
+export interface PrintExportOptions {
+  format: string;
+  paperSize: string;
+  orientation: string;
+  colorMode: string;
+  quality: number;
+  includeHeader: boolean;
+  includeFooter: boolean;
+  includeLogo: boolean;
+}
 
 interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   contentId?: string;
@@ -14,7 +28,7 @@ interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   documentType: "student" | "workout" | "diet" | "supplement";
   filename?: string;
   buttonDisplay?: "primary" | "minimal" | "icon-only";
-  includeFull?: boolean;  // Include full trainer profile and student management data
+  includeFull?: boolean;
   className?: string;
 }
 
@@ -26,38 +40,55 @@ export const PrintExportButton = ({
   documentType,
   filename = "export",
   buttonDisplay = "primary",
-  includeFull = true,  // Default to true to include comprehensive data
+  includeFull = true,
   className,
   variant,
   ...buttonProps
 }: PrintExportButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("pdf");
+  const [exportOptions, setExportOptions] = useState<PrintExportOptions>({
+    format: "pdf",
+    paperSize: "a4",
+    orientation: "portrait",
+    colorMode: "color",
+    quality: 90,
+    includeHeader: true,
+    includeFooter: true,
+    includeLogo: true
+  });
+  const { toast } = useToast();
 
-  const handleExport = async (format: string, options: PrintExportOptions) => {
-    return generateOutput({
-      ...options,
-      contentId,
-      filename,
-      includeFull
-    });
-  };
-
-  // Get appropriate variant based on buttonDisplay
-  const getButtonVariant = (): ButtonProps["variant"] => {
-    if (variant) return variant;
-    
-    switch (buttonDisplay) {
-      case "primary": return "default";
-      case "minimal": return "outline";
-      case "icon-only": return "ghost";
-      default: return "outline";
+  const handleExport = async () => {
+    try {
+      await generateOutput({
+        ...exportOptions,
+        contentId,
+        filename,
+        includeFull
+      });
+      
+      toast({
+        title: "خروجی با موفقیت ایجاد شد",
+        description: `فایل ${filename} با موفقیت ایجاد شد`,
+        variant: "default",
+      });
+      
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error generating output:", error);
+      toast({
+        title: "خطا در ایجاد خروجی",
+        description: "مشکلی در ایجاد خروجی رخ داد. لطفا مجددا تلاش کنید.",
+        variant: "destructive",
+      });
     }
   };
 
+  const buttonVariant = variant || (buttonDisplay === "primary" ? "default" : buttonDisplay === "minimal" ? "outline" : "ghost");
+
   // Render button based on display type
   const renderButton = () => {
-    const buttonVariant = getButtonVariant();
-    
     switch (buttonDisplay) {
       case "icon-only":
         return (
@@ -65,10 +96,10 @@ export const PrintExportButton = ({
             size="icon"
             variant={buttonVariant}
             onClick={() => setIsModalOpen(true)}
-            className={cn("rounded-full transition-all duration-300 hover:shadow-md", className)}
+            className={cn("rounded-full", className)}
             {...buttonProps}
           >
-            <FileDown className="h-4 w-4" />
+            <Download className="h-4 w-4" />
           </Button>
         );
         
@@ -77,13 +108,11 @@ export const PrintExportButton = ({
           <Button
             variant={buttonVariant}
             onClick={() => setIsModalOpen(true)}
-            className={cn("h-9 px-3 rounded-lg transition-all duration-300", className)}
+            className={cn("h-9 px-3 rounded-lg", className)}
             {...buttonProps}
           >
-            <FileDown className="h-3.5 w-3.5 ml-1" />
-            <span className="text-xs font-medium">
-              خروجی
-            </span>
+            <Download className="h-3.5 w-3.5 ml-1.5" />
+            <span className="text-xs font-medium">خروجی</span>
           </Button>
         );
         
@@ -93,40 +122,191 @@ export const PrintExportButton = ({
           <Button
             variant={buttonVariant}
             onClick={() => setIsModalOpen(true)}
-            className={cn(
-              "group flex items-center gap-2 px-4 py-2 rounded-xl shadow-sm border border-primary/10",
-              "bg-gradient-to-r from-purple-500/90 to-blue-500/90 text-white hover:from-purple-600/90 hover:to-blue-600/90",
-              "transition-all duration-300 hover:shadow-md hover:shadow-primary/10", 
-              className
-            )}
+            className={cn("flex items-center gap-2 px-4 py-2", className)}
             {...buttonProps}
           >
-            <div className="rounded-full bg-white/20 p-1 backdrop-blur-sm">
-              <Download className="h-4 w-4 transition-transform group-hover:scale-110" />
-            </div>
-            <span className="transition-transform group-hover:translate-x-0.5 font-medium">
-              دانلود و چاپ
-            </span>
+            <Download className="h-4 w-4" />
+            <span className="font-medium">دانلود و چاپ</span>
           </Button>
         );
     }
+  };
+
+  const handleOptionChange = (key: keyof PrintExportOptions, value: any) => {
+    setExportOptions(prev => ({ ...prev, [key]: value }));
   };
 
   return (
     <>
       {renderButton()}
       
-      <PrintExportModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onExport={handleExport}
-        title={title}
-        description={description}
-        previewImageUrl={previewImageUrl}
-        documentType={documentType}
-        includeFull={includeFull}
-        className="w-full h-full max-w-screen max-h-screen"
-      />
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-3xl p-0 gap-0 rounded-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+            <DialogTitle className="text-2xl font-bold mb-2">{title || "دانلود و چاپ"}</DialogTitle>
+            <DialogDescription className="text-white/80 text-sm">
+              {description || "می‌توانید فایل مورد نظر را با فرمت دلخواه دانلود کنید"}
+            </DialogDescription>
+          </div>
+          
+          <div className="p-6">
+            <Tabs defaultValue="pdf" value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="pdf" className="flex items-center gap-2">
+                  <FilePdf className="h-4 w-4" />
+                  <span>PDF</span>
+                </TabsTrigger>
+                <TabsTrigger value="print" className="flex items-center gap-2">
+                  <Printer className="h-4 w-4" />
+                  <span>چاپ مستقیم</span>
+                </TabsTrigger>
+              </TabsList>
+              
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card>
+                    <CardContent className="p-4">
+                      <h3 className="text-md font-medium mb-3">اندازه کاغذ</h3>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant={exportOptions.paperSize === "a4" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleOptionChange("paperSize", "a4")}
+                          className="flex-1"
+                        >
+                          A4
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={exportOptions.paperSize === "a5" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleOptionChange("paperSize", "a5")}
+                          className="flex-1"
+                        >
+                          A5
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={exportOptions.paperSize === "letter" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleOptionChange("paperSize", "letter")}
+                          className="flex-1"
+                        >
+                          Letter
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <h3 className="text-md font-medium mb-3">جهت صفحه</h3>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant={exportOptions.orientation === "portrait" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleOptionChange("orientation", "portrait")}
+                          className="flex-1"
+                        >
+                          عمودی
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={exportOptions.orientation === "landscape" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleOptionChange("orientation", "landscape")}
+                          className="flex-1"
+                        >
+                          افقی
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <Card>
+                  <CardContent className="p-4">
+                    <h3 className="text-md font-medium mb-3">محتوای خروجی</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button
+                        type="button"
+                        variant={exportOptions.includeHeader ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleOptionChange("includeHeader", !exportOptions.includeHeader)}
+                      >
+                        {exportOptions.includeHeader ? "با سربرگ" : "بدون سربرگ"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={exportOptions.includeFooter ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleOptionChange("includeFooter", !exportOptions.includeFooter)}
+                      >
+                        {exportOptions.includeFooter ? "با پاورقی" : "بدون پاورقی"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={exportOptions.includeLogo ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleOptionChange("includeLogo", !exportOptions.includeLogo)}
+                      >
+                        {exportOptions.includeLogo ? "با لوگو" : "بدون لوگو"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardContent className="p-4">
+                    <h3 className="text-md font-medium mb-3">نمایش</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        type="button"
+                        variant={exportOptions.colorMode === "color" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleOptionChange("colorMode", "color")}
+                      >
+                        رنگی
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={exportOptions.colorMode === "bw" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleOptionChange("colorMode", "bw")}
+                      >
+                        سیاه و سفید
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {previewImageUrl && (
+                  <div className="mt-4">
+                    <h3 className="text-md font-medium mb-2">پیش‌نمایش</h3>
+                    <div className="border rounded-md overflow-hidden">
+                      <img src={previewImageUrl} alt="Preview" className="w-full h-auto max-h-40 object-contain" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Tabs>
+            
+            <div className="flex justify-end mt-8 gap-3">
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                انصراف
+              </Button>
+              <Button 
+                onClick={handleExport}
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
+              >
+                {activeTab === "pdf" ? "دانلود PDF" : "ارسال به چاپگر"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

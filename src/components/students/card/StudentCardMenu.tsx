@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
   Dumbbell, 
   UtensilsCrossed, 
   Pill, 
-  Clipboard, 
   Download 
 } from "lucide-react";
 import { EditStudentButton } from "../EditStudentButton";
@@ -27,6 +27,7 @@ interface StudentCardMenuProps {
   onAddExercise: () => void;
   onAddDiet: () => void;
   onAddSupplement: () => void;
+  onDownload?: () => void;
   isProfileComplete: boolean;
 }
 
@@ -37,6 +38,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
+  onDownload,
   isProfileComplete
 }) => {
   return (
@@ -116,6 +118,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
         
         <MenuItemWithIcon 
           icon={<Download className="h-4 w-4" />}
+          onClick={onDownload}
           disabled={!isProfileComplete}
           title="دانلود برنامه"
           subtitle="دریافت فایل PDF برنامه"
