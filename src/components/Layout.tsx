@@ -2,7 +2,6 @@
 import { useState, useEffect, Suspense, lazy, memo, useMemo, CSSProperties } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu, X, Bell, User } from "lucide-react";
-import { LoadingScreen } from "./LoadingScreen";
 import { AppIcon } from "./ui/app-icon";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
@@ -17,7 +16,14 @@ import { Link } from "react-router-dom";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-const LoadingFallback = memo(() => <LoadingScreen />);
+// کامپوننت سبک برای لودینگ داخلی
+const PageLoading = memo(() => (
+  <div className="w-full h-full flex items-center justify-center">
+    <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+));
+
+PageLoading.displayName = "PageLoading";
 
 // Define the props interface explicitly to include children
 interface LayoutProps {
@@ -150,7 +156,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
       </header>
       
       <main className="flex-1 overflow-hidden w-full max-w-full" style={contentStyle}>
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense fallback={<PageLoading />}>
           {children}
         </Suspense>
       </main>

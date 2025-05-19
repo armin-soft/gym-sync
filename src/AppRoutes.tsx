@@ -4,6 +4,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
 
+// کامپوننت لودینگ سبک برای تغییر مسیرها
+const PageTransition = () => (
+  <div className="h-full w-full flex items-center justify-center">
+    {/* فقط یک نشانگر کوچک برای لحظه‌ای */}
+  </div>
+);
+
 // Lazy load pages
 const Dashboard = lazy(() => import("./pages/Index"));
 const StudentsPage = lazy(() => import("./pages/students"));
@@ -23,7 +30,7 @@ const AppRoutes: React.FC = () => {
         path="/"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <Dashboard />
             </Suspense>
           </AuthenticatedContent>
@@ -33,7 +40,7 @@ const AppRoutes: React.FC = () => {
         path="/students"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <StudentsPage />
             </Suspense>
           </AuthenticatedContent>
@@ -43,7 +50,7 @@ const AppRoutes: React.FC = () => {
         path="/students/add-edit/:studentId?"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <AddEditStudentPage />
             </Suspense>
           </AuthenticatedContent>
@@ -53,7 +60,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <ExercisesPage />
             </Suspense>
           </AuthenticatedContent>
@@ -63,7 +70,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises/hierarchical"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <ExerciseHierarchicalView />
             </Suspense>
           </AuthenticatedContent>
@@ -73,7 +80,7 @@ const AppRoutes: React.FC = () => {
         path="/diet"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <DietPage />
             </Suspense>
           </AuthenticatedContent>
@@ -83,7 +90,7 @@ const AppRoutes: React.FC = () => {
         path="/supplements"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <SupplementsPage />
             </Suspense>
           </AuthenticatedContent>
@@ -93,7 +100,7 @@ const AppRoutes: React.FC = () => {
         path="/trainer"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <TrainerPage />
             </Suspense>
           </AuthenticatedContent>
@@ -103,7 +110,7 @@ const AppRoutes: React.FC = () => {
         path="/backup"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <BackupPage />
             </Suspense>
           </AuthenticatedContent>
@@ -113,7 +120,7 @@ const AppRoutes: React.FC = () => {
         path="/student-program/:studentId"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<PageTransition />}>
               <StudentProgramPage />
             </Suspense>
           </AuthenticatedContent>
