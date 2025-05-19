@@ -7,7 +7,7 @@ import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
 // کامپوننت لودینگ سبک برای تغییر مسیرها
 const PageTransition = () => (
   <div className="h-full w-full flex items-center justify-center">
-    {/* فقط یک نشانگر کوچک برای لحظه‌ای */}
+    <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
   </div>
 );
 
@@ -126,6 +126,16 @@ const AppRoutes: React.FC = () => {
           </AuthenticatedContent>
         }
       />
+      
+      {/* اینجا مسیرهایی را که در منوی داشبورد استفاده می‌شوند اضافه می‌کنیم */}
+      <Route path="/Coach-Profile" element={<Navigate to="/trainer" replace />} />
+      <Route path="/Students" element={<Navigate to="/students" replace />} />
+      <Route path="/Exercise-Movements" element={<Navigate to="/exercises" replace />} />
+      <Route path="/Diet-Plan" element={<Navigate to="/diet" replace />} />
+      <Route path="/Supplements-Vitamins" element={<Navigate to="/supplements" replace />} />
+      <Route path="/Backup-Restore" element={<Navigate to="/backup" replace />} />
+      
+      {/* مسیر پیشفرض */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

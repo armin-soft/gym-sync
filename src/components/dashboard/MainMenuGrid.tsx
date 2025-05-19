@@ -17,7 +17,7 @@ export const MainMenuGrid = () => {
     { 
       title: "پروفایل مربی", 
       icon: User2, 
-      href: '/Coach-Profile', 
+      href: '/trainer', 
       color: "from-blue-600 to-blue-400",
       shadowColor: "shadow-blue-500/20",
       bgColor: "bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20"
@@ -25,7 +25,7 @@ export const MainMenuGrid = () => {
     { 
       title: "شاگردان", 
       icon: Users, 
-      href: '/Students', 
+      href: '/students', 
       color: "from-emerald-600 to-emerald-400",
       shadowColor: "shadow-emerald-500/20",
       bgColor: "bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-900/20 dark:to-teal-900/20"
@@ -33,7 +33,7 @@ export const MainMenuGrid = () => {
     { 
       title: "حرکات تمرینی", 
       icon: Dumbbell, 
-      href: '/Exercise-Movements', 
+      href: '/exercises', 
       color: "from-amber-600 to-amber-400",
       shadowColor: "shadow-amber-500/20",
       bgColor: "bg-gradient-to-br from-amber-50/80 to-yellow-50/80 dark:from-amber-900/20 dark:to-yellow-900/20"
@@ -41,7 +41,7 @@ export const MainMenuGrid = () => {
     { 
       title: "برنامه های غذایی", 
       icon: UtensilsCrossed, 
-      href: '/Diet-Plan', 
+      href: '/diet', 
       color: "from-purple-600 to-purple-400",
       shadowColor: "shadow-purple-500/20",
       bgColor: "bg-gradient-to-br from-purple-50/80 to-violet-50/80 dark:from-purple-900/20 dark:to-violet-900/20"
@@ -49,7 +49,7 @@ export const MainMenuGrid = () => {
     { 
       title: "مکمل و ویتامین", 
       icon: Pill, 
-      href: '/Supplements-Vitamins', 
+      href: '/supplements', 
       color: "from-pink-600 to-pink-400",
       shadowColor: "shadow-pink-500/20",
       bgColor: "bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-900/20 dark:to-rose-900/20"
@@ -57,12 +57,17 @@ export const MainMenuGrid = () => {
     { 
       title: "پشتیبان‌گیری و بازیابی", 
       icon: Database, 
-      href: '/Backup-Restore', 
+      href: '/backup', 
       color: "from-cyan-600 to-cyan-400",
       shadowColor: "shadow-cyan-500/20",
       bgColor: "bg-gradient-to-br from-cyan-50/80 to-sky-50/80 dark:from-cyan-900/20 dark:to-sky-900/20"
     }
   ];
+
+  // اضافه کردن console.log برای تشخیص مشکل مسیریابی
+  const handleNavigate = (href: string) => {
+    console.log(`مسیریابی به: ${href}`);
+  };
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4">
@@ -70,6 +75,7 @@ export const MainMenuGrid = () => {
         <div key={dashItem.href}>
           <Link 
             to={dashItem.href}
+            onClick={() => handleNavigate(dashItem.href)}
             className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-3 md:p-4 shadow-md ${dashItem.shadowColor} hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
           >
             <div className="relative z-10 flex flex-col items-center text-center gap-2 md:gap-3">
