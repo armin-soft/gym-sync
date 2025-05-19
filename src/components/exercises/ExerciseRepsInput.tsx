@@ -18,38 +18,26 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
   onRepsChange,
   className,
 }) => {
-  // تبدیل رشته به عدد برای محاسبات
-  const parseReps = (): number => {
-    // اگر رشته حاوی خط تیره باشد، میانگین مقادیر را برمی‌گرداند
-    if (reps.includes('-')) {
-      const [min, max] = reps.split('-').map(Number);
-      return Math.round((min + max) / 2);
-    }
-    // در غیر این صورت مقدار عددی را برمی‌گرداند یا مقدار پیش‌فرض 8
-    return parseInt(reps) || 8;
-  };
+  const repsValue = parseInt(reps) || 10;
 
-  const currentReps = parseReps();
-  
   const handleDecrement = () => {
-    if (currentReps > 1) {
-      onRepsChange(exerciseId, String(currentReps - 1));
+    if (repsValue > 1) {
+      onRepsChange(exerciseId, (repsValue - 1).toString());
     }
   };
 
   const handleIncrement = () => {
-    if (currentReps < 30) {
-      onRepsChange(exerciseId, String(currentReps + 1));
+    if (repsValue < 30) {
+      onRepsChange(exerciseId, (repsValue + 1).toString());
     }
   };
 
-  // تبدیل اعداد به فارسی برای نمایش
-  const displayReps = () => {
-    if (reps.includes('-')) {
-      const [min, max] = reps.split('-');
-      return `${toPersianNumbers(min)}-${toPersianNumbers(max)}`;
+  // Directly handle manual input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value.replace(/[۰-۹]/g, d => String(["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"].indexOf(d))));
+    if (!isNaN(value) && value >= 1 && value <= 30) {
+      onRepsChange(exerciseId, value.toString());
     }
-    return toPersianNumbers(reps);
   };
 
   return (
@@ -65,14 +53,20 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
         size="icon"
         className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
         onClick={handleDecrement}
-        disabled={currentReps <= 1}
+        disabled={repsValue <= 1}
       >
         <Minus className="h-3 w-3" />
         <span className="sr-only">کاهش</span>
       </Button>
       
-      <div className="flex-1 flex items-center justify-center text-sm font-medium">
-        {displayReps()}
+      <div className="flex-1 flex items-center justify-center">
+        <input 
+          type="text" 
+          value={toPersianNumbers(reps)}
+          onChange={handleInputChange}
+          className="w-full text-center bg-transparent border-none focus:outline-none text-sm font-medium"
+          style={{ direction: "rtl" }}
+        />
       </div>
       
       <Button
@@ -81,7 +75,7 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
         size="icon"
         className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
         onClick={handleIncrement}
-        disabled={currentReps >= 30}
+        disabled={repsValue >= 30}
       >
         <Plus className="h-3 w-3" />
         <span className="sr-only">افزایش</span>

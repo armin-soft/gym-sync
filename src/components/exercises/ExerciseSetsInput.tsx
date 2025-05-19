@@ -10,6 +10,7 @@ interface ExerciseSetsInputProps {
   sets: number;
   onSetsChange: (exerciseId: number, sets: number) => void;
   className?: string;
+  isPersian?: boolean;
 }
 
 export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
@@ -17,6 +18,7 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
   sets,
   onSetsChange,
   className,
+  isPersian = false,
 }) => {
   const handleDecrement = () => {
     if (sets > 1) {
@@ -62,7 +64,7 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
           type="number" 
           min="1" 
           max="10"
-          value={sets}
+          value={isPersian ? toPersianNumbers(sets) : sets}
           onChange={handleInputChange}
           className="w-full text-center bg-transparent border-none focus:outline-none text-sm font-medium"
           style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}

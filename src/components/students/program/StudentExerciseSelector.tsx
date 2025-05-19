@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { ExerciseWithSets } from "@/types/exercise";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,19 +13,22 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 import { HierarchicalMenu } from "@/components/exercises/search-filters/HierarchicalMenu";
 import { ExerciseSetsInput } from "@/components/exercises/ExerciseSetsInput";
+import { ExerciseRepsInput } from "@/components/exercises/ExerciseRepsInput";
 
 interface StudentExerciseSelectorProps {
   selectedExercises: ExerciseWithSets[];
   setSelectedExercises: React.Dispatch<React.SetStateAction<ExerciseWithSets[]>>;
   dayNumber: number;
   exercises: any[]; // Add exercises prop
+  dayLabel?: string;
 }
 
 const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   selectedExercises,
   setSelectedExercises,
   dayNumber,
-  exercises // Use exercises from props
+  exercises, // Use exercises from props
+  dayLabel,
 }) => {
   // State for exercise type and category filtering
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -51,6 +54,22 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
       return category?.type === selectedType && exercise.categoryId === selectedCategoryId;
     });
   }, [exercises, categories, selectedType, selectedCategoryId, isLoading]);
+
+  // Auto-select type and category if a student has existing exercises
+  useEffect(() => {
+    if (selectedExercises.length > 0 && !selectedType && !selectedCategoryId) {
+      const firstExercise = selectedExercises[0];
+      const exercise = exercises.find(ex => ex.id === firstExercise.id);
+      
+      if (exercise) {
+        const category = categories.find(cat => cat.id === exercise.categoryId);
+        if (category) {
+          setSelectedType(category.type);
+          setSelectedCategoryId(exercise.categoryId);
+        }
+      }
+    }
+  }, [selectedExercises, exercises, categories, selectedType, selectedCategoryId]);
 
   const toggleExercise = (exerciseId: number) => {
     if (selectedExercises.some(ex => ex.id === exerciseId)) {
@@ -89,6 +108,18 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   const clearFilters = () => {
     setSelectedType(null);
     setSelectedCategoryId(null);
+  };
+
+  const getDayLabel = () => {
+    if (dayLabel) return dayLabel;
+    
+    switch (dayNumber) {
+      case 1: return "روز اول";
+      case 2: return "روز دوم";
+      case 3: return "روز سوم";
+      case 4: return "روز چهارم";
+      default: return `روز ${toPersianNumbers(dayNumber)}`;
+    }
   };
 
   if (isLoading) {
@@ -144,7 +175,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
           <CardContent className="p-4">
             <h4 className="font-medium mb-3 flex items-center gap-2 justify-center">
               <Dumbbell className="h-4 w-4 text-indigo-500" />
-              <span>تمرین‌های انتخاب شده برای روز {toPersianNumbers(dayNumber)}</span>
+              <span>تمرین‌های انتخاب شده برای {getDayLabel()}</span>
               <span className="inline-flex items-center justify-center bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full h-5 min-w-[20px] px-1.5">
                 {toPersianNumbers(selectedExercises.length)}
               </span>
@@ -153,7 +184,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
             <ScrollArea className="h-[300px] pr-4">
               {selectedExercises.length === 0 ? (
                 <div className="text-center p-6 text-muted-foreground">
-                  هنوز تمرینی برای روز {toPersianNumbers(dayNumber)} انتخاب نشده است.
+                  هنوز تمرینی برای {getDayLabel()} انتخاب نشده است.
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -185,11 +216,11 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                           </div>
                           <div className="text-right">
                             <Label htmlFor={`reps-${exercise.id}`} className="text-xs">تکرار</Label>
-                            <Input
-                              id={`reps-${exercise.id}`}
-                              value={toPersianNumbers(exercise.reps)}
-                              onChange={(e) => handleRepsChange(exercise.id, e.target.value)}
-                              className="h-8 text-sm mt-1 text-right"
+                            <ExerciseRepsInput
+                              exerciseId={exercise.id}
+                              reps={exercise.reps}
+                              onRepsChange={handleRepsChange}
+                              className="mt-1 w-full"
                             />
                           </div>
                         </div>
