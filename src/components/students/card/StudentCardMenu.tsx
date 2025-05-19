@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { EditStudentButton } from "../EditStudentButton";
 import { Student } from "../StudentTypes";
+import { useRouter } from "react-router-dom";
 
 interface StudentCardMenuProps {
   student: Student;
@@ -39,6 +40,13 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   onDownload,
   isProfileComplete
 }) => {
+  const router = useRouter();
+
+  // Handle program assignment navigation
+  const handleProgramClick = () => {
+    router.navigate(`/student-program/${student.id}`);
+  };
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -69,7 +77,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
               className="h-9 px-3 flex-1"
               onClick={onEdit}
             >
-              <Edit className="h-4 w-4 mr-2" />
+              <Edit className="h-4 w-4 ml-2" />
               ویرایش
             </Button>
           ) : (
@@ -84,7 +92,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
         
         <MenuItemWithIcon 
           icon={<CalendarDays className="h-4 w-4" />}
-          onClick={onAddExercise}
+          onClick={handleProgramClick}
           disabled={!isProfileComplete}
           title="تخصیص برنامه"
           subtitle="مدیریت همه برنامه‌ها"

@@ -27,6 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useRouter } from "react-router-dom";
 
 interface StudentActionsProps {
   student: Student;
@@ -50,6 +51,7 @@ export const StudentActions = ({
   isCard = false,
 }: StudentActionsProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const router = useRouter();
 
   const handleDeleteClick = () => {
     setIsDeleteDialogOpen(true);
@@ -60,9 +62,10 @@ export const StudentActions = ({
     setIsDeleteDialogOpen(false);
   };
 
-  // Unified function for program management
+  // Unified function for program management - now navigates to the program page
   const handleProgramClick = () => {
-    onAddExercise(student);
+    // Navigate to a URL with the student's ID
+    router.navigate(`/student-program/${student.id}`);
   };
 
   return (
