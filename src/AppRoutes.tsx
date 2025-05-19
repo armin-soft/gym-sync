@@ -1,17 +1,9 @@
 
-import React, { lazy, Suspense } from "react";
+import React, { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { LoadingScreen } from "./components/LoadingScreen";
 import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
 
-// کامپوننت لودینگ سبک برای تغییر مسیرها
-const PageTransition = () => (
-  <div className="h-full w-full flex items-center justify-center">
-    <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-  </div>
-);
-
-// Lazy load pages
+// حذف کامپوننت PageTransition و لود فوری کامپوننت‌های اصلی
 const Dashboard = lazy(() => import("./pages/Index"));
 const StudentsPage = lazy(() => import("./pages/students"));
 const AddEditStudentPage = lazy(() => import("./pages/students/add-edit"));
@@ -30,9 +22,7 @@ const AppRoutes: React.FC = () => {
         path="/"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <Dashboard />
-            </Suspense>
+            <Dashboard />
           </AuthenticatedContent>
         }
       />
@@ -40,9 +30,7 @@ const AppRoutes: React.FC = () => {
         path="/students"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <StudentsPage />
-            </Suspense>
+            <StudentsPage />
           </AuthenticatedContent>
         }
       />
@@ -50,9 +38,7 @@ const AppRoutes: React.FC = () => {
         path="/students/add-edit/:studentId?"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <AddEditStudentPage />
-            </Suspense>
+            <AddEditStudentPage />
           </AuthenticatedContent>
         }
       />
@@ -60,9 +46,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <ExercisesPage />
-            </Suspense>
+            <ExercisesPage />
           </AuthenticatedContent>
         }
       />
@@ -70,9 +54,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises/hierarchical"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <ExerciseHierarchicalView />
-            </Suspense>
+            <ExerciseHierarchicalView />
           </AuthenticatedContent>
         }
       />
@@ -80,9 +62,7 @@ const AppRoutes: React.FC = () => {
         path="/diet"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <DietPage />
-            </Suspense>
+            <DietPage />
           </AuthenticatedContent>
         }
       />
@@ -90,9 +70,7 @@ const AppRoutes: React.FC = () => {
         path="/supplements"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <SupplementsPage />
-            </Suspense>
+            <SupplementsPage />
           </AuthenticatedContent>
         }
       />
@@ -100,9 +78,7 @@ const AppRoutes: React.FC = () => {
         path="/trainer"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <TrainerPage />
-            </Suspense>
+            <TrainerPage />
           </AuthenticatedContent>
         }
       />
@@ -110,9 +86,7 @@ const AppRoutes: React.FC = () => {
         path="/backup"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <BackupPage />
-            </Suspense>
+            <BackupPage />
           </AuthenticatedContent>
         }
       />
@@ -120,9 +94,7 @@ const AppRoutes: React.FC = () => {
         path="/student-program/:studentId"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageTransition />}>
-              <StudentProgramPage />
-            </Suspense>
+            <StudentProgramPage />
           </AuthenticatedContent>
         }
       />

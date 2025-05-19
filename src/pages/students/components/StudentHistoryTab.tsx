@@ -13,8 +13,7 @@ import {
   Apple, 
   Pill, 
   History,
-  Trash,
-  RefreshCcw
+  Trash
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
@@ -28,7 +27,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface StudentHistoryTabProps {
+export interface StudentHistoryTabProps {
   students: Student[];
   historyEntries: HistoryEntry[];
   onClearHistory?: () => void;
