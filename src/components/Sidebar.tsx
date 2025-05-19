@@ -38,37 +38,37 @@ const sidebarItems = [
   {
     title: "پروفایل مربی",
     description: "مدیریت اطلاعات شخصی",
-    href: "/trainer",
+    href: "/Coach-Profile",
     icon: User2,
   },
   {
     title: "شاگردان",
     description: "مدیریت ورزشکاران",
-    href: "/students",
+    href: "/Students",
     icon: Users,
   },
   {
     title: "حرکات تمرینی",
     description: "مدیریت حرکات و تمرینات",
-    href: "/exercises",
+    href: "/Exercise-Movements",
     icon: Dumbbell,
   },
   {
     title: "برنامه های غذایی",
     description: "مدیریت رژیم غذایی",
-    href: "/diet",
+    href: "/Diet-Plan",
     icon: UtensilsCrossed,
   },
   {
     title: "مکمل و ویتامین",
     description: "مدیریت مکمل‌های ورزشی",
-    href: "/supplements",
+    href: "/Supplements-Vitamins",
     icon: Pill,
   },
   {
     title: "پشتیبان‌گیری و بازیابی",
     description: "مدیریت داده‌ها",
-    href: "/backup",
+    href: "/Backup-Restore",
     icon: Database,
   },
 ];

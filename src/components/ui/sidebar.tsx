@@ -38,32 +38,32 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     title: "پروفایل مربی",
-    href: "/trainer",
+    href: "/Coach-Profile",
     icon: User2,
   },
   {
     title: "شاگردان",
-    href: "/students",
+    href: "/Students",
     icon: Users,
   },
   {
     title: "تمرینات",
-    href: "/exercises",
+    href: "/Exercise-Movements",
     icon: Dumbbell,
   },
   {
     title: "برنامه غذایی",
-    href: "/diet",
+    href: "/Diet-Plan",
     icon: UtensilsCrossed,
   },
   {
     title: "مکمل‌ها",
-    href: "/supplements",
+    href: "/Supplements-Vitamins",
     icon: Pill,
   },
   {
     title: "پشتیبان‌گیری",
-    href: "/backup",
+    href: "/Backup-Restore",
     icon: Database,
   }
 ];
