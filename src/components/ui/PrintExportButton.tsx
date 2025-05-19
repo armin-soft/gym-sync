@@ -5,12 +5,12 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { generateOutput } from "@/utils/pdf-export";
-import { FilePdf, Printer, Download, Share2 } from "lucide-react";
+import { FileText, Printer, Download, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
 export interface PrintExportOptions {
-  format: string;
+  format: "pdf" | "print";
   paperSize: string;
   orientation: string;
   colorMode: string;
@@ -25,7 +25,7 @@ interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   title: string;
   description?: string;
   previewImageUrl?: string;
-  documentType: "student" | "workout" | "diet" | "supplement";
+  documentType: "student" | "workout" | "diet" | "supplement" | "all" | "exercise";
   filename?: string;
   buttonDisplay?: "primary" | "minimal" | "icon-only";
   includeFull?: boolean;
@@ -46,7 +46,7 @@ export const PrintExportButton = ({
   ...buttonProps
 }: PrintExportButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("pdf");
+  const [activeTab, setActiveTab] = useState<"pdf" | "print">("pdf");
   const [exportOptions, setExportOptions] = useState<PrintExportOptions>({
     format: "pdf",
     paperSize: "a4",
@@ -150,10 +150,10 @@ export const PrintExportButton = ({
           </div>
           
           <div className="p-6">
-            <Tabs defaultValue="pdf" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs defaultValue="pdf" value={activeTab} onValueChange={setActiveTab as any} className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="pdf" className="flex items-center gap-2">
-                  <FilePdf className="h-4 w-4" />
+                  <FileText className="h-4 w-4" />
                   <span>PDF</span>
                 </TabsTrigger>
                 <TabsTrigger value="print" className="flex items-center gap-2">

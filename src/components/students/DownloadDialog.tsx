@@ -7,7 +7,7 @@ import { Student } from '@/components/students/StudentTypes';
 import { PrintExportButton } from "@/components/ui/PrintExportButton";
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
-import { FilePdf, ArrowLeftRight, Clock } from 'lucide-react';
+import { FileText, ArrowLeftRight, Clock } from 'lucide-react';
 
 interface DownloadDialogProps {
   isOpen: boolean;
@@ -68,7 +68,7 @@ export const DownloadDialog: React.FC<DownloadDialogProps> = ({ isOpen, onClose,
                 <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse">
                   <div className="p-5 flex items-center justify-center">
                     <div className="h-24 w-24 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-2">
-                      <FilePdf size={40} className="text-indigo-600 dark:text-indigo-400" />
+                      <FileText size={40} className="text-indigo-600 dark:text-indigo-400" />
                     </div>
                   </div>
                   
