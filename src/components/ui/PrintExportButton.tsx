@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -17,6 +18,12 @@ export interface PrintExportOptions {
   includeHeader: boolean;
   includeFooter: boolean;
   includeLogo: boolean;
+}
+
+export interface ExportDataOptions extends PrintExportOptions {
+  contentId?: string;
+  filename: string;
+  includeFull: boolean;
 }
 
 interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {

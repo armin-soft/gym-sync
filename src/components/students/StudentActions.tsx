@@ -9,7 +9,8 @@ import {
   Dumbbell, 
   Apple, 
   Download, 
-  Pill
+  Pill,
+  CalendarDays
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -63,6 +64,11 @@ export const StudentActions = ({
     setIsDeleteDialogOpen(false);
   };
 
+  // Open program manager with the appropriate student
+  const handleProgramClick = () => {
+    onAddExercise(student);
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -97,20 +103,10 @@ export const StudentActions = ({
             </DropdownMenuItem>
           )}
           
-          {/* Program actions */}
-          <DropdownMenuItem onClick={() => onAddExercise(student)} className="gap-2">
-            <Dumbbell className="h-4 w-4 text-indigo-500" />
-            افزودن تمرین
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => onAddDiet(student)} className="gap-2">
-            <Apple className="h-4 w-4 text-green-500" />
-            افزودن برنامه غذایی
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => onAddSupplement(student)} className="gap-2">
-            <Pill className="h-4 w-4 text-amber-500" />
-            افزودن مکمل
+          {/* Program actions - now as a single unified action */}
+          <DropdownMenuItem onClick={handleProgramClick} className="gap-2">
+            <CalendarDays className="h-4 w-4 text-purple-500" />
+            مدیریت برنامه‌ها
           </DropdownMenuItem>
           
           {onDownload && (
