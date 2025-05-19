@@ -5,7 +5,6 @@ import { Student } from "@/components/students/StudentTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { UserRound, CheckCircle } from "lucide-react";
-import { EditStudentButton } from "../EditStudentButton";
 import { StudentActions } from "../StudentActions";
 
 interface StudentTableRowProps {
@@ -17,7 +16,7 @@ interface StudentTableRowProps {
   onAddSupplement: (student: Student) => void;
   onDownload?: (student: Student) => void;
   isProfileComplete: boolean;
-  index?: number; // Added index as an optional prop
+  index?: number;
 }
 
 export const StudentTableRow: React.FC<StudentTableRowProps> = ({
@@ -29,7 +28,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   onAddSupplement,
   onDownload,
   isProfileComplete,
-  index, // Added index parameter
+  index,
 }) => {
   return (
     <TableRow>
@@ -67,12 +66,6 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
       
       <TableCell className="text-center">
         <div className="flex items-center justify-center gap-1">
-          {onEdit ? (
-            <EditStudentButton studentId={student.id} onClick={() => onEdit(student)} />
-          ) : (
-            <EditStudentButton studentId={student.id} />
-          )}
-          
           <StudentActions
             student={student}
             onDelete={onDelete}

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { 
   MoreHorizontal, 
   Trash2, 
-  Edit, 
   CalendarDays
 } from "lucide-react";
 import {
@@ -16,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EditStudentButton } from "./EditStudentButton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -62,7 +60,7 @@ export const StudentActions = ({
     setIsDeleteDialogOpen(false);
   };
 
-  // تخصیص برنامه - منو واحد
+  // تخصیص برنامه
   const handleProgramClick = () => {
     // هدایت به صفحه برنامه با شناسه شاگرد
     navigate(`/student-program/${student.id}`);
@@ -85,23 +83,13 @@ export const StudentActions = ({
           <DropdownMenuLabel className="text-indigo-500 dark:text-indigo-400">
             اقدامات
           </DropdownMenuLabel>
+          
           <DropdownMenuSeparator />
           
-          {/* تخصیص برنامه - گزینه واحد */}
+          {/* تخصیص برنامه - تنها گزینه منو */}
           <DropdownMenuItem onClick={handleProgramClick} className="gap-2">
             <CalendarDays className="h-4 w-4 text-purple-500" />
             تخصیص برنامه
-          </DropdownMenuItem>
-          
-          <DropdownMenuSeparator />
-          
-          {/* حذف */}
-          <DropdownMenuItem 
-            onClick={handleDeleteClick}
-            className="gap-2 text-red-500 focus:text-red-500"
-          >
-            <Trash2 className="h-4 w-4" />
-            حذف
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
