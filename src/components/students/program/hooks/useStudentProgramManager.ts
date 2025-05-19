@@ -33,40 +33,30 @@ export function useStudentProgramManager({
 
   // Load initial data for the student
   useEffect(() => {
-    // Load exercises for the current day
-    if (currentDay === 1 && student.exercisesDay1) {
-      const loadedExercises: ExerciseWithSets[] = student.exercisesDay1.map(id => ({
+    // Find all available day properties in the student object
+    const dayProperties = Object.keys(student).filter(key => key.startsWith('exercisesDay'));
+    
+    // If there are no day properties, default to empty
+    if (dayProperties.length === 0) {
+      setSelectedExercises([]);
+      return;
+    }
+    
+    // If current day data exists, load it
+    const dayKey = `exercisesDay${currentDay}`;
+    const setsKey = `exerciseSetsDay${currentDay}`;
+    const repsKey = `exerciseRepsDay${currentDay}`;
+    
+    if (student[dayKey]) {
+      const loadedExercises: ExerciseWithSets[] = student[dayKey].map(id => ({
         id,
-        sets: student.exerciseSetsDay1?.[id] || 3,
-        reps: student.exerciseRepsDay1?.[id] || "12",
-        day: 1
-      }));
-      setSelectedExercises(loadedExercises);
-    } else if (currentDay === 2 && student.exercisesDay2) {
-      const loadedExercises: ExerciseWithSets[] = student.exercisesDay2.map(id => ({
-        id,
-        sets: student.exerciseSetsDay2?.[id] || 3,
-        reps: student.exerciseRepsDay2?.[id] || "12",
-        day: 2
-      }));
-      setSelectedExercises(loadedExercises);
-    } else if (currentDay === 3 && student.exercisesDay3) {
-      const loadedExercises: ExerciseWithSets[] = student.exercisesDay3.map(id => ({
-        id,
-        sets: student.exerciseSetsDay3?.[id] || 3,
-        reps: student.exerciseRepsDay3?.[id] || "12",
-        day: 3
-      }));
-      setSelectedExercises(loadedExercises);
-    } else if (currentDay === 4 && student.exercisesDay4) {
-      const loadedExercises: ExerciseWithSets[] = student.exercisesDay4.map(id => ({
-        id,
-        sets: student.exerciseSetsDay4?.[id] || 3,
-        reps: student.exerciseRepsDay4?.[id] || "12",
-        day: 4
+        sets: student[setsKey]?.[id] || 3,
+        reps: student[repsKey]?.[id] || "12",
+        day: currentDay
       }));
       setSelectedExercises(loadedExercises);
     } else {
+      // Current day has no exercises
       setSelectedExercises([]);
     }
     

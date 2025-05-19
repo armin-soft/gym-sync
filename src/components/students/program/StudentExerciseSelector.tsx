@@ -55,9 +55,9 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
     });
   }, [exercises, categories, selectedType, selectedCategoryId, isLoading]);
 
-  // Auto-select type and category if a student has existing exercises
+  // Auto-select type and category if a student has existing exercises - trigger on day change as well
   useEffect(() => {
-    if (selectedExercises.length > 0 && !selectedType && !selectedCategoryId) {
+    if (selectedExercises.length > 0) {
       const firstExercise = selectedExercises[0];
       const exercise = exercises.find(ex => ex.id === firstExercise.id);
       
@@ -69,7 +69,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         }
       }
     }
-  }, [selectedExercises, exercises, categories, selectedType, selectedCategoryId]);
+  }, [selectedExercises, exercises, categories, dayNumber]);
 
   const toggleExercise = (exerciseId: number) => {
     if (selectedExercises.some(ex => ex.id === exerciseId)) {
@@ -212,6 +212,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                               sets={exercise.sets}
                               onSetsChange={handleSetsChange}
                               className="mt-1 w-full"
+                              isPersian={true}
                             />
                           </div>
                           <div className="text-right">
