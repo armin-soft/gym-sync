@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Plus, Check } from "lucide-react";
+import { Search, Plus, Check, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -39,16 +39,17 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
       <Button
         variant="outline"
         onClick={() => setIsOpen(true)}
-        className="w-full justify-start text-right bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-900/30 dark:to-gray-900 border-indigo-100 dark:border-indigo-800 hover:border-indigo-300 transition-all duration-300"
+        className="w-full justify-between bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-900/30 dark:to-gray-900"
       >
-        {selectedType || "انتخاب نوع حرکت"}
+        <span>{selectedType || "انتخاب نوع تمرین"}</span>
+        <ChevronDown className="h-4 w-4 opacity-50" />
       </Button>
       
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md max-h-[80vh]">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
-              انتخاب نوع حرکت
+              انتخاب نوع تمرین
             </DialogTitle>
           </DialogHeader>
           
