@@ -14,4 +14,6 @@ self.STATIC_ASSETS = [
   './assets/index.js'
 ];
 
+self.CACHE_NAME = 'gym-sync-v249';
+
 console.log('[Service Worker] Configuration module loaded');

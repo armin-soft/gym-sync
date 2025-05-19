@@ -17,7 +17,7 @@ async function getAppVersion() {
 }
 
 // Cache name with version - will be dynamically updated when possible
-export const CACHE_NAME = 'gym-sync-v242';
+export const CACHE_NAME = 'gym-sync-v249';
 
 // Files to cache - use relative paths that will work in any environment
 export const STATIC_ASSETS = [
