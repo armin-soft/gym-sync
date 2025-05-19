@@ -37,7 +37,7 @@ export interface Exercise {
 export interface ExerciseWithSets {
   id: number;
   sets: number;
-  reps: string; // Making reps a required field instead of optional
+  reps: string; // تکرار بصورت رشته اما معمولا یک عدد خواهد بود
   rest?: string;
   day?: number;
   weight?: string;

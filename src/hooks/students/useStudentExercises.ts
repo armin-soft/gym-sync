@@ -25,9 +25,9 @@ export const useStudentExercises = (
             return acc;
           }, {} as Record<number, number>);
           
-          // Extract reps information if available
+          // Extract reps information if available - save as string but should contain numeric value
           const exerciseReps = exercisesWithSets.reduce((acc, ex) => {
-            if (ex.reps) acc[ex.id] = ex.reps!;
+            if (ex.reps) acc[ex.id] = ex.reps.toString();
             return acc;
           }, {} as Record<number, string>);
           

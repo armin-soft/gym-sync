@@ -7,6 +7,7 @@ import { Student } from "@/components/students/StudentTypes";
 import { ExerciseWithSets } from "@/types/exercise";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import StudentExerciseSelector from "@/components/students/program/StudentExerciseSelector";
+import { cn } from "@/lib/utils";
 
 interface ProgramExerciseTabProps {
   student: Student;
@@ -29,32 +30,32 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
       const loadedExercises = student.exercisesDay1.map(id => ({
         id,
         sets: student.exerciseSetsDay1?.[id] || 3,
-        reps: student.exerciseRepsDay1?.[id] || "12-15",
-        rest: "60s"
+        reps: student.exerciseRepsDay1?.[id] || "12",
+        rest: ""
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 2 && student.exercisesDay2) {
       const loadedExercises = student.exercisesDay2.map(id => ({
         id,
         sets: student.exerciseSetsDay2?.[id] || 3,
-        reps: student.exerciseRepsDay2?.[id] || "12-15",
-        rest: "60s"
+        reps: student.exerciseRepsDay2?.[id] || "12",
+        rest: ""
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 3 && student.exercisesDay3) {
       const loadedExercises = student.exercisesDay3.map(id => ({
         id,
         sets: student.exerciseSetsDay3?.[id] || 3,
-        reps: student.exerciseRepsDay3?.[id] || "12-15",
-        rest: "60s"
+        reps: student.exerciseRepsDay3?.[id] || "12",
+        rest: ""
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 4 && student.exercisesDay4) {
       const loadedExercises = student.exercisesDay4.map(id => ({
         id,
         sets: student.exerciseSetsDay4?.[id] || 3,
-        reps: student.exerciseRepsDay4?.[id] || "12-15",
-        rest: "60s"
+        reps: student.exerciseRepsDay4?.[id] || "12",
+        rest: ""
       }));
       setSelectedExercises(loadedExercises);
     } else {
@@ -72,31 +73,13 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4">
+    <div className="flex flex-col h-full space-y-4 rtl">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           برنامه تمرینی روز {toPersianNumbers(currentDay)}
         </div>
         
         <div className="flex items-center gap-2">
-          <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            {[1, 2, 3, 4].map(day => (
-              <Button 
-                key={day}
-                variant={currentDay === day ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setCurrentDay(day)}
-                className={`h-8 rounded-none border-0 ${
-                  currentDay === day 
-                    ? "bg-indigo-500 text-white hover:bg-indigo-600" 
-                    : "text-gray-600 dark:text-gray-300"
-                }`}
-              >
-                روز {toPersianNumbers(day)}
-              </Button>
-            ))}
-          </div>
-          
           <Button 
             onClick={handleSave} 
             disabled={isSaving}
@@ -109,6 +92,27 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
             )}
             <span>ذخیره</span>
           </Button>
+        </div>
+      </div>
+      
+      <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          {[1, 2, 3, 4].map(day => (
+            <Button 
+              key={day}
+              variant={currentDay === day ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setCurrentDay(day)}
+              className={cn(
+                "h-10 rounded-none border-0 px-6",
+                currentDay === day 
+                  ? "bg-indigo-500 text-white hover:bg-indigo-600" 
+                  : "text-gray-600 dark:text-gray-300"
+              )}
+            >
+              روز {toPersianNumbers(day)}
+            </Button>
+          ))}
         </div>
       </div>
       
