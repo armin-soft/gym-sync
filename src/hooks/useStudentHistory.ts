@@ -1,68 +1,74 @@
 
-// src/hooks/useStudentHistory.ts
 import { useState, useEffect } from 'react';
 import { Student } from '@/components/students/StudentTypes';
-
-export type HistoryEntryType = 'edit' | 'exercise' | 'diet' | 'supplement';
+import { safeJSONParse, safeJSONSave } from '@/utils/database';
 
 export interface HistoryEntry {
-  id: number;
-  student: Student;
-  type: HistoryEntryType;
-  message: string;
+  id: string;
   timestamp: number;
+  studentId: number;
+  studentName: string;
+  studentImage: string;
+  type: 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete';
+  description: string;
+  // Add these fields for compatibility with StudentHistoryEntry
+  date?: string;
+  action?: string;
+  details?: string;
 }
 
-export const useStudentHistory = () => {
+export function useStudentHistory() {
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
-  
-  // Load history from localStorage on init
+
+  // Load history from localStorage
   useEffect(() => {
-    try {
-      const savedHistory = localStorage.getItem('studentHistory');
-      if (savedHistory) {
-        setHistoryEntries(JSON.parse(savedHistory));
-      }
-    } catch (error) {
-      console.error('Error loading history:', error);
+    const loadedHistory = safeJSONParse('studentHistory', []);
+    if (Array.isArray(loadedHistory)) {
+      // Map to ensure type compatibility
+      const mappedEntries = loadedHistory.map((entry: any): HistoryEntry => ({
+        ...entry,
+        // Map fields for compatibility if needed
+        date: entry.date || new Date(entry.timestamp).toISOString(),
+        action: entry.action || entry.type,
+        details: entry.details || entry.description
+      }));
+      setHistoryEntries(mappedEntries);
     }
   }, []);
-  
-  // Save history to localStorage whenever it changes
-  useEffect(() => {
-    if (historyEntries.length > 0) {
-      try {
-        localStorage.setItem('studentHistory', JSON.stringify(historyEntries));
-      } catch (error) {
-        console.error('Error saving history:', error);
-      }
-    }
-  }, [historyEntries]);
-  
-  const addHistoryEntry = (student: Student, type: HistoryEntryType, message: string) => {
+
+  // Add new entry to history
+  const addHistoryEntry = (student: Student, type: HistoryEntry['type'], description: string) => {
     const newEntry: HistoryEntry = {
-      id: Date.now(),
-      student,
+      id: `hist_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      timestamp: Date.now(),
+      studentId: student.id,
+      studentName: student.name,
+      studentImage: student.image || '/Assets/Image/Place-Holder.svg',
       type,
-      message,
-      timestamp: Date.now()
+      description,
+      // Add these fields for compatibility
+      date: new Date().toISOString(),
+      action: type,
+      details: description
     };
-    
-    setHistoryEntries(prev => {
-      // Limit history to 50 entries
-      const updatedHistory = [newEntry, ...prev].slice(0, 50);
-      return updatedHistory;
+
+    // Update state with new entry
+    setHistoryEntries(prevEntries => {
+      const updatedEntries = [newEntry, ...prevEntries].slice(0, 100); // Keep only the last 100 entries
+      safeJSONSave('studentHistory', updatedEntries);
+      return updatedEntries;
     });
   };
-  
+
+  // Clear history entries
   const clearHistory = () => {
     setHistoryEntries([]);
-    localStorage.removeItem('studentHistory');
+    safeJSONSave('studentHistory', []);
   };
-  
+
   return {
     historyEntries,
     addHistoryEntry,
     clearHistory
   };
-};
+}

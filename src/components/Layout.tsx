@@ -1,12 +1,29 @@
 
-import { useState, useEffect, memo, useMemo, CSSProperties } from "react";
+import { useState, useEffect, Suspense, lazy, memo, useMemo, CSSProperties } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu } from "lucide-react";
+import { Menu, X, Bell, User } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetTrigger 
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+
+// کامپوننت سبک برای لودینگ داخلی
+const PageLoading = memo(() => (
+  <div className="w-full h-full flex items-center justify-center">
+    <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+));
+
+PageLoading.displayName = "PageLoading";
 
 // Define the props interface explicitly to include children
 interface LayoutProps {
@@ -17,14 +34,23 @@ interface LayoutProps {
 export const Layout = memo(({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
+  const [trainerProfile, setTrainerProfile] = useState({
+    name: "مربی",
+    image: "",
+  });
   const [scrolled, setScrolled] = useState(false);
   const deviceInfo = useDeviceInfo();
+  const { toast } = useToast();
   
   const loadProfile = () => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
         const profile = JSON.parse(savedProfile);
+        setTrainerProfile({
+          name: profile.name || "مربی",
+          image: profile.image || "",
+        });
         if (profile.gymName) {
           setGymName(profile.gymName);
         }
@@ -130,7 +156,9 @@ export const Layout = memo(({ children }: LayoutProps) => {
       </header>
       
       <main className="flex-1 overflow-hidden w-full max-w-full" style={contentStyle}>
-        {children}
+        <Suspense fallback={<PageLoading />}>
+          {children}
+        </Suspense>
       </main>
     </div>
   );
