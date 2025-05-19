@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 import { HierarchicalMenu } from "@/components/exercises/search-filters/HierarchicalMenu";
+import { ExerciseSetsInput } from "@/components/exercises/ExerciseSetsInput";
 
 interface StudentExerciseSelectorProps {
   selectedExercises: ExerciseWithSets[];
@@ -68,11 +69,21 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   };
 
   const updateExerciseDetails = (exerciseId: number, field: keyof ExerciseWithSets, value: any) => {
+    console.log(`Updating exercise ${exerciseId} field ${field} with value ${value}`);
     setSelectedExercises(prev => 
       prev.map(ex => 
         ex.id === exerciseId ? { ...ex, [field]: value } : ex
       )
     );
+  };
+  
+  const handleSetsChange = (exerciseId: number, sets: number) => {
+    console.log(`Sets changing for exercise ${exerciseId} to ${sets}`);
+    updateExerciseDetails(exerciseId, 'sets', sets);
+  };
+
+  const handleRepsChange = (exerciseId: number, reps: string) => {
+    updateExerciseDetails(exerciseId, 'reps', reps);
   };
 
   const clearFilters = () => {
@@ -165,14 +176,11 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                         <div className="grid grid-cols-2 gap-2 mt-2">
                           <div className="text-right">
                             <Label htmlFor={`sets-${exercise.id}`} className="text-xs">تعداد ست</Label>
-                            <Input
-                              id={`sets-${exercise.id}`}
-                              value={toPersianNumbers(exercise.sets)}
-                              onChange={(e) => updateExerciseDetails(exercise.id, 'sets', parseInt(e.target.value) || 1)}
-                              className="h-8 text-sm mt-1 text-right"
-                              type="number"
-                              min="1"
-                              max="10"
+                            <ExerciseSetsInput
+                              exerciseId={exercise.id}
+                              sets={exercise.sets}
+                              onSetsChange={handleSetsChange}
+                              className="mt-1 w-full"
                             />
                           </div>
                           <div className="text-right">
@@ -180,7 +188,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                             <Input
                               id={`reps-${exercise.id}`}
                               value={toPersianNumbers(exercise.reps)}
-                              onChange={(e) => updateExerciseDetails(exercise.id, 'reps', e.target.value)}
+                              onChange={(e) => handleRepsChange(exercise.id, e.target.value)}
                               className="h-8 text-sm mt-1 text-right"
                             />
                           </div>

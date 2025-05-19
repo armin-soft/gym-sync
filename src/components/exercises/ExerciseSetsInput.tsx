@@ -30,6 +30,14 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
     }
   };
 
+  // Directly handle manual input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 1 && value <= 10) {
+      onSetsChange(exerciseId, value);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -49,8 +57,16 @@ export const ExerciseSetsInput: React.FC<ExerciseSetsInputProps> = ({
         <span className="sr-only">کاهش</span>
       </Button>
       
-      <div className="flex-1 flex items-center justify-center text-sm font-medium">
-        {toPersianNumbers(sets)}
+      <div className="flex-1 flex items-center justify-center">
+        <input 
+          type="number" 
+          min="1" 
+          max="10"
+          value={sets}
+          onChange={handleInputChange}
+          className="w-full text-center bg-transparent border-none focus:outline-none text-sm font-medium"
+          style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
+        />
       </div>
       
       <Button
