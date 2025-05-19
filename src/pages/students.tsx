@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
@@ -6,7 +7,7 @@ import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentHistory } from "@/components/students/StudentHistory";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; 
-import { useStudentHistory, HistoryEntry } from "@/hooks/useStudentHistory";
+import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
@@ -18,11 +19,13 @@ import { UserRound, History, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { ExerciseWithSets } from "@/types/exercise";
+import StudentProgramManager from "@/components/students/program/StudentProgramManager";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
+  const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
   const deviceInfo = useDeviceInfo();
   
   const {
@@ -83,63 +86,60 @@ const StudentsPage = () => {
     return result;
   }, [handleSave, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveExercisesWithHistory = useCallback((exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
-    const result = handleSaveExercises(exercisesWithSets, studentId, dayNumber);
+  const handleSaveExercisesWithHistory = useCallback((exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => {
+    if (!selectedStudentForProgram) return false;
+    
+    const result = handleSaveExercises(exercisesWithSets, selectedStudentForProgram.id, dayNumber);
     
     if (result) {
-      const student = students.find(s => s.id === studentId);
-      if (student) {
-        const dayText = dayNumber ? ` برای روز ${dayNumber}` : '';
-        addHistoryEntry(
-          student, 
-          'exercise',
-          `برنامه تمرینی${dayText} برای ${student.name} بروزرسانی شد`
-        );
-      }
+      const dayText = dayNumber ? ` برای روز ${dayNumber}` : '';
+      addHistoryEntry(
+        selectedStudentForProgram, 
+        'exercise',
+        `برنامه تمرینی${dayText} برای ${selectedStudentForProgram.name} بروزرسانی شد`
+      );
       
       triggerRefresh();
     }
     
     return result;
-  }, [handleSaveExercises, students, addHistoryEntry, triggerRefresh]);
+  }, [handleSaveExercises, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveDietWithHistory = useCallback((mealIds: number[], studentId: number) => {
-    const result = handleSaveDiet(mealIds, studentId);
+  const handleSaveDietWithHistory = useCallback((mealIds: number[]) => {
+    if (!selectedStudentForProgram) return false;
+    
+    const result = handleSaveDiet(mealIds, selectedStudentForProgram.id);
     
     if (result) {
-      const student = students.find(s => s.id === studentId);
-      if (student) {
-        addHistoryEntry(
-          student, 
-          'diet',
-          `برنامه غذایی برای ${student.name} بروزرسانی شد`
-        );
-      }
+      addHistoryEntry(
+        selectedStudentForProgram, 
+        'diet',
+        `برنامه غذایی برای ${selectedStudentForProgram.name} بروزرسانی شد`
+      );
       
       triggerRefresh();
     }
     
     return result;
-  }, [handleSaveDiet, students, addHistoryEntry, triggerRefresh]);
+  }, [handleSaveDiet, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveSupplementsWithHistory = useCallback((data: {supplements: number[], vitamins: number[]}, studentId: number) => {
-    const result = handleSaveSupplements(data, studentId);
+  const handleSaveSupplementsWithHistory = useCallback((data: {supplements: number[], vitamins: number[]}) => {
+    if (!selectedStudentForProgram) return false;
+    
+    const result = handleSaveSupplements(data, selectedStudentForProgram.id);
     
     if (result) {
-      const student = students.find(s => s.id === studentId);
-      if (student) {
-        addHistoryEntry(
-          student, 
-          'supplement',
-          `برنامه مکمل و ویتامین برای ${student.name} بروزرسانی شد`
-        );
-      }
+      addHistoryEntry(
+        selectedStudentForProgram, 
+        'supplement',
+        `برنامه مکمل و ویتامین برای ${selectedStudentForProgram.name} بروزرسانی شد`
+      );
       
       triggerRefresh();
     }
     
     return result;
-  }, [handleSaveSupplements, students, addHistoryEntry, triggerRefresh]);
+  }, [handleSaveSupplements, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
   
   const handleDeleteWithHistory = useCallback((studentId: number) => {
     const student = students.find(s => s.id === studentId);
@@ -165,12 +165,37 @@ const StudentsPage = () => {
     handleClearSearch
   } = useStudentFiltering(students);
 
+  // Handler for opening the program manager
+  const handleOpenProgramManager = (student: Student) => {
+    setSelectedStudentForProgram(student);
+  };
+
   // Determine the appropriate classes based on device type
   const getContentPadding = () => {
     if (deviceInfo.isMobile) return "px-2";
     if (deviceInfo.isTablet) return "px-4";
     return "px-4 sm:px-6 lg:px-8";
   };
+
+  // If a student is selected for program management, show the program manager
+  if (selectedStudentForProgram) {
+    return (
+      <PageContainer withBackground fullHeight className="w-full overflow-hidden">
+        <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
+          <StudentProgramManager 
+            student={selectedStudentForProgram}
+            exercises={exercises}
+            meals={meals}
+            supplements={supplements}
+            onSaveExercises={handleSaveExercisesWithHistory}
+            onSaveDiet={handleSaveDietWithHistory}
+            onSaveSupplements={handleSaveSupplementsWithHistory}
+            onClose={() => setSelectedStudentForProgram(null)}
+          />
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
@@ -243,11 +268,11 @@ const StudentsPage = () => {
                   searchQuery={searchQuery}
                   refreshTrigger={refreshTrigger}
                   onEdit={(student: Student) => dialogManagerRef.current?.handleEdit(student)}
-                  onDelete={handleDelete}
-                  onAddExercise={(student: Student) => dialogManagerRef.current?.handleAddExercise(student)}
-                  onAddDiet={(student: Student) => dialogManagerRef.current?.handleAddDiet(student)}
-                  onAddSupplement={(student: Student) => dialogManagerRef.current?.handleAddSupplement(student)}
-                  onDownload={(student: Student) => dialogManagerRef.current?.handleDownload(student)}
+                  onDelete={handleDeleteWithHistory}
+                  onAddExercise={handleOpenProgramManager}  // Changed to use our unified program manager
+                  onAddDiet={handleOpenProgramManager}      // Changed to use our unified program manager
+                  onAddSupplement={handleOpenProgramManager}  // Changed to use our unified program manager
+                  onDownload={(student: Student) => {}}     // Removed download functionality as requested
                   onAddStudent={() => dialogManagerRef.current?.handleAdd()}
                   onClearSearch={handleClearSearch}
                   viewMode={viewMode}

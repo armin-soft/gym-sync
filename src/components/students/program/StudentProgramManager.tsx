@@ -3,16 +3,14 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Student } from "@/components/students/StudentTypes";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Dumbbell, Utensils, Pill, Calendar, Save } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dumbbell, Utensils, Pill, Save } from "lucide-react";
 import { ExerciseWithSets } from "@/types/exercise";
 import { Supplement } from "@/types/supplement";
-import { Meal } from "@/types/meal";
 import { useToast } from "@/hooks/use-toast";
 import StudentExerciseSelector from "./StudentExerciseSelector";
 import StudentDietSelector from "./StudentDietSelector";
 import StudentSupplementSelector from "./StudentSupplementSelector";
-import { PrintExportButton } from "@/components/ui/PrintExportButton";
 
 interface StudentProgramManagerProps {
   student: Student;
@@ -115,7 +113,7 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
       success = onSaveDiet(selectedMeals);
     }
     
-    // Save supplements and vitamins
+    // Supplement state
     if (activeTab === "supplement") {
       success = onSaveSupplements({
         supplements: selectedSupplements,
@@ -143,13 +141,6 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
             <Save className="h-4 w-4 ml-2" />
             ذخیره
           </Button>
-          <PrintExportButton 
-            title={`برنامه ${student.name}`}
-            description="دانلود یا چاپ برنامه شاگرد"
-            documentType="student"
-            filename={`program_${student.name}`}
-            buttonDisplay="minimal"
-          />
         </div>
       </div>
 

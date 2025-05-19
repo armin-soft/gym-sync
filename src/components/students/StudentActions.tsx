@@ -6,10 +6,6 @@ import {
   MoreHorizontal, 
   Trash2, 
   Edit, 
-  Dumbbell, 
-  Apple, 
-  Download, 
-  Pill,
   CalendarDays
 } from "lucide-react";
 import {
@@ -64,7 +60,7 @@ export const StudentActions = ({
     setIsDeleteDialogOpen(false);
   };
 
-  // Open program manager with the appropriate student
+  // یک تابع واحد برای مدیریت برنامه‌ها
   const handleProgramClick = () => {
     onAddExercise(student);
   };
@@ -82,7 +78,7 @@ export const StudentActions = ({
             <span className="sr-only">منوی اقدامات</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align={isCard ? "end" : "start"} className="min-w-48 backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800/80">
+        <DropdownMenuContent align={isCard ? "end" : "start"} className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800/80">
           <DropdownMenuLabel className="text-indigo-500 dark:text-indigo-400">
             اقدامات
           </DropdownMenuLabel>
@@ -103,18 +99,11 @@ export const StudentActions = ({
             </DropdownMenuItem>
           )}
           
-          {/* Program actions - now as a single unified action */}
+          {/* Program manager - دکمه واحد برای مدیریت همه برنامه‌ها */}
           <DropdownMenuItem onClick={handleProgramClick} className="gap-2">
             <CalendarDays className="h-4 w-4 text-purple-500" />
             مدیریت برنامه‌ها
           </DropdownMenuItem>
-          
-          {onDownload && (
-            <DropdownMenuItem onClick={() => onDownload(student)} className="gap-2">
-              <Download className="h-4 w-4 text-blue-500" />
-              دانلود برنامه
-            </DropdownMenuItem>
-          )}
           
           <DropdownMenuSeparator />
           
