@@ -22,8 +22,7 @@ export interface Exercise {
   equipment?: string;
   category?: string; // افزودن فیلد category برای سازگاری با سایر بخش‌ها
   sets?: number; // فیلدهای مورد نیاز برای StudentExerciseDialog
-  reps?: string;
-  rest?: string;
+  reps?: number;
   day?: number;
   type?: string; // نوع تمرین مانند "قدرتی"، "استقامتی" و غیره
   difficulty?: "easy" | "medium" | "hard"; // سطح دشواری تمرین
@@ -37,8 +36,7 @@ export interface Exercise {
 export interface ExerciseWithSets {
   id: number;
   sets: number;
-  reps: string; // تکرار بصورت رشته اما معمولا یک عدد خواهد بود
-  rest?: string;
+  reps: number; // تغییر تکرار به عدد
   day?: number;
   weight?: string;
   intensity?: number;

@@ -11,16 +11,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 
 interface StudentExerciseSelectorProps {
-  exercises: any[];
   selectedExercises: ExerciseWithSets[];
   setSelectedExercises: React.Dispatch<React.SetStateAction<ExerciseWithSets[]>>;
   dayNumber: number;
 }
 
 const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
-  exercises,
   selectedExercises,
   setSelectedExercises,
   dayNumber
@@ -30,35 +29,33 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   
-  // Extract unique exercise types
-  const exerciseTypes = useMemo(() => {
-    const types = new Set<string>();
-    exercises.forEach(exercise => {
-      if (exercise.type) types.add(exercise.type);
-    });
-    return Array.from(types);
-  }, [exercises]);
+  // دریافت داده‌ها از دیتابیس محلی
+  const { exercises, categories, exerciseTypes, isLoading } = useExerciseData();
   
-  // Extract categories based on selected type
-  const categories = useMemo(() => {
+  // فیلتر بر اساس نوع تمرین انتخاب شده
+  const filteredCategories = useMemo(() => {
     const categoryMap = new Map<number, string>();
     exercises.forEach(exercise => {
-      if ((!selectedType || exercise.type === selectedType) && 
-          exercise.categoryId && exercise.category) {
-        categoryMap.set(exercise.categoryId, exercise.category);
+      const category = categories.find(cat => cat.id === exercise.categoryId);
+      if ((!selectedType || category?.type === selectedType) && 
+          exercise.categoryId && category) {
+        categoryMap.set(exercise.categoryId, category.name);
       }
     });
     return Array.from(categoryMap.entries()).map(([id, name]) => ({ id, name }));
-  }, [exercises, selectedType]);
+  }, [exercises, categories, selectedType]);
   
-  // Filter exercises based on type and category
+  // فیلتر تمرین‌ها بر اساس نوع و دسته‌بندی
   const filteredExercises = useMemo(() => {
+    if (isLoading) return [];
+    
     return exercises.filter(exercise => {
-      const typeMatch = !selectedType || exercise.type === selectedType;
+      const category = categories.find(cat => cat.id === exercise.categoryId);
+      const typeMatch = !selectedType || (category && category.type === selectedType);
       const categoryMatch = !selectedCategory || exercise.categoryId === selectedCategory;
       return typeMatch && categoryMatch;
     });
-  }, [exercises, selectedType, selectedCategory]);
+  }, [exercises, categories, selectedType, selectedCategory, isLoading]);
 
   const toggleExercise = (exerciseId: number) => {
     if (selectedExercises.some(ex => ex.id === exerciseId)) {
@@ -69,7 +66,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         { 
           id: exerciseId, 
           sets: 3, 
-          reps: "12", 
+          reps: 12, // تغییر به عدد 
           day: dayNumber
         }
       ]);
@@ -88,6 +85,10 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
     setSelectedType(null);
     setSelectedCategory(null);
   };
+
+  if (isLoading) {
+    return <div className="p-8 text-center">در حال بارگذاری...</div>;
+  }
 
   return (
     <div className="space-y-4 rtl">
@@ -140,7 +141,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                   variant="outline" 
                   className="flex items-center gap-1 bg-green-50 text-green-700"
                 >
-                  {categories.find(c => c.id === selectedCategory)?.name}
+                  {filteredCategories.find(c => c.id === selectedCategory)?.name}
                   <Button 
                     variant="ghost" 
                     size="sm"
@@ -151,7 +152,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                   </Button>
                 </Badge>
               ) : (
-                categories.map(category => (
+                filteredCategories.map(category => (
                   <Button 
                     key={category.id} 
                     variant="outline"
@@ -238,7 +239,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                             <Label htmlFor={`sets-${exercise.id}`} className="text-xs">تعداد ست</Label>
                             <Input
                               id={`sets-${exercise.id}`}
-                              value={exercise.sets}
+                              value={toPersianNumbers(exercise.sets)}
                               onChange={(e) => updateExerciseDetails(exercise.id, 'sets', parseInt(e.target.value) || 1)}
                               className="h-8 text-sm mt-1 text-right"
                               type="number"
@@ -250,8 +251,8 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
                             <Label htmlFor={`reps-${exercise.id}`} className="text-xs">تکرار</Label>
                             <Input
                               id={`reps-${exercise.id}`}
-                              value={exercise.reps}
-                              onChange={(e) => updateExerciseDetails(exercise.id, 'reps', e.target.value)}
+                              value={toPersianNumbers(exercise.reps)}
+                              onChange={(e) => updateExerciseDetails(exercise.id, 'reps', parseInt(e.target.value) || 1)}
                               className="h-8 text-sm mt-1 text-right"
                               type="number"
                               min="1"
