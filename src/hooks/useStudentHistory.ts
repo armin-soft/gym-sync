@@ -1,62 +1,58 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Student } from '@/components/students/StudentTypes';
 import { safeJSONParse, safeJSONSave } from '@/utils/database';
 
-// Define and export the HistoryEntry type
 export interface HistoryEntry {
-  id: number;
+  id: string;
+  timestamp: number;
   studentId: number;
-  date: string;
-  action: 'edit' | 'exercise' | 'diet' | 'supplement';
-  details: string;
+  studentName: string;
+  studentImage: string;
+  type: 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete';
+  description: string;
 }
 
-export const useStudentHistory = () => {
+export function useStudentHistory() {
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
 
-  // Load history entries from localStorage with improved error handling
+  // Load history from localStorage
   useEffect(() => {
-    try {
-      const entries = safeJSONParse<HistoryEntry[]>('studentHistory', []);
-      setHistoryEntries(entries);
-    } catch (error) {
-      console.error('Error loading student history:', error);
-      setHistoryEntries([]);
+    const loadedHistory = safeJSONParse('studentHistory', []);
+    if (Array.isArray(loadedHistory)) {
+      setHistoryEntries(loadedHistory);
     }
   }, []);
 
-  // Save history entries to localStorage with debounce for better performance
-  useEffect(() => {
-    if (historyEntries.length > 0) {
-      const saveTimeout = setTimeout(() => {
-        safeJSONSave('studentHistory', historyEntries);
-      }, 300); // Debounce by 300ms
-      
-      return () => clearTimeout(saveTimeout);
-    }
-  }, [historyEntries]);
-
-  // Add a new history entry with optimized implementation
-  const addHistoryEntry = useCallback((
-    student: Student,
-    action: 'edit' | 'exercise' | 'diet' | 'supplement',
-    details: string
-  ) => {
+  // Add new entry to history
+  const addHistoryEntry = (student: Student, type: HistoryEntry['type'], description: string) => {
     const newEntry: HistoryEntry = {
-      id: Date.now(),
+      id: `hist_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      timestamp: Date.now(),
       studentId: student.id,
-      date: new Date().toISOString(),
-      action,
-      details,
+      studentName: student.name,
+      studentImage: student.image || '/Assets/Image/Place-Holder.svg',
+      type,
+      description
     };
-    
-    setHistoryEntries(prev => [newEntry, ...prev.slice(0, 99)]); // Keep only the last 100 entries for performance
-    return newEntry;
-  }, []);
+
+    // Update state with new entry
+    setHistoryEntries(prevEntries => {
+      const updatedEntries = [newEntry, ...prevEntries].slice(0, 100); // Keep only the last 100 entries
+      safeJSONSave('studentHistory', updatedEntries);
+      return updatedEntries;
+    });
+  };
+
+  // Clear history entries
+  const clearHistory = () => {
+    setHistoryEntries([]);
+    safeJSONSave('studentHistory', []);
+  };
 
   return {
     historyEntries,
-    addHistoryEntry
+    addHistoryEntry,
+    clearHistory
   };
-};
+}

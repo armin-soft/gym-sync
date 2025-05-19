@@ -1,82 +1,63 @@
 
-import { useState, useMemo, useCallback } from "react";
-import { Student } from "@/components/students/StudentTypes";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useState, useMemo, useCallback } from 'react';
+import { Student } from '@/components/students/StudentTypes';
 
-export const useStudentFiltering = (students: Student[]) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortField, setSortField] = useState<"name" | "weight" | "height" | "progress">("name");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const deviceInfo = useDeviceInfo();
+export function useStudentFiltering(students: Student[]) {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortField, setSortField] = useState<string>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  const toggleSort = useCallback((field: "name" | "weight" | "height" | "progress") => {
-    if (field === sortField) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("asc");
-    }
-  }, [sortField, sortOrder]);
-
+  // Handle clearing search
   const handleClearSearch = useCallback(() => {
-    setSearchQuery("");
+    setSearchQuery('');
   }, []);
 
-  // Filter and sort students with optimizations for mobile
-  const sortedAndFilteredStudents = useMemo(() => {
-    let filtered = [...students];
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const normalizedQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (student) =>
-          student.name.toLowerCase().includes(normalizedQuery) ||
-          student.phone.toLowerCase().includes(normalizedQuery) ||
-          (student.payment && student.payment.toLowerCase().includes(normalizedQuery))
-      );
+  // Toggle sort order
+  const toggleSort = useCallback((field: string) => {
+    if (sortField === field) {
+      setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
     }
+  }, [sortField]);
 
-    // Sort students with consideration for device performance
-    return filtered.sort((a, b) => {
-      let aValue: string | number = a.name;
-      let bValue: string | number = b.name;
-
-      if (sortField === "name") {
-        aValue = a.name;
-        bValue = b.name;
-      } else if (sortField === "weight") {
-        aValue = parseFloat(a.weight) || 0;
-        bValue = parseFloat(b.weight) || 0;
-      } else if (sortField === "height") {
-        aValue = parseFloat(a.height) || 0;
-        bValue = parseFloat(b.height) || 0;
-      } else if (sortField === "progress") {
-        aValue = a.progress || 0;
-        bValue = b.progress || 0;
-      }
-
-      // Optimize string comparison for mobile devices
-      if (deviceInfo.isMobile && sortField === "name") {
-        // Simple string comparison for mobile to improve performance
-        return sortOrder === "asc" 
-          ? aValue.toString().localeCompare(bValue.toString()) 
-          : bValue.toString().localeCompare(aValue.toString());
-      }
-
-      if (sortOrder === "asc") {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
+  // Filter and sort students
+  const sortedAndFilteredStudents = useMemo(() => {
+    // First filter by search query
+    let filteredStudents = students;
+    
+    if (searchQuery.trim()) {
+      const normalizedQuery = searchQuery.trim().toLowerCase();
+      
+      filteredStudents = students.filter(student => {
+        return (
+          student.name?.toLowerCase().includes(normalizedQuery) ||
+          student.phone?.toLowerCase().includes(normalizedQuery) ||
+          student.height?.toString().includes(normalizedQuery) ||
+          student.weight?.toString().includes(normalizedQuery) ||
+          student.payment?.toString().includes(normalizedQuery)
+        );
+      });
+    }
+    
+    // Then sort
+    return [...filteredStudents].sort((a, b) => {
+      let valueA: any = a[sortField as keyof Student];
+      let valueB: any = b[sortField as keyof Student];
+      
+      // Convert to strings for comparison
+      if (valueA === undefined) valueA = '';
+      if (valueB === undefined) valueB = '';
+      
+      valueA = valueA.toString().toLowerCase();
+      valueB = valueB.toString().toLowerCase();
+      
+      if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+      if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
     });
-  }, [
-    students,
-    searchQuery,
-    sortField,
-    sortOrder,
-    deviceInfo.isMobile
-  ]);
+  }, [students, searchQuery, sortField, sortOrder]);
 
   return {
     searchQuery,
@@ -87,4 +68,4 @@ export const useStudentFiltering = (students: Student[]) => {
     sortedAndFilteredStudents,
     handleClearSearch
   };
-};
+}

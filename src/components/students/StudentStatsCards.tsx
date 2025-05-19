@@ -1,155 +1,122 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Student } from "./StudentTypes";
-import { Users, Clock, UserCheck, Award } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import React, { useMemo } from 'react';
+import { Card } from '@/components/ui/card';
+import { Student } from '@/components/students/StudentTypes';
+import { UserRound, Dumbbell, Apple, Pill } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+interface StatCardProps {
+  title: string;
+  value: number | string;
+  icon: React.ReactNode;
+  className?: string;
+  valueClassName?: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, className = '', valueClassName = '' }) => (
+  <Card className={`p-4 backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border border-gray-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all duration-300 ${className}`}>
+    <div className="flex items-center">
+      <div className="p-2 rounded-full bg-gray-100/80 dark:bg-gray-800/80">
+        {icon}
+      </div>
+      <div className="ml-4">
+        <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+        <p className={`text-2xl font-semibold ${valueClassName}`}>{value}</p>
+      </div>
+    </div>
+  </Card>
+);
 
 interface StudentStatsCardsProps {
   students: Student[];
 }
 
 export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }) => {
-  // Calculate stats
-  const totalStudents = students.length;
-  
-  const activeStudents = students.filter(student => {
-    // Check if the student has any exercises, meals, or supplements
-    const hasExercises = student.exercises?.length || student.exercisesDay1?.length || 
-                          student.exercisesDay2?.length || student.exercisesDay3?.length || 
-                          student.exercisesDay4?.length;
-    const hasMeals = student.meals?.length;
-    const hasSupplements = student.supplements?.length || student.vitamins?.length;
+  const stats = useMemo(() => {
+    const totalStudents = students.length;
     
-    return hasExercises || hasMeals || hasSupplements;
-  }).length;
-  
-  const completedStudents = students.filter(student => {
-    // Check if the student has exercises, meals, AND supplements
-    const hasExercises = student.exercises?.length || student.exercisesDay1?.length || 
-                          student.exercisesDay2?.length || student.exercisesDay3?.length || 
-                          student.exercisesDay4?.length;
-    const hasMeals = student.meals?.length;
-    const hasSupplements = student.supplements?.length || student.vitamins?.length;
+    const withExercises = students.filter(s => 
+      (s.exercises?.length > 0) || 
+      (s.exercisesDay1?.length > 0) || 
+      (s.exercisesDay2?.length > 0) || 
+      (s.exercisesDay3?.length > 0) || 
+      (s.exercisesDay4?.length > 0)
+    ).length;
     
-    return hasExercises && hasMeals && hasSupplements;
-  }).length;
-  
-  const newStudents = students.filter(student => {
-    const hasExercises = student.exercises?.length || student.exercisesDay1?.length || 
-                          student.exercisesDay2?.length || student.exercisesDay3?.length || 
-                          student.exercisesDay4?.length;
-    const hasMeals = student.meals?.length;
-    const hasSupplements = student.supplements?.length || student.vitamins?.length;
+    const withDiet = students.filter(s => s.meals?.length > 0).length;
     
-    return !hasExercises && !hasMeals && !hasSupplements;
-  }).length;
-
-  const stats = [
-    {
-      id: "total",
-      title: "کل شاگردان",
-      value: totalStudents,
-      icon: Users,
-      color: "from-blue-500 to-indigo-500",
-      shadowColor: "shadow-blue-500/25",
-      bgLight: "bg-blue-50",
-      iconColor: "text-blue-500",
-      hover: "hover:shadow-blue-500/20",
-    },
-    {
-      id: "active",
-      title: "شاگردان در حال کار",
-      value: activeStudents,
-      icon: Clock,
-      color: "from-amber-500 to-orange-500",
-      shadowColor: "shadow-amber-500/25",
-      bgLight: "bg-amber-50",
-      iconColor: "text-amber-500",
-      hover: "hover:shadow-amber-500/20",
-    },
-    {
-      id: "completed",
-      title: "برنامه‌های تکمیل شده",
-      value: completedStudents,
-      icon: UserCheck,
-      color: "from-emerald-500 to-green-500",
-      shadowColor: "shadow-emerald-500/25",
-      bgLight: "bg-emerald-50",
-      iconColor: "text-emerald-500",
-      hover: "hover:shadow-emerald-500/20",
-    },
-    {
-      id: "new",
-      title: "شاگردان جدید",
-      value: newStudents,
-      icon: Award,
-      color: "from-purple-500 to-fuchsia-500",
-      shadowColor: "shadow-purple-500/25",
-      bgLight: "bg-purple-50",
-      iconColor: "text-purple-500",
-      hover: "hover:shadow-purple-500/20",
-    },
-  ];
-
+    const withSupplements = students.filter(s => 
+      (s.supplements?.length > 0) || 
+      (s.vitamins?.length > 0)
+    ).length;
+    
+    return { totalStudents, withExercises, withDiet, withSupplements };
+  }, [students]);
+  
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    show: {
+    visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-      },
-    },
+        staggerChildren: 0.1
+      }
+    }
   };
-
+  
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 20 } },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5
+      }
+    }
   };
-
+  
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
-      animate="show"
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8"
+      animate="visible" 
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
     >
-      {stats.map((stat) => (
-        <motion.div
-          key={stat.id}
-          variants={itemVariants}
-          whileHover={{ y: -5, transition: { type: "spring", stiffness: 300 } }}
-          className="relative group"
-        >
-          <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-70 transition-all duration-300 blur-xl rounded-3xl -z-10 scale-90 bg-gradient-to-r ${stat.color}`} />
-          
-          <div className="backdrop-blur-sm bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-gray-200/50 dark:border-gray-800/50 p-6 h-full shadow-lg shadow-gray-100/50 dark:shadow-gray-950/30 group-hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 rounded-2xl ${stat.bgLight} dark:bg-opacity-20 flex items-center justify-center ${stat.iconColor}`}>
-                <stat.icon size={24} />
-              </div>
-              
-              <div className="w-16 h-16 overflow-hidden">
-                <div className={`w-full h-full rounded-br-[40px] bg-gradient-to-br ${stat.color} opacity-10`} />
-              </div>
-            </div>
-            
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-              {stat.title}
-            </p>
-            
-            <div className="mt-2 flex items-end justify-between">
-              <h3 className={`text-3xl font-bold bg-gradient-to-br ${stat.color} bg-clip-text text-transparent`}>
-                {toPersianNumbers(stat.value)}
-              </h3>
-              
-              <div className="flex-grow ml-2">
-                <div className={`h-1 bg-gradient-to-r ${stat.color} rounded-full opacity-50`}></div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      ))}
+      <motion.div variants={itemVariants}>
+        <StatCard
+          title="تعداد شاگردان"
+          value={stats.totalStudents}
+          icon={<UserRound className="h-5 w-5 text-blue-500" />}
+          valueClassName="text-blue-500"
+        />
+      </motion.div>
+      
+      <motion.div variants={itemVariants}>
+        <StatCard
+          title="برنامه تمرینی"
+          value={stats.withExercises}
+          icon={<Dumbbell className="h-5 w-5 text-indigo-500" />}
+          valueClassName="text-indigo-500"
+        />
+      </motion.div>
+      
+      <motion.div variants={itemVariants}>
+        <StatCard
+          title="برنامه غذایی"
+          value={stats.withDiet}
+          icon={<Apple className="h-5 w-5 text-green-500" />}
+          valueClassName="text-green-500"
+        />
+      </motion.div>
+      
+      <motion.div variants={itemVariants}>
+        <StatCard
+          title="مکمل و ویتامین"
+          value={stats.withSupplements}
+          icon={<Pill className="h-5 w-5 text-amber-500" />}
+          valueClassName="text-amber-500"
+        />
+      </motion.div>
     </motion.div>
   );
 };

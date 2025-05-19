@@ -1,74 +1,67 @@
 
 /**
- * سرویس ورکر ساده‌شده - فقط پشتیبانی آفلاین و بروزرسانی
+ * ثبت و پیکربندی سرویس ورکر
  */
-import { showUpdateNotification } from './helpers';
 
-export const registerServiceWorker = async (): Promise<void> => {
-  if ('serviceWorker' in navigator) {
-    try {
-      // دریافت نسخه کنونی از مانیفست
-      const manifestResponse = await fetch('./Manifest.json');
-      const manifestData = await manifestResponse.json();
-      const currentVersion = manifestData.version || '1.0.0';
+import { isServiceWorkerSupported, showUpdateNotification } from "./helpers";
+
+// ثبت سرویس ورکر
+export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
+  if (!isServiceWorkerSupported()) {
+    console.warn('مرورگر شما از سرویس ورکر پشتیبانی نمی‌کند');
+    return null;
+  }
+  
+  try {
+    const registration = await navigator.serviceWorker.register('/service-worker.js', {
+      scope: '/'
+    });
+    
+    // بررسی وضعیت سرویس ورکر
+    if (registration.installing) {
+      console.log('سرویس ورکر در حال نصب است');
+    } else if (registration.waiting) {
+      console.log('سرویس ورکر در انتظار فعال‌سازی است');
+    } else if (registration.active) {
+      console.log('سرویس ورکر فعال است');
+    }
+    
+    // تنظیم رفتار بروزرسانی
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+      if (!newWorker) return;
       
-      // آخرین نسخه شناخته شده از localStorage
-      const lastKnownVersion = localStorage.getItem('app_version') || '';
-      
-      // ثبت سرویس ورکر با تایم‌استمپ برای اطمینان از بروزرسانی
-      const timestamp = new Date().getTime();
-      const registration = await navigator.serviceWorker.register('./Service-Worker.js?v=' + timestamp);
-      console.log('سرویس ورکر با موفقیت ثبت شد:', registration.scope);
-
-      // بررسی بروزرسانی‌ها
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        if (!newWorker) return;
-        
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            console.log('نسخه جدید نصب شد و آماده استفاده است!');
-            
-            // فقط اگر نسخه‌ها متفاوت باشند اعلان نمایش داده شود
-            if (lastKnownVersion !== currentVersion) {
-              // نمایش اعلان بروزرسانی
-              showUpdateNotification();
-              // ذخیره نسخه جدید
-              localStorage.setItem('app_version', currentVersion);
-            }
-          }
-        });
-      });
-
-      // بررسی مجدد بروزرسانی‌ها هر 30 دقیقه
-      setInterval(() => {
-        registration.update().catch(err => {
-          console.error('خطا در بروزرسانی سرویس ورکر:', err);
-        });
-      }, 30 * 60 * 1000);
-
-      // گوش دادن به تغییر کنترل‌کننده - با مکانیزم جلوگیری از رفرش مکرر
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (refreshing) return;
-        refreshing = true;
-        
-        // بررسی کنیم آیا این تغییر کنترل از نصب اولیه است یا بروزرسانی
-        if (document.readyState === 'complete' && lastKnownVersion) {
-          console.log('کنترل‌کننده تغییر کرد، در حال بروزرسانی صفحه...');
-          window.location.reload();
-        } else {
-          console.log('نصب اولیه سرویس ورکر، بدون بروزرسانی صفحه');
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          console.log('نسخه جدید برنامه در دسترس است');
+          showUpdateNotification();
         }
       });
-
-      // ذخیره نسخه فعلی اگر تازه نصب شده است
-      if (!lastKnownVersion) {
-        localStorage.setItem('app_version', currentVersion);
-      }
-
-    } catch (error) {
-      console.error('خطا در ثبت سرویس ورکر:', error);
-    }
+    });
+    
+    // پیکربندی برای بروزرسانی خودکار هر 60 دقیقه
+    setInterval(() => {
+      registration.update();
+    }, 60 * 60 * 1000);
+    
+    return registration;
+  } catch (error) {
+    console.error('خطا در ثبت سرویس ورکر:', error);
+    return null;
   }
-};
+}
+
+// لغو ثبت سرویس ورکر (در صورت نیاز)
+export async function unregisterServiceWorker(): Promise<boolean> {
+  if (!isServiceWorkerSupported()) return false;
+  
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const result = await registration.unregister();
+    console.log('لغو ثبت سرویس ورکر:', result);
+    return result;
+  } catch (error) {
+    console.error('خطا در لغو ثبت سرویس ورکر:', error);
+    return false;
+  }
+}
