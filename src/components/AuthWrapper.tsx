@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { LoadingScreen } from "./LoadingScreen";
 import { AuthenticatedContent } from "./auth/AuthenticatedContent";
@@ -41,15 +40,18 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
           
           // Show welcome back notification
           const profile = JSON.parse(localStorage.getItem('trainerProfile') || '{}');
+          const rememberedEmail = localStorage.getItem("rememberedEmail");
+          
           setTimeout(() => {
             successToast(
               `${profile.name || 'کاربر'} عزیز، خوش آمدید`,
-              "به سیستم مدیریت برنامه وارد شدید"
+              rememberedEmail ? `شما با ایمیل ${rememberedEmail} وارد شده‌اید` : "به سیستم مدیریت برنامه وارد شدید"
             );
           }, 1000);
         } else {
           // Remember me expired, clear it
           localStorage.removeItem("rememberMeExpiry");
+          // But keep the remembered email
         }
       }
     };
@@ -71,6 +73,9 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       const expiryDate = new Date();
       expiryDate.setDate(expiryDate.getDate() + 30);
       localStorage.setItem("rememberMeExpiry", expiryDate.toString());
+    } else {
+      // If not checked, remove any previous remember me expiry
+      localStorage.removeItem("rememberMeExpiry");
     }
 
     // نمایش پیغام موفقیت در کامپوننت LoginForm انجام می‌شود، اینجا نیازی به تکرار نیست

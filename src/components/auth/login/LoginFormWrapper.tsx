@@ -25,8 +25,15 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Load profile data and lock status on component mount
+  // Load profile data, lock status and remembered email on component mount
   useEffect(() => {
+    // Load remembered email if exists
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRememberMe(true);
+    }
+    
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
@@ -97,6 +104,13 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.removeItem("loginAttempts");
           setAttempts(0);
+          
+          // Save email if remember me is checked
+          if (rememberMe) {
+            localStorage.setItem("rememberedEmail", email);
+          } else {
+            localStorage.removeItem("rememberedEmail");
+          }
           
           successToast(
             "ورود موفقیت‌آمیز",

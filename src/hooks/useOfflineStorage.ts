@@ -93,9 +93,27 @@ export function useOfflineStorage() {
     }
   }, [storageAvailable, toast]);
 
+  const getSavedCredentials = () => {
+    if (!storageAvailable) return null;
+    
+    try {
+      const rememberedEmail = localStorage.getItem("rememberedEmail");
+      const hasRememberedCredentials = !!rememberedEmail;
+      
+      return {
+        email: rememberedEmail || '',
+        hasRememberedCredentials
+      };
+    } catch (error) {
+      console.error('Error retrieving saved credentials:', error);
+      return null;
+    }
+  };
+
   return {
     isOnline,
     storageAvailable,
-    storageStats
+    storageStats,
+    getSavedCredentials
   };
 }
