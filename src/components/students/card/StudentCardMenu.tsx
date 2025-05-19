@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -122,15 +121,6 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
           subtitle="دریافت فایل PDF برنامه"
           iconClassName="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 group-hover/item:bg-amber-200 dark:group-hover/item:bg-amber-800/50"
           hoverClassName="group-hover/item:text-amber-600 dark:group-hover/item:text-amber-400"
-        />
-        
-        <MenuItemWithIcon 
-          icon={<Clipboard className="h-4 w-4" />}
-          disabled={!isProfileComplete}
-          title="پرینت برنامه"
-          subtitle="آماده‌سازی برای چاپ"
-          iconClassName="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 group-hover/item:bg-cyan-200 dark:group-hover/item:bg-cyan-800/50"
-          hoverClassName="group-hover/item:text-cyan-600 dark:group-hover/item:text-cyan-400"
         />
         
         <div className="h-px bg-slate-200 dark:bg-slate-700/50 my-2 mx-1"></div>

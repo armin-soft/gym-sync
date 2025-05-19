@@ -1,7 +1,8 @@
+
 import React, { useState } from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { PrintExportModal, PrintExportOptions } from "@/components/ui/PrintExportModal";
-import { Download, Printer, FileDown, Share2, FileText } from "lucide-react";
+import { Download, FileDown, Share2, FileText } from "lucide-react";
 import { generateOutput } from "@/utils/pdf-export";
 import { cn } from "@/lib/utils";
 
@@ -13,8 +14,7 @@ interface PrintExportButtonProps extends Omit<ButtonProps, "onClick"> {
   documentType: "student" | "workout" | "diet" | "supplement";
   filename?: string;
   buttonDisplay?: "primary" | "minimal" | "icon-only";
-  showPrintOnly?: boolean;
-  includeFull?: boolean;  // New prop to include full trainer profile and student management data
+  includeFull?: boolean;  // Include full trainer profile and student management data
   className?: string;
 }
 
@@ -26,7 +26,6 @@ export const PrintExportButton = ({
   documentType,
   filename = "export",
   buttonDisplay = "primary",
-  showPrintOnly = false,
   includeFull = true,  // Default to true to include comprehensive data
   className,
   variant,
@@ -69,7 +68,7 @@ export const PrintExportButton = ({
             className={cn("rounded-full transition-all duration-300 hover:shadow-md", className)}
             {...buttonProps}
           >
-            {showPrintOnly ? <Printer className="h-4 w-4" /> : <FileDown className="h-4 w-4" />}
+            <FileDown className="h-4 w-4" />
           </Button>
         );
         
@@ -81,13 +80,9 @@ export const PrintExportButton = ({
             className={cn("h-9 px-3 rounded-lg transition-all duration-300", className)}
             {...buttonProps}
           >
-            {showPrintOnly ? (
-              <Printer className="h-3.5 w-3.5 ml-1" />
-            ) : (
-              <FileDown className="h-3.5 w-3.5 ml-1" />
-            )}
+            <FileDown className="h-3.5 w-3.5 ml-1" />
             <span className="text-xs font-medium">
-              {showPrintOnly ? "پرینت" : "خروجی"}
+              خروجی
             </span>
           </Button>
         );
@@ -107,14 +102,10 @@ export const PrintExportButton = ({
             {...buttonProps}
           >
             <div className="rounded-full bg-white/20 p-1 backdrop-blur-sm">
-              {showPrintOnly ? (
-                <Printer className="h-4 w-4 transition-transform group-hover:scale-110" />
-              ) : (
-                <Share2 className="h-4 w-4 transition-transform group-hover:scale-110" />
-              )}
+              <Download className="h-4 w-4 transition-transform group-hover:scale-110" />
             </div>
             <span className="transition-transform group-hover:translate-x-0.5 font-medium">
-              {showPrintOnly ? "پرینت کامل" : "خروجی و پرینت"}
+              دانلود و چاپ
             </span>
           </Button>
         );

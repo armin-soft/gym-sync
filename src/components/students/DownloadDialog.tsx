@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -6,7 +7,7 @@ import { Student } from '@/components/students/StudentTypes';
 import { PrintExportButton } from "@/components/ui/PrintExportButton";
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
-import { Download, FileText, Printer, File } from 'lucide-react';
+import { FileText, Download } from 'lucide-react';
 
 interface DownloadDialogProps {
   isOpen: boolean;
@@ -33,7 +34,7 @@ export const DownloadDialog: React.FC<DownloadDialogProps> = ({ isOpen, onClose,
         <DialogContent className="sm:max-w-[600px]">
           <DialogTitle>برنامه‌ها ناقص است</DialogTitle>
           <DialogDescription>
-            برای دانلود و چاپ برنامه، باید حداقل یک برنامه تمرینی، یک برنامه غذایی و یک برنامه مکمل یا ویتامین به شاگرد اختصاص داده شود.
+            برای دانلود برنامه، باید حداقل یک برنامه تمرینی، یک برنامه غذایی و یک برنامه مکمل یا ویتامین به شاگرد اختصاص داده شود.
           </DialogDescription>
           <div className="flex justify-end gap-2 mt-4">
             <Button variant="outline" onClick={onClose}>بستن</Button>
@@ -46,9 +47,9 @@ export const DownloadDialog: React.FC<DownloadDialogProps> = ({ isOpen, onClose,
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[700px] p-6 overflow-hidden">
-        <DialogTitle className="text-center text-2xl font-bold mb-2">دانلود و چاپ برنامه‌ها</DialogTitle>
+        <DialogTitle className="text-center text-2xl font-bold mb-2">دانلود برنامه‌ها</DialogTitle>
         <DialogDescription className="text-center mb-6">
-          می‌توانید برنامه‌های {student.name} را در قالب‌های مختلف دانلود یا چاپ کنید
+          می‌توانید برنامه‌های {student.name} را در قالب‌های مختلف دانلود کنید
         </DialogDescription>
 
         <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
@@ -59,42 +60,23 @@ export const DownloadDialog: React.FC<DownloadDialogProps> = ({ isOpen, onClose,
             <TabsTrigger value="supplement">مکمل و ویتامین</TabsTrigger>
           </TabsList>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 gap-6 mb-8">
             <Card className="p-6 shadow-md hover:shadow-lg transition-all border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
               <div className="flex items-center mb-4">
                 <div className="bg-blue-100 dark:bg-blue-900/30 p-2.5 rounded-full">
                   <FileText size={28} className="text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-semibold">PDF قابل چاپ</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">خروجی با کیفیت برای چاپ</p>
+                  <h3 className="text-lg font-semibold">PDF قابل دانلود</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">خروجی با کیفیت برای دانلود و چاپ</p>
                 </div>
               </div>
-              <p className="mb-4 text-sm">برنامه با فرمت استاندارد PDF برای چاپ با کیفیت بالا</p>
+              <p className="mb-4 text-sm">برنامه با فرمت استاندارد PDF برای دانلود با کیفیت بالا و قابلیت چاپ</p>
               <PrintExportButton
                 documentType={activeTab as any}
                 title={`برنامه ${student.name}`}
                 filename={`program-${student.id}-${activeTab}`}
                 buttonDisplay="primary"
-              />
-            </Card>
-
-            <Card className="p-6 shadow-md hover:shadow-lg transition-all border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
-              <div className="flex items-center mb-4">
-                <div className="bg-purple-100 dark:bg-purple-900/30 p-2.5 rounded-full">
-                  <Printer size={28} className="text-purple-600 dark:text-purple-400" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-semibold">چاپ مستقیم</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">ارسال به چاپگر</p>
-                </div>
-              </div>
-              <p className="mb-4 text-sm">چاپ مستقیم با تنظیمات پیش‌فرض چاپگر</p>
-              <PrintExportButton
-                documentType={activeTab as any} 
-                title={`برنامه ${student.name}`}
-                buttonDisplay="primary"
-                showPrintOnly={true}
               />
             </Card>
           </div>
