@@ -12,9 +12,7 @@ import {
   MoreVertical, 
   Edit, 
   Trash2, 
-  Dumbbell, 
-  UtensilsCrossed, 
-  Pill, 
+  CalendarDays, 
   Download 
 } from "lucide-react";
 import { EditStudentButton } from "../EditStudentButton";
@@ -85,33 +83,13 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
         </div>
         
         <MenuItemWithIcon 
-          icon={<Dumbbell className="h-4 w-4" />}
+          icon={<CalendarDays className="h-4 w-4" />}
           onClick={onAddExercise}
           disabled={!isProfileComplete}
-          title="برنامه تمرینی"
-          subtitle="تنظیم حرکات ورزشی"
+          title="تخصیص برنامه"
+          subtitle="مدیریت همه برنامه‌ها"
           iconClassName="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover/item:bg-indigo-200 dark:group-hover/item:bg-indigo-800/50"
           hoverClassName="group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400"
-        />
-        
-        <MenuItemWithIcon 
-          icon={<UtensilsCrossed className="h-4 w-4" />}
-          onClick={onAddDiet}
-          disabled={!isProfileComplete}
-          title="برنامه غذایی"
-          subtitle="تنظیم وعده‌های غذایی"
-          iconClassName="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 group-hover/item:bg-green-200 dark:group-hover/item:bg-green-800/50"
-          hoverClassName="group-hover/item:text-green-600 dark:group-hover/item:text-green-400"
-        />
-        
-        <MenuItemWithIcon 
-          icon={<Pill className="h-4 w-4" />}
-          onClick={onAddSupplement}
-          disabled={!isProfileComplete}
-          title="مکمل و ویتامین"
-          subtitle="تنظیم مکمل‌های ورزشی"
-          iconClassName="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover/item:bg-purple-200 dark:group-hover/item:bg-purple-800/50"
-          hoverClassName="group-hover/item:text-purple-600 dark:group-hover/item:text-purple-400"
         />
         
         <div className="h-px bg-slate-200 dark:bg-slate-700/50 my-2 mx-1"></div>

@@ -16,7 +16,7 @@ const StudentMealHeader: React.FC<StudentMealHeaderProps> = ({ studentName }) =>
               <Salad className="h-5 w-5 text-white" />
             </div>
             <div className="text-right">
-              <h2 className="text-lg font-bold text-foreground">مدیریت برنامه غذایی</h2>
+              <h2 className="text-lg font-bold text-foreground">تخصیص برنامه</h2>
               <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
             </div>
           </div>

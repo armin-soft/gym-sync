@@ -60,7 +60,7 @@ export const StudentActions = ({
     setIsDeleteDialogOpen(false);
   };
 
-  // یک تابع واحد برای مدیریت برنامه‌ها
+  // Unified function for program management
   const handleProgramClick = () => {
     onAddExercise(student);
   };
@@ -99,10 +99,10 @@ export const StudentActions = ({
             </DropdownMenuItem>
           )}
           
-          {/* Program manager - دکمه واحد برای مدیریت همه برنامه‌ها */}
+          {/* Program assignment - single unified option */}
           <DropdownMenuItem onClick={handleProgramClick} className="gap-2">
             <CalendarDays className="h-4 w-4 text-purple-500" />
-            مدیریت برنامه‌ها
+            تخصیص برنامه
           </DropdownMenuItem>
           
           <DropdownMenuSeparator />
