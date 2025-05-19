@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Student } from '@/components/students/StudentTypes';
 import { UserRound, Dumbbell, Apple, Pill } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toPersianNumbers } from '@/lib/utils/numbers';
 
 interface StatCardProps {
   title: string;
@@ -85,7 +86,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       <motion.div variants={itemVariants}>
         <StatCard
           title="تعداد شاگردان"
-          value={stats.totalStudents}
+          value={toPersianNumbers(stats.totalStudents)}
           icon={<UserRound className="h-5 w-5 text-blue-500" />}
           valueClassName="text-blue-500"
         />
@@ -94,7 +95,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       <motion.div variants={itemVariants}>
         <StatCard
           title="برنامه تمرینی"
-          value={stats.withExercises}
+          value={toPersianNumbers(stats.withExercises)}
           icon={<Dumbbell className="h-5 w-5 text-indigo-500" />}
           valueClassName="text-indigo-500"
         />
@@ -103,7 +104,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       <motion.div variants={itemVariants}>
         <StatCard
           title="برنامه غذایی"
-          value={stats.withDiet}
+          value={toPersianNumbers(stats.withDiet)}
           icon={<Apple className="h-5 w-5 text-green-500" />}
           valueClassName="text-green-500"
         />
@@ -112,7 +113,7 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
       <motion.div variants={itemVariants}>
         <StatCard
           title="مکمل و ویتامین"
-          value={stats.withSupplements}
+          value={toPersianNumbers(stats.withSupplements)}
           icon={<Pill className="h-5 w-5 text-amber-500" />}
           valueClassName="text-amber-500"
         />
