@@ -12,6 +12,7 @@ interface StudentProgramExerciseContentProps {
   setCurrentDay: (day: number) => void;
   selectedExercises: ExerciseWithSets[];
   setSelectedExercises: React.Dispatch<React.SetStateAction<ExerciseWithSets[]>>;
+  exercises: any[]; // Add exercises prop
 }
 
 const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps> = ({
@@ -19,6 +20,7 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
   setCurrentDay,
   selectedExercises,
   setSelectedExercises,
+  exercises, // Add exercises prop
 }) => {
   return (
     <TabsContent value="exercise" className="m-0 h-full">
@@ -45,6 +47,7 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
             selectedExercises={selectedExercises}
             setSelectedExercises={setSelectedExercises}
             dayNumber={currentDay}
+            exercises={exercises} // Pass exercises down to the selector
           />
         </div>
       </div>

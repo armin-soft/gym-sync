@@ -36,7 +36,7 @@ export interface Exercise {
 export interface ExerciseWithSets {
   id: number;
   sets: number;
-  reps: number; // تغییر تکرار به عدد
+  reps: string; // تغییر از number به string برای سازگاری با src/hooks/exercise-selection/types.ts
   day?: number;
   weight?: string;
   intensity?: number;

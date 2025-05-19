@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
         id,
         sets: student.exerciseSetsDay1?.[id] || 3,
         reps: student.exerciseRepsDay1?.[id] || "12",
-        rest: ""
+        day: 1
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 2 && student.exercisesDay2) {
@@ -39,7 +38,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
         id,
         sets: student.exerciseSetsDay2?.[id] || 3,
         reps: student.exerciseRepsDay2?.[id] || "12",
-        rest: ""
+        day: 2
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 3 && student.exercisesDay3) {
@@ -47,7 +46,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
         id,
         sets: student.exerciseSetsDay3?.[id] || 3,
         reps: student.exerciseRepsDay3?.[id] || "12",
-        rest: ""
+        day: 3
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 4 && student.exercisesDay4) {
@@ -55,7 +54,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
         id,
         sets: student.exerciseSetsDay4?.[id] || 3,
         reps: student.exerciseRepsDay4?.[id] || "12",
-        rest: ""
+        day: 4
       }));
       setSelectedExercises(loadedExercises);
     } else {

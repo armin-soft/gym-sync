@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { ExerciseWithSets } from "@/types/exercise";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,12 +16,14 @@ interface StudentExerciseSelectorProps {
   selectedExercises: ExerciseWithSets[];
   setSelectedExercises: React.Dispatch<React.SetStateAction<ExerciseWithSets[]>>;
   dayNumber: number;
+  exercises: any[]; // Add exercises prop
 }
 
 const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   selectedExercises,
   setSelectedExercises,
-  dayNumber
+  dayNumber,
+  exercises // Use exercises from props
 }) => {
   // State for exercise type and category filtering
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -30,7 +31,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   
   // دریافت داده‌ها از دیتابیس محلی
-  const { exercises, categories, exerciseTypes, isLoading } = useExerciseData();
+  const { categories, exerciseTypes, isLoading } = useExerciseData();
   
   // فیلتر بر اساس نوع تمرین انتخاب شده
   const filteredCategories = useMemo(() => {
@@ -66,7 +67,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         { 
           id: exerciseId, 
           sets: 3, 
-          reps: 12, // تغییر به عدد 
+          reps: "12", // Update to use string
           day: dayNumber
         }
       ]);

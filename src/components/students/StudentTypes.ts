@@ -1,3 +1,4 @@
+
 export interface Student {
   id: number;
   name: string;
@@ -19,19 +20,19 @@ export interface Student {
   };
   exercises?: number[];
   exerciseSets?: Record<number, number>; // Map exercise ID to sets
-  exerciseReps?: Record<number, string>; // Map exercise ID to reps
+  exerciseReps?: Record<number, string>; // Map exercise ID to reps (string type)
   exercisesDay1?: number[];
   exerciseSetsDay1?: Record<number, number>; // Map exercise ID to sets for day 1
-  exerciseRepsDay1?: Record<number, string>; // Map exercise ID to reps for day 1
+  exerciseRepsDay1?: Record<number, string>; // Map exercise ID to reps for day 1 (string type)
   exercisesDay2?: number[];
   exerciseSetsDay2?: Record<number, number>; // Map exercise ID to sets for day 2
-  exerciseRepsDay2?: Record<number, string>; // Map exercise ID to reps for day 2
+  exerciseRepsDay2?: Record<number, string>; // Map exercise ID to reps for day 2 (string type)
   exercisesDay3?: number[];
   exerciseSetsDay3?: Record<number, number>; // Map exercise ID to sets for day 3
-  exerciseRepsDay3?: Record<number, string>; // Map exercise ID to reps for day 3
+  exerciseRepsDay3?: Record<number, string>; // Map exercise ID to reps for day 3 (string type)
   exercisesDay4?: number[];
   exerciseSetsDay4?: Record<number, number>; // Map exercise ID to sets for day 4
-  exerciseRepsDay4?: Record<number, string>; // Map exercise ID to reps for day 4
+  exerciseRepsDay4?: Record<number, string>; // Map exercise ID to reps for day 4 (string type)
   meals?: number[];
   mealNotes?: string;
   supplements?: number[];

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { ExerciseWithSets } from "@/types/exercise";
@@ -35,37 +34,39 @@ export function useStudentProgramManager({
   useEffect(() => {
     // Load exercises for the current day
     if (currentDay === 1 && student.exercisesDay1) {
-      const loadedExercises = student.exercisesDay1.map(id => ({
+      const loadedExercises: ExerciseWithSets[] = student.exercisesDay1.map(id => ({
         id,
         sets: student.exerciseSetsDay1?.[id] || 3,
         reps: student.exerciseRepsDay1?.[id] || "12-15",
-        rest: "60s"
+        day: 1
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 2 && student.exercisesDay2) {
-      const loadedExercises = student.exercisesDay2.map(id => ({
+      const loadedExercises: ExerciseWithSets[] = student.exercisesDay2.map(id => ({
         id,
         sets: student.exerciseSetsDay2?.[id] || 3,
         reps: student.exerciseRepsDay2?.[id] || "12-15",
-        rest: "60s"
+        day: 2
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 3 && student.exercisesDay3) {
-      const loadedExercises = student.exercisesDay3.map(id => ({
+      const loadedExercises: ExerciseWithSets[] = student.exercisesDay3.map(id => ({
         id,
         sets: student.exerciseSetsDay3?.[id] || 3,
         reps: student.exerciseRepsDay3?.[id] || "12-15",
-        rest: "60s"
+        day: 3
       }));
       setSelectedExercises(loadedExercises);
     } else if (currentDay === 4 && student.exercisesDay4) {
-      const loadedExercises = student.exercisesDay4.map(id => ({
+      const loadedExercises: ExerciseWithSets[] = student.exercisesDay4.map(id => ({
         id,
         sets: student.exerciseSetsDay4?.[id] || 3,
         reps: student.exerciseRepsDay4?.[id] || "12-15",
-        rest: "60s"
+        day: 4
       }));
       setSelectedExercises(loadedExercises);
+    } else {
+      setSelectedExercises([]);
     }
     
     // Load meals
