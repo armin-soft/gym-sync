@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
@@ -61,9 +62,9 @@ export const StudentActions = ({
     setIsDeleteDialogOpen(false);
   };
 
-  // Unified function for program management - now navigates to the program page
+  // تخصیص برنامه - منو واحد
   const handleProgramClick = () => {
-    // Navigate to a URL with the student's ID
+    // هدایت به صفحه برنامه با شناسه شاگرد
     navigate(`/student-program/${student.id}`);
   };
 
@@ -86,22 +87,7 @@ export const StudentActions = ({
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           
-          {/* Edit action */}
-          {onEdit ? (
-            <DropdownMenuItem onClick={() => onEdit(student)} className="gap-2">
-              <Edit className="h-4 w-4 text-gray-500" />
-              ویرایش
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem asChild>
-              <a href={`/students/add-edit/${student.id}`} className="flex items-center gap-2">
-                <Edit className="h-4 w-4 text-gray-500" />
-                ویرایش
-              </a>
-            </DropdownMenuItem>
-          )}
-          
-          {/* Program assignment - single unified option */}
+          {/* تخصیص برنامه - گزینه واحد */}
           <DropdownMenuItem onClick={handleProgramClick} className="gap-2">
             <CalendarDays className="h-4 w-4 text-purple-500" />
             تخصیص برنامه
@@ -109,7 +95,7 @@ export const StudentActions = ({
           
           <DropdownMenuSeparator />
           
-          {/* Delete action */}
+          {/* حذف */}
           <DropdownMenuItem 
             onClick={handleDeleteClick}
             className="gap-2 text-red-500 focus:text-red-500"

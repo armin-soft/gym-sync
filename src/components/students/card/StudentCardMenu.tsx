@@ -42,7 +42,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // Handle program assignment navigation
+  // ایجاد مسیریابی به صفحه مدیریت برنامه
   const handleProgramClick = () => {
     navigate(`/student-program/${student.id}`);
   };
@@ -69,6 +69,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">مدیریت اطلاعات شاگرد</p>
         </div>
         
+        {/* گزینه ویرایش */}
         <div className="flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 group/item">
           {onEdit ? (
             <Button
@@ -90,6 +91,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
           )}
         </div>
         
+        {/* گزینه تخصیص برنامه */}
         <MenuItemWithIcon 
           icon={<CalendarDays className="h-4 w-4" />}
           onClick={handleProgramClick}
@@ -102,18 +104,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
         
         <div className="h-px bg-slate-200 dark:bg-slate-700/50 my-2 mx-1"></div>
         
-        <MenuItemWithIcon 
-          icon={<Download className="h-4 w-4" />}
-          onClick={onDownload}
-          disabled={!isProfileComplete}
-          title="دانلود برنامه"
-          subtitle="دریافت فایل PDF برنامه"
-          iconClassName="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 group-hover/item:bg-amber-200 dark:group-hover/item:bg-amber-800/50"
-          hoverClassName="group-hover/item:text-amber-600 dark:group-hover/item:text-amber-400"
-        />
-        
-        <div className="h-px bg-slate-200 dark:bg-slate-700/50 my-2 mx-1"></div>
-        
+        {/* گزینه حذف */}
         <MenuItemWithIcon 
           icon={<Trash2 className="h-4 w-4" />}
           onClick={onDelete}
