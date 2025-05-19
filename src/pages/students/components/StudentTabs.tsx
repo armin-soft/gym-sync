@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { StudentHistory } from "@/components/students/StudentHistory";
 import { History, ListFilter, Search, Users2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +10,7 @@ import { StudentsList } from "./StudentsList";
 import { Student } from "@/components/students/StudentTypes";
 import { HistoryEntry } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
+import { StudentHistoryTab } from "./StudentHistoryTab";
 
 interface StudentTabsProps {
   students: Student[];
@@ -168,7 +168,7 @@ export const StudentTabs: React.FC<StudentTabsProps> = ({
             exit="exit"
             className="h-full"
           >
-            <StudentHistory 
+            <StudentHistoryTab
               students={students} 
               historyEntries={historyEntries} 
             />

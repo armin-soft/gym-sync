@@ -22,7 +22,7 @@ export const ProfileWarning: React.FC<ProfileWarningProps> = ({ isProfileComplet
       transition={{ duration: 0.5, delay: 0.3 }}
       className={cn(className)}
     >
-      <Alert variant="destructive" className="backdrop-blur-md bg-amber-50/90 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300">
+      <Alert variant="default" className="backdrop-blur-md bg-amber-50/90 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300">
         <AlertCircle className="h-5 w-5" />
         <AlertTitle className="font-semibold">تکمیل پروفایل مربی</AlertTitle>
         <AlertDescription className="mt-1">

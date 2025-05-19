@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import StudentsContainer from './StudentsContainer';
-import { TabsList, TabsTrigger, Tabs } from "@/components/ui/tabs";
 import { PageContainer } from "@/components/ui/page-container";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { initializeServiceWorker } from '@/utils/RegisterServiceWorker';

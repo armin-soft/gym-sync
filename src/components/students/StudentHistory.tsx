@@ -1,4 +1,3 @@
-
 import React, { useMemo } from "react";
 import { Student } from "./StudentTypes";
 import { Card } from "@/components/ui/card";
@@ -16,7 +15,9 @@ import {
   Activity, History, Clock, User, FileText
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { HistoryEntry } from "@/hooks/useStudentHistory";
 
+// Keep the old type for backward compatibility
 export interface StudentHistoryEntry {
   id: number;
   studentId: number;
@@ -28,13 +29,14 @@ export interface StudentHistoryEntry {
 
 interface StudentHistoryProps {
   students: Student[];
-  historyEntries: StudentHistoryEntry[];
+  historyEntries: HistoryEntry[];
 }
 
 export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, historyEntries }) => {
   const sortedHistory = useMemo(() => {
     return [...historyEntries].sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+      // Use timestamp for HistoryEntry
+      return b.timestamp - a.timestamp;
     });
   }, [historyEntries]);
 
@@ -98,8 +100,8 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
     return student ? student.image : "";
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateString: string | number) => {
+    const date = typeof dateString === 'string' ? new Date(dateString) : new Date(dateString);
     return `${toPersianNumbers(date.toLocaleDateString('fa-IR'))} ${toPersianNumbers(date.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }))}`;
   };
 
@@ -171,24 +173,24 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                   >
                     <div className="flex items-start gap-3">
                       <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-full">
-                        {getActionIcon(entry.action)}
+                        {getActionIcon(entry.type)}
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-2">
                           <div className="flex items-center gap-2">
                             <Avatar className="h-6 w-6">
-                              <AvatarImage src={getStudentAvatar(entry.studentId)} alt={getStudentName(entry.studentId)} />
-                              <AvatarFallback className="text-xs bg-indigo-100 text-indigo-700">{getStudentName(entry.studentId).charAt(0)}</AvatarFallback>
+                              <AvatarImage src={entry.studentImage} alt={entry.studentName} />
+                              <AvatarFallback className="text-xs bg-indigo-100 text-indigo-700">{entry.studentName.charAt(0)}</AvatarFallback>
                             </Avatar>
-                            <span className="font-medium text-gray-800 dark:text-gray-200">{getStudentName(entry.studentId)}</span>
-                            {getActionBadge(entry.action)}
+                            <span className="font-medium text-gray-800 dark:text-gray-200">{entry.studentName}</span>
+                            {getActionBadge(entry.type)}
                           </div>
                           <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                             <Clock className="h-3 w-3" />
-                            <span>{formatDate(entry.date)}</span>
+                            <span>{formatDate(entry.timestamp)}</span>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">{entry.details}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{entry.description}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -208,7 +210,7 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
           </TabsContent>
           
           <TabsContent value="edits">
-            {sortedHistory.filter(entry => entry.action === 'edit').length > 0 ? (
+            {sortedHistory.filter(entry => entry.type === 'edit').length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -219,20 +221,20 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                 </TableHeader>
                 <TableBody>
                   {sortedHistory
-                    .filter(entry => entry.action === 'edit')
+                    .filter(entry => entry.type === 'edit')
                     .map(entry => (
                       <TableRow key={entry.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={getStudentAvatar(entry.studentId)} alt={getStudentName(entry.studentId)} />
-                              <AvatarFallback>{getStudentName(entry.studentId).charAt(0)}</AvatarFallback>
+                              <AvatarImage src={entry.studentImage} alt={entry.studentName} />
+                              <AvatarFallback>{entry.studentName.charAt(0)}</AvatarFallback>
                             </Avatar>
-                            <span>{getStudentName(entry.studentId)}</span>
+                            <span>{entry.studentName}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{entry.details}</TableCell>
-                        <TableCell className="text-muted-foreground">{formatDate(entry.date)}</TableCell>
+                        <TableCell>{entry.description}</TableCell>
+                        <TableCell className="text-muted-foreground">{formatDate(entry.timestamp)}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -251,7 +253,7 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
           </TabsContent>
           
           <TabsContent value="exercises">
-            {sortedHistory.filter(entry => entry.action === 'exercise').length > 0 ? (
+            {sortedHistory.filter(entry => entry.type === 'exercise').length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -262,20 +264,20 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                 </TableHeader>
                 <TableBody>
                   {sortedHistory
-                    .filter(entry => entry.action === 'exercise')
+                    .filter(entry => entry.type === 'exercise')
                     .map(entry => (
                       <TableRow key={entry.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={getStudentAvatar(entry.studentId)} alt={getStudentName(entry.studentId)} />
-                              <AvatarFallback>{getStudentName(entry.studentId).charAt(0)}</AvatarFallback>
+                              <AvatarImage src={entry.studentImage} alt={entry.studentName} />
+                              <AvatarFallback>{entry.studentName.charAt(0)}</AvatarFallback>
                             </Avatar>
-                            <span>{getStudentName(entry.studentId)}</span>
+                            <span>{entry.studentName}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{entry.details}</TableCell>
-                        <TableCell className="text-muted-foreground">{formatDate(entry.date)}</TableCell>
+                        <TableCell>{entry.description}</TableCell>
+                        <TableCell className="text-muted-foreground">{formatDate(entry.timestamp)}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -294,7 +296,7 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
           </TabsContent>
           
           <TabsContent value="diets">
-            {sortedHistory.filter(entry => entry.action === 'diet').length > 0 ? (
+            {sortedHistory.filter(entry => entry.type === 'diet').length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -305,20 +307,20 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                 </TableHeader>
                 <TableBody>
                   {sortedHistory
-                    .filter(entry => entry.action === 'diet')
+                    .filter(entry => entry.type === 'diet')
                     .map(entry => (
                       <TableRow key={entry.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={getStudentAvatar(entry.studentId)} alt={getStudentName(entry.studentId)} />
-                              <AvatarFallback>{getStudentName(entry.studentId).charAt(0)}</AvatarFallback>
+                              <AvatarImage src={entry.studentImage} alt={entry.studentName} />
+                              <AvatarFallback>{entry.studentName.charAt(0)}</AvatarFallback>
                             </Avatar>
-                            <span>{getStudentName(entry.studentId)}</span>
+                            <span>{entry.studentName}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{entry.details}</TableCell>
-                        <TableCell className="text-muted-foreground">{formatDate(entry.date)}</TableCell>
+                        <TableCell>{entry.description}</TableCell>
+                        <TableCell className="text-muted-foreground">{formatDate(entry.timestamp)}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -337,7 +339,7 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
           </TabsContent>
           
           <TabsContent value="supplements">
-            {sortedHistory.filter(entry => entry.action === 'supplement').length > 0 ? (
+            {sortedHistory.filter(entry => entry.type === 'supplement').length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -348,20 +350,20 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                 </TableHeader>
                 <TableBody>
                   {sortedHistory
-                    .filter(entry => entry.action === 'supplement')
+                    .filter(entry => entry.type === 'supplement')
                     .map(entry => (
                       <TableRow key={entry.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={getStudentAvatar(entry.studentId)} alt={getStudentName(entry.studentId)} />
-                              <AvatarFallback>{getStudentName(entry.studentId).charAt(0)}</AvatarFallback>
+                              <AvatarImage src={entry.studentImage} alt={entry.studentName} />
+                              <AvatarFallback>{entry.studentName.charAt(0)}</AvatarFallback>
                             </Avatar>
-                            <span>{getStudentName(entry.studentId)}</span>
+                            <span>{entry.studentName}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{entry.details}</TableCell>
-                        <TableCell className="text-muted-foreground">{formatDate(entry.date)}</TableCell>
+                        <TableCell>{entry.description}</TableCell>
+                        <TableCell className="text-muted-foreground">{formatDate(entry.timestamp)}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -384,16 +386,16 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
               {students.length > 0 ? students.map(student => {
                 // Find latest entries for this student
                 const latestExercise = sortedHistory
-                  .filter(entry => entry.studentId === student.id && entry.action === 'exercise')
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+                  .filter(entry => entry.studentId === student.id && entry.type === 'exercise')
+                  .sort((a, b) => b.timestamp - a.timestamp)[0];
                 
                 const latestDiet = sortedHistory
-                  .filter(entry => entry.studentId === student.id && entry.action === 'diet')
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+                  .filter(entry => entry.studentId === student.id && entry.type === 'diet')
+                  .sort((a, b) => b.timestamp - a.timestamp)[0];
                 
                 const latestSupplement = sortedHistory
-                  .filter(entry => entry.studentId === student.id && entry.action === 'supplement')
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+                  .filter(entry => entry.studentId === student.id && entry.type === 'supplement')
+                  .sort((a, b) => b.timestamp - a.timestamp)[0];
                 
                 const hasAnyLatest = latestExercise || latestDiet || latestSupplement;
                 
@@ -420,9 +422,9 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                             <div>
                               <div className="flex justify-between">
                                 <p className="text-sm font-medium">آخرین برنامه تمرینی</p>
-                                <span className="text-xs text-muted-foreground">{formatDate(latestExercise.date)}</span>
+                                <span className="text-xs text-muted-foreground">{formatDate(latestExercise.timestamp)}</span>
                               </div>
-                              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{latestExercise.details}</p>
+                              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{latestExercise.description}</p>
                             </div>
                           </div>
                         )}
@@ -435,9 +437,9 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                             <div>
                               <div className="flex justify-between">
                                 <p className="text-sm font-medium">آخرین رژیم غذایی</p>
-                                <span className="text-xs text-muted-foreground">{formatDate(latestDiet.date)}</span>
+                                <span className="text-xs text-muted-foreground">{formatDate(latestDiet.timestamp)}</span>
                               </div>
-                              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{latestDiet.details}</p>
+                              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{latestDiet.description}</p>
                             </div>
                           </div>
                         )}
@@ -450,9 +452,9 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                             <div>
                               <div className="flex justify-between">
                                 <p className="text-sm font-medium">آخرین برنامه مکمل</p>
-                                <span className="text-xs text-muted-foreground">{formatDate(latestSupplement.date)}</span>
+                                <span className="text-xs text-muted-foreground">{formatDate(latestSupplement.timestamp)}</span>
                               </div>
-                              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{latestSupplement.details}</p>
+                              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{latestSupplement.description}</p>
                             </div>
                           </div>
                         )}
