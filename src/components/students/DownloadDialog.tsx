@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,7 +6,7 @@ import { Student } from '@/components/students/StudentTypes';
 import { PrintExportButton } from "@/components/ui/PrintExportButton";
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
-import { Download, FileText, Printer, FilePdf } from 'lucide-react';
+import { Download, FileText, Printer, File } from 'lucide-react';
 
 interface DownloadDialogProps {
   isOpen: boolean;

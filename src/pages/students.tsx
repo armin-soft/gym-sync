@@ -6,7 +6,7 @@ import { StudentsTable } from "@/components/students/StudentsTable";
 import { StudentHistory } from "@/components/students/StudentHistory";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; 
-import { useStudentHistory } from "@/hooks/useStudentHistory";
+import { useStudentHistory, HistoryEntry } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";

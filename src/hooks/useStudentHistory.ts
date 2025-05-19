@@ -11,6 +11,10 @@ export interface HistoryEntry {
   studentImage: string;
   type: 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete';
   description: string;
+  // Add these fields for compatibility with StudentHistoryEntry
+  date?: string;
+  action?: string;
+  details?: string;
 }
 
 export function useStudentHistory() {
@@ -20,7 +24,15 @@ export function useStudentHistory() {
   useEffect(() => {
     const loadedHistory = safeJSONParse('studentHistory', []);
     if (Array.isArray(loadedHistory)) {
-      setHistoryEntries(loadedHistory);
+      // Map to ensure type compatibility
+      const mappedEntries = loadedHistory.map((entry: any): HistoryEntry => ({
+        ...entry,
+        // Map fields for compatibility if needed
+        date: entry.date || new Date(entry.timestamp).toISOString(),
+        action: entry.action || entry.type,
+        details: entry.details || entry.description
+      }));
+      setHistoryEntries(mappedEntries);
     }
   }, []);
 
@@ -33,7 +45,11 @@ export function useStudentHistory() {
       studentName: student.name,
       studentImage: student.image || '/Assets/Image/Place-Holder.svg',
       type,
-      description
+      description,
+      // Add these fields for compatibility
+      date: new Date().toISOString(),
+      action: type,
+      details: description
     };
 
     // Update state with new entry
