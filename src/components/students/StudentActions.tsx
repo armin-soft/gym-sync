@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface StudentActionsProps {
   student: Student;
@@ -51,7 +50,7 @@ export const StudentActions = ({
   isCard = false,
 }: StudentActionsProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleDeleteClick = () => {
     setIsDeleteDialogOpen(true);
@@ -65,7 +64,7 @@ export const StudentActions = ({
   // Unified function for program management - now navigates to the program page
   const handleProgramClick = () => {
     // Navigate to a URL with the student's ID
-    router.navigate(`/student-program/${student.id}`);
+    navigate(`/student-program/${student.id}`);
   };
 
   return (

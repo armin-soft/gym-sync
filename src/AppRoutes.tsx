@@ -1,8 +1,8 @@
 
 import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoadingScreen from "./components/LoadingScreen";
-import AuthenticatedContent from "./components/auth/AuthenticatedContent";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
 
 // Lazy load pages
 const Dashboard = lazy(() => import("./pages/Index"));

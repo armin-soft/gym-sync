@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { EditStudentButton } from "../EditStudentButton";
 import { Student } from "../StudentTypes";
-import { useRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface StudentCardMenuProps {
   student: Student;
@@ -40,11 +40,11 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   onDownload,
   isProfileComplete
 }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   // Handle program assignment navigation
   const handleProgramClick = () => {
-    router.navigate(`/student-program/${student.id}`);
+    navigate(`/student-program/${student.id}`);
   };
   
   return (
