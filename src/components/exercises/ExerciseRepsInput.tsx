@@ -38,7 +38,7 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
   };
 
   const handleIncrement = () => {
-    if (currentReps < 10) {
+    if (currentReps < 30) {
       onRepsChange(exerciseId, String(currentReps + 1));
     }
   };
@@ -47,7 +47,7 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
   const displayReps = () => {
     if (reps.includes('-')) {
       const [min, max] = reps.split('-');
-      return `${toPersianNumbers(max)}-${toPersianNumbers(min)}`;
+      return `${toPersianNumbers(min)}-${toPersianNumbers(max)}`;
     }
     return toPersianNumbers(reps);
   };
@@ -81,7 +81,7 @@ export const ExerciseRepsInput: React.FC<ExerciseRepsInputProps> = ({
         size="icon"
         className="h-full aspect-square rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted"
         onClick={handleIncrement}
-        disabled={currentReps >= 10}
+        disabled={currentReps >= 30}
       >
         <Plus className="h-3 w-3" />
         <span className="sr-only">افزایش</span>

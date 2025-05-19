@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import StudentExerciseSelector from "./StudentExerciseSelector";
 import StudentDietSelector from "./StudentDietSelector";
 import StudentSupplementSelector from "./StudentSupplementSelector";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentProgramManagerProps {
   student: Student;
@@ -130,7 +131,7 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full w-full flex flex-col">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">برنامه‌های {student.name}</h2>
         <div className="flex items-center gap-2">
@@ -144,8 +145,8 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
         </div>
       </div>
 
-      <Tabs defaultValue="exercise" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <Card>
+      <Tabs defaultValue="exercise" value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
+        <Card className="flex flex-col flex-1">
           <CardHeader className="pb-0">
             <TabsList className="grid grid-cols-3 mb-0">
               <TabsTrigger value="exercise" className="flex items-center gap-2">
@@ -162,9 +163,9 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
               </TabsTrigger>
             </TabsList>
           </CardHeader>
-          <CardContent className="pt-6">
-            <TabsContent value="exercise" className="m-0">
-              <div className="mb-4">
+          <CardContent className="pt-6 flex-1 overflow-auto">
+            <TabsContent value="exercise" className="m-0 h-full">
+              <div className="mb-4 h-full flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-lg">برنامه تمرینی</h3>
                   <div className="flex items-center border rounded-md">
@@ -175,41 +176,47 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
                         className="h-8 rounded-md"
                         onClick={() => setCurrentDay(day)}
                       >
-                        روز {day}
+                        روز {toPersianNumbers(day)}
                       </Button>
                     ))}
                   </div>
                 </div>
-                <StudentExerciseSelector 
-                  exercises={exercises}
-                  selectedExercises={selectedExercises}
-                  setSelectedExercises={setSelectedExercises}
-                  dayNumber={currentDay}
-                />
+                <div className="flex-1 overflow-auto">
+                  <StudentExerciseSelector 
+                    exercises={exercises}
+                    selectedExercises={selectedExercises}
+                    setSelectedExercises={setSelectedExercises}
+                    dayNumber={currentDay}
+                  />
+                </div>
               </div>
             </TabsContent>
             
-            <TabsContent value="diet" className="m-0">
-              <div className="mb-4">
+            <TabsContent value="diet" className="m-0 h-full">
+              <div className="mb-4 h-full flex flex-col">
                 <h3 className="font-semibold text-lg mb-4">برنامه غذایی</h3>
-                <StudentDietSelector 
-                  meals={meals}
-                  selectedMeals={selectedMeals}
-                  setSelectedMeals={setSelectedMeals}
-                />
+                <div className="flex-1 overflow-auto">
+                  <StudentDietSelector 
+                    meals={meals}
+                    selectedMeals={selectedMeals}
+                    setSelectedMeals={setSelectedMeals}
+                  />
+                </div>
               </div>
             </TabsContent>
             
-            <TabsContent value="supplement" className="m-0">
-              <div className="mb-4">
+            <TabsContent value="supplement" className="m-0 h-full">
+              <div className="mb-4 h-full flex flex-col">
                 <h3 className="font-semibold text-lg mb-4">مکمل و ویتامین</h3>
-                <StudentSupplementSelector 
-                  supplements={supplements}
-                  selectedSupplements={selectedSupplements}
-                  setSelectedSupplements={setSelectedSupplements}
-                  selectedVitamins={selectedVitamins}
-                  setSelectedVitamins={setSelectedVitamins}
-                />
+                <div className="flex-1 overflow-auto">
+                  <StudentSupplementSelector 
+                    supplements={supplements}
+                    selectedSupplements={selectedSupplements}
+                    setSelectedSupplements={setSelectedSupplements}
+                    selectedVitamins={selectedVitamins}
+                    setSelectedVitamins={setSelectedVitamins}
+                  />
+                </div>
               </div>
             </TabsContent>
           </CardContent>

@@ -5,6 +5,7 @@ import { X, Save } from "lucide-react";
 import { motion } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExerciseDialogFooterProps {
   activeTab: string;
@@ -71,7 +72,7 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
             transition={{ duration: 0.2 }}
             className={`${deviceInfo.isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground mr-2`}
           >
-            {selectedExercisesCount} تمرین انتخاب شده
+            {toPersianNumbers(selectedExercisesCount)} تمرین انتخاب شده
           </motion.div>
         </div>
         
