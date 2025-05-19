@@ -1,5 +1,4 @@
-
-import { PrintExportOptions } from "@/components/ui/PrintExportModal";
+import { PrintExportOptions } from "@/components/ui/PrintExportButton";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { generateDocumentId } from "@/lib/utils/ids";

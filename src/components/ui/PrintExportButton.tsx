@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -11,9 +10,9 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface PrintExportOptions {
   format: "pdf" | "print";
-  paperSize: string;
-  orientation: string;
-  colorMode: string;
+  paperSize: "a4" | "a5" | "letter";
+  orientation: "portrait" | "landscape";
+  colorMode: "color" | "bw";
   quality: number;
   includeHeader: boolean;
   includeFooter: boolean;
