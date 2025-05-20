@@ -9,26 +9,70 @@ export const isServiceWorkerSupported = (): boolean => {
 };
 
 // نمایش اعلان به کاربر
-export const showToast = (): void => {
-  // پیاده‌سازی نمایش اعلان - بعداً با سیستم toast جایگزین خواهد شد
-  console.log('نمایش پیام به کاربر');
+export const showToast = (message: string): void => {
+  // با توجه به اینکه toast در کامپوننت‌های UI موجود است
+  // این فقط یک متد جایگزین برای زمانی است که toast در دسترس نیست
+  console.log(message);
+  
+  // اگر می‌خواهیم یک اعلان ساده نمایش دهیم:
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification("GymSync", {
+      body: message,
+      icon: "./Assets/Image/Logo.png"
+    });
+  }
 };
 
-// دریافت نسخه برنامه
-export const getAppVersion = (): string => '1.0.0';
+// دریافت نسخه برنامه از manifest
+export const getAppVersion = (): Promise<string> => {
+  return fetch('./Manifest.json')
+    .then(response => response.json())
+    .then(data => data.version || '1.0.0')
+    .catch(() => '1.0.0');
+};
 
-// نمایش اعلان بروزرسانی
+// نمایش اعلان بروزرسانی با پیشگیری از نمایش مکرر
 export function showUpdateNotification(): void {
-  // برای جلوگیری از نمایش مکرر اعلان در زمان بارگیری
+  // برای جلوگیری از نمایش مکرر اعلان در زمان بارگذاری
   const lastPromptTime = parseInt(sessionStorage.getItem('update_prompt_time') || '0');
   const currentTime = new Date().getTime();
   
   // فقط اگر 10 دقیقه از آخرین نمایش گذشته باشد مجدداً نمایش دهد
   if (currentTime - lastPromptTime > 10 * 60 * 1000) {
-    if (window.confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه بروزرسانی شود؟')) {
-      window.location.reload();
+    const userConfirmed = window.confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه بروزرسانی شود؟');
+    
+    if (userConfirmed) {
+      // پیش از بارگذاری مجدد، همه کش‌ها را پاک کنیم تا مطمئن شویم نسخه جدید بارگذاری می‌شود
+      if ('caches' in window) {
+        caches.keys().then(cacheNames => {
+          return Promise.all(
+            cacheNames.map(cacheName => {
+              return caches.delete(cacheName);
+            })
+          );
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        window.location.reload();
+      }
     }
+    
     // ثبت زمان نمایش اعلان
     sessionStorage.setItem('update_prompt_time', currentTime.toString());
+  }
+}
+
+// بررسی وضعیت آنلاین/آفلاین
+export function isOnline(): boolean {
+  return navigator.onLine;
+}
+
+// راه‌اندازی پردازش در زمان خالی مرورگر
+export function runWhenIdle(callback: () => void, timeout = 1000): void {
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(callback, { timeout });
+  } else {
+    setTimeout(callback, timeout);
   }
 }

@@ -1,74 +1,105 @@
 
 /**
- * تشخیص وضعیت آفلاین و مدیریت آن
+ * سیستم تشخیص وضعیت آفلاین و مدیریت آن
  */
 
 import { useToast } from "@/hooks/use-toast";
 
-// متغیر نگهداری وضعیت آنلاین/آفلاین
-let isOnline = navigator.onLine;
-
-// تنظیم رویدادهای وضعیت اتصال
-export function setupOfflineDetection(): void {
-  const handleOnlineStatus = () => {
-    const wasOffline = !isOnline;
-    isOnline = true;
+// تنظیم مانیتورینگ وضعیت آنلاین/آفلاین
+export const setupOfflineDetection = (): void => {
+  let toastShown = false;
+  let offlineEventQueued = false;
+  
+  // تابع نمایش اعلان آفلاین
+  const showOfflineToast = () => {
+    if (toastShown) return;
     
-    if (wasOffline) {
-      console.log('اتصال به اینترنت برقرار شد');
-      showOnlineToast();
+    // نمایش اعلان فقط یک بار
+    try {
+      const { toast } = useToast();
+      
+      if (toast) {
+        toast({
+          variant: "warning",
+          title: "اتصال قطع شد",
+          description: "شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.",
+          duration: 5000
+        });
+        
+        toastShown = true;
+      }
+    } catch (error) {
+      // اگر هنوز hook آماده نیست، با تاخیر دوباره تلاش کن
+      if (!offlineEventQueued) {
+        offlineEventQueued = true;
+        setTimeout(showOfflineToast, 2000);
+      }
+      console.log('اعلان آفلاین با تاخیر نمایش داده خواهد شد');
     }
   };
   
-  const handleOfflineStatus = () => {
-    isOnline = false;
-    console.log('اتصال به اینترنت قطع شد');
+  // تابع نمایش اعلان آنلاین
+  const showOnlineToast = () => {
+    toastShown = false;
+    offlineEventQueued = false;
+    
+    try {
+      const { toast } = useToast();
+      
+      if (toast) {
+        toast({
+          title: "اتصال برقرار شد",
+          description: "شما مجدداً به اینترنت متصل شدید.",
+          duration: 3000
+        });
+      }
+    } catch (error) {
+      console.log('اعلان آنلاین نمایش داده نشد');
+    }
+  };
+
+  // ثبت event listener ها
+  window.addEventListener('offline', () => {
     showOfflineToast();
-  };
+    document.documentElement.classList.add('offline-mode');
+  });
   
-  window.addEventListener('online', handleOnlineStatus);
-  window.addEventListener('offline', handleOfflineStatus);
+  window.addEventListener('online', () => {
+    showOnlineToast();
+    document.documentElement.classList.remove('offline-mode');
+    
+    // در صورت برقراری اتصال، یک درخواست برای بررسی آپدیت ارسال کن
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(registration => {
+        registration.update();
+      });
+    }
+  });
   
-  // بررسی وضعیت اولیه
+  // وضعیت اولیه را بررسی کن
   if (!navigator.onLine) {
-    handleOfflineStatus();
+    document.documentElement.classList.add('offline-mode');
+    showOfflineToast();
   }
-}
+};
 
-// نمایش پیام آفلاین
-function showOfflineToast(): void {
+// فانکشن برای بررسی دسترسی به یک URL خاص
+export const checkConnectivity = async (url: string = 'https://www.google.com/favicon.ico'): Promise<boolean> => {
   try {
-    if (typeof document !== 'undefined') {
-      const { toast } = require("@/hooks/use-toast");
-      toast({
-        title: "شما آفلاین هستید",
-        description: "اتصال به اینترنت قطع شده است. برخی از قابلیت‌ها ممکن است در دسترس نباشند.",
-        variant: "destructive",
-        duration: 5000,
-      });
-    }
-  } catch (e) {
-    console.error('خطا در نمایش اعلان آفلاین:', e);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch(url, {
+      method: 'HEAD',
+      mode: 'no-cors',
+      cache: 'no-store',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    return true;
+  } catch (error) {
+    console.log('تست اتصال ناموفق بود:', error);
+    return false;
   }
-}
-
-// نمایش پیام آنلاین
-function showOnlineToast(): void {
-  try {
-    if (typeof document !== 'undefined') {
-      const { toast } = require("@/hooks/use-toast");
-      toast({
-        title: "شما آنلاین هستید",
-        description: "اتصال به اینترنت برقرار شد. همه قابلیت‌ها در دسترس هستند.",
-        duration: 3000,
-      });
-    }
-  } catch (e) {
-    console.error('خطا در نمایش اعلان آنلاین:', e);
-  }
-}
-
-// تابع بررسی وضعیت آنلاین/آفلاین
-export function checkOnlineStatus(): boolean {
-  return isOnline;
-}
+};

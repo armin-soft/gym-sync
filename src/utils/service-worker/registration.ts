@@ -5,7 +5,7 @@
 
 import { isServiceWorkerSupported, showUpdateNotification } from "./helpers";
 
-// ثبت سرویس ورکر
+// ثبت سرویس ورکر با کانفیگ بهینه‌شده
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!isServiceWorkerSupported()) {
     console.warn('مرورگر شما از سرویس ورکر پشتیبانی نمی‌کند');
@@ -13,8 +13,10 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
   
   try {
+    // ثبت با حداکثر اولویت
     const registration = await navigator.serviceWorker.register('/service-worker.js', {
-      scope: '/'
+      scope: '/',
+      updateViaCache: 'none' // همیشه شبکه را برای به‌روزرسانی‌ها بررسی کند
     });
     
     // بررسی وضعیت سرویس ورکر
@@ -22,8 +24,16 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       console.log('سرویس ورکر در حال نصب است');
     } else if (registration.waiting) {
       console.log('سرویس ورکر در انتظار فعال‌سازی است');
+      // اعمال فوری سرویس ورکر جدید
+      registration.waiting.postMessage({ type: 'SKIP_WAITING' });
     } else if (registration.active) {
       console.log('سرویس ورکر فعال است');
+      // اعمال فوری کنترل
+      if (navigator.serviceWorker.controller === null) {
+        // اولین بار است که سرویس ورکر نصب می‌شود
+        // صفحه را بارگذاری مجدد کن تا سرویس ورکر کنترل را بدست بگیرد
+        window.location.reload();
+      }
     }
     
     // تنظیم رفتار بروزرسانی
@@ -39,10 +49,11 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       });
     });
     
-    // پیکربندی برای بروزرسانی خودکار هر 60 دقیقه
-    setInterval(() => {
-      registration.update();
-    }, 60 * 60 * 1000);
+    // این کد کمک می‌کند نویگیشن فوری بین صفحات حفظ شود
+    if (registration.navigationPreload) {
+      await registration.navigationPreload.enable();
+      console.log('پیش‌بارگذاری نویگیشن فعال شد');
+    }
     
     return registration;
   } catch (error) {

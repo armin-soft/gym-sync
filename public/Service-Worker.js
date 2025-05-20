@@ -1,8 +1,8 @@
 
-// سرویس ورکر ساده‌شده - فقط برای پشتیبانی آفلاین و بروزرسانی
+// سرویس ورکر بهینه‌سازی شده - برای پشتیبانی آفلاین و بارگذاری سریع
 
 // تعریف نام کش
-const CACHE_NAME = 'gym-sync-app-v258';
+const CACHE_NAME = 'gym-sync-app-v267';
 
 // فایل‌های اصلی برای کش کردن
 const STATIC_ASSETS = [
@@ -16,7 +16,7 @@ const STATIC_ASSETS = [
   './assets/index.js'
 ];
 
-// نصب سرویس ورکر
+// نصب سرویس ورکر - کش کردن فایل‌های اصلی برای بارگذاری سریع
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] نصب سرویس ورکر');
   
@@ -27,12 +27,7 @@ self.addEventListener('install', (event) => {
         console.log('[Service Worker] کش کردن فایل‌های اصلی');
         return cache.addAll(STATIC_ASSETS);
       })
-      .then(() => {
-        // فقط در صورتی که قبلاً سرویس ورکری فعال نبوده باشد skipWaiting را فراخوانی می‌کنیم
-        if (!self.registration.active) {
-          return self.skipWaiting();
-        }
-      })
+      .then(() => self.skipWaiting()) // اعمال فوری سرویس ورکر جدید
   );
 });
 
@@ -51,19 +46,13 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    }).then(() => {
-      // اعمال کنترل فقط در صورت نیاز
-      return self.clients.matchAll().then(clients => {
-        if (clients.length === 0) {
-          // اگر هیچ کلاینت نبود، کنترل را بگیر
-          return self.clients.claim();
-        }
-      });
-    })
+    }).then(() => self.clients.claim()) // اعمال فوری کنترل روی تمام کلاینت‌ها
   );
 });
 
-// استراتژی کش: ابتدا کش، سپس شبکه و بروزرسانی کش در پس‌زمینه
+// استراتژی کش بهبود یافته: 
+// 1. اگر کش موجود باشد فوراً استفاده کن
+// 2. همزمان درخواست شبکه را انجام بده و کش را بروز کن (اما منتظر نتیجه نباش)
 self.addEventListener('fetch', (event) => {
   // فقط درخواست‌های GET را پردازش می‌کنیم
   if (event.request.method !== 'GET') return;
@@ -74,54 +63,58 @@ self.addEventListener('fetch', (event) => {
   // API درخواست‌ها را رد می‌کنیم
   if (event.request.url.includes('/api/')) return;
 
+  // استراتژی سریع: اول کش، سپس شبکه در پس‌زمینه
   event.respondWith(
-    caches.match(event.request)
-      .then(cachedResponse => {
-        // استفاده از نسخه کش شده اگر موجود باشد
-        if (cachedResponse) {
-          // بروزرسانی کش در پس‌زمینه
-          fetch(event.request)
-            .then(response => {
-              if (response.ok) {
-                caches.open(CACHE_NAME)
-                  .then(cache => cache.put(event.request, response.clone()));
-              }
-            })
-            .catch(() => {/* خطا را نادیده می‌گیریم چون قبلاً نسخه کش شده را برگردانده‌ایم */});
-          
-          return cachedResponse;
-        }
-
-        // گرفتن از شبکه اگر در کش نباشد
-        return fetch(event.request)
-          .then(response => {
-            if (!response || response.status !== 200) {
-              return response;
-            }
-
-            // کش کردن پاسخ
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch(error => {
-            console.log('[Service Worker] خطا در گرفتن از شبکه:', error);
-            
-            // برای درخواست‌های صفحه، صفحه آفلاین را برمی‌گردانیم
-            if (event.request.mode === 'navigate') {
-              return caches.match('./Offline.html');
-            }
-            
-            // برای منابع دیگر، خطا را برمی‌گردانیم
-            return new Response('خطا: شما آفلاین هستید و این منبع در کش موجود نیست.');
+    (async function() {
+      // فوری از کش بخوان
+      const cachedResponse = await caches.match(event.request);
+      
+      if (cachedResponse) {
+        // بروزرسانی در پس‌زمینه بدون انتظار
+        updateCacheInBackground(event.request);
+        return cachedResponse;
+      }
+      
+      // اگر در کش نبود، از شبکه بگیر
+      try {
+        const networkResponse = await fetch(event.request);
+        
+        // نتیجه را در کش ذخیره کن
+        if (networkResponse.ok) {
+          const clonedResponse = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, clonedResponse);
           });
-      })
+        }
+        
+        return networkResponse;
+      } catch (error) {
+        // اگر در حالت آفلاین هستیم، صفحه آفلاین را برگردان
+        if (event.request.mode === 'navigate') {
+          const offlinePage = await caches.match('./Offline.html');
+          if (offlinePage) return offlinePage;
+        }
+        
+        throw error;
+      }
+    })()
   );
 });
+
+// بروزرسانی کش در پس‌زمینه بدون ایجاد تاخیر در پاسخ
+function updateCacheInBackground(request) {
+  setTimeout(() => {
+    fetch(request).then(response => {
+      if (response.ok) {
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(request, response);
+        });
+      }
+    }).catch(() => {
+      // خطاهای شبکه را نادیده می‌گیریم
+    });
+  }, 0);
+}
 
 // هنگامی که پیامی از برنامه دریافت می‌شود
 self.addEventListener('message', (event) => {
