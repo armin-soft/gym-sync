@@ -60,6 +60,7 @@ interface StudentExerciseDialogStateProps {
     getActiveTabSelectedExercises: () => number[];
     getActiveTabSelectedExercisesWithSets: () => ExerciseWithSets[];
     handleSave: () => boolean;
+    handleSaveAndContinue: () => boolean;
     handleSaveDay: (exercisesWithSets: ExerciseWithSets[], onSave: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean, dayNumber: number) => boolean;
   }) => React.ReactNode;
 }
