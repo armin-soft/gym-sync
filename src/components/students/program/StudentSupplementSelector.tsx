@@ -21,8 +21,6 @@ interface StudentSupplementSelectorProps {
   setSelectedSupplements: React.Dispatch<React.SetStateAction<number[]>>;
   selectedVitamins: number[];
   setSelectedVitamins: React.Dispatch<React.SetStateAction<number[]>>;
-  initialActiveTab?: "supplements" | "vitamins";
-  currentDayLabel?: string;
 }
 
 const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
@@ -30,19 +28,12 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   selectedSupplements,
   setSelectedSupplements,
   selectedVitamins,
-  setSelectedVitamins,
-  initialActiveTab = "supplements",
-  currentDayLabel = "روز فعلی"
+  setSelectedVitamins
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">(initialActiveTab);
+  const [activeTab, setActiveTab] = useState<"supplements" | "vitamins">("supplements");
   const [currentStage, setCurrentStage] = useState<SelectionStage>('type');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  
-  // تنظیم تب فعال بر اساس prop دریافتی
-  useEffect(() => {
-    setActiveTab(initialActiveTab);
-  }, [initialActiveTab]);
   
   // تجمیع دسته‌بندی‌ها از لیست مکمل‌ها و ویتامین‌ها
   const getCategories = (type: "supplements" | "vitamins") => {
@@ -328,59 +319,49 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
           
           <Card className="h-full shadow-sm">
             <CardContent className="p-4 h-full flex flex-col">
-              <h4 className="font-medium mb-3 flex justify-between items-center">
-                <span>لیست {typeTitle}</span>
-                <Badge className={cn(
-                  "bg-gray-100 text-gray-700 hover:bg-gray-200 border-none",
-                  "dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                )}>
-                  {toPersianNumbers(filteredItems.length)} مورد
-                </Badge>
-              </h4>
+              <h4 className="font-medium mb-3">لیست موجود</h4>
               
-              <ScrollArea className="flex-1 pr-4">
-                <div className="space-y-2">
-                  {filteredItems.map(item => (
-                    <div 
-                      key={item.id} 
-                      className={cn(
-                        "border rounded-md p-3 cursor-pointer transition-colors", 
-                        isItemSelected(item.id) ? (
-                          activeTab === "supplements" 
-                            ? "border-amber-500 bg-amber-50/80 dark:bg-amber-900/20" 
-                            : "border-purple-500 bg-purple-50/80 dark:bg-purple-900/20"
-                        ) : "hover:bg-gray-50 dark:hover:bg-gray-800"
-                      )}
-                      onClick={() => toggleItem(item.id)}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
+              {filteredItems.length === 0 ? (
+                searchQuery ? (
+                  <div className="text-center p-6 text-muted-foreground">
+                    موردی با عبارت جستجو شده یافت نشد.
+                  </div>
+                ) : (
+                  <div className="text-center p-6 text-muted-foreground">
+                    در این دسته‌بندی موردی یافت نشد.
+                  </div>
+                )
+              ) : (
+                <ScrollArea className="flex-1 pr-4">
+                  <div className="space-y-2">
+                    {filteredItems.map(item => (
+                      <div 
+                        key={item.id} 
+                        className={cn(
+                          "border rounded-md p-2 flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800",
+                          isItemSelected(item.id) 
+                            ? activeTab === "supplements" 
+                              ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20" 
+                              : "border-purple-500 bg-purple-50 dark:bg-purple-900/20"
+                            : ""
+                        )}
+                        onClick={() => toggleItem(item.id)}
+                      >
+                        <div className="flex items-center gap-3">
                           <Checkbox 
                             checked={isItemSelected(item.id)}
                             className={cn(
                               activeTab === "supplements" 
-                                ? "border-amber-500 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500" 
-                                : "border-purple-500 data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500"
+                                ? "data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500" 
+                                : "data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500"
                             )}
                           />
-                          <div className="mr-2">
-                            <div className="font-medium">{item.name}</div>
-                            <div className="text-sm text-muted-foreground truncate">
-                              {item.description && (
-                                <span className="text-xs">{item.description.substring(0, 60)}{item.description.length > 60 ? "..." : ""}</span>
-                              )}
-                            </div>
-                          </div>
+                          <div className="font-medium">{item.name}</div>
                         </div>
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className={cn(
-                            "h-7 w-7 p-0",
-                            activeTab === "supplements" 
-                              ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50" 
-                              : "text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                          )}
+                          className="h-7 w-7 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleItem(item.id);
@@ -393,10 +374,10 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
                           )}
                         </Button>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -404,15 +385,52 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
     );
   };
   
+  // نمایش مرحله فعلی
+  const renderStage = () => {
+    switch (currentStage) {
+      case 'type':
+        return renderTypeSelection();
+      case 'category':
+        return renderCategorySelection();
+      case 'items':
+        return renderItemsSelection();
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
-      {currentStage === 'type' && renderTypeSelection()}
-      {currentStage === 'category' && renderCategorySelection()}
-      {currentStage === 'items' && renderItemsSelection()}
-      
-      <div className="mt-4 text-center text-xs text-gray-500">
-        برنامه مکمل و ویتامین برای {currentDayLabel}
+      <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg mb-2 flex items-center justify-between">
+        <div className="flex items-center">
+          <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            موارد انتخاب شده: 
+          </span>
+          <Badge variant="outline" className="mr-2 bg-white dark:bg-gray-700">
+            مکمل: {toPersianNumbers(selectedSupplements.length)}
+          </Badge>
+          <Badge variant="outline" className="mr-1 bg-white dark:bg-gray-700">
+            ویتامین: {toPersianNumbers(selectedVitamins.length)}
+          </Badge>
+        </div>
+        
+        <div className="flex-shrink-0">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setCurrentStage('type')}
+            className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+          >
+            شروع مجدد
+          </Button>
+        </div>
       </div>
+      
+      <Card className="flex-1 shadow-sm">
+        <CardContent className="p-4 h-full">
+          {renderStage()}
+        </CardContent>
+      </Card>
     </div>
   );
 };
