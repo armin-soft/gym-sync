@@ -1,11 +1,10 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import StudentProgramManager from "@/components/students/program/StudentProgramManager";
 import { ExerciseWithSets } from "@/types/exercise";
-import { Card } from "@/components/ui/card";
 
 interface StudentProgramManagerViewProps {
   student: Student;
@@ -40,24 +39,22 @@ const StudentProgramManagerView: React.FC<StudentProgramManagerViewProps> = ({
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
-        <Card className="flex-1 overflow-hidden border-none shadow-none bg-transparent">
-          <StudentProgramManager 
-            student={student}
-            exercises={exercises}
-            meals={meals}
-            supplements={supplements}
-            onSaveExercises={(exercisesWithSets, dayNumber) => 
-              onSaveExercises(exercisesWithSets, student.id, dayNumber)
-            }
-            onSaveDiet={(mealIds, dayNumber) => 
-              onSaveDiet(mealIds, student.id, dayNumber)
-            }
-            onSaveSupplements={(data) => 
-              onSaveSupplements(data, student.id)
-            }
-            onClose={onClose}
-          />
-        </Card>
+        <StudentProgramManager 
+          student={student}
+          exercises={exercises}
+          meals={meals}
+          supplements={supplements}
+          onSaveExercises={(exercisesWithSets, dayNumber) => 
+            onSaveExercises(exercisesWithSets, student.id, dayNumber)
+          }
+          onSaveDiet={(mealIds, dayNumber) => 
+            onSaveDiet(mealIds, student.id, dayNumber)
+          }
+          onSaveSupplements={(data) => 
+            onSaveSupplements(data, student.id)
+          }
+          onClose={onClose}
+        />
       </div>
     </PageContainer>
   );
