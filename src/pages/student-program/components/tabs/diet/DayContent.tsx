@@ -14,6 +14,7 @@ interface DayContentProps {
   selectedMeals: number[];
   setSelectedMeals: React.Dispatch<React.SetStateAction<number[]>>;
   meals: any[];
+  centered?: boolean; // Added centered prop as optional
 }
 
 const mealTypes = [
@@ -30,7 +31,8 @@ const DayContent: React.FC<DayContentProps> = ({
   weekDays,
   selectedMeals,
   setSelectedMeals,
-  meals
+  meals,
+  centered = false, // Default to false
 }) => {
   const [currentMealType, setCurrentMealType] = useState<number>(0); // 0 means all meal types
   
@@ -72,10 +74,16 @@ const DayContent: React.FC<DayContentProps> = ({
       className="flex-1 flex flex-col"
     >
       <div className="bg-gray-50 p-3 rounded-md mb-4">
-        <h4 className="font-medium text-green-700">
+        <h4 className={cn(
+          "font-medium text-green-700",
+          centered ? "text-center" : "text-right"
+        )}>
           وعده‌های غذایی روز {weekDays.find(d => d.id === currentDay)?.name}
         </h4>
-        <p className="text-sm text-gray-500">
+        <p className={cn(
+          "text-sm text-gray-500",
+          centered ? "text-center" : "text-right"
+        )}>
           {toPersianNumbers(selectedMeals.length)} وعده انتخاب شده
         </p>
       </div>
@@ -83,7 +91,10 @@ const DayContent: React.FC<DayContentProps> = ({
       {/* Meal type selector */}
       <div className="flex items-center justify-center mb-4">
         <ScrollArea className="w-full" orientation="horizontal">
-          <div className="flex items-center justify-center space-x-1 space-x-reverse">
+          <div className={cn(
+            "flex items-center space-x-1 space-x-reverse",
+            centered ? "justify-center" : "justify-start"
+          )}>
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setCurrentMealType(0)}

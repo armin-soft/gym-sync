@@ -9,6 +9,7 @@ import ExerciseTypeCategory from "./selectors/ExerciseTypeCategory";
 import SelectedExercisesList from "./selectors/SelectedExercisesList";
 import ExerciseListDisplay from "./selectors/ExerciseListDisplay";
 import { useExerciseSelector } from "./hooks/useExerciseSelector";
+import { cn } from "@/lib/utils";
 
 interface StudentExerciseSelectorProps {
   selectedExercises: ExerciseWithSets[];
@@ -16,6 +17,7 @@ interface StudentExerciseSelectorProps {
   dayNumber: number;
   exercises: any[]; 
   dayLabel?: string;
+  noScroll?: boolean; // Added noScroll prop as optional
 }
 
 const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
@@ -24,6 +26,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   dayNumber,
   exercises,
   dayLabel,
+  noScroll = false, // Default to false
 }) => {
   // دریافت داده‌ها از دیتابیس محلی
   const { categories, exerciseTypes, isLoading } = useExerciseData();
@@ -67,7 +70,10 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   }
 
   return (
-    <div className="space-y-4 rtl">
+    <div className={cn(
+      "space-y-4 rtl",
+      noScroll ? "h-full flex flex-col" : ""
+    )}>
       {/* نمایش منوی سلسله مراتبی انتخاب */}
       <ExerciseTypeCategory
         selectedType={selectedType}
@@ -80,7 +86,10 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         clearFilters={clearFilters}
       />
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className={cn(
+        "grid grid-cols-1 lg:grid-cols-2 gap-4",
+        noScroll ? "flex-1 overflow-auto" : ""
+      )}>
         <Card className="shadow-sm">
           <CardContent className="p-4">
             <h4 className="font-medium mb-3 flex items-center gap-2 justify-center">

@@ -13,18 +13,23 @@ interface DaySelectorProps {
   weekDays: DayItem[];
   currentDay: number | null;
   setCurrentDay: (day: number) => void;
+  centered?: boolean; // Added centered prop as optional
 }
 
 const DaySelector: React.FC<DaySelectorProps> = ({
   weekDays,
   currentDay,
   setCurrentDay,
+  centered = false, // Default to false
 }) => {
   return (
     <div className="text-center mb-6 mt-2">
       <h3 className="text-lg font-medium mb-3">انتخاب روز هفته</h3>
       <ScrollArea className="w-full" orientation="horizontal">
-        <div className="flex justify-center items-center space-x-1 space-x-reverse">
+        <div className={cn(
+          "flex items-center space-x-1 space-x-reverse",
+          centered ? "justify-center" : "justify-start"
+        )}>
           {weekDays.map((day) => (
             <motion.button
               key={day.id}

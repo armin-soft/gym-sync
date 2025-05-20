@@ -13,9 +13,10 @@ interface MealTypeSectionProps {
   onEdit: (meal: Meal) => void;
   onDelete: (id: number) => void;
   typeIndex: number;
+  centered?: boolean; // Added the centered prop as optional
 }
 
-export const MealTypeSection = ({ type, meals, day, onEdit, onDelete, typeIndex }: MealTypeSectionProps) => {
+export const MealTypeSection = ({ type, meals, day, onEdit, onDelete, typeIndex, centered = false }: MealTypeSectionProps) => {
   const styles = getMealTypeStyle(type);
   
   // Animation variants for the container
@@ -49,7 +50,10 @@ export const MealTypeSection = ({ type, meals, day, onEdit, onDelete, typeIndex 
             ))}
           </div>
         ) : (
-          <div className="col-span-full text-center py-6 text-muted-foreground">
+          <div className={cn(
+            "col-span-full py-6 text-muted-foreground",
+            centered ? "text-center" : "text-right"
+          )}>
             هیچ موردی برای {type} در روز {day} یافت نشد
           </div>
         )}
