@@ -3,8 +3,8 @@
 // 1. Offline support
 // 2. Update notifications
 
-// Cache name with version
-const CACHE_NAME = 'gym-sync-v261';
+// Cache name with version - increased to prevent constant updates
+const CACHE_NAME = 'gym-sync-v262';
 
 // Essential files to cache for offline functionality
 const STATIC_ASSETS = [

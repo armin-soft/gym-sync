@@ -3,6 +3,10 @@
  * Simplified service worker registration with focus on offline support and updates
  */
 
+// کد نسخه برنامه برای کنترل بروزرسانی‌ها
+const APP_VERSION = '2.6.2';
+let updateAvailable = false;
+
 // Register the service worker
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) {
@@ -11,14 +15,19 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
   
   try {
-    // Register with a timestamp to prevent excessive caching
-    const timestamp = new Date().getTime();
-    const registration = await navigator.serviceWorker.register(`/service-worker.js?v=${timestamp}`, {
+    // Register with full path but no timestamp to prevent excessive updates
+    const registration = await navigator.serviceWorker.register(`/service-worker.js?v=${APP_VERSION}`, {
       scope: '/',
       updateViaCache: 'none' // Always check for updates
     });
     
     console.log('سرویس ورکر با موفقیت راه‌اندازی شد');
+    
+    // فقط زمانی بروزرسانی نمایش داده شود که سرویس ورکر واقعاً تغییر کرده باشد
+    if (registration.waiting) {
+      updateAvailable = true;
+      showUpdateNotification();
+    }
     
     // Handle service worker updates
     registration.addEventListener('updatefound', () => {
@@ -26,9 +35,14 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       if (!newWorker) return;
       
       newWorker.addEventListener('statechange', () => {
+        // فقط زمانی که سرویس ورکر در حالت نصب است و یک کنترلر فعال وجود دارد
+        // نشانه‌ای است که این یک بروزرسانی واقعی است نه نصب اولیه
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // New service worker is available
-          showUpdateNotification();
+          // اگر قبلاً بروزرسانی نمایش داده نشده
+          if (!updateAvailable) {
+            updateAvailable = true;
+            showUpdateNotification();
+          }
         }
       });
     });
