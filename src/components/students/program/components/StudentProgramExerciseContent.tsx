@@ -86,10 +86,12 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
             <h3 className="font-semibold text-lg mb-2 sm:mb-0">
               برنامه تمرینی روز {toPersianNumbers(currentDay)}
             </h3>
+            
+            {/* Removed the Add Day button as requested */}
           </div>
         </motion.div>
         
-        <motion.div variants={itemVariants} className="flex flex-wrap gap-2 mb-4 overflow-visible">
+        <motion.div variants={itemVariants}>
           <DaySelector 
             days={days}
             dayLabels={dayLabels}
