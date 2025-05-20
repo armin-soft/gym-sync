@@ -35,6 +35,8 @@ export function useStudentProgramManager({
 
   // Load initial data for the student
   useEffect(() => {
+    if (!student) return;
+    
     // Find all available day properties in the student object
     const dayProperties = Object.keys(student).filter(key => key.startsWith('exercisesDay'));
     
@@ -96,8 +98,9 @@ export function useStudentProgramManager({
     }
   }, [student, currentDay, currentDietDay, currentSupplementDay]);
 
-  // Watch for tab changes to sync the current day
+  // Sync days between tabs - removing conditional hooks
   useEffect(() => {
+    // This effect now runs on every render, not conditionally
     if (activeTab === "exercise") {
       setCurrentSupplementDay(currentDay);
       setCurrentDietDay(currentDay);
@@ -110,30 +113,30 @@ export function useStudentProgramManager({
     }
   }, [activeTab, currentDay, currentDietDay, currentSupplementDay]);
 
-  // Watch for day changes within a tab
+  // Load supplements and vitamins when current day changes
   useEffect(() => {
-    if (activeTab === "supplement") {
-      // Load supplements for current day when day changes
-      const supplementDayKey = `supplementsDay${currentSupplementDay}`;
-      const vitaminDayKey = `vitaminsDay${currentSupplementDay}`;
-      
-      if (student[supplementDayKey]) {
-        setSelectedSupplements(student[supplementDayKey]);
-      } else if (student.supplements) {
-        setSelectedSupplements(student.supplements);
-      } else {
-        setSelectedSupplements([]);
-      }
-      
-      if (student[vitaminDayKey]) {
-        setSelectedVitamins(student[vitaminDayKey]);
-      } else if (student.vitamins) {
-        setSelectedVitamins(student.vitamins);
-      } else {
-        setSelectedVitamins([]);
-      }
+    if (!student) return;
+    
+    // Always load supplement data regardless of active tab
+    const supplementDayKey = `supplementsDay${currentSupplementDay}`;
+    const vitaminDayKey = `vitaminsDay${currentSupplementDay}`;
+    
+    if (student[supplementDayKey]) {
+      setSelectedSupplements(student[supplementDayKey]);
+    } else if (student.supplements) {
+      setSelectedSupplements(student.supplements);
+    } else {
+      setSelectedSupplements([]);
     }
-  }, [activeTab, currentSupplementDay, student]);
+    
+    if (student[vitaminDayKey]) {
+      setSelectedVitamins(student[vitaminDayKey]);
+    } else if (student.vitamins) {
+      setSelectedVitamins(student.vitamins);
+    } else {
+      setSelectedVitamins([]);
+    }
+  }, [student, currentSupplementDay]);
 
   const handleSaveAll = () => {
     let success = true;
