@@ -8,6 +8,7 @@ import EmptyDayState from "./diet/EmptyDayState";
 import DayContent from "./diet/DayContent";
 import { weekDays } from "./diet/constants";
 import { useDietState } from "./diet/useDietState";
+import { cn } from "@/lib/utils";
 
 interface ProgramDietTabProps {
   student: Student;
@@ -46,12 +47,18 @@ const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
       />
       
       <Card className="flex-1 overflow-auto">
-        <CardContent className="p-4 h-full flex flex-col">
-          <DaySelector 
-            weekDays={weekDays} 
-            currentDay={effectiveCurrentDay} 
-            setCurrentDay={effectiveSetCurrentDay}
-          />
+        <CardContent className={cn(
+          "p-4 h-full flex flex-col",
+          "text-center" // Center the content
+        )}>
+          <div className="mx-auto w-full max-w-3xl">
+            <DaySelector 
+              weekDays={weekDays} 
+              currentDay={effectiveCurrentDay} 
+              setCurrentDay={effectiveSetCurrentDay}
+              centered={true}
+            />
+          </div>
           
           {effectiveCurrentDay !== null ? (
             <DayContent 
@@ -60,6 +67,7 @@ const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
               selectedMeals={selectedMeals}
               setSelectedMeals={setSelectedMeals}
               meals={meals}
+              centered={true}
             />
           ) : (
             <EmptyDayState />

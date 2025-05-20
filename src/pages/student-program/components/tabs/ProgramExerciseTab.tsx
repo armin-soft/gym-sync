@@ -7,6 +7,7 @@ import ExerciseHeader from "./exercise/ExerciseHeader";
 import ExerciseContent from "./exercise/ExerciseContent";
 import ExerciseCounter from "./exercise/ExerciseCounter";
 import { useExerciseTabState } from "./exercise/useExerciseTabState";
+import { Card } from "@/components/ui/card";
 
 interface ProgramExerciseTabProps {
   student: Student;
@@ -46,12 +47,16 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
         onDayChange={setCurrentDay} 
       />
       
-      <ExerciseContent
-        currentDay={currentDay}
-        selectedExercises={selectedExercises}
-        setSelectedExercises={setSelectedExercises}
-        exercises={exercises}
-      />
+      <Card className="flex-1 overflow-hidden border border-border/40 bg-white/90 backdrop-blur-sm shadow-sm">
+        <div className="p-4 h-full">
+          <ExerciseContent
+            currentDay={currentDay}
+            selectedExercises={selectedExercises}
+            setSelectedExercises={setSelectedExercises}
+            exercises={exercises}
+          />
+        </div>
+      </Card>
       
       <ExerciseCounter count={selectedExercises.length} />
     </div>

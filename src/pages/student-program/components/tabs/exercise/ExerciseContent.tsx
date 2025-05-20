@@ -19,7 +19,7 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
 }) => {
   return (
     <motion.div 
-      className="flex-1 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+      className="h-full"
       key={`day-${currentDay}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -30,6 +30,7 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
         selectedExercises={selectedExercises}
         setSelectedExercises={setSelectedExercises}
         dayNumber={currentDay}
+        noScroll={true}
       />
     </motion.div>
   );

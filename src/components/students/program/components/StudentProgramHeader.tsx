@@ -5,6 +5,7 @@ import { Student } from "@/components/students/StudentTypes";
 import { ArrowRight, Save } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
+import { Chip } from "@/components/ui/chip";
 
 interface StudentProgramHeaderProps {
   student: Student;
@@ -40,26 +41,23 @@ const StudentProgramHeader: React.FC<StudentProgramHeaderProps> = ({
         
         <div className="flex flex-col">
           <h2 className="text-lg font-bold">{student.name}</h2>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             {student.age && (
-              <span className="flex items-center gap-1">
-                <span>سن:</span>
-                <span>{ageDisplay}</span>
-              </span>
+              <Chip variant="outline" interactive={false} className="py-0 h-5">
+                <span>سن: {ageDisplay}</span>
+              </Chip>
             )}
             
             {student.height && (
-              <span className="flex items-center gap-1">
-                <span>قد:</span>
-                <span>{heightDisplay}</span>
-              </span>
+              <Chip variant="outline" interactive={false} className="py-0 h-5">
+                <span>قد: {heightDisplay}</span>
+              </Chip>
             )}
             
             {student.weight && (
-              <span className="flex items-center gap-1">
-                <span>وزن:</span>
-                <span>{weightDisplay}</span>
-              </span>
+              <Chip variant="outline" interactive={false} className="py-0 h-5">
+                <span>وزن: {weightDisplay}</span>
+              </Chip>
             )}
           </div>
         </div>

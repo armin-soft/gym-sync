@@ -5,6 +5,7 @@ import { mealTypeOrder } from "./MealTypeUtils";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 import { motion } from "framer-motion";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { cn } from "@/lib/utils";
 
 interface DayContentProps {
   day: string;
@@ -12,9 +13,10 @@ interface DayContentProps {
   meals: Meal[];
   onEdit: (meal: Meal) => void;
   onDelete: (id: number) => void;
+  centered?: boolean;
 }
 
-export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayContentProps) => {
+export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered = false }: DayContentProps) => {
   // مرتب‌سازی انواع وعده‌های غذایی بر اساس ترتیب تعریف شده
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   
@@ -43,7 +45,10 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-4 sm:space-y-6 text-right"
+      className={cn(
+        "space-y-4 sm:space-y-6",
+        centered ? "text-center" : "text-right"
+      )}
     >
       {sortedMealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter(meal => meal.type === type);
@@ -58,6 +63,7 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
               onEdit={onEdit}
               onDelete={onDelete}
               typeIndex={typeIndex}
+              centered={centered}
             />
           </motion.div>
         );

@@ -105,15 +105,15 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
         className="mb-4 h-full flex flex-col"
       >
         <motion.div variants={itemVariants}>
-          <h3 className="font-semibold text-lg mb-4 text-right">
+          <h3 className="font-semibold text-lg mb-4 text-center">
             برنامه غذایی {currentDietDay ? `روز ${toPersianNumbers(currentDietDay)}` : ''}
           </h3>
         </motion.div>
         
-        {/* Day selector */}
+        {/* Day selector - Centered */}
         <motion.div variants={itemVariants} className="mb-4">
-          <ScrollArea className="w-full" orientation="horizontal">
-            <div className="flex items-center justify-start space-x-1 space-x-reverse pb-2">
+          <div className="flex items-center justify-center pb-2">
+            <div className="flex flex-wrap items-center justify-center gap-2">
               {weekDays.map((day) => (
                 <motion.button
                   key={day.id}
@@ -130,14 +130,14 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
                 </motion.button>
               ))}
             </div>
-          </ScrollArea>
+          </div>
         </motion.div>
         
-        {/* Only show meal type selector if a day is selected */}
+        {/* Only show meal type selector if a day is selected - Centered */}
         {currentDietDay > 0 && (
           <motion.div variants={itemVariants} className="mb-6">
-            <ScrollArea className="w-full" orientation="horizontal">
-              <div className="flex items-center justify-start space-x-1 space-x-reverse pb-2">
+            <div className="flex items-center justify-center pb-2">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentMealType(0)}
@@ -179,7 +179,7 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
                   </motion.button>
                 ))}
               </div>
-            </ScrollArea>
+            </div>
           </motion.div>
         )}
         
