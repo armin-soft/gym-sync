@@ -1,3 +1,20 @@
+/**
+ * Check if the browser supports Service Workers
+ */
+export function isServiceWorkerSupported(): boolean {
+  return 'serviceWorker' in navigator;
+}
+
+/**
+ * Run a function when the browser is idle
+ */
+export function runWhenIdle(callback: () => void, timeout = 1000): void {
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(callback, { timeout });
+  } else {
+    setTimeout(callback, 1);
+  }
+}
 
 export const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
@@ -58,16 +75,4 @@ export const unregisterServiceWorker = async () => {
       console.error(`Service worker unregistration failed: ${error}`);
     }
   }
-};
-
-export const runWhenIdle = (callback: () => void, timeout = 1000): void => {
-  if (window.requestIdleCallback) {
-    window.requestIdleCallback(() => callback(), { timeout });
-  } else {
-    setTimeout(callback, 1);
-  }
-};
-
-export const isServiceWorkerSupported = (): boolean => {
-  return 'serviceWorker' in navigator;
 };

@@ -4,9 +4,9 @@ import { TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 import StudentDietSelector from "../StudentDietSelector";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Utensils } from "lucide-react";
 
 interface StudentProgramDietContentProps {
   selectedMeals: number[];
@@ -63,12 +63,31 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
         </div>
         
         <div className="flex-1 overflow-auto">
-          <StudentDietSelector 
-            meals={meals}
-            selectedMeals={selectedMeals}
-            setSelectedMeals={setSelectedMeals}
-            currentDay={currentDietDay}
-          />
+          {currentDietDay ? (
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="flex items-center justify-center mb-3">
+                <div className="bg-green-100 p-2 rounded-full">
+                  <Utensils className="h-6 w-6 text-green-600" />
+                </div>
+                <h4 className="text-lg font-medium mr-2 text-gray-800">
+                  وعده‌های غذایی روز {weekDays.find(d => d.id === currentDietDay)?.name}
+                </h4>
+              </div>
+              
+              <StudentDietSelector 
+                meals={meals}
+                selectedMeals={selectedMeals}
+                setSelectedMeals={setSelectedMeals}
+                currentDay={currentDietDay}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center p-8">
+              <Utensils className="h-16 w-16 text-gray-300 mb-4" />
+              <p className="text-gray-500 text-lg">لطفا یک روز از هفته را انتخاب کنید</p>
+              <p className="text-gray-400 text-sm mt-2">برای مشاهده و تنظیم برنامه غذایی، ابتدا روز مورد نظر را انتخاب کنید</p>
+            </div>
+          )}
         </div>
       </div>
     </TabsContent>
