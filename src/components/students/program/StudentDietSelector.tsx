@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,6 +8,7 @@ import { Plus, Minus, Utensils } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Meal, MealType, WeekDay } from "@/types/meal";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { cn } from "@/lib/utils";
 
 interface StudentDietSelectorProps {
   meals: Meal[];
