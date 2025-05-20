@@ -1,59 +1,98 @@
 
-import React from "react";
-import { motion } from "framer-motion";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { menuItemVariants } from "../context-menu/menuAnimations";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import React from "react";
 
-export interface MenuItemWithIconProps {
+interface MenuItemWithIconProps {
   icon: React.ReactNode;
   onClick?: () => void;
-  disabled?: boolean;
   title: string;
   subtitle: string;
   iconClassName?: string;
-  menuItemClassName?: string;
   hoverClassName?: string;
-  subtitleClassName?: string;
-  custom: number;
+  disabled?: boolean;
+  custom?: number;
+  disableAnimation?: boolean;
 }
 
-export const MenuItemWithIcon: React.FC<MenuItemWithIconProps> = ({
+export const MenuItemWithIcon = ({
   icon,
   onClick,
-  disabled = false,
   title,
   subtitle,
-  iconClassName = "",
-  menuItemClassName = "",
-  hoverClassName = "",
-  subtitleClassName = "",
-  custom
-}) => {
+  iconClassName,
+  hoverClassName,
+  disabled = false,
+  custom = 0,
+  disableAnimation = false
+}: MenuItemWithIconProps) => {
+  
+  // نسخه بدون انیمیشن برای سرعت بیشتر
+  if (disableAnimation) {
+    return (
+      <DropdownMenuItem
+        onClick={onClick}
+        disabled={disabled}
+        className={cn(
+          "flex items-center gap-3 p-2 cursor-pointer rounded-lg",
+          "transition-colors duration-150 text-slate-700 dark:text-slate-200 group/item",
+          disabled && "opacity-50 pointer-events-none"
+        )}
+      >
+        <div className={cn(
+          "p-1.5 rounded-md shadow-sm",
+          iconClassName
+        )}>
+          {icon}
+        </div>
+        <div className="flex-1">
+          <p className={cn("text-sm font-medium", hoverClassName)}>
+            {title}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {subtitle}
+          </p>
+        </div>
+      </DropdownMenuItem>
+    );
+  }
+  
+  // نسخه با انیمیشن (پیش‌فرض)
   return (
     <motion.div
-      variants={menuItemVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      custom={custom}
-      whileHover={{ x: 3 }}
-      whileTap={{ scale: 0.98 }}
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ 
+        opacity: 1, 
+        x: 0,
+        transition: { delay: custom * 0.05, duration: 0.15 } 
+      }}
+      exit={{ opacity: 0, x: -5 }}
     >
       <DropdownMenuItem 
         onClick={onClick} 
-        disabled={disabled} 
-        className={`flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/50 focus:bg-slate-100/80 dark:focus:bg-slate-800/50 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item ${menuItemClassName}`}
+        disabled={disabled}
+        className={cn(
+          "flex items-center gap-3 p-2 cursor-pointer rounded-lg", 
+          "transition-all duration-200 text-slate-700 dark:text-slate-200 group/item",
+          disabled && "opacity-50 pointer-events-none"
+        )}
       >
-        <div className={`flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center transition-all duration-200 ${iconClassName}`}>
+        <div className={cn(
+          "p-1.5 rounded-md shadow-sm",
+          iconClassName
+        )}>
           {icon}
         </div>
-        <div className="flex flex-col">
-          <span className={`transition-colors duration-200 ${hoverClassName}`}>{title}</span>
-          <span className={`text-xs text-slate-500 dark:text-slate-400 ${subtitleClassName}`}>{subtitle}</span>
+        <div className="flex-1">
+          <p className={cn("text-sm font-medium", hoverClassName)}>
+            {title}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {subtitle}
+          </p>
         </div>
       </DropdownMenuItem>
     </motion.div>
   );
 };
-
-export default MenuItemWithIcon;

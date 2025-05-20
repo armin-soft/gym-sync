@@ -68,30 +68,69 @@ const sidebarItems: SidebarItem[] = [
   }
 ];
 
+// کامپوننت آیتم منو بهینه‌سازی شده
+const SidebarItem = React.memo(({ item, isActive, onClick }: { 
+  item: SidebarItem, 
+  isActive: boolean, 
+  onClick: () => void 
+}) => (
+  <Link
+    key={item.href}
+    to={item.href}
+    onClick={onClick}
+    className={cn(
+      "group flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200",
+      "hover:bg-accent/50 active:scale-[0.98]",
+      isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
+    )}
+  >
+    <div className="flex items-center gap-4">
+      <div className={cn(
+        "rounded-md p-1 transition-colors duration-200",
+        isActive ? "bg-primary/20" : "bg-muted group-hover:bg-primary/10"
+      )}>
+        <item.icon className="h-4 w-4" />
+      </div>
+      <span className="text-sm font-medium">{item.title}</span>
+    </div>
+    <ChevronLeft className={cn(
+      "h-4 w-4 opacity-0 transition-all duration-200",
+      "group-hover:opacity-100 group-hover:translate-x-0",
+      "group-hover:text-primary",
+      isActive ? "opacity-100 text-primary" : "-translate-x-2"
+    )} />
+  </Link>
+));
+
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const [gymName, setGymName] = React.useState("");
   
-  // بارگیری نام باشگاه از پروفایل مربی
+  // بارگذاری نام باشگاه از پروفایل مربی - فقط وقتی منو باز است
   React.useEffect(() => {
-    const savedProfile = localStorage.getItem('trainerProfile');
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        if (profile.gymName) {
-          setGymName(profile.gymName);
+    if (isOpen) {
+      const savedProfile = localStorage.getItem('trainerProfile');
+      if (savedProfile) {
+        try {
+          const profile = JSON.parse(savedProfile);
+          if (profile.gymName) {
+            setGymName(profile.gymName);
+          }
+        } catch (error) {
+          console.error('Error loading gym name:', error);
         }
-      } catch (error) {
-        console.error('Error loading gym name:', error);
       }
     }
-  }, []);
+  }, [isOpen]);
   
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
         side="right" 
         className="w-[280px] p-0 border-l bg-card/95 backdrop-blur-sm"
+        // تنظیمات برای باز شدن سریع‌تر
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onEscapeKeyDown={onClose}
       >
         <div className="flex h-full flex-col">
           <div className="p-4 border-b bg-background/50 backdrop-blur-sm">
@@ -113,32 +152,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 const isActive = location.pathname === item.href;
                 
                 return (
-                  <Link
-                    key={item.href}
-                    to={item.href}
-                    onClick={onClose}
-                    className={cn(
-                      "group flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200",
-                      "hover:bg-accent/50 active:scale-[0.98]",
-                      isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
-                    )}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "rounded-md p-1 transition-colors duration-200",
-                        isActive ? "bg-primary/20" : "bg-muted group-hover:bg-primary/10"
-                      )}>
-                        <item.icon className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">{item.title}</span>
-                    </div>
-                    <ChevronLeft className={cn(
-                      "h-4 w-4 opacity-0 transition-all duration-200",
-                      "group-hover:opacity-100 group-hover:translate-x-0",
-                      "group-hover:text-primary",
-                      isActive ? "opacity-100 text-primary" : "-translate-x-2"
-                    )} />
-                  </Link>
+                  <SidebarItem 
+                    key={item.href} 
+                    item={item} 
+                    isActive={isActive} 
+                    onClick={onClose} 
+                  />
                 );
               })}
             </div>
@@ -151,7 +170,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{gymName || "برنامه مدیریت"}</span>
-                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "1.0.0")}</span>
+                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "3.0.0")}</span>
               </div>
             </div>
           </div>

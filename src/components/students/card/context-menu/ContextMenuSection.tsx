@@ -11,13 +11,15 @@ export const ContextMenuSection: React.FC<ContextMenuSectionProps> = ({
   children 
 }) => {
   return (
-    <div>
+    <div className="py-1 px-1">
       <div className="px-2 py-1">
-        <span className="text-xs font-medium text-indigo-500 dark:text-indigo-400">{title}</span>
+        <h4 className="text-xs font-medium text-slate-500 dark:text-slate-400">
+          {title}
+        </h4>
       </div>
-      {children}
+      <div className="space-y-0.5">
+        {children}
+      </div>
     </div>
   );
 };
-
-export default ContextMenuSection;
