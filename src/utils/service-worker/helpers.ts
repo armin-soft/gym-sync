@@ -1,3 +1,4 @@
+
 export const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
@@ -36,13 +37,11 @@ export const registerServiceWorker = async () => {
 };
 
 export const showUpdateNotification = () => {
-  // Use window.location instead of location to fix the TypeScript error
   const updatePrompt = confirm(
     "A new version of the app is available. Do you want to update now?"
   );
 
   if (updatePrompt) {
-    // Call window.location.reload() instead of location.reload()
     window.location.reload();
   }
 };
@@ -59,4 +58,16 @@ export const unregisterServiceWorker = async () => {
       console.error(`Service worker unregistration failed: ${error}`);
     }
   }
+};
+
+export const runWhenIdle = (callback: () => void, timeout = 1000): void => {
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(() => callback(), { timeout });
+  } else {
+    setTimeout(callback, 1);
+  }
+};
+
+export const isServiceWorkerSupported = (): boolean => {
+  return 'serviceWorker' in navigator;
 };

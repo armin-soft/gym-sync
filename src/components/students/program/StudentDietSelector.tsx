@@ -13,12 +13,14 @@ interface StudentDietSelectorProps {
   meals: Meal[];
   selectedMeals: number[];
   setSelectedMeals: React.Dispatch<React.SetStateAction<number[]>>;
+  currentDay?: number;
 }
 
 const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
   meals,
   selectedMeals,
-  setSelectedMeals
+  setSelectedMeals,
+  currentDay
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
