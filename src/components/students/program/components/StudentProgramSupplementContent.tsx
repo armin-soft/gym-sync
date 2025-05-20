@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentProgramSupplementContentProps {
   selectedSupplements: number[];
@@ -152,8 +151,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
             <Pill className="h-4 w-4" />
             <span>
               {activeTab === 'supplement' 
-                ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده` 
-                : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده`}
+                ? `${selectedSupplements.length} مکمل انتخاب شده` 
+                : `${selectedVitamins.length} ویتامین انتخاب شده`}
             </span>
           </div>
         </motion.div>

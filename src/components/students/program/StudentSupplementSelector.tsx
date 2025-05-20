@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
-import { Check, Search, Pill } from "lucide-react";
+import { Check, Search, Pill, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { Separator } from "@/components/ui/separator";
 import { Supplement } from "@/types/supplement";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentSupplementSelectorProps {
   supplements: Supplement[];
@@ -33,6 +33,7 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   setSelectedTypes
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showTypeFilter, setShowTypeFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   // Extract unique categories for the current tab
@@ -48,11 +49,24 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
     return Array.from(categorySet).sort();
   }, [supplements, activeTab]);
 
+  // Extract unique types for the current tab
+  const types = React.useMemo(() => {
+    const typeSet = new Set<string>();
+    
+    supplements
+      .filter(item => item.type === activeTab)
+      .forEach(item => {
+        if (item.supplementType) typeSet.add(item.supplementType);
+      });
+    
+    return Array.from(typeSet).sort();
+  }, [supplements, activeTab]);
+
   // Get currently selected items based on activeTab
   const selectedItems = activeTab === 'supplement' ? selectedSupplements : selectedVitamins;
   const setSelectedItems = activeTab === 'supplement' ? setSelectedSupplements : setSelectedVitamins;
 
-  // Filter supplements based on activeTab, search query, and category
+  // Filter supplements based on activeTab, search query, type filters, and category
   const filteredItems = React.useMemo(() => {
     return supplements.filter(item => {
       // Filter by tab type
@@ -64,9 +78,14 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
       // Filter by category if selected
       if (selectedCategory && item.category !== selectedCategory) return false;
       
+      // Filter by selected types
+      if (Object.values(selectedTypes).some(v => v)) {
+        return item.supplementType && selectedTypes[item.supplementType];
+      }
+      
       return true;
     });
-  }, [supplements, activeTab, searchQuery, selectedCategory]);
+  }, [supplements, activeTab, searchQuery, selectedTypes, selectedCategory]);
 
   // Toggle selection of an item
   const toggleItem = (id: number) => {
@@ -85,47 +104,78 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   // Reset filters when tab changes
   useEffect(() => {
     setSearchQuery("");
+    setSelectedTypes({});
     setSelectedCategory(null);
   }, [activeTab]);
 
   return (
     <div className="h-full flex flex-col">
-      {/* Category Selection */}
-      <Card className="p-3 space-y-2 mb-4">
-        <h4 className="text-sm font-medium">دسته‌بندی</h4>
-        <ScrollArea className="h-10" orientation="horizontal">
-          <div className="flex space-x-2 space-x-reverse">
-            <Button 
-              variant={selectedCategory === null ? "default" : "outline"}
-              size="sm"
-              className={cn(
-                "whitespace-nowrap",
-                selectedCategory === null && "bg-purple-600"
-              )}
-              onClick={() => setSelectedCategory(null)}
-            >
-              همه
-              {selectedCategory === null && <Check className="mr-1 h-3 w-3" />}
-            </Button>
-            
-            {categories.map(category => (
+      {/* Type and Category Selection */}
+      <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Type Selection */}
+        <Card className="p-3 space-y-2">
+          <h4 className="text-sm font-medium">نوع {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}</h4>
+          <ScrollArea className="h-10" orientation="horizontal">
+            <div className="flex space-x-2 space-x-reverse">
+              {types.map(type => (
+                <Button 
+                  key={type}
+                  variant={selectedTypes[type] ? "default" : "outline"}
+                  size="sm"
+                  className={cn(
+                    "whitespace-nowrap",
+                    selectedTypes[type] && "bg-purple-600"
+                  )}
+                  onClick={() => setSelectedTypes(prev => ({
+                    ...prev,
+                    [type]: !prev[type]
+                  }))}
+                >
+                  {type}
+                  {selectedTypes[type] && <Check className="mr-1 h-3 w-3" />}
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
+        </Card>
+        
+        {/* Category Selection */}
+        <Card className="p-3 space-y-2">
+          <h4 className="text-sm font-medium">دسته‌بندی</h4>
+          <ScrollArea className="h-10" orientation="horizontal">
+            <div className="flex space-x-2 space-x-reverse">
               <Button 
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
+                variant={selectedCategory === null ? "default" : "outline"}
                 size="sm"
                 className={cn(
                   "whitespace-nowrap",
-                  selectedCategory === category && "bg-purple-600"
+                  selectedCategory === null && "bg-purple-600"
                 )}
-                onClick={() => setSelectedCategory(prev => prev === category ? null : category)}
+                onClick={() => setSelectedCategory(null)}
               >
-                {category}
-                {selectedCategory === category && <Check className="mr-1 h-3 w-3" />}
+                همه
+                {selectedCategory === null && <Check className="mr-1 h-3 w-3" />}
               </Button>
-            ))}
-          </div>
-        </ScrollArea>
-      </Card>
+              
+              {categories.map(category => (
+                <Button 
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  size="sm"
+                  className={cn(
+                    "whitespace-nowrap",
+                    selectedCategory === category && "bg-purple-600"
+                  )}
+                  onClick={() => setSelectedCategory(prev => prev === category ? null : category)}
+                >
+                  {category}
+                  {selectedCategory === category && <Check className="mr-1 h-3 w-3" />}
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
+        </Card>
+      </div>
 
       {/* Search and Filter */}
       <div className="relative mb-4">
@@ -139,23 +189,46 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
       </div>
 
       {/* Display active filters */}
-      {selectedCategory && (
+      {(Object.values(selectedTypes).some(v => v) || selectedCategory) && (
         <div className="flex flex-wrap gap-2 mb-4">
-          <Badge 
-            variant="outline"
-            className="flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-200"
-          >
-            {selectedCategory}
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className="h-3.5 w-3.5 rounded-full bg-blue-200 text-blue-700 hover:bg-blue-300 inline-flex items-center justify-center"
+          {Object.entries(selectedTypes)
+            .filter(([_, isSelected]) => isSelected)
+            .map(([type]) => (
+              <Badge 
+                key={type}
+                variant="outline"
+                className="flex items-center gap-1 bg-purple-50 text-purple-700 border-purple-200"
+              >
+                {type}
+                <button
+                  onClick={() => setSelectedTypes(prev => ({...prev, [type]: false}))}
+                  className="h-3.5 w-3.5 rounded-full bg-purple-200 text-purple-700 hover:bg-purple-300 inline-flex items-center justify-center"
+                >
+                  <span className="sr-only">Remove</span>
+                  <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.877075 0.877075L5.12292 5.12292M0.877075 5.12292L5.12292 0.877075" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </Badge>
+            ))}
+            
+          {selectedCategory && (
+            <Badge 
+              variant="outline"
+              className="flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-200"
             >
-              <span className="sr-only">Remove</span>
-              <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0.877075 0.877075L5.12292 5.12292M0.877075 5.12292L5.12292 0.877075" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </Badge>
+              {selectedCategory}
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="h-3.5 w-3.5 rounded-full bg-blue-200 text-blue-700 hover:bg-blue-300 inline-flex items-center justify-center"
+              >
+                <span className="sr-only">Remove</span>
+                <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0.877075 0.877075L5.12292 5.12292M0.877075 5.12292L5.12292 0.877075" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </Badge>
+          )}
         </div>
       )}
 
@@ -195,30 +268,18 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
                       </div>
                       
                       <div className="flex flex-wrap gap-1 mt-2">
+                        {item.supplementType && (
+                          <Badge variant="outline" className="text-xs bg-purple-50 border-purple-100 text-purple-700">
+                            {item.supplementType}
+                          </Badge>
+                        )}
+                        
                         {item.category && (
                           <Badge variant="outline" className="text-xs bg-blue-50 border-blue-100 text-blue-700">
                             {item.category}
                           </Badge>
                         )}
                       </div>
-
-                      {/* Display dosage and timing information */}
-                      {(item.dosage || item.timing) && (
-                        <div className="mt-2 text-xs text-gray-600 space-y-1 border-t border-gray-100 pt-2">
-                          {item.dosage && (
-                            <div className="flex items-center gap-1">
-                              <span className="font-medium">دوز مصرف:</span> 
-                              <span>{item.dosage}</span>
-                            </div>
-                          )}
-                          {item.timing && (
-                            <div className="flex items-center gap-1">
-                              <span className="font-medium">زمان مصرف:</span> 
-                              <span>{item.timing}</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </Card>
                 </motion.div>
@@ -234,12 +295,13 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
                 <p className="text-muted-foreground text-sm">
                   با تغییر معیارهای جستجو یا فیلتر، موارد بیشتری را مشاهده کنید
                 </p>
-                {(searchQuery || selectedCategory) && (
+                {(searchQuery || Object.values(selectedTypes).some(v => v) || selectedCategory) && (
                   <Button 
                     variant="outline" 
                     className="mt-3"
                     onClick={() => {
                       setSearchQuery("");
+                      setSelectedTypes({});
                       setSelectedCategory(null);
                     }}
                   >
@@ -255,10 +317,10 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
       {/* Selected count */}
       <div className="mt-4 flex justify-between items-center text-sm text-muted-foreground">
         <span>
-          {toPersianNumbers(filteredItems.length)} {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} نمایش داده شده
+          {filteredItems.length} {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} نمایش داده شده
         </span>
         <span>
-          {toPersianNumbers(selectedItems.length)} مورد انتخاب شده
+          {selectedItems.length} مورد انتخاب شده
         </span>
       </div>
     </div>
