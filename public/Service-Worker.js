@@ -2,7 +2,7 @@
 // سرویس ورکر ساده‌شده - فقط برای پشتیبانی آفلاین و بروزرسانی
 
 // تعریف نام کش
-const CACHE_NAME = 'gym-sync-app-v1';
+const CACHE_NAME = 'gym-sync-app-v258';
 
 // فایل‌های اصلی برای کش کردن
 const STATIC_ASSETS = [

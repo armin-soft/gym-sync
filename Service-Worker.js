@@ -4,7 +4,7 @@
 
 // Define global scope for the service worker
 self.APP_VERSION = 'gym-sync';
-self.CACHE_NAME = 'gym-sync-v238';
+self.CACHE_NAME = 'gym-sync-v258';
 self.BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 
 // Import core modules

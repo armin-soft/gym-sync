@@ -5,7 +5,7 @@
 self.APP_VERSION = 'gym-sync'; // Base name, version will be appended
 
 // Define global scope for the service worker
-self.CACHE_NAME = `${self.APP_VERSION}-v264`;
+self.CACHE_NAME = `${self.APP_VERSION}-v258`;
 self.BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
 
 // Files to cache - use relative paths that will work in any environment
