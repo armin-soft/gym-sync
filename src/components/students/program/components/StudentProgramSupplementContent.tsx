@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { TabsContent } from "@/components/ui/tabs";
 import StudentSupplementSelector from "../supplement-selector";
 import { Pill } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -80,105 +79,101 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   };
 
   return (
-    <TabsContent value="supplement" className="m-0 h-full">
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="mb-4 h-full flex flex-col rtl"
-      >
-        <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2">
-          <h3 className="font-semibold text-lg">
-            مکمل و ویتامین روز {toPersianNumbers(currentDay)}
-          </h3>
-        </motion.div>
-        
-        <motion.div variants={itemVariants}>
-          <DaySelector 
-            days={days}
-            dayLabels={dayLabels}
-            currentDay={currentDay}
-            setCurrentDay={setCurrentDay}
-            editingDay={editingDay}
-            setEditingDay={setEditingDay}
-            tempDayLabel={tempDayLabel}
-            setTempDayLabel={setTempDayLabel}
-            setShowAddDayDialog={setShowAddDayDialog}
-            confirmDeleteDay={confirmDeleteDay}
-            maxDays={maxDays}
-          />
-        </motion.div>
-        
-        {/* Tab Selector for Supplement vs Vitamin */}
-        <motion.div variants={itemVariants} className="mb-4">
-          <div className="flex bg-muted/20 rounded-lg p-1 w-full sm:w-auto">
-            <button
-              onClick={() => setActiveTab('supplement')}
-              className={cn(
-                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
-                activeTab === 'supplement'
-                  ? "bg-white text-purple-700 shadow-sm" 
-                  : "text-gray-600 hover:bg-white/50"
-              )}
-            >
-              مکمل‌ها
-            </button>
-            <button
-              onClick={() => setActiveTab('vitamin')}
-              className={cn(
-                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
-                activeTab === 'vitamin'
-                  ? "bg-white text-purple-700 shadow-sm" 
-                  : "text-gray-600 hover:bg-white/50"
-              )}
-            >
-              ویتامین‌ها
-            </button>
-          </div>
-        </motion.div>
-        
-        <motion.div variants={itemVariants} className="flex-1 overflow-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${activeTab}-day-${currentDay}`}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="h-full"
-            >
-              <Card className="border border-border/40 bg-white/90 backdrop-blur-sm shadow-sm h-full">
-                <div className="p-4 h-full">
-                  <StudentSupplementSelector 
-                    supplements={supplements}
-                    selectedSupplements={selectedSupplements}
-                    setSelectedSupplements={setSelectedSupplements}
-                    selectedVitamins={selectedVitamins}
-                    setSelectedVitamins={setSelectedVitamins}
-                    activeTab={activeTab}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                    dayLabel={getDayLabel(currentDay)}
-                    dayNumber={currentDay}
-                  />
-                </div>
-              </Card>
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
-
-        <motion.div variants={itemVariants} className="mt-4 text-muted-foreground text-sm text-center">
-          <div className="flex items-center justify-center gap-2">
-            <Pill className="h-4 w-4" />
-            <span>
-              {activeTab === 'supplement' 
-                ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده برای ${getDayLabel(currentDay)}` 
-                : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده برای ${getDayLabel(currentDay)}`}
-            </span>
-          </div>
-        </motion.div>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="mb-4 h-full flex flex-col rtl"
+    >
+      <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2">
+        <h3 className="font-semibold text-lg">
+          مکمل و ویتامین روز {toPersianNumbers(currentDay)}
+        </h3>
       </motion.div>
-    </TabsContent>
+      
+      <motion.div variants={itemVariants}>
+        <DaySelector 
+          days={days}
+          dayLabels={dayLabels}
+          currentDay={currentDay}
+          setCurrentDay={setCurrentDay}
+          editingDay={editingDay}
+          setEditingDay={setEditingDay}
+          tempDayLabel={tempDayLabel}
+          setTempDayLabel={setTempDayLabel}
+          setShowAddDayDialog={setShowAddDayDialog}
+          confirmDeleteDay={confirmDeleteDay}
+          maxDays={maxDays}
+        />
+      </motion.div>
+      
+      {/* Tab Selector for Supplement vs Vitamin */}
+      <motion.div variants={itemVariants} className="mb-4">
+        <div className="flex bg-muted/20 rounded-lg p-1 w-full sm:w-auto">
+          <button
+            onClick={() => setActiveTab('supplement')}
+            className={cn(
+              "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
+              activeTab === 'supplement'
+                ? "bg-white text-purple-700 shadow-sm" 
+                : "text-gray-600 hover:bg-white/50"
+            )}
+          >
+            مکمل‌ها
+          </button>
+          <button
+            onClick={() => setActiveTab('vitamin')}
+            className={cn(
+              "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
+              activeTab === 'vitamin'
+                ? "bg-white text-purple-700 shadow-sm" 
+                : "text-gray-600 hover:bg-white/50"
+            )}
+          >
+            ویتامین‌ها
+          </button>
+        </div>
+      </motion.div>
+      
+      <motion.div variants={itemVariants} className="flex-1 overflow-auto">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${activeTab}-day-${currentDay}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="h-full"
+          >
+            <Card className="border border-gray-200/80 p-4 h-full">
+              <StudentSupplementSelector 
+                supplements={supplements}
+                selectedSupplements={selectedSupplements}
+                setSelectedSupplements={setSelectedSupplements}
+                selectedVitamins={selectedVitamins}
+                setSelectedVitamins={setSelectedVitamins}
+                activeTab={activeTab}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                dayLabel={getDayLabel(currentDay)}
+                dayNumber={currentDay}
+              />
+            </Card>
+          </motion.div>
+        </AnimatePresence>
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="mt-4 text-muted-foreground text-sm text-center">
+        <div className="flex items-center justify-center gap-2">
+          <Pill className="h-4 w-4" />
+          <span>
+            {activeTab === 'supplement' 
+              ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده برای ${getDayLabel(currentDay)}` 
+              : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده برای ${getDayLabel(currentDay)}`}
+          </span>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

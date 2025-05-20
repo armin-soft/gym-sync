@@ -9,6 +9,7 @@ import StudentProgramTabs from "./components/StudentProgramTabs";
 import StudentProgramExerciseContent from "./components/StudentProgramExerciseContent";
 import StudentProgramDietContent from "./components/StudentProgramDietContent";
 import StudentProgramSupplementContent from "./components/StudentProgramSupplementContent";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface StudentProgramManagerProps {
   student: Student;
@@ -56,12 +57,19 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
     onSaveSupplements
   });
 
+  const tabContentVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
+  };
+
   return (
     <div className="space-y-4 h-full w-full flex flex-col">
       <StudentProgramHeader 
         student={student} 
         onClose={onClose} 
         handleSaveAll={handleSaveAll} 
+        activeTab={activeTab}
       />
 
       <StudentProgramTabs
@@ -78,31 +86,66 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
             ? setCurrentDietDay 
             : setCurrentSupplementDay}
       >
-        <StudentProgramExerciseContent 
-          currentDay={currentDay}
-          setCurrentDay={setCurrentDay}
-          selectedExercises={selectedExercises}
-          setSelectedExercises={setSelectedExercises}
-          exercises={exercises}
-        />
-        
-        <StudentProgramDietContent 
-          selectedMeals={selectedMeals}
-          setSelectedMeals={setSelectedMeals}
-          meals={meals}
-          currentDietDay={currentDietDay}
-          setCurrentDietDay={setCurrentDietDay}
-        />
-        
-        <StudentProgramSupplementContent 
-          selectedSupplements={selectedSupplements}
-          setSelectedSupplements={setSelectedSupplements}
-          selectedVitamins={selectedVitamins}
-          setSelectedVitamins={setSelectedVitamins}
-          supplements={supplements}
-          currentDay={currentSupplementDay}
-          setCurrentDay={setCurrentSupplementDay}
-        />
+        <AnimatePresence mode="wait">
+          {activeTab === "exercise" && (
+            <motion.div
+              key="exercise-tab"
+              variants={tabContentVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="h-full"
+            >
+              <StudentProgramExerciseContent 
+                currentDay={currentDay}
+                setCurrentDay={setCurrentDay}
+                selectedExercises={selectedExercises}
+                setSelectedExercises={setSelectedExercises}
+                exercises={exercises}
+              />
+            </motion.div>
+          )}
+          
+          {activeTab === "diet" && (
+            <motion.div
+              key="diet-tab"
+              variants={tabContentVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="h-full"
+            >
+              <StudentProgramDietContent 
+                selectedMeals={selectedMeals}
+                setSelectedMeals={setSelectedMeals}
+                meals={meals}
+                currentDietDay={currentDietDay}
+                setCurrentDietDay={setCurrentDietDay}
+              />
+            </motion.div>
+          )}
+          
+          {activeTab === "supplement" && (
+            <motion.div
+              key="supplement-tab"
+              variants={tabContentVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="h-full"
+            >
+              <StudentProgramSupplementContent 
+                selectedSupplements={selectedSupplements}
+                setSelectedSupplements={setSelectedSupplements}
+                selectedVitamins={selectedVitamins}
+                setSelectedVitamins={setSelectedVitamins}
+                supplements={supplements}
+                currentDay={currentSupplementDay}
+                setCurrentDay={setCurrentSupplementDay}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </StudentProgramTabs>
     </div>
   );
