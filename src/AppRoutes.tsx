@@ -1,35 +1,19 @@
 
-import React, { lazy, Suspense } from "react";
+import React, { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
-import { Spinner } from "@/components/ui/spinner";
 
-// کامپوننت برای نمایش در حین بارگذاری
-const PageLoading = () => (
-  <div className="w-full h-full flex items-center justify-center">
-    <Spinner size="lg" />
-  </div>
-);
-
-// تنظیم تایمر برای لود تنبل کامپوننت‌ها - حداقل 200 میلی ثانیه تأخیر در لود
-const withMinLoadTime = (importFn: () => Promise<any>, minTimeMs: number = 200) => {
-  return () => Promise.all([
-    importFn(),
-    new Promise(resolve => setTimeout(resolve, minTimeMs))
-  ]).then(([moduleExports]) => moduleExports);
-};
-
-// لود تنبل کامپوننت‌های اصلی با تایمر حداقل
-const Dashboard = lazy(() => withMinLoadTime(() => import("./pages/Index")));
-const StudentsPage = lazy(() => withMinLoadTime(() => import("./pages/students")));
-const AddEditStudentPage = lazy(() => withMinLoadTime(() => import("./pages/students/add-edit")));
-const ExercisesPage = lazy(() => withMinLoadTime(() => import("./pages/exercises")));
-const ExerciseHierarchicalView = lazy(() => withMinLoadTime(() => import("./pages/exercises/hierarchical-view")));
-const DietPage = lazy(() => withMinLoadTime(() => import("./pages/diet")));
-const SupplementsPage = lazy(() => withMinLoadTime(() => import("./pages/supplements")));
-const TrainerPage = lazy(() => withMinLoadTime(() => import("./pages/trainer")));
-const BackupPage = lazy(() => withMinLoadTime(() => import("./pages/backup")));
-const StudentProgramPage = lazy(() => withMinLoadTime(() => import("./pages/student-program")));
+// حذف کامپوننت PageTransition و لود فوری کامپوننت‌های اصلی
+const Dashboard = lazy(() => import("./pages/Index"));
+const StudentsPage = lazy(() => import("./pages/students"));
+const AddEditStudentPage = lazy(() => import("./pages/students/add-edit"));
+const ExercisesPage = lazy(() => import("./pages/exercises"));
+const ExerciseHierarchicalView = lazy(() => import("./pages/exercises/hierarchical-view"));
+const DietPage = lazy(() => import("./pages/diet"));
+const SupplementsPage = lazy(() => import("./pages/supplements"));
+const TrainerPage = lazy(() => import("./pages/trainer"));
+const BackupPage = lazy(() => import("./pages/backup"));
+const StudentProgramPage = lazy(() => import("./pages/student-program"));
 
 const AppRoutes: React.FC = () => {
   return (
@@ -38,9 +22,7 @@ const AppRoutes: React.FC = () => {
         path="/"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <Dashboard />
-            </Suspense>
+            <Dashboard />
           </AuthenticatedContent>
         }
       />
@@ -48,9 +30,7 @@ const AppRoutes: React.FC = () => {
         path="/students"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <StudentsPage />
-            </Suspense>
+            <StudentsPage />
           </AuthenticatedContent>
         }
       />
@@ -58,9 +38,7 @@ const AppRoutes: React.FC = () => {
         path="/students/add-edit/:studentId?"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <AddEditStudentPage />
-            </Suspense>
+            <AddEditStudentPage />
           </AuthenticatedContent>
         }
       />
@@ -68,9 +46,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <ExercisesPage />
-            </Suspense>
+            <ExercisesPage />
           </AuthenticatedContent>
         }
       />
@@ -78,9 +54,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises/hierarchical"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <ExerciseHierarchicalView />
-            </Suspense>
+            <ExerciseHierarchicalView />
           </AuthenticatedContent>
         }
       />
@@ -88,9 +62,7 @@ const AppRoutes: React.FC = () => {
         path="/diet"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <DietPage />
-            </Suspense>
+            <DietPage />
           </AuthenticatedContent>
         }
       />
@@ -98,9 +70,7 @@ const AppRoutes: React.FC = () => {
         path="/supplements"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <SupplementsPage />
-            </Suspense>
+            <SupplementsPage />
           </AuthenticatedContent>
         }
       />
@@ -108,9 +78,7 @@ const AppRoutes: React.FC = () => {
         path="/trainer"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <TrainerPage />
-            </Suspense>
+            <TrainerPage />
           </AuthenticatedContent>
         }
       />
@@ -118,9 +86,7 @@ const AppRoutes: React.FC = () => {
         path="/backup"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <BackupPage />
-            </Suspense>
+            <BackupPage />
           </AuthenticatedContent>
         }
       />
@@ -128,14 +94,12 @@ const AppRoutes: React.FC = () => {
         path="/student-program/:studentId"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <StudentProgramPage />
-            </Suspense>
+            <StudentProgramPage />
           </AuthenticatedContent>
         }
       />
       
-      {/* مسیرهایی که در منوی داشبورد استفاده می‌شوند */}
+      {/* اینجا مسیرهایی را که در منوی داشبورد استفاده می‌شوند اضافه می‌کنیم */}
       <Route path="/Coach-Profile" element={<Navigate to="/trainer" replace />} />
       <Route path="/Students" element={<Navigate to="/students" replace />} />
       <Route path="/Exercise-Movements" element={<Navigate to="/exercises" replace />} />

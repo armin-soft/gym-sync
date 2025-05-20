@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, VisuallyHidden } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 interface DeleteDayDialogProps {
@@ -18,14 +18,14 @@ const DeleteDayDialog: React.FC<DeleteDayDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" aria-describedby="delete-day-description">
         <DialogHeader>
           <DialogTitle className="text-center">حذف روز</DialogTitle>
-          <DialogDescription id="delete-day-description" className="text-center">
-            آیا از حذف {dayLabel} اطمینان دارید؟
-          </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
+        <div className="py-4" id="delete-day-description">
+          <p className="text-center">
+            آیا از حذف {dayLabel} اطمینان دارید؟
+          </p>
           <p className="text-center text-red-500 text-sm mt-2">
             تمام تمرین‌های این روز حذف خواهند شد.
           </p>

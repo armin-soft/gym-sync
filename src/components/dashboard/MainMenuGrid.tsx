@@ -1,6 +1,6 @@
 
-import React, { useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { 
   User2, 
   Users, 
@@ -8,17 +8,11 @@ import {
   UtensilsCrossed, 
   Pill, 
   Database,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from "lucide-react";
-import { performanceMonitor } from "@/utils/performance-monitor";
-
-// فعال کردن مانیتورینگ عملکرد برای تشخیص مشکلات
-performanceMonitor.enable(150);
 
 export const MainMenuGrid = () => {
-  const navigate = useNavigate();
-  
-  // آیتم‌های داشبورد را خارج از رندر تعریف می‌کنیم
   const dashboardItems = [
     { 
       title: "پروفایل مربی", 
@@ -70,28 +64,19 @@ export const MainMenuGrid = () => {
     }
   ];
 
-  // استفاده از useCallback برای جلوگیری از ایجاد مجدد تابع در هر رندر
-  const handleNavigate = useCallback((href: string, event: React.MouseEvent) => {
-    event.preventDefault(); // جلوگیری از رفتار پیش‌فرض لینک
-    
-    const perfId = performanceMonitor.start(`Navigate to ${href}`);
-    
-    // تأخیر کوتاه برای نمایش انیمیشن کلیک
-    setTimeout(() => {
-      navigate(href);
-      performanceMonitor.end(`Navigate to ${href}`, perfId);
-    }, 10);
-  }, [navigate]);
+  // اضافه کردن console.log برای تشخیص مشکل مسیریابی
+  const handleNavigate = (href: string) => {
+    console.log(`مسیریابی به: ${href}`);
+  };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4">
       {dashboardItems.map((dashItem) => (
-        <div key={dashItem.href} className="flex">
-          <a 
-            href={dashItem.href}
-            onClick={(e) => handleNavigate(dashItem.href, e)}
-            className={`block group relative overflow-hidden w-full ${dashItem.bgColor} rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-3 md:p-4 shadow-md ${dashItem.shadowColor} hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
-            aria-label={`منوی ${dashItem.title}`}
+        <div key={dashItem.href}>
+          <Link 
+            to={dashItem.href}
+            onClick={() => handleNavigate(dashItem.href)}
+            className={`block group relative overflow-hidden ${dashItem.bgColor} rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-3 md:p-4 shadow-md ${dashItem.shadowColor} hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full`}
           >
             <div className="relative z-10 flex flex-col items-center text-center gap-2 md:gap-3">
               <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md ring-1 ring-white/10 group-hover:shadow-lg transition-all duration-300`}>
@@ -101,14 +86,14 @@ export const MainMenuGrid = () => {
                 {dashItem.title}
               </span>
               
-              {/* آیکن فلش ساده */}
+              {/* Simple arrow icon without animations */}
               <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="p-1 rounded-full bg-white/20 backdrop-blur-sm">
                   <ArrowRight className="w-3 h-3 text-gray-700 dark:text-white" />
                 </div>
               </div>
             </div>
-          </a>
+          </Link>
         </div>
       ))}
     </div>

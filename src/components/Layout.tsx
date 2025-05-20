@@ -1,7 +1,7 @@
 
 import { useState, useEffect, lazy, memo, useMemo, CSSProperties } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu } from "lucide-react";
+import { Menu, Bell, User } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,6 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { performanceMonitor } from "@/utils/performance-monitor";
 
 // Define the props interface explicitly to include children
 interface LayoutProps {
@@ -18,9 +17,6 @@ interface LayoutProps {
 
 // Using memo to prevent unnecessary re-renders
 export const Layout = memo(({ children }: LayoutProps) => {
-  // شروع اندازه‌گیری عملکرد
-  const perfId = performanceMonitor.start('Layout');
-  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
   const [trainerProfile, setTrainerProfile] = useState({
@@ -48,12 +44,8 @@ export const Layout = memo(({ children }: LayoutProps) => {
     }
   };
   
-  // چک می‌کنیم که آیا قبلا پروفایل لود شده یا نه
-  // لود کردن با تاخیر برای جلوگیری از کند شدن رندر اولیه
   useEffect(() => {
-    const timer = setTimeout(() => {
-      loadProfile();
-    }, 100);
+    loadProfile();
     
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'trainerProfile') {
@@ -64,28 +56,25 @@ export const Layout = memo(({ children }: LayoutProps) => {
     window.addEventListener('storage', handleStorageChange);
     
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
-  // بهینه‌سازی scroll listener
+  // Separate scroll listener effect to avoid unnecessary re-renders
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
-      if ((offset > 10 && !scrolled) || (offset <= 10 && scrolled)) {
-        setScrolled(offset > 10);
-      }
+      setScrolled(offset > 10);
     };
     
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [scrolled]);
+  }, []);
 
-  // محاسبه مقادیر طراحی واکنش‌گرا با useMemo
+  // Calculate responsive design values ONCE with useMemo
   const {
     headerHeight,
     headerPadding,
@@ -104,21 +93,16 @@ export const Layout = memo(({ children }: LayoutProps) => {
     };
   }, [deviceInfo.isMobile, deviceInfo.isTablet]);
 
-  // استایل محتوا برای جلوگیری از پرش‌های طرح‌بندی
+  // Fixed content style to prevent layout jumps - using proper typings
   const contentStyle: CSSProperties = useMemo(() => {
     return deviceInfo.isMobile ? { 
       fontSize: '90%', 
       overflowX: 'hidden' as const,
-      height: 'calc(100% - 40px)' // 40px ارتفاع هدر برای موبایل
+      height: 'calc(100% - 40px)' // 40px is the header height for mobile
     } : {
       height: deviceInfo.isTablet ? 'calc(100% - 48px)' : 'calc(100% - 56px)'
     };
   }, [deviceInfo.isMobile, deviceInfo.isTablet]);
-
-  // پایان اندازه‌گیری عملکرد
-  useEffect(() => {
-    performanceMonitor.end('Layout', perfId);
-  }, [perfId]);
 
   return (
     <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
@@ -156,6 +140,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
       </header>
       
       <main className="flex-1 overflow-hidden w-full max-w-full" style={contentStyle}>
+        {/* حذف Suspense و PageLoading - نمایش مستقیم محتوا */}
         {children}
       </main>
     </div>

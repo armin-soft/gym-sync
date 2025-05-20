@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -9,41 +9,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getBasePath } from "./utils/basePath";
-import { performanceMonitor } from "./utils/performance-monitor";
 import "./App.css";
 
-// ایجاد یک نمونه جدید از کلاینت کوئری با تنظیمات مناسب
+// Create a new query client instance with proper configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 دقیقه
+      staleTime: 5 * 60 * 1000, // 5 minutes
       retry: 1,
-      refetchOnWindowFocus: false, // غیرفعال کردن بازیابی خودکار در فوکوس پنجره
-      refetchOnMount: false, // غیرفعال کردن بازیابی خودکار در نصب کامپوننت
-      refetchOnReconnect: true, // بازیابی در زمان اتصال مجدد
-      cacheTime: 10 * 60 * 1000, // 10 دقیقه
     },
   },
 });
 
-function AppContent() {
-  // شروع مانیتورینگ عملکرد
-  useEffect(() => {
-    // در محیط توسعه، مانیتورینگ را فعال می‌کنیم
-    if (process.env.NODE_ENV === 'development') {
-      performanceMonitor.enable(200);
-    }
-    
-    // در محیط تولید، فقط رویدادهای بسیار کند را ثبت می‌کنیم
-    if (process.env.NODE_ENV === 'production') {
-      performanceMonitor.enable(500);
-    }
-    
-    return () => {
-      performanceMonitor.disable();
-    };
-  }, []);
+// The global declaration is now handled in vite-env.d.ts
+// so we remove the redundant declaration here
 
+function AppContent() {
   return (
     <AuthWrapper>
       <Layout>
@@ -54,7 +35,7 @@ function AppContent() {
 }
 
 function App() {
-  // همیشه از مسیر ریشه به عنوان مسیر پایه استفاده می‌کنیم - این برای همه محیط‌ها امن‌تر است
+  // Always use root path as base - this is safer for all environments
   const basePath = '/';
   
   console.log("Using basename for router:", basePath);
