@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   MoreVertical, 
-  CalendarDays 
+  CalendarDays,
+  FileText
 } from "lucide-react";
 import { Student } from "../StudentTypes";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +28,7 @@ interface StudentCardMenuProps {
 
 export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   student,
-  onDelete,
+  onDownload,
   isProfileComplete
 }) => {
   const navigate = useNavigate();
@@ -69,6 +70,19 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
           iconClassName="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover/item:bg-indigo-200 dark:group-hover/item:bg-indigo-800/50"
           hoverClassName="group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400"
         />
+        
+        {/* گزینه صدور برنامه */}
+        {onDownload && (
+          <MenuItemWithIcon 
+            icon={<FileText className="h-4 w-4" />}
+            onClick={onDownload}
+            disabled={!isProfileComplete}
+            title="صدور برنامه"
+            subtitle="دانلود و چاپ برنامه‌ها"
+            iconClassName="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover/item:bg-blue-200 dark:group-hover/item:bg-blue-800/50"
+            hoverClassName="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400"
+          />
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

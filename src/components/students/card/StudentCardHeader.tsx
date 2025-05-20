@@ -12,16 +12,13 @@ interface StudentCardHeaderProps {
   onAddExercise: () => void;
   onAddDiet: () => void;
   onAddSupplement: () => void;
+  onDownload?: () => void;
   isProfileComplete: boolean;
 }
 
 export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
   student,
-  onEdit,
-  onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
+  onDownload,
   isProfileComplete
 }) => {
   return (
@@ -38,11 +35,7 @@ export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
       
       <StudentCardMenu 
         student={student}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onAddExercise={onAddExercise}
-        onAddDiet={onAddDiet}
-        onAddSupplement={onAddSupplement}
+        onDownload={onDownload}
         isProfileComplete={isProfileComplete}
       />
     </div>

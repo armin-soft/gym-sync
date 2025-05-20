@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MoreHorizontal } from "lucide-react";
+import { CalendarDays, FileText, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,7 +26,7 @@ interface StudentActionsProps {
 
 export const StudentActions = ({
   student,
-  onDelete,
+  onDownload,
   isCard = false,
 }: StudentActionsProps) => {
   const navigate = useNavigate();
@@ -57,11 +57,19 @@ export const StudentActions = ({
           
           <DropdownMenuSeparator />
           
-          {/* تخصیص برنامه - تنها گزینه منو */}
+          {/* تخصیص برنامه */}
           <DropdownMenuItem onClick={handleProgramClick} className="gap-2">
             <CalendarDays className="h-4 w-4 text-purple-500" />
             تخصیص برنامه
           </DropdownMenuItem>
+          
+          {/* صدور برنامه */}
+          {onDownload && (
+            <DropdownMenuItem onClick={() => onDownload(student)} className="gap-2">
+              <FileText className="h-4 w-4 text-blue-500" />
+              صدور برنامه
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
