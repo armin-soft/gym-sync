@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import TabHeader from "./day-tabs/TabHeader";
@@ -18,10 +17,12 @@ interface ExerciseDayTabsProps {
   selectedExercisesDay2: number[];
   selectedExercisesDay3: number[];
   selectedExercisesDay4: number[];
+  selectedExercisesDay5: number[];
   toggleExerciseDay1: (id: number) => void;
   toggleExerciseDay2: (id: number) => void;
   toggleExerciseDay3: (id: number) => void;
   toggleExerciseDay4: (id: number) => void;
+  toggleExerciseDay5: (id: number) => void;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
   filteredExercises: Exercise[];
@@ -35,18 +36,22 @@ interface ExerciseDayTabsProps {
   exerciseSetsDay2?: Record<number, number>;
   exerciseSetsDay3?: Record<number, number>;
   exerciseSetsDay4?: Record<number, number>;
+  exerciseSetsDay5?: Record<number, number>;
   handleSetsChangeDay1?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay2?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay3?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay4?: (exerciseId: number, sets: number) => void;
+  handleSetsChangeDay5?: (exerciseId: number, sets: number) => void;
   exerciseRepsDay1?: Record<number, string>;  
   exerciseRepsDay2?: Record<number, string>;
   exerciseRepsDay3?: Record<number, string>;
   exerciseRepsDay4?: Record<number, string>;
+  exerciseRepsDay5?: Record<number, string>;
   handleRepsChangeDay1?: (exerciseId: number, reps: string) => void;  
   handleRepsChangeDay2?: (exerciseId: number, reps: string) => void;
   handleRepsChangeDay3?: (exerciseId: number, reps: string) => void;
   handleRepsChangeDay4?: (exerciseId: number, reps: string) => void;
+  handleRepsChangeDay5?: (exerciseId: number, reps: string) => void;
 }
 
 const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
@@ -56,10 +61,12 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
   selectedExercisesDay2,
   selectedExercisesDay3,
   selectedExercisesDay4,
+  selectedExercisesDay5,
   toggleExerciseDay1,
   toggleExerciseDay2,
   toggleExerciseDay3,
   toggleExerciseDay4,
+  toggleExerciseDay5,
   viewMode,
   setViewMode,
   filteredExercises,
@@ -72,22 +79,26 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
   exerciseSetsDay2 = {},
   exerciseSetsDay3 = {},
   exerciseSetsDay4 = {},
+  exerciseSetsDay5 = {},
   handleSetsChangeDay1,
   handleSetsChangeDay2,
   handleSetsChangeDay3,
   handleSetsChangeDay4,
+  handleSetsChangeDay5,
   exerciseRepsDay1 = {},
   exerciseRepsDay2 = {},
   exerciseRepsDay3 = {},
   exerciseRepsDay4 = {},
+  exerciseRepsDay5 = {},
   handleRepsChangeDay1,
   handleRepsChangeDay2,
   handleRepsChangeDay3,
   handleRepsChangeDay4,
+  handleRepsChangeDay5,
   handleSaveExercises
 }) => {
-  // Available day tabs
-  const dayTabs = ["day1", "day2", "day3", "day4"];
+  // Available day tabs - updated to 5 fixed days
+  const dayTabs = ["day1", "day2", "day3", "day4", "day5"];
   
   // State for the fullscreen dialog
   const [showFullDialog, setShowFullDialog] = useState(false);
@@ -99,6 +110,7 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
       case "day2": return selectedExercisesDay2.length;
       case "day3": return selectedExercisesDay3.length;
       case "day4": return selectedExercisesDay4.length;
+      case "day5": return selectedExercisesDay5.length;
       default: return 0;
     }
   };
@@ -110,6 +122,7 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
       case "day2": return "روز دوم";
       case "day3": return "روز سوم";
       case "day4": return "روز چهارم";
+      case "day5": return "روز پنجم";
       default: return "";
     }
   };
@@ -128,6 +141,7 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
           selectedExercisesDay2={selectedExercisesDay2}
           selectedExercisesDay3={selectedExercisesDay3}
           selectedExercisesDay4={selectedExercisesDay4}
+          selectedExercisesDay5={selectedExercisesDay5}
           viewMode={viewMode}
           setViewMode={setViewMode}
           toggleSortOrder={toggleSortOrder}
@@ -173,26 +187,32 @@ const ExerciseDayTabs: React.FC<ExerciseDayTabsProps> = ({
                     selectedExercisesDay2={selectedExercisesDay2}
                     selectedExercisesDay3={selectedExercisesDay3}
                     selectedExercisesDay4={selectedExercisesDay4}
+                    selectedExercisesDay5={selectedExercisesDay5}
                     toggleExerciseDay1={toggleExerciseDay1}
                     toggleExerciseDay2={toggleExerciseDay2}
                     toggleExerciseDay3={toggleExerciseDay3}
                     toggleExerciseDay4={toggleExerciseDay4}
+                    toggleExerciseDay5={toggleExerciseDay5}
                     exerciseSetsDay1={exerciseSetsDay1}
                     exerciseSetsDay2={exerciseSetsDay2}
                     exerciseSetsDay3={exerciseSetsDay3}
                     exerciseSetsDay4={exerciseSetsDay4}
+                    exerciseSetsDay5={exerciseSetsDay5}
                     handleSetsChangeDay1={handleSetsChangeDay1}
                     handleSetsChangeDay2={handleSetsChangeDay2}
                     handleSetsChangeDay3={handleSetsChangeDay3}
                     handleSetsChangeDay4={handleSetsChangeDay4}
+                    handleSetsChangeDay5={handleSetsChangeDay5}
                     exerciseRepsDay1={exerciseRepsDay1}
                     exerciseRepsDay2={exerciseRepsDay2}
                     exerciseRepsDay3={exerciseRepsDay3}
                     exerciseRepsDay4={exerciseRepsDay4}
+                    exerciseRepsDay5={exerciseRepsDay5}
                     handleRepsChangeDay1={handleRepsChangeDay1}
                     handleRepsChangeDay2={handleRepsChangeDay2}
                     handleRepsChangeDay3={handleRepsChangeDay3}
                     handleRepsChangeDay4={handleRepsChangeDay4}
+                    handleRepsChangeDay5={handleRepsChangeDay5}
                   />
                 </Tabs>
               </div>

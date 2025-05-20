@@ -4,13 +4,10 @@ import { TabsContent } from "@/components/ui/tabs";
 import StudentExerciseSelector from "../StudentExerciseSelector";
 import { ExerciseWithSets } from "@/types/exercise";
 import DaySelector from "./exercise/DaySelector";
-import AddDayDialog from "./exercise/AddDayDialog";
-import DeleteDayDialog from "./exercise/DeleteDayDialog";
 import useDayManagement from "./exercise/useDayManagement";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dumbbell } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface StudentProgramExerciseContentProps {
   currentDay: number;
@@ -27,7 +24,7 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
   setSelectedExercises,
   exercises,
 }) => {
-  // Use our custom hook for day management
+  // Use our custom hook for day management with fixed 5 days
   const {
     days,
     dayLabels,
@@ -35,20 +32,20 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
     setEditingDay,
     tempDayLabel,
     setTempDayLabel,
-    showAddDayDialog,
     setShowAddDayDialog,
-    showDeleteDayDialog,
     setShowDeleteDayDialog,
-    dayToDelete,
-    newDayLabel,
-    setNewDayLabel,
+    confirmDeleteDay,
     maxDays,
     getDayLabel,
-    handleAddDay,
-    confirmDeleteDay,
-    handleDeleteDay,
   } = useDayManagement({
-    initialDays: [1, 2, 3, 4],
+    initialDays: [1, 2, 3, 4, 5],
+    initialDayLabels: {
+      1: "روز اول",
+      2: "روز دوم",
+      3: "روز سوم",
+      4: "روز چهارم",
+      5: "روز پنجم",
+    },
     onDayChange: setCurrentDay
   });
 
@@ -86,8 +83,6 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
             <h3 className="font-semibold text-lg mb-2 sm:mb-0">
               برنامه تمرینی روز {toPersianNumbers(currentDay)}
             </h3>
-            
-            {/* Removed the Add Day button as requested */}
           </div>
         </motion.div>
         
@@ -142,23 +137,6 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
           </AnimatePresence>
         </motion.div>
       </motion.div>
-      
-      {/* Add Day Dialog */}
-      <AddDayDialog
-        open={showAddDayDialog}
-        onOpenChange={setShowAddDayDialog}
-        newDayLabel={newDayLabel}
-        setNewDayLabel={setNewDayLabel}
-        handleAddDay={handleAddDay}
-      />
-      
-      {/* Delete Day Dialog */}
-      <DeleteDayDialog
-        open={showDeleteDayDialog}
-        onOpenChange={setShowDeleteDayDialog}
-        dayLabel={dayToDelete ? getDayLabel(dayToDelete) : ''}
-        onDelete={handleDeleteDay}
-      />
     </TabsContent>
   );
 };

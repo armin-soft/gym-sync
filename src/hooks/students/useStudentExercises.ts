@@ -37,6 +37,7 @@ export const useStudentExercises = (
           updatedStudent.exerciseRepsDay2 = updatedStudent.exerciseRepsDay2 || {};
           updatedStudent.exerciseRepsDay3 = updatedStudent.exerciseRepsDay3 || {};
           updatedStudent.exerciseRepsDay4 = updatedStudent.exerciseRepsDay4 || {};
+          updatedStudent.exerciseRepsDay5 = updatedStudent.exerciseRepsDay5 || {};  // Add day 5
           
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
@@ -61,8 +62,13 @@ export const useStudentExercises = (
                 updatedStudent.exerciseSetsDay4 = exerciseSets;
                 updatedStudent.exerciseRepsDay4 = exerciseReps;
                 break;
+              case 5:  // Add day 5
+                updatedStudent.exercisesDay5 = exerciseIds;
+                updatedStudent.exerciseSetsDay5 = exerciseSets;
+                updatedStudent.exerciseRepsDay5 = exerciseReps;
+                break;
               default:
-                // در صورت ارسال عدد نامعتبر، روز اول را بروزرسانی کنیم
+                // For invalid day number, update day 1
                 updatedStudent.exercisesDay1 = exerciseIds;
                 updatedStudent.exerciseSetsDay1 = exerciseSets; 
                 updatedStudent.exerciseRepsDay1 = exerciseReps;
@@ -79,7 +85,8 @@ export const useStudentExercises = (
           let progressCount = 0;
           if (updatedStudent.exercises?.length) progressCount++;
           if (updatedStudent.exercisesDay1?.length || updatedStudent.exercisesDay2?.length || 
-              updatedStudent.exercisesDay3?.length || updatedStudent.exercisesDay4?.length) {
+              updatedStudent.exercisesDay3?.length || updatedStudent.exercisesDay4?.length ||
+              updatedStudent.exercisesDay5?.length) {  // Include day 5 in progress calculation
             progressCount++;
           }
           if (updatedStudent.meals?.length) progressCount++;

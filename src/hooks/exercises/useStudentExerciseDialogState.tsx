@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ExerciseWithSets } from "@/hooks/exercise-selection";
 import { useExerciseDialogData } from "./useExerciseDialogData";
@@ -16,6 +15,7 @@ interface UseStudentExerciseDialogStateProps {
   initialExercisesDay2?: number[];
   initialExercisesDay3?: number[];
   initialExercisesDay4?: number[];
+  initialExercisesDay5?: number[];
 }
 
 /**
@@ -30,7 +30,8 @@ export const useStudentExerciseDialogState = ({
   initialExercisesDay1 = [],
   initialExercisesDay2 = [],
   initialExercisesDay3 = [],
-  initialExercisesDay4 = []
+  initialExercisesDay4 = [],
+  initialExercisesDay5 = []
 }: UseStudentExerciseDialogStateProps) => {
   // برای نمایش پیام‌های اعلان
   const { toast } = useToast();
@@ -42,42 +43,50 @@ export const useStudentExerciseDialogState = ({
   // Fetch exercises data
   const { exercises, categories, exerciseTypes, isLoading } = useExerciseDialogData();
   
-  // Exercise selection state from hook
+  // Exercise selection state - add day 5
   const {
     selectedExercisesDay1,
     selectedExercisesDay2,
     selectedExercisesDay3,
     selectedExercisesDay4,
+    selectedExercisesDay5,
     toggleExerciseDay1,
     toggleExerciseDay2,
     toggleExerciseDay3,
     toggleExerciseDay4,
+    toggleExerciseDay5,
     exerciseSetsDay1,
     exerciseSetsDay2,
     exerciseSetsDay3,
     exerciseSetsDay4,
+    exerciseSetsDay5,
     handleSetsChangeDay1,
     handleSetsChangeDay2,
     handleSetsChangeDay3,
     handleSetsChangeDay4,
+    handleSetsChangeDay5,
     exerciseRepsDay1,
     exerciseRepsDay2,
     exerciseRepsDay3,
     exerciseRepsDay4,
+    exerciseRepsDay5,
     handleRepsChangeDay1,
     handleRepsChangeDay2,
     handleRepsChangeDay3,
     handleRepsChangeDay4,
+    handleRepsChangeDay5,
     getSelectedExercisesWithSetsDay1,
     getSelectedExercisesWithSetsDay2,
     getSelectedExercisesWithSetsDay3,
-    getSelectedExercisesWithSetsDay4
+    getSelectedExercisesWithSetsDay4,
+    getSelectedExercisesWithSetsDay5
   } = useExerciseSelection({
     initialExercises,
     initialExercisesDay1,
     initialExercisesDay2,
     initialExercisesDay3,
-    initialExercisesDay4
+    initialExercisesDay4,
+    initialExercisesDay5
   });
 
   // Dialog state management
@@ -105,6 +114,7 @@ export const useStudentExerciseDialogState = ({
     initialExercisesDay2,
     initialExercisesDay3,
     initialExercisesDay4,
+    initialExercisesDay5,
     categories,
     exercises
   });
@@ -128,6 +138,9 @@ export const useStudentExerciseDialogState = ({
         case "day4":
           exercisesWithSets = getSelectedExercisesWithSetsDay4();
           break;
+        case "day5":
+          exercisesWithSets = getSelectedExercisesWithSetsDay5();
+          break;
       }
       
       if (exercisesWithSets.length > 0) {
@@ -142,36 +155,40 @@ export const useStudentExerciseDialogState = ({
     setPreviousTab(activeTab);
   }, [activeTab]);
 
+  // Update getActiveTabSelectedExercises to support day 5
   const getActiveTabSelectedExercises = () => {
     switch(activeTab) {
       case "day1": return selectedExercisesDay1;
       case "day2": return selectedExercisesDay2;
       case "day3": return selectedExercisesDay3;
       case "day4": return selectedExercisesDay4;
+      case "day5": return selectedExercisesDay5;
       default: return [];
     }
   };
 
+  // Update getActiveTabSelectedExercisesWithSets to support day 5
   const getActiveTabSelectedExercisesWithSets = () => {
     switch(activeTab) {
       case "day1": return getSelectedExercisesWithSetsDay1();
       case "day2": return getSelectedExercisesWithSetsDay2();
       case "day3": return getSelectedExercisesWithSetsDay3();
       case "day4": return getSelectedExercisesWithSetsDay4();
+      case "day5": return getSelectedExercisesWithSetsDay5();
       default: return [];
     }
   };
 
-  // ذخیره و ادامه به روز بعدی
+  // Update handleSaveAndContinue to support 5 days
   const handleSaveAndContinue = () => {
     const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
     const currentDayNumber = parseInt(activeTab.replace("day", ""));
     
     const success = handleSaveDay(selectedExercisesWithSets, onSave, currentDayNumber);
     if (success) {
-      // حرکت به روز بعدی
-      if (currentDayNumber < 4) {
-        // غیرفعال کردن ذخیره خودکار برای این تغییر تب
+      // Move to the next day - updated for 5 days
+      if (currentDayNumber < 5) {
+        // Disable auto-save for this tab change
         setShouldAutoSave(false);
         setActiveTab(`day${currentDayNumber + 1}`);
         setShouldAutoSave(true);
@@ -181,7 +198,7 @@ export const useStudentExerciseDialogState = ({
           description: `تمرین‌های روز ${currentDayNumber} ذخیره شد. اکنون روز ${currentDayNumber + 1} را تنظیم کنید.`
         });
       } else {
-        // اگر روز آخر بودیم، دیالوگ را ببندیم
+        // If we're on the last day, close the dialog
         toast({
           title: "تکمیل برنامه",
           description: "تمام روزهای تمرینی با موفقیت ذخیره شدند."
@@ -203,8 +220,8 @@ export const useStudentExerciseDialogState = ({
         description: `تمرین‌های روز ${dayNumber} با موفقیت ذخیره شدند.`
       });
       
-      // اگر این آخرین روز بود، دیالوگ را ببندیم
-      if (dayNumber === 4) {
+      // If we're on the last day, close the dialog
+      if (dayNumber === 5) {
         onOpenChange(false);
       }
     }
@@ -268,6 +285,14 @@ export const useStudentExerciseDialogState = ({
     handleSetsChangeDay4,
     exerciseRepsDay4,
     handleRepsChangeDay4,
+    
+    // Day 5 state
+    selectedExercisesDay5,
+    toggleExerciseDay5,
+    exerciseSetsDay5,
+    handleSetsChangeDay5,
+    exerciseRepsDay5,
+    handleRepsChangeDay5,
     
     // Helper functions
     getActiveTabSelectedExercises,

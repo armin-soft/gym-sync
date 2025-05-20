@@ -20,15 +20,16 @@ export const useExerciseTabState = (
   const effectiveCurrentDay = propCurrentDay !== undefined ? propCurrentDay : currentDay;
   const effectiveSetCurrentDay = propSetCurrentDay || setCurrentDay;
   
-  // Exercise cache for day switching
+  // Exercise cache for day switching - updated for 5 days
   const exerciseCacheRef = useRef<Record<number, ExerciseWithSets[]>>({
     1: [],
     2: [],
     3: [],
-    4: []
+    4: [],
+    5: []
   });
   
-  // Initializing cache once on load
+  // Initializing cache once on load - updated for 5 days
   useEffect(() => {
     const cachedExercises = { ...exerciseCacheRef.current };
     
@@ -65,6 +66,15 @@ export const useExerciseTabState = (
         sets: student.exerciseSetsDay4?.[id] || 3,
         reps: student.exerciseRepsDay4?.[id] || "12",
         day: 4
+      }));
+    }
+    
+    if (student.exercisesDay5) {
+      cachedExercises[5] = student.exercisesDay5.map(id => ({
+        id,
+        sets: student.exerciseSetsDay5?.[id] || 3,
+        reps: student.exerciseRepsDay5?.[id] || "12",
+        day: 5
       }));
     }
     

@@ -2,7 +2,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Edit2, Trash } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface DayTabListProps {
@@ -16,6 +15,7 @@ interface DayTabListProps {
   handleEditDayLabel: (day: number) => void;
   handleSaveDayLabel: () => void;
   confirmDeleteDay: (day: number) => void;
+  readOnly?: boolean;
 }
 
 const DayTabList: React.FC<DayTabListProps> = ({
@@ -29,6 +29,7 @@ const DayTabList: React.FC<DayTabListProps> = ({
   handleEditDayLabel,
   handleSaveDayLabel,
   confirmDeleteDay,
+  readOnly = false
 }) => {
   const getDayLabel = (day: number) => {
     return dayLabels[day] || `روز ${toPersianNumbers(day)}`;
@@ -38,7 +39,7 @@ const DayTabList: React.FC<DayTabListProps> = ({
     <div className="flex items-center border rounded-md overflow-x-auto pb-1">
       {days.map(day => (
         <div key={day} className="relative">
-          {editingDay === day ? (
+          {editingDay === day && !readOnly ? (
             <div className="flex items-center px-2">
               <input
                 value={tempDayLabel}
@@ -68,28 +69,7 @@ const DayTabList: React.FC<DayTabListProps> = ({
                 onClick={() => setCurrentDay(day)}
               >
                 {getDayLabel(day)}
-                <Edit2
-                  className="h-3 w-3 ml-2 opacity-50 hover:opacity-100"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEditDayLabel(day);
-                  }}
-                />
               </Button>
-              
-              {days.length > 1 && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    confirmDeleteDay(day);
-                  }}
-                  className="h-8 w-8 ml-1 text-red-500 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash className="h-3.5 w-3.5" />
-                </Button>
-              )}
             </div>
           )}
         </div>
