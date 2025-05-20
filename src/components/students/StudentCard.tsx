@@ -40,7 +40,7 @@ export const StudentCard: React.FC<StudentCardProps> = ({
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
       layout
       className="h-full"
-      aria-label={`کارت دانش‌آموز ${student.firstName} ${student.lastName}`}
+      aria-label={`کارت دانش‌آموز ${student.name}`}
     >
       <StudentContextMenu
         student={student}
