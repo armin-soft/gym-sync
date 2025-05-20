@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ExerciseWithSets } from "@/hooks/exercise-selection";
 import { useExerciseDialogData } from "./useExerciseDialogData";

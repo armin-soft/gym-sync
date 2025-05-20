@@ -24,7 +24,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   const [currentDay, setCurrentDay] = useState<number>(1);
   const [isSaving, setIsSaving] = useState(false);
   
-  // کش کردن تمرینات هر روز برای بهبود عملکرد
+  // คัชเดิเระิฑาทร่อย่างเพื่อเพิ่มประสิทธิภาพการใช้งาน
   const exerciseCacheRef = React.useRef<Record<number, ExerciseWithSets[]>>({
     1: [],
     2: [],
@@ -32,7 +32,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
     4: []
   });
   
-  // فقط یکبار در لود اولیه تمرینات را در کش بگذاریم
+  // Initializing cache once on load
   useEffect(() => {
     const cachedExercises = { ...exerciseCacheRef.current };
     
@@ -74,31 +74,32 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
     
     exerciseCacheRef.current = cachedExercises;
     
-    // تنظیم تمرینات روز اول در مرحله اول
+    // Set first day exercises initially
     setSelectedExercises(cachedExercises[1]);
   }, [student]);
 
-  // اثر جانبی برای مدیریت تغییر روز - ذخیره و بارگذاری از کش
+  // Side effect for managing day changes - save to and load from cache
   useEffect(() => {
-    // تغییر روز - ذخیره تمرینات روز قبلی در کش
+    // Save current day exercises to cache before changing
     const currentExercises = [...selectedExercises];
     exerciseCacheRef.current = {
       ...exerciseCacheRef.current,
       [currentDay]: currentExercises
     };
     
-    // لود تمرینات از کش برای روز جدید
+    // Load exercises from cache for the new day
     setSelectedExercises(exerciseCacheRef.current[currentDay] || []);
   }, [currentDay]);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // ذخیره در کش قبل از ارسال به سرور
-      exerciseCacheRef.current = {
+      // Save to cache before sending to server
+      const updatedCache = {
         ...exerciseCacheRef.current,
         [currentDay]: [...selectedExercises]
       };
+      exerciseCacheRef.current = updatedCache;
       
       onSaveExercises(selectedExercises, currentDay);
     } finally {
@@ -106,7 +107,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
     }
   };
   
-  // دکمه‌های تنظیم روز با انیمیشن برای تجربه کاربری بهتر
+  // Day buttons with animation for better UX
   const DayButton = ({ day }: { day: number }) => (
     <motion.button
       whileTap={{ scale: 0.95 }}
@@ -170,11 +171,15 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
           selectedExercises={selectedExercises}
           setSelectedExercises={(newExercises) => {
             setSelectedExercises(newExercises);
-            // آپدیت کش تا در صورت جابجایی بین روزها، تغییرات گم نشوند
-            exerciseCacheRef.current = {
-              ...exerciseCacheRef.current,
-              [currentDay]: newExercises
-            };
+            // Update cache to preserve changes when switching between days
+            // Fix the type issue by creating a new actual array instead of a setState action
+            const updatedCache = { ...exerciseCacheRef.current };
+            updatedCache[currentDay] = Array.isArray(newExercises) ? 
+              [...newExercises] : 
+              typeof newExercises === 'function' ? 
+                [...selectedExercises] : // If it's a function, use current state (this should never happen though)
+                [];
+            exerciseCacheRef.current = updatedCache;
           }}
           dayNumber={currentDay}
         />

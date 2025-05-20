@@ -51,6 +51,7 @@ export function showUpdateNotification(): void {
             })
           );
         }).then(() => {
+          // Use window.location instead of just location
           window.location.reload();
         });
       } else {
