@@ -2,21 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-
-// Define the animation variants
-export const menuItemVariants = {
-  hidden: { opacity: 0, x: -10 },
-  visible: (i: number) => ({
-    opacity: 1,
-    x: 0,
-    transition: {
-      delay: i * 0.05,
-      duration: 0.2,
-      ease: "easeOut"
-    }
-  }),
-  exit: { opacity: 0, x: -10, transition: { duration: 0.1 } }
-};
+import { menuItemVariants } from "../context-menu/menuAnimations";
 
 export interface MenuItemWithIconProps {
   icon: React.ReactNode;
@@ -69,3 +55,5 @@ export const MenuItemWithIcon: React.FC<MenuItemWithIconProps> = ({
     </motion.div>
   );
 };
+
+export default MenuItemWithIcon;

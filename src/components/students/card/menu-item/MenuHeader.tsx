@@ -15,8 +15,10 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({ student }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">عملیات شاگرد</h3>
-      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">مدیریت اطلاعات {student.name}</p>
+      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">{student.name}</h3>
+      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">منوی مدیریت شاگرد</p>
     </motion.div>
   );
 };
+
+export default MenuHeader;
