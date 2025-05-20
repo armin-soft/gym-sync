@@ -151,7 +151,7 @@ export function useStudentProgramManager({
       success = onSaveDiet(selectedMeals, currentDietDay);
     }
     
-    // Supplement state
+    // Save supplements for current day
     if (activeTab === "supplement") {
       success = onSaveSupplements({
         supplements: selectedSupplements,

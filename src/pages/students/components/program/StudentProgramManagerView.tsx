@@ -13,7 +13,7 @@ interface StudentProgramManagerViewProps {
   supplements: any[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[], studentId: number, dayNumber?: number) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
   onClose: () => void;
 }
 

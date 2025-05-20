@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
@@ -11,7 +12,7 @@ import { Pill } from "lucide-react";
 interface ProgramSupplementTabProps {
   student: Student;
   supplements: Supplement[];
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}) => boolean;
   currentDay?: number;
   setCurrentDay?: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -19,27 +20,49 @@ interface ProgramSupplementTabProps {
 const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
   student,
   supplements,
-  onSaveSupplements
+  onSaveSupplements,
+  currentDay = 1,
+  setCurrentDay
 }) => {
   const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
   const [selectedVitamins, setSelectedVitamins] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  // Load initial data
+  // Load initial data based on the current day
   useEffect(() => {
-    if (student.supplements) {
+    if (!student) return;
+    
+    const supplementDayKey = `supplementsDay${currentDay}`;
+    const vitaminDayKey = `vitaminsDay${currentDay}`;
+
+    // Load supplements for current day
+    if (student[supplementDayKey]) {
+      setSelectedSupplements(student[supplementDayKey]);
+    } else if (student.supplements) {
       setSelectedSupplements(student.supplements);
     } else {
       setSelectedSupplements([]);
     }
     
-    if (student.vitamins) {
+    // Load vitamins for current day
+    if (student[vitaminDayKey]) {
+      setSelectedVitamins(student[vitaminDayKey]);
+    } else if (student.vitamins) {
       setSelectedVitamins(student.vitamins);
     } else {
       setSelectedVitamins([]);
     }
-  }, [student]);
+  }, [student, currentDay]);
+
+  // Handle saving with the current day
+  const handleSave = () => {
+    return onSaveSupplements({
+      supplements: selectedSupplements,
+      vitamins: selectedVitamins,
+      day: currentDay
+    });
+  };
 
   // Animation variants
   const containerVariants = {
@@ -61,6 +84,8 @@ const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
     }
   };
 
+  const dayLabel = currentDay ? `روز ${toPersianNumbers(currentDay)}` : undefined;
+
   return (
     <div className="flex flex-col h-full space-y-4">
       <motion.div
@@ -71,7 +96,9 @@ const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
       >
         <motion.div variants={itemVariants} className="mb-4">
           <div className="flex items-center justify-center gap-2">
-            <h3 className="text-lg font-semibold text-center">مکمل و ویتامین</h3>
+            <h3 className="text-lg font-semibold text-center">
+              مکمل و ویتامین {dayLabel}
+            </h3>
             <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
               {toPersianNumbers(selectedSupplements.length + selectedVitamins.length)} مورد
             </Badge>
@@ -116,6 +143,8 @@ const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
                 activeTab={activeTab}
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
+                dayLabel={dayLabel}
+                dayNumber={currentDay}
               />
             </div>
           </Card>
@@ -133,6 +162,13 @@ const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
               <span>{toPersianNumbers(selectedVitamins.length)} ویتامین</span>
             </span>
           </div>
+          
+          <button
+            onClick={handleSave}
+            className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md transition-colors shadow-sm"
+          >
+            ذخیره برنامه روز {toPersianNumbers(currentDay)}
+          </button>
         </motion.div>
       </motion.div>
     </div>
