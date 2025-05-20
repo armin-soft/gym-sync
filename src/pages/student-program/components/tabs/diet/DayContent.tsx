@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import StudentDietSelector from "@/components/students/program/StudentDietSelector";
@@ -20,6 +20,22 @@ const DayContent: React.FC<DayContentProps> = ({
   setSelectedMeals,
   meals
 }) => {
+  // Get the current day name
+  const currentDayName = weekDays.find(d => d.id === currentDay)?.name;
+  
+  // Filter meals for the current day type
+  useEffect(() => {
+    const daySpecificMeals = meals.filter(meal => {
+      return meal.day === currentDayName;
+    });
+    
+    // If there are day specific meals and no selection yet, auto-select them
+    if (daySpecificMeals.length > 0 && selectedMeals.length === 0) {
+      const dayMealIds = daySpecificMeals.map(meal => meal.id);
+      setSelectedMeals(dayMealIds);
+    }
+  }, [currentDay, currentDayName, meals, selectedMeals.length, setSelectedMeals]);
+
   return (
     <motion.div
       key={`day-${currentDay}`}

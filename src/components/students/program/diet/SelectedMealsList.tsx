@@ -3,7 +3,7 @@ import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Minus, Utensils } from "lucide-react";
+import { Minus } from "lucide-react";
 import { Meal } from "@/types/meal";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -59,12 +59,6 @@ const SelectedMealsList: React.FC<SelectedMealsListProps> = ({
                     <Minus className="h-4 w-4" />
                   </Button>
                 </div>
-                
-                {mealInfo.description && (
-                  <div className="mt-2 text-sm text-slate-600">
-                    {mealInfo.description}
-                  </div>
-                )}
                 
                 {(mealInfo.calories || mealInfo.protein || mealInfo.carbs || mealInfo.fat) && (
                   <div className="flex gap-2 mt-2 text-xs text-slate-500">

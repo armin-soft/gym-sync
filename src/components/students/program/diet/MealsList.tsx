@@ -62,10 +62,16 @@ const MealsList: React.FC<MealsListProps> = ({
   };
 
   sortedMeals.forEach(meal => {
-    if (meal.type) {
-      mealsByType[meal.type].push(meal);
+    // Create a clean version of the meal with description removed
+    const cleanMeal = {
+      ...meal,
+      description: "" // Remove all descriptions/comments
+    };
+    
+    if (cleanMeal.type) {
+      mealsByType[cleanMeal.type].push(cleanMeal);
     } else {
-      mealsByType["میان وعده"].push(meal);
+      mealsByType["میان وعده"].push(cleanMeal);
     }
   });
 
