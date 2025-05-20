@@ -5,10 +5,8 @@ import StudentSupplementSelector from "../StudentSupplementSelector";
 import { Button } from "@/components/ui/button";
 import { Save, Pill } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 interface StudentProgramSupplementContentProps {
@@ -20,23 +18,12 @@ interface StudentProgramSupplementContentProps {
   currentDay?: number;
 }
 
-const weekDays = [
-  { id: 1, name: "شنبه" },
-  { id: 2, name: "یکشنبه" },
-  { id: 3, name: "دوشنبه" },
-  { id: 4, name: "سه شنبه" },
-  { id: 5, name: "چهارشنبه" },
-  { id: 6, name: "پنج شنبه" },
-  { id: 7, name: "جمعه" },
-];
-
 const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentProps> = ({
   selectedSupplements,
   setSelectedSupplements,
   selectedVitamins,
   setSelectedVitamins,
   supplements,
-  currentDay = 1
 }) => {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -51,7 +38,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
       setIsSaving(false);
       toast({
         title: "ذخیره موفق",
-        description: `برنامه مکمل و ویتامین روز ${toPersianNumbers(currentDay)} با موفقیت ذخیره شد`
+        description: "برنامه مکمل و ویتامین با موفقیت ذخیره شد"
       });
     }, 600);
   };
@@ -86,7 +73,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
       >
         <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2">
           <h3 className="font-semibold text-lg">
-            مکمل و ویتامین (روز {toPersianNumbers(currentDay)})
+            مکمل و ویتامین
           </h3>
           
           <Button 
@@ -99,32 +86,11 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
             ) : (
               <Save className="h-4 w-4" />
             )}
-            <span>ذخیره برنامه روز {toPersianNumbers(currentDay)}</span>
+            <span>ذخیره برنامه</span>
           </Button>
         </motion.div>
         
-        {/* Day selector */}
-        <motion.div variants={itemVariants} className="mb-4">
-          <ScrollArea className="w-full" orientation="horizontal">
-            <div className="flex items-center justify-start space-x-1 space-x-reverse pb-2">
-              {weekDays.map((day) => (
-                <motion.button
-                  key={day.id}
-                  whileTap={{ scale: 0.95 }}
-                  // onClick={() => setCurrentDietDay(day.id)}
-                  className={cn(
-                    "h-10 px-4 py-2 rounded-lg transition-all",
-                    currentDay === day.id 
-                      ? "bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-md" 
-                      : "bg-white/80 text-gray-700 border border-gray-200/80 hover:bg-gray-50"
-                  )}
-                >
-                  {day.name}
-                </motion.button>
-              ))}
-            </div>
-          </ScrollArea>
-        </motion.div>
+        {/* Removed day selector as requested */}
         
         {/* Tab Selector for Supplement vs Vitamin */}
         <motion.div variants={itemVariants} className="mb-4">
@@ -187,8 +153,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
             <Pill className="h-4 w-4" />
             <span>
               {activeTab === 'supplement' 
-                ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده` 
-                : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده`}
+                ? `${selectedSupplements.length} مکمل انتخاب شده` 
+                : `${selectedVitamins.length} ویتامین انتخاب شده`}
             </span>
           </div>
         </motion.div>

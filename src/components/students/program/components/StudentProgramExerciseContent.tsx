@@ -87,17 +87,7 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
               برنامه تمرینی روز {toPersianNumbers(currentDay)}
             </h3>
             
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
-                onClick={() => setShowAddDayDialog(true)}
-                disabled={days.length >= maxDays}
-              >
-                افزودن روز
-              </Button>
-            </div>
+            {/* Removed the Add Day button as requested */}
           </div>
         </motion.div>
         
