@@ -11,10 +11,10 @@ async function getAppVersion(): Promise<string> {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
-    return manifest.version || '1.0.0';
+    return manifest.version || '3.2.7';
   } catch (error) {
     console.error('خطا در دریافت نسخه برنامه:', error);
-    return '1.0.0';
+    return '3.2.7';
   }
 }
 
