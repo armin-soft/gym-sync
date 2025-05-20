@@ -90,8 +90,6 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
           </Button>
         </motion.div>
         
-        {/* Removed day selector as requested */}
-        
         {/* Tab Selector for Supplement vs Vitamin */}
         <motion.div variants={itemVariants} className="mb-4">
           <div className="flex bg-muted/20 rounded-lg p-1 w-full sm:w-auto">

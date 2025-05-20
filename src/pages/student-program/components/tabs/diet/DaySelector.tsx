@@ -30,21 +30,6 @@ const DaySelector: React.FC<DaySelectorProps> = ({
           "flex items-center space-x-1 space-x-reverse",
           centered ? "justify-center" : "justify-start"
         )}>
-          {/* Add "All Days" option */}
-          <motion.button
-            key="all-days"
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setCurrentDay(0)}
-            className={cn(
-              "h-10 px-5 py-2 rounded-md border text-sm transition-all",
-              currentDay === 0 
-                ? "bg-green-500 text-white border-green-500" 
-                : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-            )}
-          >
-            همه روزها
-          </motion.button>
-          
           {weekDays.map((day) => (
             <motion.button
               key={day.id}
