@@ -22,7 +22,7 @@ const STATIC_ASSETS = [
 fetch('./Manifest.json')
   .then(response => response.json())
   .then(manifest => {
-    const version = manifest.version || '3.0.0';
+    const version = manifest.version || '3.2.7';
     CACHE_NAME = `gym-sync-v${version.replace(/\./g, '')}`;
     console.log(`[Service Worker] Using version ${version} (Cache: ${CACHE_NAME})`);
   })
