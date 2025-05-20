@@ -1,8 +1,8 @@
+
 import React, { useState } from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import StudentSupplementSelector from "../supplement-selector";
-import { Button } from "@/components/ui/button";
-import { Save, Pill } from "lucide-react";
+import { Pill } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -26,23 +26,9 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   supplements,
 }) => {
   const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  const handleSave = () => {
-    setIsSaving(true);
-    
-    // به تاخیر انداختن ذخیره‌سازی برای نمایش وضعیت بارگذاری
-    setTimeout(() => {
-      setIsSaving(false);
-      toast({
-        title: "ذخیره موفق",
-        description: "برنامه مکمل و ویتامین با موفقیت ذخیره شد"
-      });
-    }, 600);
-  };
-
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -75,19 +61,6 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
           <h3 className="font-semibold text-lg">
             مکمل و ویتامین
           </h3>
-          
-          <Button 
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex items-center gap-1 bg-gradient-to-br from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700"
-          >
-            {isSaving ? (
-              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            <span>ذخیره برنامه</span>
-          </Button>
         </motion.div>
         
         {/* Tab Selector for Supplement vs Vitamin */}

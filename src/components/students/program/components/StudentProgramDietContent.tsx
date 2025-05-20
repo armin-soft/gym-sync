@@ -41,7 +41,7 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
   selectedMeals,
   setSelectedMeals,
   meals,
-  currentDietDay = 0, // Changed to 0 to represent "All Days" by default
+  currentDietDay = 1, // Changed default to 1 (Saturday) instead of 0
   setCurrentDietDay = () => {}
 }) => {
   const [currentMealType, setCurrentMealType] = useState<number>(0); // 0 means all meal types
@@ -106,7 +106,7 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
       >
         <motion.div variants={itemVariants}>
           <h3 className="font-semibold text-lg mb-4 text-center">
-            برنامه غذایی {currentDietDay ? `روز ${toPersianNumbers(currentDietDay)}` : 'همه روزها'}
+            برنامه غذایی روز {toPersianNumbers(currentDietDay)}
           </h3>
         </motion.div>
         
@@ -114,21 +114,6 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
         <motion.div variants={itemVariants} className="mb-4">
           <div className="flex items-center justify-center pb-2">
             <div className="flex flex-wrap items-center justify-center gap-2">
-              {/* Add "All Days" option */}
-              <motion.button
-                key="all-days"
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setCurrentDietDay(0)}
-                className={cn(
-                  "h-10 px-4 py-2 rounded-lg transition-all",
-                  currentDietDay === 0 
-                    ? "bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-md" 
-                    : "bg-white/80 text-gray-700 border border-gray-200/80 hover:bg-gray-50"
-                )}
-              >
-                همه روزها
-              </motion.button>
-              
               {weekDays.map((day) => (
                 <motion.button
                   key={day.id}
