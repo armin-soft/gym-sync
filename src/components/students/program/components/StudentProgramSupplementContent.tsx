@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import StudentSupplementSelector from "../StudentSupplementSelector";
+import StudentSupplementSelector from "../../supplement-selector";
 import { Button } from "@/components/ui/button";
 import { Save, Pill } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";

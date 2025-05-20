@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
 import { Supplement } from "@/types/supplement";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import StudentSupplementSelector from "@/components/students/program/StudentSupplementSelector";
+import StudentSupplementSelector from "@/components/students/program/supplement-selector";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Pill } from "lucide-react";
