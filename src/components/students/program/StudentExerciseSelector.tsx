@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from "react";
 import { ExerciseWithSets } from "@/types/exercise";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, Minus, List, Grid3X3, X, ChevronDown } from "lucide-react";
+import { Plus, Minus, Dumbbell, List, Grid3X3, X, ChevronDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -173,6 +174,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         <Card className="shadow-sm">
           <CardContent className="p-4">
             <h4 className="font-medium mb-3 flex items-center gap-2 justify-center">
+              <Dumbbell className="h-4 w-4 text-indigo-500" />
               <span>تمرین‌های انتخاب شده برای {getDayLabel()}</span>
               <span className="inline-flex items-center justify-center bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full h-5 min-w-[20px] px-1.5">
                 {toPersianNumbers(selectedExercises.length)}
