@@ -8,6 +8,7 @@ import { StudentCardStats } from "./card/StudentCardStats";
 import { StudentProgressBar } from "./card/StudentProgressBar";
 import { StudentStatBadges } from "./card/StudentStatBadges";
 import { StudentCardFooter } from "./card/StudentCardFooter";
+import { StudentContextMenu } from "./card/StudentContextMenu";
 import { cn } from "@/lib/utils";
 
 interface StudentCardProps {
@@ -40,57 +41,68 @@ export const StudentCard: React.FC<StudentCardProps> = ({
       layout
       className="h-full"
     >
-      <Card className={cn(
-        "h-full relative overflow-hidden shadow-lg backdrop-blur-md",
-        "bg-gradient-to-br from-white/90 to-white/70 dark:from-slate-900/90 dark:to-slate-800/70",
-        "border border-slate-200/80 dark:border-slate-700/80",
-        "hover:shadow-xl hover:shadow-indigo-200/10 dark:hover:shadow-indigo-900/20",
-        "transition-all duration-300 ease-in-out group",
-        className
-      )}>
-        {/* Animated gradient background on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/5 via-purple-400/5 to-pink-400/5 
-                      opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
-        
-        {/* Top right decorative shape */}
-        <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 
-                      blur-xl dark:from-blue-500/20 dark:to-indigo-500/20"></div>
-        
-        {/* Bottom left decorative shape */}
-        <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 
-                      blur-xl dark:from-purple-500/20 dark:to-pink-500/20"></div>
-        
-        <CardHeader className="p-4 pb-0">
-          <StudentCardHeader
-            student={student}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onAddExercise={onAddExercise}
-            onAddDiet={onAddDiet}
-            onAddSupplement={onAddSupplement}
-            isProfileComplete={isProfileComplete}
-          />
-        </CardHeader>
-        
-        <CardContent className="p-4 pt-2">
-          <StudentCardStats 
-            height={student.height} 
-            weight={student.weight} 
-          />
+      <StudentContextMenu
+        student={student}
+        onEdit={() => onEdit()}
+        onDelete={onDelete}
+        onAddExercise={onAddExercise}
+        onAddDiet={onAddDiet}
+        onAddSupplement={onAddSupplement}
+        onDownload={() => {}}
+        isProfileComplete={isProfileComplete}
+      >
+        <Card className={cn(
+          "h-full relative overflow-hidden shadow-lg backdrop-blur-md",
+          "bg-gradient-to-br from-white/90 to-white/70 dark:from-slate-900/90 dark:to-slate-800/70",
+          "border border-slate-200/80 dark:border-slate-700/80",
+          "hover:shadow-xl hover:shadow-indigo-200/10 dark:hover:shadow-indigo-900/20",
+          "transition-all duration-300 ease-in-out group",
+          className
+        )}>
+          {/* Animated gradient background on hover */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/5 via-purple-400/5 to-pink-400/5 
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
           
-          <StudentProgressBar progress={student.progress || 0} />
+          {/* Top right decorative shape */}
+          <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 
+                        blur-xl dark:from-blue-500/20 dark:to-indigo-500/20"></div>
           
-          <StudentStatBadges 
-            exercises={student.exercises} 
-            meals={student.meals} 
-            supplements={student.supplements} 
-          />
-        </CardContent>
-        
-        <CardFooter className="p-3 pt-0 flex justify-between">
-          <StudentCardFooter onEdit={onEdit} />
-        </CardFooter>
-      </Card>
+          {/* Bottom left decorative shape */}
+          <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 
+                        blur-xl dark:from-purple-500/20 dark:to-pink-500/20"></div>
+          
+          <CardHeader className="p-4 pb-0">
+            <StudentCardHeader
+              student={student}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onAddExercise={onAddExercise}
+              onAddDiet={onAddDiet}
+              onAddSupplement={onAddSupplement}
+              isProfileComplete={isProfileComplete}
+            />
+          </CardHeader>
+          
+          <CardContent className="p-4 pt-2">
+            <StudentCardStats 
+              height={student.height} 
+              weight={student.weight} 
+            />
+            
+            <StudentProgressBar progress={student.progress || 0} />
+            
+            <StudentStatBadges 
+              exercises={student.exercises} 
+              meals={student.meals} 
+              supplements={student.supplements} 
+            />
+          </CardContent>
+          
+          <CardFooter className="p-3 pt-0 flex justify-between">
+            <StudentCardFooter onEdit={onEdit} />
+          </CardFooter>
+        </Card>
+      </StudentContextMenu>
     </motion.div>
   );
 };
