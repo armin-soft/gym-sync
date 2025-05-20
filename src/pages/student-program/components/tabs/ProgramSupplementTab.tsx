@@ -25,7 +25,7 @@ const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
   const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
   const [selectedVitamins, setSelectedVitamins] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
-  const [selectedTypes, setSelectedTypes] = useState<{[key: string]: boolean}>({});
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   // Load initial data
   useEffect(() => {
@@ -115,8 +115,8 @@ const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
                 selectedVitamins={selectedVitamins}
                 setSelectedVitamins={setSelectedVitamins}
                 activeTab={activeTab}
-                selectedTypes={selectedTypes}
-                setSelectedTypes={setSelectedTypes}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
               />
             </div>
           </Card>
