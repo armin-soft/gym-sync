@@ -44,6 +44,17 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
     }
   };
 
+  // If no day is selected, show a message
+  if (!currentDay) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center p-8">
+        <Utensils className="h-16 w-16 text-gray-300 mb-4" />
+        <p className="text-gray-500 text-lg">لطفا یک روز از هفته را انتخاب کنید</p>
+        <p className="text-gray-400 text-sm mt-2">برای مشاهده و انتخاب وعده‌های غذایی، ابتدا روز مورد نظر را انتخاب کنید</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4" dir="rtl">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
