@@ -7,6 +7,7 @@ import StudentDietSelector from "../StudentDietSelector";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Utensils } from "lucide-react";
+import { MealType } from "@/types/meal";
 
 interface StudentProgramDietContentProps {
   selectedMeals: number[];
@@ -26,6 +27,15 @@ const weekDays = [
   { id: 7, name: "جمعه" },
 ];
 
+const mealTypes = [
+  { id: 1, name: "صبحانه" },
+  { id: 2, name: "میان وعده صبح" },
+  { id: 3, name: "ناهار" },
+  { id: 4, name: "میان وعده عصر" },
+  { id: 5, name: "شام" },
+  { id: 6, name: "میان وعده شب" },
+];
+
 const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
   selectedMeals,
   setSelectedMeals,
@@ -33,6 +43,16 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
   currentDietDay = 1,
   setCurrentDietDay = () => {}
 }) => {
+  const [currentMealType, setCurrentMealType] = useState<number>(0); // 0 means all meal types
+
+  // Filter meals by selected type if a specific type is selected
+  const filteredMeals = currentMealType === 0 
+    ? meals 
+    : meals.filter(meal => {
+        const typeName = mealTypes.find(t => t.id === currentMealType)?.name;
+        return meal.type === typeName;
+      });
+
   return (
     <TabsContent value="diet" className="m-0 h-full" dir="rtl">
       <div className="mb-4 h-full flex flex-col">
@@ -40,7 +60,8 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
           برنامه غذایی {currentDietDay ? `روز ${toPersianNumbers(currentDietDay)}` : ''}
         </h3>
         
-        <div className="flex items-center justify-center mb-6">
+        {/* Day selector */}
+        <div className="flex items-center justify-center mb-4">
           <ScrollArea className="w-full max-w-3xl" orientation="horizontal">
             <div className="flex items-center justify-center space-x-1 space-x-reverse">
               {weekDays.map((day) => (
@@ -62,6 +83,41 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
           </ScrollArea>
         </div>
         
+        {/* Meal type selector - new component */}
+        <div className="flex items-center justify-center mb-6">
+          <ScrollArea className="w-full max-w-3xl" orientation="horizontal">
+            <div className="flex items-center justify-center space-x-1 space-x-reverse">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentMealType(0)}
+                className={cn(
+                  "h-10 px-4 py-2 rounded-md border text-sm transition-all",
+                  currentMealType === 0
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                )}
+              >
+                همه وعده‌ها
+              </motion.button>
+              {mealTypes.map((type) => (
+                <motion.button
+                  key={type.id}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentMealType(type.id)}
+                  className={cn(
+                    "h-10 px-4 py-2 rounded-md border text-sm transition-all",
+                    currentMealType === type.id 
+                      ? "bg-blue-500 text-white border-blue-500" 
+                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                  )}
+                >
+                  {type.name}
+                </motion.button>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+        
         <div className="flex-1 overflow-auto">
           {currentDietDay ? (
             <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -70,15 +126,16 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
                   <Utensils className="h-6 w-6 text-green-600" />
                 </div>
                 <h4 className="text-lg font-medium mr-2 text-gray-800">
-                  وعده‌های غذایی روز {weekDays.find(d => d.id === currentDietDay)?.name}
+                  وعده‌های غذایی {currentMealType > 0 ? mealTypes.find(t => t.id === currentMealType)?.name : ""} روز {weekDays.find(d => d.id === currentDietDay)?.name}
                 </h4>
               </div>
               
               <StudentDietSelector 
-                meals={meals}
+                meals={filteredMeals}
                 selectedMeals={selectedMeals}
                 setSelectedMeals={setSelectedMeals}
                 currentDay={currentDietDay}
+                currentMealType={currentMealType > 0 ? mealTypes.find(t => t.id === currentMealType)?.name as MealType : undefined}
               />
             </div>
           ) : (

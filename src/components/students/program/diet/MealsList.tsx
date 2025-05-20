@@ -1,17 +1,20 @@
 
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Check, Plus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Meal, MealType } from "@/types/meal";
-import MealTypeGroup from "./MealTypeGroup";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { MealType } from "@/types/meal";
 
 interface MealsListProps {
-  meals: Meal[];
+  meals: any[];
   selectedMeals: number[];
   toggleMeal: (mealId: number) => void;
   currentDayName?: string;
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  currentMealType?: MealType;
 }
 
 const MealsList: React.FC<MealsListProps> = ({
@@ -20,89 +23,88 @@ const MealsList: React.FC<MealsListProps> = ({
   toggleMeal,
   currentDayName,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  currentMealType
 }) => {
   // Filter meals by search query
-  const filteredMeals = meals.filter(meal => {
-    const matchesSearch = searchQuery.trim() === "" || 
-      meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (meal.category && meal.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (meal.type && meal.type.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    return matchesSearch;
-  });
+  const filteredMeals = meals.filter(meal => 
+    meal.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   
-  // Sort meals to prioritize meals tagged for the current day
-  const sortedMeals = [...filteredMeals].sort((a, b) => {
-    // If meal is tagged for current day, prioritize it
-    if (a.day === currentDayName && b.day !== currentDayName) return -1;
-    if (a.day !== currentDayName && b.day === currentDayName) return 1;
-    
-    // If both or neither are tagged for current day, sort by meal type
-    const mealTypeOrder = {
-      "صبحانه": 1,
-      "میان وعده صبح": 2,
-      "ناهار": 3, 
-      "میان وعده عصر": 4,
-      "شام": 5,
-      "میان وعده": 6
-    };
-    
-    return (mealTypeOrder[a.type] || 99) - (mealTypeOrder[b.type] || 99);
-  });
-
-  // Group meals by type for better organization
-  const mealsByType: Record<MealType, Meal[]> = {
-    "صبحانه": [],
-    "میان وعده صبح": [],
-    "ناهار": [],
-    "میان وعده عصر": [],
-    "شام": [],
-    "میان وعده": []
-  };
-
-  sortedMeals.forEach(meal => {
-    // Create a clean version of the meal with description removed
-    const cleanMeal = {
-      ...meal,
-      description: "" // Remove all descriptions/comments
-    };
-    
-    if (cleanMeal.type) {
-      mealsByType[cleanMeal.type].push(cleanMeal);
-    } else {
-      mealsByType["میان وعده"].push(cleanMeal);
-    }
-  });
+  // Further filter by current meal type if specified
+  const displayMeals = currentMealType 
+    ? filteredMeals.filter(meal => meal.type === currentMealType) 
+    : filteredMeals;
 
   return (
-    <>
-      <Input
-        placeholder="جستجوی غذا..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="mb-3"
-      />
+    <div className="space-y-3">
+      <div className="relative">
+        <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+        <Input
+          placeholder="جستجو در غذاها..."
+          className="pr-10"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+        />
+      </div>
       
-      <ScrollArea className="h-[300px] pr-4">
-        {Object.entries(mealsByType).map(([type, typeMeals]) => (
-          <MealTypeGroup
-            key={type}
-            typeName={type}
-            meals={typeMeals}
-            selectedMeals={selectedMeals}
-            toggleMeal={toggleMeal}
-            currentDayName={currentDayName}
-          />
-        ))}
-        
-        {Object.values(mealsByType).every(meals => meals.length === 0) && (
-          <div className="text-center py-8">
-            <p className="text-gray-500">هیچ غذایی با این جستجو یافت نشد</p>
+      {displayMeals.length > 0 ? (
+        <ScrollArea className="h-64 pr-3">
+          <div className="space-y-2">
+            {displayMeals.map(meal => {
+              const isSelected = selectedMeals.includes(meal.id);
+              const isForCurrentDay = currentDayName && meal.day === currentDayName;
+              
+              return (
+                <div 
+                  key={meal.id}
+                  className={cn(
+                    "flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors",
+                    isSelected ? "bg-primary/5 border-primary/30" : "border-gray-200",
+                    isForCurrentDay && !isSelected ? "bg-green-50 border-green-200" : ""
+                  )}
+                  onClick={() => toggleMeal(meal.id)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className={cn(
+                        "w-6 h-6 rounded-full flex items-center justify-center border-2",
+                        isSelected ? "bg-primary border-primary" : "border-gray-300"
+                      )}
+                    >
+                      {isSelected && <Check className="h-3.5 w-3.5 text-white" />}
+                    </div>
+                    
+                    <div>
+                      <div className="font-medium">{meal.name}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {meal.type}
+                        {meal.day && ` - ${meal.day}`}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={cn(
+                      "h-8 w-8 p-0 rounded-full",
+                      isSelected && "text-primary"
+                    )}
+                  >
+                    {isSelected ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                  </Button>
+                </div>
+              );
+            })}
           </div>
-        )}
-      </ScrollArea>
-    </>
+        </ScrollArea>
+      ) : (
+        <div className="text-center p-8 bg-gray-50 rounded-lg">
+          <p className="text-gray-400">هیچ غذایی یافت نشد</p>
+        </div>
+      )}
+    </div>
   );
 };
 

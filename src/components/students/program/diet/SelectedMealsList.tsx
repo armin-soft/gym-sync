@@ -1,78 +1,75 @@
 
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Minus } from "lucide-react";
-import { Meal } from "@/types/meal";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { cn } from "@/lib/utils";
+import { MealType } from "@/types/meal";
 
 interface SelectedMealsListProps {
-  meals: Meal[];
+  meals: any[];
   selectedMeals: number[];
   toggleMeal: (mealId: number) => void;
   currentDayName?: string;
+  currentMealType?: MealType;
 }
 
 const SelectedMealsList: React.FC<SelectedMealsListProps> = ({
   meals,
   selectedMeals,
   toggleMeal,
-  currentDayName
+  currentDayName,
+  currentMealType
 }) => {
+  // Get selected meals details
+  const selectedMealDetails = meals.filter(meal => selectedMeals.includes(meal.id));
+  
+  // Filter by current meal type if specified
+  const filteredMeals = currentMealType
+    ? selectedMealDetails.filter(meal => meal.type === currentMealType)
+    : selectedMealDetails;
+
+  if (selectedMeals.length === 0) {
+    return (
+      <div className="text-center p-8 bg-gray-50 rounded-lg">
+        <p className="text-gray-400">هیچ غذایی انتخاب نشده است</p>
+      </div>
+    );
+  }
+
   return (
-    <ScrollArea className="h-[300px] pr-4">
-      {selectedMeals.length === 0 ? (
-        <div className="text-center p-6 text-muted-foreground">
-          هنوز غذایی برای روز {currentDayName} انتخاب نشده است.
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {selectedMeals.map(mealId => {
-            const mealInfo = meals.find(m => m.id === mealId);
-            if (!mealInfo) return null;
-            
-            return (
-              <div key={mealId} className="border rounded-md p-3">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="font-medium">{mealInfo.name}</div>
-                    <div className="flex gap-2 mt-1">
-                      {mealInfo.type && (
-                        <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                          {mealInfo.type}
-                        </Badge>
-                      )}
-                      {mealInfo.day && (
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                          {mealInfo.day}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                    onClick={() => toggleMeal(mealId)}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                {(mealInfo.calories || mealInfo.protein || mealInfo.carbs || mealInfo.fat) && (
-                  <div className="flex gap-2 mt-2 text-xs text-slate-500">
-                    {mealInfo.calories && <span>{toPersianNumbers(mealInfo.calories)} کالری</span>}
-                    {mealInfo.protein && <span>{toPersianNumbers(mealInfo.protein)} پروتئین</span>}
-                    {mealInfo.carbs && <span>{toPersianNumbers(mealInfo.carbs)} کربوهیدرات</span>}
-                    {mealInfo.fat && <span>{toPersianNumbers(mealInfo.fat)} چربی</span>}
-                  </div>
-                )}
+    <ScrollArea className="h-64 pr-3">
+      <div className="space-y-2">
+        {filteredMeals.map(meal => (
+          <div 
+            key={meal.id}
+            className={cn(
+              "flex items-center justify-between p-3 rounded-lg border",
+              currentDayName && meal.day === currentDayName 
+                ? "bg-green-50 border-green-200" 
+                : "bg-white"
+            )}
+          >
+            <div>
+              <div className="font-medium">{meal.name}</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {meal.type}
+                {meal.day && ` - ${meal.day}`}
               </div>
-            );
-          })}
-        </div>
-      )}
+            </div>
+            
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0 rounded-full" 
+              onClick={() => toggleMeal(meal.id)}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">حذف</span>
+            </Button>
+          </div>
+        ))}
+      </div>
     </ScrollArea>
   );
 };
