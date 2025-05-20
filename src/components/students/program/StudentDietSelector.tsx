@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Minus, Utensils } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Meal, MealType, WeekDay } from "@/types/meal";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentDietSelectorProps {
   meals: Meal[];
@@ -59,13 +60,13 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir="rtl">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="shadow-sm">
           <CardContent className="p-4">
             <h4 className="font-medium mb-3 flex items-center gap-2">
               <Utensils className="h-4 w-4 text-green-500" />
-              غذاهای انتخاب شده ({selectedMeals.length})
+              غذاهای انتخاب شده ({toPersianNumbers(selectedMeals.length)})
             </h4>
             
             <ScrollArea className="h-[300px] pr-4">
@@ -115,10 +116,10 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
                         
                         {(mealInfo.calories || mealInfo.protein || mealInfo.carbs || mealInfo.fat) && (
                           <div className="flex gap-2 mt-2 text-xs text-slate-500">
-                            {mealInfo.calories && <span>{mealInfo.calories} کالری</span>}
-                            {mealInfo.protein && <span>{mealInfo.protein} پروتئین</span>}
-                            {mealInfo.carbs && <span>{mealInfo.carbs} کربوهیدرات</span>}
-                            {mealInfo.fat && <span>{mealInfo.fat} چربی</span>}
+                            {mealInfo.calories && <span>{toPersianNumbers(mealInfo.calories)} کالری</span>}
+                            {mealInfo.protein && <span>{toPersianNumbers(mealInfo.protein)} پروتئین</span>}
+                            {mealInfo.carbs && <span>{toPersianNumbers(mealInfo.carbs)} کربوهیدرات</span>}
+                            {mealInfo.fat && <span>{toPersianNumbers(mealInfo.fat)} چربی</span>}
                           </div>
                         )}
                       </div>

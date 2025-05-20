@@ -152,7 +152,7 @@ const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
       whileTap={{ scale: 0.95 }}
       onClick={() => setCurrentDay(day)}
       className={cn(
-        "h-10 px-6 rounded-none border-0",
+        "h-10 px-6 rounded-md border-0",
         currentDay === day 
           ? "bg-green-500 text-white" 
           : "bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -163,7 +163,7 @@ const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
   );
 
   return (
-    <div className="flex flex-col h-full space-y-4 rtl">
+    <div className="flex flex-col h-full space-y-4 rtl" dir="rtl">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           برنامه غذایی روز {getWeekdayName(currentDay)}
@@ -211,6 +211,7 @@ const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
           meals={meals}
           selectedMeals={selectedMeals}
           setSelectedMeals={setSelectedMeals}
+          currentDay={currentDay}
         />
       </motion.div>
       
