@@ -16,6 +16,7 @@ interface StudentCardProps {
   onAddExercise: () => void;
   onAddDiet: () => void;
   onAddSupplement: () => void;
+  onDownload?: () => void;
   isProfileComplete: boolean;
 }
 
@@ -26,6 +27,7 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
+  onDownload,
   isProfileComplete
 }) => {
   // Add some debugging to see what's happening with the meal data
@@ -43,11 +45,7 @@ export const StudentCard: React.FC<StudentCardProps> = ({
         <CardHeader className="p-4 pb-0">
           <StudentCardHeader
             student={student}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onAddExercise={onAddExercise}
-            onAddDiet={onAddDiet}
-            onAddSupplement={onAddSupplement}
+            onDownload={onDownload}
             isProfileComplete={isProfileComplete}
           />
         </CardHeader>

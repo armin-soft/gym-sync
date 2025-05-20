@@ -17,11 +17,6 @@ import { useNavigate } from "react-router-dom";
 
 interface StudentCardMenuProps {
   student: Student;
-  onEdit?: () => void;
-  onDelete: () => void;
-  onAddExercise: () => void;
-  onAddDiet: () => void;
-  onAddSupplement: () => void;
   onDownload?: () => void;
   isProfileComplete: boolean;
 }

@@ -7,11 +7,6 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentCardHeaderProps {
   student: Student;
-  onEdit?: () => void;
-  onDelete: () => void;
-  onAddExercise: () => void;
-  onAddDiet: () => void;
-  onAddSupplement: () => void;
   onDownload?: () => void;
   isProfileComplete: boolean;
 }
