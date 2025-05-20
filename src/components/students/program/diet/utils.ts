@@ -1,7 +1,6 @@
 
-import { WeekDay } from "@/types/meal";
-
-export const weekDayMap: Record<number, WeekDay> = {
+// Map day numbers to their Persian names
+export const weekDayMap: Record<number, string> = {
   1: "شنبه",
   2: "یکشنبه",
   3: "دوشنبه",
@@ -9,4 +8,9 @@ export const weekDayMap: Record<number, WeekDay> = {
   5: "چهارشنبه",
   6: "پنج شنبه",
   7: "جمعه"
+};
+
+// Get the day name for a given day number
+export const getDayName = (dayNumber: number): string => {
+  return weekDayMap[dayNumber] || "";
 };
