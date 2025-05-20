@@ -2,11 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { 
-  MoreHorizontal, 
-  Trash2, 
-  CalendarDays
-} from "lucide-react";
+import { CalendarDays, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,16 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 
 interface StudentActionsProps {
@@ -40,25 +26,10 @@ interface StudentActionsProps {
 
 export const StudentActions = ({
   student,
-  onEdit,
   onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
-  onDownload,
   isCard = false,
 }: StudentActionsProps) => {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
-
-  const handleDeleteClick = () => {
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    onDelete(student.id);
-    setIsDeleteDialogOpen(false);
-  };
 
   // تخصیص برنامه
   const handleProgramClick = () => {
@@ -93,26 +64,6 @@ export const StudentActions = ({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800/80">
-          <AlertDialogHeader>
-            <AlertDialogTitle>آیا از حذف این شاگرد مطمئن هستید؟</AlertDialogTitle>
-            <AlertDialogDescription>
-              این عمل قابل بازگشت نیست. تمامی اطلاعات این شاگرد پاک خواهد شد.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>انصراف</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-500 hover:bg-red-600 text-white"
-            >
-              حذف
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 };

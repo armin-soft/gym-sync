@@ -1,6 +1,5 @@
 
 import React from "react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,12 +27,7 @@ interface StudentCardMenuProps {
 
 export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   student,
-  onEdit,
   onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
-  onDownload,
   isProfileComplete
 }) => {
   const navigate = useNavigate();
