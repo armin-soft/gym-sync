@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Supplement } from "@/types/supplement";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { CategorySelector } from "@/components/nutrition/supplements/CategorySelector";
 
 interface StudentSupplementSelectorProps {
   supplements: Supplement[];
@@ -46,6 +47,15 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
     
     return Array.from(categorySet).sort();
   }, [supplements, activeTab]);
+  
+  // Create category objects for our selector
+  const categoryObjects = React.useMemo(() => {
+    return categories.map((name, index) => ({
+      id: index + 1,
+      name,
+      type: activeTab
+    }));
+  }, [categories, activeTab]);
 
   // Get currently selected items based on activeTab
   const selectedItems = activeTab === 'supplement' ? selectedSupplements : selectedVitamins;
@@ -81,49 +91,24 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
     return selectedItems.includes(id);
   };
 
-  // Reset filters when tab changes
+  // Reset search when tab changes
   useEffect(() => {
     setSearchQuery("");
-    setSelectedCategory(null);
-  }, [activeTab, setSelectedCategory]);
+  }, [activeTab]);
 
   return (
     <div className="h-full flex flex-col">
-      {/* Category Selection */}
+      {/* Category Selection - New design using TypeSelector style */}
       <Card className="p-3 space-y-2 mb-4">
         <h4 className="text-sm font-medium">دسته‌بندی</h4>
-        <ScrollArea className="h-10" orientation="horizontal">
-          <div className="flex space-x-2 space-x-reverse">
-            <Button 
-              variant={selectedCategory === null ? "default" : "outline"}
-              size="sm"
-              className={cn(
-                "whitespace-nowrap",
-                selectedCategory === null && "bg-purple-600"
-              )}
-              onClick={() => setSelectedCategory(null)}
-            >
-              همه
-              {selectedCategory === null && <Check className="mr-1 h-3 w-3" />}
-            </Button>
-            
-            {categories.map(category => (
-              <Button 
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                className={cn(
-                  "whitespace-nowrap",
-                  selectedCategory === category && "bg-purple-600"
-                )}
-                onClick={() => setSelectedCategory(prev => prev === category ? null : category)}
-              >
-                {category}
-                {selectedCategory === category && <Check className="mr-1 h-3 w-3" />}
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
+        <div className="flex">
+          <CategorySelector 
+            categories={categoryObjects}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+            activeTab={activeTab}
+          />
+        </div>
       </Card>
 
       {/* Search */}
