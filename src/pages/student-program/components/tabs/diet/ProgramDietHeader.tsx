@@ -1,37 +1,40 @@
 
 import React from "react";
-import { Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProgramDietHeaderProps {
   handleSave: () => void;
   isSaving: boolean;
+  currentDay?: number | null;
 }
 
-const ProgramDietHeader: React.FC<ProgramDietHeaderProps> = ({
-  handleSave,
+const ProgramDietHeader: React.FC<ProgramDietHeaderProps> = ({ 
+  handleSave, 
   isSaving,
+  currentDay = 1
 }) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2">
-      <div className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center">
-        <Utensils className="h-5 w-5 ml-2 text-green-500" />
-        برنامه غذایی
-      </div>
+    <div className="flex items-center justify-between">
+      <h2 className="text-lg font-semibold">
+        برنامه غذایی {currentDay !== null ? `روز ${toPersianNumbers(currentDay)}` : ""}
+      </h2>
       
-      <Button 
-        onClick={handleSave} 
-        disabled={isSaving}
-        className="flex items-center gap-1 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
-      >
-        {isSaving ? (
-          <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-        ) : (
-          <Save className="h-4 w-4" />
-        )}
-        <span>ذخیره</span>
-      </Button>
+      {currentDay !== null && (
+        <Button 
+          onClick={handleSave}
+          disabled={isSaving}
+          className="flex items-center gap-1 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+        >
+          {isSaving ? (
+            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          <span>ذخیره برنامه روز {toPersianNumbers(currentDay)}</span>
+        </Button>
+      )}
     </div>
   );
 };

@@ -13,12 +13,16 @@ interface ProgramDietTabProps {
   student: Student;
   meals: any[];
   onSaveDiet: (mealIds: number[], dayNumber?: number) => boolean;
+  currentDay?: number;
+  setCurrentDay?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
   student,
   meals,
-  onSaveDiet
+  onSaveDiet,
+  currentDay: propCurrentDay,
+  setCurrentDay: propSetCurrentDay
 }) => {
   const {
     selectedMeals,
@@ -27,26 +31,31 @@ const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
     setCurrentDay,
     isSaving,
     handleSave
-  } = useDietState(student, onSaveDiet);
+  } = useDietState(student, onSaveDiet, propCurrentDay, propSetCurrentDay);
+
+  // Use the day from props if provided, otherwise use the local state
+  const effectiveCurrentDay = propCurrentDay !== undefined ? propCurrentDay : currentDay;
+  const effectiveSetCurrentDay = propSetCurrentDay || setCurrentDay;
 
   return (
     <div className="flex flex-col h-full space-y-4 rtl" dir="rtl">
       <ProgramDietHeader 
         handleSave={handleSave} 
         isSaving={isSaving} 
+        currentDay={effectiveCurrentDay}
       />
       
       <Card className="flex-1 overflow-auto">
         <CardContent className="p-4 h-full flex flex-col">
           <DaySelector 
             weekDays={weekDays} 
-            currentDay={currentDay} 
-            setCurrentDay={setCurrentDay} 
+            currentDay={effectiveCurrentDay} 
+            setCurrentDay={effectiveSetCurrentDay}
           />
           
-          {currentDay !== null ? (
+          {effectiveCurrentDay !== null ? (
             <DayContent 
-              currentDay={currentDay}
+              currentDay={effectiveCurrentDay}
               weekDays={weekDays}
               selectedMeals={selectedMeals}
               setSelectedMeals={setSelectedMeals}

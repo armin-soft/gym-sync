@@ -14,17 +14,25 @@ interface ProgramExerciseTabProps {
   student: Student;
   exercises: any[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
+  currentDay?: number;
+  setCurrentDay?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   student,
   exercises,
-  onSaveExercises
+  onSaveExercises,
+  currentDay: propCurrentDay,
+  setCurrentDay: propSetCurrentDay
 }) => {
   const { toast } = useToast();
   const [selectedExercises, setSelectedExercises] = useState<ExerciseWithSets[]>([]);
-  const [currentDay, setCurrentDay] = useState<number>(1);
+  const [currentDay, setCurrentDay] = useState<number>(propCurrentDay || 1);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Use prop state if provided, otherwise use local state
+  const effectiveCurrentDay = propCurrentDay !== undefined ? propCurrentDay : currentDay;
+  const effectiveSetCurrentDay = propSetCurrentDay || setCurrentDay;
   
   // คัชเดิเระิฑาทร่อย่างเพื่อเพิ่มประสิทธิภาพการใช้งาน
   const exerciseCacheRef = React.useRef<Record<number, ExerciseWithSets[]>>({
@@ -77,8 +85,8 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
     exerciseCacheRef.current = cachedExercises;
     
     // Set first day exercises initially
-    setSelectedExercises(cachedExercises[1]);
-  }, [student]);
+    setSelectedExercises(cachedExercises[effectiveCurrentDay]);
+  }, [student, effectiveCurrentDay]);
 
   // Side effect for managing day changes - save to and load from cache
   useEffect(() => {
@@ -86,12 +94,12 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
     const currentExercises = [...selectedExercises];
     exerciseCacheRef.current = {
       ...exerciseCacheRef.current,
-      [currentDay]: currentExercises
+      [effectiveCurrentDay]: currentExercises
     };
     
     // Load exercises from cache for the new day
-    setSelectedExercises(exerciseCacheRef.current[currentDay] || []);
-  }, [currentDay]);
+    setSelectedExercises(exerciseCacheRef.current[effectiveCurrentDay] || []);
+  }, [effectiveCurrentDay]);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -99,22 +107,22 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
       // Save to cache before sending to server
       const updatedCache = {
         ...exerciseCacheRef.current,
-        [currentDay]: [...selectedExercises]
+        [effectiveCurrentDay]: [...selectedExercises]
       };
       exerciseCacheRef.current = updatedCache;
       
       // مطمئن شویم day در هر تمرین به درستی تنظیم شده است
       const exercisesWithDay = selectedExercises.map(ex => ({
         ...ex,
-        day: currentDay
+        day: effectiveCurrentDay
       }));
       
-      const success = onSaveExercises(exercisesWithDay, currentDay);
+      const success = onSaveExercises(exercisesWithDay, effectiveCurrentDay);
       
       if (success) {
         toast({
           title: "ذخیره موفق",
-          description: `تمرین‌های روز ${toPersianNumbers(currentDay)} با موفقیت ذخیره شدند`
+          description: `تمرین‌های روز ${toPersianNumbers(effectiveCurrentDay)} با موفقیت ذخیره شدند`
         });
       } else {
         toast({
@@ -139,10 +147,10 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   const DayButton = ({ day }: { day: number }) => (
     <motion.button
       whileTap={{ scale: 0.95 }}
-      onClick={() => setCurrentDay(day)}
+      onClick={() => effectiveSetCurrentDay(day)}
       className={cn(
         "h-10 px-6 rounded-none border-0",
-        currentDay === day 
+        effectiveCurrentDay === day 
           ? "bg-indigo-500 text-white" 
           : "bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
       )}
@@ -155,7 +163,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
     <div className="flex flex-col h-full space-y-4 rtl">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-          برنامه تمرینی روز {toPersianNumbers(currentDay)}
+          برنامه تمرینی روز {toPersianNumbers(effectiveCurrentDay)}
         </div>
         
         <div className="flex items-center gap-2">
@@ -189,7 +197,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
       
       <motion.div 
         className="flex-1 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-        key={`day-${currentDay}`}
+        key={`day-${effectiveCurrentDay}`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
@@ -202,14 +210,14 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
             // Update cache to preserve changes when switching between days
             // Fix the type issue by creating a new actual array instead of a setState action
             const updatedCache = { ...exerciseCacheRef.current };
-            updatedCache[currentDay] = Array.isArray(newExercises) ? 
+            updatedCache[effectiveCurrentDay] = Array.isArray(newExercises) ? 
               [...newExercises] : 
               typeof newExercises === 'function' ? 
                 [...selectedExercises] : // If it's a function, use current state (this should never happen though)
                 [];
             exerciseCacheRef.current = updatedCache;
           }}
-          dayNumber={currentDay}
+          dayNumber={effectiveCurrentDay}
         />
       </motion.div>
       
