@@ -1,3 +1,4 @@
+
 /**
  * Main service worker registration entry point
  */
@@ -37,7 +38,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Auto check for updates every 30 minutes
+// Auto check for updates every 2 hours (instead of 30 minutes)
+// This helps prevent excessive update notifications
 setInterval(() => {
   if (navigator.serviceWorker.controller) {
     navigator.serviceWorker.ready.then(registration => {
@@ -46,4 +48,4 @@ setInterval(() => {
       });
     });
   }
-}, 30 * 60 * 1000);
+}, 2 * 60 * 60 * 1000);

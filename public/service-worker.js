@@ -3,8 +3,8 @@
 // 1. Offline support
 // 2. Update notifications
 
-// Cache name with version - increased to prevent constant updates
-const CACHE_NAME = 'gym-sync-v262';
+// Cache name with version - will be dynamically determined
+let CACHE_NAME = 'gym-sync-cache';
 
 // Essential files to cache for offline functionality
 const STATIC_ASSETS = [
@@ -17,6 +17,18 @@ const STATIC_ASSETS = [
   './assets/index.css',
   './assets/index.js'
 ];
+
+// Get version from manifest and set cache name
+fetch('./Manifest.json')
+  .then(response => response.json())
+  .then(manifest => {
+    const version = manifest.version || '1.0.0';
+    CACHE_NAME = `gym-sync-v${version.replace(/\./g, '')}`;
+    console.log(`[Service Worker] Using version ${version} (Cache: ${CACHE_NAME})`);
+  })
+  .catch(err => {
+    console.log('[Service Worker] Failed to fetch version from manifest');
+  });
 
 // Install service worker - cache essential files
 self.addEventListener('install', (event) => {
@@ -44,7 +56,7 @@ self.addEventListener('activate', (event) => {
       caches.keys().then(cacheNames => {
         return Promise.all(
           cacheNames.map(cacheName => {
-            if (cacheName !== CACHE_NAME) {
+            if (cacheName !== CACHE_NAME && cacheName.startsWith('gym-sync-')) {
               console.log('[Service Worker] Removing old cache:', cacheName);
               return caches.delete(cacheName);
             }

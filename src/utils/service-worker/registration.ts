@@ -3,9 +3,20 @@
  * Simplified service worker registration with focus on offline support and updates
  */
 
-// کد نسخه برنامه برای کنترل بروزرسانی‌ها
-const APP_VERSION = '2.6.2';
+// Flag to track if update is available
 let updateAvailable = false;
+
+// Fetch version from Manifest.json
+async function getAppVersion(): Promise<string> {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version || '1.0.0';
+  } catch (error) {
+    console.error('خطا در دریافت نسخه برنامه:', error);
+    return '1.0.0';
+  }
+}
 
 // Register the service worker
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
@@ -15,13 +26,16 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
   
   try {
-    // Register with full path but no timestamp to prevent excessive updates
-    const registration = await navigator.serviceWorker.register(`/service-worker.js?v=${APP_VERSION}`, {
+    // Get version from manifest
+    const appVersion = await getAppVersion();
+    
+    // Register with full path and version from manifest
+    const registration = await navigator.serviceWorker.register(`/service-worker.js?v=${appVersion}`, {
       scope: '/',
       updateViaCache: 'none' // Always check for updates
     });
     
-    console.log('سرویس ورکر با موفقیت راه‌اندازی شد');
+    console.log(`سرویس ورکر با موفقیت راه‌اندازی شد (نسخه ${appVersion})`);
     
     // فقط زمانی بروزرسانی نمایش داده شود که سرویس ورکر واقعاً تغییر کرده باشد
     if (registration.waiting) {
