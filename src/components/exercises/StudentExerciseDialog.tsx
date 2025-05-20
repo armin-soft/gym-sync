@@ -12,6 +12,9 @@ import ExerciseDialogLoading from "./dialog/ExerciseDialogLoading";
 import { StudentExerciseDialogState } from "./dialog/StudentExerciseDialogState";
 import StudentExerciseDialogContent from "./dialog/StudentExerciseDialogContent";
 import { StudentExerciseDialogProps } from "./dialog/StudentExerciseDialogProps";
+import { Button } from "../ui/button";
+import { Save } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   open,
@@ -24,6 +27,8 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
 }) => {
+  const { toast } = useToast();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] p-0 m-0 h-[100vh] w-[100vw] rounded-none border-none overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 flex flex-col">
@@ -47,26 +52,56 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             isLoading,
             activeTab,
             getActiveTabSelectedExercises,
+            getActiveTabSelectedExercisesWithSets,
             handleSave,
             handleSaveDay,
+            handleSaveAndContinue,
             ...contentProps
           }) => (
             <>
               {isLoading ? (
                 <ExerciseDialogLoading />
               ) : (
-                <StudentExerciseDialogContent 
-                  isLoading={isLoading}
-                  activeTab={activeTab}
-                  handleSaveExercises={(exercisesWithSets, dayNumber) => {
-                    return handleSaveDay(
-                      exercisesWithSets, 
-                      onSave, 
-                      dayNumber || parseInt(activeTab.replace("day", ""))
-                    );
-                  }}
-                  {...contentProps} 
-                />
+                <>
+                  {/* افزودن دکمه ذخیره روز فعلی در بالای صفحه */}
+                  <div className="flex items-center justify-end gap-2 p-2 bg-white dark:bg-gray-800 border-b">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1 text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+                      onClick={() => {
+                        const exercises = getActiveTabSelectedExercisesWithSets();
+                        const success = handleSaveDay(
+                          exercises,
+                          onSave,
+                          parseInt(activeTab.replace("day", ""))
+                        );
+                        if (success) {
+                          toast({
+                            title: "ذخیره موفق",
+                            description: `تمرین‌های روز ${parseInt(activeTab.replace("day", ""))} با موفقیت ذخیره شدند.`
+                          });
+                        }
+                      }}
+                    >
+                      <Save className="h-3.5 w-3.5" />
+                      <span>ذخیره روز فعلی</span>
+                    </Button>
+                  </div>
+                  
+                  <StudentExerciseDialogContent 
+                    isLoading={isLoading}
+                    activeTab={activeTab}
+                    handleSaveExercises={(exercisesWithSets, dayNumber) => {
+                      return handleSaveDay(
+                        exercisesWithSets, 
+                        onSave, 
+                        dayNumber || parseInt(activeTab.replace("day", ""))
+                      );
+                    }}
+                    {...contentProps} 
+                  />
+                </>
               )}
 
               <ExerciseDialogFooter
@@ -74,6 +109,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                 selectedExercisesCount={getActiveTabSelectedExercises().length}
                 onCancel={() => onOpenChange(false)}
                 onSave={handleSave}
+                onSaveAndContinue={handleSaveAndContinue}
               />
             </>
           )}

@@ -1,8 +1,10 @@
 
+import { useState, useEffect } from "react";
 import { ExerciseWithSets } from "@/hooks/exercise-selection";
 import { useExerciseDialogData } from "./useExerciseDialogData";
 import { useExerciseSelection } from "@/hooks/exercise-selection";
 import { useExerciseDialogState } from "./useExerciseDialogState";
+import { useToast } from "@/hooks/use-toast";
 
 interface UseStudentExerciseDialogStateProps {
   open: boolean;
@@ -30,9 +32,16 @@ export const useStudentExerciseDialogState = ({
   initialExercisesDay3 = [],
   initialExercisesDay4 = []
 }: UseStudentExerciseDialogStateProps) => {
+  // برای نمایش پیام‌های اعلان
+  const { toast } = useToast();
+  
+  // حالت فعلی تب و تغییرات آن - مدیریت ذخیره‌سازی در هر تغییر تب
+  const [previousTab, setPreviousTab] = useState<string>("");
+  const [shouldAutoSave, setShouldAutoSave] = useState<boolean>(true);
+  
   // Fetch exercises data
   const { exercises, categories, exerciseTypes, isLoading } = useExerciseDialogData();
-
+  
   // Exercise selection state from hook
   const {
     selectedExercisesDay1,
@@ -99,6 +108,39 @@ export const useStudentExerciseDialogState = ({
     categories,
     exercises
   });
+  
+  // ذخیره خودکار هنگام تغییر تب
+  useEffect(() => {
+    if (previousTab && activeTab !== previousTab && shouldAutoSave) {
+      const prevDayNumber = parseInt(previousTab.replace("day", ""));
+      let exercisesWithSets: ExerciseWithSets[] = [];
+      
+      switch(previousTab) {
+        case "day1":
+          exercisesWithSets = getSelectedExercisesWithSetsDay1();
+          break;
+        case "day2":
+          exercisesWithSets = getSelectedExercisesWithSetsDay2();
+          break;
+        case "day3":
+          exercisesWithSets = getSelectedExercisesWithSetsDay3();
+          break;
+        case "day4":
+          exercisesWithSets = getSelectedExercisesWithSetsDay4();
+          break;
+      }
+      
+      if (exercisesWithSets.length > 0) {
+        const success = handleSaveDay(exercisesWithSets, onSave, prevDayNumber);
+        if (success) {
+          console.log(`Auto-saved exercises for day ${prevDayNumber}`);
+        }
+      }
+    }
+    
+    // ذخیره تب فعلی برای استفاده در ذخیره خودکار بعدی
+    setPreviousTab(activeTab);
+  }, [activeTab]);
 
   const getActiveTabSelectedExercises = () => {
     switch(activeTab) {
@@ -120,13 +162,48 @@ export const useStudentExerciseDialogState = ({
     }
   };
 
+  // ذخیره و ادامه به روز بعدی
+  const handleSaveAndContinue = () => {
+    const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
+    const currentDayNumber = parseInt(activeTab.replace("day", ""));
+    
+    const success = handleSaveDay(selectedExercisesWithSets, onSave, currentDayNumber);
+    if (success) {
+      // حرکت به روز بعدی
+      if (currentDayNumber < 4) {
+        // غیرفعال کردن ذخیره خودکار برای این تغییر تب
+        setShouldAutoSave(false);
+        setActiveTab(`day${currentDayNumber + 1}`);
+        setShouldAutoSave(true);
+        
+        toast({
+          title: "ذخیره موفق",
+          description: `تمرین‌های روز ${currentDayNumber} ذخیره شد. اکنون روز ${currentDayNumber + 1} را تنظیم کنید.`
+        });
+      } else {
+        // اگر روز آخر بودیم، دیالوگ را ببندیم
+        toast({
+          title: "تکمیل برنامه",
+          description: "تمام روزهای تمرینی با موفقیت ذخیره شدند."
+        });
+        onOpenChange(false);
+      }
+    }
+    return success;
+  };
+
   const handleSave = () => {
     const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
     const dayNumber = parseInt(activeTab.replace("day", ""));
     
     const success = handleSaveDay(selectedExercisesWithSets, onSave, dayNumber);
     if (success) {
-      // If this was the last day and all days are saved, close the dialog
+      toast({
+        title: "ذخیره موفق",
+        description: `تمرین‌های روز ${dayNumber} با موفقیت ذخیره شدند.`
+      });
+      
+      // اگر این آخرین روز بود، دیالوگ را ببندیم
       if (dayNumber === 4) {
         onOpenChange(false);
       }
@@ -196,6 +273,9 @@ export const useStudentExerciseDialogState = ({
     getActiveTabSelectedExercises,
     getActiveTabSelectedExercisesWithSets,
     handleSave,
-    handleSaveDay
+    handleSaveDay,
+    handleSaveAndContinue
   };
 };
+
+export default useStudentExerciseDialogState;

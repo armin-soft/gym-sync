@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
@@ -23,53 +24,103 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   const [currentDay, setCurrentDay] = useState<number>(1);
   const [isSaving, setIsSaving] = useState(false);
   
-  // Load initial data for the current day
+  // کش کردن تمرینات هر روز برای بهبود عملکرد
+  const exerciseCacheRef = React.useRef<Record<number, ExerciseWithSets[]>>({
+    1: [],
+    2: [],
+    3: [],
+    4: []
+  });
+  
+  // فقط یکبار در لود اولیه تمرینات را در کش بگذاریم
   useEffect(() => {
-    if (currentDay === 1 && student.exercisesDay1) {
-      const loadedExercises = student.exercisesDay1.map(id => ({
+    const cachedExercises = { ...exerciseCacheRef.current };
+    
+    if (student.exercisesDay1) {
+      cachedExercises[1] = student.exercisesDay1.map(id => ({
         id,
         sets: student.exerciseSetsDay1?.[id] || 3,
         reps: student.exerciseRepsDay1?.[id] || "12",
         day: 1
       }));
-      setSelectedExercises(loadedExercises);
-    } else if (currentDay === 2 && student.exercisesDay2) {
-      const loadedExercises = student.exercisesDay2.map(id => ({
+    }
+    
+    if (student.exercisesDay2) {
+      cachedExercises[2] = student.exercisesDay2.map(id => ({
         id,
         sets: student.exerciseSetsDay2?.[id] || 3,
         reps: student.exerciseRepsDay2?.[id] || "12",
         day: 2
       }));
-      setSelectedExercises(loadedExercises);
-    } else if (currentDay === 3 && student.exercisesDay3) {
-      const loadedExercises = student.exercisesDay3.map(id => ({
+    }
+    
+    if (student.exercisesDay3) {
+      cachedExercises[3] = student.exercisesDay3.map(id => ({
         id,
         sets: student.exerciseSetsDay3?.[id] || 3,
         reps: student.exerciseRepsDay3?.[id] || "12",
         day: 3
       }));
-      setSelectedExercises(loadedExercises);
-    } else if (currentDay === 4 && student.exercisesDay4) {
-      const loadedExercises = student.exercisesDay4.map(id => ({
+    }
+    
+    if (student.exercisesDay4) {
+      cachedExercises[4] = student.exercisesDay4.map(id => ({
         id,
         sets: student.exerciseSetsDay4?.[id] || 3,
         reps: student.exerciseRepsDay4?.[id] || "12",
         day: 4
       }));
-      setSelectedExercises(loadedExercises);
-    } else {
-      setSelectedExercises([]);
     }
-  }, [student, currentDay]);
+    
+    exerciseCacheRef.current = cachedExercises;
+    
+    // تنظیم تمرینات روز اول در مرحله اول
+    setSelectedExercises(cachedExercises[1]);
+  }, [student]);
+
+  // اثر جانبی برای مدیریت تغییر روز - ذخیره و بارگذاری از کش
+  useEffect(() => {
+    // تغییر روز - ذخیره تمرینات روز قبلی در کش
+    const currentExercises = [...selectedExercises];
+    exerciseCacheRef.current = {
+      ...exerciseCacheRef.current,
+      [currentDay]: currentExercises
+    };
+    
+    // لود تمرینات از کش برای روز جدید
+    setSelectedExercises(exerciseCacheRef.current[currentDay] || []);
+  }, [currentDay]);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      // ذخیره در کش قبل از ارسال به سرور
+      exerciseCacheRef.current = {
+        ...exerciseCacheRef.current,
+        [currentDay]: [...selectedExercises]
+      };
+      
       onSaveExercises(selectedExercises, currentDay);
     } finally {
       setIsSaving(false);
     }
   };
+  
+  // دکمه‌های تنظیم روز با انیمیشن برای تجربه کاربری بهتر
+  const DayButton = ({ day }: { day: number }) => (
+    <motion.button
+      whileTap={{ scale: 0.95 }}
+      onClick={() => setCurrentDay(day)}
+      className={cn(
+        "h-10 px-6 rounded-none border-0",
+        currentDay === day 
+          ? "bg-indigo-500 text-white" 
+          : "bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+      )}
+    >
+      روز {toPersianNumbers(day)}
+    </motion.button>
+  );
 
   return (
     <div className="flex flex-col h-full space-y-4 rtl">
@@ -95,34 +146,39 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
       </div>
       
       <div className="flex items-center justify-center mb-4">
-        <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <motion.div 
+          className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           {[1, 2, 3, 4].map(day => (
-            <Button 
-              key={day}
-              variant={currentDay === day ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setCurrentDay(day)}
-              className={cn(
-                "h-10 rounded-none border-0 px-6",
-                currentDay === day 
-                  ? "bg-indigo-500 text-white hover:bg-indigo-600" 
-                  : "text-gray-600 dark:text-gray-300"
-              )}
-            >
-              روز {toPersianNumbers(day)}
-            </Button>
+            <DayButton key={day} day={day} />
           ))}
-        </div>
+        </motion.div>
       </div>
       
-      <div className="flex-1 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <motion.div 
+        className="flex-1 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+        key={`day-${currentDay}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
         <StudentExerciseSelector 
           exercises={exercises}
           selectedExercises={selectedExercises}
-          setSelectedExercises={setSelectedExercises}
+          setSelectedExercises={(newExercises) => {
+            setSelectedExercises(newExercises);
+            // آپدیت کش تا در صورت جابجایی بین روزها، تغییرات گم نشوند
+            exerciseCacheRef.current = {
+              ...exerciseCacheRef.current,
+              [currentDay]: newExercises
+            };
+          }}
           dayNumber={currentDay}
         />
-      </div>
+      </motion.div>
       
       <div className="text-xs text-gray-500 dark:text-gray-400 text-center p-2">
         <span className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
