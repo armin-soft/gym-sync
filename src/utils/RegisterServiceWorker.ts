@@ -1,6 +1,6 @@
 
 /**
- * سیستم ثبت سرویس ورکر بهینه شده
+ * سیستم ثبت سرویس ورکر بهینه شده برای سرعت بارگذاری
  */
 import { registerServiceWorker, setupOfflineDetection } from './service-worker/registration';
 
@@ -26,12 +26,13 @@ export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | n
       resolve(registration);
     } catch (error) {
       console.error('خطا در راه‌اندازی سرویس ورکر:', error);
-      reject(error);
+      // خطاها را فرو بخور تا برنامه اصلی ادامه یابد
+      resolve(null);
     }
   });
 }
 
-// بروزرسانی خودکار سرویس ورکر در فواصل طولانی‌تر (4 ساعت)
+// بروزرسانی خودکار سرویس ورکر در فواصل خیلی طولانی‌تر (8 ساعت)
 let updateInterval: number | null = null;
 
 export function startServiceWorkerUpdateCheck() {
@@ -39,7 +40,7 @@ export function startServiceWorkerUpdateCheck() {
     clearInterval(updateInterval);
   }
   
-  // بررسی فقط یکبار در هر 4 ساعت برای کاهش بار شبکه
+  // بررسی فقط یکبار در هر 8 ساعت برای کاهش بار شبکه و افزایش سرعت
   updateInterval = window.setInterval(() => {
     if (navigator.serviceWorker.controller) {
       navigator.serviceWorker.ready.then(registration => {
@@ -48,7 +49,7 @@ export function startServiceWorkerUpdateCheck() {
         });
       });
     }
-  }, 4 * 60 * 60 * 1000); // 4 ساعت
+  }, 8 * 60 * 60 * 1000); // 8 ساعت
 }
 
 // امکان توقف بررسی بروزرسانی

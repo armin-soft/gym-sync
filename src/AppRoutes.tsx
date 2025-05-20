@@ -1,27 +1,19 @@
 
-import React, { lazy, Suspense } from "react";
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
-import { Spinner } from "@/components/ui/spinner";
 
-// بارگذاری تنبل کامپوننت‌های اصلی با Suspense برای بهبود عملکرد
-const Dashboard = lazy(() => import("./pages/Index"));
-const StudentsPage = lazy(() => import("./pages/students"));
-const AddEditStudentPage = lazy(() => import("./pages/students/add-edit"));
-const ExercisesPage = lazy(() => import("./pages/exercises"));
-const ExerciseHierarchicalView = lazy(() => import("./pages/exercises/hierarchical-view"));
-const DietPage = lazy(() => import("./pages/diet"));
-const SupplementsPage = lazy(() => import("./pages/supplements"));
-const TrainerPage = lazy(() => import("./pages/trainer"));
-const BackupPage = lazy(() => import("./pages/backup"));
-const StudentProgramPage = lazy(() => import("./pages/student-program"));
-
-// کامپوننت برای نمایش در حین بارگذاری
-const PageLoading = () => (
-  <div className="flex items-center justify-center w-full h-full min-h-[200px]">
-    <Spinner size="lg" />
-  </div>
-);
+// پیش بارگذاری کامپوننت‌ها برای لود سریعتر 
+import Dashboard from "./pages/Index";
+import StudentsPage from "./pages/students";
+import AddEditStudentPage from "./pages/students/add-edit";
+import ExercisesPage from "./pages/exercises";
+import ExerciseHierarchicalView from "./pages/exercises/hierarchical-view";
+import DietPage from "./pages/diet";
+import SupplementsPage from "./pages/supplements";
+import TrainerPage from "./pages/trainer";
+import BackupPage from "./pages/backup";
+import StudentProgramPage from "./pages/student-program";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -30,9 +22,7 @@ const AppRoutes: React.FC = () => {
         path="/"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <Dashboard />
-            </Suspense>
+            <Dashboard />
           </AuthenticatedContent>
         }
       />
@@ -40,9 +30,7 @@ const AppRoutes: React.FC = () => {
         path="/students"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <StudentsPage />
-            </Suspense>
+            <StudentsPage />
           </AuthenticatedContent>
         }
       />
@@ -50,9 +38,7 @@ const AppRoutes: React.FC = () => {
         path="/students/add-edit/:studentId?"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <AddEditStudentPage />
-            </Suspense>
+            <AddEditStudentPage />
           </AuthenticatedContent>
         }
       />
@@ -60,9 +46,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <ExercisesPage />
-            </Suspense>
+            <ExercisesPage />
           </AuthenticatedContent>
         }
       />
@@ -70,9 +54,7 @@ const AppRoutes: React.FC = () => {
         path="/exercises/hierarchical"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <ExerciseHierarchicalView />
-            </Suspense>
+            <ExerciseHierarchicalView />
           </AuthenticatedContent>
         }
       />
@@ -80,9 +62,7 @@ const AppRoutes: React.FC = () => {
         path="/diet"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <DietPage />
-            </Suspense>
+            <DietPage />
           </AuthenticatedContent>
         }
       />
@@ -90,9 +70,7 @@ const AppRoutes: React.FC = () => {
         path="/supplements"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <SupplementsPage />
-            </Suspense>
+            <SupplementsPage />
           </AuthenticatedContent>
         }
       />
@@ -100,9 +78,7 @@ const AppRoutes: React.FC = () => {
         path="/trainer"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <TrainerPage />
-            </Suspense>
+            <TrainerPage />
           </AuthenticatedContent>
         }
       />
@@ -110,9 +86,7 @@ const AppRoutes: React.FC = () => {
         path="/backup"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <BackupPage />
-            </Suspense>
+            <BackupPage />
           </AuthenticatedContent>
         }
       />
@@ -120,9 +94,7 @@ const AppRoutes: React.FC = () => {
         path="/student-program/:studentId"
         element={
           <AuthenticatedContent>
-            <Suspense fallback={<PageLoading />}>
-              <StudentProgramPage />
-            </Suspense>
+            <StudentProgramPage />
           </AuthenticatedContent>
         }
       />

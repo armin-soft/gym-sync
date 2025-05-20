@@ -3,7 +3,6 @@ import { TabsContent } from "@/components/ui/tabs";
 import { MealTypeSection } from "./MealTypeSection";
 import { mealTypeOrder } from "./MealTypeUtils";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
-import { motion } from "framer-motion";
 
 interface DayContentProps {
   day: string;
@@ -14,33 +13,13 @@ interface DayContentProps {
 }
 
 export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayContentProps) => {
-  // دیباگ
-  console.log(`DayContent rendering for day ${day} with ${meals.length} meals`);
-  
   // مرتب‌سازی انواع وعده‌های غذایی بر اساس ترتیب تعریف شده
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   
-  // واریانت‌های انیمیشن برای کودکان با تأخیر
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-  
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="space-y-4 sm:space-y-6 text-right"
-    >
+    <div className="space-y-4 sm:space-y-6 text-right">
       {sortedMealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter(meal => meal.type === type);
-        console.log(`Type ${type} has ${typeMeals.length} meals for day ${day}`);
         
         // نمایش همه انواع وعده غذایی، حتی اگر وعده‌ای نداشته باشند
         return (
@@ -58,12 +37,7 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
       
       {/* نمایش پیام خالی بودن اگر هیچ وعده‌ای برای روز وجود نداشت */}
       {meals.length === 0 && (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.25 }}
-          className="text-muted-foreground text-lg py-10 px-4 rounded-2xl bg-muted/30 backdrop-blur-sm border border-border/30 shadow-sm flex items-center justify-center"
-        >
+        <div className="text-muted-foreground text-lg py-10 px-4 rounded-2xl bg-muted/30 backdrop-blur-sm border border-border/30 shadow-sm flex items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-3">
             <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-60">
@@ -72,8 +46,8 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
             </div>
             <p>برای روز {day} برنامه غذایی ثبت نشده است</p>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 };

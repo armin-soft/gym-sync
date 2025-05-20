@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { PageContainer } from "@/components/ui/page-container";
 import { MealDialog } from "@/components/diet/MealDialog";
@@ -48,18 +48,6 @@ const Index = () => {
     handleDelete,
     toggleSortOrder
   } = useDietState();
-
-  // دیباگ داده‌های وعده‌های غذایی در زمان لود کامپوننت
-  useEffect(() => {
-    console.log("Diet page loaded with meals:", meals.length);
-    console.log("Selected meal:", selectedMeal?.id);
-    
-    // اضافه کردن بررسی بیشتر برای دیباگ وعده‌های غذایی هر روز
-    weekDays.forEach(day => {
-      const dayMeals = meals.filter(meal => meal.day === day);
-      console.log(`Day ${day} has ${dayMeals.length} meals`);
-    });
-  }, [meals, selectedMeal, filteredMeals]);
 
   return (
     <PageContainer 

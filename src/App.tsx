@@ -1,5 +1,5 @@
 
-import React, { useMemo } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -10,14 +10,15 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./App.css";
 
-// بهینه‌سازی React Query با استفاده از گزینه‌های بهتر
+// بهینه‌سازی React Query با استفاده از گزینه‌های بهتر برای سرعت بیشتر
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1,
+      staleTime: 10 * 60 * 1000, // 10 minutes - افزایش زمان برای کاهش درخواست‌ها
+      retry: 0, // عدم تلاش مجدد برای سرعت بیشتر
       refetchOnWindowFocus: false,
       refetchOnMount: false,
+      suspense: true, // فعال کردن حالت suspense
     },
   },
 });
@@ -33,8 +34,8 @@ function AppContent() {
 }
 
 function App() {
-  // استفاده از useMemo برای جلوگیری از محاسبات مجدد در هر رندر
-  const basePath = useMemo(() => '/', []);
+  // استفاده ثابت از مسیر پایه
+  const basePath = '/';
   
   return (
     <QueryClientProvider client={queryClient}>

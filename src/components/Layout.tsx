@@ -1,25 +1,16 @@
 
-import { useState, useEffect, lazy, memo, useMemo, Suspense, CSSProperties } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { Spinner } from "@/components/ui/spinner";
 
 // برای جلوگیری از بارگذاری مجدد صفحه هنگام تغییر مسیرها
 interface LayoutProps {
   children: React.ReactNode;
 }
-
-const PageLoading = () => (
-  <div className="flex flex-col items-center justify-center h-full w-full py-10">
-    <Spinner className="h-10 w-10 mb-4" />
-    <p className="text-muted-foreground">در حال بارگذاری...</p>
-  </div>
-);
 
 // استفاده از memo برای جلوگیری از رندرهای غیرضروری
 export const Layout = memo(({ children }: LayoutProps) => {
@@ -41,46 +32,26 @@ export const Layout = memo(({ children }: LayoutProps) => {
     }
   }, []);
 
-  // استفاده از useMemo برای کاهش محاسبات اضافی
-  const {
-    headerHeight,
-    headerPadding,
-    buttonSize,
-    iconSize,
-    logoGap,
-    titleSize
-  } = useMemo(() => {
-    return {
-      headerHeight: deviceInfo.isMobile ? "h-10" : deviceInfo.isTablet ? "h-12" : "h-14",
-      headerPadding: deviceInfo.isMobile ? "px-1 xs:px-2" : deviceInfo.isTablet ? "px-2 sm:px-3" : "px-3 md:px-4 lg:px-6",
-      buttonSize: deviceInfo.isMobile ? "p-1" : deviceInfo.isTablet ? "p-1.5" : "p-2",
-      iconSize: deviceInfo.isMobile ? "h-3.5 w-3.5" : deviceInfo.isTablet ? "h-4 w-4" : "h-5 w-5",
-      logoGap: deviceInfo.isMobile ? "gap-1" : "gap-1.5",
-      titleSize: deviceInfo.isMobile ? "text-xs" : deviceInfo.isTablet ? "text-sm" : "text-base"
-    };
-  }, [deviceInfo.isMobile, deviceInfo.isTablet]);
-
+  // استفاده از useRef برای ذخیره وضعیت اسکرول برای کارایی بهتر
+  const scrollHandler = useRef(() => {
+    const offset = window.scrollY;
+    setScrolled(offset > 10);
+  });
+  
   // جداسازی کد اسکرول برای کاهش رندرهای اضافی
   useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      setScrolled(offset > 10);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const currentHandler = scrollHandler.current;
+    window.addEventListener('scroll', currentHandler, { passive: true });
+    return () => window.removeEventListener('scroll', currentHandler);
   }, []);
-
-  // بهینه‌سازی استایل‌ها با useMemo
-  const contentStyle: CSSProperties = useMemo(() => {
-    return deviceInfo.isMobile ? { 
-      fontSize: '90%', 
-      overflowX: 'hidden',
-      height: 'calc(100% - 40px)'
-    } : {
-      height: deviceInfo.isTablet ? 'calc(100% - 48px)' : 'calc(100% - 56px)'
-    };
-  }, [deviceInfo.isMobile, deviceInfo.isTablet]);
+  
+  // محاسبه استایل ها یکبار
+  const headerHeight = deviceInfo.isMobile ? "h-10" : deviceInfo.isTablet ? "h-12" : "h-14";
+  const headerPadding = deviceInfo.isMobile ? "px-1 xs:px-2" : deviceInfo.isTablet ? "px-2 sm:px-3" : "px-3 md:px-4 lg:px-6";
+  const buttonSize = deviceInfo.isMobile ? "p-1" : deviceInfo.isTablet ? "p-1.5" : "p-2";
+  const iconSize = deviceInfo.isMobile ? "h-3.5 w-3.5" : deviceInfo.isTablet ? "h-4 w-4" : "h-5 w-5";
+  const logoGap = deviceInfo.isMobile ? "gap-1" : "gap-1.5";
+  const titleSize = deviceInfo.isMobile ? "text-xs" : deviceInfo.isTablet ? "text-sm" : "text-base";
 
   return (
     <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
@@ -119,10 +90,8 @@ export const Layout = memo(({ children }: LayoutProps) => {
         </div>
       </header>
       
-      <main className="flex-1 overflow-hidden w-full max-w-full" style={contentStyle}>
-        <Suspense fallback={<PageLoading />}>
-          {children}
-        </Suspense>
+      <main className="flex-1 overflow-hidden w-full max-w-full">
+        {children}
       </main>
     </div>
   );

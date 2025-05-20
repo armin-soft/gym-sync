@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { LoadingScreen } from "./LoadingScreen";
 import { AuthenticatedContent } from "./auth/AuthenticatedContent";
 import { LoginContainer } from "./auth/login/LoginContainer";
 import { defaultProfile } from "@/types/trainer";
@@ -10,7 +9,6 @@ interface AuthWrapperProps {
 }
 
 export const AuthWrapper = ({ children }: AuthWrapperProps) => {
-  const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -47,7 +45,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
               `${profile.name || 'کاربر'} عزیز، خوش آمدید`,
               rememberedEmail ? `شما با ایمیل ${rememberedEmail} وارد شده‌اید` : "به سیستم مدیریت برنامه وارد شدید"
             );
-          }, 1000);
+          }, 500);
         } else {
           // Remember me expired, clear it
           localStorage.removeItem("rememberMeExpiry");
@@ -56,13 +54,8 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       }
     };
     
-    // نمایش صفحه بارگذاری برای مدت مشخص
-    const timer = setTimeout(() => {
-      checkAuth();
-      setLoading(false);
-    }, 1500); // تاخیر قابل تنظیم برای نمایش بهتر صفحه بارگذاری
-    
-    return () => clearTimeout(timer);
+    // بررسی فوری وضعیت احراز هویت بدون نمایش صفحه لودینگ
+    checkAuth();
   }, []);
 
   const handleLoginSuccess = (rememberMe: boolean = false) => {
@@ -77,14 +70,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       // If not checked, remove any previous remember me expiry
       localStorage.removeItem("rememberMeExpiry");
     }
-
-    // نمایش پیغام موفقیت در کامپوننت LoginForm انجام می‌شود، اینجا نیازی به تکرار نیست
   };
-
-  // If still loading, show the loading screen
-  if (loading) {
-    return <LoadingScreen />;
-  }
 
   // If not authenticated, show the login form
   if (!authenticated) {
