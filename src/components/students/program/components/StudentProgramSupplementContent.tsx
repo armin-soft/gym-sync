@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import useDayManagement from "./exercise/useDayManagement";
+import DaySelector from "./exercise/DaySelector";
 
 interface StudentProgramSupplementContentProps {
   selectedSupplements: number[];
@@ -15,7 +17,8 @@ interface StudentProgramSupplementContentProps {
   selectedVitamins: number[];
   setSelectedVitamins: React.Dispatch<React.SetStateAction<number[]>>;
   supplements: any[];
-  currentDay?: number;
+  currentDay: number;
+  setCurrentDay: (day: number) => void;
 }
 
 const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentProps> = ({
@@ -24,10 +27,37 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   selectedVitamins,
   setSelectedVitamins,
   supplements,
+  currentDay,
+  setCurrentDay,
 }) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  
+  // Use our custom hook for day management with fixed 5 days
+  const {
+    days,
+    dayLabels,
+    editingDay,
+    setEditingDay,
+    tempDayLabel,
+    setTempDayLabel,
+    setShowAddDayDialog,
+    setShowDeleteDayDialog,
+    confirmDeleteDay,
+    maxDays,
+    getDayLabel,
+  } = useDayManagement({
+    initialDays: [1, 2, 3, 4, 5],
+    initialDayLabels: {
+      1: "روز اول",
+      2: "روز دوم",
+      3: "روز سوم",
+      4: "روز چهارم",
+      5: "روز پنجم",
+    },
+    onDayChange: setCurrentDay
+  });
   
   // Animation variants
   const containerVariants = {
@@ -59,8 +89,24 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
       >
         <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2">
           <h3 className="font-semibold text-lg">
-            مکمل و ویتامین
+            مکمل و ویتامین روز {toPersianNumbers(currentDay)}
           </h3>
+        </motion.div>
+        
+        <motion.div variants={itemVariants}>
+          <DaySelector 
+            days={days}
+            dayLabels={dayLabels}
+            currentDay={currentDay}
+            setCurrentDay={setCurrentDay}
+            editingDay={editingDay}
+            setEditingDay={setEditingDay}
+            tempDayLabel={tempDayLabel}
+            setTempDayLabel={setTempDayLabel}
+            setShowAddDayDialog={setShowAddDayDialog}
+            confirmDeleteDay={confirmDeleteDay}
+            maxDays={maxDays}
+          />
         </motion.div>
         
         {/* Tab Selector for Supplement vs Vitamin */}
@@ -94,7 +140,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
         <motion.div variants={itemVariants} className="flex-1 overflow-auto">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeTab}
+              key={`${activeTab}-day-${currentDay}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -112,6 +158,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
                     activeTab={activeTab}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
+                    dayLabel={getDayLabel(currentDay)}
+                    dayNumber={currentDay}
                   />
                 </div>
               </Card>
@@ -124,8 +172,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
             <Pill className="h-4 w-4" />
             <span>
               {activeTab === 'supplement' 
-                ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده` 
-                : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده`}
+                ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده برای ${getDayLabel(currentDay)}` 
+                : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده برای ${getDayLabel(currentDay)}`}
             </span>
           </div>
         </motion.div>

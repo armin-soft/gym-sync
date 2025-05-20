@@ -35,7 +35,8 @@ export const useStudentSupplements = (
           let progressCount = 0;
           if (student.exercises?.length) progressCount++;
           if (student.exercisesDay1?.length || student.exercisesDay2?.length || 
-              student.exercisesDay3?.length || student.exercisesDay4?.length) {
+              student.exercisesDay3?.length || student.exercisesDay4?.length ||
+              student.exercisesDay5?.length) {
             progressCount++;
           }
           if (student.meals?.length) progressCount++;

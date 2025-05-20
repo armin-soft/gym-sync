@@ -101,6 +101,7 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
           setSelectedVitamins={setSelectedVitamins}
           supplements={supplements}
           currentDay={currentSupplementDay}
+          setCurrentDay={setCurrentSupplementDay}
         />
       </StudentProgramTabs>
     </div>

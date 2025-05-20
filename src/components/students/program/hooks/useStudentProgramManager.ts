@@ -110,6 +110,31 @@ export function useStudentProgramManager({
     }
   }, [activeTab, currentDay, currentDietDay, currentSupplementDay]);
 
+  // Watch for day changes within a tab
+  useEffect(() => {
+    if (activeTab === "supplement") {
+      // Load supplements for current day when day changes
+      const supplementDayKey = `supplementsDay${currentSupplementDay}`;
+      const vitaminDayKey = `vitaminsDay${currentSupplementDay}`;
+      
+      if (student[supplementDayKey]) {
+        setSelectedSupplements(student[supplementDayKey]);
+      } else if (student.supplements) {
+        setSelectedSupplements(student.supplements);
+      } else {
+        setSelectedSupplements([]);
+      }
+      
+      if (student[vitaminDayKey]) {
+        setSelectedVitamins(student[vitaminDayKey]);
+      } else if (student.vitamins) {
+        setSelectedVitamins(student.vitamins);
+      } else {
+        setSelectedVitamins([]);
+      }
+    }
+  }, [activeTab, currentSupplementDay, student]);
+
   const handleSaveAll = () => {
     let success = true;
     

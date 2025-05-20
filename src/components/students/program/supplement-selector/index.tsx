@@ -17,6 +17,8 @@ interface StudentSupplementSelectorProps {
   activeTab: 'supplement' | 'vitamin';
   selectedCategory: string | null;
   setSelectedCategory: React.Dispatch<React.SetStateAction<string | null>>;
+  dayLabel?: string;
+  dayNumber?: number;
 }
 
 const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
@@ -27,7 +29,9 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   setSelectedVitamins,
   activeTab,
   selectedCategory,
-  setSelectedCategory
+  setSelectedCategory,
+  dayLabel,
+  dayNumber
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   
@@ -95,6 +99,14 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
 
   return (
     <div className="h-full flex flex-col">
+      {dayLabel && (
+        <div className="mb-4 text-center">
+          <h3 className="text-lg font-semibold text-indigo-700">
+            {activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'} - {dayLabel}
+          </h3>
+        </div>
+      )}
+      
       {/* Category Selection */}
       <div className="p-3 space-y-2 mb-4 border rounded-lg">
         <h4 className="text-sm font-medium">دسته‌بندی</h4>
@@ -138,6 +150,7 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
         filteredItemsCount={filteredItems.length}
         selectedItemsCount={selectedItems.length}
         activeTab={activeTab}
+        dayLabel={dayLabel}
       />
     </div>
   );
