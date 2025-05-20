@@ -17,7 +17,7 @@ interface StudentProgramManagerProps {
   supplements: Supplement[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[], dayNumber?: number) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
   onClose: () => void;
 }
 
@@ -38,6 +38,8 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
     setCurrentDay,
     currentDietDay,
     setCurrentDietDay,
+    currentSupplementDay,
+    setCurrentSupplementDay,
     selectedExercises,
     setSelectedExercises,
     selectedMeals,
@@ -65,8 +67,16 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
       <StudentProgramTabs
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        currentDay={activeTab === "exercise" ? currentDay : currentDietDay}
-        setCurrentDay={activeTab === "exercise" ? setCurrentDay : setCurrentDietDay}
+        currentDay={activeTab === "exercise" 
+          ? currentDay 
+          : activeTab === "diet" 
+            ? currentDietDay 
+            : currentSupplementDay}
+        setCurrentDay={activeTab === "exercise" 
+          ? setCurrentDay 
+          : activeTab === "diet" 
+            ? setCurrentDietDay 
+            : setCurrentSupplementDay}
       >
         <StudentProgramExerciseContent 
           currentDay={currentDay}
@@ -90,6 +100,7 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
           selectedVitamins={selectedVitamins}
           setSelectedVitamins={setSelectedVitamins}
           supplements={supplements}
+          currentDay={currentSupplementDay}
         />
       </StudentProgramTabs>
     </div>

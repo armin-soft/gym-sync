@@ -25,7 +25,7 @@ export const useStudentSupplements = (
     }
   }, []);
   
-  const handleSaveSupplements = (data: {supplements: number[], vitamins: number[]}, studentId: number) => {
+  const handleSaveSupplements = (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
     try {
       console.log(`Saving supplements for student ${studentId}:`, data);
       
@@ -43,16 +43,35 @@ export const useStudentSupplements = (
           
           const progress = Math.round((progressCount / 4) * 100);
           
-          // نمایش اطلاعات در کنسول برای اشکال‌زدایی
-          console.log('Updated student supplements:', data.supplements);
-          console.log('Updated student vitamins:', data.vitamins);
-          
-          return {
-            ...student,
-            supplements: data.supplements,
-            vitamins: data.vitamins,
-            progress
-          };
+          // اگر روز مشخص شده است، ذخیره برنامه روزانه
+          if (data.day) {
+            const supplementDayKey = `supplementsDay${data.day}`;
+            const vitaminDayKey = `vitaminsDay${data.day}`;
+            
+            console.log(`Saving day ${data.day} specific supplements and vitamins`);
+            console.log('Updated student supplements day:', data.supplements);
+            console.log('Updated student vitamins day:', data.vitamins);
+            
+            return {
+              ...student,
+              [supplementDayKey]: data.supplements,
+              [vitaminDayKey]: data.vitamins,
+              supplements: student.supplements || data.supplements,
+              vitamins: student.vitamins || data.vitamins,
+              progress
+            };
+          } else {
+            // ذخیره کلی (بدون مشخص کردن روز)
+            console.log('Updated student supplements (general):', data.supplements);
+            console.log('Updated student vitamins (general):', data.vitamins);
+            
+            return {
+              ...student,
+              supplements: data.supplements,
+              vitamins: data.vitamins,
+              progress
+            };
+          }
         }
         return student;
       });
@@ -62,7 +81,9 @@ export const useStudentSupplements = (
       
       toast({
         title: "افزودن موفق",
-        description: "برنامه مکمل و ویتامین با موفقیت به شاگرد اضافه شد"
+        description: data.day 
+          ? `برنامه مکمل و ویتامین روز ${data.day} با موفقیت به شاگرد اضافه شد`
+          : "برنامه مکمل و ویتامین با موفقیت به شاگرد اضافه شد"
       });
       return true;
     } catch (error) {
@@ -80,10 +101,22 @@ export const useStudentSupplements = (
   const getSupplementInfo = (supplementId: number) => {
     return supplements.find(item => item.id === supplementId);
   };
+  
+  // دریافت مکمل‌ها و ویتامین‌های روزانه
+  const getDailySupplements = (student: Student, day: number) => {
+    const supplementDayKey = `supplementsDay${day}`;
+    const vitaminDayKey = `vitaminsDay${day}`;
+    
+    return {
+      supplements: student[supplementDayKey] || student.supplements || [],
+      vitamins: student[vitaminDayKey] || student.vitamins || []
+    };
+  };
 
   return { 
     handleSaveSupplements,
     getSupplementInfo,
+    getDailySupplements,
     supplements 
   };
 };

@@ -1,17 +1,12 @@
 
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { CardContent } from "@/components/ui/card";
 import { Student } from "@/components/students/StudentTypes";
 import { ExerciseWithSets } from "@/types/exercise";
 import { Supplement } from "@/types/supplement";
-
-// Import tab components
-import { 
-  ProgramExerciseTab, 
-  ProgramDietTab, 
-  ProgramSupplementTab 
-} from "./tabs";
+import ProgramExerciseTab from "./tabs/ProgramExerciseTab";
+import ProgramDietTab from "./tabs/ProgramDietTab";
+import ProgramSupplementTab from "./tabs/ProgramSupplementTab";
 
 interface ProgramTabsContentProps {
   student: Student;
@@ -19,8 +14,10 @@ interface ProgramTabsContentProps {
   meals: any[];
   supplements: Supplement[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: number[], dayNumber?: number) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  onSaveDiet: (mealIds: number[]) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}) => boolean;
+  currentDay?: number;
+  setCurrentDay?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
@@ -30,34 +27,42 @@ const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
   supplements,
   onSaveExercises,
   onSaveDiet,
-  onSaveSupplements
+  onSaveSupplements,
+  currentDay = 1,
+  setCurrentDay
 }) => {
   return (
-    <CardContent className="p-4 pt-6 flex-1">
-      <TabsContent value="exercise" className="m-0 h-full flex flex-col">
-        <ProgramExerciseTab
+    <div className="mt-4 flex-1 overflow-hidden">
+      <TabsContent value="exercise" className="h-full m-0 overflow-hidden">
+        <ProgramExerciseTab 
           student={student}
           exercises={exercises}
           onSaveExercises={onSaveExercises}
+          currentDay={currentDay}
+          setCurrentDay={setCurrentDay}
         />
       </TabsContent>
       
-      <TabsContent value="diet" className="m-0 h-full flex flex-col">
-        <ProgramDietTab
+      <TabsContent value="diet" className="h-full m-0 overflow-hidden">
+        <ProgramDietTab 
           student={student}
           meals={meals}
           onSaveDiet={onSaveDiet}
+          currentDay={currentDay}
+          setCurrentDay={setCurrentDay}
         />
       </TabsContent>
       
-      <TabsContent value="supplement" className="m-0 h-full flex flex-col">
-        <ProgramSupplementTab
+      <TabsContent value="supplement" className="h-full m-0 overflow-hidden">
+        <ProgramSupplementTab 
           student={student}
           supplements={supplements}
           onSaveSupplements={onSaveSupplements}
+          currentDay={currentDay}
+          setCurrentDay={setCurrentDay}
         />
       </TabsContent>
-    </CardContent>
+    </div>
   );
 };
 

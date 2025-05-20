@@ -8,7 +8,7 @@ interface UseStudentProgramManagerProps {
   student: Student;
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[], dayNumber?: number) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
 }
 
 export function useStudentProgramManager({
@@ -31,6 +31,7 @@ export function useStudentProgramManager({
   // Supplement state
   const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
   const [selectedVitamins, setSelectedVitamins] = useState<number[]>([]);
+  const [currentSupplementDay, setCurrentSupplementDay] = useState<number>(1);
 
   // Load initial data for the student
   useEffect(() => {
@@ -71,16 +72,43 @@ export function useStudentProgramManager({
       setSelectedMeals([]);
     }
     
-    // Load supplements
-    if (student.supplements) {
+    // Load supplements for current day
+    const supplementDayKey = `supplementsDay${currentSupplementDay}`;
+    const vitaminDayKey = `vitaminsDay${currentSupplementDay}`;
+    
+    if (student[supplementDayKey]) {
+      setSelectedSupplements(student[supplementDayKey]);
+    } else if (student.supplements) {
+      // Fall back to general supplements if no day-specific found
       setSelectedSupplements(student.supplements);
+    } else {
+      setSelectedSupplements([]);
     }
     
-    // Load vitamins
-    if (student.vitamins) {
+    // Load vitamins for current day
+    if (student[vitaminDayKey]) {
+      setSelectedVitamins(student[vitaminDayKey]);
+    } else if (student.vitamins) {
+      // Fall back to general vitamins if no day-specific found
       setSelectedVitamins(student.vitamins);
+    } else {
+      setSelectedVitamins([]);
     }
-  }, [student, currentDay, currentDietDay]);
+  }, [student, currentDay, currentDietDay, currentSupplementDay]);
+
+  // Watch for tab changes to sync the current day
+  useEffect(() => {
+    if (activeTab === "exercise") {
+      setCurrentSupplementDay(currentDay);
+      setCurrentDietDay(currentDay);
+    } else if (activeTab === "diet") {
+      setCurrentSupplementDay(currentDietDay);
+      setCurrentDay(currentDietDay);
+    } else if (activeTab === "supplement") {
+      setCurrentDay(currentSupplementDay);
+      setCurrentDietDay(currentSupplementDay);
+    }
+  }, [activeTab, currentDay, currentDietDay, currentSupplementDay]);
 
   const handleSaveAll = () => {
     let success = true;
@@ -99,8 +127,9 @@ export function useStudentProgramManager({
     if (activeTab === "supplement") {
       success = onSaveSupplements({
         supplements: selectedSupplements,
-        vitamins: selectedVitamins
-      });
+        vitamins: selectedVitamins,
+        day: currentSupplementDay
+      }, student.id);
     }
     
     if (success) {
@@ -118,6 +147,8 @@ export function useStudentProgramManager({
     setCurrentDay,
     currentDietDay,
     setCurrentDietDay,
+    currentSupplementDay,
+    setCurrentSupplementDay,
     selectedExercises,
     setSelectedExercises,
     selectedMeals,
