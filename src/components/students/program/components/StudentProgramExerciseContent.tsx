@@ -7,6 +7,10 @@ import DaySelector from "./exercise/DaySelector";
 import AddDayDialog from "./exercise/AddDayDialog";
 import DeleteDayDialog from "./exercise/DeleteDayDialog";
 import useDayManagement from "./exercise/useDayManagement";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+import { motion, AnimatePresence } from "framer-motion";
+import { Dumbbell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface StudentProgramExerciseContentProps {
   currentDay: number;
@@ -48,33 +52,106 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
     onDayChange: setCurrentDay
   });
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    }
+  };
+
   return (
     <TabsContent value="exercise" className="m-0 h-full">
-      <div className="mb-4 h-full flex flex-col rtl">
-        <DaySelector 
-          days={days}
-          dayLabels={dayLabels}
-          currentDay={currentDay}
-          setCurrentDay={setCurrentDay}
-          editingDay={editingDay}
-          setEditingDay={setEditingDay}
-          tempDayLabel={tempDayLabel}
-          setTempDayLabel={setTempDayLabel}
-          setShowAddDayDialog={setShowAddDayDialog}
-          confirmDeleteDay={confirmDeleteDay}
-          maxDays={maxDays}
-        />
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="mb-4 h-full flex flex-col rtl"
+      >
+        <motion.div variants={itemVariants}>
+          <div className="flex flex-wrap items-center justify-between mb-4">
+            <h3 className="font-semibold text-lg mb-2 sm:mb-0">
+              برنامه تمرینی روز {toPersianNumbers(currentDay)}
+            </h3>
+            
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                onClick={() => setShowAddDayDialog(true)}
+                disabled={days.length >= maxDays}
+              >
+                افزودن روز
+              </Button>
+            </div>
+          </div>
+        </motion.div>
         
-        <div className="flex-1 overflow-auto">
-          <StudentExerciseSelector 
-            selectedExercises={selectedExercises}
-            setSelectedExercises={setSelectedExercises}
-            dayNumber={currentDay}
-            exercises={exercises}
-            dayLabel={getDayLabel(currentDay)}
+        <motion.div variants={itemVariants}>
+          <DaySelector 
+            days={days}
+            dayLabels={dayLabels}
+            currentDay={currentDay}
+            setCurrentDay={setCurrentDay}
+            editingDay={editingDay}
+            setEditingDay={setEditingDay}
+            tempDayLabel={tempDayLabel}
+            setTempDayLabel={setTempDayLabel}
+            setShowAddDayDialog={setShowAddDayDialog}
+            confirmDeleteDay={confirmDeleteDay}
+            maxDays={maxDays}
           />
-        </div>
-      </div>
+        </motion.div>
+        
+        <motion.div variants={itemVariants} className="flex-1 overflow-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`day-${currentDay}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 24 }}
+              className="h-full"
+            >
+              {selectedExercises.length > 0 ? (
+                <StudentExerciseSelector 
+                  selectedExercises={selectedExercises}
+                  setSelectedExercises={setSelectedExercises}
+                  dayNumber={currentDay}
+                  exercises={exercises}
+                  dayLabel={getDayLabel(currentDay)}
+                />
+              ) : (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 backdrop-blur-sm border border-border/30 shadow-sm max-w-md">
+                    <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                      <Dumbbell className="w-8 h-8 text-blue-500" />
+                    </div>
+                    <h4 className="text-xl font-semibold mb-2">هیچ تمرینی انتخاب نشده</h4>
+                    <p className="text-muted-foreground mb-4">
+                      برای روز {toPersianNumbers(currentDay)} هنوز هیچ تمرینی اضافه نشده است. میتوانید تمرینات را انتخاب کنید.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      </motion.div>
       
       {/* Add Day Dialog */}
       <AddDayDialog

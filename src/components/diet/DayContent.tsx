@@ -3,6 +3,8 @@ import { TabsContent } from "@/components/ui/tabs";
 import { MealTypeSection } from "./MealTypeSection";
 import { mealTypeOrder } from "./MealTypeUtils";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
+import { motion } from "framer-motion";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface DayContentProps {
   day: string;
@@ -16,28 +18,57 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
   // مرتب‌سازی انواع وعده‌های غذایی بر اساس ترتیب تعریف شده
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   
+  // انیمیشن برای ظهور آیتم‌ها
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    }
+  };
+  
   return (
-    <div className="space-y-4 sm:space-y-6 text-right">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="space-y-4 sm:space-y-6 text-right"
+    >
       {sortedMealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter(meal => meal.type === type);
         
         // نمایش همه انواع وعده غذایی، حتی اگر وعده‌ای نداشته باشند
         return (
-          <MealTypeSection
-            key={`${day}-${type}`}
-            type={type}
-            meals={typeMeals}
-            day={day}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            typeIndex={typeIndex}
-          />
+          <motion.div key={`${day}-${type}`} variants={itemVariants}>
+            <MealTypeSection
+              type={type}
+              meals={typeMeals}
+              day={day}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              typeIndex={typeIndex}
+            />
+          </motion.div>
         );
       })}
       
       {/* نمایش پیام خالی بودن اگر هیچ وعده‌ای برای روز وجود نداشت */}
       {meals.length === 0 && (
-        <div className="text-muted-foreground text-lg py-10 px-4 rounded-2xl bg-muted/30 backdrop-blur-sm border border-border/30 shadow-sm flex items-center justify-center">
+        <motion.div 
+          variants={itemVariants}
+          className="text-muted-foreground text-lg py-10 px-4 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 backdrop-blur-sm border border-border/30 shadow-sm flex items-center justify-center"
+        >
           <div className="flex flex-col items-center justify-center gap-3">
             <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-60">
@@ -46,8 +77,8 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
             </div>
             <p>برای روز {day} برنامه غذایی ثبت نشده است</p>
           </div>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
