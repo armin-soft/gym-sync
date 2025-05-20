@@ -40,10 +40,15 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
   selectedMeals,
   setSelectedMeals,
   meals,
-  currentDietDay = 1,
+  currentDietDay = 0, // Changed to 0 to represent no selection
   setCurrentDietDay = () => {}
 }) => {
   const [currentMealType, setCurrentMealType] = useState<number>(0); // 0 means all meal types
+
+  // Reset meal type when day changes
+  useEffect(() => {
+    setCurrentMealType(0);
+  }, [currentDietDay]);
 
   // Filter meals by selected type if a specific type is selected
   const filteredMeals = currentMealType === 0 
@@ -83,43 +88,45 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
           </ScrollArea>
         </div>
         
-        {/* Meal type selector - new component */}
-        <div className="flex items-center justify-center mb-6">
-          <ScrollArea className="w-full max-w-3xl" orientation="horizontal">
-            <div className="flex items-center justify-center space-x-1 space-x-reverse">
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setCurrentMealType(0)}
-                className={cn(
-                  "h-10 px-4 py-2 rounded-md border text-sm transition-all",
-                  currentMealType === 0
-                    ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-                )}
-              >
-                همه وعده‌ها
-              </motion.button>
-              {mealTypes.map((type) => (
+        {/* Only show meal type selector if a day is selected */}
+        {currentDietDay > 0 && (
+          <div className="flex items-center justify-center mb-6">
+            <ScrollArea className="w-full max-w-3xl" orientation="horizontal">
+              <div className="flex items-center justify-center space-x-1 space-x-reverse">
                 <motion.button
-                  key={type.id}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentMealType(type.id)}
+                  onClick={() => setCurrentMealType(0)}
                   className={cn(
                     "h-10 px-4 py-2 rounded-md border text-sm transition-all",
-                    currentMealType === type.id 
-                      ? "bg-blue-500 text-white border-blue-500" 
+                    currentMealType === 0
+                      ? "bg-blue-500 text-white border-blue-500"
                       : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                   )}
                 >
-                  {type.name}
+                  همه وعده‌ها
                 </motion.button>
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
+                {mealTypes.map((type) => (
+                  <motion.button
+                    key={type.id}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentMealType(type.id)}
+                    className={cn(
+                      "h-10 px-4 py-2 rounded-md border text-sm transition-all",
+                      currentMealType === type.id 
+                        ? "bg-blue-500 text-white border-blue-500" 
+                        : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                    )}
+                  >
+                    {type.name}
+                  </motion.button>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        )}
         
         <div className="flex-1 overflow-auto">
-          {currentDietDay ? (
+          {currentDietDay > 0 ? (
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-center justify-center mb-3">
                 <div className="bg-green-100 p-2 rounded-full">

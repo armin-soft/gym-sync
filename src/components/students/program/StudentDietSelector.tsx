@@ -31,6 +31,11 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
     ? meals.filter(meal => meal.type === currentMealType)
     : meals;
 
+  // Further filter by current day if specified
+  const dayFilteredMeals = currentDayName
+    ? displayMeals.filter(meal => !meal.day || meal.day === currentDayName)
+    : displayMeals;
+
   const toggleMeal = (mealId: number) => {
     if (selectedMeals.includes(mealId)) {
       setSelectedMeals(prev => prev.filter(id => id !== mealId));
@@ -68,7 +73,7 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
             </h4>
             
             <MealsList
-              meals={displayMeals}
+              meals={dayFilteredMeals}
               selectedMeals={selectedMeals}
               toggleMeal={toggleMeal}
               currentDayName={currentDayName}
