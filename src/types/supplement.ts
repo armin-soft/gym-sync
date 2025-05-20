@@ -10,6 +10,7 @@ export interface Supplement {
   name: string;
   category: string;
   type: 'supplement' | 'vitamin';
+  supplementType?: string;  // Added supplementType property as optional
   description?: string;
   dosage?: string;
   timing?: string;
