@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ExerciseWithSets } from "@/hooks/exercise-selection";
 import { useExerciseDialogData } from "./useExerciseDialogData";
@@ -33,17 +34,17 @@ export const useStudentExerciseDialogState = ({
   initialExercisesDay4 = [],
   initialExercisesDay5 = []
 }: UseStudentExerciseDialogStateProps) => {
-  // برای نمایش پیام‌های اعلان
+  // For notifications
   const { toast } = useToast();
   
-  // حالت فعلی تب و تغییرات آن - مدیریت ذخیره‌سازی در هر تغییر تب
+  // Current tab state and changes - manage saving on each tab change
   const [previousTab, setPreviousTab] = useState<string>("");
   const [shouldAutoSave, setShouldAutoSave] = useState<boolean>(true);
   
   // Fetch exercises data
   const { exercises, categories, exerciseTypes, isLoading } = useExerciseDialogData();
   
-  // Exercise selection state - add day 5
+  // Exercise selection state with day 5
   const {
     selectedExercisesDay1,
     selectedExercisesDay2,
@@ -119,7 +120,7 @@ export const useStudentExerciseDialogState = ({
     exercises
   });
   
-  // ذخیره خودکار هنگام تغییر تب
+  // Auto-save when changing tabs
   useEffect(() => {
     if (previousTab && activeTab !== previousTab && shouldAutoSave) {
       const prevDayNumber = parseInt(previousTab.replace("day", ""));
@@ -151,7 +152,7 @@ export const useStudentExerciseDialogState = ({
       }
     }
     
-    // ذخیره تب فعلی برای استفاده در ذخیره خودکار بعدی
+    // Save current tab for next auto-save
     setPreviousTab(activeTab);
   }, [activeTab]);
 

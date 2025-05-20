@@ -10,6 +10,7 @@ interface UseExerciseDialogStateProps {
   initialExercisesDay2?: number[];
   initialExercisesDay3?: number[];
   initialExercisesDay4?: number[];
+  initialExercisesDay5?: number[]; // Added day 5
   categories: any[];
   exercises: any[];
 }
@@ -24,6 +25,7 @@ export const useExerciseDialogState = ({
   initialExercisesDay2 = [],
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
+  initialExercisesDay5 = [], // Added day 5
   categories,
   exercises
 }: UseExerciseDialogStateProps) => {
@@ -35,7 +37,8 @@ export const useExerciseDialogState = ({
     day1: false,
     day2: false,
     day3: false,
-    day4: false
+    day4: false,
+    day5: false // Added day 5
   });
 
   // Reset saved state when dialog opens
@@ -45,7 +48,8 @@ export const useExerciseDialogState = ({
         day1: false,
         day2: false,
         day3: false,
-        day4: false
+        day4: false,
+        day5: false // Added day 5
       });
     }
   }, [open]);
@@ -60,6 +64,7 @@ export const useExerciseDialogState = ({
         case "day2": selectedExercises = initialExercisesDay2; break;
         case "day3": selectedExercises = initialExercisesDay3; break;
         case "day4": selectedExercises = initialExercisesDay4; break;
+        case "day5": selectedExercises = initialExercisesDay5; break; // Added day 5
         default: selectedExercises = initialExercises;
       }
       
@@ -81,7 +86,7 @@ export const useExerciseDialogState = ({
         }
       }
     }
-  }, [open, activeTab, categories, exercises, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4]);
+  }, [open, activeTab, categories, exercises, initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, initialExercisesDay5]);
 
   // Filter and search state
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -143,17 +148,18 @@ export const useExerciseDialogState = ({
           title: "ذخیره موفق",
           description: `تمرین‌های ${dayNumber === 1 ? 'روز اول' : 
                         dayNumber === 2 ? 'روز دوم' : 
-                        dayNumber === 3 ? 'روز سوم' : 'روز چهارم'} با موفقیت ذخیره شدند`,
+                        dayNumber === 3 ? 'روز سوم' : 
+                        dayNumber === 4 ? 'روز چهارم' : 'روز پنجم'} با موفقیت ذخیره شدند`,
           variant: "default",
         });
         
-        // Automatically switch to the next day tab if not on day4
-        if (dayNumber !== 4) {
+        // Automatically switch to the next day if not on day5
+        if (dayNumber !== 5) {
           const nextTab = `day${dayNumber + 1}`;
           setActiveTab(nextTab);
         } else {
           // If all days have been saved, return true to potentially close the dialog
-          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && true; // day4 is saved now
+          const allSaved = savedState.day1 && savedState.day2 && savedState.day3 && savedState.day4 && true; // day5 is saved now
           if (allSaved) {
             return true;
           }

@@ -15,26 +15,32 @@ interface TabContentWrapperProps {
   selectedExercisesDay2: number[];
   selectedExercisesDay3: number[];
   selectedExercisesDay4: number[];
+  selectedExercisesDay5: number[]; // Added day 5
   toggleExerciseDay1: (id: number) => void;
   toggleExerciseDay2: (id: number) => void;
   toggleExerciseDay3: (id: number) => void;
   toggleExerciseDay4: (id: number) => void;
+  toggleExerciseDay5: (id: number) => void; // Added day 5
   exerciseSetsDay1?: Record<number, number>;
   exerciseSetsDay2?: Record<number, number>;
   exerciseSetsDay3?: Record<number, number>;
   exerciseSetsDay4?: Record<number, number>;
+  exerciseSetsDay5?: Record<number, number>; // Added day 5
   handleSetsChangeDay1?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay2?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay3?: (exerciseId: number, sets: number) => void;
   handleSetsChangeDay4?: (exerciseId: number, sets: number) => void;
-  exerciseRepsDay1?: Record<number, string>;
+  handleSetsChangeDay5?: (exerciseId: number, sets: number) => void; // Added day 5
+  exerciseRepsDay1?: Record<number, string>;  
   exerciseRepsDay2?: Record<number, string>;
   exerciseRepsDay3?: Record<number, string>;
   exerciseRepsDay4?: Record<number, string>;
-  handleRepsChangeDay1?: (exerciseId: number, reps: string) => void;
+  exerciseRepsDay5?: Record<number, string>; // Added day 5
+  handleRepsChangeDay1?: (exerciseId: number, reps: string) => void;  
   handleRepsChangeDay2?: (exerciseId: number, reps: string) => void;
   handleRepsChangeDay3?: (exerciseId: number, reps: string) => void;
   handleRepsChangeDay4?: (exerciseId: number, reps: string) => void;
+  handleRepsChangeDay5?: (exerciseId: number, reps: string) => void; // Added day 5
 }
 
 const TabContentWrapper: React.FC<TabContentWrapperProps> = ({
@@ -47,26 +53,32 @@ const TabContentWrapper: React.FC<TabContentWrapperProps> = ({
   selectedExercisesDay2,
   selectedExercisesDay3,
   selectedExercisesDay4,
+  selectedExercisesDay5, // Added day 5
   toggleExerciseDay1,
   toggleExerciseDay2,
   toggleExerciseDay3,
   toggleExerciseDay4,
+  toggleExerciseDay5, // Added day 5
   exerciseSetsDay1,
   exerciseSetsDay2,
   exerciseSetsDay3,
   exerciseSetsDay4,
+  exerciseSetsDay5, // Added day 5
   handleSetsChangeDay1,
   handleSetsChangeDay2,
   handleSetsChangeDay3,
   handleSetsChangeDay4,
+  handleSetsChangeDay5, // Added day 5
   exerciseRepsDay1,
   exerciseRepsDay2,
   exerciseRepsDay3,
   exerciseRepsDay4,
+  exerciseRepsDay5, // Added day 5
   handleRepsChangeDay1,
   handleRepsChangeDay2,
   handleRepsChangeDay3,
   handleRepsChangeDay4,
+  handleRepsChangeDay5, // Added day 5
 }) => {
   const containerVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -138,6 +150,21 @@ const TabContentWrapper: React.FC<TabContentWrapperProps> = ({
         onSetsChange={handleSetsChangeDay4}
         repsInfo={exerciseRepsDay4}
         onRepsChange={handleRepsChangeDay4}
+      />
+      
+      <DayTabContent
+        day="day5"
+        dayNumber={5}
+        filteredExercises={filteredExercises}
+        categories={categories}
+        viewMode={viewMode}
+        handleClearSearch={handleClearSearch}
+        selectedExercises={selectedExercisesDay5}
+        toggleExercise={toggleExerciseDay5}
+        exerciseSets={exerciseSetsDay5}
+        onSetsChange={handleSetsChangeDay5}
+        repsInfo={exerciseRepsDay5}
+        onRepsChange={handleRepsChangeDay5}
       />
     </motion.div>
   );

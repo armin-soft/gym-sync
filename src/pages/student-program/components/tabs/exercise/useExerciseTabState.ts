@@ -33,6 +33,7 @@ export const useExerciseTabState = (
   useEffect(() => {
     const cachedExercises = { ...exerciseCacheRef.current };
     
+    // Day 1
     if (student.exercisesDay1) {
       cachedExercises[1] = student.exercisesDay1.map(id => ({
         id,
@@ -42,6 +43,7 @@ export const useExerciseTabState = (
       }));
     }
     
+    // Day 2
     if (student.exercisesDay2) {
       cachedExercises[2] = student.exercisesDay2.map(id => ({
         id,
@@ -51,6 +53,7 @@ export const useExerciseTabState = (
       }));
     }
     
+    // Day 3
     if (student.exercisesDay3) {
       cachedExercises[3] = student.exercisesDay3.map(id => ({
         id,
@@ -60,6 +63,7 @@ export const useExerciseTabState = (
       }));
     }
     
+    // Day 4
     if (student.exercisesDay4) {
       cachedExercises[4] = student.exercisesDay4.map(id => ({
         id,
@@ -69,6 +73,7 @@ export const useExerciseTabState = (
       }));
     }
     
+    // Day 5
     if (student.exercisesDay5) {
       cachedExercises[5] = student.exercisesDay5.map(id => ({
         id,

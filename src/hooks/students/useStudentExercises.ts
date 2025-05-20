@@ -31,13 +31,16 @@ export const useStudentExercises = (
             return acc;
           }, {} as Record<number, string>);
           
-          // Store the reps information in the student object
+          // Initialize reps objects if needed
           updatedStudent.exerciseReps = updatedStudent.exerciseReps || {};
           updatedStudent.exerciseRepsDay1 = updatedStudent.exerciseRepsDay1 || {};
           updatedStudent.exerciseRepsDay2 = updatedStudent.exerciseRepsDay2 || {};
           updatedStudent.exerciseRepsDay3 = updatedStudent.exerciseRepsDay3 || {};
           updatedStudent.exerciseRepsDay4 = updatedStudent.exerciseRepsDay4 || {};
-          updatedStudent.exerciseRepsDay5 = updatedStudent.exerciseRepsDay5 || {};  // Add day 5
+          // Add day 5 support
+          if (!updatedStudent.exerciseRepsDay5) {
+            updatedStudent.exerciseRepsDay5 = {};
+          }
           
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
@@ -62,7 +65,14 @@ export const useStudentExercises = (
                 updatedStudent.exerciseSetsDay4 = exerciseSets;
                 updatedStudent.exerciseRepsDay4 = exerciseReps;
                 break;
-              case 5:  // Add day 5
+              case 5:
+                // Add day 5 support
+                if (!updatedStudent.exercisesDay5) {
+                  updatedStudent.exercisesDay5 = [];
+                }
+                if (!updatedStudent.exerciseSetsDay5) {
+                  updatedStudent.exerciseSetsDay5 = {};
+                }
                 updatedStudent.exercisesDay5 = exerciseIds;
                 updatedStudent.exerciseSetsDay5 = exerciseSets;
                 updatedStudent.exerciseRepsDay5 = exerciseReps;

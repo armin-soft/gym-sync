@@ -11,4 +11,5 @@ export interface StudentExerciseDialogProps {
   initialExercisesDay2?: number[];
   initialExercisesDay3?: number[];
   initialExercisesDay4?: number[];
+  initialExercisesDay5?: number[]; // Added day 5
 }

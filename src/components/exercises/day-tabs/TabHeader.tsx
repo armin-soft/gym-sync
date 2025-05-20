@@ -11,6 +11,7 @@ interface TabHeaderProps {
   selectedExercisesDay2: number[];
   selectedExercisesDay3: number[];
   selectedExercisesDay4: number[];
+  selectedExercisesDay5: number[]; // Added day 5
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
   toggleSortOrder: () => void;
@@ -24,6 +25,7 @@ const TabHeader: React.FC<TabHeaderProps> = ({
   selectedExercisesDay2,
   selectedExercisesDay3,
   selectedExercisesDay4,
+  selectedExercisesDay5, // Added day 5
 }) => {
   const getSelectedCount = (day: string) => {
     switch (day) {
@@ -31,6 +33,7 @@ const TabHeader: React.FC<TabHeaderProps> = ({
       case "day2": return selectedExercisesDay2.length;
       case "day3": return selectedExercisesDay3.length;
       case "day4": return selectedExercisesDay4.length;
+      case "day5": return selectedExercisesDay5.length; // Added day 5
       default: return 0;
     }
   };
