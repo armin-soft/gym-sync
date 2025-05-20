@@ -1,67 +1,61 @@
 
-import React, { useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Search, X } from "lucide-react";
+import React from 'react';
+import { Search, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface StudentSearchProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  onClearSearch?: () => void;
+  className?: string;
+  onClear?: () => void;
 }
 
-export const StudentSearch: React.FC<StudentSearchProps> = ({
-  searchQuery,
-  setSearchQuery,
-  onClearSearch
+export const StudentSearch: React.FC<StudentSearchProps> = ({ 
+  searchQuery, 
+  setSearchQuery, 
+  className,
+  onClear
 }) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleClear = () => {
-    if (onClearSearch) {
-      onClearSearch();
-    } else {
-      setSearchQuery("");
-    }
-    inputRef.current?.focus();
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    if (onClear) onClear();
   };
 
   return (
-    <div 
-      className={`
-        relative flex items-center rounded-lg border border-input bg-background 
-        shadow-sm transition-all duration-200
-        ${isFocused ? 'ring-1 ring-ring' : ''}
-        ${searchQuery ? 'pr-3' : 'pr-4'}
-      `}
-    >
-      <Search className="h-4 w-4 absolute right-3 text-muted-foreground" />
+    <div className={cn('relative w-full', className)}>
+      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+        <Search className="h-4 w-4" />
+      </div>
       
       <Input
-        ref={inputRef}
         type="text"
+        placeholder="جستجوی نام، شماره تلفن یا ویژگی‌های دیگر..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        placeholder="جستجوی شاگرد..."
-        className="border-0 focus-visible:ring-0 pr-9 text-sm bg-transparent shadow-none"
+        className="pl-9 pr-4 py-2 text-sm bg-transparent dark:bg-slate-800/50 focus-visible:ring-indigo-500 border-none shadow-none rounded-lg"
       />
       
       <AnimatePresence>
         {searchQuery && (
-          <motion.button
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={handleClear}
-            className="absolute left-3 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="پاک کردن جستجو"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2"
           >
-            <X className="h-4 w-4" />
-          </motion.button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 rounded-full"
+              onClick={handleClearSearch}
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

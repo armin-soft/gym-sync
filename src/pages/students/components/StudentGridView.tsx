@@ -30,7 +30,7 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
   const getGridColumns = () => {
     if (deviceInfo.isMobile) return "grid-cols-1";
     if (deviceInfo.isTablet) return "grid-cols-2";
-    if (window.innerWidth >= 1280) return "grid-cols-4";
+    if (window.innerWidth >= 1280) return "grid-cols-3 xl:grid-cols-4";
     return "grid-cols-3";
   };
   
@@ -72,6 +72,7 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
             variants={itemVariants}
             layout
             className="h-full"
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >
             <StudentCard
               student={student}
@@ -81,6 +82,7 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
               onAddDiet={() => onAddDiet(student)}
               onAddSupplement={() => onAddSupplement(student)}
               isProfileComplete={isProfileComplete}
+              className="h-full transform transition-all duration-300 hover:shadow-xl hover:shadow-indigo-200/20 dark:hover:shadow-indigo-900/10"
             />
           </motion.div>
         ))}
@@ -88,3 +90,5 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
     </div>
   );
 };
+
+export default StudentGridView;

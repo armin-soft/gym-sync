@@ -12,6 +12,7 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 import StudentTabControls from "../StudentTabControls";
 import StudentSearchControls from "../StudentSearchControls";
 import StudentContent from "../StudentContent";
+import StudentHeaderInfo from "../StudentHeaderInfo";
 
 interface MainContentProps {
   students: Student[];
@@ -32,6 +33,8 @@ interface MainContentProps {
   exercises: any[];
   meals: any[];
   supplements: any[];
+  currentDate?: string;
+  seasonEmoji?: string;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
@@ -52,7 +55,9 @@ const MainContent: React.FC<MainContentProps> = ({
   handleDeleteWithHistory,
   exercises,
   meals,
-  supplements
+  supplements,
+  currentDate,
+  seasonEmoji
 }) => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const deviceInfo = useDeviceInfo();
@@ -67,9 +72,27 @@ const MainContent: React.FC<MainContentProps> = ({
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          <StudentHeaderInfo 
+            currentDate={currentDate}
+            seasonEmoji={seasonEmoji}
+            studentsCount={students?.length || 0}
+          />
+        </motion.div>
+        
         <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
         
-        <StudentStatsCards students={students} />
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+          <StudentStatsCards students={students} />
+        </motion.div>
         
         <Tabs defaultValue="all" className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-4 md:mb-6">
