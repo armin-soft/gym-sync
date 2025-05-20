@@ -64,6 +64,12 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
             handleSave,
             handleSaveDay,
             handleSaveAndContinue,
+            selectedExercisesDay5,
+            toggleExerciseDay5,
+            exerciseSetsDay5,
+            handleSetsChangeDay5,
+            exerciseRepsDay5,
+            handleRepsChangeDay5,
             ...contentProps
           }) => (
             <>
@@ -100,6 +106,12 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
                   <StudentExerciseDialogContent 
                     isLoading={isLoading}
                     activeTab={activeTab}
+                    selectedExercisesDay5={selectedExercisesDay5}
+                    toggleExerciseDay5={toggleExerciseDay5}
+                    exerciseSetsDay5={exerciseSetsDay5}
+                    handleSetsChangeDay5={handleSetsChangeDay5}
+                    exerciseRepsDay5={exerciseRepsDay5}
+                    handleRepsChangeDay5={handleRepsChangeDay5}
                     handleSaveExercises={(exercisesWithSets, dayNumber) => {
                       return handleSaveDay(
                         exercisesWithSets, 
