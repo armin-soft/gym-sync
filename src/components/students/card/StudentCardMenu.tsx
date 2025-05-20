@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,21 @@ import {
 } from "lucide-react";
 import { Student } from "../StudentTypes";
 import { useNavigate } from "react-router-dom";
+
+// Define the missing menuItemVariants object
+const menuItemVariants = {
+  hidden: { opacity: 0, x: -10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      delay: i * 0.05,
+      duration: 0.2,
+      ease: "easeOut"
+    }
+  }),
+  exit: { opacity: 0, x: -10, transition: { duration: 0.1 } }
+};
 
 interface StudentCardMenuProps {
   student: Student;
@@ -45,20 +59,6 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
     navigate(`/student-program/${student.id}`);
   };
   
-  const menuItemVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.2,
-        ease: "easeOut"
-      }
-    }),
-    exit: { opacity: 0, x: -10, transition: { duration: 0.1 } }
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
