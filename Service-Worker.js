@@ -1,4 +1,3 @@
-
 // Main service worker entry point
 // This file serves as the orchestrator for all service worker functionality
 
@@ -30,3 +29,47 @@ fetch('./Manifest.json')
   .catch(err => {
     console.log('[Service Worker] Using default version configuration');
   });
+
+// Add navigation preload support for faster page transitions
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    (async function() {
+      // Enable navigation preload if supported
+      if (self.registration.navigationPreload) {
+        await self.registration.navigationPreload.enable();
+        console.log('[Service Worker] Navigation preload enabled');
+      }
+      
+      // Take control immediately
+      await self.clients.claim();
+    })()
+  );
+});
+
+// Fix for navigation issues - respond faster to navigation requests
+self.addEventListener('fetch', event => {
+  // Only handle navigation requests (HTML pages)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        try {
+          // Try using navigation preload response if available
+          const preloadResponse = await event.preloadResponse;
+          if (preloadResponse) {
+            return preloadResponse;
+          }
+
+          // Otherwise use network with a fast timeout
+          const networkResponse = await fetch(event.request, { 
+            cache: 'no-store'
+          });
+          return networkResponse;
+        } catch (error) {
+          // If both fail, use cache
+          const cachedResponse = await caches.match(event.request);
+          return cachedResponse || caches.match('./index.html');
+        }
+      })()
+    );
+  }
+});

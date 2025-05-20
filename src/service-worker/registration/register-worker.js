@@ -11,22 +11,34 @@ export function registerServiceWorker(manifestData) {
   // Add timestamp to force new service worker
   const timestamp = new Date().getTime();
   // Always use relative path for service worker with cache busting
-  const scriptPath = './Service-Worker.js?v=' + timestamp;
-  
-  // Clear caches before registering to ensure fresh version
-  clearCaches();
+  const scriptPath = `./Service-Worker.js?v=${timestamp}`;
   
   // Register the service worker with improved error handling
-  navigator.serviceWorker.register(scriptPath)
+  navigator.serviceWorker.register(scriptPath, {
+    scope: '/',
+    updateViaCache: 'none' // Always check network for updates
+  })
     .then(function(registration) {
       // Registration was successful
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      
+      // If there's a waiting worker, activate it immediately
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
       
       // Handle service worker updates
       handleServiceWorkerUpdate(registration, currentVersion, lastKnownVersion);
       
       // Save registration to make it available throughout the app
       window.swRegistration = registration;
+      
+      // Enable navigation preload if supported
+      if (registration.navigationPreload) {
+        registration.navigationPreload.enable().then(() => {
+          console.log('Navigation preload enabled');
+        });
+      }
       
       // Dispatch event to notify React app that service worker is ready
       window.dispatchEvent(new CustomEvent('swRegistered', { detail: registration }));

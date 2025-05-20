@@ -20,7 +20,6 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] نصب سرویس ورکر');
   
-  // کش کردن فایل‌های اصلی
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -31,28 +30,40 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// فعال‌سازی سرویس ورکر
+// فعال‌سازی سرویس ورکر - پاکسازی کش‌های قدیمی و گرفتن کنترل سریع صفحات
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] فعال‌سازی');
   
-  // حذف کش‌های قدیمی
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] حذف کش قدیمی:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim()) // اعمال فوری کنترل روی تمام کلاینت‌ها
+    Promise.all([
+      // حذف کش‌های قدیمی
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('[Service Worker] حذف کش قدیمی:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      
+      // فعال کردن navigation preload برای سرعت بیشتر
+      (async function() {
+        // فقط اگر پشتیبانی شود
+        if (self.registration.navigationPreload) {
+          await self.registration.navigationPreload.enable();
+          console.log('[Service Worker] Navigation preload فعال شد');
+        }
+      })(),
+      
+      // اعمال فوری کنترل روی تمام کلاینت‌ها
+      self.clients.claim()
+    ])
   );
 });
 
-// استراتژی کش بهبود یافته: 
-// 1. اگر کش موجود باشد فوراً استفاده کن
-// 2. همزمان درخواست شبکه را انجام بده و کش را بروز کن (اما منتظر نتیجه نباش)
+// بهبود استراتژی کش برای مسیریابی بهتر
 self.addEventListener('fetch', (event) => {
   // فقط درخواست‌های GET را پردازش می‌کنیم
   if (event.request.method !== 'GET') return;
@@ -62,8 +73,34 @@ self.addEventListener('fetch', (event) => {
 
   // API درخواست‌ها را رد می‌کنیم
   if (event.request.url.includes('/api/')) return;
+  
+  // تشخیص درخواست‌های مسیریابی (صفحات HTML)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        try {
+          // استفاده از navigation preload اگر در دسترس باشد
+          const preloadResponse = await event.preloadResponse;
+          if (preloadResponse) {
+            return preloadResponse;
+          }
+          
+          // در غیر این صورت از شبکه با کش no-store استفاده کن
+          return await fetch(event.request, { cache: 'no-store' });
+        } catch (error) {
+          // در صورت خطا از کش استفاده کن
+          const cachedResponse = await caches.match('./index.html');
+          return cachedResponse || new Response('صفحه در دسترس نیست', { 
+            status: 503, 
+            headers: {'Content-Type': 'text/html'} 
+          });
+        }
+      })()
+    );
+    return;
+  }
 
-  // استراتژی سریع: اول کش، سپس شبکه در پس‌زمینه
+  // برای سایر درخواست‌ها (منابع استاتیک)
   event.respondWith(
     (async function() {
       // فوری از کش بخوان
@@ -75,8 +112,8 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
       
-      // اگر در کش نبود، از شبکه بگیر
       try {
+        // اگر در کش نبود، از شبکه بگیر
         const networkResponse = await fetch(event.request);
         
         // نتیجه را در کش ذخیره کن
@@ -89,12 +126,12 @@ self.addEventListener('fetch', (event) => {
         
         return networkResponse;
       } catch (error) {
-        // اگر در حالت آفلاین هستیم، صفحه آفلاین را برگردان
-        if (event.request.mode === 'navigate') {
-          const offlinePage = await caches.match('./Offline.html');
-          if (offlinePage) return offlinePage;
+        // اگر منبع تصویر بود، تصویر پیش‌فرض را برگردان
+        if (event.request.url.match(/\.(jpg|jpeg|png|gif|svg)$/)) {
+          return caches.match('./Assets/Image/Place-Holder.svg');
         }
         
+        // برای سایر منابع خطای معمولی را برگردان
         throw error;
       }
     })()
