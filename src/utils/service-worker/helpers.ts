@@ -51,9 +51,11 @@ export function showUpdateNotification(): void {
             })
           );
         }).then(() => {
+          // Explicitly specify that we're accessing the window object
           window.location.reload();
         });
       } else {
+        // Explicitly specify that we're accessing the window object
         window.location.reload();
       }
     }
