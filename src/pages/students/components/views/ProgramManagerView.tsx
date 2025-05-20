@@ -10,9 +10,9 @@ interface ProgramManagerViewProps {
   exercises: any[];
   meals: any[];
   supplements: any[];
-  onSaveExercisesWithHistory: (exercisesWithSets: any[], studentId: number, dayNumber?: number) => void;
-  onSaveDietWithHistory: (mealIds: number[], studentId: number) => void;
-  onSaveSupplementsWithHistory: (data: {supplements: number[], vitamins: number[]}, studentId: number) => void;
+  onSaveExercisesWithHistory: (exercisesWithSets: any[], studentId: number, dayNumber?: number) => boolean;
+  onSaveDietWithHistory: (mealIds: number[], studentId: number) => boolean;
+  onSaveSupplementsWithHistory: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
   onClose: () => void;
 }
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import StudentsPage from './components/StudentsPage';
+import StudentsPage from '../students';
 
 const Students = () => {
   return <StudentsPage />;
