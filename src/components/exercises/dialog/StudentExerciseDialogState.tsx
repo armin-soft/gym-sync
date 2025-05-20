@@ -13,6 +13,7 @@ interface StudentExerciseDialogStateProps {
   initialExercisesDay2?: number[];
   initialExercisesDay3?: number[];
   initialExercisesDay4?: number[];
+  initialExercisesDay5?: number[]; // Added day 5 here
   children: (props: {
     isLoading: boolean;
     exercises: any[];
@@ -37,26 +38,32 @@ interface StudentExerciseDialogStateProps {
     selectedExercisesDay2: number[];
     selectedExercisesDay3: number[];
     selectedExercisesDay4: number[];
+    selectedExercisesDay5: number[]; // Added day 5 here
     toggleExerciseDay1: (id: number) => void;
     toggleExerciseDay2: (id: number) => void;
     toggleExerciseDay3: (id: number) => void;
     toggleExerciseDay4: (id: number) => void;
+    toggleExerciseDay5: (id: number) => void; // Added day 5 here
     exerciseSetsDay1: Record<number, number>;
     exerciseSetsDay2: Record<number, number>;
     exerciseSetsDay3: Record<number, number>;
     exerciseSetsDay4: Record<number, number>;
+    exerciseSetsDay5: Record<number, number>; // Added day 5 here
     handleSetsChangeDay1: (exerciseId: number, sets: number) => void;
     handleSetsChangeDay2: (exerciseId: number, sets: number) => void;
     handleSetsChangeDay3: (exerciseId: number, sets: number) => void;
     handleSetsChangeDay4: (exerciseId: number, sets: number) => void;
+    handleSetsChangeDay5: (exerciseId: number, sets: number) => void; // Added day 5 here
     exerciseRepsDay1: Record<number, string>;
     exerciseRepsDay2: Record<number, string>;
     exerciseRepsDay3: Record<number, string>;
     exerciseRepsDay4: Record<number, string>;
+    exerciseRepsDay5: Record<number, string>; // Added day 5 here
     handleRepsChangeDay1: (exerciseId: number, reps: string) => void;
     handleRepsChangeDay2: (exerciseId: number, reps: string) => void;
     handleRepsChangeDay3: (exerciseId: number, reps: string) => void;
     handleRepsChangeDay4: (exerciseId: number, reps: string) => void;
+    handleRepsChangeDay5: (exerciseId: number, reps: string) => void; // Added day 5 here
     getActiveTabSelectedExercises: () => number[];
     getActiveTabSelectedExercisesWithSets: () => ExerciseWithSets[];
     handleSave: () => boolean;
@@ -75,6 +82,7 @@ export const StudentExerciseDialogState: React.FC<StudentExerciseDialogStateProp
   initialExercisesDay2 = [],
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
+  initialExercisesDay5 = [], // Added day 5 here
   children
 }) => {
   // Use the custom hook to manage all state
@@ -87,7 +95,8 @@ export const StudentExerciseDialogState: React.FC<StudentExerciseDialogStateProp
     initialExercisesDay1,
     initialExercisesDay2,
     initialExercisesDay3,
-    initialExercisesDay4
+    initialExercisesDay4,
+    initialExercisesDay5 // Added day 5 here
   });
 
   // Render the children function with all the state props
