@@ -37,10 +37,7 @@ export const useStudentExercises = (
           updatedStudent.exerciseRepsDay2 = updatedStudent.exerciseRepsDay2 || {};
           updatedStudent.exerciseRepsDay3 = updatedStudent.exerciseRepsDay3 || {};
           updatedStudent.exerciseRepsDay4 = updatedStudent.exerciseRepsDay4 || {};
-          // Add day 5 support
-          if (!updatedStudent.exerciseRepsDay5) {
-            updatedStudent.exerciseRepsDay5 = {};
-          }
+          updatedStudent.exerciseRepsDay5 = updatedStudent.exerciseRepsDay5 || {};
           
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
@@ -66,13 +63,17 @@ export const useStudentExercises = (
                 updatedStudent.exerciseRepsDay4 = exerciseReps;
                 break;
               case 5:
-                // Add day 5 support
+                // Initialize day 5 properties if they don't exist
                 if (!updatedStudent.exercisesDay5) {
                   updatedStudent.exercisesDay5 = [];
                 }
                 if (!updatedStudent.exerciseSetsDay5) {
                   updatedStudent.exerciseSetsDay5 = {};
                 }
+                if (!updatedStudent.exerciseRepsDay5) {
+                  updatedStudent.exerciseRepsDay5 = {};
+                }
+                
                 updatedStudent.exercisesDay5 = exerciseIds;
                 updatedStudent.exerciseSetsDay5 = exerciseSets;
                 updatedStudent.exerciseRepsDay5 = exerciseReps;

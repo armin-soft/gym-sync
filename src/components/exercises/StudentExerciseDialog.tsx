@@ -26,6 +26,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   initialExercisesDay2 = [],
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
+  initialExercisesDay5 = [],
 }) => {
   const { toast } = useToast();
 
@@ -53,6 +54,7 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
           initialExercisesDay2={initialExercisesDay2}
           initialExercisesDay3={initialExercisesDay3}
           initialExercisesDay4={initialExercisesDay4}
+          initialExercisesDay5={initialExercisesDay5}
         >
           {({ 
             isLoading,
