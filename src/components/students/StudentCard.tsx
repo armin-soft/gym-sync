@@ -8,7 +8,7 @@ import { StudentCardStats } from "./card/StudentCardStats";
 import { StudentProgressBar } from "./card/StudentProgressBar";
 import { StudentStatBadges } from "./card/StudentStatBadges";
 import { StudentCardFooter } from "./card/StudentCardFooter";
-import { StudentContextMenu } from "./card/StudentContextMenu";
+import StudentContextMenu from "./card/StudentContextMenu";
 import { cn } from "@/lib/utils";
 
 interface StudentCardProps {
@@ -106,3 +106,4 @@ export const StudentCard: React.FC<StudentCardProps> = ({
     </motion.div>
   );
 };
+
