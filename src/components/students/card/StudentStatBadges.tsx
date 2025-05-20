@@ -3,40 +3,93 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Dumbbell, UtensilsCrossed, Pill } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { motion } from "framer-motion";
 
 interface StudentStatBadgesProps {
-  exercises?: number[];
-  meals?: number[];
-  supplements?: number[];
+  exercises?: any[];
+  meals?: any[];
+  supplements?: any[];
 }
 
-export const StudentStatBadges: React.FC<StudentStatBadgesProps> = ({
-  exercises,
-  meals,
-  supplements
+export const StudentStatBadges: React.FC<StudentStatBadgesProps> = ({ 
+  exercises = [], 
+  meals = [], 
+  supplements = [] 
 }) => {
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0 }
+  };
+  
   return (
-    <div className="flex flex-wrap gap-1.5 mt-3">
-      {exercises && exercises.length > 0 && (
-        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-          <Dumbbell className="mr-1 h-3 w-3" />
-          <span>{toPersianNumbers(exercises.length)} تمرین</span>
-        </Badge>
-      )}
+    <motion.div 
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="flex flex-wrap gap-2 mt-4"
+    >
+      <motion.div variants={item}>
+        <StatBadge 
+          icon={<Dumbbell className="h-3 w-3" />}
+          count={exercises.length}
+          label="تمرین"
+          className="bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800/50 dark:text-indigo-400"
+          hoverClassName="hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
+        />
+      </motion.div>
       
-      {meals && meals.length > 0 && (
-        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-          <UtensilsCrossed className="mr-1 h-3 w-3" />
-          <span>{toPersianNumbers(meals.length)} وعده</span>
-        </Badge>
-      )}
+      <motion.div variants={item}>
+        <StatBadge 
+          icon={<UtensilsCrossed className="h-3 w-3" />}
+          count={meals.length}
+          label="وعده غذایی"
+          className="bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-800/50 dark:text-emerald-400"
+          hoverClassName="hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
+        />
+      </motion.div>
       
-      {supplements && supplements.length > 0 && (
-        <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-          <Pill className="mr-1 h-3 w-3" />
-          <span>{toPersianNumbers(supplements.length)} مکمل</span>
-        </Badge>
-      )}
-    </div>
+      <motion.div variants={item}>
+        <StatBadge 
+          icon={<Pill className="h-3 w-3" />}
+          count={supplements.length}
+          label="مکمل"
+          className="bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/30 dark:border-amber-800/50 dark:text-amber-400"
+          hoverClassName="hover:bg-amber-100 dark:hover:bg-amber-900/50"
+        />
+      </motion.div>
+    </motion.div>
+  );
+};
+
+interface StatBadgeProps {
+  icon: React.ReactNode;
+  count: number;
+  label: string;
+  className?: string;
+  hoverClassName?: string;
+}
+
+const StatBadge: React.FC<StatBadgeProps> = ({ icon, count, label, className, hoverClassName }) => {
+  return (
+    <Badge 
+      variant="outline" 
+      className={`py-1 gap-1.5 text-xs transition-colors duration-200 ${className} ${hoverClassName}`}
+    >
+      <span className="flex items-center justify-center rounded-full p-0.5">
+        {icon}
+      </span>
+      <span className="font-medium">{toPersianNumbers(count)}</span>
+      <span className="opacity-80">{label}</span>
+    </Badge>
   );
 };

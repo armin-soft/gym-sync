@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   MoreVertical, 
-  CalendarDays,
   FileText
 } from "lucide-react";
 import { Student } from "../StudentTypes";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface StudentCardMenuProps {
   student: Student;
@@ -33,7 +33,7 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // ایجاد مسیریابی به صفحه مدیریت برنامه
+  // Navigate to program management page
   const handleProgramClick = () => {
     navigate(`/student-program/${student.id}`);
   };
@@ -60,29 +60,16 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">مدیریت اطلاعات شاگرد</p>
         </div>
         
-        {/* گزینه تخصیص برنامه */}
-        <MenuItemWithIcon 
-          icon={<CalendarDays className="h-4 w-4" />}
-          onClick={handleProgramClick}
-          disabled={!isProfileComplete}
-          title="تخصیص برنامه"
-          subtitle="مدیریت همه برنامه‌ها"
-          iconClassName="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover/item:bg-indigo-200 dark:group-hover/item:bg-indigo-800/50"
-          hoverClassName="group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400"
-        />
-        
         {/* گزینه صدور برنامه */}
-        {onDownload && (
-          <MenuItemWithIcon 
-            icon={<FileText className="h-4 w-4" />}
-            onClick={onDownload}
-            disabled={!isProfileComplete}
-            title="صدور برنامه"
-            subtitle="دانلود و چاپ برنامه‌ها"
-            iconClassName="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover/item:bg-blue-200 dark:group-hover/item:bg-blue-800/50"
-            hoverClassName="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400"
-          />
-        )}
+        <MenuItemWithIcon 
+          icon={<FileText className="h-4 w-4" />}
+          onClick={onDownload}
+          disabled={!isProfileComplete}
+          title="صدور برنامه"
+          subtitle="دانلود و چاپ برنامه‌ها"
+          iconClassName="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover/item:bg-blue-200 dark:group-hover/item:bg-blue-800/50"
+          hoverClassName="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400"
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -112,18 +99,23 @@ const MenuItemWithIcon: React.FC<MenuItemWithIconProps> = ({
   subtitleClassName = ""
 }) => {
   return (
-    <DropdownMenuItem 
-      onClick={onClick} 
-      disabled={disabled} 
-      className={`flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item ${menuItemClassName}`}
+    <motion.div
+      whileHover={{ x: 3 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <div className={`flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center transition-all duration-200 ${iconClassName}`}>
-        {icon}
-      </div>
-      <div className="flex flex-col">
-        <span className={`transition-colors duration-200 ${hoverClassName}`}>{title}</span>
-        <span className={`text-xs text-slate-500 dark:text-slate-400 ${subtitleClassName}`}>{subtitle}</span>
-      </div>
-    </DropdownMenuItem>
+      <DropdownMenuItem 
+        onClick={onClick} 
+        disabled={disabled} 
+        className={`flex items-center gap-2.5 py-2.5 px-3 cursor-pointer rounded-lg text-slate-700 dark:text-slate-200 focus:bg-slate-100 dark:focus:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed group/item ${menuItemClassName}`}
+      >
+        <div className={`flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center transition-all duration-200 ${iconClassName}`}>
+          {icon}
+        </div>
+        <div className="flex flex-col">
+          <span className={`transition-colors duration-200 ${hoverClassName}`}>{title}</span>
+          <span className={`text-xs text-slate-500 dark:text-slate-400 ${subtitleClassName}`}>{subtitle}</span>
+        </div>
+      </DropdownMenuItem>
+    </motion.div>
   );
 };

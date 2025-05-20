@@ -8,6 +8,7 @@ import { StudentCardStats } from "./card/StudentCardStats";
 import { StudentProgressBar } from "./card/StudentProgressBar";
 import { StudentStatBadges } from "./card/StudentStatBadges";
 import { StudentCardFooter } from "./card/StudentCardFooter";
+import { cn } from "@/lib/utils";
 
 interface StudentCardProps {
   student: Student;
@@ -17,6 +18,7 @@ interface StudentCardProps {
   onAddDiet: () => void;
   onAddSupplement: () => void;
   isProfileComplete: boolean;
+  className?: string;
 }
 
 export const StudentCard: React.FC<StudentCardProps> = ({
@@ -26,20 +28,38 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  isProfileComplete
+  isProfileComplete,
+  className
 }) => {
-  // Add some debugging to see what's happening with the meal data
-  console.log(`StudentCard for ${student.name}, meals:`, student.meals);
-  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
       layout
       className="h-full"
     >
-      <Card className="h-full backdrop-blur-sm bg-white/60 dark:bg-slate-900/60 border border-gray-200/60 dark:border-slate-800/60 hover:shadow-md transition-all duration-300">
+      <Card className={cn(
+        "h-full relative overflow-hidden shadow-lg backdrop-blur-md",
+        "bg-gradient-to-br from-white/90 to-white/70 dark:from-slate-900/90 dark:to-slate-800/70",
+        "border border-slate-200/80 dark:border-slate-700/80",
+        "hover:shadow-xl hover:shadow-indigo-200/10 dark:hover:shadow-indigo-900/20",
+        "transition-all duration-300 ease-in-out group",
+        className
+      )}>
+        {/* Animated gradient background on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/5 via-purple-400/5 to-pink-400/5 
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+        
+        {/* Top right decorative shape */}
+        <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 
+                      blur-xl dark:from-blue-500/20 dark:to-indigo-500/20"></div>
+        
+        {/* Bottom left decorative shape */}
+        <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 
+                      blur-xl dark:from-purple-500/20 dark:to-pink-500/20"></div>
+        
         <CardHeader className="p-4 pb-0">
           <StudentCardHeader
             student={student}
