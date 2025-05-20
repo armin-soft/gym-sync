@@ -18,10 +18,10 @@ import { motion } from "framer-motion";
 interface StudentCardMenuProps {
   student: Student;
   onEdit?: () => void;
-  onDelete: () => void;
-  onAddExercise: () => void;
-  onAddDiet: () => void;
-  onAddSupplement: () => void;
+  onDelete?: (id: number) => void;
+  onAddExercise?: (student: Student) => void;
+  onAddDiet?: (student: Student) => void;
+  onAddSupplement?: (student: Student) => void;
   onDownload?: () => void;
   isProfileComplete: boolean;
 }
