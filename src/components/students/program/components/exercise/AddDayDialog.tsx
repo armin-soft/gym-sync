@@ -28,11 +28,11 @@ const AddDayDialog: React.FC<AddDayDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" aria-describedby="add-day-description">
         <DialogHeader>
           <DialogTitle className="text-center">افزودن روز جدید</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4" id="add-day-description">
           <div className="space-y-2">
             <Input
               value={newDayLabel}

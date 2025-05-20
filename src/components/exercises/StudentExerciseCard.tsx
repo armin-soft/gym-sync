@@ -52,6 +52,7 @@ export const StudentExerciseCard: React.FC<StudentExerciseCardProps> = ({
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ duration: 0.2 }}
+          aria-label={`تنظیمات تمرین ${exercise.name}`}
         >
           <div className="text-xs text-muted-foreground mb-2 font-medium">
             جزئیات تمرین

@@ -31,10 +31,16 @@ const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[100vw] p-0 m-0 h-[100vh] w-[100vw] rounded-none border-none overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 flex flex-col">
+      <DialogContent 
+        className="max-w-[100vw] p-0 m-0 h-[100vh] w-[100vw] rounded-none border-none overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 flex flex-col"
+        aria-describedby="exercise-dialog-description"
+      >
         <DialogTitle className="sr-only">
           انتخاب تمرین برای {studentName}
         </DialogTitle>
+        <div id="exercise-dialog-description" className="sr-only">
+          در این صفحه شما می‌توانید تمرین‌های مورد نظر را برای دانش‌آموز انتخاب کنید
+        </div>
         <ExerciseDialogHeader studentName={studentName} />
 
         <StudentExerciseDialogState

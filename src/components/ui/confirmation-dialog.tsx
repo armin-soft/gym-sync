@@ -60,10 +60,11 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   };
 
   const { Icon, iconColor, buttonClass } = getIconAndColor();
+  const dialogId = `dialog-description-${Math.random().toString(36).substring(2, 9)}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md text-right" dir="rtl">
+      <DialogContent className="sm:max-w-md text-right" dir="rtl" aria-describedby={dialogId}>
         <DialogHeader className="flex flex-col items-center justify-center text-center">
           <div
             className={`p-3 rounded-full bg-opacity-10 mb-4 ${
@@ -75,7 +76,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             <Icon className={`h-6 w-6 ${iconColor}`} />
           </div>
           <DialogTitle className="text-xl">{title}</DialogTitle>
-          <DialogDescription className="text-center mt-2">
+          <DialogDescription id={dialogId} className="text-center mt-2">
             {description}
           </DialogDescription>
         </DialogHeader>

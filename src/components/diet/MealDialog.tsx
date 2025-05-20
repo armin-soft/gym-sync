@@ -56,13 +56,16 @@ export const MealDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0" dir="rtl">
+      <DialogContent className="sm:max-w-[500px] p-0" dir="rtl" aria-describedby="meal-dialog-description">
         <DialogHeader className="p-6 pb-4 bg-gradient-to-b from-muted/50 to-transparent">
           <DialogTitle className="flex items-center gap-2 text-lg">
             <UtensilsCrossed className="w-5 h-5 text-primary" />
             {meal ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
           </DialogTitle>
         </DialogHeader>
+        <div id="meal-dialog-description" className="sr-only">
+          {meal ? "ویرایش اطلاعات وعده غذایی" : "افزودن وعده غذایی جدید به برنامه"}
+        </div>
         <MealFormContent 
           onSubmit={handleSubmit}
           onCancel={() => onOpenChange(false)}

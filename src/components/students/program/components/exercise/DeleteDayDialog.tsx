@@ -18,11 +18,11 @@ const DeleteDayDialog: React.FC<DeleteDayDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" aria-describedby="delete-day-description">
         <DialogHeader>
           <DialogTitle className="text-center">حذف روز</DialogTitle>
         </DialogHeader>
-        <div className="py-4">
+        <div className="py-4" id="delete-day-description">
           <p className="text-center">
             آیا از حذف {dayLabel} اطمینان دارید؟
           </p>
