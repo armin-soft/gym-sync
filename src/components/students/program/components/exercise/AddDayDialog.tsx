@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, VisuallyHidden } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -19,6 +19,13 @@ const AddDayDialog: React.FC<AddDayDialogProps> = ({
   setNewDayLabel,
   handleAddDay,
 }) => {
+  // اضافه کردن Enter key handler
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && newDayLabel.trim()) {
+      handleAddDay();
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -30,8 +37,10 @@ const AddDayDialog: React.FC<AddDayDialogProps> = ({
             <Input
               value={newDayLabel}
               onChange={(e) => setNewDayLabel(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="نام روز (مثال: روز پنجم)"
               className="text-right"
+              aria-label="نام روز"
             />
           </div>
         </div>
