@@ -1,8 +1,8 @@
 
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import React, { useState, memo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface SidebarItemProps {
@@ -15,8 +15,7 @@ interface SidebarItemProps {
   onClose: () => void;
 }
 
-// استفاده از memo برای جلوگیری از رندر مجدد غیر ضروری
-export const SidebarMenuItem = memo(function SidebarMenuItem({ 
+export function SidebarMenuItem({ 
   title, 
   href, 
   icon: Icon, 
@@ -29,6 +28,11 @@ export const SidebarMenuItem = memo(function SidebarMenuItem({
   const isActive = location.pathname === href;
   const [isHovered, setIsHovered] = useState(false);
   const deviceInfo = useDeviceInfo();
+  
+  const itemVariants = {
+    open: { opacity: 1, x: 0 },
+    closed: { opacity: 0, x: 20 }
+  };
   
   // تنظیم اندازه منو بر اساس دستگاه
   const getMenuPadding = () => {
@@ -61,73 +65,83 @@ export const SidebarMenuItem = memo(function SidebarMenuItem({
     return "text-xs";
   };
   
-  // استفاده از حالت بهینه‌شده با انیمیشن‌های کمتر
   return (
-    <Link
-      to={href}
-      onClick={onClose}
+    <motion.div 
+      variants={itemVariants}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={cn(
-        "relative block mb-1 rounded-lg transition-colors duration-200",
-        getMenuPadding(),
-        isActive 
-          ? "bg-primary text-primary-foreground" 
-          : "hover:bg-muted"
-      )}
     >
-      {isActive && (
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 opacity-90"></div>
-      )}
-      
-      {isHovered && !isActive && (
-        <div className="absolute inset-0 rounded-lg bg-muted"></div>
-      )}
-      
-      <div className="relative flex items-center">
-        <div className={cn(
-          "flex-shrink-0 rounded-md flex items-center justify-center mr-3",
-          getIconContainer(),
+      <Link
+        to={href}
+        onClick={onClose}
+        className={cn(
+          "relative block mb-1 rounded-lg transition-all duration-200",
+          getMenuPadding(),
           isActive 
-            ? "bg-white/20 text-white" 
-            : "bg-muted-foreground/10 text-muted-foreground"
-        )}>
-          <Icon className={getIconSize()} />
-        </div>
+            ? "bg-primary text-primary-foreground" 
+            : "hover:bg-muted"
+        )}
+      >
+        {isActive && (
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 opacity-90"></div>
+        )}
         
-        <div className="flex-1">
-          <div className="flex items-center justify-between">
-            <span className={cn(
-              "font-medium",
-              getFontSize(),
-              isActive ? "text-white" : ""
-            )}>
-              {title}
-            </span>
-            
-            {badge && (
-              <span className={cn(
-                "px-1.5 py-0.5 rounded-full font-medium",
-                "text-[10px]",
-                badgeColor || "bg-primary",
-                isActive ? "text-white bg-white/20" : "text-white"
-              )}>
-                {badge}
-              </span>
-            )}
+        <AnimatePresence>
+          {isHovered && !isActive && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 rounded-lg bg-muted"
+            ></motion.div>
+          )}
+        </AnimatePresence>
+        
+        <div className="relative flex items-center">
+          <div className={cn(
+            "flex-shrink-0 rounded-md flex items-center justify-center mr-3",
+            getIconContainer(),
+            isActive 
+              ? "bg-white/20 text-white" 
+              : "bg-muted-foreground/10 text-muted-foreground"
+          )}>
+            <Icon className={getIconSize()} />
           </div>
           
-          {description && (
-            <p className={cn(
-              "mt-0.5",
-              getDescriptionSize(),
-              isActive ? "text-white/70" : "text-muted-foreground"
-            )}>
-              {description}
-            </p>
-          )}
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <span className={cn(
+                "font-medium",
+                getFontSize(),
+                isActive ? "text-white" : ""
+              )}>
+                {title}
+              </span>
+              
+              {badge && (
+                <span className={cn(
+                  "px-1.5 py-0.5 rounded-full font-medium",
+                  "text-[10px]",
+                  badgeColor || "bg-primary",
+                  isActive ? "text-white bg-white/20" : "text-white"
+                )}>
+                  {badge}
+                </span>
+              )}
+            </div>
+            
+            {description && (
+              <p className={cn(
+                "mt-0.5",
+                getDescriptionSize(),
+                isActive ? "text-white/70" : "text-muted-foreground"
+              )}>
+                {description}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </motion.div>
   );
-});
+}

@@ -9,11 +9,14 @@ import {
   Dumbbell,
   UtensilsCrossed,
   Pill,
-  Database
+  Database,
+  ChevronLeft,
+  Menu
 } from "lucide-react";
 import manifestData from "@/Manifest.json";
 import { Separator } from "@/components/ui/separator";
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { SidebarProfile } from "./sidebar/SidebarProfile";
 import { SidebarMenuList } from "./sidebar/SidebarMenuList";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
@@ -70,10 +73,6 @@ const sidebarItems = [
   },
 ];
 
-// استفاده از memo برای جلوگیری از رندر مجدد غیر ضروری
-const SidebarMenuListMemo = memo(SidebarMenuList);
-const SidebarFooterMemo = memo(SidebarFooter);
-
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [gymName, setGymName] = useState("");
   const [trainerProfile, setTrainerProfile] = useState({
@@ -81,29 +80,41 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     image: "",
     email: ""
   });
+  const { toast } = useToast();
   const deviceInfo = useDeviceInfo();
   
-  // بارگذاری پروفایل از localStorage
-  useEffect(() => {
-    if (isOpen) { // فقط وقتی منو باز شده پروفایل را لود می‌کنیم
-      const savedProfile = localStorage.getItem('trainerProfile');
-      if (savedProfile) {
-        try {
-          const profile = JSON.parse(savedProfile);
-          setTrainerProfile({
-            name: profile.name || "مربی",
-            image: profile.image || "",
-            email: profile.email || ""
-          });
-          if (profile.gymName) {
-            setGymName(profile.gymName);
-          }
-        } catch (error) {
-          console.error('Error loading profile from localStorage:', error);
+  const loadProfile = () => {
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        setTrainerProfile({
+          name: profile.name || "مربی",
+          image: profile.image || "",
+          email: profile.email || ""
+        });
+        if (profile.gymName) {
+          setGymName(profile.gymName);
         }
+      } catch (error) {
+        console.error('Error loading profile from localStorage:', error);
       }
     }
-  }, [isOpen]);
+  };
+  
+  useEffect(() => {
+    loadProfile();
+    
+    const handleStorageChange = () => {
+      loadProfile();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
   
   // تنظیم عرض منو بر اساس نوع دستگاه
   const getSidebarWidth = () => {
@@ -121,9 +132,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           getSidebarWidth(),
           "p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
         )}
-        // تنظیمات برای باز شدن سریع‌تر
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onEscapeKeyDown={onClose}
       >
         <div className="flex h-full flex-col overflow-hidden">
           <SidebarProfile 
@@ -144,10 +152,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
           
           <ScrollArea className="flex-1">
-            <SidebarMenuListMemo items={sidebarItems} onClose={onClose} />
+            <SidebarMenuList items={sidebarItems} onClose={onClose} />
           </ScrollArea>
           
-          <SidebarFooterMemo gymName={gymName} />
+          <SidebarFooter gymName={gymName} />
         </div>
       </SheetContent>
     </Sheet>
