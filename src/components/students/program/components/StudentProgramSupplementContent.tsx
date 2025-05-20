@@ -55,7 +55,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="mb-4 h-full flex flex-col"
+        className="mb-4 h-full flex flex-col rtl"
       >
         <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2">
           <h3 className="font-semibold text-lg">

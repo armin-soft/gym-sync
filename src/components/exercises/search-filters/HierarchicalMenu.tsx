@@ -35,8 +35,6 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
   onAddType,
   onAddCategory
 }) => {
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
-
   const getSelectedTypeName = () => {
     return selectedExerciseType || "انتخاب نوع تمرین";
   };
@@ -66,57 +64,39 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
       {selectedExerciseType && (
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium text-muted-foreground">دسته‌بندی</label>
-          <DropdownMenu open={isCategoryMenuOpen} onOpenChange={setIsCategoryMenuOpen}>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                className="w-full justify-between bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-900/30 dark:to-gray-900"
-                disabled={filteredCategories.length === 0}
-              >
-                <span>{getSelectedCategoryName()}</span>
-                <ChevronDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-white">
-              <DropdownMenuLabel>انتخاب دسته‌بندی</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              
-              {filteredCategories.length > 0 ? (
-                filteredCategories.map(category => (
-                  <DropdownMenuItem 
-                    key={category.id}
-                    className={cn(selectedCategoryId === category.id ? "bg-indigo-50 text-indigo-700 font-medium" : "")}
-                    onClick={() => {
-                      setSelectedCategoryId(category.id);
-                      setIsCategoryMenuOpen(false);
-                    }}
-                  >
-                    {category.name}
-                  </DropdownMenuItem>
-                ))
-              ) : (
-                <div className="text-center py-2 px-2 text-sm text-muted-foreground">
-                  هیچ دسته‌بندی یافت نشد
-                </div>
-              )}
-              
+          {filteredCategories.length > 0 ? (
+            <div className="flex flex-wrap gap-2 mt-1">
+              {filteredCategories.map(category => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategoryId === category.id ? "default" : "outline"}
+                  className={cn(
+                    "text-sm h-8",
+                    selectedCategoryId === category.id
+                      ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                      : "bg-white hover:bg-slate-100"
+                  )}
+                  onClick={() => setSelectedCategoryId(category.id)}
+                >
+                  {category.name}
+                </Button>
+              ))}
               {onAddCategory && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => {
-                      onAddCategory();
-                      setIsCategoryMenuOpen(false);
-                    }}
-                    className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                  >
-                    <Plus className="h-4 w-4 ml-2" />
-                    افزودن دسته‌بندی جدید
-                  </DropdownMenuItem>
-                </>
+                <Button
+                  variant="outline"
+                  className="text-sm h-8 border-dashed border-muted-foreground/30"
+                  onClick={onAddCategory}
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1" />
+                  افزودن
+                </Button>
               )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </div>
+          ) : (
+            <div className="text-sm text-muted-foreground p-2 border border-dashed rounded-md text-center">
+              هیچ دسته‌بندی برای این نوع تمرین یافت نشد
+            </div>
+          )}
         </div>
       )}
       

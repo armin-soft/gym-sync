@@ -19,6 +19,7 @@ const ScrollArea = React.forwardRef<
       {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar orientation="vertical" />
+    {/* Only show horizontal scrollbar if explicitly requested */}
     {(orientation === "horizontal" || orientation === "both") && (
       <ScrollBar orientation="horizontal" />
     )}

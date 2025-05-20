@@ -17,7 +17,7 @@ interface StudentExerciseSelectorProps {
   dayNumber: number;
   exercises: any[]; 
   dayLabel?: string;
-  noScroll?: boolean; // Added noScroll prop as optional
+  noScroll?: boolean;
 }
 
 const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
@@ -26,7 +26,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   dayNumber,
   exercises,
   dayLabel,
-  noScroll = false, // Default to false
+  noScroll = false,
 }) => {
   // دریافت داده‌ها از دیتابیس محلی
   const { categories, exerciseTypes, isLoading } = useExerciseData();

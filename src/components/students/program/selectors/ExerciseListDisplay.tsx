@@ -48,8 +48,8 @@ const ExerciseListDisplay: React.FC<ExerciseListDisplayProps> = ({
   }
   
   return (
-    <ScrollArea className="h-[300px] pr-4">
-      <div className={viewMode === "grid" ? "grid grid-cols-2 gap-2" : "space-y-2"}>
+    <ScrollArea className="h-[300px]" orientation="vertical">
+      <div className={viewMode === "grid" ? "grid grid-cols-2 gap-2 pr-2" : "space-y-2 pr-2"}>
         {filteredExercises.map(exercise => (
           <div 
             key={exercise.id} 
