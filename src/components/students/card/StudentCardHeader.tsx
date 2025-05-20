@@ -10,21 +10,16 @@ import { Badge } from "@/components/ui/badge";
 interface StudentCardHeaderProps {
   student: Student;
   onEdit?: () => void;
-  onDelete?: () => void;
-  onAddExercise?: () => void;
-  onAddDiet?: () => void;
-  onAddSupplement?: () => void;
+  onDelete: () => void;
+  onAddExercise: () => void;
+  onAddDiet: () => void;
+  onAddSupplement: () => void;
   onDownload?: () => void;
   isProfileComplete: boolean;
 }
 
 export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
   student,
-  onEdit,
-  onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
   onDownload,
   isProfileComplete
 }) => {
@@ -68,11 +63,6 @@ export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
       
       <StudentCardMenu 
         student={student}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onAddExercise={onAddExercise}
-        onAddDiet={onAddDiet}
-        onAddSupplement={onAddSupplement}
         onDownload={onDownload}
         isProfileComplete={isProfileComplete}
       />

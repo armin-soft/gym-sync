@@ -1,5 +1,4 @@
 
-import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { StudentsList } from "./StudentsList";
@@ -26,7 +25,7 @@ interface StudentContentProps {
   onClearSearch: () => void;
 }
 
-const StudentContent: React.FC<StudentContentProps> = ({
+export const StudentContent: React.FC<StudentContentProps> = ({
   activeTab,
   students,
   historyEntries,
@@ -90,5 +89,3 @@ const StudentContent: React.FC<StudentContentProps> = ({
     </>
   );
 };
-
-export default StudentContent;

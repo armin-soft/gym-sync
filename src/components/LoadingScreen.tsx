@@ -7,9 +7,8 @@ import { LoadingProgress } from "./loading/LoadingProgress";
 import { LoadingTip } from "./loading/LoadingTip";
 import { useLoadingState } from "@/hooks/useLoadingState";
 
-// Use memo to prevent unnecessary re-renders
+// استفاده از memo برای جلوگیری از رندر مجدد غیرضروری
 export const LoadingScreen = memo(() => {
-  // Make sure the hook is called inside the function component body
   const { progress, gymName, loadingText } = useLoadingState();
   
   return (
@@ -21,11 +20,11 @@ export const LoadingScreen = memo(() => {
     >
       <LoadingBackground />
       
-      {/* Main content */}
+      {/* محتوای اصلی */}
       <div className="w-full max-w-md px-5 sm:px-6 py-8 flex flex-col items-center relative z-10">
         <LoadingIcon />
         
-        {/* Title */}
+        {/* عنوان */}
         <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center text-white relative">
           {gymName ? (
             <>
@@ -45,5 +44,5 @@ export const LoadingScreen = memo(() => {
   );
 });
 
-// Set displayName for better debugging
+// تعیین displayName برای بهبود ابزارهای debugging
 LoadingScreen.displayName = "LoadingScreen";

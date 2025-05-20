@@ -28,11 +28,6 @@ interface StudentCardMenuProps {
 
 export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   student,
-  onEdit,
-  onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
   onDownload,
   isProfileComplete
 }) => {
