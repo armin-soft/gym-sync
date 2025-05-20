@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 import { StudentSearch } from "@/components/students/search-sort/StudentSearch";
 import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface StudentSearchControlsProps {
   searchQuery: string;
@@ -24,7 +24,7 @@ const StudentSearchControls: React.FC<StudentSearchControlsProps> = ({
   setViewMode
 }) => {
   const deviceInfo = useDeviceInfo();
-  
+
   return (
     <div className="flex items-center gap-2 sm:gap-3 mt-2 md:mt-0">
       {searchQuery && (

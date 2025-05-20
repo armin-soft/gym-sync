@@ -71,7 +71,8 @@ export function isOnline(): boolean {
 // راه‌اندازی پردازش در زمان خالی مرورگر
 export function runWhenIdle(callback: () => void, timeout = 1000): void {
   if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(callback, { timeout });
+    // استفاده از window در اینجا ایمن‌تر است و خطای TypeScript را برطرف می‌کند
+    window.requestIdleCallback(callback, { timeout });
   } else {
     setTimeout(callback, timeout);
   }

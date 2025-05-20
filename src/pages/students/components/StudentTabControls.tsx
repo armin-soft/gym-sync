@@ -6,7 +6,7 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const StudentTabControls: React.FC = () => {
   const deviceInfo = useDeviceInfo();
-  
+
   return (
     <TabsList className={`h-10 sm:h-12 p-1 ${deviceInfo.isMobile ? 'w-full' : ''}`}>
       <TabsTrigger value="all" className="gap-2 h-8 sm:h-10 px-3 sm:px-6">

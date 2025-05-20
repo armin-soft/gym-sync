@@ -3,18 +3,21 @@ import { useCallback } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { ExerciseWithSets } from "@/types/exercise";
 
+/**
+ * هوک برای مدیریت رویدادهای دانشجویی با ادغام تاریخچه
+ */
 export function useStudentEvents(
-  handleSave: any,
-  handleSaveExercises: any,
-  handleSaveDiet: any, 
-  handleSaveSupplements: any,
-  handleDelete: any,
-  addHistoryEntry: any,
-  triggerRefresh: any,
+  handleSave: (data: any, selectedStudent?: Student) => boolean,
+  handleSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean,
+  handleSaveDiet: (mealIds: number[], studentId: number) => boolean,
+  handleSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean,
+  handleDelete: (studentId: number) => void,
+  addHistoryEntry: (student: Student, type: string, message: string) => void,
+  triggerRefresh: () => void,
   students: Student[],
-  selectedStudentForProgram: Student | null
+  selectedStudentForProgram: Student | null = null
 ) {
-
+  // ذخیره با تاریخچه
   const handleSaveWithHistory = useCallback((data: any, selectedStudent?: Student) => {
     const result = handleSave(data, selectedStudent);
     
@@ -39,61 +42,68 @@ export function useStudentEvents(
     return result;
   }, [handleSave, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveExercisesWithHistory = useCallback((exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => {
-    if (!selectedStudentForProgram) return false;
-    
-    const result = handleSaveExercises(exercisesWithSets, selectedStudentForProgram.id, dayNumber);
+  // ذخیره تمرین‌ها با تاریخچه
+  const handleSaveExercisesWithHistory = useCallback((exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+    const result = handleSaveExercises(exercisesWithSets, studentId, dayNumber);
     
     if (result) {
-      const dayText = dayNumber ? ` برای روز ${dayNumber}` : '';
-      addHistoryEntry(
-        selectedStudentForProgram, 
-        'exercise',
-        `برنامه تمرینی${dayText} برای ${selectedStudentForProgram.name} بروزرسانی شد`
-      );
+      const student = students.find(s => s.id === studentId) || selectedStudentForProgram;
+      if (student) {
+        const dayText = dayNumber ? ` برای روز ${dayNumber}` : '';
+        addHistoryEntry(
+          student, 
+          'exercise',
+          `برنامه تمرینی${dayText} برای ${student.name} بروزرسانی شد`
+        );
+      }
       
       triggerRefresh();
     }
     
     return result;
-  }, [handleSaveExercises, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
+  }, [handleSaveExercises, students, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveDietWithHistory = useCallback((mealIds: number[]) => {
-    if (!selectedStudentForProgram) return false;
-    
-    const result = handleSaveDiet(mealIds, selectedStudentForProgram.id);
+  // ذخیره رژیم غذایی با تاریخچه
+  const handleSaveDietWithHistory = useCallback((mealIds: number[], studentId: number) => {
+    const result = handleSaveDiet(mealIds, studentId);
     
     if (result) {
-      addHistoryEntry(
-        selectedStudentForProgram, 
-        'diet',
-        `برنامه غذایی برای ${selectedStudentForProgram.name} بروزرسانی شد`
-      );
+      const student = students.find(s => s.id === studentId) || selectedStudentForProgram;
+      if (student) {
+        addHistoryEntry(
+          student, 
+          'diet',
+          `برنامه غذایی برای ${student.name} بروزرسانی شد`
+        );
+      }
       
       triggerRefresh();
     }
     
     return result;
-  }, [handleSaveDiet, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
+  }, [handleSaveDiet, students, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
 
-  const handleSaveSupplementsWithHistory = useCallback((data: {supplements: number[], vitamins: number[]}) => {
-    if (!selectedStudentForProgram) return false;
-    
-    const result = handleSaveSupplements(data, selectedStudentForProgram.id);
+  // ذخیره مکمل‌ها با تاریخچه
+  const handleSaveSupplementsWithHistory = useCallback((data: {supplements: number[], vitamins: number[]}, studentId: number) => {
+    const result = handleSaveSupplements(data, studentId);
     
     if (result) {
-      addHistoryEntry(
-        selectedStudentForProgram, 
-        'supplement',
-        `برنامه مکمل و ویتامین برای ${selectedStudentForProgram.name} بروزرسانی شد`
-      );
+      const student = students.find(s => s.id === studentId) || selectedStudentForProgram;
+      if (student) {
+        addHistoryEntry(
+          student, 
+          'supplement',
+          `برنامه مکمل و ویتامین برای ${student.name} بروزرسانی شد`
+        );
+      }
       
       triggerRefresh();
     }
     
     return result;
-  }, [handleSaveSupplements, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
+  }, [handleSaveSupplements, students, selectedStudentForProgram, addHistoryEntry, triggerRefresh]);
   
+  // حذف با تاریخچه
   const handleDeleteWithHistory = useCallback((studentId: number) => {
     const student = students.find(s => s.id === studentId);
     if (student) {

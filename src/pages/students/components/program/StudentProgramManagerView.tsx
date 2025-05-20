@@ -1,20 +1,19 @@
 
 import React from "react";
-import { PageContainer } from "@/components/ui/page-container";
 import { Student } from "@/components/students/StudentTypes";
-import { ExerciseWithSets } from "@/types/exercise";
-import { Supplement } from "@/types/supplement";
-import StudentProgramManager from "@/components/students/program/StudentProgramManager";
+import { PageContainer } from "@/components/ui/page-container";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import StudentProgramManager from "@/components/students/program/StudentProgramManager";
+import { ExerciseWithSets } from "@/types/exercise";
 
 interface StudentProgramManagerViewProps {
   student: Student;
   exercises: any[];
   meals: any[];
-  supplements: Supplement[];
-  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: number[]) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  supplements: any[];
+  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
+  onSaveDiet: (mealIds: number[], studentId: number) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
   onClose: () => void;
 }
 
@@ -29,8 +28,8 @@ const StudentProgramManagerView: React.FC<StudentProgramManagerViewProps> = ({
   onClose
 }) => {
   const deviceInfo = useDeviceInfo();
-
-  // Determine the appropriate classes based on device type
+  
+  // تعیین پدینگ مناسب براساس نوع دستگاه
   const getContentPadding = () => {
     if (deviceInfo.isMobile) return "px-2";
     if (deviceInfo.isTablet) return "px-4";
@@ -45,9 +44,15 @@ const StudentProgramManagerView: React.FC<StudentProgramManagerViewProps> = ({
           exercises={exercises}
           meals={meals}
           supplements={supplements}
-          onSaveExercises={onSaveExercises}
-          onSaveDiet={onSaveDiet}
-          onSaveSupplements={onSaveSupplements}
+          onSaveExercises={(exercisesWithSets, dayNumber) => 
+            onSaveExercises(exercisesWithSets, student.id, dayNumber)
+          }
+          onSaveDiet={(mealIds) => 
+            onSaveDiet(mealIds, student.id)
+          }
+          onSaveSupplements={(data) => 
+            onSaveSupplements(data, student.id)
+          }
           onClose={onClose}
         />
       </div>
