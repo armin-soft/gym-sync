@@ -1,24 +1,18 @@
 
 /**
- * Simplified service worker registration with focus on offline support and updates
+ * بهینه‌سازی شده - سرویس ورکر با تمرکز بر عملکرد و سرعت
  */
 
-// Flag to track if update is available
+// پرچم وجود بروزرسانی
 let updateAvailable = false;
 
-// Fetch version from Manifest.json
-async function getAppVersion(): Promise<string> {
-  try {
-    const response = await fetch('./Manifest.json');
-    const manifest = await response.json();
-    return manifest.version || '3.2.7';
-  } catch (error) {
-    console.error('خطا در دریافت نسخه برنامه:', error);
-    return '3.2.7';
-  }
-}
+// دریافت نسخه از فایل Manifest.json با کش کردن نتیجه
+const appVersionPromise = fetch('./Manifest.json')
+  .then(response => response.json())
+  .then(manifest => manifest.version || '3.2.7')
+  .catch(() => '3.2.7');
 
-// Register the service worker
+// ثبت سرویس ورکر با کارایی بهبود یافته
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) {
     console.warn('مرورگر شما از سرویس ورکر پشتیبانی نمی‌کند');
@@ -26,33 +20,31 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
   
   try {
-    // Get version from manifest
-    const appVersion = await getAppVersion();
+    // دریافت نسخه از کش یا فایل manifest
+    const appVersion = await appVersionPromise;
     
-    // Register with full path and version from manifest
+    // ثبت با مسیر کامل و نسخه
     const registration = await navigator.serviceWorker.register(`/service-worker.js?v=${appVersion}`, {
       scope: '/',
-      updateViaCache: 'none' // Always check for updates
+      updateViaCache: 'none' // همیشه برای بروزرسانی‌ها بررسی شود
     });
     
     console.log(`سرویس ورکر با موفقیت راه‌اندازی شد (نسخه ${appVersion})`);
     
-    // فقط زمانی بروزرسانی نمایش داده شود که سرویس ورکر واقعاً تغییر کرده باشد
+    // فقط زمانی بروزرسانی نمایش داده شود که واقعاً تغییر کرده باشد
     if (registration.waiting) {
       updateAvailable = true;
       showUpdateNotification();
     }
     
-    // Handle service worker updates
+    // مدیریت بروزرسانی‌های سرویس ورکر
     registration.addEventListener('updatefound', () => {
       const newWorker = registration.installing;
       if (!newWorker) return;
       
       newWorker.addEventListener('statechange', () => {
         // فقط زمانی که سرویس ورکر در حالت نصب است و یک کنترلر فعال وجود دارد
-        // نشانه‌ای است که این یک بروزرسانی واقعی است نه نصب اولیه
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // اگر قبلاً بروزرسانی نمایش داده نشده
           if (!updateAvailable) {
             updateAvailable = true;
             showUpdateNotification();
@@ -61,7 +53,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       });
     });
     
-    // Listen for controller change to refresh page
+    // بارگذاری مجدد صفحه فقط یک بار انجام شود
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (refreshing) return;
@@ -77,7 +69,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
 }
 
-// Show update notification
+// نمایش اطلاعیه بروزرسانی
 export function showUpdateNotification(): void {
   if (typeof window.showToast === 'function') {
     window.showToast({
@@ -106,11 +98,12 @@ export function showUpdateNotification(): void {
   }
 }
 
-// Offline detection
+// تشخیص آفلاین بودن - بهینه شده
 export function setupOfflineDetection(): void {
-  window.addEventListener('online', () => {
-    console.log('اتصال به اینترنت برقرار شد');
-    document.documentElement.classList.remove('offline-mode');
+  const offlineClassName = 'offline-mode';
+  
+  function handleOnline() {
+    document.documentElement.classList.remove(offlineClassName);
     
     if (typeof window.showToast === 'function') {
       window.showToast({
@@ -120,11 +113,10 @@ export function setupOfflineDetection(): void {
         duration: 3000
       });
     }
-  });
+  }
   
-  window.addEventListener('offline', () => {
-    console.log('اتصال به اینترنت قطع شد');
-    document.documentElement.classList.add('offline-mode');
+  function handleOffline() {
+    document.documentElement.classList.add(offlineClassName);
     
     if (typeof window.showToast === 'function') {
       window.showToast({
@@ -134,15 +126,19 @@ export function setupOfflineDetection(): void {
         duration: 5000
       });
     }
-  });
+  }
   
-  // Check initial state
+  // اضافه کردن شنونده‌ها فقط یک بار
+  window.addEventListener('online', handleOnline);
+  window.addEventListener('offline', handleOffline);
+  
+  // بررسی وضعیت اولیه
   if (!navigator.onLine) {
-    document.documentElement.classList.add('offline-mode');
+    document.documentElement.classList.add(offlineClassName);
   }
 }
 
-// Add window.showToast type definition
+// تعریف نوع showToast در window
 declare global {
   interface Window {
     showToast?: (options: {

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -8,21 +8,19 @@ import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { getBasePath } from "./utils/basePath";
 import "./App.css";
 
-// Create a new query client instance with proper configuration
+// بهینه‌سازی React Query با استفاده از گزینه‌های بهتر
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
       retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
     },
   },
 });
-
-// The global declaration is now handled in vite-env.d.ts
-// so we remove the redundant declaration here
 
 function AppContent() {
   return (
@@ -35,10 +33,8 @@ function AppContent() {
 }
 
 function App() {
-  // Always use root path as base - this is safer for all environments
-  const basePath = '/';
-  
-  console.log("Using basename for router:", basePath);
+  // استفاده از useMemo برای جلوگیری از محاسبات مجدد در هر رندر
+  const basePath = useMemo(() => '/', []);
   
   return (
     <QueryClientProvider client={queryClient}>

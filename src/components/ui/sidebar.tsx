@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -15,7 +15,6 @@ import {
   Menu,
   ChevronLeft,
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import manifestData from "@/Manifest.json";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -30,6 +29,7 @@ interface SidebarItem {
   icon: React.ElementType;
 }
 
+// لیست آیتم‌های منو - خارج از کامپوننت تعریف شده برای جلوگیری از تعریف مجدد
 const sidebarItems: SidebarItem[] = [
   {
     title: "داشبورد",
@@ -38,41 +38,76 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     title: "پروفایل مربی",
-    href: "/Coach-Profile",
+    href: "/trainer",
     icon: User2,
   },
   {
     title: "شاگردان",
-    href: "/Students",
+    href: "/students",
     icon: Users,
   },
   {
     title: "تمرینات",
-    href: "/Exercise-Movements",
+    href: "/exercises",
     icon: Dumbbell,
   },
   {
     title: "برنامه غذایی",
-    href: "/Diet-Plan",
+    href: "/diet",
     icon: UtensilsCrossed,
   },
   {
     title: "مکمل‌ها",
-    href: "/Supplements-Vitamins",
+    href: "/supplements",
     icon: Pill,
   },
   {
     title: "پشتیبان‌گیری",
-    href: "/Backup-Restore",
+    href: "/backup",
     icon: Database,
   }
 ];
+
+// کامپوننت آیتم منو برای بهینه‌سازی رندر
+const MenuItem = React.memo(({ item, isActive, onClick }: { 
+  item: SidebarItem; 
+  isActive: boolean;
+  onClick: () => void;
+}) => (
+  <Link
+    to={item.href}
+    onClick={onClick}
+    className={cn(
+      "group flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200",
+      "hover:bg-accent/50 active:scale-[0.98]",
+      isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
+    )}
+  >
+    <div className="flex items-center gap-4">
+      <div className={cn(
+        "rounded-md p-1 transition-colors duration-200",
+        isActive ? "bg-primary/20" : "bg-muted group-hover:bg-primary/10"
+      )}>
+        <item.icon className="h-4 w-4" />
+      </div>
+      <span className="text-sm font-medium">{item.title}</span>
+    </div>
+    <ChevronLeft className={cn(
+      "h-4 w-4 opacity-0 transition-all duration-200",
+      "group-hover:opacity-100 group-hover:translate-x-0",
+      "group-hover:text-primary",
+      isActive ? "opacity-100 text-primary" : "-translate-x-2"
+    )} />
+  </Link>
+));
+
+MenuItem.displayName = 'MenuItem';
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const [gymName, setGymName] = React.useState("");
   
-  // بارگیری نام باشگاه از پروفایل مربی
+  // بارگذاری نام باشگاه با کاهش رندرهای اضافی
   React.useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
@@ -86,6 +121,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       }
     }
   }, []);
+  
+  // استفاده از useMemo برای محاسبه مسیر فعلی
+  const currentPath = useMemo(() => {
+    return location.pathname;
+  }, [location.pathname]);
   
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -110,35 +150,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <ScrollArea className="flex-1 px-3">
             <div className="space-y-1 py-3">
               {sidebarItems.map((item) => {
-                const isActive = location.pathname === item.href;
-                
+                const isActive = currentPath === item.href;
                 return (
-                  <Link
-                    key={item.href}
-                    to={item.href}
-                    onClick={onClose}
-                    className={cn(
-                      "group flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200",
-                      "hover:bg-accent/50 active:scale-[0.98]",
-                      isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
-                    )}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "rounded-md p-1 transition-colors duration-200",
-                        isActive ? "bg-primary/20" : "bg-muted group-hover:bg-primary/10"
-                      )}>
-                        <item.icon className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">{item.title}</span>
-                    </div>
-                    <ChevronLeft className={cn(
-                      "h-4 w-4 opacity-0 transition-all duration-200",
-                      "group-hover:opacity-100 group-hover:translate-x-0",
-                      "group-hover:text-primary",
-                      isActive ? "opacity-100 text-primary" : "-translate-x-2"
-                    )} />
-                  </Link>
+                  <MenuItem 
+                    key={item.href} 
+                    item={item} 
+                    isActive={isActive} 
+                    onClick={onClose} 
+                  />
                 );
               })}
             </div>
@@ -151,7 +170,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{gymName || "برنامه مدیریت"}</span>
-                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "1.0.0")}</span>
+                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "3.2.7")}</span>
               </div>
             </div>
           </div>

@@ -1,10 +1,12 @@
+
 import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { ChevronDown } from "lucide-react"
-
+import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 
+// کامپوننت پایه منو
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
@@ -23,6 +25,7 @@ const NavigationMenu = React.forwardRef<
 ))
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
 
+// لیست منو
 const NavigationMenuList = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>
@@ -40,10 +43,12 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
+// استایل دکمه منو
 const navigationMenuTriggerStyle = cva(
   "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
 )
 
+// دکمه منو
 const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
@@ -62,6 +67,7 @@ const NavigationMenuTrigger = React.forwardRef<
 ))
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
 
+// محتوای منو
 const NavigationMenuContent = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Content>
@@ -77,8 +83,34 @@ const NavigationMenuContent = React.forwardRef<
 ))
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName
 
-const NavigationMenuLink = NavigationMenuPrimitive.Link
+// کامپوننت لینک بهینه شده - از React Router Link استفاده می‌کنیم
+const NavigationMenuLink = React.forwardRef<
+  HTMLAnchorElement,
+  Omit<React.ComponentPropsWithoutRef<typeof Link>, "ref"> & { external?: boolean }
+>(({ className, to, external, ...props }, ref) => {
+  if (external) {
+    return (
+      <a
+        ref={ref as any}
+        className={cn(navigationMenuTriggerStyle(), className)}
+        {...props}
+      />
+    );
+  }
+  
+  return (
+    <Link
+      ref={ref as any}
+      to={to}
+      className={cn(navigationMenuTriggerStyle(), className)}
+      {...props}
+    />
+  );
+});
 
+NavigationMenuLink.displayName = "NavigationMenuLink";
+
+// Viewport
 const NavigationMenuViewport = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
@@ -97,6 +129,7 @@ const NavigationMenuViewport = React.forwardRef<
 NavigationMenuViewport.displayName =
   NavigationMenuPrimitive.Viewport.displayName
 
+// Indicator
 const NavigationMenuIndicator = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Indicator>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Indicator>

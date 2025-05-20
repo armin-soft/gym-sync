@@ -1,18 +1,25 @@
 
 /**
- * Main service worker registration entry point
+ * سیستم ثبت سرویس ورکر بهینه شده
  */
 import { registerServiceWorker, setupOfflineDetection } from './service-worker/registration';
 
-// Initialize service worker function that will be called from main.tsx
+// تابع راه‌اندازی سرویس ورکر که از main.tsx فراخوانی می‌شود
 export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | null> {
+  // اگر قبلا راه‌اندازی شده، عملیات را انجام نده
+  if (window.__serviceWorkerInitialized) {
+    return Promise.resolve(null);
+  }
+  
+  window.__serviceWorkerInitialized = true;
+  
+  // بررسی پشتیبانی از سرویس ورکر
+  if (!('serviceWorker' in navigator)) {
+    console.warn('مرورگر شما از سرویس ورکر پشتیبانی نمی‌کند');
+    return Promise.resolve(null);
+  }
+  
   return new Promise(async (resolve, reject) => {
-    if (!('serviceWorker' in navigator)) {
-      console.warn('مرورگر شما از سرویس ورکر پشتیبانی نمی‌کند');
-      resolve(null);
-      return;
-    }
-    
     try {
       const registration = await registerServiceWorker();
       setupOfflineDetection();
@@ -24,28 +31,37 @@ export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | n
   });
 }
 
-// Initialize service worker when the app starts (also keep as an auto-init option)
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      await registerServiceWorker();
-      
-      // Set up offline detection
-      setupOfflineDetection();
-    } catch (error) {
-      console.error('خطا در راه‌اندازی سرویس ورکر:', error);
+// بروزرسانی خودکار سرویس ورکر در فواصل طولانی‌تر (4 ساعت)
+let updateInterval: number | null = null;
+
+export function startServiceWorkerUpdateCheck() {
+  if (updateInterval) {
+    clearInterval(updateInterval);
+  }
+  
+  // بررسی فقط یکبار در هر 4 ساعت برای کاهش بار شبکه
+  updateInterval = window.setInterval(() => {
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(registration => {
+        registration.update().catch(() => {
+          // خطا را نادیده بگیر
+        });
+      });
     }
-  });
+  }, 4 * 60 * 60 * 1000); // 4 ساعت
 }
 
-// Auto check for updates every 2 hours (instead of 30 minutes)
-// This helps prevent excessive update notifications
-setInterval(() => {
-  if (navigator.serviceWorker.controller) {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.update().catch(err => {
-        console.error('خطا در بروزرسانی سرویس ورکر:', err);
-      });
-    });
+// امکان توقف بررسی بروزرسانی
+export function stopServiceWorkerUpdateCheck() {
+  if (updateInterval) {
+    clearInterval(updateInterval);
+    updateInterval = null;
   }
-}, 2 * 60 * 60 * 1000);
+}
+
+// تعریف متغیر سراسری
+declare global {
+  interface Window {
+    __serviceWorkerInitialized?: boolean;
+  }
+}

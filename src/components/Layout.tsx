@@ -1,80 +1,47 @@
 
-import { useState, useEffect, lazy, memo, useMemo, CSSProperties } from "react";
+import { useState, useEffect, lazy, memo, useMemo, Suspense, CSSProperties } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu, Bell, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
-// Define the props interface explicitly to include children
+// برای جلوگیری از بارگذاری مجدد صفحه هنگام تغییر مسیرها
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-// Using memo to prevent unnecessary re-renders
+const PageLoading = () => (
+  <div className="flex flex-col items-center justify-center h-full w-full py-10">
+    <Spinner className="h-10 w-10 mb-4" />
+    <p className="text-muted-foreground">در حال بارگذاری...</p>
+  </div>
+);
+
+// استفاده از memo برای جلوگیری از رندرهای غیرضروری
 export const Layout = memo(({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
-  const [trainerProfile, setTrainerProfile] = useState({
-    name: "مربی",
-    image: "",
-  });
   const [scrolled, setScrolled] = useState(false);
   const deviceInfo = useDeviceInfo();
   
-  const loadProfile = () => {
+  // بارگذاری اطلاعات با محدودیت دفعات اجرا
+  useEffect(() => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
         const profile = JSON.parse(savedProfile);
-        setTrainerProfile({
-          name: profile.name || "مربی",
-          image: profile.image || "",
-        });
-        if (profile.gymName) {
-          setGymName(profile.gymName);
-        }
+        setGymName(profile.gymName || "");
       }
     } catch (error) {
-      console.error('Error loading profile from localStorage:', error);
+      console.error('خطا در بارگذاری پروفایل:', error);
     }
-  };
-  
-  useEffect(() => {
-    loadProfile();
-    
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'trainerProfile') {
-        loadProfile();
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
   }, []);
 
-  // Separate scroll listener effect to avoid unnecessary re-renders
-  useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      setScrolled(offset > 10);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  // Calculate responsive design values ONCE with useMemo
+  // استفاده از useMemo برای کاهش محاسبات اضافی
   const {
     headerHeight,
     headerPadding,
@@ -93,12 +60,23 @@ export const Layout = memo(({ children }: LayoutProps) => {
     };
   }, [deviceInfo.isMobile, deviceInfo.isTablet]);
 
-  // Fixed content style to prevent layout jumps - using proper typings
+  // جداسازی کد اسکرول برای کاهش رندرهای اضافی
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      setScrolled(offset > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // بهینه‌سازی استایل‌ها با useMemo
   const contentStyle: CSSProperties = useMemo(() => {
     return deviceInfo.isMobile ? { 
       fontSize: '90%', 
-      overflowX: 'hidden' as const,
-      height: 'calc(100% - 40px)' // 40px is the header height for mobile
+      overflowX: 'hidden',
+      height: 'calc(100% - 40px)'
     } : {
       height: deviceInfo.isTablet ? 'calc(100% - 48px)' : 'calc(100% - 56px)'
     };
@@ -106,25 +84,27 @@ export const Layout = memo(({ children }: LayoutProps) => {
 
   return (
     <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
+      {/* اینجا Sidebar را فقط در صورت نیاز نمایش می‌دهیم */}
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       
       <header 
-        className={`sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0 ${
-          scrolled 
-            ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" 
-            : "bg-background"
-        }`}
+        className={cn(
+          "sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0",
+          scrolled ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" : "bg-background"
+        )}
       >
         <div className={cn("w-full", headerPadding)}>
           <div className={cn("w-full flex items-center justify-between", headerHeight)}>
             <div className="flex items-center">
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setSidebarOpen(true)}
                 className={cn("mr-1 rounded-md hover:bg-accent", buttonSize)}
                 aria-label="Open menu"
               >
                 <Menu className={iconSize} />
-              </button>
+              </Button>
               <div className={cn("flex items-center", logoGap)}>
                 <AppIcon size="sm" animated />
                 <h1 className={cn(
@@ -140,8 +120,9 @@ export const Layout = memo(({ children }: LayoutProps) => {
       </header>
       
       <main className="flex-1 overflow-hidden w-full max-w-full" style={contentStyle}>
-        {/* حذف Suspense و PageLoading - نمایش مستقیم محتوا */}
-        {children}
+        <Suspense fallback={<PageLoading />}>
+          {children}
+        </Suspense>
       </main>
     </div>
   );
