@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
@@ -8,6 +8,7 @@ import { ExerciseWithSets } from "@/types/exercise";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import StudentExerciseSelector from "@/components/students/program/StudentExerciseSelector";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProgramExerciseTabProps {
   student: Student;
@@ -20,6 +21,7 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   exercises,
   onSaveExercises
 }) => {
+  const { toast } = useToast();
   const [selectedExercises, setSelectedExercises] = useState<ExerciseWithSets[]>([]);
   const [currentDay, setCurrentDay] = useState<number>(1);
   const [isSaving, setIsSaving] = useState(false);
@@ -101,7 +103,33 @@ const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
       };
       exerciseCacheRef.current = updatedCache;
       
-      onSaveExercises(selectedExercises, currentDay);
+      // مطمئن شویم day در هر تمرین به درستی تنظیم شده است
+      const exercisesWithDay = selectedExercises.map(ex => ({
+        ...ex,
+        day: currentDay
+      }));
+      
+      const success = onSaveExercises(exercisesWithDay, currentDay);
+      
+      if (success) {
+        toast({
+          title: "ذخیره موفق",
+          description: `تمرین‌های روز ${toPersianNumbers(currentDay)} با موفقیت ذخیره شدند`
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "خطا در ذخیره‌سازی",
+          description: "مشکلی در ذخیره‌سازی برنامه تمرینی پیش آمد."
+        });
+      }
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+      toast({
+        variant: "destructive",
+        title: "خطای سیستمی",
+        description: "خطایی در هنگام ذخیره‌سازی رخ داد. لطفا مجدد تلاش کنید."
+      });
     } finally {
       setIsSaving(false);
     }

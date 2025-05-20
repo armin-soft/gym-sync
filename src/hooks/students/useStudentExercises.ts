@@ -61,6 +61,12 @@ export const useStudentExercises = (
                 updatedStudent.exerciseSetsDay4 = exerciseSets;
                 updatedStudent.exerciseRepsDay4 = exerciseReps;
                 break;
+              default:
+                // در صورت ارسال عدد نامعتبر، روز اول را بروزرسانی کنیم
+                updatedStudent.exercisesDay1 = exerciseIds;
+                updatedStudent.exerciseSetsDay1 = exerciseSets; 
+                updatedStudent.exerciseRepsDay1 = exerciseReps;
+                break;
             }
           } else {
             // Otherwise update the general exercises
@@ -91,7 +97,7 @@ export const useStudentExercises = (
       
       toast({
         title: "افزودن موفق",
-        description: "برنامه تمرینی با موفقیت به شاگرد اضافه شد"
+        description: `برنامه تمرینی ${dayNumber ? `روز ${dayNumber}` : ''} با موفقیت به شاگرد اضافه شد`
       });
       return true;
     } catch (error) {
