@@ -19,7 +19,7 @@ interface ProgramTabsContentProps {
   meals: any[];
   supplements: Supplement[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: number[]) => boolean;
+  onSaveDiet: (mealIds: number[], dayNumber?: number) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
 }
 

@@ -34,6 +34,13 @@ export interface Student {
   exerciseSetsDay4?: Record<number, number>; // Map exercise ID to sets for day 4
   exerciseRepsDay4?: Record<number, string>; // Map exercise ID to reps for day 4 (string type)
   meals?: number[];
+  mealsDay1?: number[]; // شنبه
+  mealsDay2?: number[]; // یکشنبه
+  mealsDay3?: number[]; // دوشنبه
+  mealsDay4?: number[]; // سه شنبه
+  mealsDay5?: number[]; // چهارشنبه
+  mealsDay6?: number[]; // پنج شنبه
+  mealsDay7?: number[]; // جمعه
   mealNotes?: string;
   supplements?: number[];
   vitamins?: number[];

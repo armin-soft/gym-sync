@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 interface UseStudentProgramManagerProps {
   student: Student;
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: number[]) => boolean;
+  onSaveDiet: (mealIds: number[], dayNumber?: number) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
 }
 
@@ -26,6 +26,7 @@ export function useStudentProgramManager({
   
   // Diet state
   const [selectedMeals, setSelectedMeals] = useState<number[]>([]);
+  const [currentDietDay, setCurrentDietDay] = useState<number>(1);
   
   // Supplement state
   const [selectedSupplements, setSelectedSupplements] = useState<number[]>([]);
@@ -39,30 +40,35 @@ export function useStudentProgramManager({
     // If there are no day properties, default to empty
     if (dayProperties.length === 0) {
       setSelectedExercises([]);
-      return;
-    }
-    
-    // If current day data exists, load it
-    const dayKey = `exercisesDay${currentDay}`;
-    const setsKey = `exerciseSetsDay${currentDay}`;
-    const repsKey = `exerciseRepsDay${currentDay}`;
-    
-    if (student[dayKey]) {
-      const loadedExercises: ExerciseWithSets[] = student[dayKey].map(id => ({
-        id,
-        sets: student[setsKey]?.[id] || 3,
-        reps: student[repsKey]?.[id] || "12",
-        day: currentDay
-      }));
-      setSelectedExercises(loadedExercises);
     } else {
-      // Current day has no exercises
-      setSelectedExercises([]);
+      // If current day data exists, load it
+      const dayKey = `exercisesDay${currentDay}`;
+      const setsKey = `exerciseSetsDay${currentDay}`;
+      const repsKey = `exerciseRepsDay${currentDay}`;
+      
+      if (student[dayKey]) {
+        const loadedExercises: ExerciseWithSets[] = student[dayKey].map(id => ({
+          id,
+          sets: student[setsKey]?.[id] || 3,
+          reps: student[repsKey]?.[id] || "12",
+          day: currentDay
+        }));
+        setSelectedExercises(loadedExercises);
+      } else {
+        // Current day has no exercises
+        setSelectedExercises([]);
+      }
     }
     
-    // Load meals
-    if (student.meals) {
+    // Load meals for current diet day
+    const dietDayKey = `mealsDay${currentDietDay}`;
+    if (student[dietDayKey]) {
+      setSelectedMeals(student[dietDayKey]);
+    } else if (student.meals) {
+      // Fall back to general meals if no day-specific meals found
       setSelectedMeals(student.meals);
+    } else {
+      setSelectedMeals([]);
     }
     
     // Load supplements
@@ -74,7 +80,7 @@ export function useStudentProgramManager({
     if (student.vitamins) {
       setSelectedVitamins(student.vitamins);
     }
-  }, [student, currentDay]);
+  }, [student, currentDay, currentDietDay]);
 
   const handleSaveAll = () => {
     let success = true;
@@ -84,9 +90,9 @@ export function useStudentProgramManager({
       success = onSaveExercises(selectedExercises, currentDay);
     }
     
-    // Save diet
+    // Save diet for current day
     if (activeTab === "diet") {
-      success = onSaveDiet(selectedMeals);
+      success = onSaveDiet(selectedMeals, currentDietDay);
     }
     
     // Supplement state
@@ -110,6 +116,8 @@ export function useStudentProgramManager({
     setActiveTab,
     currentDay,
     setCurrentDay,
+    currentDietDay,
+    setCurrentDietDay,
     selectedExercises,
     setSelectedExercises,
     selectedMeals,

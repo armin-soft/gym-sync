@@ -12,7 +12,7 @@ interface StudentProgramManagerViewProps {
   meals: any[];
   supplements: any[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: number[], studentId: number) => boolean;
+  onSaveDiet: (mealIds: number[], studentId: number, dayNumber?: number) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}, studentId: number) => boolean;
   onClose: () => void;
 }
@@ -47,8 +47,8 @@ const StudentProgramManagerView: React.FC<StudentProgramManagerViewProps> = ({
           onSaveExercises={(exercisesWithSets, dayNumber) => 
             onSaveExercises(exercisesWithSets, student.id, dayNumber)
           }
-          onSaveDiet={(mealIds) => 
-            onSaveDiet(mealIds, student.id)
+          onSaveDiet={(mealIds, dayNumber) => 
+            onSaveDiet(mealIds, student.id, dayNumber)
           }
           onSaveSupplements={(data) => 
             onSaveSupplements(data, student.id)

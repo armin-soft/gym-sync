@@ -1,4 +1,3 @@
-
 import { useToast } from "@/hooks/use-toast";
 import { Student } from "@/components/students/StudentTypes";
 
@@ -8,12 +7,48 @@ export const useStudentDiet = (
 ) => {
   const { toast } = useToast();
   
-  const handleSaveDiet = (mealIds: number[], studentId: number) => {
+  const handleSaveDiet = (mealIds: number[], studentId: number, dayNumber?: number) => {
     try {
-      console.log(`Saving meals for student ${studentId}:`, mealIds);
+      console.log(`Saving meals for student ${studentId} day ${dayNumber || 'general'}:`, mealIds);
       
       const updatedStudents = students.map(student => {
         if (student.id === studentId) {
+          const updatedStudent = { ...student };
+          
+          // If dayNumber is provided, update the specific day's meals
+          if (dayNumber !== undefined) {
+            switch(dayNumber) {
+              case 1:
+                updatedStudent.mealsDay1 = [...mealIds];
+                break;
+              case 2:
+                updatedStudent.mealsDay2 = [...mealIds];
+                break;
+              case 3:
+                updatedStudent.mealsDay3 = [...mealIds];
+                break;
+              case 4:
+                updatedStudent.mealsDay4 = [...mealIds];
+                break;
+              case 5:
+                updatedStudent.mealsDay5 = [...mealIds];
+                break;
+              case 6:
+                updatedStudent.mealsDay6 = [...mealIds];
+                break;
+              case 7:
+                updatedStudent.mealsDay7 = [...mealIds];
+                break;
+              default:
+                // در صورت ارسال عدد نامعتبر، برنامه کلی را بروزرسانی کنیم
+                updatedStudent.meals = [...mealIds];
+                break;
+            }
+          } else {
+            // Otherwise update the general meals
+            updatedStudent.meals = [...mealIds];
+          }
+          
           // Calculate progress
           let progressCount = 0;
           if (student.exercises?.length) progressCount++;
@@ -21,17 +56,18 @@ export const useStudentDiet = (
               student.exercisesDay3?.length || student.exercisesDay4?.length) {
             progressCount++;
           }
-          if (mealIds.length) progressCount++;
+          if (mealIds.length || student.mealsDay1?.length || student.mealsDay2?.length || 
+              student.mealsDay3?.length || student.mealsDay4?.length ||
+              student.mealsDay5?.length || student.mealsDay6?.length ||
+              student.mealsDay7?.length) {
+            progressCount++;
+          }
           if (student.supplements?.length || student.vitamins?.length) progressCount++;
           
           const progress = Math.round((progressCount / 4) * 100);
+          updatedStudent.progress = progress;
           
-          // Create a new object to ensure React detects the change
-          return {
-            ...student,
-            meals: [...mealIds], // Create a new array to ensure React detects the change
-            progress
-          };
+          return updatedStudent;
         }
         return student;
       });
@@ -46,7 +82,7 @@ export const useStudentDiet = (
       
       toast({
         title: "افزودن موفق",
-        description: "برنامه غذایی با موفقیت به شاگرد اضافه شد"
+        description: `برنامه غذایی ${dayNumber ? `روز ${dayNumber}` : ''} با موفقیت به شاگرد اضافه شد`
       });
       return true;
     } catch (error) {

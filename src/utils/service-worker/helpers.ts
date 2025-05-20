@@ -1,79 +1,62 @@
-
-/**
- * توابع کمکی برای سرویس ورکر
- */
-
-// بررسی پشتیبانی مرورگر از سرویس ورکر
-export const isServiceWorkerSupported = (): boolean => {
-  return 'serviceWorker' in navigator;
-};
-
-// نمایش اعلان به کاربر
-export const showToast = (message: string): void => {
-  // با توجه به اینکه toast در کامپوننت‌های UI موجود است
-  // این فقط یک متد جایگزین برای زمانی است که toast در دسترس نیست
-  console.log(message);
-  
-  // اگر می‌خواهیم یک اعلان ساده نمایش دهیم:
-  if ("Notification" in window && Notification.permission === "granted") {
-    new Notification("GymSync", {
-      body: message,
-      icon: "./Assets/Image/Logo.png"
-    });
-  }
-};
-
-// دریافت نسخه برنامه از manifest
-export const getAppVersion = (): Promise<string> => {
-  return fetch('./Manifest.json')
-    .then(response => response.json())
-    .then(data => data.version || '1.0.0')
-    .catch(() => '1.0.0');
-};
-
-// نمایش اعلان بروزرسانی با پیشگیری از نمایش مکرر
-export function showUpdateNotification(): void {
-  // برای جلوگیری از نمایش مکرر اعلان در زمان بارگذاری
-  const lastPromptTime = parseInt(sessionStorage.getItem('update_prompt_time') || '0');
-  const currentTime = new Date().getTime();
-  
-  // فقط اگر 10 دقیقه از آخرین نمایش گذشته باشد مجدداً نمایش دهد
-  if (currentTime - lastPromptTime > 10 * 60 * 1000) {
-    const userConfirmed = window.confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه بروزرسانی شود؟');
-    
-    if (userConfirmed) {
-      // پیش از بارگذاری مجدد، همه کش‌ها را پاک کنیم تا مطمئن شویم نسخه جدید بارگذاری می‌شود
-      if ('caches' in window) {
-        caches.keys().then(cacheNames => {
-          return Promise.all(
-            cacheNames.map(cacheName => {
-              return caches.delete(cacheName);
-            })
-          );
-        }).then(() => {
-          // Use window.location instead of just location
-          window.location.reload();
-        });
-      } else {
-        window.location.reload();
+export const registerServiceWorker = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js");
+      if (registration.installing) {
+        console.log("Service worker installing");
+      } else if (registration.waiting) {
+        console.log("Service worker installed; waiting for activation");
+      } else if (registration.active) {
+        console.log("Service worker active");
       }
+
+      registration.onupdatefound = () => {
+        const installingWorker = registration.installing;
+        if (installingWorker == null) {
+          return;
+        }
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === "installed") {
+            if (navigator.serviceWorker.controller) {
+              // New content is available, prompt the user to update
+              showUpdateNotification();
+            } else {
+              // Content is cached for offline use
+              console.log("Content is cached for offline use.");
+            }
+          }
+        };
+      };
+    } catch (error) {
+      console.error(`Service worker registration failed: ${error}`);
     }
-    
-    // ثبت زمان نمایش اعلان
-    sessionStorage.setItem('update_prompt_time', currentTime.toString());
-  }
-}
-
-// بررسی وضعیت آنلاین/آفلاین
-export function isOnline(): boolean {
-  return navigator.onLine;
-}
-
-// راه‌اندازی پردازش در زمان خالی مرورگر
-export function runWhenIdle(callback: () => void, timeout = 1000): void {
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(callback, { timeout });
   } else {
-    setTimeout(callback, timeout);
+    console.log("Service workers are not supported.");
   }
-}
+};
+
+export const showUpdateNotification = () => {
+  // Use window.location instead of location to fix the TypeScript error
+  const updatePrompt = confirm(
+    "A new version of the app is available. Do you want to update now?"
+  );
+
+  if (updatePrompt) {
+    // Call window.location.reload() instead of location.reload()
+    window.location.reload();
+  }
+};
+
+export const unregisterServiceWorker = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration) {
+        await registration.unregister();
+        console.log("Service worker unregistered.");
+      }
+    } catch (error) {
+      console.error(`Service worker unregistration failed: ${error}`);
+    }
+  }
+};
