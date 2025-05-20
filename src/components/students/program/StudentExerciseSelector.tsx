@@ -61,6 +61,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
       case 2: return "روز دوم";
       case 3: return "روز سوم";
       case 4: return "روز چهارم";
+      case 5: return "روز پنجم";
       default: return `روز ${toPersianNumbers(dayNumber)}`;
     }
   };
@@ -100,14 +101,21 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
               </span>
             </h4>
             
-            <SelectedExercisesList
-              selectedExercises={selectedExercises}
-              exercises={exercises}
-              dayLabel={getDayLabel()}
-              toggleExercise={toggleExercise}
-              handleSetsChange={handleSetsChange}
-              handleRepsChange={handleRepsChange}
-            />
+            {selectedExercises.length > 0 ? (
+              <SelectedExercisesList
+                selectedExercises={selectedExercises}
+                exercises={exercises}
+                dayLabel={getDayLabel()}
+                toggleExercise={toggleExercise}
+                handleSetsChange={handleSetsChange}
+                handleRepsChange={handleRepsChange}
+              />
+            ) : (
+              <div className="text-center p-4">
+                <p className="text-muted-foreground">هیچ تمرینی انتخاب نشده است</p>
+                <p className="text-sm text-muted-foreground mt-1">از لیست سمت راست تمرین را انتخاب کنید</p>
+              </div>
+            )}
           </CardContent>
         </Card>
         
@@ -115,14 +123,21 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
           <CardContent className="p-4">
             <h4 className="font-medium mb-3 text-right">لیست تمرین‌ها</h4>
             
-            <ExerciseListDisplay
-              filteredExercises={filteredExercises}
-              selectedExercises={selectedExercises}
-              selectedType={selectedType}
-              selectedCategoryId={selectedCategoryId}
-              toggleExercise={toggleExercise}
-              viewMode={viewMode}
-            />
+            {filteredExercises.length > 0 ? (
+              <ExerciseListDisplay
+                filteredExercises={filteredExercises}
+                selectedExercises={selectedExercises}
+                selectedType={selectedType}
+                selectedCategoryId={selectedCategoryId}
+                toggleExercise={toggleExercise}
+                viewMode={viewMode}
+              />
+            ) : (
+              <div className="text-center p-4">
+                <p className="text-muted-foreground">هیچ تمرینی برای نمایش وجود ندارد</p>
+                <p className="text-sm text-muted-foreground mt-1">لطفا یک دسته‌بندی انتخاب کنید</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

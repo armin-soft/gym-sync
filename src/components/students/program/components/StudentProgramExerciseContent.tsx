@@ -112,27 +112,14 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
               transition={{ type: "spring", stiffness: 300, damping: 24 }}
               className="h-full"
             >
-              {selectedExercises.length > 0 ? (
-                <StudentExerciseSelector 
-                  selectedExercises={selectedExercises}
-                  setSelectedExercises={setSelectedExercises}
-                  dayNumber={currentDay}
-                  exercises={exercises}
-                  dayLabel={getDayLabel(currentDay)}
-                />
-              ) : (
-                <div className="h-full flex items-center justify-center">
-                  <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 backdrop-blur-sm border border-border/30 shadow-sm max-w-md">
-                    <div className="mx-auto w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-                      <Dumbbell className="w-8 h-8 text-blue-500" />
-                    </div>
-                    <h4 className="text-xl font-semibold mb-2">هیچ تمرینی انتخاب نشده</h4>
-                    <p className="text-muted-foreground mb-4">
-                      برای روز {toPersianNumbers(currentDay)} هنوز هیچ تمرینی اضافه نشده است. میتوانید تمرینات را انتخاب کنید.
-                    </p>
-                  </div>
-                </div>
-              )}
+              {/* Always show the StudentExerciseSelector, even if no exercises are selected */}
+              <StudentExerciseSelector 
+                selectedExercises={selectedExercises}
+                setSelectedExercises={setSelectedExercises}
+                dayNumber={currentDay}
+                exercises={exercises}
+                dayLabel={getDayLabel(currentDay)}
+              />
             </motion.div>
           </AnimatePresence>
         </motion.div>
