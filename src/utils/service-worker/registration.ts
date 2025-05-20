@@ -1,59 +1,46 @@
 
 /**
- * ثبت و پیکربندی سرویس ورکر
+ * Simplified service worker registration with focus on offline support and updates
  */
 
-import { isServiceWorkerSupported, showUpdateNotification } from "./helpers";
-
-// ثبت سرویس ورکر با کانفیگ بهینه‌شده
+// Register the service worker
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (!isServiceWorkerSupported()) {
+  if (!('serviceWorker' in navigator)) {
     console.warn('مرورگر شما از سرویس ورکر پشتیبانی نمی‌کند');
     return null;
   }
   
   try {
-    // ثبت با حداکثر اولویت
-    const registration = await navigator.serviceWorker.register('/service-worker.js', {
+    // Register with a timestamp to prevent excessive caching
+    const timestamp = new Date().getTime();
+    const registration = await navigator.serviceWorker.register(`/service-worker.js?v=${timestamp}`, {
       scope: '/',
-      updateViaCache: 'none' // همیشه شبکه را برای به‌روزرسانی‌ها بررسی کند
+      updateViaCache: 'none' // Always check for updates
     });
     
-    // بررسی وضعیت سرویس ورکر
-    if (registration.installing) {
-      console.log('سرویس ورکر در حال نصب است');
-    } else if (registration.waiting) {
-      console.log('سرویس ورکر در انتظار فعال‌سازی است');
-      // اعمال فوری سرویس ورکر جدید
-      registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-    } else if (registration.active) {
-      console.log('سرویس ورکر فعال است');
-      // اعمال فوری کنترل
-      if (navigator.serviceWorker.controller === null) {
-        // اولین بار است که سرویس ورکر نصب می‌شود
-        // صفحه را بارگذاری مجدد کن تا سرویس ورکر کنترل را بدست بگیرد
-        window.location.reload();
-      }
-    }
+    console.log('سرویس ورکر با موفقیت راه‌اندازی شد');
     
-    // تنظیم رفتار بروزرسانی
+    // Handle service worker updates
     registration.addEventListener('updatefound', () => {
       const newWorker = registration.installing;
       if (!newWorker) return;
       
       newWorker.addEventListener('statechange', () => {
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          console.log('نسخه جدید برنامه در دسترس است');
+          // New service worker is available
           showUpdateNotification();
         }
       });
     });
     
-    // این کد کمک می‌کند نویگیشن فوری بین صفحات حفظ شود
-    if (registration.navigationPreload) {
-      await registration.navigationPreload.enable();
-      console.log('پیش‌بارگذاری نویگیشن فعال شد');
-    }
+    // Listen for controller change to refresh page
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      console.log('سرویس ورکر بروز شد، بارگذاری مجدد صفحه...');
+      window.location.reload();
+    });
     
     return registration;
   } catch (error) {
@@ -62,17 +49,83 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
 }
 
-// لغو ثبت سرویس ورکر (در صورت نیاز)
-export async function unregisterServiceWorker(): Promise<boolean> {
-  if (!isServiceWorkerSupported()) return false;
+// Show update notification
+export function showUpdateNotification(): void {
+  if (typeof window.showToast === 'function') {
+    window.showToast({
+      title: 'بروزرسانی جدید',
+      description: 'نسخه جدید برنامه در دسترس است.',
+      variant: 'warning',
+      action: {
+        label: 'بروزرسانی',
+        onClick: () => {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SKIP_WAITING'
+            });
+          }
+        }
+      }
+    });
+  } else {
+    if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'SKIP_WAITING'
+        });
+      }
+    }
+  }
+}
+
+// Offline detection
+export function setupOfflineDetection(): void {
+  window.addEventListener('online', () => {
+    console.log('اتصال به اینترنت برقرار شد');
+    document.documentElement.classList.remove('offline-mode');
+    
+    if (typeof window.showToast === 'function') {
+      window.showToast({
+        title: 'اتصال برقرار شد',
+        description: 'شما مجدداً به اینترنت متصل شدید.',
+        variant: 'success',
+        duration: 3000
+      });
+    }
+  });
   
-  try {
-    const registration = await navigator.serviceWorker.ready;
-    const result = await registration.unregister();
-    console.log('لغو ثبت سرویس ورکر:', result);
-    return result;
-  } catch (error) {
-    console.error('خطا در لغو ثبت سرویس ورکر:', error);
-    return false;
+  window.addEventListener('offline', () => {
+    console.log('اتصال به اینترنت قطع شد');
+    document.documentElement.classList.add('offline-mode');
+    
+    if (typeof window.showToast === 'function') {
+      window.showToast({
+        title: 'حالت آفلاین',
+        description: 'شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.',
+        variant: 'warning',
+        duration: 5000
+      });
+    }
+  });
+  
+  // Check initial state
+  if (!navigator.onLine) {
+    document.documentElement.classList.add('offline-mode');
+  }
+}
+
+// Add window.showToast type definition
+declare global {
+  interface Window {
+    showToast?: (options: {
+      title: string;
+      description: string;
+      variant?: 'default' | 'success' | 'warning' | 'destructive';
+      duration?: number;
+      action?: {
+        label: string;
+        onClick: () => void;
+      };
+    }) => void;
   }
 }
