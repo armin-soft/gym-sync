@@ -16,8 +16,8 @@ self.STATIC_ASSETS = [
   './Assets/Image/Logo.png',
   './Assets/Image/Place-Holder.svg',
   './Manifest.json',
-  './assets/index.css',
-  './assets/index.js'
+  './Assets/Style/Menu.css',
+  './Assets/Script/index.js'
 ];
 
 // Get version from manifest when possible

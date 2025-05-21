@@ -28,9 +28,7 @@ export const STATIC_ASSETS = [
   './Assets/Image/Place-Holder.svg',
   './Manifest.json',
   './Assets/Script/index.js',
-  './Assets/Style/Menu.css',
-  './assets/index.css',
-  './assets/index.js'
+  './Assets/Style/Menu.css'
 ];
 
 // Make configuration available in the global scope
