@@ -2,7 +2,8 @@
 import React from "react";
 import { Plus, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatRelative } from 'date-fns-jalali';
+import { useShamsiDate } from "@/hooks/useShamsiDate";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentsHeaderProps {
   onAddStudent: () => void;
@@ -15,11 +16,45 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
   onRefresh,
   lastRefreshTime
 }) => {
+  const { dateInfo, isLoading } = useShamsiDate();
+  
   const formatLastRefreshTime = () => {
-    if (!lastRefreshTime) return "";
+    if (!lastRefreshTime) return null;
     
     try {
-      return formatRelative(lastRefreshTime, new Date());
+      const hours = lastRefreshTime.getHours();
+      const minutes = lastRefreshTime.getMinutes();
+      const seconds = lastRefreshTime.getSeconds();
+      
+      const formattedTime = `${toPersianNumbers(hours.toString().padStart(2, '0'))}:${toPersianNumbers(minutes.toString().padStart(2, '0'))}:${toPersianNumbers(seconds.toString().padStart(2, '0'))}`;
+      
+      // Get time context (morning, noon, evening, night)
+      let timeContext = "صبح";
+      if (hours >= 12 && hours < 17) {
+        timeContext = "ظهر";
+      } else if (hours >= 17 && hours < 20) {
+        timeContext = "عصر";
+      } else if (hours >= 20 || hours < 4) {
+        timeContext = "شب";
+      }
+      
+      return (
+        <div className="flex flex-col text-xs text-muted-foreground">
+          {dateInfo && (
+            <>
+              <div className="flex items-center gap-1">
+                <span>{dateInfo.Shamsi_Date}</span>
+                <span>{dateInfo.Season}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span>{dateInfo.Season_Emoji}</span>
+                <span>{formattedTime}</span>
+                <span>{timeContext}</span>
+              </div>
+            </>
+          )}
+        </div>
+      );
     } catch (error) {
       console.error('Error formatting date:', error);
       return "";
@@ -31,9 +66,9 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
       <div>
         <h1 className="text-2xl font-bold text-primary">شاگردان</h1>
         {lastRefreshTime && (
-          <p className="text-sm text-muted-foreground mt-1">
+          <div className="text-sm text-muted-foreground mt-1">
             آخرین بروزرسانی: {formatLastRefreshTime()}
-          </p>
+          </div>
         )}
       </div>
       
