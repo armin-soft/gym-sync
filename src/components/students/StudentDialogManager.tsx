@@ -58,18 +58,22 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         setFormDialogOpen(true);
       },
       handleAddExercise: onSaveExercises ? (student) => {
+        console.log("Opening exercise dialog for student:", student);
         setSelectedStudent(student);
         setExerciseDialogOpen(true);
       } : undefined,
       handleAddDiet: onSaveDiet ? (student) => {
+        console.log("Opening diet dialog for student:", student);
         setSelectedStudent(student);
         setDietDialogOpen(true);
       } : undefined,
       handleAddSupplement: onSaveSupplements ? (student) => {
+        console.log("Opening supplement dialog for student:", student);
         setSelectedStudent(student);
         setSupplementDialogOpen(true);
       } : undefined,
       handleDownload: (student) => {
+        console.log("Opening export dialog for student:", student);
         setSelectedStudent(student);
         setExportDialogOpen(true);
       }
@@ -98,21 +102,21 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
             }}
             initialExercises={selectedStudent.exercises}
             initialExerciseSets={selectedStudent.exerciseSets}
+            initialExerciseReps={selectedStudent.exerciseReps}
             initialExercisesDay1={selectedStudent.exercisesDay1}
             initialExerciseSetsDay1={selectedStudent.exerciseSetsDay1}
+            initialExerciseRepsDay1={selectedStudent.exerciseRepsDay1}
             initialExercisesDay2={selectedStudent.exercisesDay2}
             initialExerciseSetsDay2={selectedStudent.exerciseSetsDay2}
+            initialExerciseRepsDay2={selectedStudent.exerciseRepsDay2}
             initialExercisesDay3={selectedStudent.exercisesDay3}
             initialExerciseSetsDay3={selectedStudent.exerciseSetsDay3}
+            initialExerciseRepsDay3={selectedStudent.exerciseRepsDay3}
             initialExercisesDay4={selectedStudent.exercisesDay4}
             initialExerciseSetsDay4={selectedStudent.exerciseSetsDay4}
+            initialExerciseRepsDay4={selectedStudent.exerciseRepsDay4}
             initialExercisesDay5={selectedStudent.exercisesDay5}
             initialExerciseSetsDay5={selectedStudent.exerciseSetsDay5}
-            initialExerciseReps={selectedStudent.exerciseReps}
-            initialExerciseRepsDay1={selectedStudent.exerciseRepsDay1}
-            initialExerciseRepsDay2={selectedStudent.exerciseRepsDay2}
-            initialExerciseRepsDay3={selectedStudent.exerciseRepsDay3}
-            initialExerciseRepsDay4={selectedStudent.exerciseRepsDay4}
             initialExerciseRepsDay5={selectedStudent.exerciseRepsDay5}
           />
         )}
@@ -145,8 +149,8 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
             supplements={supplements || []}
             initialSupplements={selectedStudent.supplements}
             initialVitamins={selectedStudent.vitamins}
-            initialSupplementsDay1={selectedStudent.supplementsDay1}
-            initialVitaminsDay1={selectedStudent.vitaminsDay1}
+            initialSupplementsDay1={selectedStudent.supplementsDay1 || []}
+            initialVitaminsDay1={selectedStudent.vitaminsDay1 || []}
           />
         )}
 

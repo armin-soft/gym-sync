@@ -65,8 +65,8 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
     supplement: Boolean(
       student.supplements?.length > 0 || 
       student.vitamins?.length > 0 ||
-      student.supplementsDay1?.length > 0 ||
-      student.vitaminsDay1?.length > 0
+      (student.supplementsDay1 && student.supplementsDay1.length > 0) ||
+      (student.vitaminsDay1 && student.vitaminsDay1.length > 0)
     ),
     all: false
   };
@@ -74,6 +74,14 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
   hasProgramData.all = hasProgramData.exercise && hasProgramData.diet && hasProgramData.supplement;
   
   const canExport = activeTab === 'all' ? hasProgramData.all : hasProgramData[activeTab as keyof typeof hasProgramData];
+
+  // Add a debug function to check what happens when we click export
+  const handleExportClick = () => {
+    console.log("Export button clicked");
+    console.log("Active tab:", activeTab);
+    console.log("Can export:", canExport);
+    console.log("Student data:", student);
+  };
 
   // If no data exists for any program, show warning
   if (!hasProgramData.exercise && !hasProgramData.diet && !hasProgramData.supplement) {
@@ -139,6 +147,7 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
                   tags={["برنامه کامل", "اطلاعات جامع"]}
                   student={student}
                   documentType="all"
+                  onDebugClick={handleExportClick}
                 />
               </TabsContent>
               
@@ -150,6 +159,7 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
                   tags={["اختصاصی تمرین", "تقویم روزانه"]}
                   student={student}
                   documentType="exercise"
+                  onDebugClick={handleExportClick}
                 />
               </TabsContent>
               
@@ -161,6 +171,7 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
                   tags={["تغذیه روزانه", "کالری و ماکروها"]}
                   student={student}
                   documentType="diet"
+                  onDebugClick={handleExportClick}
                 />
               </TabsContent>
               
@@ -172,6 +183,7 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
                   tags={["مکمل غذایی", "ویتامین روزانه"]}
                   student={student}
                   documentType="supplement"
+                  onDebugClick={handleExportClick}
                 />
               </TabsContent>
             </motion.div>
@@ -189,6 +201,30 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
             <p>قد: {student.height} - وزن: {student.weight}</p>
             <div data-student-id={student.id}></div>
           </div>
+          
+          {/* Add more content here for the export */}
+          <div className="export-content">
+            {hasProgramData.exercise && (
+              <div className="exercise-section">
+                <h2>برنامه تمرینی</h2>
+                {/* Add exercise data */}
+              </div>
+            )}
+            
+            {hasProgramData.diet && (
+              <div className="diet-section">
+                <h2>برنامه غذایی</h2>
+                {/* Add diet data */}
+              </div>
+            )}
+            
+            {hasProgramData.supplement && (
+              <div className="supplement-section">
+                <h2>مکمل و ویتامین</h2>
+                {/* Add supplement data */}
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
@@ -202,6 +238,7 @@ interface ExportCardProps {
   tags: string[];
   student: Student;
   documentType: "student" | "workout" | "diet" | "supplement" | "all" | "exercise";
+  onDebugClick?: () => void;
 }
 
 const ExportCard: React.FC<ExportCardProps> = ({ 
@@ -210,7 +247,8 @@ const ExportCard: React.FC<ExportCardProps> = ({
   icon,
   tags,
   student,
-  documentType
+  documentType,
+  onDebugClick
 }) => {
   return (
     <motion.div variants={itemVariants}>
@@ -242,10 +280,15 @@ const ExportCard: React.FC<ExportCardProps> = ({
                 filename={`program-${student.id}-${documentType}`}
                 buttonDisplay="primary"
                 contentId="program-export-content"
+                onClick={onDebugClick}
                 className="w-full md:w-auto justify-center bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
               />
               
-              <Button variant="outline" className="w-full md:w-auto justify-center">
+              <Button 
+                variant="outline" 
+                className="w-full md:w-auto justify-center"
+                onClick={onDebugClick}
+              >
                 <Printer className="h-4 w-4 ml-1.5" />
                 <span>پیش‌نمایش</span>
               </Button>

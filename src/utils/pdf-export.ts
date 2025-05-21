@@ -1,10 +1,11 @@
-
 import { PrintExportOptions, ExportDataOptions } from "@/components/ui/PrintExportButton";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { generateDocumentId } from "@/lib/utils/ids";
 
 export async function generateOutput(options: ExportDataOptions) {
+  console.log("Generating output with options:", options);
+  
   const { 
     contentId, 
     format, 
@@ -23,17 +24,23 @@ export async function generateOutput(options: ExportDataOptions) {
   const content = contentId ? document.getElementById(contentId) : document.body;
   
   if (!content) {
+    console.error("Content element not found:", contentId);
     throw new Error("Content element not found");
   }
 
+  console.log("Content element found:", content);
+
   if (format === "pdf") {
+    console.log("Generating PDF...");
     // Generate PDF
     const canvas = await html2canvas(content, {
       scale: 2,
       useCORS: true,
-      logging: false,
+      logging: true,
       backgroundColor: colorMode === "bw" ? "#ffffff" : null
     });
+
+    console.log("Canvas created with dimensions:", canvas.width, "x", canvas.height);
 
     const imgData = canvas.toDataURL(`image/jpeg`, quality / 100);
     
@@ -49,6 +56,8 @@ export async function generateOutput(options: ExportDataOptions) {
       width = orientation === "portrait" ? 216 : 279;
       height = orientation === "portrait" ? 279 : 216;
     }
+    
+    console.log("Creating PDF with dimensions:", width, "x", height);
     
     const pdf = new jsPDF(orientation, 'mm', [width, height]);
     
@@ -69,6 +78,7 @@ export async function generateOutput(options: ExportDataOptions) {
     }
     
     // Add the content image
+    console.log("Adding image to PDF");
     pdf.addImage(imgData, 'JPEG', 10, includeHeader ? 20 : 10, imgWidth, imgHeight);
     
     // Add footer if requested
@@ -81,13 +91,16 @@ export async function generateOutput(options: ExportDataOptions) {
     
     // Save the PDF
     const uniqueFilename = `${filename.replace(/\s+/g, '_')}_${Date.now()}.pdf`;
+    console.log("Saving PDF as:", uniqueFilename);
     pdf.save(uniqueFilename);
     
     return uniqueFilename;
   } else if (format === "print") {
+    console.log("Opening print window...");
     // Handle direct printing
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
+      console.error("Could not open print window");
       throw new Error("Could not open print window. Please check if pop-ups are blocked.");
     }
     
@@ -126,6 +139,7 @@ export async function generateOutput(options: ExportDataOptions) {
     
     // Wait for content to load then print
     printWindow.onload = () => {
+      console.log("Print window loaded, printing...");
       printWindow.print();
     };
     
