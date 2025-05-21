@@ -18,7 +18,7 @@ interface StudentActionsProps {
   student: Student;
   onEdit?: (student: Student) => void;
   onDelete?: (id: number) => void;
-  onAddExercise?: (student: Student) => void;
+  onAddExercise: (student: Student) => void;
   onAddDiet?: (student: Student) => void;
   onAddSupplement?: (student: Student) => void;
   onDownload?: (student: Student) => void;
@@ -33,8 +33,12 @@ export const StudentActions = ({
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Add a console log to debug when this menu is rendered
+  console.log("Rendering StudentActions for student:", student.name);
+
   // تخصیص برنامه
   const handleProgramClick = () => {
+    console.log("StudentActions: Add Exercise clicked for student:", student.name);
     if (onAddExercise) {
       onAddExercise(student);
     }

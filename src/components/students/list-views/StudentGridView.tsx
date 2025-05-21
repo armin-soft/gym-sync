@@ -1,62 +1,86 @@
 
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Student } from '@/components/students/StudentTypes';
-import { StudentCard } from '@/components/students/StudentCard';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Student } from "@/components/students/StudentTypes";
+import { StudentCard } from "@/components/students/StudentCard";
+import { StudentEmptyState } from "./StudentEmptyState";
 
 interface StudentGridViewProps {
   students: Student[];
-  isProfileComplete: boolean;
+  searchQuery: string;
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
+  onAddStudent: () => void;
+  onClearSearch: () => void;
+  isProfileComplete: boolean;
 }
 
 export const StudentGridView: React.FC<StudentGridViewProps> = ({
   students,
-  isProfileComplete,
+  searchQuery,
   onEdit,
   onDelete,
   onAddExercise,
   onAddDiet,
-  onAddSupplement
+  onAddSupplement,
+  onAddStudent,
+  onClearSearch,
+  isProfileComplete
 }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
-      }
-    }
-  };
-
+  // No students found with search query
+  if (students.length === 0 && searchQuery) {
+    return (
+      <StudentEmptyState
+        title="شاگردی یافت نشد"
+        description={`شاگردی با عبارت جستجوی «${searchQuery}» پیدا نشد.`}
+        buttonText="پاک کردن جستجو"
+        onClick={onClearSearch}
+      />
+    );
+  }
+  
+  // No students at all
+  if (students.length === 0) {
+    return (
+      <StudentEmptyState
+        title="هنوز هیچ شاگردی ندارید"
+        description="برای شروع، یک شاگرد جدید اضافه کنید."
+        buttonText="افزودن شاگرد جدید"
+        onClick={onAddStudent}
+      />
+    );
+  }
+  
   return (
-    <ScrollArea className="h-[calc(100vh-30rem)] md:h-[calc(100vh-26rem)] p-4">
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-8"
-      >
-        <AnimatePresence>
-          {students.map((student) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+      <AnimatePresence>
+        {students.map((student) => (
+          <motion.div
+            key={student.id}
+            layout
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+          >
             <StudentCard
-              key={student.id}
               student={student}
               onEdit={() => onEdit(student)}
               onDelete={() => onDelete(student.id)}
-              onAddExercise={() => onAddExercise(student)}
+              onAddExercise={() => {
+                console.log("GridView: onAddExercise called for student:", student.name);
+                onAddExercise(student);
+              }}
               onAddDiet={() => onAddDiet(student)}
               onAddSupplement={() => onAddSupplement(student)}
               isProfileComplete={isProfileComplete}
             />
-          ))}
-        </AnimatePresence>
-      </motion.div>
-    </ScrollArea>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
   );
 };

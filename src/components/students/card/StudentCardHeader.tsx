@@ -1,61 +1,59 @@
 
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, CheckCircle2 } from "lucide-react";
 import { Student } from "@/components/students/StudentTypes";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { CalendarDays } from "lucide-react";
+import { Edit2 } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentCardHeaderProps {
   student: Student;
   onEdit: () => void;
   onDelete: (id: number) => void;
-  onAddExercise: () => void;
-  onAddDiet: () => void;
-  onAddSupplement: () => void;
-  onDownload?: () => void;
   isProfileComplete: boolean;
+  menu?: React.ReactNode;
 }
 
 export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
   student,
-  onAddExercise,
+  onEdit,
+  onDelete,
   isProfileComplete,
+  menu
 }) => {
   return (
     <div className="flex justify-between items-start">
-      <div className="flex items-center space-x-2 space-x-reverse">
-        <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-          <AvatarImage src={student.image || "/Assets/Image/Place-Holder.svg"} alt={student.name} />
-          <AvatarFallback>
-            <User className="h-5 w-5" />
+      <div className="flex items-center gap-3">
+        <Avatar className="h-12 w-12 border-2 border-white dark:border-slate-800 shadow-sm">
+          <AvatarImage 
+            src={student.image || "/Assets/Image/Place-Holder.svg"} 
+            alt={student.name} 
+            className="object-cover"
+          />
+          <AvatarFallback className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">
+            {student.name?.substring(0, 2)}
           </AvatarFallback>
         </Avatar>
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-bold text-base">{student.name}</h3>
-            {isProfileComplete ? (
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-            ) : null}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Badge variant="outline" className="text-xs px-1.5 py-0 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-              {student.phone}
-            </Badge>
-          </div>
+        <div>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">{student.name}</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            {student.phone ? toPersianNumbers(student.phone) : "بدون شماره تماس"}
+          </p>
         </div>
       </div>
-      
-      <Button
-        variant="ghost"
-        size="sm"
-        className="flex items-center gap-1 text-xs p-1.5 hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-purple-900/20 dark:hover:text-purple-400 rounded-lg transition-colors"
-        onClick={onAddExercise}
-      >
-        <CalendarDays className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">تخصیص برنامه</span>
-      </Button>
+      <div className="flex items-center gap-1.5">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-full hover:bg-indigo-100/80 dark:hover:bg-indigo-900/30 transition-colors duration-200"
+          onClick={onEdit}
+        >
+          <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+          <span className="sr-only">ویرایش شاگرد</span>
+        </Button>
+        
+        {menu}
+      </div>
     </div>
   );
 };

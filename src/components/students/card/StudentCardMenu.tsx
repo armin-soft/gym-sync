@@ -19,7 +19,7 @@ interface StudentCardMenuProps {
   student: Student;
   onEdit?: () => void;
   onDelete?: (id: number) => void;
-  onAddExercise?: () => void;
+  onAddExercise: () => void;
   onAddDiet?: () => void;
   onAddSupplement?: () => void;
   onDownload?: () => void;
@@ -31,6 +31,16 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   onAddExercise,
   isProfileComplete
 }) => {
+  // Add a console log to debug when the menu is rendered
+  console.log("Rendering StudentCardMenu for student:", student.name);
+  
+  const handleProgramClick = () => {
+    console.log("Add Exercise clicked for student:", student.name);
+    if (onAddExercise) {
+      onAddExercise();
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -54,20 +64,19 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
           
           <div className="space-y-0.5 py-1">
             {/* تخصیص برنامه */}
-            {onAddExercise && (
-              <MenuItemWithIcon 
-                icon={<CalendarDays className="h-4 w-4" />}
-                onClick={onAddExercise}
-                title="تخصیص برنامه"
-                subtitle="افزودن تمرین و برنامه"
-                iconClassName="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover/item:bg-purple-200 dark:group-hover/item:bg-purple-800/50"
-                hoverClassName="group-hover/item:text-purple-600 dark:group-hover/item:text-purple-400"
-                custom={0}
-              />
-            )}
+            <MenuItemWithIcon 
+              icon={<CalendarDays className="h-4 w-4" />}
+              onClick={handleProgramClick}
+              title="تخصیص برنامه"
+              subtitle="افزودن تمرین و برنامه"
+              iconClassName="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover/item:bg-purple-200 dark:group-hover/item:bg-purple-800/50"
+              hoverClassName="group-hover/item:text-purple-600 dark:group-hover/item:text-purple-400"
+              custom={0}
+            />
           </div>
         </DropdownMenuContent>
       </AnimatePresence>
     </DropdownMenu>
   );
 };
+

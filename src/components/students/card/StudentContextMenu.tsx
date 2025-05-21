@@ -19,7 +19,7 @@ interface StudentContextMenuProps {
   children: React.ReactNode;
   onEdit?: (student: Student) => void;
   onDelete?: (id: number) => void;
-  onAddExercise?: (student: Student) => void;
+  onAddExercise: (student: Student) => void;
   onAddDiet?: (student: Student) => void;
   onAddSupplement?: (student: Student) => void;
   onDownload?: (student: Student) => void;
@@ -33,6 +33,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   isProfileComplete
 }) => {
   const handleProgramClick = () => {
+    console.log("Context Menu: Add Exercise clicked for student:", student.name);
     if (onAddExercise) onAddExercise(student);
   };
 
