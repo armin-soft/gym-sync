@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Plus, RotateCw } from "lucide-react";
+import { Plus, RotateCw, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
@@ -8,11 +8,13 @@ interface StudentsHeaderProps {
   onAddStudent: () => void;
   onRefresh?: () => void;
   lastRefreshTime?: Date;
+  onDownload?: () => void;
 }
 
 export const StudentsHeader: React.FC<StudentsHeaderProps> = ({ 
   onAddStudent,
-  onRefresh
+  onRefresh,
+  onDownload
 }) => {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-3">
@@ -29,6 +31,18 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
       
       <div className="flex items-center gap-3">
         <div className="flex gap-2">
+          {onDownload && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onDownload}
+              className="flex items-center gap-1.5 border-blue-200/80 dark:border-blue-700/80 shadow-sm transition-all duration-300 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600/60"
+            >
+              <Download className="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" />
+              <span>خروجی برنامه</span>
+            </Button>
+          )}
+          
           {onRefresh && (
             <Button
               size="sm"

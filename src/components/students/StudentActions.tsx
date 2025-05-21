@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, FileText, MoreHorizontal, ClipboardEdit, BarChart } from "lucide-react";
+import { CalendarDays, FileText, MoreHorizontal, ClipboardEdit, BarChart, Download } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +17,10 @@ import { motion } from "framer-motion";
 interface StudentActionsProps {
   student: Student;
   onEdit?: (student: Student) => void;
-  onDelete: (id: number) => void;
-  onAddExercise: (student: Student) => void;
-  onAddDiet: (student: Student) => void;
-  onAddSupplement: (student: Student) => void;
+  onDelete?: (id: number) => void;
+  onAddExercise?: (student: Student) => void;
+  onAddDiet?: (student: Student) => void;
+  onAddSupplement?: (student: Student) => void;
   onDownload?: (student: Student) => void;
   isCard?: boolean;
 }
@@ -28,6 +28,10 @@ interface StudentActionsProps {
 export const StudentActions = ({
   student,
   onEdit,
+  onDelete,
+  onAddExercise,
+  onAddDiet,
+  onAddSupplement,
   onDownload,
   isCard = false,
 }: StudentActionsProps) => {
@@ -90,9 +94,9 @@ export const StudentActions = ({
             {/* صدور برنامه */}
             {onDownload && (
               <MenuItemWithAnimation
-                icon={<FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                icon={<Download className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
                 onClick={() => onDownload(student)}
-                label="صدور برنامه"
+                label="دانلود برنامه"
                 index={2}
                 bgHoverClass="hover:bg-blue-50 dark:hover:bg-blue-900/20"
               />

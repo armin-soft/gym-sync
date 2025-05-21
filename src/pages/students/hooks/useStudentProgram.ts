@@ -1,34 +1,37 @@
 
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
-import { useNavigate } from "react-router-dom";
 
-/**
- * هوک برای مدیریت انتخاب برنامه دانشجویان
- */
-export function useStudentProgram() {
+export const useStudentProgram = () => {
   const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
-  const navigate = useNavigate();
-
-  // انتخاب دانشجو برای مدیریت برنامه
+  const [selectedStudentForExport, setSelectedStudentForExport] = useState<Student | null>(null);
+  
+  // Handler for opening the program manager
   const handleOpenProgramManager = (student: Student) => {
     setSelectedStudentForProgram(student);
   };
   
-  // بستن مدیریت برنامه دانشجو
+  // Handler for closing the program manager
   const handleCloseProgramManager = () => {
     setSelectedStudentForProgram(null);
   };
-
-  // هدایت مستقیم به صفحه برنامه دانشجو
-  const navigateToStudentProgram = (studentId: number) => {
-    navigate(`/student-program/${studentId}`);
+  
+  // Handler for opening the export dialog
+  const handleOpenExport = (student: Student) => {
+    setSelectedStudentForExport(student);
+  };
+  
+  // Handler for closing the export dialog
+  const handleCloseExport = () => {
+    setSelectedStudentForExport(null);
   };
   
   return {
     selectedStudentForProgram,
+    selectedStudentForExport,
     handleOpenProgramManager,
     handleCloseProgramManager,
-    navigateToStudentProgram
+    handleOpenExport,
+    handleCloseExport
   };
-}
+};

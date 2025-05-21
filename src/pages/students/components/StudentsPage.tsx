@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from "react";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
@@ -113,6 +112,33 @@ const StudentsPage = () => {
     }, 500);
   };
 
+  // Handle program download/export
+  const handleProgramExport = () => {
+    // If there are no students, show a toast
+    if (students.length === 0) {
+      toast({
+        title: "هیچ شاگردی یافت نشد",
+        description: "ابتدا یک شاگرد اضافه کنید",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Find a student with programs
+    const studentWithProgram = students.find(student => 
+      (student.exercises?.length || student.exercisesDay1?.length) && 
+      (student.meals?.length || student.mealsDay1?.length) && 
+      (student.supplements?.length || student.vitamins?.length)
+    );
+    
+    if (studentWithProgram) {
+      dialogManagerRef.current?.handleDownload?.(studentWithProgram);
+    } else {
+      // Otherwise open for first student
+      dialogManagerRef.current?.handleDownload?.(students[0]);
+    }
+  };
+
   // If a student is selected for program management, show the program manager
   if (selectedStudentForProgram) {
     return (
@@ -135,6 +161,7 @@ const StudentsPage = () => {
         <StudentsHeader 
           onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
           onRefresh={handleManualRefresh}
+          onDownload={handleProgramExport}
           lastRefreshTime={lastRefresh}
         />
         
