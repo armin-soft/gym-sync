@@ -19,7 +19,7 @@ interface StudentModernStatsProps {
 const StudentModernStats = ({ students }: StudentModernStatsProps) => {
   // Calculate stats
   const totalStudents = students.length;
-  const activeStudents = students.filter(s => s.status !== 'inactive').length;
+  const activeStudents = students.filter(s => s.status !== "inactive").length;
   const totalExercises = students.reduce((sum, student) => {
     return sum + (student.exercises?.length || 0);
   }, 0);

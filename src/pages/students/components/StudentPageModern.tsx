@@ -73,6 +73,7 @@ const StudentPageModern = () => {
       toast({
         title: selectedStudent ? "ویرایش موفق" : "افزودن موفق",
         description: `اطلاعات شاگرد با موفقیت ${selectedStudent ? 'ویرایش' : 'اضافه'} شد.`,
+        variant: "default",
       });
     }
     return success;
@@ -94,6 +95,7 @@ const StudentPageModern = () => {
         toast({
           title: "حذف موفق",
           description: `شاگرد ${student.name} با موفقیت حذف شد.`,
+          variant: "default",
         });
       }
       return success;
@@ -114,6 +116,11 @@ const StudentPageModern = () => {
         details: `تنظیم برنامه تمرینی برای ${student.name} ${dayNumber ? `(روز ${toPersianNumbers(dayNumber)})` : ''}`
       });
       triggerRefresh();
+      toast({
+        title: "تنظیم برنامه موفق",
+        description: `برنامه تمرینی با موفقیت برای ${student.name} تنظیم شد.`,
+        variant: "default",
+      });
     }
     
     return success;
@@ -132,6 +139,11 @@ const StudentPageModern = () => {
         details: `تنظیم برنامه غذایی برای ${student.name}`
       });
       triggerRefresh();
+      toast({
+        title: "تنظیم برنامه موفق",
+        description: `برنامه غذایی با موفقیت برای ${student.name} تنظیم شد.`,
+        variant: "default",
+      });
     }
     
     return success;
@@ -150,6 +162,11 @@ const StudentPageModern = () => {
         details: `تنظیم مکمل و ویتامین برای ${student.name}`
       });
       triggerRefresh();
+      toast({
+        title: "تنظیم مکمل موفق",
+        description: `مکمل و ویتامین با موفقیت برای ${student.name} تنظیم شد.`,
+        variant: "default",
+      });
     }
     
     return success;

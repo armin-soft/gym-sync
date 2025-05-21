@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { StudentProgramManager } from "@/components/students/program/StudentProgramManager";
+import StudentProgramManager from "@/components/students/program/StudentProgramManager";
 import { ExerciseWithSets } from "@/types/exercise";
 
 interface StudentModernProgramManagerProps {
