@@ -34,10 +34,9 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
   if (students.length === 0 && searchQuery) {
     return (
       <StudentEmptyState
-        title="شاگردی یافت نشد"
-        description={`شاگردی با عبارت جستجوی «${searchQuery}» پیدا نشد.`}
-        buttonText="پاک کردن جستجو"
-        onClick={onClearSearch}
+        searchQuery={searchQuery}
+        onClearSearch={onClearSearch}
+        onAddStudent={onAddStudent}
       />
     );
   }
@@ -46,10 +45,9 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
   if (students.length === 0) {
     return (
       <StudentEmptyState
-        title="هنوز هیچ شاگردی ندارید"
-        description="برای شروع، یک شاگرد جدید اضافه کنید."
-        buttonText="افزودن شاگرد جدید"
-        onClick={onAddStudent}
+        searchQuery={""}
+        onClearSearch={onClearSearch}
+        onAddStudent={onAddStudent}
       />
     );
   }

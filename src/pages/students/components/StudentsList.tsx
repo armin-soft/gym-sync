@@ -52,12 +52,15 @@ export const StudentsList: React.FC<StudentsListProps> = ({
     return (
       <StudentGridView 
         students={students}
+        searchQuery={searchQuery}
         isProfileComplete={isProfileComplete}
         onEdit={onEdit}
         onDelete={onDelete}
         onAddExercise={onAddExercise}
         onAddDiet={onAddDiet}
         onAddSupplement={onAddSupplement}
+        onAddStudent={onAddStudent}
+        onClearSearch={onClearSearch}
       />
     );
   }
