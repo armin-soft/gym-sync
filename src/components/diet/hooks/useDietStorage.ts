@@ -24,13 +24,11 @@ export const useDietStorage = () => {
         day: meal.day ? normalizeDay(meal.day) as WeekDay : meal.day
       }));
       
-      if (safeJSONSave('meals', normalizedMeals)) {
-        // Now use setMeals with the processed array that matches the Meal[] type
-        setMeals(normalizedMeals);
-        notifyDataChange('meals');
-        return true;
-      }
-      return false;
+      safeJSONSave('meals', normalizedMeals);
+      // Now use setMeals with the processed array that matches the Meal[] type
+      setMeals(normalizedMeals);
+      notifyDataChange('meals');
+      return true;
     } catch (error) {
       console.error('Error saving meals:', error);
       toast({

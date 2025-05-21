@@ -105,19 +105,17 @@ export const useExerciseManagement = () => {
     try {
       const updatedExercises = exercises.filter(ex => !selectedIds.includes(ex.id));
       
-      if (safeJSONSave("exercises", updatedExercises)) {
-        notifyDataChange("exercises");
-        queryClient.setQueryData(["exercises"], updatedExercises);
-        
-        toast({
-          title: "موفقیت",
-          description: selectedIds.length > 1 
-            ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
-            : "حرکت با موفقیت حذف شد"
-        });
-        return true;
-      }
-      return false;
+      safeJSONSave("exercises", updatedExercises);
+      notifyDataChange("exercises");
+      queryClient.setQueryData(["exercises"], updatedExercises);
+      
+      toast({
+        title: "موفقیت",
+        description: selectedIds.length > 1 
+          ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
+          : "حرکت با موفقیت حذف شد"
+      });
+      return true;
     } catch (error) {
       console.error('Error deleting exercises:', error);
       toast({

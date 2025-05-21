@@ -39,7 +39,7 @@ const StudentsPage = () => {
   } = useStudents();
   
   const { historyEntries, addHistoryEntry } = useStudentHistory();
-  const { refreshTrigger, triggerRefresh } = useStudentRefresh();
+  const { refreshTrigger, triggerRefresh, lastRefresh } = useStudentRefresh();
 
   const {
     handleSaveWithHistory,
@@ -97,7 +97,11 @@ const StudentsPage = () => {
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
-        <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
+        <StudentsHeader 
+          onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
+          onRefresh={triggerRefresh}
+          lastRefreshTime={lastRefresh}
+        />
         
         <StudentStatsCards students={students} />
         
