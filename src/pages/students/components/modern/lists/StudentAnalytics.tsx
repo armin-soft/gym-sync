@@ -67,14 +67,14 @@ const StudentAnalytics = ({ students }: StudentAnalyticsProps) => {
     },
     { 
       name: "غیرفعال", 
-      value: students.filter(s => s.status === "inactive").length,
+      value: students.filter(s => s.status && s.status === "inactive").length,
       color: "#f87171"
     }
   ];
   
   // Group students by program type
   const programTypes = students.reduce((acc, student) => {
-    const programType = student.programType || "بدون برنامه";
+    const programType = (student as any).programType || "بدون برنامه";
     if (!acc[programType]) acc[programType] = 0;
     acc[programType]++;
     return acc;
@@ -137,7 +137,7 @@ const StudentAnalytics = ({ students }: StudentAnalyticsProps) => {
         fontSize={12}
         fontWeight="bold"
       >
-        {toPersianNumbers(value.toString())}
+        {toPersianNumbers(String(value))}
       </text>
     );
   };
