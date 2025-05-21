@@ -68,9 +68,9 @@ export interface Student {
   // Supplement-related fields
   supplements?: number[];
   vitamins?: number[];
-  supplementsDay1?: number[]; // Adding this field
-  vitaminsDay1?: number[];     // Adding this field
-  supplementsDay2?: number[];  // Adding more day-specific fields
+  supplementsDay1?: number[];  
+  vitaminsDay1?: number[];     
+  supplementsDay2?: number[];  
   vitaminsDay2?: number[];
   supplementsDay3?: number[];
   vitaminsDay3?: number[];

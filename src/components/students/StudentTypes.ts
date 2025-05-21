@@ -47,6 +47,14 @@ export interface Student {
   mealNotes?: string;
   supplements?: number[];
   vitamins?: number[];
+  supplementsDay1?: number[]; // Add support for day-specific supplements
+  vitaminsDay1?: number[];    // Add support for day-specific vitamins
+  supplementsDay2?: number[];
+  vitaminsDay2?: number[];
+  supplementsDay3?: number[];
+  vitaminsDay3?: number[];
+  supplementsDay4?: number[];
+  vitaminsDay4?: number[];
   notes?: string;
   createdAt?: string;
   updatedAt?: string;
