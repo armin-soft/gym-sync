@@ -2,13 +2,12 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, FileText, MoreHorizontal, ClipboardEdit, BarChart, Download, Trash2 } from "lucide-react";
+import { CalendarDays, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
@@ -28,12 +27,7 @@ interface StudentActionsProps {
 
 export const StudentActions = ({
   student,
-  onEdit,
-  onDelete,
   onAddExercise,
-  onAddDiet,
-  onAddSupplement,
-  onDownload,
   isCard = false,
 }: StudentActionsProps) => {
   const navigate = useNavigate();
@@ -43,13 +37,6 @@ export const StudentActions = ({
   const handleProgramClick = () => {
     if (onAddExercise) {
       onAddExercise(student);
-    }
-  };
-
-  // حذف شاگرد
-  const handleDeleteClick = () => {
-    if (onDelete) {
-      onDelete(student.id);
     }
   };
 
@@ -87,41 +74,6 @@ export const StudentActions = ({
               index={0}
               bgHoverClass="hover:bg-purple-50 dark:hover:bg-purple-900/20"
             />
-            
-            {/* ویرایش اطلاعات */}
-            {onEdit && (
-              <MenuItemWithAnimation
-                icon={<ClipboardEdit className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />}
-                onClick={() => onEdit(student)}
-                label="ویرایش اطلاعات"
-                index={1}
-                bgHoverClass="hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
-              />
-            )}
-            
-            <DropdownMenuSeparator className="my-1.5 bg-slate-200/70 dark:bg-slate-700/40" />
-            
-            {/* دانلود برنامه */}
-            {onDownload && (
-              <MenuItemWithAnimation
-                icon={<Download className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
-                onClick={() => onDownload(student)}
-                label="دانلود برنامه"
-                index={2}
-                bgHoverClass="hover:bg-blue-50 dark:hover:bg-blue-900/20"
-              />
-            )}
-            
-            {/* حذف شاگرد */}
-            {onDelete && (
-              <MenuItemWithAnimation
-                icon={<Trash2 className="h-4 w-4 text-red-600 dark:text-red-400" />}
-                onClick={handleDeleteClick}
-                label="حذف شاگرد"
-                index={3}
-                bgHoverClass="hover:bg-red-50 dark:hover:bg-red-900/20"
-              />
-            )}
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
