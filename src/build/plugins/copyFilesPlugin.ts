@@ -9,7 +9,7 @@ export const copyFilesPlugin = () => {
     name: 'copy-files',
     closeBundle: async () => {
       try {
-        // اطمینان از وجود پوشه‌ها
+        // اطمینان از وجود پوشه‌ها با حروف بزرگ اول (Pascal Case)
         if (!fs.existsSync('dist/Assets')) {
           fs.mkdirSync('dist/Assets', { recursive: true });
         }
@@ -19,11 +19,13 @@ export const copyFilesPlugin = () => {
         if (!fs.existsSync('dist/Assets/Script')) {
           fs.mkdirSync('dist/Assets/Script', { recursive: true });
         }
-        if (!fs.existsSync('dist/service-worker')) {
-          fs.mkdirSync('dist/service-worker', { recursive: true });
+        
+        // ایجاد پوشه‌ها با حروف بزرگ برای سرویس ورکر
+        if (!fs.existsSync('dist/Service-Worker')) {
+          fs.mkdirSync('dist/Service-Worker', { recursive: true });
         }
-        if (!fs.existsSync('dist/service-worker/event-handlers')) {
-          fs.mkdirSync('dist/service-worker/event-handlers', { recursive: true });
+        if (!fs.existsSync('dist/Service-Worker/Event-Handlers')) {
+          fs.mkdirSync('dist/Service-Worker/Event-Handlers', { recursive: true });
         }
         
         // کپی Manifest.json از src به ریشه dist، جلوگیری از تکرار
@@ -39,29 +41,40 @@ export const copyFilesPlugin = () => {
         fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
         console.log('Copied Service-Worker.js to dist root');
 
-        // کپی ماژول‌های سرویس ورکر اصلی
-        if (fs.existsSync('public/service-worker')) {
-          const serviceWorkerRootFiles = fs.readdirSync('public/service-worker')
-            .filter(file => !fs.statSync(path.join('public/service-worker', file)).isDirectory());
-            
-          serviceWorkerRootFiles.forEach(file => {
-            fs.copyFileSync(
-              `public/service-worker/${file}`, 
-              `dist/service-worker/${file}`
-            );
-            console.log(`Copied service worker module: ${file}`);
-          });
-          
-          // کپی فایل‌های زیرپوشه event-handlers
-          if (fs.existsSync('public/service-worker/event-handlers')) {
-            const handlerFiles = fs.readdirSync('public/service-worker/event-handlers');
-            handlerFiles.forEach(file => {
-              fs.copyFileSync(
-                `public/service-worker/event-handlers/${file}`, 
-                `dist/service-worker/event-handlers/${file}`
-              );
-              console.log(`Copied event handler: ${file}`);
-            });
+        // کپی ماژول‌های سرویس ورکر اصلی با نام‌های جدید
+        const serviceWorkerFiles = [
+          { source: 'public/service-worker/cache-strategies.js', dest: 'dist/Service-Worker/Cache-Strategies.js' },
+          { source: 'public/service-worker/config.js', dest: 'dist/Service-Worker/Config.js' },
+          { source: 'public/service-worker/event-handlers.js', dest: 'dist/Service-Worker/Event-Handlers.js' },
+          { source: 'public/service-worker/utils.js', dest: 'dist/Service-Worker/Utils.js' }
+        ];
+        
+        // کپی فایل‌های event handler با نام‌های جدید
+        const eventHandlerFiles = [
+          { source: 'public/service-worker/event-handlers/activate-handler.js', dest: 'dist/Service-Worker/Event-Handlers/Activate-Handler.js' },
+          { source: 'public/service-worker/event-handlers/fetch-handler.js', dest: 'dist/Service-Worker/Event-Handlers/Fetch-Handler.js' },
+          { source: 'public/service-worker/event-handlers/install-handler.js', dest: 'dist/Service-Worker/Event-Handlers/Install-Handler.js' },
+          { source: 'public/service-worker/event-handlers/message-handler.js', dest: 'dist/Service-Worker/Event-Handlers/Message-Handler.js' },
+          { source: 'public/service-worker/event-handlers/sync-handler.js', dest: 'dist/Service-Worker/Event-Handlers/Sync-Handler.js' }
+        ];
+        
+        // کپی فایل‌های سرویس ورکر اصلی
+        for (const file of serviceWorkerFiles) {
+          if (fs.existsSync(file.source)) {
+            fs.copyFileSync(file.source, file.dest);
+            console.log(`Copied service worker file: ${file.source} -> ${file.dest}`);
+          } else {
+            console.log(`Warning: Source file not found: ${file.source}`);
+          }
+        }
+        
+        // کپی فایل‌های event handler
+        for (const file of eventHandlerFiles) {
+          if (fs.existsSync(file.source)) {
+            fs.copyFileSync(file.source, file.dest);
+            console.log(`Copied event handler: ${file.source} -> ${file.dest}`);
+          } else {
+            console.log(`Warning: Source file not found: ${file.source}`);
           }
         }
 
@@ -91,7 +104,7 @@ export const copyFilesPlugin = () => {
           console.log('Removed duplicate Manifest.json from dist/Assets/');
         }
 
-        console.log('All service worker files copied successfully!');
+        console.log('All service worker files copied successfully with proper casing!');
       } catch (error) {
         console.error('Error during file copying:', error);
       }

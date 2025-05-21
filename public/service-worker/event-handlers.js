@@ -1,10 +1,10 @@
 
 // Service Worker Event Handlers Registration Module
-import { registerInstallHandler } from './event-handlers/install-handler.js';
-import { registerActivateHandler } from './event-handlers/activate-handler.js';
-import { registerFetchHandler } from './event-handlers/fetch-handler.js';
-import { registerMessageHandler } from './event-handlers/message-handler.js';
-import { registerSyncHandler } from './event-handlers/sync-handler.js';
+import { registerInstallHandler } from './Event-Handlers/Install-Handler.js';
+import { registerActivateHandler } from './Event-Handlers/Activate-Handler.js';
+import { registerFetchHandler } from './Event-Handlers/Fetch-Handler.js';
+import { registerMessageHandler } from './Event-Handlers/Message-Handler.js';
+import { registerSyncHandler } from './Event-Handlers/Sync-Handler.js';
 
 // Function to register all event handlers
 export function registerAllEventHandlers() {
