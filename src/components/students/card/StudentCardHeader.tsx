@@ -4,7 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, CheckCircle2 } from "lucide-react";
 import { Student } from "@/components/students/StudentTypes";
 import { Badge } from "@/components/ui/badge";
-import { StudentCardMenu } from "./StudentCardMenu";
+import { Button } from "@/components/ui/button";
+import { CalendarDays } from "lucide-react";
 
 interface StudentCardHeaderProps {
   student: Student;
@@ -19,12 +20,7 @@ interface StudentCardHeaderProps {
 
 export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
   student,
-  onEdit,
-  onDelete,
   onAddExercise,
-  onAddDiet,
-  onAddSupplement,
-  onDownload,
   isProfileComplete,
 }) => {
   return (
@@ -51,16 +47,15 @@ export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
         </div>
       </div>
       
-      <StudentCardMenu 
-        student={student}
-        onEdit={onEdit}
-        onDelete={() => onDelete(student.id)}
-        onAddExercise={onAddExercise}
-        onAddDiet={onAddDiet}
-        onAddSupplement={onAddSupplement}
-        onDownload={onDownload}
-        isProfileComplete={isProfileComplete}
-      />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="flex items-center gap-1 text-xs p-1.5 hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-purple-900/20 dark:hover:text-purple-400 rounded-lg transition-colors"
+        onClick={onAddExercise}
+      >
+        <CalendarDays className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">تخصیص برنامه</span>
+      </Button>
     </div>
   );
 };

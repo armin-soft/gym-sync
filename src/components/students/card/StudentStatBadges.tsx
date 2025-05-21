@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Dumbbell, UtensilsCrossed, Pill } from "lucide-react";
+import { Dumbbell } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
 
@@ -12,9 +12,7 @@ interface StudentStatBadgesProps {
 }
 
 export const StudentStatBadges: React.FC<StudentStatBadgesProps> = ({ 
-  exercises = [], 
-  meals = [], 
-  supplements = [] 
+  exercises = []
 }) => {
   const container = {
     hidden: { opacity: 0 },
@@ -45,26 +43,6 @@ export const StudentStatBadges: React.FC<StudentStatBadgesProps> = ({
           label="تمرین"
           className="bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800/50 dark:text-indigo-400"
           hoverClassName="hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
-        />
-      </motion.div>
-      
-      <motion.div variants={item}>
-        <StatBadge 
-          icon={<UtensilsCrossed className="h-3 w-3" />}
-          count={meals.length}
-          label="وعده غذایی"
-          className="bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-800/50 dark:text-emerald-400"
-          hoverClassName="hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
-        />
-      </motion.div>
-      
-      <motion.div variants={item}>
-        <StatBadge 
-          icon={<Pill className="h-3 w-3" />}
-          count={supplements.length}
-          label="مکمل"
-          className="bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/30 dark:border-amber-800/50 dark:text-amber-400"
-          hoverClassName="hover:bg-amber-100 dark:hover:bg-amber-900/50"
         />
       </motion.div>
     </motion.div>

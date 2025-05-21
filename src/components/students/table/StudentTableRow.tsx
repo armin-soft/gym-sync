@@ -4,8 +4,8 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { UserRound, CheckCircle } from "lucide-react";
-import { StudentActions } from "../StudentActions";
+import { UserRound, CheckCircle, CalendarDays } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface StudentTableRowProps {
   student: Student;
@@ -21,14 +21,8 @@ interface StudentTableRowProps {
 
 export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   student,
-  onEdit,
-  onDelete,
   onAddExercise,
-  onAddDiet,
-  onAddSupplement,
-  onDownload,
   isProfileComplete,
-  index,
 }) => {
   return (
     <TableRow>
@@ -65,15 +59,16 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
       </TableCell>
       
       <TableCell className="text-center">
-        <div className="flex items-center justify-center gap-1">
-          <StudentActions
-            student={student}
-            onDelete={onDelete}
-            onAddExercise={onAddExercise}
-            onAddDiet={onAddDiet}
-            onAddSupplement={onAddSupplement}
-            onDownload={onDownload}
-          />
+        <div className="flex items-center justify-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-purple-900/20 dark:hover:text-purple-400 transition-colors"
+            onClick={() => onAddExercise(student)}
+          >
+            <CalendarDays className="h-3.5 w-3.5" />
+            <span>تخصیص برنامه</span>
+          </Button>
         </div>
       </TableCell>
     </TableRow>
