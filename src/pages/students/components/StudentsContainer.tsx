@@ -9,7 +9,7 @@ import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
 import { StudentsList } from "./StudentsList";
-import { StudentDialogManagerWrapper } from "@/components/students/StudentDialogManagerWrapper";
+import { StudentDialogManager } from "@/components/students/StudentDialogManager";
 import { TabsContent, Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRound, History } from "lucide-react";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
@@ -147,7 +147,7 @@ const StudentsContainer = () => {
         </div>
       </Tabs>
       
-      <StudentDialogManagerWrapper
+      <StudentDialogManager
         ref={dialogRef}
         onSave={(data, selectedStudent) => {
           const result = handleSave(data, selectedStudent);
