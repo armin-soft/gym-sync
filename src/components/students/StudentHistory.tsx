@@ -97,7 +97,7 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
 
   const getStudentAvatar = (studentId: number) => {
     const student = students.find(s => s.id === studentId);
-    return student ? student.image : "";
+    return student ? student.picture : "";
   };
 
   const formatDate = (dateString: string | number) => {
@@ -403,7 +403,7 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({ students, histor
                   <Card key={student.id} className="p-4 border-gray-100 dark:border-gray-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center gap-3 mb-3 pb-3 border-b border-gray-100 dark:border-gray-700">
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={student.image} alt={student.name} />
+                        <AvatarImage src={student.picture} alt={student.name} />
                         <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">

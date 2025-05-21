@@ -101,21 +101,21 @@ export const filterHistoryEntries = (
   
   // Filter by time range
   if (timeRange !== 'all') {
-    const now = new Date();
+    const now = Date.now(); // Current timestamp in milliseconds
     const dayInMs = 24 * 60 * 60 * 1000;
     
     if (timeRange === 'today') {
       filtered = filtered.filter(entry => {
         const entryDate = new Date(entry.timestamp);
-        return now.toDateString() === entryDate.toDateString();
+        return new Date(now).toDateString() === entryDate.toDateString();
       });
     } else if (timeRange === 'week') {
       filtered = filtered.filter(entry => {
-        return (now.getTime() - entry.timestamp) <= 7 * dayInMs;
+        return now - entry.timestamp <= 7 * dayInMs;
       });
     } else if (timeRange === 'month') {
       filtered = filtered.filter(entry => {
-        return (now.getTime() - entry.timestamp) <= 30 * dayInMs;
+        return now - entry.timestamp <= 30 * dayInMs;
       });
     }
   }

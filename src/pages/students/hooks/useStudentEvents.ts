@@ -31,19 +31,26 @@ export function useStudentEvents(
 
   // ذخیره شاگرد با ثبت در تاریخچه
   const handleSaveWithHistory = useCallback((data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => {
-    const timestamp = new Date().toISOString();
+    const timestamp = Date.now();
     const isSuccess = handleSave(data, selectedStudent);
     
     if (isSuccess) {
       const actionType = selectedStudent ? 'edit' : 'add';
       const studentName = selectedStudent ? selectedStudent.name : data.name;
+      const studentImage = selectedStudent?.picture || data.picture;
+      const description = selectedStudent 
+        ? `اطلاعات ${studentName} ویرایش شد` 
+        : `شاگرد جدید ${studentName} اضافه شد`;
       
       addHistoryEntry({
         id: Date.now(),
         timestamp,
         studentId: selectedStudent ? selectedStudent.id : null,
         studentName,
+        studentImage,
         action: actionType,
+        type: 'edit',
+        description,
         details: JSON.stringify({ 
           before: selectedStudent ? { name: selectedStudent.name, phone: selectedStudent.phone } : {},
           after: { name: data.name, phone: data.phone }
@@ -59,18 +66,23 @@ export function useStudentEvents(
   
   // ذخیره تمرینات با ثبت در تاریخچه
   const handleSaveExercisesWithHistory = useCallback((exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
-    const timestamp = new Date().toISOString();
+    const timestamp = Date.now();
     const isSuccess = handleSaveExercises(exercisesWithSets, studentId, dayNumber);
     
     if (isSuccess) {
       const student = students.find(s => s.id === studentId);
       if (student) {
+        const description = `برنامه تمرینی روز ${dayNumber || 1} برای ${student.name} با ${exercisesWithSets.length} حرکت ثبت شد`;
+        
         addHistoryEntry({
           id: Date.now(),
           timestamp,
           studentId: student.id,
           studentName: student.name,
+          studentImage: student.picture,
           action: 'exercises',
+          type: 'exercise',
+          description,
           details: JSON.stringify({
             day: dayNumber || 1,
             count: exercisesWithSets.length
@@ -87,18 +99,23 @@ export function useStudentEvents(
   
   // ذخیره رژیم غذایی با ثبت در تاریخچه
   const handleSaveDietWithHistory = useCallback((mealIds: number[], studentId: number, dayNumber?: number) => {
-    const timestamp = new Date().toISOString();
+    const timestamp = Date.now();
     const isSuccess = handleSaveDiet(mealIds, studentId, dayNumber);
     
     if (isSuccess) {
       const student = students.find(s => s.id === studentId);
       if (student) {
+        const description = `رژیم غذایی روز ${dayNumber || 1} برای ${student.name} با ${mealIds.length} وعده ثبت شد`;
+        
         addHistoryEntry({
           id: Date.now(),
           timestamp,
           studentId: student.id,
           studentName: student.name,
+          studentImage: student.picture,
           action: 'diet',
+          type: 'diet',
+          description,
           details: JSON.stringify({
             day: dayNumber || 1,
             count: mealIds.length
@@ -115,18 +132,24 @@ export function useStudentEvents(
   
   // ذخیره مکمل‌ها با ثبت در تاریخچه
   const handleSaveSupplementsWithHistory = useCallback((data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
-    const timestamp = new Date().toISOString();
+    const timestamp = Date.now();
     const isSuccess = handleSaveSupplements(data, studentId);
     
     if (isSuccess) {
       const student = students.find(s => s.id === studentId);
       if (student) {
+        const totalItems = data.supplements.length + data.vitamins.length;
+        const description = `برنامه مکمل روز ${data.day || 1} برای ${student.name} با ${totalItems} آیتم ثبت شد`;
+        
         addHistoryEntry({
           id: Date.now(),
           timestamp,
           studentId: student.id,
           studentName: student.name,
+          studentImage: student.picture,
           action: 'supplements',
+          type: 'supplement',
+          description,
           details: JSON.stringify({
             day: data.day || 1,
             supplements: data.supplements.length,
@@ -144,16 +167,21 @@ export function useStudentEvents(
   
   // حذف شاگرد با ثبت در تاریخچه
   const handleDeleteWithHistory = useCallback((id: number) => {
-    const timestamp = new Date().toISOString();
+    const timestamp = Date.now();
     const student = students.find(s => s.id === id);
     
     if (student) {
+      const description = `شاگرد ${student.name} حذف شد`;
+      
       addHistoryEntry({
         id: Date.now(),
         timestamp,
         studentId: id,
         studentName: student.name,
+        studentImage: student.picture,
         action: 'delete',
+        type: 'delete',
+        description,
         details: JSON.stringify({
           name: student.name,
           phone: student.phone

@@ -4,11 +4,10 @@ import { History, Edit, Dumbbell, Apple, Pill } from 'lucide-react';
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from '@/components/ui/badge';
 import { toPersianNumbers } from '@/lib/utils/numbers';
+import { HistoryEntry } from '@/hooks/useStudentHistory';
 
 interface HistoryTabListProps {
-  historyEntries: {
-    type: 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete';
-  }[];
+  historyEntries: HistoryEntry[];
 }
 
 export const HistoryTabList: React.FC<HistoryTabListProps> = ({ historyEntries }) => {

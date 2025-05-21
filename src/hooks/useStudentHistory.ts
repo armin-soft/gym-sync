@@ -5,11 +5,14 @@ import { safeJSONParse, safeJSONSave } from '@/utils/database';
 
 export interface HistoryEntry {
   id: number;
-  timestamp: string;
+  timestamp: number;
   studentId: number | null;
   studentName: string;
+  studentImage?: string;
   action: string;
   details: string;
+  type: 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete';
+  description: string;
 }
 
 export function useStudentHistory() {
@@ -17,9 +20,16 @@ export function useStudentHistory() {
 
   // Load history from localStorage
   useEffect(() => {
-    const loadedHistory = safeJSONParse('studentHistory', []);
+    const loadedHistory = safeJSONParse<HistoryEntry[]>('studentHistory', []);
     if (Array.isArray(loadedHistory)) {
-      setHistoryEntries(loadedHistory);
+      // Convert any legacy entries to the new format if needed
+      const normalizedEntries = loadedHistory.map(entry => ({
+        ...entry,
+        timestamp: typeof entry.timestamp === 'string' ? new Date(entry.timestamp).getTime() : entry.timestamp,
+        type: entry.type || (entry.action as 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete'),
+        description: entry.description || entry.details
+      }));
+      setHistoryEntries(normalizedEntries);
     }
   }, []);
 

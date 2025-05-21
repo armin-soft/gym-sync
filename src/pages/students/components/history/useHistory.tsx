@@ -23,7 +23,8 @@ export const useHistory = (historyEntries: HistoryEntry[]) => {
   // Format date function
   const formatDate = (timestamp: number) => {
     try {
-      return format(new Date(timestamp), 'yyyy/MM/dd - HH:mm');
+      const date = new Date(timestamp);
+      return toPersianNumbers(format(date, 'yyyy/MM/dd - HH:mm'));
     } catch (error) {
       return toPersianNumbers(new Date(timestamp).toLocaleDateString('fa-IR'));
     }
