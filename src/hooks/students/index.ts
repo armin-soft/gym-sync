@@ -13,7 +13,8 @@ export const useStudents = () => {
     setStudents, 
     setSupplements,
     handleDelete, 
-    handleSave 
+    handleSave,
+    refreshData
   } = useStudentManagement();
 
   const { handleSaveExercises } = useStudentExercises(students, setStudents);
@@ -31,7 +32,8 @@ export const useStudents = () => {
     handleSave,
     handleSaveExercises,
     handleSaveDiet,
-    handleSaveSupplements
+    handleSaveSupplements,
+    refreshData
   };
 };
 

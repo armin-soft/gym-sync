@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
@@ -9,6 +9,7 @@ import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { PageContainer } from "@/components/ui/page-container";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 // Import our refactored components and hooks
 import MainStudentTabs from "./MainStudentTabs";
@@ -21,6 +22,8 @@ const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   const deviceInfo = useDeviceInfo();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
   
   // Main data and operations
   const {
@@ -32,13 +35,40 @@ const StudentsPage = () => {
     handleSave,
     handleSaveExercises,
     handleSaveDiet,
-    handleSaveSupplements
+    handleSaveSupplements,
+    refreshData
   } = useStudents();
   
   // Custom hooks
   const { historyEntries, addHistoryEntry } = useStudentHistory();
-  const { refreshTrigger, triggerRefresh } = useStudentRefresh();
+  const { refreshTrigger, triggerRefresh, lastRefresh } = useStudentRefresh();
   const { selectedStudentForProgram, handleOpenProgramManager, handleCloseProgramManager } = useStudentProgram();
+
+  // Initial data loading effect
+  useEffect(() => {
+    const loadingTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    
+    return () => clearTimeout(loadingTimer);
+  }, []);
+
+  // Effect to refresh data based on the refresh trigger
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      console.log('Refreshing student data due to trigger change');
+      refreshData();
+      
+      // Show toast only on automatic refreshes (not initial load)
+      if (refreshTrigger > 1) {
+        toast({
+          title: "به‌روزرسانی",
+          description: "داده‌های شاگردان با موفقیت به‌روزرسانی شدند",
+          duration: 3000,
+        });
+      }
+    }
+  }, [refreshTrigger, refreshData, toast]);
 
   // Student events with history tracking
   const {
@@ -74,6 +104,15 @@ const StudentsPage = () => {
     return "px-4 sm:px-6 lg:px-8";
   };
 
+  // Manual refresh handler for user-triggered refreshes
+  const handleManualRefresh = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      triggerRefresh();
+      setIsLoading(false);
+    }, 500);
+  };
+
   // If a student is selected for program management, show the program manager
   if (selectedStudentForProgram) {
     return (
@@ -93,7 +132,11 @@ const StudentsPage = () => {
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
-        <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
+        <StudentsHeader 
+          onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
+          onRefresh={handleManualRefresh}
+          lastRefreshTime={lastRefresh}
+        />
         
         <StudentStatsCards students={students} />
         
@@ -107,6 +150,7 @@ const StudentsPage = () => {
           setViewMode={setViewMode}
           refreshTrigger={refreshTrigger}
           historyEntries={historyEntries}
+          isLoading={isLoading}
           onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
           onDelete={handleDeleteWithHistory}
           onAddExercise={handleOpenProgramManager}
