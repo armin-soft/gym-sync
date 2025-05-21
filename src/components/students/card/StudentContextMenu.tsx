@@ -49,10 +49,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   const navigate = useNavigate();
   
   const handleProgramClick = () => {
-    navigate(`/student-program/${student.id}`);
-  };
-
-  const handleExerciseClick = () => {
     if (onAddExercise) onAddExercise(student);
   };
 
@@ -87,10 +83,19 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
             
             <ContextMenuItemWithAnimation
               icon={<ClipboardList className="h-4 w-4" />}
-              title="برنامه تمرینی"
-              subtitle="مدیریت تمرینات"
-              onClick={handleExerciseClick}
+              title="برنامه غذایی"
+              subtitle="مدیریت تغذیه و رژیم"
+              onClick={handleDietClick}
               index={1}
+              variant="purple"
+            />
+
+            <ContextMenuItemWithAnimation
+              icon={<FileText className="h-4 w-4" />}
+              title="مکمل‌ها و ویتامین‌ها"
+              subtitle="مدیریت مکمل‌ها"
+              onClick={handleSupplementClick}
+              index={2}
               variant="purple"
             />
           </ContextMenuSection>
@@ -105,7 +110,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="ویرایش اطلاعات"
                 subtitle="تغییر پروفایل شاگرد"
                 onClick={() => onEdit(student)}
-                index={2}
+                index={3}
                 variant="blue"
               />
             )}
@@ -116,7 +121,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="حذف شاگرد"
                 subtitle="حذف کامل اطلاعات"
                 onClick={() => onDelete(student.id)}
-                index={3}
+                index={4}
                 variant="red"
               />
             )}
@@ -132,8 +137,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="دانلود برنامه"
                 subtitle="خروجی PDF"
                 onClick={() => onDownload(student)}
-                disabled={!isProfileComplete}
-                index={4}
+                index={5}
                 variant="green"
               />
             )}
@@ -142,17 +146,8 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
               icon={<BarChart className="h-4 w-4" />}
               title="گزارش پیشرفت"
               subtitle="تحلیل روند پیشرفت"
-              disabled={!isProfileComplete}
-              index={5}
-              variant="orange"
-            />
-            
-            <ContextMenuItemWithAnimation
-              icon={<AppWindow className="h-4 w-4" />}
-              title="مشاهده پنل شاگرد"
-              subtitle="دسترسی به حساب کاربری"
               index={6}
-              variant="slate"
+              variant="orange"
             />
           </ContextMenuSection>
         </ContextMenuContent>

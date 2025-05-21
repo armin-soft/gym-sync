@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, FileText, MoreHorizontal, ClipboardEdit, BarChart, Download } from "lucide-react";
+import { CalendarDays, FileText, MoreHorizontal, ClipboardEdit, BarChart, Download, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentActionsProps {
   student: Student;
@@ -36,11 +37,20 @@ export const StudentActions = ({
   isCard = false,
 }: StudentActionsProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // تخصیص برنامه
   const handleProgramClick = () => {
-    // هدایت به صفحه برنامه با شناسه شاگرد
-    navigate(`/student-program/${student.id}`);
+    if (onAddExercise) {
+      onAddExercise(student);
+    }
+  };
+
+  // حذف شاگرد
+  const handleDeleteClick = () => {
+    if (onDelete) {
+      onDelete(student.id);
+    }
   };
 
   return (
@@ -91,7 +101,7 @@ export const StudentActions = ({
             
             <DropdownMenuSeparator className="my-1.5 bg-slate-200/70 dark:bg-slate-700/40" />
             
-            {/* صدور برنامه */}
+            {/* دانلود برنامه */}
             {onDownload && (
               <MenuItemWithAnimation
                 icon={<Download className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
@@ -102,13 +112,16 @@ export const StudentActions = ({
               />
             )}
             
-            {/* گزارش‌گیری */}
-            <MenuItemWithAnimation
-              icon={<BarChart className="h-4 w-4 text-green-600 dark:text-green-400" />}
-              label="گزارش‌گیری"
-              index={3}
-              bgHoverClass="hover:bg-green-50 dark:hover:bg-green-900/20"
-            />
+            {/* حذف شاگرد */}
+            {onDelete && (
+              <MenuItemWithAnimation
+                icon={<Trash2 className="h-4 w-4 text-red-600 dark:text-red-400" />}
+                onClick={handleDeleteClick}
+                label="حذف شاگرد"
+                index={3}
+                bgHoverClass="hover:bg-red-50 dark:hover:bg-red-900/20"
+              />
+            )}
           </div>
         </DropdownMenuContent>
       </DropdownMenu>

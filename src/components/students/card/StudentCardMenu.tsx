@@ -13,12 +13,11 @@ import {
   FileText,
   CalendarDays,
   Download,
-  Settings,
-  BarChart,
-  ClipboardEdit
+  Trash2,
+  ClipboardEdit,
+  BarChart
 } from "lucide-react";
 import { Student } from "../StudentTypes";
-import { useNavigate } from "react-router-dom";
 import { MenuItemWithIcon } from "./menu-item/MenuItemWithIcon";
 import { MenuHeader } from "./menu-item/MenuHeader";
 
@@ -26,9 +25,9 @@ interface StudentCardMenuProps {
   student: Student;
   onEdit?: () => void;
   onDelete?: (id: number) => void;
-  onAddExercise?: (student: Student) => void;
-  onAddDiet?: (student: Student) => void;
-  onAddSupplement?: (student: Student) => void;
+  onAddExercise?: () => void;
+  onAddDiet?: () => void;
+  onAddSupplement?: () => void;
   onDownload?: () => void;
   isProfileComplete: boolean;
 }
@@ -37,15 +36,12 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
   student,
   onDownload,
   onEdit,
+  onDelete,
+  onAddExercise,
+  onAddDiet,
+  onAddSupplement,
   isProfileComplete
 }) => {
-  const navigate = useNavigate();
-
-  // Navigate to program management page
-  const handleProgramClick = () => {
-    navigate(`/student-program/${student.id}`);
-  };
-  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -69,15 +65,30 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
           
           <div className="space-y-0.5 py-1">
             {/* تخصیص برنامه */}
-            <MenuItemWithIcon 
-              icon={<CalendarDays className="h-4 w-4" />}
-              onClick={handleProgramClick}
-              title="تخصیص برنامه"
-              subtitle="افزودن تمرین، رژیم و مکمل"
-              iconClassName="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover/item:bg-purple-200 dark:group-hover/item:bg-purple-800/50"
-              hoverClassName="group-hover/item:text-purple-600 dark:group-hover/item:text-purple-400"
-              custom={0}
-            />
+            {onAddExercise && (
+              <MenuItemWithIcon 
+                icon={<CalendarDays className="h-4 w-4" />}
+                onClick={onAddExercise}
+                title="تخصیص برنامه"
+                subtitle="افزودن تمرین و برنامه"
+                iconClassName="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover/item:bg-purple-200 dark:group-hover/item:bg-purple-800/50"
+                hoverClassName="group-hover/item:text-purple-600 dark:group-hover/item:text-purple-400"
+                custom={0}
+              />
+            )}
+            
+            {/* برنامه غذایی */}
+            {onAddDiet && (
+              <MenuItemWithIcon 
+                icon={<FileText className="h-4 w-4" />}
+                onClick={onAddDiet}
+                title="برنامه غذایی"
+                subtitle="تخصیص رژیم غذایی"
+                iconClassName="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover/item:bg-blue-200 dark:group-hover/item:bg-blue-800/50"
+                hoverClassName="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400"
+                custom={1}
+              />
+            )}
             
             {/* ویرایش اطلاعات */}
             {onEdit && (
@@ -88,43 +99,46 @@ export const StudentCardMenu: React.FC<StudentCardMenuProps> = ({
                 subtitle="تغییر مشخصات شاگرد"
                 iconClassName="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover/item:bg-indigo-200 dark:group-hover/item:bg-indigo-800/50"
                 hoverClassName="group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400"
-                custom={1}
+                custom={2}
               />
             )}
             
             <DropdownMenuSeparator className="my-2 bg-slate-200/70 dark:bg-slate-700/40" />
             
-            {/* گزینه صدور برنامه */}
-            <MenuItemWithIcon 
-              icon={<FileText className="h-4 w-4" />}
-              onClick={onDownload}
-              disabled={!isProfileComplete}
-              title="صدور برنامه"
-              subtitle="دانلود و چاپ برنامه‌ها"
-              iconClassName="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover/item:bg-blue-200 dark:group-hover/item:bg-blue-800/50"
-              hoverClassName="group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400"
-              custom={2}
-            />
+            {/* دانلود برنامه */}
+            {onDownload && (
+              <MenuItemWithIcon 
+                icon={<Download className="h-4 w-4" />}
+                onClick={onDownload}
+                title="دانلود برنامه"
+                subtitle="خروجی PDF برنامه‌ها"
+                iconClassName="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 group-hover/item:bg-green-200 dark:group-hover/item:bg-green-800/50"
+                hoverClassName="group-hover/item:text-green-600 dark:group-hover/item:text-green-400"
+                custom={3}
+              />
+            )}
+            
+            {/* حذف شاگرد */}
+            {onDelete && (
+              <MenuItemWithIcon 
+                icon={<Trash2 className="h-4 w-4" />}
+                onClick={() => onDelete(student.id)}
+                title="حذف شاگرد"
+                subtitle="حذف دائمی اطلاعات"
+                iconClassName="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 group-hover/item:bg-red-200 dark:group-hover/item:bg-red-800/50"
+                hoverClassName="group-hover/item:text-red-600 dark:group-hover/item:text-red-400"
+                custom={4}
+              />
+            )}
             
             {/* گزارش‌گیری */}
             <MenuItemWithIcon 
               icon={<BarChart className="h-4 w-4" />}
-              disabled={!isProfileComplete}
               title="گزارش‌گیری"
               subtitle="مشاهده آمار و پیشرفت"
-              iconClassName="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 group-hover/item:bg-green-200 dark:group-hover/item:bg-green-800/50"
-              hoverClassName="group-hover/item:text-green-600 dark:group-hover/item:text-green-400"
-              custom={3}
-            />
-            
-            {/* تنظیمات شاگرد */}
-            <MenuItemWithIcon 
-              icon={<Settings className="h-4 w-4" />}
-              title="تنظیمات شاگرد"
-              subtitle="مدیریت دسترسی‌ها"
-              iconClassName="bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 group-hover/item:bg-slate-200 dark:group-hover/item:bg-slate-700"
-              hoverClassName="group-hover/item:text-slate-800 dark:group-hover/item:text-slate-200"
-              custom={4}
+              iconClassName="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 group-hover/item:bg-orange-200 dark:group-hover/item:bg-orange-800/50"
+              hoverClassName="group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400"
+              custom={5}
             />
           </div>
         </DropdownMenuContent>
