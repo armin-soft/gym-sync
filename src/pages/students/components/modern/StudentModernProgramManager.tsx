@@ -111,6 +111,7 @@ export const StudentModernProgramManager: React.FC<StudentModernProgramManagerPr
           onSaveExercises={onSaveExercises}
           onSaveDiet={onSaveDiet}
           onSaveSupplements={onSaveSupplements}
+          onClose={onClose}
         />
       </motion.div>
     </motion.div>

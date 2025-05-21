@@ -1,7 +1,6 @@
-
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useStudents } from "@/hooks/students";
+import { useStudents } from "@/hooks/useStudents";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { useStudentRefresh } from "../hooks/useStudentRefresh";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
@@ -73,7 +72,6 @@ const StudentPageModern = () => {
       toast({
         title: selectedStudent ? "ویرایش موفق" : "افزودن موفق",
         description: `اطلاعات شاگرد با موفقیت ${selectedStudent ? 'ویرایش' : 'اضافه'} شد.`,
-        variant: "default",
       });
     }
     return success;
@@ -95,7 +93,6 @@ const StudentPageModern = () => {
         toast({
           title: "حذف موفق",
           description: `شاگرد ${student.name} با موفقیت حذف شد.`,
-          variant: "default",
         });
       }
       return success;
@@ -119,7 +116,6 @@ const StudentPageModern = () => {
       toast({
         title: "تنظیم برنامه موفق",
         description: `برنامه تمرینی با موفقیت برای ${student.name} تنظیم شد.`,
-        variant: "default",
       });
     }
     
@@ -142,7 +138,6 @@ const StudentPageModern = () => {
       toast({
         title: "تنظیم برنامه موفق",
         description: `برنامه غذایی با موفقیت برای ${student.name} تنظیم شد.`,
-        variant: "default",
       });
     }
     
@@ -165,7 +160,6 @@ const StudentPageModern = () => {
       toast({
         title: "تنظیم مکمل موفق",
         description: `مکمل و ویتامین با موفقیت برای ${student.name} تنظیم شد.`,
-        variant: "default",
       });
     }
     
