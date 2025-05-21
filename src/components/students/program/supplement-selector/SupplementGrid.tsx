@@ -27,7 +27,7 @@ const SupplementGrid: React.FC<SupplementGridProps> = ({
     return (
       <div className="flex items-center justify-center h-full w-full text-right" dir="rtl">
         <EmptyState
-          icon={Pill}
+          icon={Pill} // This is where the error was occurring
           title={
             searchQuery || selectedCategory
               ? "هیچ موردی با فیلترهای انتخابی یافت نشد"
