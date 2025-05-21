@@ -3,9 +3,8 @@ import React, { useRef } from "react";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
-import { useStudents } from "@/hooks/students";
+import { useStudents } from "@/hooks/useStudents";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
-import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { PageContainer } from "@/components/ui/page-container";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { useState } from "react";
@@ -28,6 +27,10 @@ const StudentsPage = () => {
     exercises,
     meals,
     supplements,
+    sortedAndFilteredStudents,
+    searchQuery,
+    setSearchQuery,
+    handleClearSearch,
     handleDelete,
     handleSave,
     handleSaveExercises,
@@ -59,14 +62,6 @@ const StudentsPage = () => {
     selectedStudentForProgram
   );
 
-  // Filtering and search
-  const {
-    searchQuery,
-    setSearchQuery,
-    sortedAndFilteredStudents,
-    handleClearSearch
-  } = useStudentFiltering(students);
-
   // Helper function to get appropriate padding based on device type
   const getContentPadding = () => {
     if (deviceInfo.isMobile) return "px-2";
@@ -91,43 +86,41 @@ const StudentsPage = () => {
   }
 
   return (
-    <PageContainer withBackground fullHeight className="w-full overflow-hidden">
-      <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
-        <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
-        
-        <StudentStatsCards students={students} />
-        
-        <MainStudentTabs
-          students={students}
-          sortedAndFilteredStudents={sortedAndFilteredStudents}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleClearSearch={handleClearSearch}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          refreshTrigger={refreshTrigger}
-          historyEntries={historyEntries}
-          onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
-          onDelete={handleDeleteWithHistory}
-          onAddExercise={handleOpenProgramManager}
-          onAddDiet={handleOpenProgramManager}
-          onAddSupplement={handleOpenProgramManager}
-          onDownload={(student) => dialogManagerRef.current?.handleDownload?.(student)}
-          onAddStudent={() => dialogManagerRef.current?.handleAdd()}
-        />
+    <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
+      <StudentsHeader onAddStudent={() => dialogManagerRef.current?.handleAdd()} />
+      
+      <StudentStatsCards students={students} />
+      
+      <MainStudentTabs
+        students={students}
+        sortedAndFilteredStudents={sortedAndFilteredStudents}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleClearSearch={handleClearSearch}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        refreshTrigger={refreshTrigger}
+        historyEntries={historyEntries}
+        onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+        onDelete={handleDeleteWithHistory}
+        onAddExercise={handleOpenProgramManager}
+        onAddDiet={handleOpenProgramManager}
+        onAddSupplement={handleOpenProgramManager}
+        onDownload={(student) => dialogManagerRef.current?.handleDownload?.(student)}
+        onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+      />
 
-        <StudentDialogManager
-          ref={dialogManagerRef}
-          onSave={handleSaveWithHistory}
-          onSaveExercises={handleSaveExercisesWithHistory}
-          onSaveDiet={handleSaveDietWithHistory}
-          onSaveSupplements={handleSaveSupplementsWithHistory}
-          exercises={exercises}
-          meals={meals}
-          supplements={supplements}
-        />
-      </div>
-    </PageContainer>
+      <StudentDialogManager
+        ref={dialogManagerRef}
+        onSave={handleSaveWithHistory}
+        onSaveExercises={handleSaveExercisesWithHistory}
+        onSaveDiet={handleSaveDietWithHistory}
+        onSaveSupplements={handleSaveSupplementsWithHistory}
+        exercises={exercises}
+        meals={meals}
+        supplements={supplements}
+      />
+    </div>
   );
 };
 
