@@ -9,11 +9,11 @@ export function registerMessageHandler() {
     if (!event.data) return;
     
     // Get version dynamically for logs
-    let appVersion = '1.0.0';
+    let appVersion = '3.0.0';
     fetch('./Manifest.json')
       .then(response => response.json())
       .then(manifest => {
-        appVersion = manifest.version || '1.0.0';
+        appVersion = manifest.version || '3.0.0';
       })
       .catch(() => {});
       

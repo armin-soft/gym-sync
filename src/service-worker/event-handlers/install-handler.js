@@ -10,7 +10,7 @@ export function registerInstallHandler() {
     fetch('./Manifest.json')
       .then(response => response.json())
       .then(manifest => {
-        const version = manifest.version || '1.0.0';
+        const version = manifest.version || '3.0.0';
         logger.initLogger(version);
         logger.info(`Installing v${version}`);
       })
