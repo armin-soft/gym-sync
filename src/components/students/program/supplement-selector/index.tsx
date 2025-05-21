@@ -98,7 +98,7 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   }, [activeTab]);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col text-right" dir="rtl">
       {dayLabel && (
         <div className="mb-4 text-center">
           <h3 className="text-lg font-semibold text-indigo-700">

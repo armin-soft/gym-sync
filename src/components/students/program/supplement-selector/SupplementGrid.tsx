@@ -1,9 +1,10 @@
 
 import React from "react";
-import { AnimatePresence } from "framer-motion";
-import { Supplement } from "@/types/supplement";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Pill } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import SupplementCard from "./SupplementCard";
-import EmptyState from "./EmptyState";
+import { Supplement } from "@/types/supplement";
 
 interface SupplementGridProps {
   filteredItems: Supplement[];
@@ -14,7 +15,7 @@ interface SupplementGridProps {
   clearFilters: () => void;
 }
 
-export const SupplementGrid: React.FC<SupplementGridProps> = ({
+const SupplementGrid: React.FC<SupplementGridProps> = ({
   filteredItems,
   selectedItems,
   toggleItem,
@@ -22,30 +23,49 @@ export const SupplementGrid: React.FC<SupplementGridProps> = ({
   selectedCategory,
   clearFilters
 }) => {
-  // Check if an item is selected
-  const isSelected = (id: number) => {
-    return selectedItems.includes(id);
-  };
+  if (filteredItems.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full w-full text-right" dir="rtl">
+        <EmptyState
+          icon={<Pill className="w-10 h-10 text-muted-foreground/80" />}
+          title={
+            searchQuery || selectedCategory
+              ? "هیچ موردی با فیلترهای انتخابی یافت نشد"
+              : "هیچ موردی برای نمایش وجود ندارد"
+          }
+          description={
+            searchQuery || selectedCategory
+              ? "فیلترهای خود را تغییر دهید تا نتایج دیگری ببینید"
+              : "لطفا بعداً دوباره بررسی کنید"
+          }
+          action={
+            searchQuery || selectedCategory
+              ? { label: "پاک کردن فیلترها", onClick: clearFilters }
+              : undefined
+          }
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 p-1 text-right" dir="rtl">
       <AnimatePresence>
-        {filteredItems.length > 0 ? (
-          filteredItems.map((item) => (
+        {filteredItems.map((item) => (
+          <motion.div
+            key={item.id}
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <SupplementCard
-              key={item.id}
               item={item}
-              isSelected={isSelected(item.id)}
-              onSelect={() => toggleItem(item.id)}
+              isSelected={selectedItems.includes(item.id)}
+              onSelect={toggleItem}
             />
-          ))
-        ) : (
-          <EmptyState 
-            searchQuery={searchQuery}
-            selectedCategory={selectedCategory}
-            clearFilters={clearFilters}
-          />
-        )}
+          </motion.div>
+        ))}
       </AnimatePresence>
     </div>
   );

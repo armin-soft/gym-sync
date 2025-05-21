@@ -5,23 +5,24 @@ import { Input } from "@/components/ui/input";
 
 interface SupplementSearchProps {
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   activeTab: 'supplement' | 'vitamin';
 }
 
-export const SupplementSearch: React.FC<SupplementSearchProps> = ({
+const SupplementSearch: React.FC<SupplementSearchProps> = ({
   searchQuery,
   setSearchQuery,
   activeTab
 }) => {
   return (
-    <div className="relative mb-4">
+    <div className="mb-4 relative text-right" dir="rtl">
       <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-      <Input 
-        placeholder={`جستجوی ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}...`}
+      <Input
+        type="search"
+        placeholder={activeTab === 'supplement' ? 'جستجوی مکمل‌ها...' : 'جستجوی ویتامین‌ها...'}
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="pl-3 pr-10"
+        className="pr-10 pl-4 text-right"
       />
     </div>
   );
