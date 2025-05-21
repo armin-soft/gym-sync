@@ -1,9 +1,9 @@
 
 import React from 'react';
-import StudentsPage from './components/StudentsPage';
+import StudentPageModern from './components/StudentPageModern';
 
 const Students = () => {
-  return <StudentsPage />;
+  return <StudentPageModern />;
 };
 
 export default Students;
