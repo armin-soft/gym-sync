@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { Student } from '@/components/students/StudentTypes';
-import { StudentEmptyState } from './EmptyStudentState';
-import { StudentGridView } from './StudentGridView';
-import { StudentTableView } from './StudentTableView';
+import { StudentEmptyState, StudentGridView, StudentTableView } from '@/components/students/list-views';
 
 interface StudentsListProps {
   students: Student[];
