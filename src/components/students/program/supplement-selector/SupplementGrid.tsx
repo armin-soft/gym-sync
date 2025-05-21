@@ -27,7 +27,7 @@ const SupplementGrid: React.FC<SupplementGridProps> = ({
     return (
       <div className="flex items-center justify-center h-full w-full text-right" dir="rtl">
         <EmptyState
-          icon={<Pill className="w-10 h-10 text-muted-foreground/80" />}
+          icon={Pill}
           title={
             searchQuery || selectedCategory
               ? "هیچ موردی با فیلترهای انتخابی یافت نشد"
