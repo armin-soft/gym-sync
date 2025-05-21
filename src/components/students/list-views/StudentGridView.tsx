@@ -52,6 +52,9 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
     );
   }
   
+  // Log to help with debugging
+  console.log(`Rendering StudentGridView with ${students.length} students`);
+  
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
       <AnimatePresence>
@@ -66,8 +69,14 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
           >
             <StudentCard
               student={student}
-              onEdit={() => onEdit(student)}
-              onDelete={() => onDelete(student.id)}
+              onEdit={() => {
+                console.log("Edit clicked for:", student.name);
+                onEdit(student);
+              }}
+              onDelete={() => {
+                console.log("Delete clicked for:", student.name);
+                onDelete(student.id);
+              }}
               onAddExercise={() => {
                 console.log("GridView: onAddExercise called for student:", student.name);
                 onAddExercise(student);

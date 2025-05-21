@@ -6,9 +6,15 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuTrigger,
+  ContextMenuItem,
 } from "@/components/ui/context-menu";
 import {
   CalendarDays,
+  FileText,
+  Trash,
+  Edit,
+  Apple,
+  Pill,
 } from "lucide-react";
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
@@ -17,24 +23,52 @@ import { ContextMenuSection } from "./context-menu/ContextMenuSection";
 interface StudentContextMenuProps {
   student: Student;
   children: React.ReactNode;
-  onEdit?: (student: Student) => void;
-  onDelete?: (id: number) => void;
-  onAddExercise: (student: Student) => void;
-  onAddDiet?: (student: Student) => void;
-  onAddSupplement?: (student: Student) => void;
-  onDownload?: (student: Student) => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onAddExercise: () => void;
+  onAddDiet?: () => void;
+  onAddSupplement?: () => void;
+  onDownload?: () => void;
   isProfileComplete: boolean;
 }
 
 export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   student,
   children,
+  onEdit,
+  onDelete,
   onAddExercise,
+  onAddDiet,
+  onAddSupplement,
+  onDownload,
   isProfileComplete
 }) => {
+  // Log when this component renders to help with debugging
+  console.log("Rendering StudentContextMenu for:", student.name);
+
   const handleProgramClick = () => {
     console.log("Context Menu: Add Exercise clicked for student:", student.name);
-    if (onAddExercise) onAddExercise(student);
+    if (onAddExercise) onAddExercise();
+  };
+  
+  const handleEditClick = () => {
+    if (onEdit) onEdit();
+  };
+  
+  const handleDeleteClick = () => {
+    if (onDelete) onDelete();
+  };
+  
+  const handleDietClick = () => {
+    if (onAddDiet) onAddDiet();
+  };
+  
+  const handleSupplementClick = () => {
+    if (onAddSupplement) onAddSupplement();
+  };
+  
+  const handleDownloadClick = () => {
+    if (onDownload) onDownload();
   };
 
   return (
@@ -57,6 +91,64 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
               index={0}
               variant="purple"
             />
+            
+            {onAddDiet && (
+              <ContextMenuItemWithAnimation
+                icon={<Apple className="h-4 w-4" />}
+                title="افزودن رژیم غذایی"
+                subtitle="مدیریت برنامه غذایی"
+                onClick={handleDietClick}
+                index={1}
+                variant="green"
+              />
+            )}
+            
+            {onAddSupplement && (
+              <ContextMenuItemWithAnimation
+                icon={<Pill className="h-4 w-4" />}
+                title="افزودن مکمل"
+                subtitle="مدیریت مکمل‌های ورزشی"
+                onClick={handleSupplementClick}
+                index={2}
+                variant="orange"
+              />
+            )}
+          </ContextMenuSection>
+          
+          {/* Student Management Section */}
+          <ContextMenuSection title="مدیریت شاگرد">
+            {onEdit && (
+              <ContextMenuItemWithAnimation
+                icon={<Edit className="h-4 w-4" />}
+                title="ویرایش شاگرد"
+                subtitle="تغییر اطلاعات شاگرد"
+                onClick={handleEditClick}
+                index={3}
+                variant="blue"
+              />
+            )}
+            
+            {onDelete && (
+              <ContextMenuItemWithAnimation
+                icon={<Trash className="h-4 w-4" />}
+                title="حذف شاگرد"
+                subtitle="حذف کامل اطلاعات"
+                onClick={handleDeleteClick}
+                index={4}
+                variant="red"
+              />
+            )}
+            
+            {onDownload && (
+              <ContextMenuItemWithAnimation
+                icon={<FileText className="h-4 w-4" />}
+                title="دانلود برنامه"
+                subtitle="خروجی PDF برنامه"
+                onClick={handleDownloadClick}
+                index={5}
+                variant="indigo"
+              />
+            )}
           </ContextMenuSection>
         </ContextMenuContent>
       </AnimatePresence>
