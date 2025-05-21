@@ -67,7 +67,8 @@ const StudentAnalytics = ({ students }: StudentAnalyticsProps) => {
     },
     { 
       name: "غیرفعال", 
-      value: students.filter(s => s.status && s.status === "inactive").length,
+      // Fix type comparison with explicit type casting
+      value: students.filter(s => s.status === "inactive" as any).length,
       color: "#f87171"
     }
   ];

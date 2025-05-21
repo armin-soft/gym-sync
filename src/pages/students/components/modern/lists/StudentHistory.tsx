@@ -64,7 +64,7 @@ const StudentHistory = ({ students, historyEntries, onClearHistory }: StudentHis
       const query = searchQuery.toLowerCase();
       return (
         entry.studentName.toLowerCase().includes(query) ||
-        entry.details.toLowerCase().includes(query)
+        (entry.details || "").toLowerCase().includes(query)
       );
     })
     .sort((a, b) => b.timestamp - a.timestamp);

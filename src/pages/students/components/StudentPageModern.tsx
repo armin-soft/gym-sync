@@ -61,13 +61,11 @@ const StudentPageModern = () => {
   const handleSaveWithHistory = (data: any, selectedStudent?: Student) => {
     const success = handleSave(data, selectedStudent);
     if (success) {
-      addHistoryEntry({
-        type: selectedStudent ? 'edit' : 'add',
-        studentName: data.name,
-        studentId: selectedStudent?.id || students.length + 1,
-        timestamp: Date.now(),
-        details: `${selectedStudent ? 'ویرایش' : 'افزودن'} اطلاعات شاگرد ${data.name}`
-      });
+      // Use the correct signature for addHistoryEntry
+      const student = selectedStudent || { id: students.length + 1, name: data.name, image: "" };
+      addHistoryEntry(student, selectedStudent ? 'edit' : 'add', 
+        `${selectedStudent ? 'ویرایش' : 'افزودن'} اطلاعات شاگرد ${data.name}`);
+      
       triggerRefresh();
       toast({
         title: selectedStudent ? "ویرایش موفق" : "افزودن موفق",
@@ -80,22 +78,17 @@ const StudentPageModern = () => {
   const handleDeleteWithHistory = (id: number) => {
     const student = students.find(s => s.id === id);
     if (student) {
-      const success = handleDelete(id);
-      if (success) {
-        addHistoryEntry({
-          type: 'delete',
-          studentName: student.name,
-          studentId: id,
-          timestamp: Date.now(),
-          details: `حذف شاگرد ${student.name}`
-        });
-        triggerRefresh();
-        toast({
-          title: "حذف موفق",
-          description: `شاگرد ${student.name} با موفقیت حذف شد.`,
-        });
-      }
-      return success;
+      handleDelete(id);
+      // Properly call addHistoryEntry with the correct parameters
+      addHistoryEntry(student, 'delete', `حذف شاگرد ${student.name}`);
+      
+      triggerRefresh();
+      toast({
+        title: "حذف موفق",
+        description: `شاگرد ${student.name} با موفقیت حذف شد.`,
+      });
+      
+      return true;
     }
     return false;
   };
@@ -105,13 +98,10 @@ const StudentPageModern = () => {
     const success = handleSaveExercises(exercisesWithSets, studentId, dayNumber);
     
     if (success && student) {
-      addHistoryEntry({
-        type: 'exercise',
-        studentName: student.name,
-        studentId: studentId,
-        timestamp: Date.now(),
-        details: `تنظیم برنامه تمرینی برای ${student.name} ${dayNumber ? `(روز ${toPersianNumbers(dayNumber)})` : ''}`
-      });
+      // Properly call addHistoryEntry with the correct parameters
+      addHistoryEntry(student, 'exercise', 
+        `تنظیم برنامه تمرینی برای ${student.name} ${dayNumber ? `(روز ${toPersianNumbers(dayNumber)})` : ''}`);
+      
       triggerRefresh();
       toast({
         title: "تنظیم برنامه موفق",
@@ -127,13 +117,9 @@ const StudentPageModern = () => {
     const success = handleSaveDiet(mealIds, studentId);
     
     if (success && student) {
-      addHistoryEntry({
-        type: 'diet',
-        studentName: student.name,
-        studentId: studentId,
-        timestamp: Date.now(),
-        details: `تنظیم برنامه غذایی برای ${student.name}`
-      });
+      // Properly call addHistoryEntry with the correct parameters
+      addHistoryEntry(student, 'diet', `تنظیم برنامه غذایی برای ${student.name}`);
+      
       triggerRefresh();
       toast({
         title: "تنظیم برنامه موفق",
@@ -149,13 +135,9 @@ const StudentPageModern = () => {
     const success = handleSaveSupplements(data, studentId);
     
     if (success && student) {
-      addHistoryEntry({
-        type: 'supplement',
-        studentName: student.name,
-        studentId: studentId,
-        timestamp: Date.now(),
-        details: `تنظیم مکمل و ویتامین برای ${student.name}`
-      });
+      // Properly call addHistoryEntry with the correct parameters
+      addHistoryEntry(student, 'supplement', `تنظیم مکمل و ویتامین برای ${student.name}`);
+      
       triggerRefresh();
       toast({
         title: "تنظیم مکمل موفق",

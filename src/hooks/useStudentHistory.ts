@@ -9,7 +9,7 @@ export interface HistoryEntry {
   studentId: number;
   studentName: string;
   studentImage: string;
-  type: 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete';
+  type: 'add' | 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete';
   description: string;
   // Add these fields for compatibility with StudentHistoryEntry
   date?: string;
