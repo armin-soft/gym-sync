@@ -2,7 +2,7 @@
 import { useRef } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { useStudents } from "@/hooks/useStudents";
-import { useStudentHistory } from "@/hooks/useStudentHistory";
+import { useStudentHistory, HistoryEntry } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 
 export const useStudentsContainer = () => {

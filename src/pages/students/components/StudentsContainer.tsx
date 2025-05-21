@@ -109,7 +109,21 @@ const StudentsContainer = () => {
         meals={meals}
         supplements={supplements}
         students={students}
-        addHistoryEntry={addHistoryEntry}
+        addHistoryEntry={(student, type, description) => {
+          // Create a proper HistoryEntry object and pass it to addHistoryEntry
+          const entry = {
+            id: Date.now(),
+            timestamp: Date.now(),
+            studentId: student.id,
+            studentName: student.name,
+            studentImage: student.picture,
+            action: type,
+            details: description,
+            type: type as 'edit' | 'exercise' | 'diet' | 'supplement' | 'delete',
+            description: description
+          };
+          addHistoryEntry(entry);
+        }}
       />
     </div>
   );
