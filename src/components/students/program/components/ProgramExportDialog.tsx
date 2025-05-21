@@ -17,6 +17,26 @@ interface ProgramExportDialogProps {
   programType?: 'exercise' | 'diet' | 'supplement' | 'all';
 }
 
+// Define animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.1,
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3 }
+  }
+};
+
 export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({ 
   isOpen, 
   onClose, 
@@ -54,26 +74,6 @@ export const ProgramExportDialog: React.FC<ProgramExportDialogProps> = ({
   hasProgramData.all = hasProgramData.exercise && hasProgramData.diet && hasProgramData.supplement;
   
   const canExport = activeTab === 'all' ? hasProgramData.all : hasProgramData[activeTab as keyof typeof hasProgramData];
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.1,
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3 }
-    }
-  };
 
   // If no data exists for any program, show warning
   if (!hasProgramData.exercise && !hasProgramData.diet && !hasProgramData.supplement) {

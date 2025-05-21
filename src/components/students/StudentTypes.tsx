@@ -61,6 +61,9 @@ export interface Student {
   mealsDay2?: number[];
   mealsDay3?: number[];
   mealsDay4?: number[];
+  mealsDay5?: number[];
+  mealsDay6?: number[];
+  mealsDay7?: number[];
   
   // Supplement-related fields
   supplements?: number[];
@@ -97,6 +100,14 @@ export interface Student {
   
   // Grouping
   group?: string;
+
+  // Additional fields
+  height?: string;
+  weight?: string;
+  image?: string;
+  payment?: string;
+  age?: number;
+  grade?: string;
 }
 
 export interface StudentHistoryEntry {
