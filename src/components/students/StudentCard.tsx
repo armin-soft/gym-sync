@@ -38,14 +38,11 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   return (
     <StudentContextMenu
       student={student}
-      onEdit={() => onEdit()}
-      onDelete={() => onDelete(student.id)}
-      onAddExercise={() => {
-        console.log("Context menu: Exercise button clicked for:", student.name);
-        onAddExercise();
-      }}
-      onAddDiet={() => onAddDiet()}
-      onAddSupplement={() => onAddSupplement()}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      onAddExercise={onAddExercise}
+      onAddDiet={onAddDiet}
+      onAddSupplement={onAddSupplement}
       onDownload={undefined}
       isProfileComplete={isProfileComplete}
     >
