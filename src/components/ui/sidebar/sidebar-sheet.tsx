@@ -63,7 +63,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{gymName || "برنامه مدیریت"}</span>
-                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "3.4.5")}</span>
+                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "1.6.0")}</span>
               </div>
             </div>
           </div>
