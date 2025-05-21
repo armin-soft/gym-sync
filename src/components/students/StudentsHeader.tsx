@@ -55,20 +55,10 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
               آخرین بروزرسانی
             </div>
             
-            {dateInfo && (
-              <div className="flex flex-col space-y-0.5 text-sm">
-                <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                  <span className="font-medium">{dateInfo.Shamsi_Date}</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{dateInfo.Season}</span>
-                </div>
-                
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xl leading-none">{dateInfo.Season_Emoji}</span>
-                  <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400">{formattedTime}</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded-md bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100/60 dark:border-indigo-800/20">{timeContext}</span>
-                </div>
-              </div>
-            )}
+            <div className="flex items-center gap-1.5">
+              <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400 text-xl leading-none">{formattedTime}</span>
+              <span className="text-xs px-1.5 py-0.5 rounded-md bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100/60 dark:border-indigo-800/20">{timeContext}</span>
+            </div>
           </div>
         </motion.div>
       );
