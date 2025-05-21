@@ -29,7 +29,7 @@ interface SidebarItem {
   icon: React.ElementType;
 }
 
-// لیست آیتم‌های منو - خارج از کامپوننت تعریف شده برای جلوگیری از تعریف مجدد
+// آیتم‌های منوی کناری با مسیرهای صحیح
 const sidebarItems: SidebarItem[] = [
   {
     title: "داشبورد",
@@ -38,32 +38,32 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     title: "پروفایل مربی",
-    href: "/trainer",
+    href: "/Coach-Profile",
     icon: User2,
   },
   {
     title: "شاگردان",
-    href: "/students",
+    href: "/Students",
     icon: Users,
   },
   {
     title: "تمرینات",
-    href: "/exercises",
+    href: "/Exercise-Movements",
     icon: Dumbbell,
   },
   {
     title: "برنامه غذایی",
-    href: "/diet",
+    href: "/Diet-Plan",
     icon: UtensilsCrossed,
   },
   {
     title: "مکمل‌ها",
-    href: "/supplements",
+    href: "/Supplements-Vitamins",
     icon: Pill,
   },
   {
     title: "پشتیبان‌گیری",
-    href: "/backup",
+    href: "/Backup-Restore",
     icon: Database,
   }
 ];
@@ -170,12 +170,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{gymName || "برنامه مدیریت"}</span>
-                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "3.0.0")}</span>
+                <span className="text-xs text-muted-foreground">نسخه {toPersianNumbers(manifestData.version || "3.0.2")}</span>
               </div>
             </div>
           </div>
         </div>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

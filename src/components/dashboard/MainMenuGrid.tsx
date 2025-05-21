@@ -17,7 +17,7 @@ export const MainMenuGrid = () => {
     { 
       title: "پروفایل مربی", 
       icon: User2, 
-      href: '/trainer', 
+      href: '/Coach-Profile', 
       color: "from-blue-600 to-blue-400",
       shadowColor: "shadow-blue-500/20",
       bgColor: "bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20"
@@ -25,7 +25,7 @@ export const MainMenuGrid = () => {
     { 
       title: "شاگردان", 
       icon: Users, 
-      href: '/students', 
+      href: '/Students', 
       color: "from-emerald-600 to-emerald-400",
       shadowColor: "shadow-emerald-500/20",
       bgColor: "bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-900/20 dark:to-teal-900/20"
@@ -33,7 +33,7 @@ export const MainMenuGrid = () => {
     { 
       title: "حرکات تمرینی", 
       icon: Dumbbell, 
-      href: '/exercises', 
+      href: '/Exercise-Movements', 
       color: "from-amber-600 to-amber-400",
       shadowColor: "shadow-amber-500/20",
       bgColor: "bg-gradient-to-br from-amber-50/80 to-yellow-50/80 dark:from-amber-900/20 dark:to-yellow-900/20"
@@ -41,7 +41,7 @@ export const MainMenuGrid = () => {
     { 
       title: "برنامه های غذایی", 
       icon: UtensilsCrossed, 
-      href: '/diet', 
+      href: '/Diet-Plan', 
       color: "from-purple-600 to-purple-400",
       shadowColor: "shadow-purple-500/20",
       bgColor: "bg-gradient-to-br from-purple-50/80 to-violet-50/80 dark:from-purple-900/20 dark:to-violet-900/20"
@@ -49,7 +49,7 @@ export const MainMenuGrid = () => {
     { 
       title: "مکمل و ویتامین", 
       icon: Pill, 
-      href: '/supplements', 
+      href: '/Supplements-Vitamins', 
       color: "from-pink-600 to-pink-400",
       shadowColor: "shadow-pink-500/20",
       bgColor: "bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-900/20 dark:to-rose-900/20"
@@ -57,7 +57,7 @@ export const MainMenuGrid = () => {
     { 
       title: "پشتیبان‌گیری و بازیابی", 
       icon: Database, 
-      href: '/backup', 
+      href: '/Backup-Restore', 
       color: "from-cyan-600 to-cyan-400",
       shadowColor: "shadow-cyan-500/20",
       bgColor: "bg-gradient-to-br from-cyan-50/80 to-sky-50/80 dark:from-cyan-900/20 dark:to-sky-900/20"
