@@ -27,9 +27,10 @@ interface SidebarItem {
   title: string;
   href: string;
   icon: React.ElementType;
+  matchPaths?: string[]; // مسیرهای تطابق اضافی
 }
 
-// آیتم‌های منوی کناری با مسیرهای صحیح
+// آیتم‌های منوی کناری با مسیرهای صحیح و مسیرهای تطبیق اضافی
 const sidebarItems: SidebarItem[] = [
   {
     title: "داشبورد",
@@ -40,31 +41,37 @@ const sidebarItems: SidebarItem[] = [
     title: "پروفایل مربی",
     href: "/Coach-Profile",
     icon: User2,
+    matchPaths: ["/trainer"] // مسیر واقعی که به این مسیر ریدایرکت می‌شود
   },
   {
     title: "شاگردان",
     href: "/Students",
     icon: Users,
+    matchPaths: ["/students"] // مسیر واقعی که به این مسیر ریدایرکت می‌شود
   },
   {
     title: "تمرینات",
     href: "/Exercise-Movements",
     icon: Dumbbell,
+    matchPaths: ["/exercises"] // مسیر واقعی که به این مسیر ریدایرکت می‌شود
   },
   {
     title: "برنامه غذایی",
     href: "/Diet-Plan",
     icon: UtensilsCrossed,
+    matchPaths: ["/diet"] // مسیر واقعی که به این مسیر ریدایرکت می‌شود
   },
   {
     title: "مکمل‌ها",
     href: "/Supplements-Vitamins",
     icon: Pill,
+    matchPaths: ["/supplements"] // مسیر واقعی که به این مسیر ریدایرکت می‌شود
   },
   {
     title: "پشتیبان‌گیری",
     href: "/Backup-Restore",
     icon: Database,
+    matchPaths: ["/backup"] // مسیر واقعی که به این مسیر ریدایرکت می‌شود
   }
 ];
 
@@ -122,10 +129,22 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     }
   }, []);
   
-  // استفاده از useMemo برای محاسبه مسیر فعلی
-  const currentPath = useMemo(() => {
-    return location.pathname;
-  }, [location.pathname]);
+  // بهبود تشخیص مسیر فعال با در نظر گرفتن مسیرهای تطبیق اضافی
+  const isItemActive = (item: SidebarItem) => {
+    const currentPath = location.pathname;
+    
+    // بررسی مطابقت مستقیم
+    if (currentPath === item.href) {
+      return true;
+    }
+    
+    // بررسی مسیرهای تطبیق اضافی
+    if (item.matchPaths && item.matchPaths.some(path => currentPath === path)) {
+      return true;
+    }
+    
+    return false;
+  };
   
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -150,7 +169,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <ScrollArea className="flex-1 px-3">
             <div className="space-y-1 py-3">
               {sidebarItems.map((item) => {
-                const isActive = currentPath === item.href;
+                const isActive = isItemActive(item);
                 return (
                   <MenuItem 
                     key={item.href} 
