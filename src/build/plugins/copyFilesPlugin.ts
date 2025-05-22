@@ -28,13 +28,12 @@ export const copyFilesPlugin = () => {
           fs.mkdirSync('dist/Service-Worker/Event-Handlers', { recursive: true });
         }
         
-        // کپی Manifest.json از src به ریشه dist، جلوگیری از تکرار
-        if (fs.existsSync('src/Manifest.json')) {
-          fs.copyFileSync('src/Manifest.json', 'dist/Manifest.json');
-          console.log('Copied Manifest.json from src to dist root');
-        } else if (fs.existsSync('public/Manifest.json')) {
-          fs.copyFileSync('public/Manifest.json', 'dist/Manifest.json');
-          console.log('Copied Manifest.json from public to dist root');
+        // کپی Manifest.json به ریشه dist
+        if (fs.existsSync('Manifest.json')) {
+          fs.copyFileSync('Manifest.json', 'dist/Manifest.json');
+          console.log('Copied Manifest.json from project root to dist root');
+        } else {
+          console.log('Warning: Manifest.json not found in project root');
         }
 
         // کپی Service-Worker.js به dist root 

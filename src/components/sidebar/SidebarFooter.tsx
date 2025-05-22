@@ -1,9 +1,9 @@
 
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Dumbbell } from "lucide-react";
-import manifestData from "@/Manifest.json";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 interface SidebarFooterProps {
   gymName: string;
@@ -11,6 +11,21 @@ interface SidebarFooterProps {
 
 export function SidebarFooter({ gymName }: SidebarFooterProps) {
   const deviceInfo = useDeviceInfo();
+  const [appVersion, setAppVersion] = useState("1.7.9");
+  
+  // Fetch the version from Manifest.json
+  useEffect(() => {
+    fetch('/Manifest.json')
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.version) {
+          setAppVersion(data.version);
+        }
+      })
+      .catch(err => {
+        console.error('Error loading Manifest.json:', err);
+      });
+  }, []);
   
   // تنظیمات ریسپانسیو برای فوتر
   const getFooterPadding = () => {
@@ -52,7 +67,7 @@ export function SidebarFooter({ gymName }: SidebarFooterProps) {
         <div className="flex flex-col">
           <span className={cn("font-medium", getTextSize())}>{gymName || "برنامه مدیریت"}</span>
           <div className={cn("text-muted-foreground", getVersionSize())}>
-            <span>نسخه {toPersianNumbers(manifestData.version || "1.6.0")}</span>
+            <span>نسخه {toPersianNumbers(appVersion)}</span>
           </div>
         </div>
       </div>
