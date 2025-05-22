@@ -1,8 +1,10 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { cn } from "@/lib/utils";
+import { Dumbbell } from "lucide-react";
 
 interface DayTabListProps {
   days: number[];
@@ -31,49 +33,79 @@ const DayTabList: React.FC<DayTabListProps> = ({
   confirmDeleteDay,
   readOnly = false
 }) => {
-  const getDayLabel = (day: number) => {
-    return dayLabels[day] || `روز ${toPersianNumbers(day)}`;
-  };
-  
   return (
-    <div className="flex items-center border rounded-md overflow-x-auto pb-1">
-      {days.map(day => (
-        <div key={day} className="relative">
-          {editingDay === day && !readOnly ? (
-            <div className="flex items-center px-2">
-              <input
+    <div className="flex items-center flex-wrap gap-2 rounded-md">
+      {days.sort((a, b) => a - b).map((day) => (
+        <div
+          key={day}
+          className="relative"
+        >
+          {editingDay === day ? (
+            <div className="flex items-center gap-1">
+              <Input
                 value={tempDayLabel}
                 onChange={(e) => setTempDayLabel(e.target.value)}
-                className="h-10 text-sm w-24 px-2 border rounded"
+                className="h-8 text-xs w-24"
                 autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSaveDayLabel();
+                  }
+                }}
               />
               <Button
                 variant="ghost"
-                size="icon"
+                size="sm"
+                className="h-8 px-2"
                 onClick={handleSaveDayLabel}
-                className="ml-1 h-8 w-8"
               >
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                </svg>
+                تأیید
               </Button>
             </div>
           ) : (
-            <div className="flex items-center">
-              <Button 
-                variant={currentDay === day ? "default" : "ghost"}
-                className={cn(
-                  "h-10 rounded-md px-5",
-                  currentDay === day ? "bg-indigo-600 hover:bg-indigo-700" : ""
-                )}
-                onClick={() => setCurrentDay(day)}
-              >
-                {getDayLabel(day)}
-              </Button>
+            <Button
+              variant={currentDay === day ? "default" : "outline"}
+              size="sm"
+              className={cn(
+                "flex items-center gap-1.5 transition-all whitespace-nowrap",
+                currentDay === day
+                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white"
+                  : "hover:bg-indigo-50 hover:text-indigo-600"
+              )}
+              onClick={() => setCurrentDay(day)}
+            >
+              <Dumbbell className="h-3.5 w-3.5" />
+              <span>{dayLabels[day] || `روز ${toPersianNumbers(day)}`}</span>
+            </Button>
+          )}
+
+          {!readOnly && currentDay === day && days.length > 1 && (
+            <div
+              onClick={() => confirmDeleteDay(day)}
+              className="absolute -top-1.5 -right-1.5 w-4 h-4 flex items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600 cursor-pointer z-10"
+            >
+              <span className="text-xs">×</span>
             </div>
           )}
         </div>
       ))}
+
+      {!readOnly && days.length < 7 && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-dashed text-muted-foreground text-xs hover:text-foreground"
+          onClick={() => {
+            if (days.length < 7) {
+              const newDay = Math.max(...days) + 1;
+              setTempDayLabel(`روز ${toPersianNumbers(newDay)}`);
+              handleEditDayLabel(newDay);
+            }
+          }}
+        >
+          افزودن روز
+        </Button>
+      )}
     </div>
   );
 };

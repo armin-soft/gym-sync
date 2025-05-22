@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -20,9 +21,14 @@ export const useDayManagement = ({
   onDayChange,
   maxDays = 5
 }: DayManagementProps = {}) => {
-  const [days] = useState<number[]>(initialDays);
-  const [dayLabels] = useState<Record<number, string>>(initialDayLabels);
+  const [days, setDays] = useState<number[]>(initialDays);
+  const [dayLabels, setDayLabels] = useState<Record<number, string>>(initialDayLabels);
   const [currentDay, setCurrentDay] = useState<number>(1);
+  const [editingDay, setEditingDay] = useState<number | null>(null);
+  const [tempDayLabel, setTempDayLabel] = useState<string>("");
+  const [showAddDayDialog, setShowAddDayDialog] = useState(false);
+  const [showDeleteDayDialog, setShowDeleteDayDialog] = useState(false);
+  const [dayToDelete, setDayToDelete] = useState<number | null>(null);
   
   // Update external day state if provided
   const handleDayChange = (day: number) => {
@@ -36,33 +42,89 @@ export const useDayManagement = ({
     return dayLabels[day] || `روز ${toPersianNumbers(day)}`;
   };
 
+  const handleEditDayLabel = (day: number) => {
+    setEditingDay(day);
+    setTempDayLabel(dayLabels[day] || `روز ${toPersianNumbers(day)}`);
+  };
+
+  const handleSaveDayLabel = () => {
+    if (editingDay !== null && tempDayLabel.trim()) {
+      setDayLabels(prev => ({
+        ...prev,
+        [editingDay]: tempDayLabel.trim()
+      }));
+      setEditingDay(null);
+      setTempDayLabel("");
+    }
+  };
+
+  const handleAddDay = (label: string) => {
+    if (days.length >= maxDays) {
+      // Maximum days reached
+      return false;
+    }
+    
+    const newDayNumber = Math.max(...days) + 1;
+    const newLabel = label.trim() || `روز ${toPersianNumbers(newDayNumber)}`;
+    
+    setDays(prev => [...prev, newDayNumber]);
+    setDayLabels(prev => ({
+      ...prev,
+      [newDayNumber]: newLabel
+    }));
+    
+    setShowAddDayDialog(false);
+    return true;
+  };
+
+  const prepareDeleteDay = (day: number) => {
+    setDayToDelete(day);
+    setShowDeleteDayDialog(true);
+  };
+
+  const confirmDeleteDay = (day: number) => {
+    // Filter out the day
+    setDays(prev => prev.filter(d => d !== day));
+    
+    // Create new labels object without the deleted day
+    const newLabels = { ...dayLabels };
+    delete newLabels[day];
+    setDayLabels(newLabels);
+    
+    // If current day is deleted, select the first available day
+    if (currentDay === day && days.length > 0) {
+      const firstDay = days.filter(d => d !== day)[0] || 1;
+      handleDayChange(firstDay);
+    }
+    
+    setDayToDelete(null);
+    setShowDeleteDayDialog(false);
+  };
+
   return {
     days,
+    setDays,
     dayLabels,
+    setDayLabels,
     currentDay,
     setCurrentDay: handleDayChange,
+    editingDay,
+    setEditingDay,
+    tempDayLabel,
+    setTempDayLabel,
+    showAddDayDialog,
+    setShowAddDayDialog,
+    showDeleteDayDialog,
+    setShowDeleteDayDialog,
+    dayToDelete,
+    setDayToDelete,
     getDayLabel,
-    maxDays,
-    
-    // We're keeping these methods but they won't be used
-    // They're here to maintain the interface compatibility
-    editingDay: null,
-    setEditingDay: () => {},
-    tempDayLabel: "",
-    setTempDayLabel: () => {},
-    showAddDayDialog: false,
-    setShowAddDayDialog: () => {},
-    showDeleteDayDialog: false,
-    setShowDeleteDayDialog: () => {},
-    dayToDelete: null,
-    newDayLabel: "",
-    setNewDayLabel: () => {},
-    
-    handleEditDayLabel: () => {},
-    handleSaveDayLabel: () => {},
-    handleAddDay: () => {},
-    confirmDeleteDay: () => {},
-    handleDeleteDay: () => {},
+    handleEditDayLabel,
+    handleSaveDayLabel,
+    handleAddDay,
+    prepareDeleteDay,
+    confirmDeleteDay,
+    maxDays
   };
 };
 
