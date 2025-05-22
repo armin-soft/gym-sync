@@ -1,4 +1,4 @@
-
+import React, { useState } from "react";
 import { Tabs } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import { Supplement, SupplementCategory } from "@/types/supplement";
@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Card } from "@/components/ui/card";
 import { CategoryTable } from "@/components/supplements/CategoryTable";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface SupplementTabsProps {
   activeTab: 'supplement' | 'vitamin';
@@ -281,7 +282,7 @@ const SupplementContent: React.FC<{
           className="w-full p-2 pl-10 border rounded-lg text-right"
         />
         <span className="absolute left-3 top-2.5">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </span>

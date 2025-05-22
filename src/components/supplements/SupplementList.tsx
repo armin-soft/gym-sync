@@ -1,4 +1,4 @@
 
-import { SupplementContent } from '@/pages/supplements/components/supplement-content';
+import { SupplementList as SupplementListComponent } from './list';
 
-export { SupplementContent as SupplementList };
+export { SupplementListComponent as SupplementList };
