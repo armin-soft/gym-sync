@@ -30,14 +30,20 @@ export const useExerciseDialogData = () => {
     handleClearSearch
   } = useExerciseFilters(exercises, categories, selectedType, selectedCategoryId);
   
-  // Manage exercise selection and view mode
-  const {
-    selectedExerciseIds,
-    setSelectedExerciseIds,
-    viewMode,
-    setViewMode,
-    toggleExerciseSelection
-  } = useExerciseSelection();
+  // Manage view mode
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  
+  // Manage exercise selection
+  const [selectedExerciseIds, setSelectedExerciseIds] = useState<number[]>([]);
+  
+  // Function to toggle exercise selection
+  const toggleExerciseSelection = (exerciseId: number) => {
+    setSelectedExerciseIds(prev => 
+      prev.includes(exerciseId)
+        ? prev.filter(id => id !== exerciseId)
+        : [...prev, exerciseId]
+    );
+  };
 
   return {
     // Data
