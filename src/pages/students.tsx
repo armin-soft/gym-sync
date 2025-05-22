@@ -17,7 +17,7 @@ import StudentProgramManagerView from "./students/components/program/StudentProg
 import StudentSearchControls from "./students/components/StudentSearchControls";
 // Import from the list-views folder instead of local components
 import { StudentTableView } from "@/components/students/list-views";
-import { useStudentRefresh } from "./students/hooks/useStudentRefresh";
+import { useStudentRefresh } from "@/hooks/useStudentRefresh"; // Fixed import path
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
 
 const StudentsPage = () => {
