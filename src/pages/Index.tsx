@@ -7,6 +7,7 @@ import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { PageContainer } from "@/components/ui/page-container";
 import { Sparkles } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
 
 // Import components
 import { HeroSection } from "@/components/dashboard/HeroSection";
@@ -45,9 +46,24 @@ const Index = () => {
   }, []);
 
   // Animation variants
-  const fadeIn = {
+  const pageVariants = {
     initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 0.6 } }
+    animate: { 
+      opacity: 1,
+      transition: { 
+        duration: 0.5,
+        staggerChildren: 0.1,
+      }
+    }
+  };
+  
+  const itemVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
   };
 
   // Determine optimal grid layout based on device type
@@ -65,20 +81,43 @@ const Index = () => {
   const BackgroundDecorations = () => (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Top right decoration */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full" />
+      <motion.div 
+        className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.1, 0.15, 0.1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      />
       
       {/* Bottom left decoration */}
-      <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-tr from-blue-500/10 to-teal-500/5 blur-3xl rounded-full" />
+      <motion.div 
+        className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-tr from-blue-500/10 to-teal-500/5 blur-3xl rounded-full"
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.1, 0.2, 0.1],
+        }}
+        transition={{
+          duration: 10,
+          delay: 2,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      />
       
       {/* Animated sparkles that appear in random positions */}
-      {[...Array(5)].map((_, i) => (
+      {[...Array(8)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute"
           style={{
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            opacity: 0.7
+            opacity: 0.4
           }}
           animate={{
             opacity: [0.4, 0.7, 0.4],
@@ -99,9 +138,9 @@ const Index = () => {
   return (
     <PageContainer fullWidth noPadding>
       <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
         className="w-full h-full overflow-auto p-2 xs:p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6 relative"
       >
         {/* Background decorations */}
@@ -110,16 +149,17 @@ const Index = () => {
         {/* Page content */}
         <div className="relative z-10">
           {/* Hero Section */}
-          <HeroSection 
-            stats={stats} 
-            currentTime={currentTime} 
-            trainerProfile={trainerProfile} 
-          />
+          <motion.div variants={itemVariants}>
+            <HeroSection 
+              stats={stats} 
+              currentTime={currentTime} 
+              trainerProfile={trainerProfile} 
+            />
+          </motion.div>
 
           {/* Main Menu Grid */}
           <motion.div 
-            {...fadeIn}
-            transition={{ delay: 0.2 }}
+            variants={itemVariants}
             className="mt-4 sm:mt-5 md:mt-6"
           >
             <MainMenuGrid />
@@ -127,44 +167,53 @@ const Index = () => {
 
           {/* Stats and Recent Students */}
           <motion.div
-            {...fadeIn}
-            transition={{ delay: 0.4 }} 
+            variants={itemVariants}
             className={`mt-4 sm:mt-5 md:mt-6 grid ${getGridLayout()}`}
           >
             {/* First column on larger screens */}
             <motion.div 
-              {...fadeIn}
-              transition={{ delay: 0.6 }}
+              variants={itemVariants}
               className={deviceInfo.isMobile ? "" : "md:col-span-2 space-y-4 sm:space-y-5 md:space-y-6"}
             >
               {/* Students Card */}
-              <RecentStudentsCard students={students} />
+              <motion.div variants={itemVariants}>
+                <RecentStudentsCard students={students} />
+              </motion.div>
               
               {deviceInfo.isMobile && (
                 <>
                   {/* Progress Card - Show here on mobile */}
-                  <ProgressCard stats={stats} />
+                  <motion.div variants={itemVariants}>
+                    <ProgressCard stats={stats} />
+                  </motion.div>
                   
                   {/* Activity Summary Card - Show here on mobile */}
-                  <ActivitySummaryCard stats={stats} />
+                  <motion.div variants={itemVariants}>
+                    <ActivitySummaryCard stats={stats} />
+                  </motion.div>
                 </>
               )}
               
               {/* Stats Cards */}
-              <StatsCards stats={stats} />
+              <motion.div variants={itemVariants}>
+                <StatsCards stats={stats} />
+              </motion.div>
             </motion.div>
             
             {!deviceInfo.isMobile && (
               <motion.div 
-                {...fadeIn}
-                transition={{ delay: 0.7 }}
+                variants={itemVariants}
                 className="space-y-4 sm:space-y-5 md:space-y-6"
               >
                 {/* Progress Card */}
-                <ProgressCard stats={stats} />
+                <motion.div variants={itemVariants}>
+                  <ProgressCard stats={stats} />
+                </motion.div>
 
                 {/* Activity Summary Card */}
-                <ActivitySummaryCard stats={stats} />
+                <motion.div variants={itemVariants}>
+                  <ActivitySummaryCard stats={stats} />
+                </motion.div>
               </motion.div>
             )}
           </motion.div>

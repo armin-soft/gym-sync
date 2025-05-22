@@ -24,7 +24,7 @@ export function useSpeechRecognitionErrors() {
     } else if (error === "audio-capture") {
       toast({
         title: "خطا",
-        description: "میکروفون قابل دسترسی نیست یا در حال استفاده توسط برنامه دیگری است.",
+        description: "میکروفون قابل دسترسی نیست.",
         variant: "destructive",
       });
       setShownErrors(prev => [...prev, error]);

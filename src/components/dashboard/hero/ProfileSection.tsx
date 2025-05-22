@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Users, Activity } from "lucide-react";
+import { Crown, Users, Activity, Sparkles } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProfileSectionProps {
@@ -26,25 +26,43 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
     >
       <div className="flex items-center gap-4">
         <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-400 blur-lg opacity-70 animate-pulse" />
-          <Avatar className="h-16 w-16 border-2 border-white/30 relative shadow-xl hover:scale-105 transition-transform duration-300">
+          {/* Enhanced glow effect */}
+          <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 opacity-70 blur-lg animate-pulse" />
+          <Avatar className="h-16 w-16 border-4 border-white/30 relative shadow-xl hover:scale-105 transition-transform duration-300">
             <AvatarImage src={trainerProfile.image} alt="تصویر پروفایل" />
             <AvatarFallback>
               <Crown className="w-6 h-6 text-white" />
             </AvatarFallback>
           </Avatar>
+          {/* Decorative elements */}
+          <motion.div
+            className="absolute -top-3 -right-3 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.4, type: "spring" }}
+          >
+            <Sparkles className="w-3 h-3 text-white" />
+          </motion.div>
         </div>
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center">
               خوش آمدید <span className="inline-block animate-wave ml-1">👋</span>
             </h1>
-            <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm hover:bg-white/30 transition-colors">
+            <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm hover:bg-white/30 transition-colors self-start sm:self-auto">
               {trainerProfile.name || "مربی حرفه‌ای"}
             </Badge>
           </div>
-          <p className="mt-2 text-white/80">
+          <p className="mt-2 text-white/80 flex items-center gap-2">
             به داشبورد مدیریت برنامه تمرینی خود خوش آمدید
+            <motion.span 
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, type: "spring" }}
+              className="inline-flex items-center gap-1 text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-full"
+            >
+              <Activity className="w-3 h-3" /> فعال
+            </motion.span>
           </p>
         </div>
       </div>
