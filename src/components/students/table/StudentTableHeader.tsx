@@ -4,6 +4,8 @@ import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTableColumns } from "./tableColumns";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Student } from "@/components/students/StudentTypes";
 
 interface StudentTableHeaderProps {
   sortField?: string;
@@ -31,12 +33,16 @@ export const StudentTableHeader: React.FC<StudentTableHeaderProps> = ({
     <TableHeader className="bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm sticky top-0 z-10">
       <TableRow>
         {columns.map((column) => {
-          const key = typeof column.accessorKey === "string" ? column.accessorKey : column.id;
+          // Properly handle column keys based on different column types
+          const key = typeof column.id === "string" ? column.id : 
+                     "accessorKey" in column && typeof column.accessorKey === "string" ? column.accessorKey : 
+                     String(column.id);
+          
           const isSortable = key && ["name", "payment", "height", "weight"].includes(key);
           
           const handleClick = () => {
             if (isSortable && onSortChange) {
-              onSortChange(key!);
+              onSortChange(key);
             }
           };
           
@@ -51,10 +57,10 @@ export const StudentTableHeader: React.FC<StudentTableHeaderProps> = ({
             >
               <motion.div
                 className="flex items-center justify-center"
-                whileHover={isSortable ? { scale: 1.05 } : {}}
+                whileHover={isSortable ? { scale: 1.05 } : undefined}
               >
-                {typeof column.header === "function" ? column.header() : column.header}
-                {isSortable && getSortIcon(key!)}
+                {typeof column.header === "function" ? column.header({}) : column.header}
+                {isSortable && getSortIcon(key)}
               </motion.div>
             </TableHead>
           );
