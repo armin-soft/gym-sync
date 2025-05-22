@@ -1,8 +1,7 @@
-
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, UtensilsCrossed, Pill, TrendingUp, TrendingDown, BarChart3, Stars } from "lucide-react";
+import { Users, UtensilsCrossed, Pill, TrendingUp, TrendingDown, Stars } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import type { DashboardStats } from "@/types/dashboard";
 
