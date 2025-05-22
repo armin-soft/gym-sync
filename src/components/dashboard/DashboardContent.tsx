@@ -8,7 +8,7 @@ import { MainMenuGrid } from "./MainMenuGrid";
 import { RecentStudentsCard } from "./RecentStudentsCard";
 import { StatsCards } from "./stats/StatsCards";
 import { ProgressCard } from "./ProgressCard";
-import { ActivitySummaryCard } from "./ActivitySummaryCard";
+import { ActivitySummaryCard } from "./activity/ActivitySummaryCard";
 import { getGridLayout } from "./layout/DashboardLayout";
 
 // Animation variants for child elements

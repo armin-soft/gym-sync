@@ -20,19 +20,20 @@ const pageVariants = {
   }
 };
 
+// Get optimal grid layout based on device type
+export const getGridLayout = () => {
+  const deviceInfo = useDeviceInfo();
+  if (deviceInfo.isMobile) {
+    return "grid-cols-1 gap-4";
+  } else if (deviceInfo.isTablet) {
+    return "grid-cols-2 gap-5";
+  } else {
+    return "md:grid-cols-3 gap-6";
+  }
+};
+
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const deviceInfo = useDeviceInfo();
-
-  // Determine optimal grid layout based on device type
-  const getGridLayout = () => {
-    if (deviceInfo.isMobile) {
-      return "grid-cols-1 gap-4";
-    } else if (deviceInfo.isTablet) {
-      return "grid-cols-2 gap-5";
-    } else {
-      return "md:grid-cols-3 gap-6";
-    }
-  };
 
   return (
     <motion.div 
@@ -53,4 +54,3 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 };
 
 export default DashboardLayout;
-export { getGridLayout };
