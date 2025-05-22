@@ -2,7 +2,7 @@
 import { Toast, ToastVariant } from "./toast-types";
 import { dispatch, genId } from "./toast-reducer";
 import * as React from "react";
-import { ToastActionElement } from "@/components/ui/toast";
+import { ToastActionElement, ToastAction } from "@/components/ui/toast";
 
 // Track the last notification to prevent duplicates
 const toastHistory = new Map<string, number>();
@@ -15,14 +15,18 @@ interface ToastActionProps {
 
 // Helper function to convert simple action to proper ToastActionElement
 const createActionElement = (action: ToastActionProps): ToastActionElement => {
-  return React.createElement(
-    "button",  // This will be replaced by ToastAction by the toast system
-    {
+  // We need to handle this conversion differently
+  // Instead of directly creating an element, we'll return a structured object
+  // that the toast system can interpret correctly
+  return {
+    type: ToastAction,
+    props: {
       onClick: action.onClick,
       className: "toast-action",
+      children: action.label
     },
-    action.label
-  ) as ToastActionElement;
+    key: null
+  } as unknown as ToastActionElement;
 };
 
 // Toast function to show notifications - compatible with both interfaces
