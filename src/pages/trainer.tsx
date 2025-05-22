@@ -8,16 +8,13 @@ import { PageContainer } from "@/components/ui/page-container";
 import { ProfileHeader } from "@/components/trainer/ProfileHeader";
 import { ProfileSidebar } from "@/components/trainer/ProfileSidebar";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { useToastNotification } from "@/hooks/use-toast-notification";
+import { useToast } from "@/hooks/use-toast";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TrainerProfile = () => {
-  const { showSuccess, showError } = useToastNotification();
-  const [profile, setProfile] = useState<TrainerProfile>({
-    ...defaultProfile,
-    image: defaultProfile.image || "/Assets/Image/Place-Holder.svg" // Ensure image always has a value
-  });
+  const { toast } = useToast();
+  const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState<string>("personal");
@@ -30,18 +27,15 @@ const TrainerProfile = () => {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
         const parsed = JSON.parse(savedProfile);
-        // Ensure the image property is set
-        if (!parsed.image) {
-          parsed.image = "/Assets/Image/Place-Holder.svg";
-        }
         setProfile(parsed);
       }
     } catch (error) {
       console.error('Error loading profile from localStorage:', error);
-      showError(
-        "خطا در بارگذاری اطلاعات",
-        "مشکلی در بارگذاری اطلاعات پیش آمده است"
-      );
+      toast({
+        variant: "destructive",
+        title: "خطا در بارگذاری اطلاعات",
+        description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
+      });
     }
   }, []);
 
@@ -64,16 +58,17 @@ const TrainerProfile = () => {
       // Force update of any components that depend on the gym name
       window.dispatchEvent(new Event('storage'));
       
-      showSuccess(
-        "ذخیره موفق",
-        "اطلاعات پروفایل با موفقیت ذخیره شد"
-      );
+      toast({
+        title: "ذخیره موفق",
+        description: "اطلاعات پروفایل با موفقیت ذخیره شد"
+      });
     } catch (error) {
       console.error('Error saving profile to localStorage:', error);
-      showError(
-        "خطا در ذخیره اطلاعات",
-        "مشکلی در ذخیره اطلاعات پیش آمده است"
-      );
+      toast({
+        variant: "destructive",
+        title: "خطا در ذخیره اطلاعات",
+        description: "مشکلی در ذخیره اطلاعات پیش آمده است"
+      });
     } finally {
       setIsSaving(false);
     }
@@ -138,10 +133,7 @@ const TrainerProfile = () => {
         }>
           {/* Sidebar */}
           <ProfileSidebar
-            profile={{
-              image: profile.image,
-              name: profile.name
-            }}
+            profile={profile}
             onImageChange={(image) => handleUpdate('image', image)} 
             activeSection={activeSection}
             onTabChange={setActiveSection}

@@ -18,6 +18,7 @@ const queryClient = new QueryClient({
       retry: 0, // عدم تلاش مجدد برای سرعت بیشتر
       refetchOnWindowFocus: false,
       refetchOnMount: false,
+      // Removed suspense: true as it's not supported in this version
     },
   },
 });

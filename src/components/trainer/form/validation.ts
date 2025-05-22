@@ -74,7 +74,7 @@ export const validateAllFields = (
   let hasErrors = false;
   
   Object.entries(profile).forEach(([key, value]) => {
-    if (key !== 'image' && key !== 'profileImage' && key !== 'socialMedia') {
+    if (key !== 'image') {
       const { isValid, error } = validateField(key as keyof TrainerProfile, value, setValidFields, setErrors);
       if (!value || error) {
         hasErrors = true;

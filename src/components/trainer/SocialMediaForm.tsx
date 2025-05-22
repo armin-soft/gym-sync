@@ -44,7 +44,7 @@ export const SocialMediaForm = ({
         <FormField
           id="instagram"
           label="اینستاگرام"
-          value={profile.instagram || profile.socialMedia?.instagram}
+          value={profile.instagram}
           onChange={(value) => onChange('instagram', value)}
           placeholder="username"
           icon={<Instagram className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-pink-600/70" />}
@@ -59,7 +59,7 @@ export const SocialMediaForm = ({
         <FormField
           id="website"
           label="وب‌سایت"
-          value={profile.website || profile.socialMedia?.website}
+          value={profile.website}
           onChange={(value) => onChange('website', value)}
           placeholder="https://example.com"
           icon={<Globe className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-sky-600/70" />}

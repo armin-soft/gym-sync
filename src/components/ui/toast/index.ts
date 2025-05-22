@@ -15,12 +15,3 @@ export {
   type ToastProps,
   type ToastActionElement,
 } from "../toast";
-
-// Export the consolidated notification functions
-export { 
-  successToast, 
-  errorToast, 
-  warningToast,
-  infoToast,
-  useToastNotification 
-} from "@/hooks/use-toast-notification";

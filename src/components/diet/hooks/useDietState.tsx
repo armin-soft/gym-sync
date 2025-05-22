@@ -1,170 +1,149 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import { Meal, MealType, WeekDay } from "@/types/meal";
-import { useToastNotification } from "@/hooks/use-toast-notification";
+import { useDietStorage, normalizeDay } from "./useDietStorage";
+import { useMealValidation } from "./useMealValidation";
+import { DietStateHook } from "./useDietTypes";
 
-const LOCAL_STORAGE_KEY = "meals";
-
-export const useDietState = () => {
-  const { showSuccess, showError } = useToastNotification();
-  const [meals, setMeals] = useState<Meal[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+export const useDietState = (): DietStateHook => {
+  const { toast } = useToast();
+  const { meals, saveMeals } = useDietStorage();
+  const { validateMeal } = useMealValidation(meals);
+  
+  // حالت دیالوگ
+  const [open, setOpen] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>();
+  
+  // جستجو و فیلتر حالت
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState<MealType | "all">("all");
-  const [selectedDay, setSelectedDay] = useState<WeekDay | "all">("all");
-
-  // Load meals from localStorage
-  useEffect(() => {
-    const loadMeals = async () => {
-      try {
-        setIsLoading(true);
-        const savedMeals = localStorage.getItem(LOCAL_STORAGE_KEY);
-        
-        if (savedMeals) {
-          setMeals(JSON.parse(savedMeals));
-        }
-      } catch (error) {
-        console.error("Failed to load meals:", error);
-        showError("خطا در بارگیری", "مشکلی در بارگیری برنامه‌های غذایی پیش آمد");
-      } finally {
-        setIsLoading(false);
-      }
+  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  
+  // تغییر ترتیب مرتب‌سازی
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
+  
+  // مدیریت باز کردن دیالوگ
+  const handleOpen = () => {
+    console.log("Opening dialog for new meal");
+    setSelectedMeal(undefined);
+    setOpen(true);
+  };
+  
+  // مدیریت ویرایش وعده غذایی
+  const handleEdit = (meal: Meal) => {
+    console.log("====== EDIT MEAL ======");
+    console.log("Editing meal with ID:", meal.id);
+    console.log("Meal details:", meal);
+    setSelectedMeal(meal);
+    setOpen(true);
+    console.log("====== END EDIT MEAL ======");
+  };
+  
+  // مدیریت حذف وعده غذایی
+  const handleDelete = (id: number) => {
+    const updatedMeals = meals.filter(meal => meal.id !== id);
+    saveMeals(updatedMeals);
+    toast({
+      title: "حذف موفق",
+      description: "وعده غذایی با موفقیت حذف شد",
+    });
+  };
+  
+  // مدیریت ذخیره وعده غذایی
+  const handleSave = (data: Omit<Meal, "id">, mealId?: number): boolean => {
+    console.log("====== SAVE MEAL ======");
+    console.log("Save called with mealId:", mealId);
+    console.log("Current selectedMeal:", selectedMeal?.id);
+    
+    // پیش‌پردازش داده‌ها - حذف فاصله‌های اضافی
+    const cleanData = {
+      ...data,
+      name: data.name.trim(),
+      description: data.description?.trim() || "",
+      category: data.category?.trim() || "",
+      // استاندارد کردن نام روز
+      day: data.day ? normalizeDay(data.day) as WeekDay : data.day
     };
     
-    loadMeals();
-  }, []);
-
-  // Save meals to localStorage
-  const saveMeals = useCallback(
-    async (updatedMeals: Meal[]) => {
-      try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedMeals));
-        setMeals(updatedMeals);
-      } catch (error) {
-        console.error("Failed to save meals:", error);
-        showError("خطا در ذخیره‌سازی", "مشکلی در ذخیره‌سازی برنامه‌های غذایی پیش آمد");
-      }
-    },
-    []
-  );
-
-  // Add new meal
-  const addMeal = useCallback(
-    async (meal: Omit<Meal, "id">) => {
-      const newMeal: Meal = {
-        ...meal,
-        id: Date.now(),
+    console.log("Clean data for saving:", cleanData);
+    
+    // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
+    // استفاده از mealId برای مشخص کردن غذای در حال ویرایش
+    if (!validateMeal(cleanData, mealId)) {
+      console.log("Validation failed - duplicate meal detected");
+      console.log("====== END SAVE MEAL (FAILED) ======");
+      return false;
+    }
+    
+    let newMeals: Meal[];
+    
+    if (mealId !== undefined) {
+      // ویرایش وعده غذایی موجود
+      console.log(`Updating meal with ID: ${mealId}`);
+      newMeals = meals.map(m => 
+        m.id === mealId 
+          ? { ...cleanData, id: m.id }
+          : m
+      );
+      
+      toast({
+        title: "ویرایش موفق",
+        description: "وعده غذایی با موفقیت ویرایش شد",
+      });
+    } else {
+      // ایجاد وعده غذایی جدید
+      const newMeal = {
+        ...cleanData,
+        id: Math.max(0, ...meals.map(m => m.id)) + 1
       };
       
-      const updatedMeals = [...meals, newMeal];
-      await saveMeals(updatedMeals);
-      showSuccess("اضافه شد", "وعده غذایی با موفقیت اضافه شد");
-      return newMeal;
-    },
-    [meals, saveMeals, showSuccess]
-  );
-
-  // Update existing meal
-  const updateMeal = useCallback(
-    async (id: number, updates: Partial<Omit<Meal, "id">>) => {
-      const mealIndex = meals.findIndex((m) => m.id === id);
+      console.log(`Creating new meal with ID: ${newMeal.id}`);
+      newMeals = [...meals, newMeal];
       
-      if (mealIndex === -1) {
-        showError("خطا", "وعده غذایی مورد نظر پیدا نشد");
-        return null;
-      }
-      
-      const updatedMeal = { ...meals[mealIndex], ...updates };
-      const updatedMeals = [...meals];
-      updatedMeals[mealIndex] = updatedMeal;
-      
-      await saveMeals(updatedMeals);
-      showSuccess("به‌روزرسانی شد", "وعده غذایی با موفقیت به‌روزرسانی شد");
-      return updatedMeal;
-    },
-    [meals, saveMeals, showSuccess, showError]
-  );
-
-  // Delete meal
-  const deleteMeal = useCallback(
-    async (id: number) => {
-      const updatedMeals = meals.filter((meal) => meal.id !== id);
-      await saveMeals(updatedMeals);
-      showSuccess("حذف شد", "وعده غذایی با موفقیت حذف شد");
-    },
-    [meals, saveMeals, showSuccess]
-  );
-
-  // Filter meals based on search query, selected type and day
-  const filteredMeals = useCallback(() => {
-    return meals.filter((meal) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (meal.description &&
-          meal.description.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      const matchesType =
-        selectedType === "all" || meal.type === selectedType;
-      
-      const matchesDay =
-        selectedDay === "all" || meal.weekDay === selectedDay;
-      
-      return matchesSearch && matchesType && matchesDay;
-    });
-  }, [meals, searchQuery, selectedType, selectedDay]);
-
-  // Open dialog for adding new meal
-  const openAddDialog = useCallback(() => {
-    setSelectedMeal(null);
-    setDialogOpen(true);
-  }, []);
-
-  // Open dialog for editing meal
-  const openEditDialog = useCallback((meal: Meal) => {
-    setSelectedMeal(meal);
-    setDialogOpen(true);
-  }, []);
-
-  // Close dialog
-  const closeDialog = useCallback(() => {
-    setDialogOpen(false);
-    setSelectedMeal(null);
-  }, []);
-
-  // Handle saving meal (add or update)
-  const handleSaveMeal = useCallback(
-    async (mealData: Omit<Meal, "id">) => {
-      if (selectedMeal) {
-        await updateMeal(selectedMeal.id, mealData);
-      } else {
-        await addMeal(mealData);
-      }
-      closeDialog();
-    },
-    [selectedMeal, addMeal, updateMeal, closeDialog]
-  );
-
+      toast({
+        title: "افزودن موفق",
+        description: "وعده غذایی جدید با موفقیت اضافه شد",
+      });
+    }
+    
+    const saveResult = saveMeals(newMeals);
+    console.log("Save completed successfully");
+    console.log("====== END SAVE MEAL (SUCCESS) ======");
+    setOpen(false);
+    return saveResult;
+  };
+  
+  // فیلتر وعده‌های غذایی بر اساس جستجو
+  const filteredMeals = meals.filter(meal => {
+    const matchesSearch = 
+      !searchQuery || 
+      meal.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      meal.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesSearch;
+  });
+  
   return {
     meals,
-    filteredMeals: filteredMeals(),
-    isLoading,
+    setMeals: saveMeals,
+    open,
+    setOpen,
     selectedMeal,
-    dialogOpen,
+    setSelectedMeal,
     searchQuery,
-    selectedType,
-    selectedDay,
     setSearchQuery,
-    setSelectedType,
+    selectedDay,
     setSelectedDay,
-    openAddDialog,
-    openEditDialog,
-    closeDialog,
-    handleSaveMeal,
-    deleteMeal,
+    sortOrder,
+    setSortOrder,
+    toggleSortOrder,
+    filteredMeals,
+    handleOpen,
+    handleEdit,
+    handleDelete,
+    handleSave,
   };
 };
-
-export default useDietState;
