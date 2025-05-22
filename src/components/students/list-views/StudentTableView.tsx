@@ -2,6 +2,7 @@
 import React from 'react';
 import { Student } from '@/components/students/StudentTypes';
 import { StudentTable } from '@/components/students/table/StudentTable';
+import { StudentEmptyState } from './StudentEmptyState';
 
 interface StudentTableViewProps {
   students: Student[];
@@ -42,6 +43,17 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
   sortOrder,
   onSortChange
 }) => {
+  // If no students are found with search query or there are no students at all
+  if (sortedAndFilteredStudents.length === 0) {
+    return (
+      <StudentEmptyState
+        searchQuery={searchQuery}
+        onClearSearch={onClearSearch}
+        onAddStudent={onAddStudent}
+      />
+    );
+  }
+
   return (
     <StudentTable
       students={students}
