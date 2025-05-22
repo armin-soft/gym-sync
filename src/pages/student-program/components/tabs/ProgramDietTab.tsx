@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Student } from "@/components/students/StudentTypes";
 import ProgramDietHeader from "./diet/ProgramDietHeader";
@@ -7,8 +7,9 @@ import DaySelector from "./diet/DaySelector";
 import EmptyDayState from "./diet/EmptyDayState";
 import DayContent from "./diet/DayContent";
 import { weekDays } from "./diet/constants";
-import { useDietState } from "./diet/useDietState";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProgramDietTabProps {
   student: Student;
@@ -25,14 +26,53 @@ const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
   currentDay: propCurrentDay,
   setCurrentDay: propSetCurrentDay
 }) => {
-  const {
-    selectedMeals,
-    setSelectedMeals,
-    currentDay,
-    setCurrentDay,
-    isSaving,
-    handleSave
-  } = useDietState(student, onSaveDiet, propCurrentDay, propSetCurrentDay);
+  const { toast } = useToast();
+  const [selectedMeals, setSelectedMeals] = useState<number[]>([]);
+  const [currentDay, setCurrentDay] = useState<number | null>(propCurrentDay !== undefined ? propCurrentDay : 1);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  // Use external day state if provided
+  useEffect(() => {
+    if (propCurrentDay !== undefined) {
+      setCurrentDay(propCurrentDay);
+    }
+  }, [propCurrentDay]);
+  
+  // Load meals for the selected day
+  useEffect(() => {
+    if (currentDay === null) return;
+
+    const dayKey = `mealsDay${currentDay}` as keyof Student;
+    if (student[dayKey]) {
+      setSelectedMeals(student[dayKey] as number[]);
+    } else {
+      setSelectedMeals([]);
+    }
+  }, [student, currentDay]);
+
+  const handleSave = () => {
+    if (currentDay === null) return;
+    
+    setIsSaving(true);
+    try {
+      const success = onSaveDiet(selectedMeals, currentDay);
+      
+      if (success) {
+        toast({
+          title: "ذخیره موفق",
+          description: `برنامه غذایی روز ${toPersianNumbers(currentDay)} با موفقیت ذخیره شد`
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "خطا در ذخیره‌سازی",
+          description: "مشکلی در ذخیره‌سازی برنامه غذایی پیش آمد."
+        });
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Use the day from props if provided, otherwise use the local state
   const effectiveCurrentDay = propCurrentDay !== undefined ? propCurrentDay : currentDay;
