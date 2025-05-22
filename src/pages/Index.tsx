@@ -13,7 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { HeroSection } from "@/components/dashboard/HeroSection";
 import { MainMenuGrid } from "@/components/dashboard/MainMenuGrid";
 import { RecentStudentsCard } from "@/components/dashboard/RecentStudentsCard";
-import { StatsCards } from "@/components/dashboard/StatsCards";
+import { StatsCards } from "@/components/dashboard/stats/StatsCards";
 import { ProgressCard } from "@/components/dashboard/ProgressCard";
 import { ActivitySummaryCard } from "@/components/dashboard/ActivitySummaryCard";
 

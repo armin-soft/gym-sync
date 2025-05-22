@@ -1,11 +1,37 @@
+
 import { motion } from "framer-motion";
+import { TrendingUp, TrendingDown, Stars } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, UtensilsCrossed, Pill, TrendingUp, TrendingDown, Stars } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import type { DashboardStats } from "@/types/dashboard";
 
-const renderGrowthBadge = (growth: number) => (
+// Color configurations for different card types
+const colorMap = {
+  blue: {
+    bg: "from-blue-600 to-blue-400",
+    bgLight: "bg-blue-100/50 dark:bg-blue-900/20",
+    text: "text-blue-600 dark:text-blue-400",
+    progressBg: "bg-blue-100 dark:bg-blue-800/30",
+    iconColor: "text-blue-500"
+  },
+  green: {
+    bg: "from-green-600 to-green-400",
+    bgLight: "bg-green-100/50 dark:bg-green-900/20",
+    text: "text-green-600 dark:text-green-400",
+    progressBg: "bg-green-100 dark:bg-green-800/30",
+    iconColor: "text-green-500"
+  },
+  orange: {
+    bg: "from-orange-600 to-orange-400",
+    bgLight: "bg-orange-100/50 dark:bg-orange-900/20",
+    text: "text-orange-600 dark:text-orange-400",
+    progressBg: "bg-orange-100 dark:bg-orange-800/30",
+    iconColor: "text-orange-500"
+  }
+};
+
+// Component to display growth badge
+export const GrowthBadge = ({ growth }: { growth: number }) => (
   <Badge 
     variant="secondary" 
     className={`rounded-lg ${growth >= 0 ? 'text-green-600 bg-green-100/70 dark:bg-green-900/30 dark:text-green-400' : 'text-red-600 bg-red-100/70 dark:bg-red-900/30 dark:text-red-400'} flex items-center gap-1`}
@@ -15,71 +41,8 @@ const renderGrowthBadge = (growth: number) => (
   </Badge>
 );
 
-export const StatsCards = ({ stats }: { stats: DashboardStats }) => {
-  // Container variants for staggered animations
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-  
-  // Item variants
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
-  };
-
-  return (
-    <motion.div 
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
-    >
-      <StatCard 
-        title="تعداد شاگردان"
-        icon={Users}
-        value={stats.totalStudents}
-        growth={stats.studentGrowth}
-        maxValue={stats.maxCapacity}
-        color="blue"
-        description="شاگرد فعال در سیستم"
-        variants={item}
-      />
-
-      <StatCard 
-        title="برنامه های غذایی"
-        icon={UtensilsCrossed}
-        value={stats.totalMeals}
-        growth={stats.mealGrowth}
-        maxValue={100}
-        percentage={stats.mealCompletionRate}
-        color="green"
-        description={`${toPersianNumbers(Math.round(stats.mealCompletionRate))}٪ شاگردان دارای برنامه غذایی`}
-        variants={item}
-      />
-
-      <StatCard 
-        title="مکمل و ویتامین تجویز شده"
-        icon={Pill}
-        value={stats.totalSupplements}
-        growth={stats.supplementGrowth}
-        maxValue={100}
-        percentage={stats.supplementCompletionRate}
-        color="orange"
-        description={`${toPersianNumbers(Math.round(stats.supplementCompletionRate))}٪ شاگردان دارای مکمل و ویتامین`}
-        variants={item}
-      />
-    </motion.div>
-  );
-};
-
-// Enhanced stat card component
-interface StatCardProps {
+// Interface for StatCard props
+export interface StatCardProps {
   title: string;
   icon: React.ElementType;
   value: number;
@@ -91,7 +54,8 @@ interface StatCardProps {
   variants: any;
 }
 
-const StatCard = ({ 
+// Main StatCard component
+export const StatCard = ({ 
   title, 
   icon: Icon, 
   value, 
@@ -102,31 +66,6 @@ const StatCard = ({
   description,
   variants
 }: StatCardProps) => {
-  // Color configurations
-  const colorMap = {
-    blue: {
-      bg: "from-blue-600 to-blue-400",
-      bgLight: "bg-blue-100/50 dark:bg-blue-900/20",
-      text: "text-blue-600 dark:text-blue-400",
-      progressBg: "bg-blue-100 dark:bg-blue-800/30",
-      iconColor: "text-blue-500"
-    },
-    green: {
-      bg: "from-green-600 to-green-400",
-      bgLight: "bg-green-100/50 dark:bg-green-900/20",
-      text: "text-green-600 dark:text-green-400",
-      progressBg: "bg-green-100 dark:bg-green-800/30",
-      iconColor: "text-green-500"
-    },
-    orange: {
-      bg: "from-orange-600 to-orange-400",
-      bgLight: "bg-orange-100/50 dark:bg-orange-900/20",
-      text: "text-orange-600 dark:text-orange-400",
-      progressBg: "bg-orange-100 dark:bg-orange-800/30",
-      iconColor: "text-orange-500"
-    }
-  };
-  
   // Calculate the progress percentage
   const progressPercentage = percentage !== undefined 
     ? percentage 
@@ -178,7 +117,7 @@ const StatCard = ({
                 </motion.div>
               )}
             </div>
-            {renderGrowthBadge(growth)}
+            <GrowthBadge growth={growth} />
           </div>
           
           <div className="text-xs text-muted-foreground mt-1">
@@ -225,3 +164,5 @@ const StatCard = ({
     </motion.div>
   );
 };
+
+export default StatCard;
