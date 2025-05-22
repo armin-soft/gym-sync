@@ -147,9 +147,6 @@ const StudentsPage = () => {
             onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
             onDelete={handleDeleteWithHistory}
             onAddExercise={handleOpenProgramManager}
-            onAddDiet={handleOpenProgramManager}
-            onAddSupplement={handleOpenProgramManager}
-            onDownload={(student) => {}}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
             viewMode="table"
