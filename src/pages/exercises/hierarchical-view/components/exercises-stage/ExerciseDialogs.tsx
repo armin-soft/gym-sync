@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ExerciseDialog } from "@/components/exercises/ExerciseDialog";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { Exercise } from "@/types/exercise";
@@ -37,30 +37,23 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
   const { categories } = useExerciseData();
   const { toast } = useToast();
   const { requestMicrophonePermission, checkMicrophoneAvailability } = useMicrophonePermission();
+  const [hasPromptedPermission, setHasPromptedPermission] = useState(false);
   
   // Request microphone permission when dialog opens with enhanced cross-platform handling
   useEffect(() => {
-    if (isAddDialogOpen) {
+    if (isAddDialogOpen && !hasPromptedPermission) {
       const initiatePermissionRequest = async () => {
         try {
           // بررسی وجود میکروفون قبل از درخواست دسترسی
           const hasMicrophone = await checkMicrophoneAvailability();
           
           if (hasMicrophone === false) {
-            toast({
-              title: "میکروفون یافت نشد",
-              description: "هیچ میکروفونی به دستگاه متصل نیست یا توسط سیستم‌عامل شناسایی نشده است. می‌توانید از ورودی متنی استفاده کنید.",
-              variant: "destructive",
-              duration: 6000,
-            });
+            // Don't show this message here since it will be shown by the AdvancedSpeechInput component
             return;
           }
           
           // Check user agent to adapt behavior
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-          const isAndroid = /android/i.test(navigator.userAgent);
-          const isChrome = typeof navigator !== 'undefined' && /Chrome/.test(navigator.userAgent) && !/Edge/.test(navigator.userAgent);
-          const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
           
           if (isIOS) {
             // On iOS, show a message first to improve UX
@@ -74,30 +67,8 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
           }
           
           // Now request permission
-          const hasPermission = await requestMicrophonePermission();
-          
-          if (!hasPermission) {
-            // راهنمایی‌های مخصوص هر مرورگر
-            if (isAndroid && isChrome) {
-              toast({
-                title: "راهنمایی کاربران Android با Chrome",
-                description: "لطفا روی آیکون قفل در نوار آدرس کلیک کرده و دسترسی میکروفون را فعال کنید.",
-                duration: 6000,
-              });
-            } else if (isIOS && isSafari) {
-              toast({
-                title: "راهنمایی کاربران iOS با Safari",
-                description: "در تنظیمات Safari > بخش دسترسی‌های وب‌سایت، دسترسی به میکروفون را برای این سایت فعال کنید.",
-                duration: 6000,
-              });
-            } else if (isChrome) {
-              toast({
-                title: "راهنمایی کاربران Chrome",
-                description: "برای فعال کردن میکروفون، روی آیکون دوربین/میکروفون در نوار آدرس کلیک کنید.",
-                duration: 6000,
-              });
-            }
-          }
+          await requestMicrophonePermission();
+          setHasPromptedPermission(true);
         } catch (error) {
           console.error("خطا در درخواست دسترسی به میکروفون:", error);
         }
@@ -105,7 +76,7 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
       
       initiatePermissionRequest();
     }
-  }, [isAddDialogOpen, toast, requestMicrophonePermission, checkMicrophoneAvailability]);
+  }, [isAddDialogOpen, toast, requestMicrophonePermission, checkMicrophoneAvailability, hasPromptedPermission]);
 
   const handleDelete = () => {
     if (selectedExerciseIds.length === 1) {

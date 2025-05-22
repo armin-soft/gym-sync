@@ -33,6 +33,7 @@ export function AdvancedSpeechInput({
   const { isSupported, supportDetails } = useBrowserSupport();
   const { permissionStatus, requestMicrophonePermission, isDeviceAvailable, checkMicrophoneAvailability } = useMicrophonePermission();
   const [isMicrophoneAvailable, setIsMicrophoneAvailable] = useState<boolean | null>(null);
+  const [hasShownMicNotFoundMessage, setHasShownMicNotFoundMessage] = useState(false);
 
   const {
     transcript,
@@ -72,14 +73,15 @@ export function AdvancedSpeechInput({
         const available = await checkMicrophoneAvailability();
         setIsMicrophoneAvailable(available);
         
-        if (available === false) {
+        if (available === false && !hasShownMicNotFoundMessage) {
           setShowPermissionReminder(true);
-          // نمایش پیام در مورد عدم وجود میکروفون
+          // نمایش پیام در مورد عدم وجود میکروفون - فقط یکبار
           toast({
             title: "میکروفون یافت نشد",
             description: "هیچ میکروفونی به دستگاه متصل نیست یا توسط سیستم‌عامل شناسایی نشده است.",
             variant: "destructive",
           });
+          setHasShownMicNotFoundMessage(true);
         }
       } catch (error) {
         console.error("خطا در بررسی میکروفون:", error);
@@ -96,7 +98,7 @@ export function AdvancedSpeechInput({
     } else {
       checkMicAvailability();
     }
-  }, [isSupported, toast, checkMicrophoneAvailability]);
+  }, [isSupported, toast, checkMicrophoneAvailability, hasShownMicNotFoundMessage]);
 
   // راهنمایی‌های مخصوص مرورگرها
   useEffect(() => {
