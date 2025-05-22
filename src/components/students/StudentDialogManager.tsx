@@ -1,12 +1,15 @@
 
-import React, { useState, useImperativeHandle, forwardRef } from "react";
+import React, { useImperativeHandle, forwardRef } from "react";
 import { Student } from "@/components/students/StudentTypes";
-import StudentFormDialog from "./StudentFormDialog";
-import StudentExerciseDialog from "@/components/exercises/StudentExerciseDialog";
-import StudentDietDialog from "./diet/StudentDietDialog";
-import { SupplementDialog } from "../supplements/student/SupplementDialog";
 import { ExerciseWithSets } from "@/types/exercise";
-import { ProgramExportDialog } from "./program/components/ProgramExportDialog";
+import { useDialogState } from "./hooks/useDialogState";
+import {
+  FormDialog,
+  ExerciseDialog,
+  DietDialog,
+  SupplementDialog,
+  ExportDialog
+} from "./dialogs";
 
 export interface StudentDialogManagerRef {
   handleAdd: () => void;
@@ -37,14 +40,16 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     meals, 
     supplements 
   }, ref) => {
-    const [formDialogOpen, setFormDialogOpen] = useState(false);
-    const [exerciseDialogOpen, setExerciseDialogOpen] = useState(false);
-    const [dietDialogOpen, setDietDialogOpen] = useState(false);
-    const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
-    const [exportDialogOpen, setExportDialogOpen] = useState(false);
-    
-    const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-    const [isEditing, setIsEditing] = useState(false);
+    const {
+      state,
+      setFormDialogOpen,
+      setExerciseDialogOpen,
+      setDietDialogOpen,
+      setSupplementDialogOpen,
+      setExportDialogOpen,
+      setSelectedStudent,
+      setIsEditing
+    } = useDialogState();
 
     useImperativeHandle(ref, () => ({
       handleAdd: () => {
@@ -81,88 +86,42 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
 
     return (
       <>
-        <StudentFormDialog
-          open={formDialogOpen}
+        <FormDialog
+          open={state.formDialog}
           onOpenChange={setFormDialogOpen}
-          student={selectedStudent}
-          isEditing={isEditing}
-          onSave={(updatedStudent) => {
-            // Fix: Pass the selectedStudent when editing
-            onSave(updatedStudent, selectedStudent);
-            setFormDialogOpen(false);
-          }}
+          selectedStudent={state.selectedStudent}
+          isEditing={state.isEditing}
+          onSave={onSave}
         />
 
-        {onSaveExercises && selectedStudent && (
-          <StudentExerciseDialog
-            open={exerciseDialogOpen}
-            onOpenChange={setExerciseDialogOpen}
-            studentName={selectedStudent.name}
-            onSave={(exercisesWithSets, dayNumber) => {
-              return onSaveExercises(exercisesWithSets, selectedStudent.id, dayNumber);
-            }}
-            initialExercises={selectedStudent.exercises}
-            initialExerciseSets={selectedStudent.exerciseSets}
-            initialExerciseReps={selectedStudent.exerciseReps}
-            initialExercisesDay1={selectedStudent.exercisesDay1}
-            initialExerciseSetsDay1={selectedStudent.exerciseSetsDay1}
-            initialExerciseRepsDay1={selectedStudent.exerciseRepsDay1}
-            initialExercisesDay2={selectedStudent.exercisesDay2}
-            initialExerciseSetsDay2={selectedStudent.exerciseSetsDay2}
-            initialExerciseRepsDay2={selectedStudent.exerciseRepsDay2}
-            initialExercisesDay3={selectedStudent.exercisesDay3}
-            initialExerciseSetsDay3={selectedStudent.exerciseSetsDay3}
-            initialExerciseRepsDay3={selectedStudent.exerciseRepsDay3}
-            initialExercisesDay4={selectedStudent.exercisesDay4}
-            initialExerciseSetsDay4={selectedStudent.exerciseSetsDay4}
-            initialExerciseRepsDay4={selectedStudent.exerciseRepsDay4}
-            initialExercisesDay5={selectedStudent.exercisesDay5}
-            initialExerciseSetsDay5={selectedStudent.exerciseSetsDay5}
-            initialExerciseRepsDay5={selectedStudent.exerciseRepsDay5}
-          />
-        )}
+        <ExerciseDialog
+          open={state.exerciseDialog}
+          onOpenChange={setExerciseDialogOpen}
+          selectedStudent={state.selectedStudent}
+          onSaveExercises={onSaveExercises}
+        />
 
-        {onSaveDiet && selectedStudent && (
-          <StudentDietDialog
-            open={dietDialogOpen}
-            onOpenChange={setDietDialogOpen}
-            studentName={selectedStudent.name}
-            onSave={(mealIds, dayNumber) => {
-              return onSaveDiet(mealIds, selectedStudent.id, dayNumber);
-            }}
-            meals={meals || []}
-            initialMeals={selectedStudent.meals}
-            initialMealsDay1={selectedStudent.mealsDay1}
-            initialMealsDay2={selectedStudent.mealsDay2}
-            initialMealsDay3={selectedStudent.mealsDay3}
-            initialMealsDay4={selectedStudent.mealsDay4}
-          />
-        )}
+        <DietDialog
+          open={state.dietDialog}
+          onOpenChange={setDietDialogOpen}
+          selectedStudent={state.selectedStudent}
+          meals={meals}
+          onSaveDiet={onSaveDiet}
+        />
 
-        {onSaveSupplements && selectedStudent && (
-          <SupplementDialog
-            open={supplementDialogOpen}
-            onOpenChange={setSupplementDialogOpen}
-            studentName={selectedStudent.name}
-            onSave={(data) => {
-              return onSaveSupplements(data, selectedStudent.id);
-            }}
-            supplements={supplements || []}
-            initialSupplements={selectedStudent.supplements}
-            initialVitamins={selectedStudent.vitamins}
-            initialSupplementsDay1={selectedStudent.supplementsDay1 || []}
-            initialVitaminsDay1={selectedStudent.vitaminsDay1 || []}
-          />
-        )}
+        <SupplementDialog
+          open={state.supplementDialog}
+          onOpenChange={setSupplementDialogOpen}
+          selectedStudent={state.selectedStudent}
+          supplements={supplements}
+          onSaveSupplements={onSaveSupplements}
+        />
 
-        {selectedStudent && (
-          <ProgramExportDialog 
-            isOpen={exportDialogOpen}
-            onClose={() => setExportDialogOpen(false)}
-            student={selectedStudent}
-            programType="all"
-          />
-        )}
+        <ExportDialog
+          open={state.exportDialog}
+          onOpenChange={setExportDialogOpen}
+          selectedStudent={state.selectedStudent}
+        />
       </>
     );
   }
