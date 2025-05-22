@@ -17,8 +17,9 @@ import StudentProgramManagerView from "./students/components/program/StudentProg
 import StudentSearchControls from "./students/components/StudentSearchControls";
 // Import from the list-views folder instead of local components
 import { StudentTableView } from "@/components/students/list-views";
-import { useStudentRefresh } from "@/hooks/useStudentRefresh"; // Fixed import path
+import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
+import { useStudentHistory } from "@/hooks/useStudentHistory";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
@@ -53,6 +54,7 @@ const StudentsPage = () => {
   } = useStudents();
   
   const { refreshTrigger, triggerRefresh, lastRefresh } = useStudentRefresh();
+  const { addHistoryEntry } = useStudentHistory();
 
   const {
     handleSaveWithHistory,
@@ -66,7 +68,7 @@ const StudentsPage = () => {
     handleSaveDiet,
     handleSaveSupplements,
     handleDelete,
-    () => {},
+    addHistoryEntry,
     triggerRefresh,
     students,
     selectedStudentForProgram
