@@ -5,12 +5,12 @@
 fetch('./Manifest.json')
   .then(response => response.json())
   .then(manifest => {
-    const version = manifest.version || '1.7.9';
+    const version = manifest.version || '1.9.3';
     self.CACHE_NAME = `gym-sync-v${version.replace(/\./g, '')}`;
     console.log(`[Service Worker] نسخه ${version} (کش: ${self.CACHE_NAME})`);
   })
   .catch(() => {
-    self.CACHE_NAME = 'gym-sync-v179';
+    self.CACHE_NAME = 'gym-sync-v193';
     console.log('[Service Worker] خطا در دریافت نسخه از manifest');
   });
 
