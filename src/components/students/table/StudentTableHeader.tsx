@@ -59,7 +59,11 @@ export const StudentTableHeader: React.FC<StudentTableHeaderProps> = ({
                 className="flex items-center justify-center"
                 whileHover={isSortable ? { scale: 1.05 } : undefined}
               >
-                {typeof column.header === "function" ? column.header({}) : column.header}
+                {typeof column.header === "function" ? column.header({
+                  header: column.header,
+                  column: column, 
+                  table: {}
+                }) : column.header}
                 {isSortable && getSortIcon(key)}
               </motion.div>
             </TableHead>

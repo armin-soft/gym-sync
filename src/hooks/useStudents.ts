@@ -21,7 +21,6 @@ export const useStudents = () => {
   } = useStudentsImpl();
   
   const { toast } = useToast();
-  const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [loading, setLoading] = useState(true);
   
@@ -59,8 +58,6 @@ export const useStudents = () => {
     // State management
     loading,
     isProfileComplete,
-    viewMode,
-    setViewMode,
     
     // Search & sort
     searchQuery,

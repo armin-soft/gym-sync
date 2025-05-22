@@ -23,7 +23,6 @@ import { useStudentEvents } from "./students/hooks/useStudentEvents";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
-  const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
   const deviceInfo = useDeviceInfo();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
@@ -79,6 +78,9 @@ const StudentsPage = () => {
     searchQuery,
     setSearchQuery,
     sortedAndFilteredStudents,
+    sortField,
+    sortOrder,
+    toggleSort,
     handleClearSearch
   } = useStudentFiltering(students);
 
@@ -129,8 +131,7 @@ const StudentsPage = () => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               handleClearSearch={handleClearSearch}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
+              // حذف prop مربوط به viewMode و setViewMode
             />
           </div>
           
@@ -147,8 +148,11 @@ const StudentsPage = () => {
             onDownload={(student) => {}}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
-            viewMode={viewMode}
+            viewMode="table" // ثابت به حالت جدولی تنظیم شد
             isProfileComplete={isProfileComplete}
+            sortField={sortField}
+            sortOrder={sortOrder}
+            onSortChange={toggleSort}
           />
           
           <TabsContent value="history" className="flex-1">

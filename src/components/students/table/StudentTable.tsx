@@ -20,7 +20,7 @@ interface StudentTableProps {
   onDownload?: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
-  viewMode: "table" | "grid";
+  viewMode: "table"; // تغییر به فقط حالت جدولی
   isProfileComplete: boolean;
   sortField?: string;
   sortOrder?: "asc" | "desc";
@@ -53,7 +53,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
-  }, [refreshTrigger, viewMode, sortField, sortOrder, searchQuery]);
+  }, [refreshTrigger, sortField, sortOrder, searchQuery]);
 
   const tableContainerVariants = {
     hidden: { opacity: 0, y: 20 },
