@@ -20,7 +20,7 @@ interface StudentTableProps {
   onDownload?: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
-  viewMode: "table"; // تغییر به فقط حالت جدولی
+  viewMode: "table"; // Only table mode is supported now
   isProfileComplete: boolean;
   sortField?: string;
   sortOrder?: "asc" | "desc";
@@ -40,7 +40,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({
   onDownload,
   onAddStudent,
   onClearSearch,
-  viewMode,
   isProfileComplete,
   sortField,
   sortOrder,
@@ -48,7 +47,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
-  // Reset loading state when data or view changes
+  // Reset loading state when data changes
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 500);

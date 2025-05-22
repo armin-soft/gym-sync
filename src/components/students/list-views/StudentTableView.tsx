@@ -17,7 +17,7 @@ interface StudentTableViewProps {
   onDownload?: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
-  viewMode: "table"; // تغییر به فقط حالت جدولی
+  viewMode: "table"; // Only table mode is supported
   sortField?: string;
   sortOrder?: "asc" | "desc";
   onSortChange?: (field: string) => void;

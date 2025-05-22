@@ -2,7 +2,6 @@
 import React from "react";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentSearchSort } from "@/components/students/StudentSearchSort";
-import { StudentsViewToggle } from "@/components/students/StudentsViewToggle";
 import { ProfileWarning } from "@/components/students/ProfileWarning";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { Student } from "@/components/students/StudentTypes";
@@ -13,8 +12,7 @@ interface StudentsHeaderSectionProps {
   sortField: string;
   sortOrder: "asc" | "desc";
   toggleSort: (field: string) => void;
-  viewMode: "table" | "grid";
-  setViewMode: (mode: "table" | "grid") => void;
+  viewMode: "table";
   isProfileComplete: boolean;
   students: Student[];
   onAddStudent: () => void;
@@ -26,8 +24,6 @@ export const StudentsHeaderSection: React.FC<StudentsHeaderSectionProps> = ({
   sortField,
   sortOrder,
   toggleSort,
-  viewMode,
-  setViewMode,
   isProfileComplete,
   students,
   onAddStudent
@@ -45,9 +41,6 @@ export const StudentsHeaderSection: React.FC<StudentsHeaderSectionProps> = ({
             sortOrder={sortOrder}
             toggleSort={toggleSort}
           />
-        </div>
-        <div>
-          <StudentsViewToggle viewMode={viewMode} onChange={setViewMode} />
         </div>
       </div>
       

@@ -4,7 +4,7 @@ import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTableColumns } from "./tableColumns";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Header, HeaderContext } from "@tanstack/react-table";
 import { Student } from "@/components/students/StudentTypes";
 
 interface StudentTableHeaderProps {
@@ -59,11 +59,7 @@ export const StudentTableHeader: React.FC<StudentTableHeaderProps> = ({
                 className="flex items-center justify-center"
                 whileHover={isSortable ? { scale: 1.05 } : undefined}
               >
-                {typeof column.header === "function" ? column.header({
-                  header: column.header,
-                  column: column, 
-                  table: {}
-                }) : column.header}
+                {typeof column.header === "function" ? column.header({} as any) : column.header}
                 {isSortable && getSortIcon(key)}
               </motion.div>
             </TableHead>

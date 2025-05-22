@@ -16,8 +16,7 @@ interface MainStudentTabsProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   handleClearSearch: () => void;
-  viewMode: "table" | "grid";
-  setViewMode: (mode: "table" | "grid") => void;
+  viewMode: "table";
   refreshTrigger: number;
   historyEntries: HistoryEntry[];
   isLoading?: boolean;
@@ -41,7 +40,6 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   setSearchQuery,
   handleClearSearch,
   viewMode,
-  setViewMode,
   refreshTrigger,
   historyEntries,
   isLoading = false,
@@ -83,8 +81,6 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             handleClearSearch={handleClearSearch}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
           />
         </div>
       </div>
@@ -96,7 +92,7 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
           </div>
         ) : (
           <StudentTableView
-            viewMode={viewMode}
+            viewMode="table"
             sortedAndFilteredStudents={sortedAndFilteredStudents}
             students={students}
             searchQuery={searchQuery}
