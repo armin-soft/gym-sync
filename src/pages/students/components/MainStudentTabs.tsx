@@ -28,6 +28,10 @@ interface MainStudentTabsProps {
   onAddSupplement: (student: Student) => void;
   onDownload: (student: Student) => void;
   onAddStudent: () => void;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  onSortChange?: (field: string) => void;
+  isProfileComplete: boolean;
 }
 
 const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
@@ -47,7 +51,11 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   onAddDiet,
   onAddSupplement,
   onDownload,
-  onAddStudent
+  onAddStudent,
+  sortField,
+  sortOrder,
+  onSortChange,
+  isProfileComplete = true
 }) => {
   return (
     <Tabs defaultValue="all" className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
@@ -101,7 +109,10 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
             onDownload={onDownload}
             onAddStudent={onAddStudent}
             onClearSearch={handleClearSearch}
-            isProfileComplete={true} // Default to true if not provided
+            isProfileComplete={isProfileComplete}
+            sortField={sortField}
+            sortOrder={sortOrder}
+            onSortChange={onSortChange}
           />
         )}
       </TabsContent>

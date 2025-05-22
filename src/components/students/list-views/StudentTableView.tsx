@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Student } from '@/components/students/StudentTypes';
-import { StudentTable } from '@/components/students/StudentTable';
+import { StudentTable } from '@/components/students/table/StudentTable';
 
 interface StudentTableViewProps {
   students: Student[];
@@ -18,6 +18,9 @@ interface StudentTableViewProps {
   onAddStudent: () => void;
   onClearSearch: () => void;
   viewMode: "table" | "grid";
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  onSortChange?: (field: string) => void;
 }
 
 export const StudentTableView: React.FC<StudentTableViewProps> = ({
@@ -34,7 +37,10 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
   onDownload,
   onAddStudent,
   onClearSearch,
-  viewMode
+  viewMode,
+  sortField,
+  sortOrder,
+  onSortChange
 }) => {
   return (
     <StudentTable
@@ -52,6 +58,9 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
       onClearSearch={onClearSearch}
       viewMode={viewMode}
       isProfileComplete={isProfileComplete}
+      sortField={sortField}
+      sortOrder={sortOrder}
+      onSortChange={onSortChange}
     />
   );
 };

@@ -5,6 +5,8 @@ import { Student } from "@/components/students/StudentTypes";
 import { StudentTableRow } from "./StudentTableRow";
 import { StudentTableEmpty } from "./StudentTableEmpty";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTableColumns } from "./tableColumns";
+import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 
 interface StudentTableBodyProps {
   students: Student[];
@@ -15,7 +17,6 @@ interface StudentTableBodyProps {
   onAddSupplement: (student: Student) => void;
   onDownload?: (student: Student) => void;
   isProfileComplete: boolean;
-  columns: any[];
   searchQuery?: string;
   onAddStudent?: () => void;
   onClearSearch?: () => void;
@@ -30,11 +31,18 @@ export const StudentTableBody: React.FC<StudentTableBodyProps> = ({
   onAddSupplement,
   onDownload,
   isProfileComplete,
-  columns,
   searchQuery = "",
   onAddStudent,
   onClearSearch
 }) => {
+  const columns = useTableColumns();
+  
+  const table = useReactTable({
+    data: students,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   if (students.length === 0) {
     return (
       <StudentTableEmpty 
