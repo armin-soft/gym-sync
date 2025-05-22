@@ -22,9 +22,16 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
   
   const handleSave = (formData: any) => {
     try {
+      // Always preserve the existing image if the image in formData is a placeholder
+      // or not provided
+      const preservedImage = 
+        (formData.image === "/Assets/Image/Place-Holder.svg" && student?.image) 
+          ? student.image 
+          : formData.image;
+      
       onSave({
         ...formData,
-        image: formData.image || student?.image || "/Assets/Image/Place-Holder.svg"
+        image: preservedImage
       });
     } catch (error) {
       console.error("Error saving student:", error);

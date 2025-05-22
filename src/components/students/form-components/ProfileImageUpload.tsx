@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,12 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   error
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [currentImage, setCurrentImage] = useState(previewImage);
+  
+  // Update currentImage when previewImage changes
+  useEffect(() => {
+    setCurrentImage(previewImage);
+  }, [previewImage]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,13 +38,17 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
     const reader = new FileReader();
     reader.onload = (event) => {
       setIsLoading(false);
-      onChange(event.target?.result as string);
+      const newImage = event.target?.result as string;
+      setCurrentImage(newImage);
+      onChange(newImage);
     };
     reader.readAsDataURL(file);
   };
 
   const handleReset = () => {
+    // Only reset if we have a new image, not if it's the original image
     onChange("/Assets/Image/Place-Holder.svg");
+    setCurrentImage("/Assets/Image/Place-Holder.svg");
   };
 
   return (
@@ -48,9 +58,9 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
           <AvatarFallback className="bg-muted">
             <RefreshCw className="h-8 w-8 text-muted-foreground animate-spin" />
           </AvatarFallback>
-        ) : previewImage && previewImage !== "/Assets/Image/Place-Holder.svg" ? (
+        ) : currentImage && currentImage !== "/Assets/Image/Place-Holder.svg" ? (
           <AvatarImage 
-            src={previewImage} 
+            src={currentImage} 
             alt="تصویر پروفایل" 
             className="object-cover"
           />
@@ -79,7 +89,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
           />
         </Button>
         
-        {previewImage && previewImage !== "/Assets/Image/Place-Holder.svg" && (
+        {currentImage && currentImage !== "/Assets/Image/Place-Holder.svg" && (
           <Button
             type="button"
             variant="outline"

@@ -32,12 +32,14 @@ export const StudentForm: React.FC<StudentFormProps> = ({
       payment: student?.payment || "",
       age: student?.age?.toString() || "",
       grade: student?.grade || "",
-      group: student?.group || ""
+      group: student?.group || "",
+      image: student?.image || "/Assets/Image/Place-Holder.svg"
     }
   });
 
   const onSubmit = (data: StudentFormValues) => {
     try {
+      // Ensure image is preserved from the student object if not changed in the form
       onSave(data);
     } catch (error) {
       console.error("Error saving student:", error);

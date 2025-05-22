@@ -184,7 +184,7 @@ export const useStudentManagement = () => {
     });
   }, [toast]);
 
-  // Improved save function with better validation and error handling
+  // Improved save function with better validation and error handling and image preservation
   const handleSave = useCallback((data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => {
     try {
       let updatedStudents: Student[];
@@ -192,10 +192,15 @@ export const useStudentManagement = () => {
       
       if (selectedStudent) {
         console.log(`Updating student: ${selectedStudent.name} with ID: ${selectedStudent.id}`);
+        
+        // Preserve the existing image if a new one isn't provided
+        const preservedImage = data.image || selectedStudent.image;
+        
         updatedStudents = students.map(s => s.id === selectedStudent.id 
           ? { 
               ...selectedStudent, // Keep existing properties
               ...data, // Update with new data
+              image: preservedImage, // Make sure we preserve the image
               exercises: selectedStudent.exercises || [], 
               exercisesDay1: selectedStudent.exercisesDay1 || [],
               exercisesDay2: selectedStudent.exercisesDay2 || [],
