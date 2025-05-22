@@ -1,7 +1,7 @@
 
 import React from "react";
-import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ActiveFiltersProps {
   selectedCategory: string | null;
@@ -12,20 +12,21 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({
   selectedCategory,
   clearCategory
 }) => {
-  if (!selectedCategory) return null;
-  
+  if (!selectedCategory) {
+    return null;
+  }
+
   return (
-    <div className="flex items-center gap-2 mb-4 flex-wrap justify-end" dir="rtl">
-      <span className="text-xs text-muted-foreground">فیلترهای فعال:</span>
-      {selectedCategory && (
-        <Badge variant="secondary" className="gap-1 text-xs group">
-          <span>{selectedCategory}</span>
-          <X 
-            className="h-3 w-3 cursor-pointer opacity-70 group-hover:opacity-100" 
-            onClick={clearCategory}
-          />
-        </Badge>
-      )}
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Badge 
+        variant="outline" 
+        className="px-2 py-1 flex items-center gap-1 bg-indigo-50 text-indigo-700 border-indigo-200">
+        <span>{selectedCategory}</span>
+        <X 
+          className="h-3 w-3 cursor-pointer hover:text-indigo-900" 
+          onClick={clearCategory}
+        />
+      </Badge>
     </div>
   );
 };

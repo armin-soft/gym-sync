@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/useSupplementsManager";
 import { PageContainer } from "@/components/ui/page-container";
 import { SupplementsHeader } from "./components/SupplementsHeader";
-import { SupplementTabs } from "./components/SupplementTabs";
+import { SupplementTabs } from "./components/supplement-tabs";
 import { SupplementDialog } from "@/components/supplements/SupplementDialog";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
 import { useToast } from "@/hooks/use-toast";
