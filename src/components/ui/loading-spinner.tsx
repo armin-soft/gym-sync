@@ -1,15 +1,18 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
   className?: string;
+  text?: string;
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
   size = "md",
-  className 
+  className,
+  text
 }) => {
   const sizeClasses = {
     sm: "h-4 w-4 border-2",
@@ -19,17 +22,17 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   
   return (
     <div className="flex flex-col items-center justify-center">
-      <div
+      <Loader2
         className={cn(
-          "rounded-full border-t-transparent animate-spin",
+          "animate-spin",
           sizeClasses[size],
-          size === "sm" ? "border-slate-600" : "border-primary",
+          size === "sm" ? "text-slate-600" : "text-primary",
           className
         )}
       />
-      {size === "lg" && (
+      {(text || size === "lg") && (
         <p className="mt-4 text-slate-500 dark:text-slate-400">
-          در حال بارگذاری...
+          {text || "در حال بارگذاری..."}
         </p>
       )}
     </div>

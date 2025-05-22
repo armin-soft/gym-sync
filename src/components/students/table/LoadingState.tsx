@@ -1,6 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export const LoadingState = () => {
   const loadingVariants = {
@@ -20,19 +21,12 @@ export const LoadingState = () => {
     >
       <div className="flex flex-col items-center">
         <div className="relative flex items-center justify-center">
-          <div className="absolute w-16 h-16 rounded-full border-4 border-slate-100 dark:border-slate-700 opacity-20"></div>
-          <div className="absolute w-16 h-16 rounded-full border-4 border-transparent border-t-purple-500 border-r-purple-500 animate-spin"></div>
-          <div className="absolute w-10 h-10 rounded-full border-4 border-transparent border-t-indigo-500 border-r-indigo-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '0.7s' }}></div>
-          <div className="absolute w-6 h-6 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full animate-pulse"></div>
+          <LoadingSpinner 
+            size="lg"
+            className="text-purple-500"
+            text="در حال بارگذاری اطلاعات..."
+          />
         </div>
-        <motion.p 
-          className="mt-6 text-slate-600 dark:text-slate-300 font-medium"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          در حال بارگذاری اطلاعات...
-        </motion.p>
       </div>
     </motion.div>
   );

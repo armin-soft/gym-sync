@@ -15,6 +15,7 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
           value={progress} 
           className="h-3 sm:h-4 bg-white/10 overflow-hidden" 
           indicatorClassName="bg-white"
+          showAnimation={progress < 100}
         />
         <div className="flex justify-between items-center text-sm">
           <span className="text-white/70">{loadingText}</span>

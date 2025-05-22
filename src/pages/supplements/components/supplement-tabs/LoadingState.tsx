@@ -1,13 +1,11 @@
 
-import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { cn } from "@/lib/utils";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
 export const LoadingState = () => {
   const deviceInfo = useDeviceInfo();
   
-  // حذف انیمیشن‌های سنگین و استفاده از انیمیشن‌های سبک‌تر
   return (
     <div className="flex-1 flex flex-col items-center justify-center w-full h-full">
       <div
@@ -16,10 +14,10 @@ export const LoadingState = () => {
           deviceInfo.isMobile ? "w-16 h-16" : "w-20 h-20"
         )}
       >
-        <Loader2 className={cn(
-          "text-purple-600 dark:text-purple-400 animate-spin",
-          deviceInfo.isMobile ? "w-8 h-8" : "w-10 h-10"
-        )} />
+        <LoadingSpinner 
+          size={deviceInfo.isMobile ? "md" : "lg"}
+          className="text-purple-600 dark:text-purple-400" 
+        />
       </div>
       
       <div className="mt-4 space-y-3">
