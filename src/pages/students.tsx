@@ -53,7 +53,7 @@ const StudentsPage = () => {
     handleSaveSupplements
   } = useStudents();
   
-  const { historyEntries, addHistoryEntry } = useStudentHistory();
+  const { historyEntries, addHistoryEntry, clearHistory } = useStudentHistory();
   const { refreshTrigger, triggerRefresh, lastRefresh } = useStudentRefresh();
 
   const {
@@ -131,7 +131,6 @@ const StudentsPage = () => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               handleClearSearch={handleClearSearch}
-              // حذف prop مربوط به viewMode و setViewMode
             />
           </div>
           
@@ -148,7 +147,7 @@ const StudentsPage = () => {
             onDownload={(student) => {}}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
-            viewMode="table" // ثابت به حالت جدولی تنظیم شد
+            viewMode="table"
             isProfileComplete={isProfileComplete}
             sortField={sortField}
             sortOrder={sortOrder}
@@ -158,7 +157,8 @@ const StudentsPage = () => {
           <TabsContent value="history" className="flex-1">
             <StudentHistory 
               students={students} 
-              historyEntries={historyEntries} 
+              historyEntries={historyEntries}
+              onClearHistory={clearHistory} 
             />
           </TabsContent>
         </Tabs>
