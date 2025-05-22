@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from "react";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
@@ -12,11 +11,12 @@ import { PageContainer } from "@/components/ui/page-container";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
-// Import our new components and hooks
+// Import from the correct paths
 import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
 import StudentTabControls from "./students/components/StudentTabControls";
 import StudentSearchControls from "./students/components/StudentSearchControls";
-import StudentTableView from "./students/components/StudentTableView";
+// Import from the list-views folder instead of local components
+import { StudentTableView } from "@/components/students/list-views";
 import { useStudentRefresh } from "./students/hooks/useStudentRefresh";
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
 
@@ -119,9 +119,8 @@ const StudentsPage = () => {
           </div>
           
           <StudentTableView 
-            viewMode={viewMode}
-            sortedAndFilteredStudents={sortedAndFilteredStudents}
             students={students}
+            sortedAndFilteredStudents={sortedAndFilteredStudents}
             searchQuery={searchQuery}
             refreshTrigger={refreshTrigger}
             onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
@@ -132,6 +131,8 @@ const StudentsPage = () => {
             onDownload={(student) => {}}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
+            viewMode={viewMode}
+            isProfileComplete={isProfileComplete}
           />
           
           <TabsContent value="history" className="flex-1">
