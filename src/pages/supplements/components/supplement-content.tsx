@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Supplement } from '@/types/supplement';
-import { SupplementList } from '@/components/supplements/list';
+import { SupplementList } from '@/components/supplements/SupplementList';
 
 interface SupplementContentProps {
   supplements: Supplement[];
