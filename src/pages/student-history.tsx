@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { StudentHistory } from "@/components/students/StudentHistory";
 import { useStudents } from "@/hooks/students";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
+import { useStudentRefresh } from "@/hooks/useStudentRefresh";
 import { PageContainer } from "@/components/ui/page-container";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ArrowLeft } from "lucide-react";
 
 const StudentHistoryPage = () => {
-  const { students, refreshTrigger } = useStudents();
+  const { students } = useStudents();
+  const { refreshTrigger } = useStudentRefresh();
   const { historyEntries, clearHistory } = useStudentHistory();
 
   // بروزرسانی تاریخچه هر زمان که تغییری در شاگردان ایجاد می‌شود
