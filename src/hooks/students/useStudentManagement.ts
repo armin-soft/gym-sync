@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
@@ -192,19 +191,19 @@ export const useStudentManagement = () => {
       const timestamp = new Date().toISOString();
       
       if (selectedStudent) {
-        console.log(`Updating student: ${selectedStudent.name}`);
+        console.log(`Updating student: ${selectedStudent.name} with ID: ${selectedStudent.id}`);
         updatedStudents = students.map(s => s.id === selectedStudent.id 
           ? { 
-              ...s, 
-              ...data, 
-              exercises: s.exercises || [], 
-              exercisesDay1: s.exercisesDay1 || [],
-              exercisesDay2: s.exercisesDay2 || [],
-              exercisesDay3: s.exercisesDay3 || [],
-              exercisesDay4: s.exercisesDay4 || [],
-              meals: s.meals || [], 
-              supplements: s.supplements || [], 
-              vitamins: s.vitamins || [],
+              ...selectedStudent, // Keep existing properties
+              ...data, // Update with new data
+              exercises: selectedStudent.exercises || [], 
+              exercisesDay1: selectedStudent.exercisesDay1 || [],
+              exercisesDay2: selectedStudent.exercisesDay2 || [],
+              exercisesDay3: selectedStudent.exercisesDay3 || [],
+              exercisesDay4: selectedStudent.exercisesDay4 || [],
+              meals: selectedStudent.meals || [], 
+              supplements: selectedStudent.supplements || [], 
+              vitamins: selectedStudent.vitamins || [],
               lastUpdate: timestamp
             } 
           : s

@@ -24,7 +24,17 @@ const StudentFormDialog: React.FC<StudentFormDialogProps> = ({
       <DialogContent className="p-0 border-none bg-transparent shadow-none max-w-3xl">
         <StudentDialogContent
           student={student || undefined}
-          onSave={onSave}
+          onSave={(data) => {
+            // When we save, we need to ensure we maintain the student ID when editing
+            if (student && isEditing) {
+              onSave({
+                ...data,
+                id: student.id // Ensure we maintain the original ID when editing
+              });
+            } else {
+              onSave(data);
+            }
+          }}
           onCancel={() => onOpenChange(false)}
         />
       </DialogContent>

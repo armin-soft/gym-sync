@@ -32,12 +32,13 @@ export function useStudentEvents(
   // ذخیره شاگرد با ثبت در تاریخچه
   const handleSaveWithHistory = useCallback((data: Omit<Student, "id" | "exercises" | "exercisesDay1" | "exercisesDay2" | "exercisesDay3" | "exercisesDay4" | "meals" | "supplements" | "vitamins">, selectedStudent?: Student) => {
     const timestamp = Date.now();
+    // Here's the fix: explicitly pass selectedStudent to handleSave
     const isSuccess = handleSave(data, selectedStudent);
     
     if (isSuccess) {
       const actionType = selectedStudent ? 'edit' : 'add';
       const studentName = selectedStudent ? selectedStudent.name : data.name;
-      const studentImage = selectedStudent?.picture || data.picture;
+      const studentImage = selectedStudent?.image || data.image;
       const description = selectedStudent 
         ? `اطلاعات ${studentName} ویرایش شد` 
         : `شاگرد جدید ${studentName} اضافه شد`;

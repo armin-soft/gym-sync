@@ -18,7 +18,7 @@ export interface StudentDialogManagerRef {
 }
 
 interface StudentDialogManagerProps {
-  onSave: (student: Student) => void;
+  onSave: (student: Student, selectedStudent?: Student) => void;
   onSaveExercises?: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
   onSaveDiet?: (mealIds: number[], studentId: number, dayNumber?: number) => boolean;
   onSaveSupplements?: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
@@ -87,7 +87,8 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
           student={selectedStudent}
           isEditing={isEditing}
           onSave={(updatedStudent) => {
-            onSave(updatedStudent);
+            // Fix: Pass the selectedStudent when editing
+            onSave(updatedStudent, selectedStudent);
             setFormDialogOpen(false);
           }}
         />
