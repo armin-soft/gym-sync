@@ -11,8 +11,6 @@ interface StudentGridViewProps {
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
   onAddExercise: (student: Student) => void;
-  onAddDiet: (student: Student) => void;
-  onAddSupplement: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
   isProfileComplete: boolean;
@@ -24,8 +22,6 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
   onEdit,
   onDelete,
   onAddExercise,
-  onAddDiet,
-  onAddSupplement,
   onAddStudent,
   onClearSearch,
   isProfileComplete
@@ -81,8 +77,6 @@ export const StudentGridView: React.FC<StudentGridViewProps> = ({
                 console.log("GridView: onAddExercise called for student:", student.name);
                 onAddExercise(student);
               }}
-              onAddDiet={() => onAddDiet(student)}
-              onAddSupplement={() => onAddSupplement(student)}
               isProfileComplete={isProfileComplete}
             />
           </motion.div>

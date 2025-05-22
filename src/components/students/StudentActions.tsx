@@ -19,9 +19,6 @@ interface StudentActionsProps {
   onEdit?: (student: Student) => void;
   onDelete?: (id: number) => void;
   onAddExercise: (student: Student) => void;
-  onAddDiet?: (student: Student) => void;
-  onAddSupplement?: (student: Student) => void;
-  onDownload?: (student: Student) => void;
   isCard?: boolean;
 }
 
