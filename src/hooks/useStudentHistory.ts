@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Student } from '@/components/students/StudentTypes';
 import { safeJSONParse, safeJSONSave } from '@/utils/database/index';
 
@@ -15,12 +15,15 @@ export interface HistoryEntry {
   description: string;
 }
 
+const HISTORY_STORAGE_KEY = 'studentHistory';
+
 export function useStudentHistory() {
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
 
   // Load history from localStorage
   useEffect(() => {
-    const loadedHistory = safeJSONParse<HistoryEntry[]>('studentHistory', []);
+    console.log("Loading history from localStorage");
+    const loadedHistory = safeJSONParse<HistoryEntry[]>(HISTORY_STORAGE_KEY, []);
     if (Array.isArray(loadedHistory)) {
       // Convert any legacy entries to the new format if needed
       const normalizedEntries = loadedHistory.map(entry => ({
@@ -30,24 +33,31 @@ export function useStudentHistory() {
         description: entry.description || entry.details
       }));
       setHistoryEntries(normalizedEntries);
+      console.log(`Loaded ${normalizedEntries.length} history entries`);
     }
   }, []);
 
   // Add new entry to history
-  const addHistoryEntry = (entry: HistoryEntry) => {
+  const addHistoryEntry = useCallback((entry: HistoryEntry) => {
+    console.log("Adding new history entry:", entry);
     // Update state with new entry
     setHistoryEntries(prevEntries => {
       const updatedEntries = [entry, ...prevEntries].slice(0, 100); // Keep only the last 100 entries
-      safeJSONSave('studentHistory', updatedEntries);
+      
+      // مهم: ذخیره تاریخچه در localStorage
+      safeJSONSave(HISTORY_STORAGE_KEY, updatedEntries);
+      console.log(`Saved ${updatedEntries.length} history entries to localStorage`);
+      
       return updatedEntries;
     });
-  };
+  }, []);
 
   // Clear history entries
-  const clearHistory = () => {
+  const clearHistory = useCallback(() => {
+    console.log("Clearing all history entries");
     setHistoryEntries([]);
-    safeJSONSave('studentHistory', []);
-  };
+    safeJSONSave(HISTORY_STORAGE_KEY, []);
+  }, []);
 
   return {
     historyEntries,

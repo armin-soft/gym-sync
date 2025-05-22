@@ -38,7 +38,12 @@ export function useStudentEvents(
     if (isSuccess) {
       const actionType = selectedStudent ? 'edit' : 'add';
       const studentName = selectedStudent ? selectedStudent.name : data.name;
-      const studentImage = selectedStudent?.image || data.image;
+      
+      // تصویر شاگرد می‌تواند در picture یا image باشد
+      const studentImage = selectedStudent ? 
+        (selectedStudent.picture || selectedStudent.image) : 
+        (data.picture || data.image);
+      
       const description = selectedStudent 
         ? `اطلاعات ${studentName} ویرایش شد` 
         : `شاگرد جدید ${studentName} اضافه شد`;
@@ -80,8 +85,8 @@ export function useStudentEvents(
           timestamp,
           studentId: student.id,
           studentName: student.name,
-          studentImage: student.picture,
-          action: 'exercises',
+          studentImage: student.picture || student.image,
+          action: 'exercise',
           type: 'exercise',
           description,
           details: JSON.stringify({
@@ -113,7 +118,7 @@ export function useStudentEvents(
           timestamp,
           studentId: student.id,
           studentName: student.name,
-          studentImage: student.picture,
+          studentImage: student.picture || student.image,
           action: 'diet',
           type: 'diet',
           description,
@@ -147,7 +152,7 @@ export function useStudentEvents(
           timestamp,
           studentId: student.id,
           studentName: student.name,
-          studentImage: student.picture,
+          studentImage: student.picture || student.image,
           action: 'supplements',
           type: 'supplement',
           description,
@@ -179,7 +184,7 @@ export function useStudentEvents(
         timestamp,
         studentId: id,
         studentName: student.name,
-        studentImage: student.picture,
+        studentImage: student.picture || student.image,
         action: 'delete',
         type: 'delete',
         description,

@@ -14,7 +14,6 @@ interface StudentsDialogSectionProps {
   meals: any[];
   supplements: any[];
   students: Student[];
-  addHistoryEntry: (student: Student, type: string, description: string) => void;
 }
 
 export const StudentsDialogSection: React.FC<StudentsDialogSectionProps> = ({
@@ -26,66 +25,15 @@ export const StudentsDialogSection: React.FC<StudentsDialogSectionProps> = ({
   exercises,
   meals,
   supplements,
-  students,
-  addHistoryEntry
+  students
 }) => {
   return (
     <StudentDialogManager
       ref={dialogRef}
-      onSave={(data) => {
-        const result = onSave(data);
-        if (result) {
-          const newStudent = { ...data, id: Date.now() } as Student;
-          addHistoryEntry(
-            newStudent,
-            'edit',
-            `شاگرد جدید ${data.name} افزوده شد`
-          );
-        }
-        return result;
-      }}
-      onSaveExercises={(exercisesData, studentId, dayNumber) => {
-        const result = onSaveExercises(exercisesData, studentId, dayNumber);
-        if (result) {
-          const student = students.find(s => s.id === studentId);
-          if (student) {
-            addHistoryEntry(
-              student,
-              'exercise',
-              `برنامه تمرینی ${dayNumber ? `روز ${dayNumber} ` : ''}برای ${student.name} بروزرسانی شد`
-            );
-          }
-        }
-        return result;
-      }}
-      onSaveDiet={(mealIds, studentId, dayNumber) => {
-        const result = onSaveDiet(mealIds, studentId, dayNumber);
-        if (result) {
-          const student = students.find(s => s.id === studentId);
-          if (student) {
-            addHistoryEntry(
-              student,
-              'diet',
-              `برنامه غذایی برای ${student.name} بروزرسانی شد`
-            );
-          }
-        }
-        return result;
-      }}
-      onSaveSupplements={(data, studentId) => {
-        const result = onSaveSupplements(data, studentId);
-        if (result) {
-          const student = students.find(s => s.id === studentId);
-          if (student) {
-            addHistoryEntry(
-              student,
-              'supplement',
-              `برنامه مکمل و ویتامین برای ${student.name} بروزرسانی شد`
-            );
-          }
-        }
-        return result;
-      }}
+      onSave={onSave}
+      onSaveExercises={onSaveExercises}
+      onSaveDiet={onSaveDiet}
+      onSaveSupplements={onSaveSupplements}
       exercises={exercises}
       meals={meals}
       supplements={supplements}

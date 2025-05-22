@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { StudentHistory } from "@/components/students/StudentHistory";
 import { useStudents } from "@/hooks/students";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
@@ -10,15 +10,20 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ArrowLeft } from "lucide-react";
 
 const StudentHistoryPage = () => {
-  const { students } = useStudents();
+  const { students, refreshTrigger } = useStudents();
   const { historyEntries, clearHistory } = useStudentHistory();
+
+  // بروزرسانی تاریخچه هر زمان که تغییری در شاگردان ایجاد می‌شود
+  useEffect(() => {
+    console.log("History entries updated:", historyEntries.length);
+  }, [historyEntries, refreshTrigger]);
 
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className="w-full h-full flex flex-col mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 md:py-6">
         <PageHeader 
           title="تاریخچه شاگردان" 
-          description="نمایش سابقه تغییرات شاگردان"
+          description={`نمایش سابقه تغییرات شاگردان (${historyEntries.length} مورد)`}
           actions={
             <Link to="/students">
               <Button variant="outline" className="flex items-center gap-2">
