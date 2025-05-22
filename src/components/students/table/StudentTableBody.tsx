@@ -69,6 +69,7 @@ export const StudentTableBody: React.FC<StudentTableBodyProps> = ({
               damping: 30,
               delay: index * 0.03
             }}
+            className="bg-white dark:bg-slate-900/60 backdrop-blur-sm hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
           >
             <StudentTableRow
               student={student}

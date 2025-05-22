@@ -1,18 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { Table } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
+import { Table } from "@/components/ui/table";
 import { StudentTableHeader } from "./table/StudentTableHeader";
 import { StudentTableBody } from "./table/StudentTableBody";
-import { StudentTableEmpty } from "./table/StudentTableEmpty";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 import { LoadingState } from "./table/LoadingState";
 
 interface StudentTableProps {
@@ -55,7 +47,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({
   onSortChange
 }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const deviceInfo = useDeviceInfo();
 
   // Reset loading state when data or view changes
   useEffect(() => {

@@ -1,9 +1,9 @@
 
 import React from "react";
-import { TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { motion } from "framer-motion";
-import { UserRound, Plus } from "lucide-react";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { PlusCircle, Search, Users } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface StudentTableEmptyProps {
   columnsCount: number;
@@ -14,57 +14,63 @@ interface StudentTableEmptyProps {
 
 export const StudentTableEmpty: React.FC<StudentTableEmptyProps> = ({
   columnsCount,
-  searchQuery = "",
+  searchQuery,
   onAddStudent,
-  onClearSearch
+  onClearSearch,
 }) => {
+  const isSearching = searchQuery && searchQuery.length > 0;
+
   return (
-    <TableBody>
-      <TableRow>
-        <TableCell colSpan={columnsCount} className="h-64 text-center p-0">
-          <motion.div 
-            className="flex flex-col items-center justify-center h-full py-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="relative mb-4">
-              <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-xl opacity-60"></div>
-              <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center border border-blue-100 dark:border-blue-800/30 shadow-inner">
-                <UserRound className="h-10 w-10 text-blue-500 dark:text-blue-400" />
-              </div>
-            </div>
+    <TableRow>
+      <TableCell colSpan={columnsCount} className="h-80 text-center p-0">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center justify-center h-full py-16 px-4 bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm"
+        >
+          <div className="bg-white dark:bg-slate-800 w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-lg">
+            {isSearching ? (
+              <Search className="h-10 w-10 text-slate-400 dark:text-slate-500" />
+            ) : (
+              <Users className="h-10 w-10 text-slate-400 dark:text-slate-500" />
+            )}
+          </div>
 
-            <h3 className="text-xl font-medium mb-2 text-slate-800 dark:text-slate-200">
-              {searchQuery ? "هیچ شاگردی پیدا نشد" : "هنوز هیچ شاگردی ثبت نشده است"}
-            </h3>
-            
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md">
-              {searchQuery 
-                ? "جستجوی شما با هیچ شاگردی مطابقت ندارد. لطفا عبارت دیگری را جستجو کنید یا فیلترها را پاک کنید." 
-                : "برای شروع، شاگرد جدیدی اضافه کنید. اطلاعات شاگردان شما در اینجا نمایش داده خواهد شد."}
-            </p>
+          <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
+            {isSearching ? "موردی یافت نشد" : "هنوز شاگردی ثبت نشده است"}
+          </h3>
 
-            {searchQuery ? (
+          <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-md text-center">
+            {isSearching
+              ? `هیچ موردی با عبارت «${searchQuery}» یافت نشد. لطفاً جستجوی دیگری را امتحان کنید یا شاگرد جدیدی اضافه کنید.`
+              : "برای شروع، یک شاگرد جدید اضافه کنید. شما می‌توانید اطلاعات شاگردان، برنامه‌های ورزشی و رژیم غذایی آنها را مدیریت کنید."}
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            {isSearching && onClearSearch && (
               <Button 
                 variant="outline" 
-                onClick={onClearSearch} 
-                className="rounded-full px-6 py-5 h-10 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-md hover:shadow-lg transition-all duration-300"
+                onClick={onClearSearch}
+                className="border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
+                <Search className="mr-2 h-4 w-4" />
                 پاک کردن جستجو
               </Button>
-            ) : (
+            )}
+            
+            {onAddStudent && (
               <Button 
                 onClick={onAddStudent}
-                className="rounded-full px-6 py-5 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 flex items-center gap-2"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0"
               >
-                <Plus className="h-4 w-4" />
-                افزودن شاگرد جدید
+                <PlusCircle className="mr-2 h-4 w-4" />
+                {isSearching ? "افزودن شاگرد جدید" : "شاگرد اول را اضافه کنید"}
               </Button>
             )}
-          </motion.div>
-        </TableCell>
-      </TableRow>
-    </TableBody>
+          </div>
+        </motion.div>
+      </TableCell>
+    </TableRow>
   );
 };

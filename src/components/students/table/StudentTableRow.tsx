@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
 
 interface StudentTableRowProps {
   student: Student;
@@ -35,7 +36,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
     <>
       <TableCell className="p-2">
         <div className="flex items-center justify-center">
-          <Avatar>
+          <Avatar className="h-10 w-10 border-2 border-white/20 shadow-lg">
             <AvatarImage src={student.image} alt={student.name} />
             <AvatarFallback><UserRound className="h-4 w-4" /></AvatarFallback>
           </Avatar>
@@ -46,22 +47,36 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
         <div className="font-medium">{student.name}</div>
       </TableCell>
       
-      <TableCell className="text-center">{student.phone}</TableCell>
+      <TableCell className="text-center">{toPersianNumbers(student.phone)}</TableCell>
       
-      <TableCell className="text-center">{student.height}</TableCell>
+      <TableCell className="text-center">
+        <div className="flex flex-col">
+          <span>{toPersianNumbers(student.height)}</span>
+          <span className="text-xs text-muted-foreground">سانتی‌متر</span>
+        </div>
+      </TableCell>
       
-      <TableCell className="text-center">{student.weight}</TableCell>
+      <TableCell className="text-center">
+        <div className="flex flex-col">
+          <span>{toPersianNumbers(student.weight)}</span>
+          <span className="text-xs text-muted-foreground">کیلوگرم</span>
+        </div>
+      </TableCell>
       
-      <TableCell className="text-center">{student.payment}</TableCell>
+      <TableCell className="text-center">
+        <span className="inline-block bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/30 px-2.5 py-1 rounded-lg text-purple-700 dark:text-purple-300 font-medium text-sm">
+          {formatPrice(student.payment)}
+        </span>
+      </TableCell>
       
       <TableCell className="text-center">
         {isProfileComplete ? (
-          <Badge variant="outline" className="gap-2">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+          <Badge variant="outline" className="gap-2 bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:border-green-700/30 dark:text-green-400">
+            <CheckCircle className="h-3.5 w-3.5 text-green-500" />
             کامل
           </Badge>
         ) : (
-          <Badge variant="destructive" className="gap-2">
+          <Badge variant="outline" className="gap-2 bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:border-amber-700/30 dark:text-amber-400">
             ناقص
           </Badge>
         )}
@@ -72,22 +87,22 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
           {/* Mobile view: dropdown menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                 <Menu className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-40 bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg border border-slate-200/70 dark:border-slate-700/70">
               {onEdit && (
-                <DropdownMenuItem onClick={() => onEdit(student)}>
+                <DropdownMenuItem onClick={() => onEdit(student)} className="cursor-pointer">
                   <Edit className="h-3.5 w-3.5 mr-2" />
                   ویرایش
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => onAddExercise(student)}>
+              <DropdownMenuItem onClick={() => onAddExercise(student)} className="cursor-pointer">
                 <CalendarDays className="h-3.5 w-3.5 mr-2" />
                 برنامه
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(student.id)}>
+              <DropdownMenuItem onClick={() => onDelete(student.id)} className="cursor-pointer text-red-600 dark:text-red-400">
                 <Trash2 className="h-3.5 w-3.5 mr-2" />
                 حذف
               </DropdownMenuItem>

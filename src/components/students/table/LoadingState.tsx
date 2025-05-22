@@ -2,13 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-interface LoadingStateProps {
-  message?: string;
-}
-
-export const LoadingState: React.FC<LoadingStateProps> = ({ 
-  message = "در حال بارگذاری..." 
-}) => {
+export const LoadingState = () => {
   const loadingVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.3 } },
@@ -25,13 +19,20 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       className="min-h-[400px] flex items-center justify-center"
     >
       <div className="flex flex-col items-center">
-        <div className="relative w-16 h-16">
-          <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-slate-100 dark:border-slate-700"></div>
-          <div className="absolute top-0 left-0 w-full h-full rounded-full border-t-4 border-blue-500 animate-spin"></div>
+        <div className="relative flex items-center justify-center">
+          <div className="absolute w-16 h-16 rounded-full border-4 border-slate-100 dark:border-slate-700 opacity-20"></div>
+          <div className="absolute w-16 h-16 rounded-full border-4 border-transparent border-t-purple-500 border-r-purple-500 animate-spin"></div>
+          <div className="absolute w-10 h-10 rounded-full border-4 border-transparent border-t-indigo-500 border-r-indigo-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '0.7s' }}></div>
+          <div className="absolute w-6 h-6 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full animate-pulse"></div>
         </div>
-        <p className="mt-4 text-slate-500 dark:text-slate-400">
-          {message}
-        </p>
+        <motion.p 
+          className="mt-6 text-slate-600 dark:text-slate-300 font-medium"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          در حال بارگذاری اطلاعات...
+        </motion.p>
       </div>
     </motion.div>
   );
