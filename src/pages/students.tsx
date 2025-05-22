@@ -82,7 +82,7 @@ const StudentsPage = () => {
     handleClearSearch
   } = useStudentFiltering(students);
 
-  // Handler for opening the program manager
+  // Handler for opening the program manager - all programs are managed in one place
   const handleOpenProgramManager = (student: Student) => {
     setSelectedStudentForProgram(student);
   };
@@ -147,8 +147,6 @@ const StudentsPage = () => {
             onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
             onDelete={handleDeleteWithHistory}
             onAddExercise={handleOpenProgramManager}
-            onAddDiet={handleOpenProgramManager}
-            onAddSupplement={handleOpenProgramManager}
             onDownload={(student) => {}}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}

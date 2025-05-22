@@ -12,16 +12,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/toast/toast-utils";
 
 interface StudentActionsProps {
   student: Student;
   onEdit?: (student: Student) => void;
   onDelete?: (id: number) => void;
   onAddExercise: (student: Student) => void;
-  onAddDiet?: (student: Student) => void;
-  onAddSupplement?: (student: Student) => void;
-  onDownload?: (student: Student) => void;
   isCard?: boolean;
 }
 
@@ -38,7 +35,7 @@ export const StudentActions = ({
 
   // تخصیص برنامه
   const handleProgramClick = () => {
-    console.log("StudentActions: Add Exercise clicked for student:", student.name);
+    console.log("StudentActions: Add Program clicked for student:", student.name);
     if (onAddExercise) {
       onAddExercise(student);
     }

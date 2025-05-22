@@ -12,8 +12,6 @@ import {
   FileText,
   Trash,
   Edit,
-  Apple,
-  Pill,
 } from "lucide-react";
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
@@ -25,8 +23,6 @@ interface StudentContextMenuProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onAddExercise: () => void;
-  onAddDiet?: () => void;
-  onAddSupplement?: () => void;
   onDownload?: () => void;
   isProfileComplete: boolean;
 }
@@ -37,8 +33,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   onEdit,
   onDelete,
   onAddExercise,
-  onAddDiet,
-  onAddSupplement,
   onDownload,
   isProfileComplete
 }) => {
@@ -46,7 +40,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   console.log("Rendering StudentContextMenu for:", student.name);
 
   const handleProgramClick = () => {
-    console.log("Context Menu: Add Exercise clicked for student:", student.name);
+    console.log("Context Menu: Add Program clicked for student:", student.name);
     if (onAddExercise) onAddExercise();
   };
   
@@ -56,14 +50,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   
   const handleDeleteClick = () => {
     if (onDelete) onDelete();
-  };
-  
-  const handleDietClick = () => {
-    if (onAddDiet) onAddDiet();
-  };
-  
-  const handleSupplementClick = () => {
-    if (onAddSupplement) onAddSupplement();
   };
   
   const handleDownloadClick = () => {
@@ -90,28 +76,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
               index={0}
               variant="purple"
             />
-            
-            {onAddDiet && (
-              <ContextMenuItemWithAnimation
-                icon={<Apple className="h-4 w-4" />}
-                title="افزودن رژیم غذایی"
-                subtitle="مدیریت برنامه غذایی"
-                onClick={handleDietClick}
-                index={1}
-                variant="green"
-              />
-            )}
-            
-            {onAddSupplement && (
-              <ContextMenuItemWithAnimation
-                icon={<Pill className="h-4 w-4" />}
-                title="افزودن مکمل"
-                subtitle="مدیریت مکمل‌های ورزشی"
-                onClick={handleSupplementClick}
-                index={2}
-                variant="orange"
-              />
-            )}
           </ContextMenuSection>
           
           {/* Student Management Section */}
