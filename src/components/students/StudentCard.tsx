@@ -16,6 +16,8 @@ interface StudentCardProps {
   onEdit: () => void;
   onDelete: () => void;
   onAddExercise: () => void;
+  onAddDiet: () => void;
+  onAddSupplement: () => void;
   isProfileComplete: boolean;
   className?: string;
 }
@@ -25,6 +27,8 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   onEdit,
   onDelete,
   onAddExercise,
+  onAddDiet,
+  onAddSupplement,
   isProfileComplete,
   className
 }) => {
@@ -37,6 +41,8 @@ export const StudentCard: React.FC<StudentCardProps> = ({
       onEdit={onEdit}
       onDelete={onDelete}
       onAddExercise={onAddExercise}
+      onAddDiet={onAddDiet}
+      onAddSupplement={onAddSupplement}
       onDownload={undefined}
       isProfileComplete={isProfileComplete}
     >
