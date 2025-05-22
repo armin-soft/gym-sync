@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToastNotification } from "@/hooks/use-toast-notification";
 import { MealDialog } from "@/components/diet/MealDialog";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -16,7 +16,7 @@ const weekDays: WeekDay[] = ["شنبه", "یکشنبه", "دوشنبه", "سه �
 const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام"];
 
 const DietPage = () => {
-  const { toast } = useToast();
+  const { showSuccess, showError, showWarning, showInfo } = useToastNotification();
   
   const [meals, setMeals] = useState<Meal[]>(() => {
     try {
@@ -38,22 +38,14 @@ const DietPage = () => {
       setMeals(newMeals);
     } catch (error) {
       console.error('Error saving meals:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا در ذخیره سازی",
-        description: "مشکلی در ذخیره برنامه غذایی پیش آمده است"
-      });
+      showError("خطا در ذخیره سازی", "مشکلی در ذخیره برنامه غذایی پیش آمده است");
     }
   };
   
   const handleDelete = (id: number) => {
     const updatedMeals = meals.filter(meal => meal.id !== id);
     saveMeals(updatedMeals);
-    toast({
-      title: "حذف موفق",
-      description: "وعده غذایی با موفقیت حذف شد",
-      className: "bg-gradient-to-r from-red-500 to-red-600 text-white border-none"
-    });
+    showSuccess("حذف موفق", "وعده غذایی با موفقیت حذف شد");
   };
   
   const handleEdit = (meal: Meal) => {
@@ -73,22 +65,14 @@ const DietPage = () => {
         ...data,
         id: m.id
       } : m);
-      toast({
-        title: "ویرایش موفق",
-        description: "وعده غذایی با موفقیت ویرایش شد",
-        className: "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none"
-      });
+      showSuccess("ویرایش موفق", "وعده غذایی با موفقیت ویرایش شد");
     } else {
       const newMeal = {
         ...data,
         id: Math.max(0, ...meals.map(m => m.id)) + 1
       };
       newMeals = [...meals, newMeal];
-      toast({
-        title: "افزودن موفق",
-        description: "وعده غذایی جدید با موفقیت اضافه شد",
-        className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
-      });
+      showSuccess("افزودن موفق", "وعده غذایی جدید با موفقیت اضافه شد");
     }
     saveMeals(newMeals);
     setIsDialogOpen(false);
@@ -169,6 +153,33 @@ const DietPage = () => {
           mealTypes={mealTypes} 
           weekDays={weekDays} 
         />
+
+        <div className="fixed bottom-4 right-4 flex flex-col gap-2">
+          <Button 
+            onClick={() => showSuccess("عملیات موفق", "این یک پیام موفقیت است")}
+            className="bg-green-500 hover:bg-green-600"
+          >
+            نمایش پیام موفقیت
+          </Button>
+          <Button 
+            onClick={() => showError("خطا", "این یک پیام خطا است")}
+            className="bg-red-500 hover:bg-red-600"
+          >
+            نمایش پیام خطا
+          </Button>
+          <Button 
+            onClick={() => showWarning("هشدار", "این یک پیام هشدار است")}
+            className="bg-amber-500 hover:bg-amber-600"
+          >
+            نمایش پیام هشدار
+          </Button>
+          <Button 
+            onClick={() => showInfo("اطلاعات", "این یک پیام اطلاعات است")}
+            className="bg-blue-500 hover:bg-blue-600"
+          >
+            نمایش پیام اطلاعات
+          </Button>
+        </div>
       </motion.div>
     </div>
   );

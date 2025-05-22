@@ -1,5 +1,6 @@
 
 import { toast } from "@/hooks/toast/toast-utils";
+import { ToastVariant } from "./toast/toast-types";
 
 /**
  * Unified toast notification hook for application-wide notifications

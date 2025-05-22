@@ -53,7 +53,7 @@ export function toast({ ...props }: { variant?: ToastVariant } & Toast) {
   // Auto dismiss after TOAST_REMOVE_DELAY
   setTimeout(() => {
     dismiss()
-  }, 2000 - 100) // matches TOAST_REMOVE_DELAY - 100
+  }, 5000) // 5 seconds duration
 
   return {
     id,
