@@ -56,7 +56,6 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
       onDownload={onDownload}
       onAddStudent={onAddStudent}
       onClearSearch={onClearSearch}
-      viewMode={viewMode}
       isProfileComplete={isProfileComplete}
       sortField={sortField}
       sortOrder={sortOrder}

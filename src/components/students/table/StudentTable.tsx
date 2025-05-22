@@ -20,7 +20,6 @@ interface StudentTableProps {
   onDownload?: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
-  viewMode: "table"; // Only table mode is supported now
   isProfileComplete: boolean;
   sortField?: string;
   sortOrder?: "asc" | "desc";
