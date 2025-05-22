@@ -78,14 +78,14 @@ export function showUpdateNotification(): void {
       description: 'نسخه جدید برنامه در دسترس است.',
       variant: 'warning',
       action: {
-        label: 'بروزرسانی',
         onClick: () => {
           if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
               type: 'SKIP_WAITING'
             });
           }
-        }
+        },
+        label: 'بروزرسانی'
       }
     });
   }).catch(() => {

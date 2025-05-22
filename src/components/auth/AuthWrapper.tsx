@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { AuthenticatedContent } from "./AuthenticatedContent";
 import { LoginContainer } from "./login/LoginContainer";
 import { defaultProfile } from "@/types/trainer";
-import { successToast } from "@/components/ui/notification-toast";
+import { successToast } from "@/hooks/use-toast";
 
 interface AuthWrapperProps {
   children: React.ReactNode;

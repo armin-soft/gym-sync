@@ -1,16 +1,52 @@
 
 import { Toast, ToastVariant } from "./toast-types";
 import { dispatch, genId } from "./toast-reducer";
+import * as React from "react";
+import { ToastActionElement } from "@/components/ui/toast";
 
 // Track the last notification to prevent duplicates
 const toastHistory = new Map<string, number>();
 
-// Toast function to show notifications
-export function toast({ ...props }: { variant?: ToastVariant } & Toast) {
-  const id = genId()
+// Define the modern action type that matches what the toast system expects
+interface ToastActionProps {
+  label: string;
+  onClick: () => void;
+}
+
+// Helper function to convert simple action to proper ToastActionElement
+const createActionElement = (action: ToastActionProps): ToastActionElement => {
+  return React.createElement(
+    "button",  // This will be replaced by ToastAction by the toast system
+    {
+      onClick: action.onClick,
+      className: "toast-action",
+    },
+    action.label
+  ) as ToastActionElement;
+};
+
+// Toast function to show notifications - compatible with both interfaces
+export function toast(options: {
+  title: string;
+  description?: string;
+  variant?: ToastVariant;
+  duration?: number;
+  action?: ToastActionProps;
+} | (Toast & { variant?: ToastVariant })): { id: string; dismiss: () => void; update: (props: Toast) => void } {
+  
+  const id = genId();
+  
+  // Normalize the options to work with both formats
+  const normalizedProps: Toast = {
+    ...(options as any),
+    // Convert simple action object to proper React element if needed
+    action: options.action && 'label' in options.action 
+      ? createActionElement(options.action)
+      : options.action,
+  };
   
   // Create a unique key for this notification based on content
-  const toastKey = `${props.title}-${props.description}`;
+  const toastKey = `${normalizedProps.title}-${normalizedProps.description}`;
   const now = Date.now();
   
   // Check for duplicate notifications within a short time frame (1 second)
@@ -34,21 +70,21 @@ export function toast({ ...props }: { variant?: ToastVariant } & Toast) {
     dispatch({
       type: "UPDATE_TOAST",
       toast: { ...props, id },
-    })
+    });
     
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
 
   dispatch({
     type: "ADD_TOAST",
     toast: {
-      ...props,
+      ...normalizedProps,
       id,
       open: true,
       onOpenChange: (open) => {
-        if (!open) dismiss()
+        if (!open) dismiss();
       },
     },
-  })
+  });
 
   // Set window.showToast for backwards compatibility
   if (typeof window !== 'undefined' && !window.showToast) {
@@ -56,16 +92,16 @@ export function toast({ ...props }: { variant?: ToastVariant } & Toast) {
   }
 
   // Auto dismiss after TOAST_REMOVE_DELAY
-  const duration = typeof props.duration === 'number' ? props.duration : 5000;
+  const duration = typeof normalizedProps.duration === 'number' ? normalizedProps.duration : 5000;
   setTimeout(() => {
-    dismiss()
-  }, duration - 100) // matches TOAST_REMOVE_DELAY - 100
+    dismiss();
+  }, duration - 100); // matches TOAST_REMOVE_DELAY - 100
 
   return {
     id,
     dismiss,
     update,
-  }
+  };
 }
 
 // Standard toast variants
@@ -111,5 +147,5 @@ export function useToast() {
     infoToast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
     toasts: [] // This will be populated from the context provider
-  }
+  };
 }
