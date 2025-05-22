@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { StudentHistory } from "@/components/students/StudentHistory";
+import { StudentHistory } from "@/components/students/history";
 import { useStudents } from "@/hooks/students";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { useStudentRefresh } from "@/hooks/useStudentRefresh";

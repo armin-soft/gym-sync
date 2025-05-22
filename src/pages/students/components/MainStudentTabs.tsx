@@ -3,7 +3,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { History, Users } from "lucide-react";
 import { Student } from "@/components/students/StudentTypes";
-import { StudentHistory } from "@/components/students/StudentHistory";
+import { StudentHistory } from "@/components/students/history";
 import { HistoryEntry } from "@/hooks/useStudentHistory";
 import { StudentTableView } from "@/components/students/list-views";
 import StudentSearchControls from "./StudentSearchControls";
