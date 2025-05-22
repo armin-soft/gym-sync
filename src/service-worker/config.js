@@ -2,7 +2,7 @@
 // پیکربندی سرویس ورکر
 
 // نام کش با نسخه پروژه
-export const CACHE_NAME = 'gym-sync-v204';
+export const CACHE_NAME = 'gym-sync-v222';
 
 // فایل‌های اصلی برای کش کردن
 export const STATIC_ASSETS = [
@@ -27,7 +27,7 @@ export async function initializeConfig() {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
-    const version = manifest.version || '2.0.4';
+    const version = manifest.version || '2.2.2';
     const formattedCacheName = `gym-sync-v${version.replace(/\./g, '')}`;
     
     // @ts-ignore
