@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -8,6 +8,7 @@ import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { initializeServiceWorker } from "@/utils/RegisterServiceWorker";
 import "./App.css";
 
 // بهینه‌سازی React Query با استفاده از گزینه‌های بهتر برای سرعت بیشتر
@@ -18,12 +19,16 @@ const queryClient = new QueryClient({
       retry: 0, // عدم تلاش مجدد برای سرعت بیشتر
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      // Removed suspense: true as it's not supported in this version
     },
   },
 });
 
 function AppContent() {
+  // راه‌اندازی سرویس ورکر در لود اولیه
+  useEffect(() => {
+    initializeServiceWorker().catch(console.error);
+  }, []);
+
   return (
     <AuthWrapper>
       <Layout>

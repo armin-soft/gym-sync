@@ -1,6 +1,13 @@
 
-// Import from internal hooks implementation
-import { useToast, toast } from "@/hooks/toast/toast-utils";
+// Re-export from central toast system for compatibility
+import { useToast, toast, successToast, errorToast, warningToast, infoToast } from "@/hooks/use-toast";
 
-// Export the hooks for use in components
-export { useToast, toast };
+// Export all toast functionality
+export { 
+  useToast, 
+  toast,
+  successToast,
+  errorToast,
+  warningToast,
+  infoToast
+};

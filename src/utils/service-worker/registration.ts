@@ -71,8 +71,9 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
 // نمایش اطلاعیه بروزرسانی
 export function showUpdateNotification(): void {
-  if (typeof window.showToast === 'function') {
-    window.showToast({
+  // استفاده از toast سیستم یکپارچه
+  import('@/hooks/toast/toast-utils').then(({ toast }) => {
+    toast({
       title: 'بروزرسانی جدید',
       description: 'نسخه جدید برنامه در دسترس است.',
       variant: 'warning',
@@ -87,7 +88,8 @@ export function showUpdateNotification(): void {
         }
       }
     });
-  } else {
+  }).catch(() => {
+    // اگر سیستم toast در دسترس نبود، از confirm استفاده میکنیم
     if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
       if (navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller.postMessage({
@@ -95,7 +97,7 @@ export function showUpdateNotification(): void {
         });
       }
     }
-  }
+  });
 }
 
 // تشخیص آفلاین بودن - بهینه شده
@@ -105,27 +107,35 @@ export function setupOfflineDetection(): void {
   function handleOnline() {
     document.documentElement.classList.remove(offlineClassName);
     
-    if (typeof window.showToast === 'function') {
-      window.showToast({
+    // استفاده از toast سیستم یکپارچه
+    import('@/hooks/toast/toast-utils').then(({ toast }) => {
+      toast({
         title: 'اتصال برقرار شد',
         description: 'شما مجدداً به اینترنت متصل شدید.',
         variant: 'success',
         duration: 3000
       });
-    }
+    }).catch(() => {
+      // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+      console.log('اتصال به اینترنت برقرار شد');
+    });
   }
   
   function handleOffline() {
     document.documentElement.classList.add(offlineClassName);
     
-    if (typeof window.showToast === 'function') {
-      window.showToast({
+    // استفاده از toast سیستم یکپارچه
+    import('@/hooks/toast/toast-utils').then(({ toast }) => {
+      toast({
         title: 'حالت آفلاین',
         description: 'شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.',
         variant: 'warning',
         duration: 5000
       });
-    }
+    }).catch(() => {
+      // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+      console.log('اتصال به اینترنت قطع شد');
+    });
   }
   
   // اضافه کردن شنونده‌ها فقط یک بار
@@ -138,7 +148,7 @@ export function setupOfflineDetection(): void {
   }
 }
 
-// تعریف نوع showToast در window
+// تعریف نوع showToast در window برای سازگاری با قبل
 declare global {
   interface Window {
     showToast?: (options: {

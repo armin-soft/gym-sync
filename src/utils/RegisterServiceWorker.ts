@@ -3,6 +3,7 @@
  * سیستم ثبت سرویس ورکر بهینه شده برای سرعت بارگذاری
  */
 import { registerServiceWorker, setupOfflineDetection } from './service-worker/registration';
+import { toast } from '@/hooks/use-toast';
 
 // تابع راه‌اندازی سرویس ورکر که از main.tsx فراخوانی می‌شود
 export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | null> {
@@ -12,6 +13,11 @@ export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | n
   }
   
   window.__serviceWorkerInitialized = true;
+  
+  // راه‌اندازی سیستم نوتیفیکیشن
+  if (typeof window !== 'undefined' && !window.showToast) {
+    window.showToast = toast;
+  }
   
   // بررسی پشتیبانی از سرویس ورکر
   if (!('serviceWorker' in navigator)) {
@@ -64,5 +70,15 @@ export function stopServiceWorkerUpdateCheck() {
 declare global {
   interface Window {
     __serviceWorkerInitialized?: boolean;
+    showToast?: (options: {
+      title: string;
+      description: string;
+      variant?: 'default' | 'success' | 'warning' | 'destructive';
+      duration?: number;
+      action?: {
+        label: string;
+        onClick: () => void;
+      };
+    }) => void;
   }
 }
