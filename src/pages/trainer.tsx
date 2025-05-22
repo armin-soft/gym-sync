@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import type { TrainerProfile } from "@/types/trainer";
@@ -8,12 +7,12 @@ import { PageContainer } from "@/components/ui/page-container";
 import { ProfileHeader } from "@/components/trainer/ProfileHeader";
 import { ProfileSidebar } from "@/components/trainer/ProfileSidebar";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { useToast } from "@/hooks/use-toast";
+import { useToastNotification } from "@/hooks/use-toast-notification";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TrainerProfile = () => {
-  const { toast } = useToast();
+  const { showSuccess, showError } = useToastNotification();
   const [profile, setProfile] = useState<TrainerProfile>({
     ...defaultProfile,
     image: defaultProfile.image || "/Assets/Image/Place-Holder.svg" // Ensure image always has a value
@@ -38,11 +37,10 @@ const TrainerProfile = () => {
       }
     } catch (error) {
       console.error('Error loading profile from localStorage:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا در بارگذاری اطلاعات",
-        description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
-      });
+      showError(
+        "خطا در بارگذاری اطلاعات",
+        "مشکلی در بارگذاری اطلاعات پیش آمده است"
+      );
     }
   }, []);
 
@@ -65,17 +63,16 @@ const TrainerProfile = () => {
       // Force update of any components that depend on the gym name
       window.dispatchEvent(new Event('storage'));
       
-      toast({
-        title: "ذخیره موفق",
-        description: "اطلاعات پروفایل با موفقیت ذخیره شد"
-      });
+      showSuccess(
+        "ذخیره موفق",
+        "اطلاعات پروفایل با موفقیت ذخیره شد"
+      );
     } catch (error) {
       console.error('Error saving profile to localStorage:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا در ذخیره اطلاعات",
-        description: "مشکلی در ذخیره اطلاعات پیش آمده است"
-      });
+      showError(
+        "خطا در ذخیره اطلاعات",
+        "مشکلی در ذخیره اطلاعات پیش آمده است"
+      );
     } finally {
       setIsSaving(false);
     }
