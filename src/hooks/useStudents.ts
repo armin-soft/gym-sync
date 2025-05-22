@@ -4,6 +4,7 @@ import { useStudentFiltering } from './useStudentFiltering';
 import { Student } from '@/components/students/StudentTypes';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { safeJSONParse } from '@/utils/database/index';
 
 export const useStudents = () => {
   const { 

@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from "react";
-import { safeJSONParse } from "@/utils/database";
+import { safeJSONParse } from "@/utils/database/index";
 
 /**
  * هوک برای بروزرسانی خودکار داده‌های دانشجو

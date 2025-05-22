@@ -108,7 +108,7 @@ const AppRoutes: React.FC = () => {
         }
       />
       
-      {/* اینجا مسیرهایی را که در منوی داشبورد استفاده می‌شوند اضافه می‌کنیم */}
+      {/* مسیرهای جایگزین برای لینک‌های منو */}
       <Route path="/Coach-Profile" element={<Navigate to="/trainer" replace />} />
       <Route path="/Students" element={<Navigate to="/students" replace />} />
       <Route path="/Student-History" element={<Navigate to="/student-history" replace />} />

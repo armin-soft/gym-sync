@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Student } from '@/components/students/StudentTypes';
-import { safeJSONParse, safeJSONSave } from '@/utils/database';
+import { safeJSONParse, safeJSONSave } from '@/utils/database/index';
 
 export interface HistoryEntry {
   id: number;
