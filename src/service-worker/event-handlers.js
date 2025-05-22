@@ -3,6 +3,7 @@
 import { initializeConfig } from './config.js';
 import { cacheInitialAssets, cleanupOldCaches, fetchWithCacheFallback } from './cache-core.js';
 import { createOfflineResponse, createCleanRequest } from './utils.js';
+import * as logger from './utils/logger.js';
 
 // راه‌اندازی تمام هندلرها
 export function registerEventHandlers() {
@@ -14,13 +15,15 @@ export function registerEventHandlers() {
     registerFetchHandler();
     registerMessageHandler();
     registerPeriodicSyncHandler();
+    
+    logger.info('تمام هندلرهای رویداد ثبت شدند');
   });
 }
 
 // هندلر نصب
 export function registerInstallHandler() {
   self.addEventListener('install', (event) => {
-    console.log('[Service Worker] نصب سرویس ورکر');
+    logger.info('نصب سرویس ورکر');
     
     // فعال‌سازی فوری
     self.skipWaiting();
@@ -30,7 +33,7 @@ export function registerInstallHandler() {
       // @ts-ignore
       cacheInitialAssets(self.CACHE_NAME, self.STATIC_ASSETS)
         .catch(error => {
-          console.error('[Service Worker] خطا در کش کردن:', error);
+          logger.error('خطا در کش کردن', error);
           // ادامه نصب حتی در صورت خطا
           return Promise.resolve();
         })
@@ -41,7 +44,7 @@ export function registerInstallHandler() {
 // هندلر فعال‌سازی
 export function registerActivateHandler() {
   self.addEventListener('activate', (event) => {
-    console.log('[Service Worker] فعال‌سازی سرویس ورکر');
+    logger.info('فعال‌سازی سرویس ورکر');
     
     // @ts-ignore
     event.waitUntil(
@@ -57,7 +60,7 @@ export function registerActivateHandler() {
           if (self.registration.navigationPreload) {
             // @ts-ignore
             await self.registration.navigationPreload.enable();
-            console.log('[Service Worker] Navigation preload فعال شد');
+            logger.info('Navigation preload فعال شد');
           }
         })(),
         
@@ -118,7 +121,7 @@ export function registerFetchHandler() {
       // @ts-ignore
       fetchWithCacheFallback(cleanRequest, self.CACHE_NAME)
         .catch(error => {
-          console.error(`[Service Worker] خطا در دریافت: ${cleanRequest.url}`, error);
+          logger.error(`خطا در دریافت: ${cleanRequest.url}`, error);
           
           // اگر منبع تصویر بود، تصویر پیش‌فرض را برگردان
           if (cleanRequest.url.match(/\.(jpg|jpeg|png|gif|svg)$/)) {
@@ -140,13 +143,13 @@ export function registerMessageHandler() {
     
     switch (event.data.type) {
       case 'SKIP_WAITING':
-        console.log('[Service Worker] درخواست اجرای فوری دریافت شد');
+        logger.info('درخواست اجرای فوری دریافت شد');
         // @ts-ignore
         self.skipWaiting();
         break;
         
       case 'CHECK_FOR_UPDATES':
-        console.log('[Service Worker] بررسی بروزرسانی‌ها');
+        logger.info('بررسی بروزرسانی‌ها');
         // @ts-ignore
         if (self.registration) {
           // @ts-ignore
@@ -155,13 +158,13 @@ export function registerMessageHandler() {
         break;
         
       case 'REFRESH_CACHE':
-        console.log('[Service Worker] درخواست بروزرسانی کش');
+        logger.info('درخواست بروزرسانی کش');
         // @ts-ignore
         cacheInitialAssets(self.CACHE_NAME, self.STATIC_ASSETS);
         break;
         
       default:
-        console.log(`[Service Worker] نوع پیام ناشناخته: ${event.data.type}`);
+        logger.info(`نوع پیام ناشناخته: ${event.data.type}`);
     }
   });
 }
@@ -174,7 +177,7 @@ export function registerPeriodicSyncHandler() {
     self.addEventListener('periodicsync', (event) => {
       // @ts-ignore
       if (event.tag === 'cache-update') {
-        console.log('[Service Worker] همگام‌سازی دوره‌ای');
+        logger.info('همگام‌سازی دوره‌ای');
         // @ts-ignore
         event.waitUntil(cacheInitialAssets(self.CACHE_NAME, self.STATIC_ASSETS));
       }
@@ -185,3 +188,5 @@ export function registerPeriodicSyncHandler() {
 // تزریق به فضای نام سراسری
 // @ts-ignore
 self.registerEventHandlers = registerEventHandlers;
+
+logger.info('ماژول event-handlers بارگذاری شد');

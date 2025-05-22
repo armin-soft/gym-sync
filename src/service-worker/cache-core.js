@@ -1,31 +1,32 @@
 
 // مدیریت کش سرویس ورکر
+import * as logger from './utils/logger.js';
 
 // کش کردن فایل‌های اصلی
 export async function cacheInitialAssets(cacheName, assets) {
   try {
     const cache = await caches.open(cacheName);
-    console.log('[Service Worker] کش کردن فایل‌های اصلی');
+    logger.info('کش کردن فایل‌های اصلی');
     
     // کش کردن فایل به فایل برای جلوگیری از شکست کامل عملیات
     const cachePromises = assets.map(url => {
       return fetch(new Request(url, { cache: 'reload' }))
         .then(response => {
           if (!response || response.status !== 200) {
-            console.log(`[Service Worker] خطا در کش: ${url} - وضعیت: ${response ? response.status : 'نامشخص'}`);
+            logger.info(`خطا در کش: ${url} - وضعیت: ${response ? response.status : 'نامشخص'}`);
             return;
           }
           return cache.put(url, response);
         })
         .catch(err => {
-          console.log(`[Service Worker] خطا در کش ${url}: ${err}`);
+          logger.error(`خطا در کش ${url}`, err);
           return Promise.resolve();
         });
     });
     
     return Promise.all(cachePromises);
   } catch (err) {
-    console.error('[Service Worker] خطا در کش اولیه:', err);
+    logger.error('خطا در کش اولیه', err);
     return Promise.resolve(); // ادامه نصب حتی در صورت خطا
   }
 }
@@ -37,7 +38,7 @@ export async function cleanupOldCaches(currentCacheName) {
   return Promise.all(
     cacheNames.map(cacheName => {
       if (cacheName !== currentCacheName && cacheName.startsWith('gym-sync-')) {
-        console.log(`[Service Worker] حذف کش قدیمی: ${cacheName}`);
+        logger.info(`حذف کش قدیمی: ${cacheName}`);
         return caches.delete(cacheName);
       }
     })
@@ -61,6 +62,7 @@ export function updateCacheInBackground(request, cacheName) {
 
 // بروزرسانی کامل کش
 export async function refreshCache(cacheName, assets) {
+  logger.info('بروزرسانی کامل کش');
   return cacheInitialAssets(cacheName, assets);
 }
 
@@ -88,7 +90,7 @@ export async function fetchWithCacheFallback(request, cacheName) {
     
     return networkResponse;
   } catch (error) {
-    console.error(`[Service Worker] خطا در دریافت: ${request.url}`, error);
+    logger.error(`خطا در دریافت: ${request.url}`, error);
     throw error; // انتقال خطا به هندلر
   }
 }
@@ -117,3 +119,5 @@ self.fetchWithCacheFallback = function(request) {
   // @ts-ignore
   return fetchWithCacheFallback(request, self.CACHE_NAME);
 };
+
+logger.info('ماژول cache-core بارگذاری شد');

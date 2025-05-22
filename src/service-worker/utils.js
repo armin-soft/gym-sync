@@ -1,5 +1,6 @@
 
 // توابع کمکی سرویس ورکر
+import * as logger from './utils/logger.js';
 
 // ایجاد پاسخ آفلاین
 export function createOfflineResponse(isNavigationRequest) {
@@ -114,3 +115,5 @@ export function createCleanRequest(request) {
 self.createOfflineResponse = createOfflineResponse;
 // @ts-ignore
 self.createCleanRequest = createCleanRequest;
+
+logger.info('ماژول utils بارگذاری شد');
