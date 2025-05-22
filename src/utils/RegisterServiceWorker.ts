@@ -32,7 +32,7 @@ export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | n
   });
 }
 
-// بروزرسانی خودکار سرویس ورکر در فواصل خیلی طولانی‌تر (8 ساعت)
+// بروزرسانی خودکار سرویس ورکر در فواصل طولانی‌تر (8 ساعت)
 let updateInterval: number | null = null;
 
 export function startServiceWorkerUpdateCheck() {
@@ -40,9 +40,9 @@ export function startServiceWorkerUpdateCheck() {
     clearInterval(updateInterval);
   }
   
-  // بررسی فقط یکبار در هر 8 ساعت برای کاهش بار شبکه و افزایش سرعت
+  // بررسی فقط یکبار در هر 8 ساعت برای کاهش بار شبکه
   updateInterval = window.setInterval(() => {
-    if (navigator.serviceWorker.controller) {
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
       navigator.serviceWorker.ready.then(registration => {
         registration.update().catch(() => {
           // خطا را نادیده بگیر

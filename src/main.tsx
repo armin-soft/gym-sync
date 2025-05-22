@@ -14,19 +14,16 @@ function startApp() {
     <App />
   );
   
-  // راه‌اندازی سرویس ورکر با تأخیر بیشتر و فقط در صورت نیاز
-  import('./utils/RegisterServiceWorker')
-    .then(({ initializeServiceWorker }) => {
-      // فقط در صورتی که آنلاین باشیم سرویس ورکر را راه اندازی کن
-      if (navigator.onLine) {
-        setTimeout(() => {
-          initializeServiceWorker().catch(console.error);
-        }, 5000); // تأخیر 5 ثانیه برای اولویت‌دهی به رندر اصلی
-      }
-    })
-    .catch(err => {
-      console.log('خطای بارگیری سرویس ورکر:', err);
-    });
+  // راه‌اندازی سرویس ورکر با تأخیر بیشتر برای اولویت‌دهی به رندر اصلی
+  setTimeout(() => {
+    import('./utils/RegisterServiceWorker')
+      .then(({ initializeServiceWorker }) => {
+        initializeServiceWorker().catch(console.error);
+      })
+      .catch(err => {
+        console.log('خطای بارگیری سرویس ورکر:', err);
+      });
+  }, 3000); // تأخیر 3 ثانیه
 }
 
 // بلافاصله شروع به کار کن

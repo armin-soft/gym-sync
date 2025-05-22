@@ -9,8 +9,8 @@ let updateAvailable = false;
 // دریافت نسخه از فایل Manifest.json با کش کردن نتیجه
 const appVersionPromise = fetch('./Manifest.json')
   .then(response => response.json())
-  .then(manifest => manifest.version || '3.0.0')
-  .catch(() => '3.0.0');
+  .then(manifest => manifest.version || '1.7.9')
+  .catch(() => '1.7.9');
 
 // ثبت سرویس ورکر با کارایی بهبود یافته
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
@@ -24,7 +24,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     const appVersion = await appVersionPromise;
     
     // ثبت با مسیر کامل و نسخه
-    const registration = await navigator.serviceWorker.register(`/service-worker.js?v=${appVersion}`, {
+    const registration = await navigator.serviceWorker.register(`/Service-Worker.js?v=${appVersion}`, {
       scope: '/',
       updateViaCache: 'none' // همیشه برای بروزرسانی‌ها بررسی شود
     });
