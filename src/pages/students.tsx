@@ -1,20 +1,19 @@
 
 import React, { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
-import { StudentHistory } from "@/components/students/StudentHistory";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; 
-import { useStudentHistory } from "@/hooks/useStudentHistory";
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { History } from "lucide-react";
 
 // Import from the correct paths
 import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
-import StudentTabControls from "./students/components/StudentTabControls";
 import StudentSearchControls from "./students/components/StudentSearchControls";
 // Import from the list-views folder instead of local components
 import { StudentTableView } from "@/components/students/list-views";
@@ -53,7 +52,6 @@ const StudentsPage = () => {
     handleSaveSupplements
   } = useStudents();
   
-  const { historyEntries, addHistoryEntry, clearHistory } = useStudentHistory();
   const { refreshTrigger, triggerRefresh, lastRefresh } = useStudentRefresh();
 
   const {
@@ -68,7 +66,7 @@ const StudentsPage = () => {
     handleSaveDiet,
     handleSaveSupplements,
     handleDelete,
-    addHistoryEntry,
+    () => {},
     triggerRefresh,
     students,
     selectedStudentForProgram
@@ -115,18 +113,25 @@ const StudentsPage = () => {
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
-        <StudentsHeader 
-          onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
-          onRefresh={triggerRefresh}
-          lastRefreshTime={lastRefresh}
-        />
+        <div className="flex justify-between items-center">
+          <StudentsHeader 
+            onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
+            onRefresh={triggerRefresh}
+            lastRefreshTime={lastRefresh}
+          />
+          
+          <Link to="/student-history">
+            <Button variant="outline" className="flex items-center gap-2">
+              <History className="h-4 w-4" />
+              <span>تاریخچه</span>
+            </Button>
+          </Link>
+        </div>
         
         <StudentStatsCards students={students} />
         
-        <Tabs defaultValue="all" className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-4 md:mb-6">
-            <StudentTabControls />
-
+        <div className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
+          <div className="flex justify-end mb-4 md:mb-6">
             <StudentSearchControls 
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -153,15 +158,7 @@ const StudentsPage = () => {
             sortOrder={sortOrder}
             onSortChange={toggleSort}
           />
-          
-          <TabsContent value="history" className="flex-1">
-            <StudentHistory 
-              students={students} 
-              historyEntries={historyEntries}
-              onClearHistory={clearHistory} 
-            />
-          </TabsContent>
-        </Tabs>
+        </div>
 
         <StudentDialogManager
           ref={dialogManagerRef}

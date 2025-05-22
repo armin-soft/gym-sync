@@ -14,6 +14,7 @@ import SupplementsPage from "./pages/supplements";
 import TrainerPage from "./pages/trainer";
 import BackupPage from "./pages/backup";
 import StudentProgramPage from "./pages/student-program";
+import StudentHistoryPage from "./pages/student-history";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -31,6 +32,14 @@ const AppRoutes: React.FC = () => {
         element={
           <AuthenticatedContent>
             <StudentsPage />
+          </AuthenticatedContent>
+        }
+      />
+      <Route
+        path="/student-history"
+        element={
+          <AuthenticatedContent>
+            <StudentHistoryPage />
           </AuthenticatedContent>
         }
       />
@@ -102,6 +111,7 @@ const AppRoutes: React.FC = () => {
       {/* اینجا مسیرهایی را که در منوی داشبورد استفاده می‌شوند اضافه می‌کنیم */}
       <Route path="/Coach-Profile" element={<Navigate to="/trainer" replace />} />
       <Route path="/Students" element={<Navigate to="/students" replace />} />
+      <Route path="/Student-History" element={<Navigate to="/student-history" replace />} />
       <Route path="/Exercise-Movements" element={<Navigate to="/exercises" replace />} />
       <Route path="/Diet-Plan" element={<Navigate to="/diet" replace />} />
       <Route path="/Supplements-Vitamins" element={<Navigate to="/supplements" replace />} />
