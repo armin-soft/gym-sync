@@ -9,8 +9,8 @@ let updateAvailable = false;
 // دریافت نسخه از فایل Manifest.json با کش کردن نتیجه
 const appVersionPromise = fetch('./Manifest.json')
   .then(response => response.json())
-  .then(manifest => manifest.version || '1.9.9')
-  .catch(() => '1.9.9');
+  .then(manifest => manifest.version || '1.9.8')
+  .catch(() => '1.9.8');
 
 // ثبت سرویس ورکر با کارایی بهبود یافته
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {

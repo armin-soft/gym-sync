@@ -11,7 +11,7 @@ interface SidebarFooterProps {
 
 export function SidebarFooter({ gymName }: SidebarFooterProps) {
   const deviceInfo = useDeviceInfo();
-  const [appVersion, setAppVersion] = useState("1.9.9");
+  const [appVersion, setAppVersion] = useState("1.9.8");
   
   // Fetch the version from Manifest.json
   useEffect(() => {
