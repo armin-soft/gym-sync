@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { PageContainer } from "@/components/ui/page-container";
-import { LoginForm } from "./LoginFormWrapper";
+import { LoginForm } from "./LoginFormMain";
 
 interface LoginContainerProps {
   onLoginSuccess: (rememberMe: boolean) => void;

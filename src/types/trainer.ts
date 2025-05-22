@@ -1,30 +1,29 @@
 
 export interface TrainerProfile {
-  name: string;
-  fullName: string;
-  bio: string;
-  phone: string;
   email: string;
   password: string;
-  image: string;
-  gymName: string;
-  gymDescription: string;
-  gymAddress: string;
-  instagram: string;
-  website: string;
+  name?: string;
+  gymName?: string;
+  phone?: string;
+  bio?: string;
+  socialMedia?: {
+    instagram?: string;
+    telegram?: string;
+    website?: string;
+  };
+  profileImage?: string;
 }
 
 export const defaultProfile: TrainerProfile = {
-  name: "",
-  fullName: "",
-  bio: "",
-  phone: "",
-  email: "MohammadAbbasiFix@gmail.com",
-  password: "Mohammad@1404",
-  image: "/Assets/Image/Place-Holder.svg",
-  gymName: "",
-  gymDescription: "",
-  gymAddress: "",
-  instagram: "",
-  website: ""
+  email: "demo@gymsync.app",
+  password: "12345678",
+  name: "مربی نمونه",
+  gymName: "باشگاه تناسب اندام",
+  phone: "09123456789",
+  bio: "مربی با تجربه در زمینه تناسب اندام و بدنسازی",
+  socialMedia: {
+    instagram: "gym.sync",
+    telegram: "gymsync",
+    website: "gymsync.app"
+  }
 };
