@@ -5,7 +5,7 @@ import { History, Users } from "lucide-react";
 import { Student } from "@/components/students/StudentTypes";
 import { StudentHistory } from "@/components/students/StudentHistory";
 import { HistoryEntry } from "@/hooks/useStudentHistory";
-import StudentTableView from "./StudentTableView";
+import { StudentTableView } from "@/components/students/list-views";
 import StudentSearchControls from "./StudentSearchControls";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { DataStatusIndicator } from "@/components/students/DataStatusIndicator";
@@ -101,6 +101,7 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
             onDownload={onDownload}
             onAddStudent={onAddStudent}
             onClearSearch={handleClearSearch}
+            isProfileComplete={true} // Default to true if not provided
           />
         )}
       </TabsContent>

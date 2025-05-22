@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+
+import React, { useRef, useState, useEffect } from "react";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentHistory } from "@/components/students/StudentHistory";
@@ -25,6 +26,21 @@ const StudentsPage = () => {
   const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
   const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
   const deviceInfo = useDeviceInfo();
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
+  
+  // Check if profile is complete on component mount
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        setIsProfileComplete(Boolean(profile.name && profile.gymName && profile.phone));
+      } catch (error) {
+        console.error('Error checking profile completeness:', error);
+        setIsProfileComplete(false);
+      }
+    }
+  }, []);
   
   const {
     students,
