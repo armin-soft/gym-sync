@@ -1,5 +1,5 @@
 
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/hooks/use-toast";
 
 export const successToast = (title: string, description?: string) => {
   toast({

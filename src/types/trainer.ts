@@ -14,16 +14,18 @@ export interface TrainerProfile {
     website?: string;
   };
   profileImage?: string;
-  image?: string; // اضافه شده برای سازگاری
+  image: string; // Changed from optional to required
   // اضافه کردن فیلدهای مستقیم برای سادگی دسترسی
   instagram?: string;
   website?: string;
+  fullName?: string; // Added fullName property for export.ts compatibility
 }
 
 export const defaultProfile: TrainerProfile = {
   email: "demo@gymsync.app",
   password: "12345678",
   name: "مربی نمونه",
+  fullName: "مربی نمونه", // Added fullName
   gymName: "باشگاه تناسب اندام",
   gymDescription: "باشگاه تخصصی تناسب اندام و بدنسازی با امکانات کامل",
   gymAddress: "تهران، خیابان ولیعصر، نرسیده به میدان ونک",
@@ -35,5 +37,6 @@ export const defaultProfile: TrainerProfile = {
     website: "gymsync.app"
   },
   instagram: "gym.sync",
-  website: "gymsync.app"
+  website: "gymsync.app",
+  image: "/Assets/Image/Place-Holder.svg" // Added default image
 };

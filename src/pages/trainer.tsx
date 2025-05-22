@@ -14,7 +14,10 @@ import { cn } from "@/lib/utils";
 
 const TrainerProfile = () => {
   const { toast } = useToast();
-  const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
+  const [profile, setProfile] = useState<TrainerProfile>({
+    ...defaultProfile,
+    image: defaultProfile.image || "/Assets/Image/Place-Holder.svg" // Ensure image always has a value
+  });
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState<string>("personal");
@@ -27,6 +30,10 @@ const TrainerProfile = () => {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
         const parsed = JSON.parse(savedProfile);
+        // Ensure the image property is set
+        if (!parsed.image) {
+          parsed.image = "/Assets/Image/Place-Holder.svg";
+        }
         setProfile(parsed);
       }
     } catch (error) {
@@ -133,7 +140,10 @@ const TrainerProfile = () => {
         }>
           {/* Sidebar */}
           <ProfileSidebar
-            profile={profile}
+            profile={{
+              image: profile.image,
+              name: profile.name
+            }}
             onImageChange={(image) => handleUpdate('image', image)} 
             activeSection={activeSection}
             onTabChange={setActiveSection}
