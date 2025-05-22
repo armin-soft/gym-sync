@@ -2,12 +2,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { ReactNode } from "react";
-
-// Define cell content interfaces for type safety
-interface CellContent {
-  children: ReactNode;
-}
 
 export const useTableColumns = () => {
   const deviceInfo = useDeviceInfo();
