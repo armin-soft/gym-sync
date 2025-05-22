@@ -41,3 +41,5 @@ export * from './useStudentManagement';
 export * from './useStudentExercises';
 export * from './useStudentDiet';
 export * from './useStudentSupplements';
+export * from './core';
+
