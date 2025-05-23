@@ -253,8 +253,14 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     }
     
     // نمایش نکات رژیم غذایی
+    // Fix for lastAutoTable - use the return value of autoTable instead
+    let finalY = 280;
+    const tables = doc.internal.getPageInfo(doc.internal.getCurrentPageInfo().pageNumber).tables;
+    if (tables && tables.length > 0) {
+      finalY = tables[tables.length - 1].finalY;
+    }
+    
     if (student.mealNotes) {
-      const finalY = doc.lastAutoTable?.finalY || 280;
       doc.setFontSize(12);
       doc.setTextColor(80, 80, 80);
       doc.text('نکات تغذیه‌ای:', 20, finalY + 10);
@@ -316,9 +322,16 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     }
     
     // جدول ویتامین‌ها
+    let vitaminY = startY;
+    // Fix for lastAutoTable - use the return value of autoTable instead
+    const tables = doc.internal.getPageInfo(doc.internal.getCurrentPageInfo().pageNumber).tables;
+    if (tables && tables.length > 0) {
+      vitaminY = tables[tables.length - 1].finalY + 20;
+    } else {
+      vitaminY += 20;
+    }
+    
     if (studentVitamins.length > 0) {
-      const vitaminY = (doc.lastAutoTable?.finalY || startY) + 20;
-      
       doc.setFontSize(14);
       doc.text('ویتامین‌های تجویز شده', 20, vitaminY);
       
@@ -356,8 +369,14 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     }
     
     // نمایش نکات مکمل و ویتامین
+    // Fix for lastAutoTable - use the return value of autoTable instead
+    let finalY = 280;
+    const finalTables = doc.internal.getPageInfo(doc.internal.getCurrentPageInfo().pageNumber).tables;
+    if (finalTables && finalTables.length > 0) {
+      finalY = finalTables[finalTables.length - 1].finalY;
+    }
+    
     if (student.notes) {
-      const finalY = doc.lastAutoTable?.finalY || 280;
       doc.setFontSize(12);
       doc.setTextColor(80, 80, 80);
       doc.text('نکات مکمل و ویتامین:', 20, finalY + 10);
@@ -422,3 +441,4 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     </div>
   );
 };
+
