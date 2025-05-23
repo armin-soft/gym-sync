@@ -13,10 +13,13 @@ import {
   Edit,
   Apple,
   Pill,
+  Printer,
 } from "lucide-react";
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
 import { ContextMenuSection } from "./context-menu/ContextMenuSection";
+import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentContextMenuProps {
   student: Student;
@@ -41,6 +44,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
 }) => {
   // Log when this component renders to help with debugging
   console.log("Rendering StudentContextMenu for:", student.name);
+  const { toast } = useToast();
 
   const handleProgramClick = () => {
     console.log("Context Menu: Add Exercise clicked for student:", student.name);
@@ -61,6 +65,35 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   
   const handleSupplementClick = () => {
     if (onAddSupplement) onAddSupplement();
+  };
+  
+  const handleExportProgramClick = () => {
+    console.log("Context Menu: Export Program clicked for student:", student.name);
+    
+    // Show the toast notification that export is in progress
+    toast({
+      title: "در حال آماده سازی برنامه",
+      description: "لطفا منتظر بمانید...",
+    });
+    
+    // Call the export function
+    setTimeout(() => {
+      exportStudentProgramToPdf(student)
+        .then(() => {
+          toast({
+            title: "صدور برنامه انجام شد",
+            description: "برنامه با موفقیت به صورت PDF صادر شد",
+          });
+        })
+        .catch((error) => {
+          console.error("Error exporting program:", error);
+          toast({
+            variant: "destructive",
+            title: "خطا در صدور برنامه",
+            description: "مشکلی در صدور برنامه پیش آمد. لطفا مجددا تلاش کنید.",
+          });
+        });
+    }, 500);
   };
 
   return (
@@ -84,13 +117,22 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
               variant="purple"
             />
             
+            <ContextMenuItemWithAnimation
+              icon={<Printer className="h-4 w-4" />}
+              title="صدور برنامه"
+              subtitle="چاپ و خروجی PDF"
+              onClick={handleExportProgramClick}
+              index={1}
+              variant="green"
+            />
+            
             {onAddDiet && (
               <ContextMenuItemWithAnimation
                 icon={<Apple className="h-4 w-4" />}
                 title="افزودن رژیم غذایی"
                 subtitle="مدیریت برنامه غذایی"
                 onClick={handleDietClick}
-                index={1}
+                index={2}
                 variant="green"
               />
             )}
@@ -101,7 +143,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="افزودن مکمل"
                 subtitle="مدیریت مکمل‌های ورزشی"
                 onClick={handleSupplementClick}
-                index={2}
+                index={3}
                 variant="orange"
               />
             )}
@@ -115,7 +157,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="ویرایش شاگرد"
                 subtitle="تغییر اطلاعات شاگرد"
                 onClick={handleEditClick}
-                index={3}
+                index={4}
                 variant="blue"
               />
             )}
@@ -126,7 +168,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="حذف شاگرد"
                 subtitle="حذف کامل اطلاعات"
                 onClick={handleDeleteClick}
-                index={4}
+                index={5}
                 variant="red"
               />
             )}
@@ -138,4 +180,3 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
 };
 
 export default StudentContextMenu;
-
