@@ -159,6 +159,9 @@ const StudentsPage = () => {
             sortField={sortField}
             sortOrder={sortOrder}
             onSortChange={toggleSort}
+            exercises={exercises}
+            meals={meals}
+            supplements={supplements}
           />
         </div>
 
