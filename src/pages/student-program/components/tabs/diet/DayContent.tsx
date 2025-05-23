@@ -14,7 +14,7 @@ interface DayContentProps {
   selectedMeals: number[];
   setSelectedMeals: React.Dispatch<React.SetStateAction<number[]>>;
   meals: any[];
-  centered?: boolean; // Added centered prop as optional
+  centered?: boolean;
 }
 
 const mealTypes = [
@@ -32,7 +32,7 @@ const DayContent: React.FC<DayContentProps> = ({
   selectedMeals,
   setSelectedMeals,
   meals,
-  centered = false, // Default to false
+  centered = false
 }) => {
   const [currentMealType, setCurrentMealType] = useState<number>(0); // 0 means all meal types
   

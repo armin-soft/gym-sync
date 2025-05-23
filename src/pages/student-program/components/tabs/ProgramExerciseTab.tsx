@@ -9,7 +9,7 @@ interface ProgramExerciseTabProps {
   student: Student;
   exercises: any[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  onShowPdfPreview?: () => void; // Added this prop to fix the TypeScript error
+  onShowPdfPreview?: () => void;
 }
 
 export const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
@@ -40,10 +40,11 @@ export const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
       
       <DaySelector 
         currentDay={currentDay}
-        setCurrentDay={setCurrentDay}
+        onDayChange={setCurrentDay}
       />
       
       <ExerciseContent
+        currentDay={currentDay}
         exercises={exercises}
         selectedExercises={selectedExercises}
         setSelectedExercises={setSelectedExercises}

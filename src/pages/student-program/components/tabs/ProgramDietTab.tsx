@@ -8,7 +8,7 @@ interface ProgramDietTabProps {
   student: Student;
   meals: any[];
   onSaveDiet: (mealIds: number[]) => boolean;
-  onShowPdfPreview?: () => void; // Added this prop to fix the TypeScript error
+  onShowPdfPreview?: () => void;
 }
 
 export const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
@@ -26,6 +26,17 @@ export const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
     isLoading
   } = useDietTabState(student, onSaveDiet);
 
+  // Define the week days
+  const weekDays = [
+    { id: 1, name: "شنبه" },
+    { id: 2, name: "یکشنبه" },
+    { id: 3, name: "دوشنبه" },
+    { id: 4, name: "سه شنبه" },
+    { id: 5, name: "چهارشنبه" },
+    { id: 6, name: "پنج شنبه" },
+    { id: 7, name: "جمعه" }
+  ];
+
   return (
     <div className="space-y-4 p-1">
       <ProgramDietHeader 
@@ -41,6 +52,7 @@ export const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
       
       <DayContent
         currentDay={currentDay}
+        weekDays={weekDays}
         meals={meals}
         selectedMeals={selectedMeals}
         setSelectedMeals={setSelectedMeals}

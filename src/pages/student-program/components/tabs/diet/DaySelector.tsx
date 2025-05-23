@@ -3,24 +3,34 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 export interface DayItem {
   id: number;
   name: string;
 }
 
+// Define the week days
+const weekDays: DayItem[] = [
+  { id: 1, name: "شنبه" },
+  { id: 2, name: "یکشنبه" },
+  { id: 3, name: "دوشنبه" },
+  { id: 4, name: "سه شنبه" },
+  { id: 5, name: "چهارشنبه" },
+  { id: 6, name: "پنج شنبه" },
+  { id: 7, name: "جمعه" }
+];
+
 interface DaySelectorProps {
-  weekDays: DayItem[];
-  currentDay: number | null;
+  currentDay: number;
   setCurrentDay: (day: number) => void;
-  centered?: boolean; // Added centered prop as optional
+  centered?: boolean;
 }
 
 const DaySelector: React.FC<DaySelectorProps> = ({
-  weekDays,
   currentDay,
   setCurrentDay,
-  centered = false, // Default to false
+  centered = false
 }) => {
   return (
     <div className="text-center mb-6 mt-2">

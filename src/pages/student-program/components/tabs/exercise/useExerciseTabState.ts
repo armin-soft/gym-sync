@@ -7,18 +7,14 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 
 export const useExerciseTabState = (
   student: Student,
-  propCurrentDay?: number,
-  propSetCurrentDay?: React.Dispatch<React.SetStateAction<number>>,
-  onSaveExercises?: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean
+  onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean
 ) => {
   const { toast } = useToast();
   const [selectedExercises, setSelectedExercises] = useState<ExerciseWithSets[]>([]);
-  const [currentDay, setCurrentDay] = useState<number>(propCurrentDay || 1);
+  const [currentDay, setCurrentDay] = useState<number>(1);
   const [isSaving, setIsSaving] = useState(false);
-  
-  // Use prop state if provided, otherwise use local state
-  const effectiveCurrentDay = propCurrentDay !== undefined ? propCurrentDay : currentDay;
-  const effectiveSetCurrentDay = propSetCurrentDay || setCurrentDay;
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Exercise cache for day switching - updated for 5 days
   const exerciseCacheRef = useRef<Record<number, ExerciseWithSets[]>>({
@@ -86,8 +82,8 @@ export const useExerciseTabState = (
     exerciseCacheRef.current = cachedExercises;
     
     // Set first day exercises initially
-    setSelectedExercises(cachedExercises[effectiveCurrentDay]);
-  }, [student, effectiveCurrentDay]);
+    setSelectedExercises(cachedExercises[currentDay]);
+  }, [student, currentDay]);
 
   // Side effect for managing day changes - save to and load from cache
   useEffect(() => {
@@ -95,39 +91,44 @@ export const useExerciseTabState = (
     const currentExercises = [...selectedExercises];
     exerciseCacheRef.current = {
       ...exerciseCacheRef.current,
-      [effectiveCurrentDay]: currentExercises
+      [currentDay]: currentExercises
     };
     
     // Load exercises from cache for the new day
-    setSelectedExercises(exerciseCacheRef.current[effectiveCurrentDay] || []);
-  }, [effectiveCurrentDay]);
+    setSelectedExercises(exerciseCacheRef.current[currentDay] || []);
+  }, [currentDay]);
 
   const handleSave = async () => {
     if (!onSaveExercises) return;
     
+    setIsLoading(true);
     setIsSaving(true);
+    setSaveStatus('idle');
+    
     try {
       // Save to cache before sending to server
       const updatedCache = {
         ...exerciseCacheRef.current,
-        [effectiveCurrentDay]: [...selectedExercises]
+        [currentDay]: [...selectedExercises]
       };
       exerciseCacheRef.current = updatedCache;
       
       // Set day in each exercise
       const exercisesWithDay = selectedExercises.map(ex => ({
         ...ex,
-        day: effectiveCurrentDay
+        day: currentDay
       }));
       
-      const success = onSaveExercises(exercisesWithDay, effectiveCurrentDay);
+      const success = onSaveExercises(exercisesWithDay, currentDay);
       
       if (success) {
+        setSaveStatus('success');
         toast({
           title: "ذخیره موفق",
-          description: `تمرین‌های روز ${toPersianNumbers(effectiveCurrentDay)} با موفقیت ذخیره شدند`
+          description: `تمرین‌های روز ${toPersianNumbers(currentDay)} با موفقیت ذخیره شدند`
         });
       } else {
+        setSaveStatus('error');
         toast({
           variant: "destructive",
           title: "خطا در ذخیره‌سازی",
@@ -135,6 +136,7 @@ export const useExerciseTabState = (
         });
       }
     } catch (error) {
+      setSaveStatus('error');
       console.error("Error saving exercises:", error);
       toast({
         variant: "destructive",
@@ -143,16 +145,26 @@ export const useExerciseTabState = (
       });
     } finally {
       setIsSaving(false);
+      setIsLoading(false);
+      
+      // Reset save status after a delay
+      setTimeout(() => {
+        setSaveStatus('idle');
+      }, 2000);
     }
   };
 
   return {
     selectedExercises,
     setSelectedExercises,
-    currentDay: effectiveCurrentDay,
-    setCurrentDay: effectiveSetCurrentDay,
+    currentDay,
+    setCurrentDay,
     isSaving,
     handleSave,
-    exerciseCacheRef
+    exerciseCacheRef,
+    isLoading,
+    saveStatus
   };
 };
+
+export default useExerciseTabState;
