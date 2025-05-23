@@ -27,14 +27,14 @@ export function createDietPlan(doc: jsPDF, student: Student, trainerProfile: Tra
     if (meals && meals.length > 0) {
       // Add day header with styled box
       const dayName = getDayName(day);
-      doc.setFillColor(39, 174, 96, 0.05);
-      doc.roundedRect(15, yPos - 5, 180, 10, 2, 2, 'F');
+      doc.setFillColor(39, 174, 96, 0.1);
+      doc.roundedRect(15, yPos, 180, 10, 2, 2, 'F');
       
       doc.setFontSize(13);
       doc.setTextColor(39, 174, 96);
       doc.setFont("Vazirmatn", "bold");
-      doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, 190, yPos + 2, { align: 'right' });
-      yPos += 10;
+      doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, 105, yPos + 7, { align: 'center' });
+      yPos += 15;
       
       // Create table for meals with improved styling
       const tableData = meals.map((mealId, index) => {
@@ -50,9 +50,12 @@ export function createDietPlan(doc: jsPDF, student: Student, trainerProfile: Tra
         body: tableData,
         ...configureTableStyles('success'),
         columnStyles: {
-          0: { cellWidth: 15 },
-          1: { cellWidth: 'auto' },
-          2: { cellWidth: 40 },
+          0: { cellWidth: 15, halign: 'center' },
+          1: { cellWidth: 'auto', halign: 'right' },
+          2: { cellWidth: 40, halign: 'center' },
+        },
+        didDrawCell: (data) => {
+          // Add special styling for cells if needed
         },
       });
       
@@ -81,7 +84,7 @@ export function createDietPlan(doc: jsPDF, student: Student, trainerProfile: Tra
     
     // Add notes text with line wrapping
     const splitNotes = doc.splitTextToSize(student.mealNotes, 165);
-    doc.text(splitNotes, 185, yPos + 7, { align: 'right' });
+    doc.text(splitNotes, 105, yPos + 7, { align: 'center' });
   }
   
   // Add footer

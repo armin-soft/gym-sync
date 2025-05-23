@@ -34,9 +34,12 @@ export function createSupplementPlan(doc: jsPDF, student: Student, trainerProfil
       body: tableData,
       ...configureTableStyles('warning'),
       columnStyles: {
-        0: { cellWidth: 15 },
-        1: { cellWidth: 'auto' },
-        2: { cellWidth: 40 },
+        0: { cellWidth: 15, halign: 'center' },
+        1: { cellWidth: 'auto', halign: 'right' },
+        2: { cellWidth: 40, halign: 'center' },
+      },
+      didDrawCell: (data) => {
+        // Add special styling for cells if needed
       },
     });
     
@@ -68,9 +71,12 @@ export function createSupplementPlan(doc: jsPDF, student: Student, trainerProfil
       body: tableData,
       ...configureTableStyles('info'),
       columnStyles: {
-        0: { cellWidth: 15 },
-        1: { cellWidth: 'auto' },
-        2: { cellWidth: 40 },
+        0: { cellWidth: 15, halign: 'center' },
+        1: { cellWidth: 'auto', halign: 'right' },
+        2: { cellWidth: 40, halign: 'center' },
+      },
+      didDrawCell: (data) => {
+        // Add special styling for cells if needed
       },
     });
     
@@ -92,7 +98,7 @@ export function createSupplementPlan(doc: jsPDF, student: Student, trainerProfil
     
     // Add notes text with line wrapping
     const splitNotes = doc.splitTextToSize(student.notes || "", 165);
-    doc.text(splitNotes, 185, yPos + 7, { align: 'right' });
+    doc.text(splitNotes, 105, yPos + 7, { align: 'center' });
   }
   
   // Add footer

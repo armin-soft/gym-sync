@@ -12,14 +12,18 @@ import { getCurrentPersianDate } from '../persianDate';
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
-      // Create a new PDF document
-      const doc = new jsPDF(PDF_OPTIONS);
+      // Create a new PDF document with right-to-left support
+      const doc = new jsPDF({
+        ...PDF_OPTIONS,
+        putOnlyUsedFonts: true,
+        direction: 'rtl'
+      });
       
       // Add Persian font
       addFontToPdf(doc);
       
-      // Configure right-to-left for entire document
-      (doc as any).setR2L(true);
+      // Explicitly set right-to-left for entire document
+      doc.setR2L(true);
       
       // Get trainer profile from localStorage
       const trainerProfileStr = localStorage.getItem('trainerProfile');

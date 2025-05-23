@@ -18,16 +18,27 @@ export const PDF_OPTIONS: PDFOptions = {
 // Add Vazirmatn font for Persian text
 export const addFontToPdf = (doc: jsPDF): jsPDF => {
   try {
-    // Add Persian font (Vazirmatn)
-    doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Regular.ttf", "Vazirmatn", "normal");
-    doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Bold.ttf", "Vazirmatn", "bold");
+    // Add Persian fonts for better rendering
+    doc.addFont("/Assets/Fonts/Vazirmatn-Regular.ttf", "Vazirmatn", "normal");
+    doc.addFont("/Assets/Fonts/Vazirmatn-Bold.ttf", "Vazirmatn", "bold");
     
     // Set default font
-    doc.setFont("Vazirmatn");
+    doc.setFont("Vazirmatn", "normal");
+    
+    // Set font size for better readability
+    doc.setFontSize(12);
   } catch (e) {
-    // Fallback to standard font
-    console.error('Failed to load custom font:', e);
-    doc.setFont("helvetica");
+    // Fallback to standard font if custom font fails
+    console.error("Failed to load custom font:", e);
+    // Try loading from CDN as backup
+    try {
+      doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Regular.ttf", "Vazirmatn", "normal");
+      doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Bold.ttf", "Vazirmatn", "bold");
+      doc.setFont("Vazirmatn", "normal");
+    } catch (err) {
+      console.error("Fallback font also failed:", err);
+      doc.setFont("helvetica");
+    }
   }
   
   return doc;
@@ -45,21 +56,21 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
   doc.setFontSize(22);
   doc.setTextColor(255, 255, 255);
   doc.setFont("Vazirmatn", "bold");
-  doc.text(trainerProfile.gymName || "برنامه مدیریت باشگاه", 105, 20, { align: 'center' });
+  doc.text(trainerProfile.gymName || "باشگاه بدنسازی", 105, 20, { align: 'center' });
   
   // Add trainer name
   doc.setFontSize(14);
   doc.setTextColor(230, 230, 230);
   doc.setFont("Vazirmatn", "normal");
-  doc.text(`${trainerProfile.name || "-"} :مربی`, 105, 30, { align: 'center' });
+  doc.text(`مربی: ${trainerProfile.name || "-"}`, 105, 30, { align: 'center' });
   
   // Add page title with badge-like style
   doc.setFillColor(255, 255, 255);
-  doc.roundedRect(15, 42, 50, 10, 5, 5, 'F');
+  doc.roundedRect(75, 42, 60, 10, 5, 5, 'F');
   doc.setFontSize(14);
   doc.setTextColor(124, 58, 237);
   doc.setFont("Vazirmatn", "bold");
-  doc.text(pageTitle, 40, 48, { align: 'center' });
+  doc.text(pageTitle, 105, 48, { align: 'center' });
   
   // Add divider line
   doc.setDrawColor(220, 220, 220);
@@ -76,22 +87,22 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
   
   // Student name with icon-like indicator
   doc.setFillColor(124, 58, 237, 0.1);
-  doc.circle(190, 72, 3, 'F');
-  doc.text(`${student.name || "-"} :نام`, 175, 73, { align: 'right' });
+  doc.circle(30, 72, 3, 'F');
+  doc.text(`نام: ${student.name || "-"}`, 40, 73);
   
   // Gender with icon-like indicator
   if (student.gender) {
     const genderText = student.gender === 'male' ? 'مرد' : 'زن';
     doc.setFillColor(124, 58, 237, 0.1);
-    doc.circle(190, 82, 3, 'F');
-    doc.text(`${genderText} :جنسیت`, 175, 83, { align: 'right' });
+    doc.circle(30, 82, 3, 'F');
+    doc.text(`جنسیت: ${genderText}`, 40, 83);
   }
   
   // Date with icon-like indicator
   const today = getCurrentPersianDate();
   doc.setFillColor(124, 58, 237, 0.1);
   doc.circle(120, 82, 3, 'F');
-  doc.text(`${today} :تاریخ`, 105, 83, { align: 'right' });
+  doc.text(`تاریخ: ${today}`, 130, 83);
   
   // Add measurements in an elegant card
   if (student.height && student.weight) {
@@ -101,16 +112,16 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
     // Height
     doc.setFontSize(11);
     doc.setTextColor(90, 90, 90);
-    doc.text(`قد: ${toPersianNumbers(student.height)} سانتی‌متر`, 170, 103, { align: 'right' });
+    doc.text(`قد: ${toPersianNumbers(student.height)} سانتی‌متر`, 40, 103);
     
     // Weight
-    doc.text(`وزن: ${toPersianNumbers(student.weight)} کیلوگرم`, 110, 103, { align: 'right' });
+    doc.text(`وزن: ${toPersianNumbers(student.weight)} کیلوگرم`, 110, 103);
     
     // BMI calculation
     const height = Number(student.height);
     const weight = Number(student.weight);
     const bmi = weight / ((height / 100) * (height / 100));
-    doc.text(`شاخص توده بدنی: ${toPersianNumbers(bmi.toFixed(1))}`, 50, 103, { align: 'right' });
+    doc.text(`شاخص توده بدنی: ${toPersianNumbers(bmi.toFixed(1))}`, 180, 103);
   }
 }
 
@@ -146,7 +157,7 @@ export function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) {
   
   // Add trainer contact info if available
   if (trainerProfile.phone) {
-    doc.text(`شماره تماس: ${toPersianNumbers(trainerProfile.phone)}`, 180, 290, { align: 'right' });
+    doc.text(`شماره تماس: ${toPersianNumbers(trainerProfile.phone)}`, 30, 290);
   }
 }
 
@@ -191,14 +202,14 @@ export function configureTableStyles(theme: string = 'primary'): any {
     headStyles: {
       fillColor: themeConfig.headColor,
       textColor: [255, 255, 255],
-      halign: 'right',
+      halign: 'center',
       font: 'Vazirmatn',
       fontStyle: 'bold',
       fontSize: 12,
       cellPadding: 3,
     },
     bodyStyles: {
-      halign: 'right',
+      halign: 'center',
       font: 'Vazirmatn',
       fontSize: 10,
       cellPadding: 3,
@@ -213,6 +224,7 @@ export function configureTableStyles(theme: string = 'primary'): any {
       overflow: 'linebreak',
       cellWidth: 'wrap',
       fontSize: 10,
+      direction: 'rtl',
     },
   };
 }
