@@ -78,7 +78,7 @@ export function createSupplementPlan(doc: jsPDF, student: Student, trainerProfil
   }
   
   // Add any additional notes with modern styling
-  if (student.supplementNotes) {
+  if (student.notes) {
     // Create notes section with styled header
     yPos = createSectionHeader(doc, "نکات مصرف مکمل", yPos, [230, 126, 34]);
     
@@ -91,7 +91,7 @@ export function createSupplementPlan(doc: jsPDF, student: Student, trainerProfil
     doc.setFont("Vazirmatn", "normal");
     
     // Add notes text with line wrapping
-    const splitNotes = doc.splitTextToSize(student.supplementNotes || "", 165);
+    const splitNotes = doc.splitTextToSize(student.notes || "", 165);
     doc.text(splitNotes, 185, yPos + 7, { align: 'right' });
   }
   

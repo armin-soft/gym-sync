@@ -26,7 +26,7 @@ export const addFontToPdf = (doc: jsPDF): jsPDF => {
     doc.setFont("Vazirmatn");
   } catch (e) {
     // Fallback to standard font
-    console.error("Failed to load custom font:", e);
+    console.error('Failed to load custom font:', e);
     doc.setFont("helvetica");
   }
   
@@ -107,7 +107,9 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
     doc.text(`وزن: ${toPersianNumbers(student.weight)} کیلوگرم`, 110, 103, { align: 'right' });
     
     // BMI calculation
-    const bmi = student.weight / ((student.height / 100) * (student.height / 100));
+    const height = Number(student.height);
+    const weight = Number(student.weight);
+    const bmi = weight / ((height / 100) * (height / 100));
     doc.text(`شاخص توده بدنی: ${toPersianNumbers(bmi.toFixed(1))}`, 50, 103, { align: 'right' });
   }
 }
