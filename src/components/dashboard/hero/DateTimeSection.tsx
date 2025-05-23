@@ -41,9 +41,25 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
       transition={{ duration: 0.5, delay: 0.3 }}
       className="flex flex-wrap gap-3"
     >
-      <AnimatePresence mode="wait">
-        {dateInfo && (
+      <AnimatePresence mode="popLayout">
+        {isLoading ? (
           <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Badge 
+              variant="outline" 
+              className="border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2"
+            >
+              <SunMoon className="w-4 h-4 animate-pulse text-blue-300" />
+              <span className="animate-pulse">در حال بارگذاری...</span>
+            </Badge>
+          </motion.div>
+        ) : dateInfo ? (
+          <motion.div
+            key="date-info"
             initial="hidden"
             animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
@@ -69,7 +85,7 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
                 <span className="text-2xl group-hover:scale-110 transition-transform">{dateInfo.Time_Based_Emoji}</span>
                 <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300 opacity-80" />
                 <motion.span 
-                  key={time.toISOString()} // Re-render on time change
+                  key={time.getTime()} 
                   initial={{ opacity: 0.5, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
@@ -80,23 +96,7 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
               </Badge>
             </motion.div>
           </motion.div>
-        )}
-        
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Badge 
-              variant="outline" 
-              className="border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2"
-            >
-              <SunMoon className="w-4 h-4 animate-pulse text-blue-300" />
-              <span className="animate-pulse">در حال بارگذاری...</span>
-            </Badge>
-          </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </motion.div>
   );
