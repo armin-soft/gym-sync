@@ -1,7 +1,6 @@
 
 import jsPDF from 'jspdf';
 import { TableThemeOptions } from './types';
-import { pdfPersianText } from './pdf-fonts';
 
 // Configure table styles for consistent look
 export function configureTableStyles(theme: string = 'primary'): any {
@@ -36,7 +35,7 @@ export function configureTableStyles(theme: string = 'primary'): any {
       cellPadding: 3,
     },
     bodyStyles: {
-      halign: 'right', // تغییر به راست چین
+      halign: 'center',
       fontSize: 10,
       cellPadding: 3,
     },
@@ -52,15 +51,6 @@ export function configureTableStyles(theme: string = 'primary'): any {
       fontSize: 10,
       direction: 'rtl',
     },
-    didParseCell: function(data: any) {
-      // اطمینان از راست چین بودن همه سلول‌ها
-      data.cell.styles.halign = 'right';
-      
-      // برای هدر جدول از مرکز استفاده کنیم
-      if (data.section === 'head') {
-        data.cell.styles.halign = 'center';
-      }
-    }
   };
 }
 
@@ -73,7 +63,7 @@ export function createSectionHeader(doc: jsPDF, title: string, yPos: number, col
     
     doc.setFontSize(14);
     doc.setTextColor(color[0], color[1], color[2]);
-    pdfPersianText(doc, title, 105, yPos + 7, { align: 'center' });
+    doc.text(title, 105, yPos + 7, { align: 'center' });
     
     return yPos + 15; // Return updated Y position
   } catch (error) {
