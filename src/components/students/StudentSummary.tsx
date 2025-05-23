@@ -8,8 +8,8 @@ interface StudentSummaryProps {
     id: number;
     name: string;
     phone: string;
-    height: string;
-    weight: string;
+    height?: string;
+    weight?: string;
     exercises?: number[];
     meals?: number[];
     supplements?: number[];
@@ -166,8 +166,8 @@ export const StudentSummary = ({
             {supplements
               .filter(
                 item =>
-                  student.supplements?.includes(item.id) ||
-                  student.vitamins?.includes(item.id)
+                  (student.supplements && student.supplements.includes(item.id)) ||
+                  (student.vitamins && student.vitamins.includes(item.id))
               )
               .map(item => (
                 <li key={item.id} className="flex items-center gap-2 bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-purple-100/50 dark:border-purple-800/30">
