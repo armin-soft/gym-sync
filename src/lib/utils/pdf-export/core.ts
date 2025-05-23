@@ -5,7 +5,7 @@ import autoTable from 'jspdf-autotable';
 import { addFontToPdf } from './pdf-fonts';
 
 // Export the reusable functions from our new modules
-export { addFontToPdf } from './pdf-fonts';
+export { addFontToPdf, pdfPersianText, pdfPersianNumber } from './pdf-fonts';
 export { createDocumentHeader, addPageFooter } from './pdf-layout';
 export { configureTableStyles, createSectionHeader } from './pdf-styling';
 

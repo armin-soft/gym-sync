@@ -29,6 +29,9 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       // افزودن فونت و تنظیم راست به چپ
       addFontToPdf(doc);
       
+      // اطمینان از اینکه فونت به درستی بارگذاری شده
+      console.log("Font loaded, checking settings");
+      
       // دریافت پروفایل مربی از localStorage
       const trainerProfileStr = localStorage.getItem('trainerProfile');
       const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
@@ -37,27 +40,32 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       console.log("Trainer profile:", trainerProfile);
       console.log("Student:", student.name);
       
-      // اطلاعات کلی فقط در صفحه اول نمایش داده می‌شود
-      createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
-      
-      // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار قسمت
-      await createExerciseProgram(doc, student, trainerProfile, false);
-      
-      // صفحه 2: برنامه غذایی هفتگی
-      doc.addPage();
-      await createDietPlan(doc, student, trainerProfile, false);
-      
-      // صفحه 3: مکمل‌ها و ویتامین‌ها
-      doc.addPage();
-      await createSupplementPlan(doc, student, trainerProfile, false);
-      
-      // ذخیره PDF با نامی بر اساس نام شاگرد و تاریخ فعلی
-      const currentDate = getCurrentPersianDate().replace(/\s/g, '_');
-      const fileName = `برنامه_${student.name || 'بدون_نام'}_${currentDate}.pdf`;
-      
-      doc.save(fileName);
-      
-      resolve();
+      try {
+        // اطلاعات کلی فقط در صفحه اول نمایش داده می‌شود
+        createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
+        
+        // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار قسمت
+        await createExerciseProgram(doc, student, trainerProfile, false);
+        
+        // صفحه 2: برنامه غذایی هفتگی
+        doc.addPage();
+        await createDietPlan(doc, student, trainerProfile, false);
+        
+        // صفحه 3: مکمل‌ها و ویتامین‌ها
+        doc.addPage();
+        await createSupplementPlan(doc, student, trainerProfile, false);
+        
+        // ذخیره PDF با نامی بر اساس نام شاگرد و تاریخ فعلی
+        const currentDate = getCurrentPersianDate().replace(/\s/g, '_');
+        const fileName = `برنامه_${student.name || 'بدون_نام'}_${currentDate}.pdf`;
+        
+        doc.save(fileName);
+        
+        resolve();
+      } catch (docError) {
+        console.error("Error generating PDF content:", docError);
+        reject(docError);
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
       reject(error);
