@@ -4,7 +4,7 @@ import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
-import { addFontToPdf, writeRTLText, toPersianDigits } from './pdf-fonts';
+import { writeRTLText, toPersianDigits } from './pdf-fonts';
 
 // Get version from Manifest.json
 async function getAppVersion(): Promise<string> {
@@ -37,9 +37,6 @@ async function getAppVersion(): Promise<string> {
 // Create the header for each page
 export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, pageTitle: string) {
   try {
-    // Ensure proper font setup for Persian text
-    addFontToPdf(doc);
-    
     // Background for header - gradient effect
     doc.setFillColor(124, 58, 237); // Primary color
     doc.rect(0, 0, 210, 50, 'F');

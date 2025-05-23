@@ -50,7 +50,6 @@ export async function createExerciseProgram(doc: jsPDF, student: Student, traine
         
         doc.setFontSize(11);
         doc.setTextColor(124, 58, 237);
-        doc.setFont("Vazirmatn", "bold");
         doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, xPos + tableWidth/2, yPos + 7, { align: 'center' });
         
         // Create table for exercises with improved styling
@@ -74,8 +73,7 @@ export async function createExerciseProgram(doc: jsPDF, student: Student, traine
             cellPadding: 2,
             overflow: 'linebreak',
             halign: 'right',
-            valign: 'middle',
-            font: 'Vazirmatn'
+            valign: 'middle'
           },
           columnStyles: {
             0: { cellWidth: 8, halign: 'center' },
@@ -114,7 +112,6 @@ export async function createExerciseProgram(doc: jsPDF, student: Student, traine
     
     doc.setFontSize(11);
     doc.setTextColor(80, 80, 80);
-    doc.setFont("Vazirmatn", "normal");
     
     // Add notes text with line wrapping
     const splitNotes = doc.splitTextToSize(student.notes, 165);

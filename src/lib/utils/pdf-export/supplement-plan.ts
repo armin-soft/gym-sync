@@ -25,7 +25,6 @@ export async function createSupplementPlan(doc: jsPDF, student: Student, trainer
     // Add heading for supplements section
     doc.setFontSize(14);
     doc.setTextColor(230, 126, 34);
-    doc.setFont("Vazirmatn", "bold");
     doc.text("مکمل‌های پیشنهادی", 105, yPos + 5, { align: 'center' });
     yPos += 10;
     
@@ -70,7 +69,6 @@ export async function createSupplementPlan(doc: jsPDF, student: Student, trainer
     // Add heading for vitamins (top-left section)
     doc.setFontSize(14);
     doc.setTextColor(155, 89, 182);
-    doc.setFont("Vazirmatn", "bold");
     doc.text("ویتامین‌های پیشنهادی", gridWidth + gridGap + 15 + gridWidth/2, yPos + 5, { align: 'center' });
     
     // Position at top-left quadrant
@@ -107,7 +105,6 @@ export async function createSupplementPlan(doc: jsPDF, student: Student, trainer
     
     doc.setFontSize(11);
     doc.setTextColor(80, 80, 80);
-    doc.setFont("Vazirmatn", "normal");
     
     // Add notes text with line wrapping
     const splitNotes = doc.splitTextToSize(student.supplementNotes || "", 165);

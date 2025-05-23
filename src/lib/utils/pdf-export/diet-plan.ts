@@ -29,7 +29,6 @@ export async function createDietPlan(doc: jsPDF, student: Student, trainerProfil
       
       doc.setFontSize(12);
       doc.setTextColor(39, 174, 96);
-      doc.setFont("Vazirmatn", "bold");
       doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, 105, yPos + 7, { align: 'center' });
       yPos += 15;
       
@@ -78,7 +77,6 @@ export async function createDietPlan(doc: jsPDF, student: Student, trainerProfil
     
     doc.setFontSize(11);
     doc.setTextColor(80, 80, 80);
-    doc.setFont("Vazirmatn", "normal");
     
     // Add notes text with line wrapping
     const splitNotes = doc.splitTextToSize(student.mealNotes, 165);
