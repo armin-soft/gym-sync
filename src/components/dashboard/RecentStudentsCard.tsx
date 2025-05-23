@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { User2, Users, ArrowRight, Dumbbell, Star, Sparkles } from "lucide-react";
+import { User2, Users, ArrowRight, Dumbbell, Calendar, Star, Sparkles } from "lucide-react";
 import { Student } from "@/components/students/StudentTypes";
 
 interface RecentStudentsCardProps {

@@ -12,7 +12,10 @@ import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { History } from "lucide-react";
 
+// Import from the correct paths
+import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
 import StudentSearchControls from "./students/components/StudentSearchControls";
+// Import from the list-views folder instead of local components
 import { StudentTableView } from "@/components/students/list-views";
 import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
@@ -20,6 +23,7 @@ import { useStudentHistory } from "@/hooks/useStudentHistory";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
+  const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
   const deviceInfo = useDeviceInfo();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   
@@ -39,8 +43,14 @@ const StudentsPage = () => {
   
   const {
     students,
+    exercises,
+    meals,
+    supplements,
     handleDelete,
     handleSave,
+    handleSaveExercises,
+    handleSaveDiet,
+    handleSaveSupplements
   } = useStudents();
   
   const { refreshTrigger, triggerRefresh, lastRefresh } = useStudentRefresh();
@@ -48,17 +58,20 @@ const StudentsPage = () => {
 
   const {
     handleSaveWithHistory,
+    handleSaveExercisesWithHistory,
+    handleSaveDietWithHistory,
+    handleSaveSupplementsWithHistory,
     handleDeleteWithHistory
   } = useStudentEvents(
     handleSave,
-    null,
-    null,
-    null,
+    handleSaveExercises,
+    handleSaveDiet,
+    handleSaveSupplements,
     handleDelete,
     addHistoryEntry,
     triggerRefresh,
     students,
-    null
+    selectedStudentForProgram
   );
 
   const {
@@ -71,12 +84,33 @@ const StudentsPage = () => {
     handleClearSearch
   } = useStudentFiltering(students);
 
+  // Handler for opening the program manager
+  const handleOpenProgramManager = (student: Student) => {
+    setSelectedStudentForProgram(student);
+  };
+
   // Determine the appropriate classes based on device type
   const getContentPadding = () => {
     if (deviceInfo.isMobile) return "px-2";
     if (deviceInfo.isTablet) return "px-4";
     return "px-4 sm:px-6 lg:px-8";
   };
+
+  // If a student is selected for program management, show the program manager
+  if (selectedStudentForProgram) {
+    return (
+      <StudentProgramManagerView 
+        student={selectedStudentForProgram}
+        exercises={exercises}
+        meals={meals}
+        supplements={supplements}
+        onSaveExercises={handleSaveExercisesWithHistory}
+        onSaveDiet={handleSaveDietWithHistory}
+        onSaveSupplements={handleSaveSupplementsWithHistory}
+        onClose={() => setSelectedStudentForProgram(null)}
+      />
+    );
+  }
 
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
@@ -114,6 +148,9 @@ const StudentsPage = () => {
             refreshTrigger={refreshTrigger}
             onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
             onDelete={handleDeleteWithHistory}
+            onAddExercise={handleOpenProgramManager}
+            onAddDiet={handleOpenProgramManager}
+            onAddSupplement={handleOpenProgramManager}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
             viewMode="table"
@@ -127,6 +164,12 @@ const StudentsPage = () => {
         <StudentDialogManager
           ref={dialogManagerRef}
           onSave={handleSaveWithHistory}
+          onSaveExercises={handleSaveExercisesWithHistory}
+          onSaveDiet={handleSaveDietWithHistory}
+          onSaveSupplements={handleSaveSupplementsWithHistory}
+          exercises={exercises}
+          meals={meals}
+          supplements={supplements}
         />
       </div>
     </PageContainer>
@@ -134,3 +177,4 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
+

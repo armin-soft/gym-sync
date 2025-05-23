@@ -22,6 +22,9 @@ interface MainStudentTabsProps {
   isLoading?: boolean;
   onEdit: (student: Student) => void;
   onDelete: (id: number) => void;
+  onAddExercise: (student: Student) => void;
+  onAddDiet: (student: Student) => void;
+  onAddSupplement: (student: Student) => void;
   onAddStudent: () => void;
   sortField?: string;
   sortOrder?: "asc" | "desc";
@@ -41,6 +44,9 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   isLoading = false,
   onEdit,
   onDelete,
+  onAddExercise,
+  onAddDiet,
+  onAddSupplement,
   onAddStudent,
   sortField,
   sortOrder,
@@ -91,6 +97,9 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
             refreshTrigger={refreshTrigger}
             onEdit={onEdit}
             onDelete={onDelete}
+            onAddExercise={onAddExercise}
+            onAddDiet={onAddDiet}
+            onAddSupplement={onAddSupplement}
             onAddStudent={onAddStudent}
             onClearSearch={handleClearSearch}
             isProfileComplete={isProfileComplete}
