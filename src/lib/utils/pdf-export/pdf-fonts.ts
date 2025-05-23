@@ -1,6 +1,6 @@
 
 import jsPDF from 'jspdf';
-import { addFont } from 'jspdf';
+// Remove the incorrect import for addFont as it's not needed
 
 // Add Persian font to PDF
 export function addFontToPdf(doc: jsPDF): void {
