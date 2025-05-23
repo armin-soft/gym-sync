@@ -1,3 +1,4 @@
+
 import React, {
   useState,
   useImperativeHandle,
@@ -19,23 +20,23 @@ export interface StudentDialogManagerRef {
 
 interface StudentDialogManagerProps {
   onSave: (data: any, selectedStudent?: Student) => boolean;
-  onSaveExercises: (
+  onSaveExercises?: (
     exercisesData: ExerciseWithSets[],
     studentId: number,
     dayNumber?: number
   ) => boolean;
-  onSaveDiet: (
+  onSaveDiet?: (
     mealIds: number[],
     studentId: number,
     dayNumber?: number
   ) => boolean;
-  onSaveSupplements: (
+  onSaveSupplements?: (
     data: { supplements: number[]; vitamins: number[]; day?: number },
     studentId: number
   ) => boolean;
-  exercises: any[];
-  meals: any[];
-  supplements: any[];
+  exercises?: any[];
+  meals?: any[];
+  supplements?: any[];
 }
 
 export const StudentDialogManager = forwardRef<
@@ -71,29 +72,34 @@ export const StudentDialogManager = forwardRef<
         onSave={onSave}
       />
 
-      <ExerciseDialog
-        open={state.exerciseDialog}
-        onOpenChange={setExerciseDialogOpen}
-        selectedStudent={state.selectedStudent}
-        exercises={exercises}
-        onSaveExercises={onSaveExercises}
-      />
+      {onSaveExercises && (
+        <ExerciseDialog
+          open={state.exerciseDialog}
+          onOpenChange={setExerciseDialogOpen}
+          selectedStudent={state.selectedStudent}
+          onSaveExercises={onSaveExercises}
+        />
+      )}
 
-      <DietDialog
-        open={state.dietDialog}
-        onOpenChange={setDietDialogOpen}
-        selectedStudent={state.selectedStudent}
-        meals={meals}
-        onSaveDiet={onSaveDiet}
-      />
+      {onSaveDiet && (
+        <DietDialog
+          open={state.dietDialog}
+          onOpenChange={setDietDialogOpen}
+          selectedStudent={state.selectedStudent}
+          meals={meals}
+          onSaveDiet={onSaveDiet}
+        />
+      )}
 
-      <SupplementDialog
-        open={state.supplementDialog}
-        onOpenChange={setSupplementDialogOpen}
-        selectedStudent={state.selectedStudent}
-        supplements={supplements}
-        onSaveSupplements={onSaveSupplements}
-      />
+      {onSaveSupplements && (
+        <SupplementDialog
+          open={state.supplementDialog}
+          onOpenChange={setSupplementDialogOpen}
+          selectedStudent={state.selectedStudent}
+          supplements={supplements}
+          onSaveSupplements={onSaveSupplements}
+        />
+      )}
     </>
   );
 });

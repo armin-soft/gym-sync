@@ -161,6 +161,9 @@ const StudentsPage = () => {
         <StudentDialogManager
           ref={dialogManagerRef}
           onSave={handleSaveWithHistory}
+          onSaveExercises={handleSaveExercisesWithHistory}
+          onSaveDiet={handleSaveDietWithHistory}
+          onSaveSupplements={handleSaveSupplementsWithHistory}
           exercises={exercises}
           meals={meals}
           supplements={supplements}
