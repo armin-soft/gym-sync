@@ -8,6 +8,8 @@ export interface PDFOptions {
   format: string;
   hotfixes?: string[];
   compress?: boolean;
+  putOnlyUsedFonts?: boolean;  // Added missing property
+  floatPrecision?: number;     // Added missing property
 }
 
 export interface TrainerProfile {
