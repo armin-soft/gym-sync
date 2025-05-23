@@ -39,8 +39,8 @@ const PrintView: React.FC<PrintViewProps> = ({
     onAfterPrint: () => {
       console.log("Print completed");
     },
-    // Changed from 'content' to 'contentRef'
-    contentRef: () => printRef.current
+    // Fix: Use the ref directly instead of a function returning the ref
+    content: () => printRef.current
   });
 
   // Find exercise details by ID
