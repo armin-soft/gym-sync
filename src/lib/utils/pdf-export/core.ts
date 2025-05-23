@@ -16,3 +16,20 @@ export const PDF_OPTIONS: PDFOptions = {
   hotfixes: ["px_scaling"],
   compress: true,
 };
+
+// Setup PDF with appropriate fonts and RTL support
+export function setupPdfDocument(): jsPDF {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+    putOnlyUsedFonts: true,
+    hotfixes: ["px_scaling"],
+    compress: true
+  });
+  
+  // تنظیم فونت و حالت راست به چپ
+  addFontToPdf(doc);
+  
+  return doc;
+}

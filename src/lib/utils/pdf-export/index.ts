@@ -1,7 +1,7 @@
 
 import jsPDF from 'jspdf';
 import { Student } from '@/components/students/StudentTypes';
-import { PDF_OPTIONS, addFontToPdf } from './core';
+import { PDF_OPTIONS } from './core';
 import { createExerciseProgram } from './exercise-program';
 import { createDietPlan } from './diet-plan';
 import { createSupplementPlan } from './supplement-plan';
@@ -9,6 +9,7 @@ import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
 import { createDocumentHeader } from './pdf-layout';
+import { addFontToPdf } from './pdf-fonts';
 
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
   return new Promise(async (resolve, reject) => {
@@ -23,11 +24,10 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
         compress: true
       });
       
-      // افزودن فونت فارسی - فقط یک بار در ابتدا
-      addFontToPdf(doc);
+      console.log("Creating PDF document");
       
-      // تنظیم حالت راست به چپ بعد از مقداردهی اولیه
-      doc.setR2L(true);
+      // افزودن فونت و تنظیم راست به چپ
+      addFontToPdf(doc);
       
       // دریافت پروفایل مربی از localStorage
       const trainerProfileStr = localStorage.getItem('trainerProfile');

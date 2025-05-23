@@ -30,14 +30,12 @@ export function configureTableStyles(theme: string = 'primary'): any {
       fillColor: themeConfig.headColor,
       textColor: [255, 255, 255],
       halign: 'center',
-      font: 'Vazirmatn',
       fontStyle: 'bold',
       fontSize: 12,
       cellPadding: 3,
     },
     bodyStyles: {
       halign: 'center',
-      font: 'Vazirmatn',
       fontSize: 10,
       cellPadding: 3,
     },
@@ -58,14 +56,18 @@ export function configureTableStyles(theme: string = 'primary'): any {
 
 // Create a styled section header
 export function createSectionHeader(doc: jsPDF, title: string, yPos: number, color: number[]): number {
-  // Add styled section header
-  doc.setFillColor(color[0], color[1], color[2], 0.1);
-  doc.roundedRect(15, yPos, 180, 10, 3, 3, 'F');
-  
-  doc.setFontSize(14);
-  doc.setTextColor(color[0], color[1], color[2]);
-  doc.setFont("Vazirmatn", "bold");
-  doc.text(title, 105, yPos + 7, { align: 'center' });
-  
-  return yPos + 15; // Return updated Y position
+  try {
+    // Add styled section header
+    doc.setFillColor(color[0], color[1], color[2], 0.1);
+    doc.roundedRect(15, yPos, 180, 10, 3, 3, 'F');
+    
+    doc.setFontSize(14);
+    doc.setTextColor(color[0], color[1], color[2]);
+    doc.text(title, 105, yPos + 7, { align: 'center' });
+    
+    return yPos + 15; // Return updated Y position
+  } catch (error) {
+    console.error("Error creating section header:", error);
+    return yPos + 15; // Return default position in case of error
+  }
 }
