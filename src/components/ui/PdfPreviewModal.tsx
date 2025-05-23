@@ -58,7 +58,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col" dir="rtl">
         <DialogHeader>
           <DialogTitle className="text-right flex items-center justify-between">
             <span>پیش‌نمایش برنامه {student?.name}</span>

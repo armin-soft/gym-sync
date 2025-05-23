@@ -8,7 +8,7 @@ export function addFontToPdf(doc: jsPDF): void {
     doc.setR2L(true);
     
     // فعال کردن پشتیبانی از یونیکد برای متن فارسی
-    doc.setFont("Helvetica", "normal", "normal");
+    doc.setFont("Helvetica", "normal");
     doc.setLanguage("fa");
     
     // تضمین اینکه تراز متن برای زبان‌های RTL به صورت پیش‌فرض راست است
@@ -23,6 +23,8 @@ export function addFontToPdf(doc: jsPDF): void {
 // تابع کمکی برای اطمینان از نمایش صحیح متن RTL
 export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, options: any = {}): void {
   try {
+    if (!text) return;
+    
     // ذخیره وضعیت قبلی
     const previousR2L = doc.getR2L();
     
@@ -40,13 +42,13 @@ export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, opt
   } catch (error) {
     console.error("خطا در نوشتن متن RTL:", error);
     // استفاده از متن استاندارد در صورت خرابی RTL
-    doc.text(text, x, y, options);
+    doc.text(text || "", x, y, options);
   }
 }
 
 // تبدیل اعداد استاندارد به اعداد فارسی
 export function toPersianDigits(text: string | number): string {
-  if (!text && text !== 0) return '';
+  if (text === undefined || text === null) return '';
   
   const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
   return String(text).replace(/\d/g, match => persianDigits[parseInt(match)]);

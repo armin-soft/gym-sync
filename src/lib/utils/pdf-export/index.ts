@@ -1,7 +1,7 @@
 
 import jsPDF from 'jspdf';
 import { Student } from '@/components/students/StudentTypes';
-import { PDF_OPTIONS } from './core';
+import { PDF_OPTIONS, setupPdfDocument } from './core';
 import { createExerciseProgram } from './exercise-program';
 import { createDietPlan } from './diet-plan';
 import { createSupplementPlan } from './supplement-plan';
@@ -35,20 +35,9 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
   return new Promise(async (resolve, reject) => {
     try {
       // ایجاد یک سند PDF جدید با پشتیبانی RTL
-      const doc = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-        putOnlyUsedFonts: true,
-        hotfixes: ["px_scaling"],
-        compress: true,
-        floatPrecision: 16
-      });
+      const doc = setupPdfDocument();
       
       console.log("در حال ایجاد پیش‌نمایش PDF");
-      
-      // افزودن فونت و تنظیم پشتیبانی RTL - این برای متن فارسی حیاتی است
-      addFontToPdf(doc);
       
       // دریافت پروفایل مربی از localStorage
       const trainerProfileStr = localStorage.getItem('trainerProfile');
@@ -87,20 +76,9 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
   return new Promise(async (resolve, reject) => {
     try {
       // ایجاد یک سند PDF جدید با پشتیبانی RTL
-      const doc = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-        putOnlyUsedFonts: true,
-        hotfixes: ["px_scaling"],
-        compress: true,
-        floatPrecision: 16
-      });
+      const doc = setupPdfDocument();
       
       console.log("در حال ایجاد سند PDF");
-      
-      // افزودن فونت و تنظیم پشتیبانی RTL - این برای متن فارسی حیاتی است
-      addFontToPdf(doc);
       
       // دریافت پروفایل مربی از localStorage
       const trainerProfileStr = localStorage.getItem('trainerProfile');
