@@ -3,88 +3,101 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Student } from '@/components/students/StudentTypes';
 import { toPersianNumbers } from '../numbers';
-import { addPageFooter, createDocumentHeader, createSectionHeader, configureTableStyles } from './core';
+import { addPageFooter, createSectionHeader, configureTableStyles } from './core';
 import { TrainerProfile } from './types';
 import { getSupplementName, getSupplementType } from './data-helpers';
 
-// Create the supplements and vitamins page
-export async function createSupplementPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
-  // Add document header
-  createDocumentHeader(doc, student, trainerProfile, "مکمل و ویتامین");
+// Create the supplements and vitamins page with a 4-section layout
+export async function createSupplementPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, showHeader = true) {
+  // Define starting Y position
+  let yPos = showHeader ? 120 : 20;
   
-  // Define starting Y position after header
-  let yPos = 120;
+  // Add section header
+  yPos = createSectionHeader(doc, "برنامه مکمل و ویتامین", yPos, [230, 126, 34]);
   
-  // Process supplements
+  // Define grid layout for supplements and vitamins
+  const gridWidth = 85;
+  const gridGap = 10;
+  const gridColumns = 2;
+  
+  // Process supplements in a grid layout (2x2)
   if (student.supplements && student.supplements.length > 0) {
-    // Add section header for supplements
-    yPos = createSectionHeader(doc, "مکمل‌های پیشنهادی", yPos, [230, 126, 34]);
+    // Add heading for supplements section
+    doc.setFontSize(14);
+    doc.setTextColor(230, 126, 34);
+    doc.setFont("Vazirmatn", "bold");
+    doc.text("مکمل‌های پیشنهادی", 105, yPos + 5, { align: 'center' });
+    yPos += 10;
     
-    // Create table for supplements with improved styling
-    const tableData = student.supplements.map((suppId, index) => {
+    // Create supplements table - first section (top-right)
+    const supplementsData = student.supplements.map((suppId, index) => {
       const suppName = getSupplementName(suppId) || `مکمل ${toPersianNumbers(index + 1)}`;
       const suppType = getSupplementType(suppId) || '-';
       return [toPersianNumbers(index + 1), suppName, suppType];
     });
     
-    // Apply table styling based on centralized configuration
+    // Position at top-right quadrant
     autoTable(doc, {
       startY: yPos,
-      head: [['ردیف', 'نام مکمل', 'نوع']],
-      body: tableData,
+      margin: { left: 15 },
+      head: [['#', 'نام مکمل', 'نوع']],
+      body: supplementsData,
       ...configureTableStyles('warning'),
+      tableWidth: gridWidth,
+      styles: {
+        fontSize: 9,
+        cellPadding: 2,
+      },
       columnStyles: {
-        0: { cellWidth: 15, halign: 'center' },
+        0: { cellWidth: 10, halign: 'center' },
         1: { cellWidth: 'auto', halign: 'right' },
-        2: { cellWidth: 40, halign: 'center' },
-      },
-      didDrawCell: (data) => {
-        // Add special styling for cells if needed
-      },
+        2: { cellWidth: 25, halign: 'center' },
+      }
     });
     
-    yPos = (doc as any).lastAutoTable.finalY + 15;
-    
-    // Check if we need to add a new page
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 20;
-    }
+    const supplementsHeight = (doc as any).lastAutoTable.finalY - yPos;
   }
   
   // Process vitamins
   if (student.vitamins && student.vitamins.length > 0) {
-    // Add section header for vitamins
-    yPos = createSectionHeader(doc, "ویتامین‌های پیشنهادی", yPos, [155, 89, 182]);
-    
-    // Create table for vitamins with improved styling
-    const tableData = student.vitamins.map((vitaminId, index) => {
+    // Position at top-left quadrant (next to supplements)
+    const vitaminData = student.vitamins.map((vitaminId, index) => {
       const vitaminName = getSupplementName(vitaminId) || `ویتامین ${toPersianNumbers(index + 1)}`;
       const vitaminType = getSupplementType(vitaminId) || '-';
       return [toPersianNumbers(index + 1), vitaminName, vitaminType];
     });
     
-    // Apply table styling based on centralized configuration
-    autoTable(doc, {
-      startY: yPos,
-      head: [['ردیف', 'نام ویتامین', 'نوع']],
-      body: tableData,
-      ...configureTableStyles('info'),
-      columnStyles: {
-        0: { cellWidth: 15, halign: 'center' },
-        1: { cellWidth: 'auto', halign: 'right' },
-        2: { cellWidth: 40, halign: 'center' },
-      },
-      didDrawCell: (data) => {
-        // Add special styling for cells if needed
-      },
-    });
+    // Add heading for vitamins (top-left section)
+    doc.setFontSize(14);
+    doc.setTextColor(155, 89, 182);
+    doc.setFont("Vazirmatn", "bold");
+    doc.text("ویتامین‌های پیشنهادی", gridWidth + gridGap + 15 + gridWidth/2, yPos + 5, { align: 'center' });
     
-    yPos = (doc as any).lastAutoTable.finalY + 15;
+    // Position at top-left quadrant
+    autoTable(doc, {
+      startY: yPos + 10,
+      margin: { left: 15 + gridWidth + gridGap },
+      head: [['#', 'نام ویتامین', 'نوع']],
+      body: vitaminData,
+      ...configureTableStyles('info'),
+      tableWidth: gridWidth,
+      styles: {
+        fontSize: 9,
+        cellPadding: 2,
+      },
+      columnStyles: {
+        0: { cellWidth: 10, halign: 'center' },
+        1: { cellWidth: 'auto', halign: 'right' },
+        2: { cellWidth: 25, halign: 'center' },
+      }
+    });
   }
   
+  // Move down for the second row of the grid
+  yPos = Math.max((doc as any).lastAutoTable?.finalY || yPos + 80) + 15;
+  
   // Add any additional notes with modern styling
-  if (student.notes) {
+  if (student.supplementNotes) {
     // Create notes section with styled header
     yPos = createSectionHeader(doc, "نکات مصرف مکمل", yPos, [230, 126, 34]);
     
@@ -97,7 +110,7 @@ export async function createSupplementPlan(doc: jsPDF, student: Student, trainer
     doc.setFont("Vazirmatn", "normal");
     
     // Add notes text with line wrapping
-    const splitNotes = doc.splitTextToSize(student.notes || "", 165);
+    const splitNotes = doc.splitTextToSize(student.supplementNotes || "", 165);
     doc.text(splitNotes, 105, yPos + 7, { align: 'center' });
   }
   

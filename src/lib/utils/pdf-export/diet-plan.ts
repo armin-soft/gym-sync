@@ -4,22 +4,19 @@ import autoTable from 'jspdf-autotable';
 import { Student } from '@/components/students/StudentTypes';
 import { toPersianNumbers } from '../numbers';
 import { getDayName } from '@/lib/utils';
-import { addPageFooter, createDocumentHeader, createSectionHeader, configureTableStyles } from './core';
+import { addPageFooter, createSectionHeader, configureTableStyles } from './core';
 import { TrainerProfile } from './types';
 import { getMealName, getMealType } from './data-helpers';
 
-// Create the diet plan page
-export async function createDietPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
-  // Add document header
-  createDocumentHeader(doc, student, trainerProfile, "برنامه غذایی");
-  
-  // Define starting Y position after header
-  let yPos = 120;
+// Create the diet plan page with all days on a single page
+export async function createDietPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, showHeader = true) {
+  // Define starting Y position
+  let yPos = showHeader ? 120 : 20;
   
   // Add section header
   yPos = createSectionHeader(doc, "برنامه غذایی هفتگی", yPos, [39, 174, 96]);
   
-  // Process each day's meal plan
+  // Process each day's meal plan in a single page layout
   for (let day = 1; day <= 7; day++) {
     const dayKey = `mealsDay${day}` as keyof Student;
     const meals = student[dayKey] as number[] || [];
@@ -30,7 +27,7 @@ export async function createDietPlan(doc: jsPDF, student: Student, trainerProfil
       doc.setFillColor(39, 174, 96, 0.1);
       doc.roundedRect(15, yPos, 180, 10, 2, 2, 'F');
       
-      doc.setFontSize(13);
+      doc.setFontSize(12);
       doc.setTextColor(39, 174, 96);
       doc.setFont("Vazirmatn", "bold");
       doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, 105, yPos + 7, { align: 'center' });
@@ -54,15 +51,16 @@ export async function createDietPlan(doc: jsPDF, student: Student, trainerProfil
           1: { cellWidth: 'auto', halign: 'right' },
           2: { cellWidth: 40, halign: 'center' },
         },
-        didDrawCell: (data) => {
-          // Add special styling for cells if needed
-        },
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+        }
       });
       
-      yPos = (doc as any).lastAutoTable.finalY + 15;
+      yPos = (doc as any).lastAutoTable.finalY + 10;
       
       // Check if we need to add a new page
-      if (yPos > 250) {
+      if (yPos > 250 && day < 7) {
         doc.addPage();
         yPos = 20;
       }

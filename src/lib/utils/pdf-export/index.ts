@@ -8,6 +8,7 @@ import { createSupplementPlan } from './supplement-plan';
 import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
+import { createDocumentHeader } from './pdf-layout';
 
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
   return new Promise(async (resolve, reject) => {
@@ -36,16 +37,19 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       console.log("Trainer profile:", trainerProfile);
       console.log("Student:", student.name);
       
-      // صفحه 1: برنامه تمرینی
-      await createExerciseProgram(doc, student, trainerProfile);
+      // اطلاعات کلی فقط در صفحه اول نمایش داده می‌شود
+      createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
       
-      // صفحه 2: برنامه غذایی
+      // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار قسمت
+      await createExerciseProgram(doc, student, trainerProfile, false);
+      
+      // صفحه 2: برنامه غذایی هفتگی
       doc.addPage();
-      await createDietPlan(doc, student, trainerProfile);
+      await createDietPlan(doc, student, trainerProfile, false);
       
       // صفحه 3: مکمل‌ها و ویتامین‌ها
       doc.addPage();
-      await createSupplementPlan(doc, student, trainerProfile);
+      await createSupplementPlan(doc, student, trainerProfile, false);
       
       // ذخیره PDF با نامی بر اساس نام شاگرد و تاریخ فعلی
       const currentDate = getCurrentPersianDate().replace(/\s/g, '_');
