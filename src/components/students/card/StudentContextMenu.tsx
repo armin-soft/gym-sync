@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/context-menu";
 import {
   CalendarDays,
-  FileText,
   Trash,
   Edit,
   Apple,
@@ -27,7 +26,6 @@ interface StudentContextMenuProps {
   onAddExercise: () => void;
   onAddDiet?: () => void;
   onAddSupplement?: () => void;
-  onDownload?: () => void;
   isProfileComplete: boolean;
 }
 
@@ -39,7 +37,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  onDownload,
   isProfileComplete
 }) => {
   // Log when this component renders to help with debugging
@@ -64,10 +61,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   
   const handleSupplementClick = () => {
     if (onAddSupplement) onAddSupplement();
-  };
-  
-  const handleDownloadClick = () => {
-    if (onDownload) onDownload();
   };
 
   return (
@@ -137,17 +130,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 variant="red"
               />
             )}
-            
-            {onDownload && (
-              <ContextMenuItemWithAnimation
-                icon={<FileText className="h-4 w-4" />}
-                title="دانلود برنامه"
-                subtitle="خروجی PDF برنامه"
-                onClick={handleDownloadClick}
-                index={5}
-                variant="indigo"
-              />
-            )}
           </ContextMenuSection>
         </ContextMenuContent>
       </AnimatePresence>
@@ -156,3 +138,4 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
 };
 
 export default StudentContextMenu;
+

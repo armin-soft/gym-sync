@@ -43,7 +43,6 @@ export const StudentCard: React.FC<StudentCardProps> = ({
       onAddExercise={onAddExercise}
       onAddDiet={onAddDiet}
       onAddSupplement={onAddSupplement}
-      onDownload={undefined}
       isProfileComplete={isProfileComplete}
     >
       <motion.div
@@ -107,3 +106,4 @@ export const StudentCard: React.FC<StudentCardProps> = ({
     </StudentContextMenu>
   );
 };
+

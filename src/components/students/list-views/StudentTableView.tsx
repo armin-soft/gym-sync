@@ -15,7 +15,6 @@ interface StudentTableViewProps {
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
-  onDownload?: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
   viewMode: "table"; // Only table mode is supported
@@ -35,7 +34,6 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  onDownload,
   onAddStudent,
   onClearSearch,
   viewMode,
@@ -65,7 +63,6 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
       onAddExercise={onAddExercise}
       onAddDiet={onAddDiet}
       onAddSupplement={onAddSupplement}
-      onDownload={onDownload}
       onAddStudent={onAddStudent}
       onClearSearch={onClearSearch}
       isProfileComplete={isProfileComplete}
@@ -75,3 +72,4 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
     />
   );
 };
+

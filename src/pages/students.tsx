@@ -151,7 +151,6 @@ const StudentsPage = () => {
             onAddExercise={handleOpenProgramManager}
             onAddDiet={handleOpenProgramManager}
             onAddSupplement={handleOpenProgramManager}
-            onDownload={(student) => {}}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
             viewMode="table"
@@ -178,3 +177,4 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
+

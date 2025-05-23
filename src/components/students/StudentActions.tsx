@@ -21,7 +21,6 @@ interface StudentActionsProps {
   onAddExercise: (student: Student) => void;
   onAddDiet?: (student: Student) => void;
   onAddSupplement?: (student: Student) => void;
-  onDownload?: (student: Student) => void;
   isCard?: boolean;
 }
 
@@ -123,3 +122,4 @@ const MenuItemWithAnimation: React.FC<MenuItemWithAnimationProps> = ({
     </motion.div>
   );
 };
+

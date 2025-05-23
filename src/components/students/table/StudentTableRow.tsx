@@ -16,7 +16,6 @@ interface StudentTableRowProps {
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
-  onDownload?: (student: Student) => void;
   isProfileComplete: boolean;
   index?: number;
 }
@@ -28,7 +27,6 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  onDownload,
   isProfileComplete,
   index,
 }) => {
@@ -148,3 +146,4 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
     </>
   );
 };
+
