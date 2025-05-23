@@ -41,7 +41,8 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
         format: 'a4',
         putOnlyUsedFonts: true,
         hotfixes: ["px_scaling"],
-        compress: true
+        compress: true,
+        floatPrecision: 16
       });
       
       console.log("در حال ایجاد پیش‌نمایش PDF");
@@ -92,7 +93,8 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
         format: 'a4',
         putOnlyUsedFonts: true,
         hotfixes: ["px_scaling"],
-        compress: true
+        compress: true,
+        floatPrecision: 16
       });
       
       console.log("در حال ایجاد سند PDF");

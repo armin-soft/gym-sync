@@ -16,6 +16,8 @@ export const PDF_OPTIONS: PDFOptions = {
   format: 'a4',
   hotfixes: ["px_scaling"],
   compress: true,
+  putOnlyUsedFonts: true,
+  floatPrecision: 16,
 };
 
 // Setup PDF with appropriate fonts and RTL support
@@ -26,7 +28,8 @@ export function setupPdfDocument(): jsPDF {
     format: 'a4',
     putOnlyUsedFonts: true,
     hotfixes: ["px_scaling"],
-    compress: true
+    compress: true,
+    floatPrecision: 16
   });
   
   // Setup font and RTL mode

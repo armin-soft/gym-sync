@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Student } from '@/components/students/StudentTypes';
 import { previewStudentProgramPDF, exportStudentProgramToPdf } from '@/lib/utils/pdf-export';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Download, Eye, X } from 'lucide-react';
+import { Download, X } from 'lucide-react';
 
 interface PdfPreviewModalProps {
   isOpen: boolean;
@@ -26,6 +26,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
     if (isOpen && student) {
       setIsLoading(true);
       setError(null);
+      setPdfDataUrl(null);
       
       previewStudentProgramPDF(student)
         .then((dataUrl) => {

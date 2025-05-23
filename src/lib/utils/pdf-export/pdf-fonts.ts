@@ -7,8 +7,9 @@ export function addFontToPdf(doc: jsPDF): void {
     // تنظیم جهت متن راست به چپ
     doc.setR2L(true);
     
-    // استفاده از فونت‌های استاندارد که پشتیبانی بهتری از یونیکد دارند
-    doc.setFont("Helvetica");
+    // فعال کردن پشتیبانی از یونیکد برای متن فارسی
+    doc.setFont("Helvetica", "normal", "normal");
+    doc.setLanguage("fa");
     
     // تضمین اینکه تراز متن برای زبان‌های RTL به صورت پیش‌فرض راست است
     doc.setTextColor(0, 0, 0);
@@ -22,14 +23,20 @@ export function addFontToPdf(doc: jsPDF): void {
 // تابع کمکی برای اطمینان از نمایش صحیح متن RTL
 export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, options: any = {}): void {
   try {
+    // ذخیره وضعیت قبلی
+    const previousR2L = doc.getR2L();
+    
     // فعال‌سازی RTL
     doc.setR2L(true);
     
     // تنظیم گزینه‌های پیش‌فرض برای متن RTL - تراز راست برای فارسی مهم است
     const defaultOptions = { align: 'right', ...options };
     
-    // نوشتن متن با پشتیبانی مناسب RTL
+    // اطمینان از اینکه متن به صورت یونیکد صحیح پردازش می‌شود
     doc.text(text, x, y, defaultOptions);
+    
+    // بازگرداندن وضعیت قبلی
+    doc.setR2L(previousR2L);
   } catch (error) {
     console.error("خطا در نوشتن متن RTL:", error);
     // استفاده از متن استاندارد در صورت خرابی RTL
