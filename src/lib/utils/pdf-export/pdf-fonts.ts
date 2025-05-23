@@ -1,43 +1,43 @@
 
 import jsPDF from 'jspdf';
 
-// Add Persian font to PDF
+// برای پشتیبانی از فونت فارسی در PDF
 export function addFontToPdf(doc: jsPDF): void {
   try {
-    // Set document to use right-to-left text direction
+    // تنظیم جهت متن راست به چپ
     doc.setR2L(true);
     
-    // Using standard fonts that have better Unicode support
+    // استفاده از فونت‌های استاندارد که پشتیبانی بهتری از یونیکد دارند
     doc.setFont("Helvetica");
     
-    // Ensure text alignment is right by default for RTL languages
+    // تضمین اینکه تراز متن برای زبان‌های RTL به صورت پیش‌فرض راست است
     doc.setTextColor(0, 0, 0);
     
-    console.log("Persian font setup completed successfully");
+    console.log("تنظیمات فونت فارسی با موفقیت انجام شد");
   } catch (error) {
-    console.error("Error setting up Persian font:", error);
+    console.error("خطا در تنظیم فونت فارسی:", error);
   }
 }
 
-// Helper function to ensure RTL text displays properly
+// تابع کمکی برای اطمینان از نمایش صحیح متن RTL
 export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, options: any = {}): void {
   try {
-    // Ensure RTL is enabled
+    // فعال‌سازی RTL
     doc.setR2L(true);
     
-    // Set default options for RTL text - right alignment is important for Persian
+    // تنظیم گزینه‌های پیش‌فرض برای متن RTL - تراز راست برای فارسی مهم است
     const defaultOptions = { align: 'right', ...options };
     
-    // Write the text with proper RTL support
+    // نوشتن متن با پشتیبانی مناسب RTL
     doc.text(text, x, y, defaultOptions);
   } catch (error) {
-    console.error("Error writing RTL text:", error);
-    // Fallback to standard text if RTL fails
+    console.error("خطا در نوشتن متن RTL:", error);
+    // استفاده از متن استاندارد در صورت خرابی RTL
     doc.text(text, x, y, options);
   }
 }
 
-// Convert standard numerals to Persian numerals
+// تبدیل اعداد استاندارد به اعداد فارسی
 export function toPersianDigits(text: string | number): string {
   if (!text && text !== 0) return '';
   

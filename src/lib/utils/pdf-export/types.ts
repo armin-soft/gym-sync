@@ -26,3 +26,9 @@ export interface TableThemeOptions {
   headColor: number[];
   altColor: number[];
 }
+
+export interface PdfPreviewOptions {
+  student: Student;
+  trainerProfile: TrainerProfile;
+  showHeader?: boolean;
+}

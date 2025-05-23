@@ -1,12 +1,12 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, User } from "lucide-react";
+import React, { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
-import { useShamsiDate } from "@/hooks/useShamsiDate";
-import { toPersianNumbers } from "@/lib/utils/numbers";
-import { getStudentProgress } from "@/utils/studentUtils";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Download, FileDown, FileText, Printer } from "lucide-react";
+import { motion } from "framer-motion";
+import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { useToast } from "@/hooks/use-toast";
+import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 interface ProgramHeaderProps {
   student: Student;
@@ -14,81 +14,101 @@ interface ProgramHeaderProps {
 }
 
 const ProgramHeader: React.FC<ProgramHeaderProps> = ({ student, onBack }) => {
-  const { dateInfo } = useShamsiDate();
-  const progress = getStudentProgress(student);
-  
+  const { toast } = useToast();
+  const [isExporting, setIsExporting] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const handleExport = async () => {
+    try {
+      setIsExporting(true);
+      toast({
+        title: "در حال آماده‌سازی PDF",
+        description: "لطفاً منتظر بمانید..."
+      });
+      
+      await exportStudentProgramToPdf(student);
+      
+      toast({
+        title: "برنامه با موفقیت صادر شد",
+        description: "فایل PDF برای دانلود آماده است.",
+        variant: "success"
+      });
+    } catch (error) {
+      console.error("خطا در صدور PDF:", error);
+      toast({
+        title: "خطا در صدور برنامه",
+        description: "متأسفانه مشکلی در صدور برنامه پیش آمد. لطفاً مجدداً تلاش کنید.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
-    <motion.div 
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="w-full bg-white dark:bg-gray-800 shadow-md px-4 sm:px-6 py-4 relative z-10"
-    >
-      <div className="container mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-1.5">
+    <>
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="bg-white dark:bg-gray-800 border-b px-4 sm:px-6 py-4 sticky top-0 z-10"
+      >
+        <div className="flex flex-col sm:flex-row justify-between gap-3 items-center">
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={onBack}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1"
+            >
               <ArrowRight className="h-4 w-4" />
               <span>بازگشت</span>
             </Button>
-            
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0">
-                {student.image ? (
-                  <img 
-                    src={student.image} 
-                    alt={student.name} 
-                    className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                    <User className="h-5 w-5 text-white" />
-                  </div>
-                )}
-              </div>
-              
-              <div>
-                <h1 className="text-lg font-bold leading-tight text-gray-800 dark:text-white">
-                  مدیریت برنامه‌های {student.name}
-                </h1>
-                
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="inline-flex items-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
-                    {student.gender === "male" ? "آقا" : "خانم"}
-                  </span>
-                  
-                  {student.phone && (
-                    <span className="text-xs">
-                      شماره تماس: {toPersianNumbers(student.phone)}
-                    </span>
-                  )}
-                  
-                  {student.age && (
-                    <span className="text-xs">
-                      سن: {toPersianNumbers(student.age)} سال
-                    </span>
-                  )}
-                  
-                  <span className="text-xs">
-                    تکمیل پروفایل: {toPersianNumbers(progress)}٪
-                  </span>
-                </div>
-              </div>
-            </div>
+            <h1 className="text-lg font-semibold">برنامه {student.name}</h1>
           </div>
-          
-          {dateInfo && (
-            <div className="text-left ltr:text-right text-sm text-gray-500 dark:text-gray-400 flex flex-col items-end">
-              <span>{dateInfo.Shamsi_Date}</span>
-              <div className="flex items-center gap-1 text-xs">
-                <span>{dateInfo.Season}</span>
-                <span>{dateInfo.Season_Emoji}</span>
-              </div>
-            </div>
-          )}
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1"
+              onClick={() => setIsPreviewOpen(true)}
+            >
+              <FileText className="h-4 w-4" />
+              <span>پیش‌نمایش برنامه</span>
+            </Button>
+            
+            <Button
+              onClick={handleExport}
+              disabled={isExporting}
+              variant="default"
+              size="sm"
+              className="flex items-center gap-1"
+            >
+              {isExporting ? (
+                <span className="flex items-center gap-1">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  در حال صدور...
+                </span>
+              ) : (
+                <>
+                  <FileDown className="h-4 w-4" />
+                  <span>صدور برنامه</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+      
+      <PdfPreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        student={student}
+      />
+    </>
   );
 };
 

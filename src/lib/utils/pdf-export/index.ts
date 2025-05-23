@@ -11,16 +11,16 @@ import { getCurrentPersianDate } from '../persianDate';
 import { createDocumentHeader } from './pdf-layout';
 import { addFontToPdf, writeRTLText } from './pdf-fonts';
 
-// Fetch application version from manifest
+// دریافت نسخه برنامه از فایل manifest
 const getAppVersionFromManifest = async (): Promise<string> => {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
     return manifest.version || '';
   } catch (error) {
-    console.error('Error loading version from manifest:', error);
+    console.error('خطا در بارگیری نسخه از manifest:', error);
     
-    // Try to get from localStorage if available
+    // تلاش برای دریافت از localStorage در صورت دسترسی
     const cachedVersion = localStorage.getItem('app_version');
     if (cachedVersion) {
       return cachedVersion;
@@ -30,10 +30,11 @@ const getAppVersionFromManifest = async (): Promise<string> => {
   }
 };
 
-export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
+// تابع برای پیش‌نمایش PDF
+export const previewStudentProgramPDF = async (student: Student): Promise<string> => {
   return new Promise(async (resolve, reject) => {
     try {
-      // Create a new PDF document with RTL support
+      // ایجاد یک سند PDF جدید با پشتیبانی RTL
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -43,34 +44,85 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
         compress: true
       });
       
-      console.log("Creating PDF document");
+      console.log("در حال ایجاد پیش‌نمایش PDF");
       
-      // Add font and set RTL support - this is critical for Persian text
+      // افزودن فونت و تنظیم پشتیبانی RTL - این برای متن فارسی حیاتی است
       addFontToPdf(doc);
       
-      // Get trainer profile from localStorage
+      // دریافت پروفایل مربی از localStorage
       const trainerProfileStr = localStorage.getItem('trainerProfile');
       const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
       
-      console.log("Creating PDF with RTL support");
-      console.log("Trainer profile:", trainerProfile);
-      console.log("Student:", student.name);
+      console.log("در حال ایجاد PDF با پشتیبانی RTL");
+      console.log("پروفایل مربی:", trainerProfile);
+      console.log("شاگرد:", student.name);
       
-      // General information is only shown on first page
+      // اطلاعات عمومی فقط در صفحه اول نمایش داده می‌شود
       createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
       
-      // Page 1: Exercise program as one page with four sections
+      // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار بخش
       await createExerciseProgram(doc, student, trainerProfile, false);
       
-      // Page 2: Weekly diet plan
+      // صفحه 2: برنامه غذایی هفتگی
       doc.addPage();
       await createDietPlan(doc, student, trainerProfile, false);
       
-      // Page 3: Supplements and vitamins
+      // صفحه 3: مکمل‌ها و ویتامین‌ها
       doc.addPage();
       await createSupplementPlan(doc, student, trainerProfile, false);
       
-      // Save PDF with a name based on student name and current date
+      // بازگرداندن URL داده برای پیش‌نمایش
+      const pdfDataUrl = doc.output('dataurlstring');
+      resolve(pdfDataUrl);
+      
+    } catch (error) {
+      console.error("خطا در ایجاد پیش‌نمایش PDF:", error);
+      reject(error);
+    }
+  });
+};
+
+export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // ایجاد یک سند PDF جدید با پشتیبانی RTL
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        putOnlyUsedFonts: true,
+        hotfixes: ["px_scaling"],
+        compress: true
+      });
+      
+      console.log("در حال ایجاد سند PDF");
+      
+      // افزودن فونت و تنظیم پشتیبانی RTL - این برای متن فارسی حیاتی است
+      addFontToPdf(doc);
+      
+      // دریافت پروفایل مربی از localStorage
+      const trainerProfileStr = localStorage.getItem('trainerProfile');
+      const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
+      
+      console.log("در حال ایجاد PDF با پشتیبانی RTL");
+      console.log("پروفایل مربی:", trainerProfile);
+      console.log("شاگرد:", student.name);
+      
+      // اطلاعات عمومی فقط در صفحه اول نمایش داده می‌شود
+      createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
+      
+      // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار بخش
+      await createExerciseProgram(doc, student, trainerProfile, false);
+      
+      // صفحه 2: برنامه غذایی هفتگی
+      doc.addPage();
+      await createDietPlan(doc, student, trainerProfile, false);
+      
+      // صفحه 3: مکمل‌ها و ویتامین‌ها
+      doc.addPage();
+      await createSupplementPlan(doc, student, trainerProfile, false);
+      
+      // ذخیره PDF با نامی بر اساس نام دانش‌آموز و تاریخ فعلی
       const currentDate = getCurrentPersianDate().replace(/\s/g, '_');
       const fileName = `برنامه_${student.name || 'بدون_نام'}_${currentDate}.pdf`;
       
@@ -78,13 +130,13 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       
       resolve();
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error("خطا در ایجاد PDF:", error);
       reject(error);
     }
   });
 };
 
-// Re-export all modules for easier imports
+// صادر کردن تمام ماژول‌ها برای واردات آسان‌تر
 export * from './types';
 export * from './core';
 export * from './data-helpers';

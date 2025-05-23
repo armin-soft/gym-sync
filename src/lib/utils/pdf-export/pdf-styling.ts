@@ -3,7 +3,7 @@ import jsPDF from 'jspdf';
 import { TableThemeOptions } from './types';
 import { writeRTLText } from './pdf-fonts';
 
-// Configure table styles for consistent look
+// پیکربندی استایل‌های جدول برای ظاهر یکنواخت
 export function configureTableStyles(theme: string = 'primary'): any {
   const themes: Record<string, TableThemeOptions> = {
     primary: {
@@ -30,13 +30,13 @@ export function configureTableStyles(theme: string = 'primary'): any {
     headStyles: {
       fillColor: themeConfig.headColor,
       textColor: [255, 255, 255],
-      halign: 'right', // Changed to right for RTL
+      halign: 'right', // تغییر به راست برای RTL
       fontStyle: 'bold',
       fontSize: 12,
       cellPadding: 3,
     },
     bodyStyles: {
-      halign: 'right', // Changed to right for RTL
+      halign: 'right', // تغییر به راست برای RTL
       fontSize: 10,
       cellPadding: 3,
     },
@@ -50,15 +50,15 @@ export function configureTableStyles(theme: string = 'primary'): any {
       overflow: 'linebreak',
       cellWidth: 'wrap',
       fontSize: 10,
-      direction: 'rtl', // Set RTL direction for tables
+      direction: 'rtl', // تنظیم جهت RTL برای جداول
     },
   };
 }
 
-// Create a styled section header
+// ایجاد هدر بخش با استایل
 export function createSectionHeader(doc: jsPDF, title: string, yPos: number, color: number[]): number {
   try {
-    // Add styled section header
+    // افزودن هدر بخش با استایل
     doc.setFillColor(color[0], color[1], color[2], 0.1);
     doc.roundedRect(15, yPos, 180, 10, 3, 3, 'F');
     
@@ -66,9 +66,9 @@ export function createSectionHeader(doc: jsPDF, title: string, yPos: number, col
     doc.setTextColor(color[0], color[1], color[2]);
     writeRTLText(doc, title, 105, yPos + 7, { align: 'center' });
     
-    return yPos + 15; // Return updated Y position
+    return yPos + 15; // بازگرداندن موقعیت Y به‌روز شده
   } catch (error) {
-    console.error("Error creating section header:", error);
-    return yPos + 15; // Return default position in case of error
+    console.error("خطا در ایجاد هدر بخش:", error);
+    return yPos + 15; // بازگرداندن موقعیت پیش‌فرض در صورت بروز خطا
   }
 }
