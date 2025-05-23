@@ -36,7 +36,7 @@ export function configureTableStyles(theme: string = 'primary'): any {
       cellPadding: 3,
     },
     bodyStyles: {
-      halign: 'center',
+      halign: 'right', // تغییر به راست چین
       fontSize: 10,
       cellPadding: 3,
     },
@@ -50,7 +50,6 @@ export function configureTableStyles(theme: string = 'primary'): any {
       overflow: 'linebreak',
       cellWidth: 'wrap',
       fontSize: 10,
-      font: 'Amiri',
       direction: 'rtl',
     },
     didParseCell: function(data: any) {

@@ -2,7 +2,7 @@
 import jsPDF from 'jspdf';
 import { PDFOptions } from './types';
 import autoTable from 'jspdf-autotable';
-import { addFontToPdf } from './pdf-fonts';
+import { addFontToPdf, pdfPersianText, pdfPersianNumber } from './pdf-fonts';
 
 // Export the reusable functions from our new modules
 export { addFontToPdf, pdfPersianText, pdfPersianNumber } from './pdf-fonts';
