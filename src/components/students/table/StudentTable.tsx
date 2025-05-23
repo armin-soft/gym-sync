@@ -14,9 +14,6 @@ interface StudentTableProps {
   refreshTrigger: number;
   onEdit?: (student: Student) => void;
   onDelete: (id: number) => void;
-  onAddExercise: (student: Student) => void;
-  onAddDiet: (student: Student) => void;
-  onAddSupplement: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
   isProfileComplete: boolean;
@@ -32,9 +29,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({
   refreshTrigger,
   onEdit,
   onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
   onAddStudent,
   onClearSearch,
   isProfileComplete,
@@ -81,9 +75,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                 students={sortedAndFilteredStudents}
                 onEdit={onEdit}
                 onDelete={onDelete}
-                onAddExercise={onAddExercise}
-                onAddDiet={onAddDiet}
-                onAddSupplement={onAddSupplement}
                 isProfileComplete={isProfileComplete}
                 searchQuery={searchQuery}
                 onAddStudent={onAddStudent}
