@@ -18,7 +18,7 @@ import {
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
 import { ContextMenuSection } from "./context-menu/ContextMenuSection";
-import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export"; // Import from new location
 import { useToast } from "@/hooks/use-toast";
 
 interface StudentContextMenuProps {

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export"; // Import from new location
 
 interface StudentActionsProps {
   student: Student;
