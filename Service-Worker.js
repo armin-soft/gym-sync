@@ -16,7 +16,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.filter(cacheName => {
-          return cacheName.startsWith('gym-sync-') && cacheName !== 'gym-sync-v235';
+          return cacheName.startsWith('gym-sync-') && cacheName !== 'gym-sync-v206';
         }).map(cacheName => {
           return caches.delete(cacheName);
         })
@@ -48,7 +48,7 @@ self.addEventListener('fetch', (event) => {
             
             const responseToCache = response.clone();
             
-            caches.open('gym-sync-v235')
+            caches.open('gym-sync-v206')
               .then(cache => {
                 cache.put(event.request, responseToCache);
               });
