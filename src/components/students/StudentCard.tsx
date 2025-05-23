@@ -19,9 +19,6 @@ interface StudentCardProps {
   onAddDiet: () => void;
   onAddSupplement: () => void;
   isProfileComplete: boolean;
-  exercises?: any[];
-  meals?: any[];
-  supplements?: any[];
   className?: string;
 }
 
@@ -33,9 +30,6 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   onAddDiet,
   onAddSupplement,
   isProfileComplete,
-  exercises = [],
-  meals = [],
-  supplements = [],
   className
 }) => {
   // Log when the card is rendered to help with debugging
@@ -44,9 +38,6 @@ export const StudentCard: React.FC<StudentCardProps> = ({
   return (
     <StudentContextMenu
       student={student}
-      exercises={exercises}
-      meals={meals}
-      supplements={supplements}
       onEdit={onEdit}
       onDelete={onDelete}
       onAddExercise={onAddExercise}

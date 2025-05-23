@@ -14,19 +14,14 @@ import {
   Edit,
   Apple,
   Pill,
-  Printer,
 } from "lucide-react";
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
 import { ContextMenuSection } from "./context-menu/ContextMenuSection";
-import PrintButton from "../PrintButton";
 
 interface StudentContextMenuProps {
   student: Student;
   children: React.ReactNode;
-  exercises?: any[]; // Add exercises prop
-  meals?: any[]; // Add meals prop
-  supplements?: any[]; // Add supplements prop
   onEdit?: () => void;
   onDelete?: () => void;
   onAddExercise: () => void;
@@ -39,9 +34,6 @@ interface StudentContextMenuProps {
 export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   student,
   children,
-  exercises = [],
-  meals = [],
-  supplements = [],
   onEdit,
   onDelete,
   onAddExercise,
@@ -120,26 +112,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 variant="orange"
               />
             )}
-
-            {/* Print Button */}
-            <ContextMenuItemWithAnimation
-              icon={<Printer className="h-4 w-4" />}
-              title="چاپ برنامه"
-              subtitle="چاپ با کیفیت بالا"
-              onClick={() => {}}
-              index={3}
-              variant="blue"
-              customContent={
-                <PrintButton 
-                  student={student}
-                  exercises={exercises}
-                  meals={meals}
-                  supplements={supplements}
-                  variant="ghost"
-                  className="w-full h-auto text-right pr-2"
-                />
-              }
-            />
           </ContextMenuSection>
           
           {/* Student Management Section */}
@@ -150,7 +122,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="ویرایش شاگرد"
                 subtitle="تغییر اطلاعات شاگرد"
                 onClick={handleEditClick}
-                index={4}
+                index={3}
                 variant="blue"
               />
             )}
@@ -161,8 +133,19 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="حذف شاگرد"
                 subtitle="حذف کامل اطلاعات"
                 onClick={handleDeleteClick}
-                index={5}
+                index={4}
                 variant="red"
+              />
+            )}
+            
+            {onDownload && (
+              <ContextMenuItemWithAnimation
+                icon={<FileText className="h-4 w-4" />}
+                title="دانلود برنامه"
+                subtitle="خروجی PDF برنامه"
+                onClick={handleDownloadClick}
+                index={5}
+                variant="indigo"
               />
             )}
           </ContextMenuSection>
@@ -171,3 +154,5 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
     </ContextMenu>
   );
 };
+
+export default StudentContextMenu;

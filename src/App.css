@@ -1,3 +1,4 @@
+
 #root {
   max-width: 100%;
   width: 100%;
@@ -40,60 +41,4 @@
 
 .read-the-docs {
   color: #888;
-}
-
-/* Print Styles */
-@media print {
-  @page {
-    size: A4;
-    margin: 10mm;
-  }
-  
-  body {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  
-  .page-break-after {
-    page-break-after: always;
-  }
-  
-  .page-break-before {
-    page-break-before: always;
-  }
-  
-  .no-print {
-    display: none !important;
-  }
-  
-  .print-only {
-    display: block !important;
-  }
-  
-  /* Keep tables from breaking across pages */
-  table {
-    page-break-inside: auto;
-  }
-  
-  tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
-  }
-  
-  /* Force background colors to print */
-  .bg-gradient-to-r {
-    background: #4f46e5 !important;
-    color: white !important;
-  }
-  
-  /* Ensure proper text direction */
-  .rtl {
-    direction: rtl !important;
-    text-align: right !important;
-  }
-  
-  /* Ensure all Persian numbers are printed correctly */
-  .persian-numbers {
-    font-feature-settings: "tnum";
-  }
 }
