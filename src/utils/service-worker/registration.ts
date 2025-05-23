@@ -1,6 +1,6 @@
 
 /**
- * بهینه‌سازی شده - سرویس ورکر با تمرکز بر عملکرد و سرعت
+ * بهینه‌سازی شده - سرویس ورکر با تمرکز بر عملکرد و سرعت با بهبود تحمل خطا
  */
 
 // پرچم وجود بروزرسانی
@@ -9,25 +9,49 @@ let updateAvailable = false;
 // دریافت نسخه از فایل Manifest.json با کش کردن نتیجه
 const getAppVersionFromManifest = async () => {
   try {
-    const response = await fetch('./Manifest.json');
-    const manifest = await response.json();
-    return manifest.version;
-  } catch (error) {
-    console.error('خطا در بارگیری نسخه از منیفست:', error);
+    // ابتدا از localStorage بخوان اگر موجود است
+    const cachedVersion = localStorage.getItem('app_version');
     
+    // تلاش برای دریافت از سرور
     try {
+      const response = await fetch('./Manifest.json');
+      if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+      const manifest = await response.json();
+      // ذخیره نسخه تازه در localStorage
+      if (manifest.version) {
+        localStorage.setItem('app_version', manifest.version);
+      }
+      return manifest.version;
+    } catch (error) {
+      console.warn('خطا در بارگیری نسخه از منیفست، استفاده از نسخه کش شده:', error);
+      // اگر نسخه کش شده داریم، از آن استفاده کن
+      if (cachedVersion) return cachedVersion;
+      
       // تلاش مجدد با درخواست تازه
-      const retryResponse = await fetch('./Manifest.json', { cache: 'reload' });
-      const retryData = await retryResponse.json();
-      return retryData.version;
-    } catch (retryError) {
-      console.error('خطای دوم در بارگیری نسخه:', retryError);
-      return '';
+      try {
+        const retryResponse = await fetch('./Manifest.json', { 
+          cache: 'reload',
+          mode: 'no-cors' // اضافه کردن no-cors برای تحمل خطای بیشتر
+        });
+        if (retryResponse.type === 'opaque') {
+          // درخواست no-cors نمی‌تواند محتوا را بخواند، پس از نسخه پیش‌فرض استفاده می‌کنیم
+          return cachedVersion || '2.2.0'; // استفاده از نسخه پیش‌فرض اگر کش نداشتیم
+        }
+        const retryData = await retryResponse.json();
+        return retryData.version;
+      } catch (retryError) {
+        console.error('خطای دوم در بارگیری نسخه:', retryError);
+        // استفاده از نسخه پیش‌فرض یا کش شده
+        return cachedVersion || '2.2.0';
+      }
     }
+  } catch (finalError) {
+    console.error('خطای نهایی در بارگیری نسخه:', finalError);
+    return '2.2.0'; // همیشه یک مقدار برگشت بده
   }
 };
 
-// ثبت سرویس ورکر با کارایی بهبود یافته
+// ثبت سرویس ورکر با کارایی بهبود یافته و تحمل خطای بالا
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) {
     console.warn('مرورگر شما از سرویس ورکر پشتیبانی نمی‌کند');
@@ -35,7 +59,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
   
   try {
-    // دریافت نسخه از فایل manifest
+    // دریافت نسخه از فایل manifest با مدیریت خطای بهتر
     const appVersion = await getAppVersionFromManifest();
     
     // ذخیره نسخه در localStorage برای استفاده در مواقع آفلاین
@@ -43,10 +67,18 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       localStorage.setItem('app_version', appVersion);
     }
     
+    // بررسی وجود سرویس ورکر فعلی
+    const existingRegistration = await navigator.serviceWorker.getRegistration();
+    
+    // اضافه کردن پارامترهای اضافی برای جلوگیری از کش
+    const timestamp = new Date().getTime();
+    const swUrl = `./Service-Worker.js?v=${appVersion}&t=${timestamp}`;
+    
     // ثبت با مسیر کامل و نسخه - اشاره به فایل در ریشه dist
-    const registration = await navigator.serviceWorker.register(`/Service-Worker.js?v=${appVersion}`, {
+    const registration = await navigator.serviceWorker.register(swUrl, {
       scope: '/',
-      updateViaCache: 'none' // همیشه برای بروزرسانی‌ها بررسی شود
+      updateViaCache: 'none', // همیشه برای بروزرسانی‌ها بررسی شود
+      type: 'classic' // نوع کلاسیک برای سازگاری بیشتر
     });
     
     console.log(`سرویس ورکر با موفقیت راه‌اندازی شد (نسخه ${appVersion})`);
@@ -85,8 +117,20 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     return registration;
   } catch (error) {
     console.error('خطا در ثبت سرویس ورکر:', error);
-    // بازگشت null بدون شکست برنامه
-    return null;
+    // در صورت خطا، تلاش کنیم با مسیر نسبی ثبت کنیم
+    try {
+      const timestamp = new Date().getTime();
+      const fallbackRegistration = await navigator.serviceWorker.register(`Service-Worker.js?t=${timestamp}`, {
+        scope: './',
+        updateViaCache: 'none'
+      });
+      console.log('سرویس ورکر با مسیر نسبی ثبت شد');
+      return fallbackRegistration;
+    } catch (fallbackError) {
+      console.error('خطای نهایی در ثبت سرویس ورکر:', fallbackError);
+      // بازگشت null بدون شکست برنامه
+      return null;
+    }
   }
 }
 

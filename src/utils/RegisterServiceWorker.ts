@@ -1,6 +1,6 @@
 
 /**
- * سیستم ثبت سرویس ورکر بهینه شده برای سرعت بارگذاری
+ * سیستم ثبت سرویس ورکر بهینه شده برای سرعت بارگذاری و تحمل خطا
  */
 import { registerServiceWorker, setupOfflineDetection } from './service-worker/registration';
 import { toast } from '@/hooks/use-toast';
@@ -27,7 +27,25 @@ export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | n
   
   return new Promise(async (resolve) => {
     try {
-      const registration = await registerServiceWorker();
+      // تلاش با فواصل زمانی مختلف برای ثبت سرویس ورکر
+      const maxRetries = 3;
+      let registration = null;
+      
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          registration = await registerServiceWorker();
+          if (registration) break;
+          
+          // تأخیر بین تلاش‌ها با افزایش زمان
+          if (i < maxRetries - 1) {
+            await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+            console.log(`تلاش مجدد برای ثبت سرویس ورکر (${i+2}/${maxRetries})...`);
+          }
+        } catch (retryError) {
+          console.warn(`خطا در تلاش ${i+1}:`, retryError);
+        }
+      }
+      
       setupOfflineDetection();
       resolve(registration);
     } catch (error) {
