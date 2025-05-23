@@ -4,7 +4,7 @@ import autoTable from 'jspdf-autotable';
 import { Student } from '@/components/students/StudentTypes';
 import { toPersianNumbers } from '../numbers';
 import { getDayName } from '@/lib/utils';
-import { addPageFooter, createDocumentHeader } from './core';
+import { addPageFooter, createDocumentHeader, createSectionHeader, configureTableStyles } from './core';
 import { TrainerProfile } from './types';
 import { getExerciseName } from './data-helpers';
 
@@ -14,12 +14,10 @@ export function createExerciseProgram(doc: jsPDF, student: Student, trainerProfi
   createDocumentHeader(doc, student, trainerProfile, "برنامه تمرینی");
   
   // Define starting Y position after header
-  let yPos = 60;
+  let yPos = 120;
   
-  doc.setFontSize(13);
-  doc.setTextColor(51, 51, 153);
-  doc.text("برنامه تمرینی", 105, yPos, { align: 'center' });
-  yPos += 10;
+  // Add program introduction
+  yPos = createSectionHeader(doc, "برنامه تمرینی", yPos, [124, 58, 237]);
   
   // Process each training day
   for (let day = 1; day <= 5; day++) {
@@ -32,14 +30,18 @@ export function createExerciseProgram(doc: jsPDF, student: Student, trainerProfi
     const reps = student[dayRepsKey] as Record<number, string> || {};
     
     if (exercises && exercises.length > 0) {
-      // Add day header
+      // Add day header with styled box
       const dayName = getDayName(day);
-      doc.setFontSize(12);
-      doc.setTextColor(66, 66, 66);
-      doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, 195, yPos, { align: 'right' });
-      yPos += 8;
+      doc.setFillColor(124, 58, 237, 0.05);
+      doc.roundedRect(15, yPos - 5, 180, 10, 2, 2, 'F');
       
-      // Create table for exercises
+      doc.setFontSize(13);
+      doc.setTextColor(124, 58, 237);
+      doc.setFont("Vazirmatn", "bold");
+      doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, 190, yPos + 2, { align: 'right' });
+      yPos += 10;
+      
+      // Create table for exercises with improved styling
       const tableData = exercises.map((exerciseId, index) => {
         const exerciseName = getExerciseName(exerciseId) || `تمرین ${toPersianNumbers(index + 1)}`;
         const setCount = sets[exerciseId] ? toPersianNumbers(sets[exerciseId]) : '-';
@@ -47,26 +49,18 @@ export function createExerciseProgram(doc: jsPDF, student: Student, trainerProfi
         return [toPersianNumbers(index + 1), exerciseName, setCount, repInfo];
       });
       
+      // Apply table styling based on centralized configuration
       autoTable(doc, {
         startY: yPos,
         head: [['ردیف', 'نام تمرین', 'ست', 'تکرار']],
         body: tableData,
-        headStyles: {
-          fillColor: [124, 58, 237],
-          textColor: [255, 255, 255],
-          halign: 'right',
-          font: 'helvetica',
-          fontStyle: 'bold',
+        ...configureTableStyles('primary'),
+        columnStyles: {
+          0: { cellWidth: 15 },
+          1: { cellWidth: 'auto' },
+          2: { cellWidth: 20 },
+          3: { cellWidth: 30 },
         },
-        bodyStyles: {
-          halign: 'right',
-          font: 'helvetica',
-        },
-        alternateRowStyles: {
-          fillColor: [240, 240, 250],
-        },
-        theme: 'grid',
-        margin: { right: 15, left: 15 },
       });
       
       yPos = (doc as any).lastAutoTable.finalY + 15;
@@ -79,18 +73,24 @@ export function createExerciseProgram(doc: jsPDF, student: Student, trainerProfi
     }
   }
   
-  // Add notes if available
+  // Add notes if available with modern styling
   if (student.notes) {
+    // Create notes section with styled header
+    yPos = createSectionHeader(doc, "نکات تمرینی", yPos, [124, 58, 237]);
+    
+    // Add styled notes box
+    doc.setFillColor(248, 246, 255);
+    doc.roundedRect(15, yPos, 180, 30, 3, 3, 'F');
+    
     doc.setFontSize(11);
     doc.setTextColor(80, 80, 80);
-    doc.text("نکات:", 195, yPos, { align: 'right' });
-    yPos += 7;
+    doc.setFont("Vazirmatn", "normal");
     
     // Add notes text with line wrapping
-    const splitNotes = doc.splitTextToSize(student.notes, 170);
-    doc.text(splitNotes, 195, yPos, { align: 'right' });
+    const splitNotes = doc.splitTextToSize(student.notes, 165);
+    doc.text(splitNotes, 185, yPos + 7, { align: 'right' });
   }
   
   // Add footer
-  addPageFooter(doc);
+  addPageFooter(doc, trainerProfile);
 }

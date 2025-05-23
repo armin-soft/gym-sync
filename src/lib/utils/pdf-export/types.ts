@@ -15,5 +15,14 @@ export interface TrainerProfile {
   gymName?: string;
   email?: string;
   phone?: string;
+  logo?: string;
+  address?: string;
+  instagram?: string;
+  website?: string;
   [key: string]: any;
+}
+
+export interface TableThemeOptions {
+  headColor: number[];
+  altColor: number[];
 }
