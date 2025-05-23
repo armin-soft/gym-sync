@@ -25,15 +25,11 @@ export const StudentsDialogSection: React.FC<StudentsDialogSectionProps> = ({
   exercises,
   meals,
   supplements,
-  students
 }) => {
   return (
     <StudentDialogManager
       ref={dialogRef}
       onSave={onSave}
-      onSaveExercises={onSaveExercises}
-      onSaveDiet={onSaveDiet}
-      onSaveSupplements={onSaveSupplements}
       exercises={exercises}
       meals={meals}
       supplements={supplements}

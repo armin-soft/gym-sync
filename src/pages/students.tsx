@@ -148,9 +148,6 @@ const StudentsPage = () => {
             refreshTrigger={refreshTrigger}
             onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
             onDelete={handleDeleteWithHistory}
-            onAddExercise={handleOpenProgramManager}
-            onAddDiet={handleOpenProgramManager}
-            onAddSupplement={handleOpenProgramManager}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
             viewMode="table"
@@ -164,9 +161,6 @@ const StudentsPage = () => {
         <StudentDialogManager
           ref={dialogManagerRef}
           onSave={handleSaveWithHistory}
-          onSaveExercises={handleSaveExercisesWithHistory}
-          onSaveDiet={handleSaveDietWithHistory}
-          onSaveSupplements={handleSaveSupplementsWithHistory}
           exercises={exercises}
           meals={meals}
           supplements={supplements}
@@ -177,4 +171,3 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
-
