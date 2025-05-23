@@ -13,16 +13,20 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
   return new Promise((resolve, reject) => {
     try {
       // Create a new PDF document with right-to-left support
+      // Initialize jsPDF with basic options first
       const doc = new jsPDF({
-        ...PDF_OPTIONS,
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
         putOnlyUsedFonts: true,
-        direction: 'rtl'
+        hotfixes: ["px_scaling"],
+        compress: true
       });
       
       // Add Persian font
       addFontToPdf(doc);
       
-      // Explicitly set right-to-left for entire document
+      // Set right-to-left mode after initialization
       doc.setR2L(true);
       
       // Get trainer profile from localStorage

@@ -1,4 +1,3 @@
-
 import jsPDF from 'jspdf';
 import { PDFOptions, TrainerProfile } from './types';
 import { Student } from '@/components/students/StudentTypes';
@@ -6,7 +5,7 @@ import { getCurrentPersianDate } from '../persianDate';
 import { toPersianNumbers } from '../numbers';
 import autoTable from 'jspdf-autotable';
 
-// Configure jsPDF with right-to-left support
+// Configure jsPDF options
 export const PDF_OPTIONS: PDFOptions = {
   orientation: 'portrait',
   unit: 'mm',
@@ -118,10 +117,14 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
     doc.text(`وزن: ${toPersianNumbers(student.weight)} کیلوگرم`, 110, 103);
     
     // BMI calculation
-    const height = Number(student.height);
-    const weight = Number(student.weight);
-    const bmi = weight / ((height / 100) * (height / 100));
-    doc.text(`شاخص توده بدنی: ${toPersianNumbers(bmi.toFixed(1))}`, 180, 103);
+    if (student.height && student.weight) {
+      const height = Number(student.height);
+      const weight = Number(student.weight);
+      if (height > 0 && weight > 0) {
+        const bmi = weight / ((height / 100) * (height / 100));
+        doc.text(`شاخص توده بدنی: ${toPersianNumbers(bmi.toFixed(1))}`, 180, 103);
+      }
+    }
   }
 }
 
