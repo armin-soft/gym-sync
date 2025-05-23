@@ -17,9 +17,9 @@ export const PDF_OPTIONS: PDFOptions = {
 // Add Vazirmatn font for Persian text
 export const addFontToPdf = (doc: jsPDF): jsPDF => {
   try {
-    // Add Persian fonts for better rendering
-    doc.addFont("/Assets/Fonts/Vazirmatn-Regular.ttf", "Vazirmatn", "normal");
-    doc.addFont("/Assets/Fonts/Vazirmatn-Bold.ttf", "Vazirmatn", "bold");
+    // استفاده از فونت آنلاین به جای فونت‌های محلی
+    doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Regular.ttf", "Vazirmatn", "normal");
+    doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Bold.ttf", "Vazirmatn", "bold");
     
     // Set default font
     doc.setFont("Vazirmatn", "normal");
@@ -27,17 +27,9 @@ export const addFontToPdf = (doc: jsPDF): jsPDF => {
     // Set font size for better readability
     doc.setFontSize(12);
   } catch (e) {
-    // Fallback to standard font if custom font fails
     console.error("Failed to load custom font:", e);
-    // Try loading from CDN as backup
-    try {
-      doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Regular.ttf", "Vazirmatn", "normal");
-      doc.addFont("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Bold.ttf", "Vazirmatn", "bold");
-      doc.setFont("Vazirmatn", "normal");
-    } catch (err) {
-      console.error("Fallback font also failed:", err);
-      doc.setFont("helvetica");
-    }
+    // Fallback to standard font if custom font fails
+    doc.setFont("helvetica");
   }
   
   return doc;
