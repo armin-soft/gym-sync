@@ -4,6 +4,7 @@ import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
+import { addFontToPdf } from './pdf-fonts';
 
 // دریافت نسخه از Manifest.json
 async function getAppVersion(): Promise<string> {
@@ -19,6 +20,9 @@ async function getAppVersion(): Promise<string> {
 
 // Create the header for each page
 export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, pageTitle: string) {
+  // اطمینان از بارگذاری فونت قبل از استفاده
+  addFontToPdf(doc);
+  
   // Background for header - gradient effect
   const gradient = doc.setFillColor(124, 58, 237); // Primary color
   doc.rect(0, 0, 210, 50, 'F');

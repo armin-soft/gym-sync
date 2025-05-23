@@ -22,7 +22,7 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
         compress: true
       });
       
-      // افزودن فونت فارسی
+      // افزودن فونت فارسی - فقط یک بار در ابتدا
       addFontToPdf(doc);
       
       // تنظیم حالت راست به چپ بعد از مقداردهی اولیه
