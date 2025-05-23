@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MoreHorizontal } from "lucide-react";
+import { CalendarDays, MoreHorizontal, Printer } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { ExportProgramPDF } from "./export/ExportProgramPDF";
 
 interface StudentActionsProps {
   student: Student;
@@ -22,15 +23,22 @@ interface StudentActionsProps {
   onAddDiet?: (student: Student) => void;
   onAddSupplement?: (student: Student) => void;
   isCard?: boolean;
+  exercises?: any[];
+  meals?: any[];
+  supplements?: any[];
 }
 
 export const StudentActions = ({
   student,
   onAddExercise,
   isCard = false,
+  exercises = [],
+  meals = [],
+  supplements = [],
 }: StudentActionsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showExportPDF, setShowExportPDF] = useState(false);
 
   // Add a console log to debug when this menu is rendered
   console.log("Rendering StudentActions for student:", student.name);
@@ -41,6 +49,12 @@ export const StudentActions = ({
     if (onAddExercise) {
       onAddExercise(student);
     }
+  };
+  
+  // صدور برنامه
+  const handleExportClick = () => {
+    console.log("StudentActions: Export Program clicked for student:", student.name);
+    setShowExportPDF(true);
   };
 
   return (
@@ -77,9 +91,27 @@ export const StudentActions = ({
               index={0}
               bgHoverClass="hover:bg-purple-50 dark:hover:bg-purple-900/20"
             />
+            
+            {/* صدور برنامه */}
+            <MenuItemWithAnimation
+              icon={<Printer className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+              onClick={handleExportClick}
+              label="صدور برنامه"
+              index={1}
+              bgHoverClass="hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            />
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
+      
+      <ExportProgramPDF 
+        student={student}
+        exercises={exercises}
+        meals={meals}
+        supplements={supplements}
+        isOpen={showExportPDF}
+        onClose={() => setShowExportPDF(false)}
+      />
     </>
   );
 };
@@ -122,4 +154,3 @@ const MenuItemWithAnimation: React.FC<MenuItemWithAnimationProps> = ({
     </motion.div>
   );
 };
-
