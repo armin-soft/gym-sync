@@ -9,8 +9,7 @@ import {
   UserCog, 
   Trash2,
 } from "lucide-react";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { RowButton } from "@/components/ui/row-button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface StudentTableRowProps {
@@ -47,17 +46,13 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   const displayCreatedAt = student.createdAt 
     ? formatDate(student.createdAt) 
     : "-";
-  
-  const displayLastVisit = student.lastVisit
-    ? formatDate(student.lastVisit)
-    : "-";
 
   return (
     <>
       <TableCell className="p-3 sm:p-4">
         <div className="font-medium text-right">{toPersianNumbers(student.name)}</div>
         <div className="text-xs text-muted-foreground text-right mt-1">
-          {student.phoneNumber ? toPersianNumbers(student.phoneNumber) : "-"}
+          {student.phone ? toPersianNumbers(student.phone) : "-"}
         </div>
       </TableCell>
       
@@ -66,7 +61,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
       </TableCell>
       
       <TableCell className="p-3 sm:p-4 hidden md:table-cell text-center">
-        {toPersianNumbers(displayLastVisit)}
+        {toPersianNumbers("-")}
       </TableCell>
       
       <TableCell className="p-3 sm:p-4 hidden lg:table-cell">
@@ -86,16 +81,27 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
       </TableCell>
                   
       <TableCell className="p-3 sm:p-4 text-right">
-        <ButtonGroup>
+        <div className="flex space-x-2 justify-end items-center">
           {onEdit && (
-            <RowButton onClick={handleEdit} disabled={!isProfileComplete} icon={<UserCog className="h-4 w-4" />} />
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleEdit} 
+              disabled={!isProfileComplete}
+              className="h-8 w-8 p-0"
+            >
+              <UserCog className="h-4 w-4" />
+            </Button>
           )}
-          <RowButton 
-            onClick={handleDelete} 
-            variant="destructive" 
-            icon={<Trash2 className="h-4 w-4" />} 
-          />
-        </ButtonGroup>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleDelete}
+            className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </TableCell>
     </>
   );
