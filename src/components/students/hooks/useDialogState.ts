@@ -1,13 +1,12 @@
 
 import { useState } from "react";
-import { Student } from "../StudentTypes";
+import { Student } from "@/components/students/StudentTypes";
 
-export interface DialogState {
+interface DialogState {
   formDialog: boolean;
   exerciseDialog: boolean;
   dietDialog: boolean;
   supplementDialog: boolean;
-  exportDialog: boolean;
   selectedStudent: Student | null;
   isEditing: boolean;
 }
@@ -18,37 +17,32 @@ export const useDialogState = () => {
     exerciseDialog: false,
     dietDialog: false,
     supplementDialog: false,
-    exportDialog: false,
     selectedStudent: null,
-    isEditing: false,
+    isEditing: false
   });
 
   const setFormDialogOpen = (open: boolean) => {
-    setState((prev) => ({ ...prev, formDialog: open }));
+    setState(prev => ({ ...prev, formDialog: open }));
   };
 
   const setExerciseDialogOpen = (open: boolean) => {
-    setState((prev) => ({ ...prev, exerciseDialog: open }));
+    setState(prev => ({ ...prev, exerciseDialog: open }));
   };
 
   const setDietDialogOpen = (open: boolean) => {
-    setState((prev) => ({ ...prev, dietDialog: open }));
+    setState(prev => ({ ...prev, dietDialog: open }));
   };
 
   const setSupplementDialogOpen = (open: boolean) => {
-    setState((prev) => ({ ...prev, supplementDialog: open }));
-  };
-
-  const setExportDialogOpen = (open: boolean) => {
-    setState((prev) => ({ ...prev, exportDialog: open }));
+    setState(prev => ({ ...prev, supplementDialog: open }));
   };
 
   const setSelectedStudent = (student: Student | null) => {
-    setState((prev) => ({ ...prev, selectedStudent: student }));
+    setState(prev => ({ ...prev, selectedStudent: student }));
   };
 
   const setIsEditing = (isEditing: boolean) => {
-    setState((prev) => ({ ...prev, isEditing }));
+    setState(prev => ({ ...prev, isEditing }));
   };
 
   return {
@@ -57,8 +51,7 @@ export const useDialogState = () => {
     setExerciseDialogOpen,
     setDietDialogOpen,
     setSupplementDialogOpen,
-    setExportDialogOpen,
     setSelectedStudent,
-    setIsEditing,
+    setIsEditing
   };
 };

@@ -17,7 +17,6 @@ interface StudentTableProps {
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
-  onDownload?: (student: Student) => void;
   onAddStudent: () => void;
   onClearSearch: () => void;
   isProfileComplete: boolean;
@@ -36,7 +35,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  onDownload,
   onAddStudent,
   onClearSearch,
   isProfileComplete,
@@ -86,7 +84,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                 onAddExercise={onAddExercise}
                 onAddDiet={onAddDiet}
                 onAddSupplement={onAddSupplement}
-                onDownload={onDownload}
                 isProfileComplete={isProfileComplete}
                 searchQuery={searchQuery}
                 onAddStudent={onAddStudent}

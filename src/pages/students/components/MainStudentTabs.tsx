@@ -25,7 +25,6 @@ interface MainStudentTabsProps {
   onAddExercise: (student: Student) => void;
   onAddDiet: (student: Student) => void;
   onAddSupplement: (student: Student) => void;
-  onDownload: (student: Student) => void;
   onAddStudent: () => void;
   sortField?: string;
   sortOrder?: "asc" | "desc";
@@ -48,7 +47,6 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  onDownload,
   onAddStudent,
   sortField,
   sortOrder,
@@ -102,7 +100,6 @@ const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
             onAddExercise={onAddExercise}
             onAddDiet={onAddDiet}
             onAddSupplement={onAddSupplement}
-            onDownload={onDownload}
             onAddStudent={onAddStudent}
             onClearSearch={handleClearSearch}
             isProfileComplete={isProfileComplete}

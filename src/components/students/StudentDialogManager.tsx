@@ -7,8 +7,7 @@ import {
   FormDialog,
   ExerciseDialog,
   DietDialog,
-  SupplementDialog,
-  ExportDialog
+  SupplementDialog
 } from "./dialogs";
 
 export interface StudentDialogManagerRef {
@@ -17,7 +16,6 @@ export interface StudentDialogManagerRef {
   handleAddExercise?: (student: Student) => void;
   handleAddDiet?: (student: Student) => void;
   handleAddSupplement?: (student: Student) => void;
-  handleDownload?: (student: Student) => void;
 }
 
 interface StudentDialogManagerProps {
@@ -46,7 +44,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
       setExerciseDialogOpen,
       setDietDialogOpen,
       setSupplementDialogOpen,
-      setExportDialogOpen,
       setSelectedStudent,
       setIsEditing
     } = useDialogState();
@@ -76,12 +73,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         console.log("Opening supplement dialog for student:", student);
         setSelectedStudent(student);
         setSupplementDialogOpen(true);
-      } : undefined,
-      handleDownload: (student) => {
-        console.log("Opening export dialog for student:", student);
-        setSelectedStudent(student);
-        setExportDialogOpen(true);
-      }
+      } : undefined
     }));
 
     return (
@@ -115,12 +107,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
           selectedStudent={state.selectedStudent}
           supplements={supplements}
           onSaveSupplements={onSaveSupplements}
-        />
-
-        <ExportDialog
-          open={state.exportDialog}
-          onOpenChange={setExportDialogOpen}
-          selectedStudent={state.selectedStudent}
         />
       </>
     );
