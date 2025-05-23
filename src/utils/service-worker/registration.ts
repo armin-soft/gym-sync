@@ -65,39 +65,45 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     return registration;
   } catch (error) {
     console.error('خطا در ثبت سرویس ورکر:', error);
+    // بازگشت null بدون شکست برنامه
     return null;
   }
 }
 
 // نمایش اطلاعیه بروزرسانی
 export function showUpdateNotification(): void {
-  // استفاده از toast سیستم یکپارچه
-  import('@/hooks/toast/toast-utils').then(({ toast }) => {
-    toast({
-      title: 'بروزرسانی جدید',
-      description: 'نسخه جدید برنامه در دسترس است.',
-      variant: 'warning',
-      action: {
-        onClick: () => {
-          if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-              type: 'SKIP_WAITING'
-            });
-          }
-        },
-        label: 'بروزرسانی'
+  try {
+    // استفاده از toast سیستم یکپارچه
+    import('@/hooks/toast/toast-utils').then(({ toast }) => {
+      toast({
+        title: 'بروزرسانی جدید',
+        description: 'نسخه جدید برنامه در دسترس است.',
+        variant: 'warning',
+        action: {
+          onClick: () => {
+            if (navigator.serviceWorker.controller) {
+              navigator.serviceWorker.controller.postMessage({
+                type: 'SKIP_WAITING'
+              });
+            }
+          },
+          label: 'بروزرسانی'
+        }
+      });
+    }).catch(err => {
+      // اگر سیستم toast در دسترس نبود، از confirm استفاده میکنیم
+      console.error('خطا در نمایش toast:', err);
+      if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'SKIP_WAITING'
+          });
+        }
       }
     });
-  }).catch(() => {
-    // اگر سیستم toast در دسترس نبود، از confirm استفاده میکنیم
-    if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
-      if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: 'SKIP_WAITING'
-        });
-      }
-    }
-  });
+  } catch (error) {
+    console.error('خطا در نمایش اعلان بروزرسانی:', error);
+  }
 }
 
 // تشخیص آفلاین بودن - بهینه شده
@@ -108,34 +114,42 @@ export function setupOfflineDetection(): void {
     document.documentElement.classList.remove(offlineClassName);
     
     // استفاده از toast سیستم یکپارچه
-    import('@/hooks/toast/toast-utils').then(({ toast }) => {
-      toast({
-        title: 'اتصال برقرار شد',
-        description: 'شما مجدداً به اینترنت متصل شدید.',
-        variant: 'success',
-        duration: 3000
+    try {
+      import('@/hooks/toast/toast-utils').then(({ toast }) => {
+        toast({
+          title: 'اتصال برقرار شد',
+          description: 'شما مجدداً به اینترنت متصل شدید.',
+          variant: 'success',
+          duration: 3000
+        });
+      }).catch(() => {
+        // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+        console.log('اتصال به اینترنت برقرار شد');
       });
-    }).catch(() => {
-      // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+    } catch (error) {
       console.log('اتصال به اینترنت برقرار شد');
-    });
+    }
   }
   
   function handleOffline() {
     document.documentElement.classList.add(offlineClassName);
     
     // استفاده از toast سیستم یکپارچه
-    import('@/hooks/toast/toast-utils').then(({ toast }) => {
-      toast({
-        title: 'حالت آفلاین',
-        description: 'شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.',
-        variant: 'warning',
-        duration: 5000
+    try {
+      import('@/hooks/toast/toast-utils').then(({ toast }) => {
+        toast({
+          title: 'حالت آفلاین',
+          description: 'شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.',
+          variant: 'warning',
+          duration: 5000
+        });
+      }).catch(() => {
+        // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+        console.log('اتصال به اینترنت قطع شد');
       });
-    }).catch(() => {
-      // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+    } catch (error) {
       console.log('اتصال به اینترنت قطع شد');
-    });
+    }
   }
   
   // اضافه کردن شنونده‌ها فقط یک بار

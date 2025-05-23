@@ -36,11 +36,45 @@ export const copyFilesPlugin = () => {
           console.log('Warning: Manifest.json not found in project root');
         }
 
-        // کپی Service-Worker.js به dist root 
-        fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
-        console.log('Copied Service-Worker.js to dist root');
+        // کپی Service-Worker.js به dist root - با بررسی وجود فایل
+        if (fs.existsSync('Service-Worker.js')) {
+          fs.copyFileSync('Service-Worker.js', 'dist/Service-Worker.js');
+          console.log('Copied Service-Worker.js to dist root');
+        } else {
+          // اگر فایل در مسیر اصلی وجود نداشت، یک فایل پیش‌فرض ایجاد کن
+          const defaultServiceWorkerContent = `
+// سرویس ورکر پیش‌فرض - ایجاد شده توسط فرآیند بیلد
+// این فایل به صورت خودکار ایجاد شده است
 
-        // کپی ماژول‌های سرویس ورکر اصلی با نام‌های جدید
+self.addEventListener('install', (event) => {
+  console.log('[Service Worker] نصب سرویس ورکر');
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  console.log('[Service Worker] فعال‌سازی سرویس ورکر');
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('fetch', (event) => {
+  // پردازش درخواست‌های شبکه
+  if (event.request.method !== 'GET') return;
+  
+  // درخواست‌های API را رد می‌کنیم
+  if (event.request.url.includes('/api/')) return;
+  
+  event.respondWith(fetch(event.request).catch(() => {
+    return new Response('آفلاین - داده در دسترس نیست');
+  }));
+});
+
+console.log('[Service Worker] سرویس ورکر پیش‌فرض راه‌اندازی شد');
+          `;
+          fs.writeFileSync('dist/Service-Worker.js', defaultServiceWorkerContent);
+          console.log('Created default Service-Worker.js in dist root since original file was not found');
+        }
+
+        // کپی ماژول‌های سرویس ورکر اصلی با نام‌های جدید - با بررسی وجود فایل‌ها
         const serviceWorkerFiles = [
           { source: 'public/service-worker/cache-strategies.js', dest: 'dist/Service-Worker/Cache-Strategies.js' },
           { source: 'public/service-worker/config.js', dest: 'dist/Service-Worker/Config.js' },
@@ -57,7 +91,7 @@ export const copyFilesPlugin = () => {
           { source: 'public/service-worker/event-handlers/sync-handler.js', dest: 'dist/Service-Worker/Event-Handlers/Sync-Handler.js' }
         ];
         
-        // کپی فایل‌های سرویس ورکر اصلی
+        // کپی فایل‌های سرویس ورکر اصلی - با بررسی وجود فایل‌ها
         for (const file of serviceWorkerFiles) {
           if (fs.existsSync(file.source)) {
             fs.copyFileSync(file.source, file.dest);
@@ -67,7 +101,7 @@ export const copyFilesPlugin = () => {
           }
         }
         
-        // کپی فایل‌های event handler
+        // کپی فایل‌های event handler - با بررسی وجود فایل‌ها
         for (const file of eventHandlerFiles) {
           if (fs.existsSync(file.source)) {
             fs.copyFileSync(file.source, file.dest);
@@ -78,22 +112,32 @@ export const copyFilesPlugin = () => {
         }
 
         // کپی همچنین به مسیر Assets/Script
-        fs.copyFileSync('Service-Worker.js', 'dist/Assets/Script/ServiceWorker.js');
-        console.log('Copied Service-Worker.js to Assets/Script/ServiceWorker.js');
+        if (fs.existsSync('Service-Worker.js')) {
+          fs.copyFileSync('Service-Worker.js', 'dist/Assets/Script/ServiceWorker.js');
+          console.log('Copied Service-Worker.js to Assets/Script/ServiceWorker.js');
+        } else {
+          // اگر فایل در مسیر اصلی وجود نداشت، از فایل ایجاد شده در مرحله قبل کپی کن
+          fs.copyFileSync('dist/Service-Worker.js', 'dist/Assets/Script/ServiceWorker.js');
+          console.log('Copied generated Service-Worker.js to Assets/Script/ServiceWorker.js');
+        }
         
-        // کپی Logo.png به Assets/Image
+        // کپی Logo.png به Assets/Image - با بررسی وجود فایل
         if (fs.existsSync('src/Logo.png')) {
           fs.copyFileSync('src/Logo.png', 'dist/Assets/Image/Logo.png');
           console.log('Copied Logo.png from src to dist/Assets/Image');
         } else if (fs.existsSync('public/Assets/Image/Logo.png')) {
           fs.copyFileSync('public/Assets/Image/Logo.png', 'dist/Assets/Image/Logo.png');
           console.log('Copied Logo.png from public to dist/Assets/Image');
+        } else {
+          console.log('Warning: Logo.png not found in src or public directories');
         }
         
         // کپی Offline.html برای حالت آفلاین
         if (fs.existsSync('public/Offline.html')) {
           fs.copyFileSync('public/Offline.html', 'dist/Offline.html');
           console.log('Copied Offline.html to dist root');
+        } else {
+          console.log('Warning: Offline.html not found in public directory');
         }
         
         // حذف فایل Manifest اضافی در Assets

@@ -25,7 +25,7 @@ export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | n
     return Promise.resolve(null);
   }
   
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     try {
       const registration = await registerServiceWorker();
       setupOfflineDetection();

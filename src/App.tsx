@@ -24,9 +24,17 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  // راه‌اندازی سرویس ورکر در لود اولیه
+  // راه‌اندازی سرویس ورکر در لود اولیه با مدیریت خطا
   useEffect(() => {
-    initializeServiceWorker().catch(console.error);
+    // استفاده از setTimeout برای اطمینان از اینکه سرویس ورکر بعد از رندر اولیه راه‌اندازی می‌شود
+    const timer = setTimeout(() => {
+      initializeServiceWorker().catch(error => {
+        console.error("خطا در راه‌اندازی سرویس ورکر:", error);
+        // ادامه اجرای برنامه بدون سرویس ورکر
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
