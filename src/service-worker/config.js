@@ -18,7 +18,7 @@ export async function initializeConfig() {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
-    const version = manifest.version || '2.2.0';
+    const version = manifest.version || '2.1.9';
     const formattedCacheName = `gym-sync-v${version.replace(/\./g, '')}`;
     
     // تزریق مقادیر به فضای نام سراسری
@@ -31,7 +31,7 @@ export async function initializeConfig() {
     return formattedCacheName;
   } catch (error) {
     console.error('[Service Worker] خطا در دریافت نسخه از manifest', error);
-    const fallbackCacheName = 'gym-sync-v220';
+    const fallbackCacheName = 'gym-sync-v219';
     
     // @ts-ignore
     self.CACHE_NAME = fallbackCacheName;
@@ -47,9 +47,9 @@ export async function getAppVersion() {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
-    return manifest.version || '2.2.0';
+    return manifest.version || '2.1.9';
   } catch (error) {
     console.error('[Service Worker] خطا در دریافت نسخه', error);
-    return '2.2.0';
+    return '2.1.9';
   }
 }

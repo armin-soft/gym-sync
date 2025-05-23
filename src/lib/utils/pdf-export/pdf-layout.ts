@@ -1,4 +1,3 @@
-
 import jsPDF from 'jspdf';
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
@@ -11,10 +10,10 @@ async function getAppVersion(): Promise<string> {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
-    return manifest.version || '2.2.4';
+    return manifest.version || '2.1.9';
   } catch (error) {
     console.error('Error loading version from manifest:', error);
-    return '2.2.4';
+    return '2.1.9';
   }
 }
 
