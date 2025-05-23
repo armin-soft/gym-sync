@@ -7,9 +7,9 @@ import { getDayName } from '@/lib/utils';
 import { getCurrentPersianDate } from './persianDate';
 
 // Configure jsPDF with right-to-left support
-const PDF_OPTIONS = {
-  orientation: 'portrait',
-  unit: 'mm',
+const PDF_OPTIONS: jsPDF.jsPDFOptions = {
+  orientation: 'portrait' as const,
+  unit: 'mm' as const,
   format: 'a4',
   hotfixes: ["px_scaling"],
   compress: true,
