@@ -9,7 +9,7 @@ import { TrainerProfile } from './types';
 import { getExerciseName } from './data-helpers';
 
 // Create the exercise program page
-export function createExerciseProgram(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
+export async function createExerciseProgram(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
   // Add document header
   createDocumentHeader(doc, student, trainerProfile, "برنامه تمرینی");
   
@@ -95,5 +95,5 @@ export function createExerciseProgram(doc: jsPDF, student: Student, trainerProfi
   }
   
   // Add footer
-  addPageFooter(doc, trainerProfile);
+  await addPageFooter(doc, trainerProfile);
 }

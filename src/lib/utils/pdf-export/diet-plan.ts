@@ -9,7 +9,7 @@ import { TrainerProfile } from './types';
 import { getMealName, getMealType } from './data-helpers';
 
 // Create the diet plan page
-export function createDietPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
+export async function createDietPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
   // Add document header
   createDocumentHeader(doc, student, trainerProfile, "برنامه غذایی");
   
@@ -88,5 +88,5 @@ export function createDietPlan(doc: jsPDF, student: Student, trainerProfile: Tra
   }
   
   // Add footer
-  addPageFooter(doc, trainerProfile);
+  await addPageFooter(doc, trainerProfile);
 }

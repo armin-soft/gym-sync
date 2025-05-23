@@ -10,7 +10,7 @@ import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
 
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       // ایجاد یک سند PDF جدید با پشتیبانی راست به چپ
       const doc = new jsPDF({
@@ -37,15 +37,15 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       console.log("Student:", student.name);
       
       // صفحه 1: برنامه تمرینی
-      createExerciseProgram(doc, student, trainerProfile);
+      await createExerciseProgram(doc, student, trainerProfile);
       
       // صفحه 2: برنامه غذایی
       doc.addPage();
-      createDietPlan(doc, student, trainerProfile);
+      await createDietPlan(doc, student, trainerProfile);
       
       // صفحه 3: مکمل‌ها و ویتامین‌ها
       doc.addPage();
-      createSupplementPlan(doc, student, trainerProfile);
+      await createSupplementPlan(doc, student, trainerProfile);
       
       // ذخیره PDF با نامی بر اساس نام شاگرد و تاریخ فعلی
       const currentDate = getCurrentPersianDate().replace(/\s/g, '_');

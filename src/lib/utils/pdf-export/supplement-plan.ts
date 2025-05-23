@@ -8,7 +8,7 @@ import { TrainerProfile } from './types';
 import { getSupplementName, getSupplementType } from './data-helpers';
 
 // Create the supplements and vitamins page
-export function createSupplementPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
+export async function createSupplementPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile) {
   // Add document header
   createDocumentHeader(doc, student, trainerProfile, "مکمل و ویتامین");
   
@@ -102,5 +102,5 @@ export function createSupplementPlan(doc: jsPDF, student: Student, trainerProfil
   }
   
   // Add footer
-  addPageFooter(doc, trainerProfile);
+  await addPageFooter(doc, trainerProfile);
 }
