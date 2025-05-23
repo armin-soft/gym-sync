@@ -9,7 +9,7 @@ import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
 import { createDocumentHeader } from './pdf-layout';
-import { addFontToPdf } from './pdf-fonts';
+import { addFontToPdf, writeRTLText } from './pdf-fonts';
 
 // Fetch application version from manifest
 const getAppVersionFromManifest = async (): Promise<string> => {
@@ -33,7 +33,7 @@ const getAppVersionFromManifest = async (): Promise<string> => {
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
   return new Promise(async (resolve, reject) => {
     try {
-      // ایجاد یک سند PDF جدید با پشتیبانی راست به چپ
+      // Create a new PDF document with RTL support
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -45,10 +45,10 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       
       console.log("Creating PDF document");
       
-      // افزودن فونت و تنظیم راست به چپ
+      // Add font and set RTL support - this is critical for Persian text
       addFontToPdf(doc);
       
-      // دریافت پروفایل مربی از localStorage
+      // Get trainer profile from localStorage
       const trainerProfileStr = localStorage.getItem('trainerProfile');
       const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
       
@@ -56,21 +56,21 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       console.log("Trainer profile:", trainerProfile);
       console.log("Student:", student.name);
       
-      // اطلاعات کلی فقط در صفحه اول نمایش داده می‌شود
+      // General information is only shown on first page
       createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
       
-      // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار قسمت
+      // Page 1: Exercise program as one page with four sections
       await createExerciseProgram(doc, student, trainerProfile, false);
       
-      // صفحه 2: برنامه غذایی هفتگی
+      // Page 2: Weekly diet plan
       doc.addPage();
       await createDietPlan(doc, student, trainerProfile, false);
       
-      // صفحه 3: مکمل‌ها و ویتامین‌ها
+      // Page 3: Supplements and vitamins
       doc.addPage();
       await createSupplementPlan(doc, student, trainerProfile, false);
       
-      // ذخیره PDF با نامی بر اساس نام شاگرد و تاریخ فعلی
+      // Save PDF with a name based on student name and current date
       const currentDate = getCurrentPersianDate().replace(/\s/g, '_');
       const fileName = `برنامه_${student.name || 'بدون_نام'}_${currentDate}.pdf`;
       
@@ -84,7 +84,7 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
   });
 };
 
-// صادر کردن مجدد همه ماژول‌ها برای واردات آسان‌تر
+// Re-export all modules for easier imports
 export * from './types';
 export * from './core';
 export * from './data-helpers';

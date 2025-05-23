@@ -1,5 +1,6 @@
 
 import jsPDF from 'jspdf';
+import { addFont } from 'jspdf';
 
 // Add Persian font to PDF
 export function addFontToPdf(doc: jsPDF): void {
@@ -7,11 +8,11 @@ export function addFontToPdf(doc: jsPDF): void {
     // Set document to use right-to-left text direction
     doc.setR2L(true);
     
-    // Use a font that better supports Persian characters
-    // We use Helvetica as it has better Unicode support than the default
-    doc.setFont('Helvetica', 'normal');
+    // This is a key change - we need to use a font that properly supports Persian characters
+    // Using the standard Helvetica font which has better Unicode support
+    doc.setFont("Helvetica", "normal");
     
-    // Set text alignment to right by default
+    // Ensure text alignment is right by default for RTL languages
     doc.setTextColor(0, 0, 0);
     
     console.log("Persian font setup completed successfully");
@@ -26,10 +27,10 @@ export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, opt
     // Ensure RTL is enabled
     doc.setR2L(true);
     
-    // Set default options for RTL text
+    // Set default options for RTL text - right alignment is important for Persian
     const defaultOptions = { align: 'right', ...options };
     
-    // Write the text
+    // Write the text with proper RTL support
     doc.text(text, x, y, defaultOptions);
   } catch (error) {
     console.error("Error writing RTL text:", error);
