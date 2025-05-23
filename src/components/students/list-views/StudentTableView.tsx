@@ -21,9 +21,6 @@ interface StudentTableViewProps {
   sortField?: string;
   sortOrder?: "asc" | "desc";
   onSortChange?: (field: string) => void;
-  exercises?: any[];
-  meals?: any[];
-  supplements?: any[];
 }
 
 export const StudentTableView: React.FC<StudentTableViewProps> = ({
@@ -42,10 +39,7 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
   viewMode,
   sortField,
   sortOrder,
-  onSortChange,
-  exercises,
-  meals,
-  supplements
+  onSortChange
 }) => {
   // If no students are found with search query or there are no students at all
   if (sortedAndFilteredStudents.length === 0) {
@@ -75,9 +69,6 @@ export const StudentTableView: React.FC<StudentTableViewProps> = ({
       sortField={sortField}
       sortOrder={sortOrder}
       onSortChange={onSortChange}
-      exercises={exercises}
-      meals={meals}
-      supplements={supplements}
     />
   );
 };

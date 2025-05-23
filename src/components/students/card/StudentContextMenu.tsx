@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { AnimatePresence } from "framer-motion";
 import {
@@ -13,12 +13,10 @@ import {
   Edit,
   Apple,
   Pill,
-  Printer
 } from "lucide-react";
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
 import { ContextMenuSection } from "./context-menu/ContextMenuSection";
-import { ExportProgramPDF } from "../export/ExportProgramPDF";
 
 interface StudentContextMenuProps {
   student: Student;
@@ -29,9 +27,6 @@ interface StudentContextMenuProps {
   onAddDiet?: () => void;
   onAddSupplement?: () => void;
   isProfileComplete: boolean;
-  exercises?: any[];
-  meals?: any[];
-  supplements?: any[];
 }
 
 export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
@@ -42,13 +37,8 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   onAddExercise,
   onAddDiet,
   onAddSupplement,
-  isProfileComplete,
-  exercises = [],
-  meals = [],
-  supplements = []
+  isProfileComplete
 }) => {
-  const [showExportPDF, setShowExportPDF] = useState(false);
-
   // Log when this component renders to help with debugging
   console.log("Rendering StudentContextMenu for:", student.name);
 
@@ -72,11 +62,6 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   const handleSupplementClick = () => {
     if (onAddSupplement) onAddSupplement();
   };
-  
-  const handleExportClick = () => {
-    console.log("Export Program clicked for student:", student.name);
-    setShowExportPDF(true);
-  };
 
   return (
     <ContextMenu>
@@ -99,22 +84,13 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
               variant="purple"
             />
             
-            <ContextMenuItemWithAnimation
-              icon={<Printer className="h-4 w-4" />}
-              title="صدور برنامه"
-              subtitle="خروجی PDF و چاپ"
-              onClick={handleExportClick}
-              index={1}
-              variant="blue"
-            />
-            
             {onAddDiet && (
               <ContextMenuItemWithAnimation
                 icon={<Apple className="h-4 w-4" />}
                 title="افزودن رژیم غذایی"
                 subtitle="مدیریت برنامه غذایی"
                 onClick={handleDietClick}
-                index={2}
+                index={1}
                 variant="green"
               />
             )}
@@ -125,7 +101,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="افزودن مکمل"
                 subtitle="مدیریت مکمل‌های ورزشی"
                 onClick={handleSupplementClick}
-                index={3}
+                index={2}
                 variant="orange"
               />
             )}
@@ -139,7 +115,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="ویرایش شاگرد"
                 subtitle="تغییر اطلاعات شاگرد"
                 onClick={handleEditClick}
-                index={4}
+                index={3}
                 variant="blue"
               />
             )}
@@ -150,24 +126,16 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="حذف شاگرد"
                 subtitle="حذف کامل اطلاعات"
                 onClick={handleDeleteClick}
-                index={5}
+                index={4}
                 variant="red"
               />
             )}
           </ContextMenuSection>
         </ContextMenuContent>
       </AnimatePresence>
-      
-      <ExportProgramPDF 
-        student={student}
-        exercises={exercises}
-        meals={meals}
-        supplements={supplements}
-        isOpen={showExportPDF}
-        onClose={() => setShowExportPDF(false)}
-      />
     </ContextMenu>
   );
 };
 
 export default StudentContextMenu;
+
