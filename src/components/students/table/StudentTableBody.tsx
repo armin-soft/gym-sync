@@ -12,9 +12,9 @@ interface StudentTableBodyProps {
   students: Student[];
   onEdit?: (student: Student) => void;
   onDelete: (id: number) => void;
-  onAddExercise?: (student: Student) => void;
-  onAddDiet?: (student: Student) => void;
-  onAddSupplement?: (student: Student) => void;
+  onAddExercise: (student: Student) => void;
+  onAddDiet: (student: Student) => void;
+  onAddSupplement: (student: Student) => void;
   isProfileComplete: boolean;
   searchQuery?: string;
   onAddStudent?: () => void;
@@ -25,9 +25,9 @@ export const StudentTableBody: React.FC<StudentTableBodyProps> = ({
   students,
   onEdit,
   onDelete,
-  onAddExercise = () => {},
-  onAddDiet = () => {},
-  onAddSupplement = () => {},
+  onAddExercise,
+  onAddDiet,
+  onAddSupplement,
   isProfileComplete,
   searchQuery = "",
   onAddStudent,

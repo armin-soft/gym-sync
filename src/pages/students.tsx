@@ -148,6 +148,9 @@ const StudentsPage = () => {
             refreshTrigger={refreshTrigger}
             onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
             onDelete={handleDeleteWithHistory}
+            onAddExercise={handleOpenProgramManager}
+            onAddDiet={handleOpenProgramManager}
+            onAddSupplement={handleOpenProgramManager}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()}
             onClearSearch={handleClearSearch}
             viewMode="table"
@@ -174,3 +177,4 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
+

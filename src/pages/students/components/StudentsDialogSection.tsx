@@ -7,13 +7,13 @@ import { ExerciseWithSets } from "@/types/exercise";
 interface StudentsDialogSectionProps {
   dialogRef: React.RefObject<any>;
   onSave: (data: any, selectedStudent?: Student) => boolean;
-  onSaveExercises?: (exercisesData: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
-  onSaveDiet?: (mealIds: number[], studentId: number, dayNumber?: number) => boolean;
-  onSaveSupplements?: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
-  exercises?: any[];
-  meals?: any[];
-  supplements?: any[];
-  students?: Student[];
+  onSaveExercises: (exercisesData: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
+  onSaveDiet: (mealIds: number[], studentId: number, dayNumber?: number) => boolean;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
+  exercises: any[];
+  meals: any[];
+  supplements: any[];
+  students: Student[];
 }
 
 export const StudentsDialogSection: React.FC<StudentsDialogSectionProps> = ({
@@ -25,6 +25,7 @@ export const StudentsDialogSection: React.FC<StudentsDialogSectionProps> = ({
   exercises,
   meals,
   supplements,
+  students
 }) => {
   return (
     <StudentDialogManager
