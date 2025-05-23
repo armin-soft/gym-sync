@@ -7,10 +7,25 @@
 let updateAvailable = false;
 
 // دریافت نسخه از فایل Manifest.json با کش کردن نتیجه
-const appVersionPromise = fetch('./Manifest.json')
-  .then(response => response.json())
-  .then(manifest => manifest.version || '1.9.2')
-  .catch(() => '1.9.2');
+const getAppVersionFromManifest = async () => {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version;
+  } catch (error) {
+    console.error('خطا در بارگیری نسخه از منیفست:', error);
+    
+    try {
+      // تلاش مجدد با درخواست تازه
+      const retryResponse = await fetch('./Manifest.json', { cache: 'reload' });
+      const retryData = await retryResponse.json();
+      return retryData.version;
+    } catch (retryError) {
+      console.error('خطای دوم در بارگیری نسخه:', retryError);
+      return '';
+    }
+  }
+};
 
 // ثبت سرویس ورکر با کارایی بهبود یافته
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
@@ -20,8 +35,13 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
   
   try {
-    // دریافت نسخه از کش یا فایل manifest
-    const appVersion = await appVersionPromise;
+    // دریافت نسخه از فایل manifest
+    const appVersion = await getAppVersionFromManifest();
+    
+    // ذخیره نسخه در localStorage برای استفاده در مواقع آفلاین
+    if (appVersion) {
+      localStorage.setItem('app_version', appVersion);
+    }
     
     // ثبت با مسیر کامل و نسخه - اشاره به فایل در ریشه dist
     const registration = await navigator.serviceWorker.register(`/Service-Worker.js?v=${appVersion}`, {

@@ -1,3 +1,4 @@
+
 import jsPDF from 'jspdf';
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
@@ -10,10 +11,26 @@ async function getAppVersion(): Promise<string> {
   try {
     const response = await fetch('./Manifest.json');
     const manifest = await response.json();
-    return manifest.version || '2.1.9';
+    return manifest.version;
   } catch (error) {
     console.error('Error loading version from manifest:', error);
-    return '2.1.9';
+    
+    try {
+      // Try fetching again with no cache
+      const retryResponse = await fetch('./Manifest.json', { cache: 'no-store' });
+      const retryData = await retryResponse.json();
+      return retryData.version;
+    } catch (retryError) {
+      console.error('Error on retry loading version:', retryError);
+      
+      // Last attempt: try to get version from localStorage if saved
+      const cachedVersion = localStorage.getItem('app_version');
+      if (cachedVersion) {
+        return cachedVersion;
+      }
+      
+      return '';
+    }
   }
 }
 

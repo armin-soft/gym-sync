@@ -11,6 +11,25 @@ import { getCurrentPersianDate } from '../persianDate';
 import { createDocumentHeader } from './pdf-layout';
 import { addFontToPdf } from './pdf-fonts';
 
+// Fetch application version from manifest
+const getAppVersionFromManifest = async (): Promise<string> => {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version || '';
+  } catch (error) {
+    console.error('Error loading version from manifest:', error);
+    
+    // Try to get from localStorage if available
+    const cachedVersion = localStorage.getItem('app_version');
+    if (cachedVersion) {
+      return cachedVersion;
+    }
+    
+    return '';
+  }
+};
+
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
   return new Promise(async (resolve, reject) => {
     try {

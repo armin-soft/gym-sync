@@ -1,3 +1,4 @@
+
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Dumbbell } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -14,19 +15,38 @@ export function SidebarFooter({ gymName }: SidebarFooterProps) {
   
   // Fetch the version from Manifest.json
   useEffect(() => {
-    fetch('/Manifest.json')
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.version) {
-          setAppVersion(data.version);
+    const getVersionFromManifest = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        
+        if (manifest && manifest.version) {
+          setAppVersion(manifest.version);
+          // Save to localStorage for offline use
+          localStorage.setItem('app_version', manifest.version);
         } else {
-          setAppVersion("نامشخص");
+          // If version is not in manifest, try to get from localStorage
+          const cachedVersion = localStorage.getItem('app_version');
+          if (cachedVersion) {
+            setAppVersion(cachedVersion);
+          } else {
+            setAppVersion("نامشخص");
+          }
         }
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Error loading Manifest.json:', err);
-        setAppVersion("خطا در بارگذاری");
-      });
+        
+        // Try to get from localStorage if fetching fails
+        const cachedVersion = localStorage.getItem('app_version');
+        if (cachedVersion) {
+          setAppVersion(cachedVersion);
+        } else {
+          setAppVersion("خطا در بارگذاری");
+        }
+      }
+    };
+    
+    getVersionFromManifest();
   }, []);
   
   // تنظیمات ریسپانسیو برای فوتر
