@@ -20,14 +20,30 @@ export const useShamsiDate = () => {
   useEffect(() => {
     const fetchDate = async () => {
       try {
+        console.log("Fetching date from API...");
+        setIsLoading(true);
+        
         const response = await fetch(
           "https://api.armin-soft.ir/Date-Time/?License=d5LAyJxbYst0egh2qNCdc6kWq0gdckmj&Next=0&Mounth=0"
         );
+        
+        if (!response.ok) {
+          throw new Error(`API returned status: ${response.status}`);
+        }
+        
         const data: DateTimeResponse = await response.json();
-        setDateInfo(data.Result);
+        console.log("API response:", data);
+        
+        if (data && data.Result) {
+          setDateInfo(data.Result);
+          console.log("Date info set successfully:", data.Result);
+        } else {
+          console.error("Invalid API response format:", data);
+          setError("فرمت پاسخ API نامعتبر است");
+        }
       } catch (err) {
-        setError("خطا در دریافت تاریخ");
         console.error("Error fetching date:", err);
+        setError("خطا در دریافت تاریخ");
       } finally {
         setIsLoading(false);
       }

@@ -22,6 +22,12 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
     return () => clearInterval(timer); // Cleanup on unmount
   }, []);
 
+  // اضافه کردن کد دیباگ برای بررسی اطلاعات دریافتی
+  useEffect(() => {
+    console.log("DateTimeSection dateInfo:", dateInfo);
+    console.log("DateTimeSection isLoading:", isLoading);
+  }, [dateInfo, isLoading]);
+
   // Animation variants for badges
   const badgeVariants = {
     hidden: { opacity: 0, y: -20, scale: 0.8 },
