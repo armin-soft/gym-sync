@@ -118,7 +118,7 @@ export function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) {
   doc.setFontSize(9);
   doc.setTextColor(100, 100, 100);
   doc.setFont("Vazirmatn", "normal");
-  doc.text("تهیه شده توسط نرم‌افزار GymSync نسخه ۲.۱.۷", 105, 290, { align: 'center' });
+  doc.text("تهیه شده توسط نرم‌افزار GymSync نسخه ۲.۲.۰", 105, 290, { align: 'center' });
   
   // Add trainer contact info if available
   if (trainerProfile.phone) {
