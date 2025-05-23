@@ -1,40 +1,45 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { Save, FileText } from "lucide-react";
 
 interface ProgramDietHeaderProps {
-  handleSave: () => void;
-  isSaving: boolean;
-  currentDay?: number | null;
+  onSave: () => void;
+  isLoading: boolean;
+  onShowPdfPreview?: () => void; // Added this prop
 }
 
-const ProgramDietHeader: React.FC<ProgramDietHeaderProps> = ({ 
-  handleSave, 
-  isSaving,
-  currentDay = 1
+const ProgramDietHeader: React.FC<ProgramDietHeaderProps> = ({
+  onSave,
+  isLoading,
+  onShowPdfPreview
 }) => {
   return (
-    <div className="flex items-center justify-between">
-      <h2 className="text-lg font-semibold">
-        برنامه غذایی {currentDay !== null ? `روز ${toPersianNumbers(currentDay)}` : ""}
-      </h2>
-      
-      {currentDay !== null && (
+    <div className="flex justify-between items-center">
+      <h3 className="text-lg font-medium">برنامه غذایی هفتگی</h3>
+      <div className="flex gap-2">
+        {onShowPdfPreview && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onShowPdfPreview}
+            className="flex items-center gap-1"
+          >
+            <FileText className="h-4 w-4" />
+            <span>پیش‌نمایش PDF</span>
+          </Button>
+        )}
+        
         <Button 
-          onClick={handleSave}
-          disabled={isSaving}
-          className="flex items-center gap-1 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+          onClick={onSave}
+          disabled={isLoading}
+          size="sm"
+          className="flex items-center gap-1"
         >
-          {isSaving ? (
-            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-          ) : (
-            <Save className="h-4 w-4" />
-          )}
-          <span>ذخیره برنامه روز {toPersianNumbers(currentDay)}</span>
+          <Save className="h-4 w-4" />
+          {isLoading ? "در حال ذخیره..." : "ذخیره برنامه"}
         </Button>
-      )}
+      </div>
     </div>
   );
 };

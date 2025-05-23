@@ -4,9 +4,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Student } from "@/components/students/StudentTypes";
 import { ExerciseWithSets } from "@/types/exercise";
 import { Supplement } from "@/types/supplement";
-import ProgramExerciseTab from "./tabs/ProgramExerciseTab";
-import ProgramDietTab from "./tabs/ProgramDietTab";
-import ProgramSupplementTab from "./tabs/ProgramSupplementTab";
+import { ProgramExerciseTab, ProgramDietTab, ProgramSupplementTab } from "./tabs";
 
 interface ProgramTabsContentProps {
   student: Student;
@@ -15,9 +13,8 @@ interface ProgramTabsContentProps {
   supplements: Supplement[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[]) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}) => boolean;
-  currentDay?: number;
-  setCurrentDay?: React.Dispatch<React.SetStateAction<number>>;
+  onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  onShowPdfPreview?: () => void; // Added this prop to fix the TypeScript error
 }
 
 const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
@@ -28,38 +25,34 @@ const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
   onSaveExercises,
   onSaveDiet,
   onSaveSupplements,
-  currentDay = 1,
-  setCurrentDay
+  onShowPdfPreview
 }) => {
   return (
-    <div className="mt-4 flex-1 overflow-hidden">
-      <TabsContent value="exercise" className="h-full m-0 overflow-hidden">
-        <ProgramExerciseTab 
+    <div className="flex-1">
+      <TabsContent value="exercise" className="mt-0">
+        <ProgramExerciseTab
           student={student}
           exercises={exercises}
           onSaveExercises={onSaveExercises}
-          currentDay={currentDay}
-          setCurrentDay={setCurrentDay}
+          onShowPdfPreview={onShowPdfPreview}
         />
       </TabsContent>
       
-      <TabsContent value="diet" className="h-full m-0 overflow-hidden">
-        <ProgramDietTab 
+      <TabsContent value="diet" className="mt-0">
+        <ProgramDietTab
           student={student}
           meals={meals}
           onSaveDiet={onSaveDiet}
-          currentDay={currentDay}
-          setCurrentDay={setCurrentDay}
+          onShowPdfPreview={onShowPdfPreview}
         />
       </TabsContent>
       
-      <TabsContent value="supplement" className="h-full m-0 overflow-hidden">
-        <ProgramSupplementTab 
+      <TabsContent value="supplement" className="mt-0">
+        <ProgramSupplementTab
           student={student}
           supplements={supplements}
           onSaveSupplements={onSaveSupplements}
-          currentDay={currentDay}
-          setCurrentDay={setCurrentDay}
+          onShowPdfPreview={onShowPdfPreview}
         />
       </TabsContent>
     </div>

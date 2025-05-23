@@ -19,6 +19,7 @@ interface ProgramManagerProps {
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[]) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
+  onShowPdfPreview?: () => void; // Added this prop to fix the TypeScript error
 }
 
 const ProgramManager: React.FC<ProgramManagerProps> = ({
@@ -28,7 +29,8 @@ const ProgramManager: React.FC<ProgramManagerProps> = ({
   supplements,
   onSaveExercises,
   onSaveDiet,
-  onSaveSupplements
+  onSaveSupplements,
+  onShowPdfPreview
 }) => {
   const { activeTab, setActiveTab } = useProgramTabs();
 
@@ -57,6 +59,7 @@ const ProgramManager: React.FC<ProgramManagerProps> = ({
               onSaveExercises={onSaveExercises}
               onSaveDiet={onSaveDiet}
               onSaveSupplements={onSaveSupplements}
+              onShowPdfPreview={onShowPdfPreview}
             />
           </Card>
         </motion.div>

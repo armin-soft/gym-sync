@@ -2,63 +2,52 @@
 import React from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { ExerciseWithSets } from "@/types/exercise";
-import DaySelector from "./exercise/DaySelector";
-import ExerciseHeader from "./exercise/ExerciseHeader";
-import ExerciseContent from "./exercise/ExerciseContent";
-import ExerciseCounter from "./exercise/ExerciseCounter";
+import { DaySelector, ExerciseContent, ExerciseHeader } from "./exercise";
 import { useExerciseTabState } from "./exercise/useExerciseTabState";
-import { Card } from "@/components/ui/card";
 
 interface ProgramExerciseTabProps {
   student: Student;
   exercises: any[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  currentDay?: number;
-  setCurrentDay?: React.Dispatch<React.SetStateAction<number>>;
+  onShowPdfPreview?: () => void; // Added this prop to fix the TypeScript error
 }
 
-const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
+export const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   student,
   exercises,
   onSaveExercises,
-  currentDay: propCurrentDay,
-  setCurrentDay: propSetCurrentDay
+  onShowPdfPreview
 }) => {
   const {
-    selectedExercises,
-    setSelectedExercises,
     currentDay,
     setCurrentDay,
-    isSaving,
-    handleSave
-  } = useExerciseTabState(student, propCurrentDay, propSetCurrentDay, onSaveExercises);
+    selectedExercises,
+    setSelectedExercises,
+    handleSave,
+    isLoading,
+    saveStatus
+  } = useExerciseTabState(student, onSaveExercises);
 
   return (
-    <div className="flex flex-col h-full space-y-4 rtl">
+    <div className="space-y-4 p-1">
       <ExerciseHeader 
-        exerciseCount={selectedExercises.length}
-        currentDay={currentDay}
-        isSaving={isSaving}
-        onSave={handleSave}
+        currentDay={currentDay} 
+        onSave={handleSave} 
+        isLoading={isLoading}
+        saveStatus={saveStatus}
+        onShowPdfPreview={onShowPdfPreview}
       />
       
       <DaySelector 
-        currentDay={currentDay} 
-        onDayChange={setCurrentDay} 
+        currentDay={currentDay}
+        setCurrentDay={setCurrentDay}
       />
       
-      <Card className="flex-1 overflow-hidden border border-border/40 bg-white/90 backdrop-blur-sm shadow-sm">
-        <div className="p-4 h-full">
-          <ExerciseContent
-            currentDay={currentDay}
-            selectedExercises={selectedExercises}
-            setSelectedExercises={setSelectedExercises}
-            exercises={exercises}
-          />
-        </div>
-      </Card>
-      
-      <ExerciseCounter count={selectedExercises.length} />
+      <ExerciseContent
+        exercises={exercises}
+        selectedExercises={selectedExercises}
+        setSelectedExercises={setSelectedExercises}
+      />
     </div>
   );
 };
