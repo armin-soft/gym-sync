@@ -5,7 +5,7 @@ import autoTable from 'jspdf-autotable';
 import { addFontToPdf } from './pdf-fonts';
 
 // Export the reusable functions from our new modules
-export { addFontToPdf } from './pdf-fonts';
+export { addFontToPdf, writeRTLText, toPersianDigits } from './pdf-fonts';
 export { createDocumentHeader, addPageFooter } from './pdf-layout';
 export { configureTableStyles, createSectionHeader } from './pdf-styling';
 
@@ -29,7 +29,7 @@ export function setupPdfDocument(): jsPDF {
     compress: true
   });
   
-  // تنظیم فونت و حالت راست به چپ
+  // Setup font and RTL mode
   addFontToPdf(doc);
   
   return doc;

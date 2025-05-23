@@ -4,9 +4,9 @@ import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
-import { addFontToPdf } from './pdf-fonts';
+import { addFontToPdf, writeRTLText, toPersianDigits } from './pdf-fonts';
 
-// دریافت نسخه از Manifest.json
+// Get version from Manifest.json
 async function getAppVersion(): Promise<string> {
   try {
     const response = await fetch('./Manifest.json');
@@ -21,7 +21,7 @@ async function getAppVersion(): Promise<string> {
 // Create the header for each page
 export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, pageTitle: string) {
   try {
-    // اطمینان از بارگذاری فونت قبل از استفاده
+    // Ensure proper font setup for Persian text
     addFontToPdf(doc);
     
     // Background for header - gradient effect
@@ -33,19 +33,19 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
     // Add gym logo/name
     doc.setFontSize(22);
     doc.setTextColor(255, 255, 255);
-    doc.text(trainerProfile.gymName || "باشگاه بدنسازی", 105, 20, { align: 'center' });
+    writeRTLText(doc, trainerProfile.gymName || "باشگاه بدنسازی", 105, 20, { align: 'center' });
     
     // Add trainer name
     doc.setFontSize(14);
     doc.setTextColor(230, 230, 230);
-    doc.text(`مربی: ${trainerProfile.name || "-"}`, 105, 30, { align: 'center' });
+    writeRTLText(doc, `مربی: ${trainerProfile.name || "-"}`, 105, 30, { align: 'center' });
     
     // Add page title with badge-like style
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(75, 42, 60, 10, 5, 5, 'F');
     doc.setFontSize(14);
     doc.setTextColor(124, 58, 237);
-    doc.text(pageTitle, 105, 48, { align: 'center' });
+    writeRTLText(doc, pageTitle, 105, 48, { align: 'center' });
     
     // Add divider line
     doc.setDrawColor(220, 220, 220);
@@ -62,21 +62,21 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
     // Student name with icon-like indicator
     doc.setFillColor(124, 58, 237, 0.1);
     doc.circle(30, 72, 3, 'F');
-    doc.text(`نام: ${student.name || "-"}`, 40, 73);
+    writeRTLText(doc, `نام: ${student.name || "-"}`, 40, 73);
     
     // Gender with icon-like indicator
     if (student.gender) {
       const genderText = student.gender === 'male' ? 'مرد' : 'زن';
       doc.setFillColor(124, 58, 237, 0.1);
       doc.circle(30, 82, 3, 'F');
-      doc.text(`جنسیت: ${genderText}`, 40, 83);
+      writeRTLText(doc, `جنسیت: ${genderText}`, 40, 83);
     }
     
     // Date with icon-like indicator
     const today = getCurrentPersianDate();
     doc.setFillColor(124, 58, 237, 0.1);
     doc.circle(120, 82, 3, 'F');
-    doc.text(`تاریخ: ${today}`, 130, 83);
+    writeRTLText(doc, `تاریخ: ${today}`, 130, 83);
     
     // Add measurements in an elegant card
     if (student.height && student.weight) {
@@ -86,10 +86,10 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
       // Height
       doc.setFontSize(11);
       doc.setTextColor(90, 90, 90);
-      doc.text(`قد: ${toPersianNumbers(student.height)} سانتی‌متر`, 40, 103);
+      writeRTLText(doc, `قد: ${toPersianDigits(student.height)} سانتی‌متر`, 40, 103);
       
       // Weight
-      doc.text(`وزن: ${toPersianNumbers(student.weight)} کیلوگرم`, 110, 103);
+      writeRTLText(doc, `وزن: ${toPersianDigits(student.weight)} کیلوگرم`, 110, 103);
       
       // BMI calculation
       if (student.height && student.weight) {
@@ -97,7 +97,7 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
         const weight = Number(student.weight);
         if (height > 0 && weight > 0) {
           const bmi = weight / ((height / 100) * (height / 100));
-          doc.text(`شاخص توده بدنی: ${toPersianNumbers(bmi.toFixed(1))}`, 180, 103);
+          writeRTLText(doc, `شاخص توده بدنی: ${toPersianDigits(bmi.toFixed(1))}`, 180, 103);
         }
       }
     }
@@ -124,8 +124,8 @@ export async function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) 
     // Page number pill
     doc.setFillColor(124, 58, 237, 0.1);
     doc.roundedRect(90, 279, 30, 6, 3, 3, 'F');
-    doc.text(
-      `صفحه ${toPersianNumbers(currentPage)} از ${toPersianNumbers(pageCount)}`, 
+    writeRTLText(doc, 
+      `صفحه ${toPersianDigits(currentPage)} از ${toPersianDigits(pageCount)}`, 
       105, 
       283, 
       { align: 'center' }
@@ -134,11 +134,11 @@ export async function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) 
     // Add app info and trainer contact
     doc.setFontSize(9);
     doc.setTextColor(100, 100, 100);
-    doc.text(`تهیه شده توسط نرم‌افزار GymSync نسخه ${toPersianNumbers(appVersion)}`, 105, 290, { align: 'center' });
+    writeRTLText(doc, `تهیه شده توسط نرم‌افزار GymSync نسخه ${toPersianDigits(appVersion)}`, 105, 290, { align: 'center' });
     
     // Add trainer contact info if available
     if (trainerProfile.phone) {
-      doc.text(`شماره تماس: ${toPersianNumbers(trainerProfile.phone)}`, 30, 290);
+      writeRTLText(doc, `شماره تماس: ${toPersianDigits(trainerProfile.phone)}`, 30, 290);
     }
   } catch (error) {
     console.error("Error adding page footer:", error);
