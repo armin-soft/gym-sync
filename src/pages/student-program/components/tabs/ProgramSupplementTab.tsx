@@ -5,8 +5,8 @@ import { Supplement } from "@/types/supplement";
 import { useSupplementTabState } from "./supplement/useSupplementTabState";
 import { Button } from "@/components/ui/button";
 import { FileText, Save } from "lucide-react";
-import { SupplementSelector } from "./supplement/SupplementSelector";
-import { VitaminSelector } from "./supplement/VitaminSelector";
+import SupplementSelector from "./supplement/SupplementSelector";
+import VitaminSelector from "./supplement/VitaminSelector";
 
 interface ProgramSupplementTabProps {
   student: Student;
