@@ -47,6 +47,7 @@ export interface Student {
   mealNotes?: string;
   supplements?: number[];
   vitamins?: number[];
+  supplementNotes?: string; // Add the missing property
   supplementsDay1?: number[]; // Add support for day-specific supplements
   vitaminsDay1?: number[];    // Add support for day-specific vitamins
   supplementsDay2?: number[];
