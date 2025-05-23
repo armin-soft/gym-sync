@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MoreHorizontal, Printer } from "lucide-react";
+import { CalendarDays, MoreHorizontal, Printer, FileText } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export"; // Import from new location
+import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 interface StudentActionsProps {
   student: Student;
@@ -31,6 +33,7 @@ export const StudentActions = ({
 }: StudentActionsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   // Add a console log to debug when this menu is rendered
   console.log("Rendering StudentActions for student:", student.name);
@@ -41,6 +44,12 @@ export const StudentActions = ({
     if (onAddExercise) {
       onAddExercise(student);
     }
+  };
+  
+  // پیش‌نمایش برنامه
+  const handlePreviewProgramClick = () => {
+    console.log("StudentActions: Preview Program clicked for student:", student.name);
+    setIsPreviewOpen(true);
   };
   
   // صدور برنامه 
@@ -108,17 +117,32 @@ export const StudentActions = ({
               bgHoverClass="hover:bg-purple-50 dark:hover:bg-purple-900/20"
             />
             
+            {/* پیش‌نمایش برنامه */}
+            <MenuItemWithAnimation
+              icon={<FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+              onClick={handlePreviewProgramClick}
+              label="پیش‌نمایش برنامه"
+              index={1}
+              bgHoverClass="hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            />
+            
             {/* صدور برنامه */}
             <MenuItemWithAnimation
               icon={<Printer className="h-4 w-4 text-green-600 dark:text-green-400" />}
               onClick={handleExportProgramClick}
               label="صدور برنامه"
-              index={1}
+              index={2}
               bgHoverClass="hover:bg-green-50 dark:hover:bg-green-900/20"
             />
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
+      
+      <PdfPreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        student={student}
+      />
     </>
   );
 };

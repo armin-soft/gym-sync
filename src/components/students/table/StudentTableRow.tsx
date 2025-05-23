@@ -1,15 +1,16 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu, Printer } from "lucide-react";
+import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu, Printer, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
 import { useToast } from "@/hooks/use-toast";
 import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 interface StudentTableRowProps {
   student: Student;
@@ -33,6 +34,12 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   index,
 }) => {
   const { toast } = useToast();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  // اضافه کردن تابع برای پیش‌نمایش برنامه
+  const handlePreviewProgramClick = () => {
+    setIsPreviewOpen(true);
+  };
 
   // اضافه کردن تابع برای صدور برنامه به صورت PDF
   const handleExportProgramClick = () => {
@@ -130,6 +137,10 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
                 <CalendarDays className="h-3.5 w-3.5 mr-2" />
                 برنامه
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={handlePreviewProgramClick} className="cursor-pointer">
+                <FileText className="h-3.5 w-3.5 mr-2" />
+                پیش‌نمایش
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleExportProgramClick} className="cursor-pointer">
                 <Printer className="h-3.5 w-3.5 mr-2" />
                 صدور برنامه
@@ -151,6 +162,16 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
             >
               <CalendarDays className="h-3.5 w-3.5" />
               <span>برنامه</span>
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400 transition-colors"
+              onClick={handlePreviewProgramClick}
+            >
+              <FileText className="h-3.5 w-3.5" />
+              <span>پیش‌نمایش</span>
             </Button>
             
             <Button
@@ -187,6 +208,12 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
           </div>
         </div>
       </TableCell>
+      
+      <PdfPreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        student={student}
+      />
     </>
   );
 };

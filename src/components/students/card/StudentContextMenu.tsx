@@ -14,12 +14,15 @@ import {
   Apple,
   Pill,
   Printer,
+  FileText,
 } from "lucide-react";
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
 import { ContextMenuSection } from "./context-menu/ContextMenuSection";
-import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export"; // Import from new location
+import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
 import { useToast } from "@/hooks/use-toast";
+import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
+import { useState } from "react";
 
 interface StudentContextMenuProps {
   student: Student;
@@ -45,6 +48,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   // Log when this component renders to help with debugging
   console.log("Rendering StudentContextMenu for:", student.name);
   const { toast } = useToast();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const handleProgramClick = () => {
     console.log("Context Menu: Add Exercise clicked for student:", student.name);
@@ -95,6 +99,11 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
         });
     }, 500);
   };
+  
+  const handlePreviewProgramClick = () => {
+    console.log("Context Menu: Preview Program clicked for student:", student.name);
+    setIsPreviewOpen(true);
+  };
 
   return (
     <ContextMenu>
@@ -118,11 +127,20 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
             />
             
             <ContextMenuItemWithAnimation
+              icon={<FileText className="h-4 w-4" />}
+              title="پیش‌نمایش برنامه"
+              subtitle="مشاهده برنامه به صورت PDF"
+              onClick={handlePreviewProgramClick}
+              index={1}
+              variant="blue"
+            />
+            
+            <ContextMenuItemWithAnimation
               icon={<Printer className="h-4 w-4" />}
               title="صدور برنامه"
               subtitle="چاپ و خروجی PDF"
               onClick={handleExportProgramClick}
-              index={1}
+              index={2}
               variant="green"
             />
             
@@ -132,7 +150,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="افزودن رژیم غذایی"
                 subtitle="مدیریت برنامه غذایی"
                 onClick={handleDietClick}
-                index={2}
+                index={3}
                 variant="green"
               />
             )}
@@ -143,7 +161,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="افزودن مکمل"
                 subtitle="مدیریت مکمل‌های ورزشی"
                 onClick={handleSupplementClick}
-                index={3}
+                index={4}
                 variant="orange"
               />
             )}
@@ -157,7 +175,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="ویرایش شاگرد"
                 subtitle="تغییر اطلاعات شاگرد"
                 onClick={handleEditClick}
-                index={4}
+                index={5}
                 variant="blue"
               />
             )}
@@ -168,13 +186,19 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="حذف شاگرد"
                 subtitle="حذف کامل اطلاعات"
                 onClick={handleDeleteClick}
-                index={5}
+                index={6}
                 variant="red"
               />
             )}
           </ContextMenuSection>
         </ContextMenuContent>
       </AnimatePresence>
+      
+      <PdfPreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        student={student}
+      />
     </ContextMenu>
   );
 };
