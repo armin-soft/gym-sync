@@ -1,4 +1,3 @@
-
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Dumbbell } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -11,7 +10,7 @@ interface SidebarFooterProps {
 
 export function SidebarFooter({ gymName }: SidebarFooterProps) {
   const deviceInfo = useDeviceInfo();
-  const [appVersion, setAppVersion] = useState("2.2.0");
+  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
   
   // Fetch the version from Manifest.json
   useEffect(() => {
@@ -20,10 +19,13 @@ export function SidebarFooter({ gymName }: SidebarFooterProps) {
       .then(data => {
         if (data && data.version) {
           setAppVersion(data.version);
+        } else {
+          setAppVersion("نامشخص");
         }
       })
       .catch(err => {
         console.error('Error loading Manifest.json:', err);
+        setAppVersion("خطا در بارگذاری");
       });
   }, []);
   

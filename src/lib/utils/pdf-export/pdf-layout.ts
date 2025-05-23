@@ -5,6 +5,18 @@ import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
 
+// دریافت نسخه از Manifest.json
+async function getAppVersion(): Promise<string> {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version || '2.2.0';
+  } catch (error) {
+    console.error('Error loading version from manifest:', error);
+    return '2.2.0';
+  }
+}
+
 // Create the header for each page
 export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, pageTitle: string) {
   // Background for header - gradient effect
@@ -91,9 +103,10 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
 }
 
 // Add footer to each page
-export function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) {
+export async function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) {
   const pageCount = doc.getNumberOfPages();
   const currentPage = doc.getCurrentPageInfo().pageNumber;
+  const appVersion = await getAppVersion();
   
   // Footer background
   doc.setFillColor(250, 250, 255);
@@ -118,7 +131,7 @@ export function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) {
   doc.setFontSize(9);
   doc.setTextColor(100, 100, 100);
   doc.setFont("Vazirmatn", "normal");
-  doc.text("تهیه شده توسط نرم‌افزار GymSync نسخه ۲.۲.۰", 105, 290, { align: 'center' });
+  doc.text(`تهیه شده توسط نرم‌افزار GymSync نسخه ${toPersianNumbers(appVersion)}`, 105, 290, { align: 'center' });
   
   // Add trainer contact info if available
   if (trainerProfile.phone) {

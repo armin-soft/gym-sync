@@ -1,9 +1,6 @@
 
 // پیکربندی سرویس ورکر
 
-// نام کش با نسخه پروژه
-export const CACHE_NAME = 'gym-sync-v220';
-
 // فایل‌های اصلی برای کش کردن
 export const STATIC_ASSETS = [
   './',
@@ -16,13 +13,7 @@ export const STATIC_ASSETS = [
   './assets/index.js'
 ];
 
-// تزریق مقادیر به فضای نام سراسری
-// @ts-ignore
-self.CACHE_NAME = CACHE_NAME;
-// @ts-ignore
-self.STATIC_ASSETS = STATIC_ASSETS;
-
-// دریافت نسخه از manifest
+// دریافت نسخه از manifest و تولید نام کش
 export async function initializeConfig() {
   try {
     const response = await fetch('./Manifest.json');
@@ -30,13 +21,35 @@ export async function initializeConfig() {
     const version = manifest.version || '2.2.0';
     const formattedCacheName = `gym-sync-v${version.replace(/\./g, '')}`;
     
+    // تزریق مقادیر به فضای نام سراسری
     // @ts-ignore
     self.CACHE_NAME = formattedCacheName;
+    // @ts-ignore
+    self.STATIC_ASSETS = STATIC_ASSETS;
     
     console.log(`[Service Worker] پیکربندی با نسخه ${version} راه‌اندازی شد`);
     return formattedCacheName;
   } catch (error) {
     console.error('[Service Worker] خطا در دریافت نسخه از manifest', error);
-    return CACHE_NAME;
+    const fallbackCacheName = 'gym-sync-v220';
+    
+    // @ts-ignore
+    self.CACHE_NAME = fallbackCacheName;
+    // @ts-ignore
+    self.STATIC_ASSETS = STATIC_ASSETS;
+    
+    return fallbackCacheName;
+  }
+}
+
+// تابع دریافت نسخه جداگانه برای استفاده در سایر قسمت‌ها
+export async function getAppVersion() {
+  try {
+    const response = await fetch('./Manifest.json');
+    const manifest = await response.json();
+    return manifest.version || '2.2.0';
+  } catch (error) {
+    console.error('[Service Worker] خطا در دریافت نسخه', error);
+    return '2.2.0';
   }
 }
