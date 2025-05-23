@@ -23,7 +23,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     // دریافت نسخه از کش یا فایل manifest
     const appVersion = await appVersionPromise;
     
-    // ثبت با مسیر کامل و نسخه
+    // ثبت با مسیر کامل و نسخه - اشاره به فایل در ریشه dist
     const registration = await navigator.serviceWorker.register(`/Service-Worker.js?v=${appVersion}`, {
       scope: '/',
       updateViaCache: 'none' // همیشه برای بروزرسانی‌ها بررسی شود
@@ -74,8 +74,8 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 export function showUpdateNotification(): void {
   try {
     // استفاده از toast سیستم یکپارچه
-    import('@/hooks/toast/toast-utils').then(({ toast }) => {
-      toast({
+    if (window.showToast) {
+      window.showToast({
         title: 'بروزرسانی جدید',
         description: 'نسخه جدید برنامه در دسترس است.',
         variant: 'warning',
@@ -90,9 +90,8 @@ export function showUpdateNotification(): void {
           label: 'بروزرسانی'
         }
       });
-    }).catch(err => {
+    } else {
       // اگر سیستم toast در دسترس نبود، از confirm استفاده میکنیم
-      console.error('خطا در نمایش toast:', err);
       if (confirm('نسخه جدید برنامه در دسترس است. می‌خواهید صفحه را بروزرسانی کنید؟')) {
         if (navigator.serviceWorker.controller) {
           navigator.serviceWorker.controller.postMessage({
@@ -100,7 +99,7 @@ export function showUpdateNotification(): void {
           });
         }
       }
-    });
+    }
   } catch (error) {
     console.error('خطا در نمایش اعلان بروزرسانی:', error);
   }
@@ -115,17 +114,16 @@ export function setupOfflineDetection(): void {
     
     // استفاده از toast سیستم یکپارچه
     try {
-      import('@/hooks/toast/toast-utils').then(({ toast }) => {
-        toast({
+      if (window.showToast) {
+        window.showToast({
           title: 'اتصال برقرار شد',
           description: 'شما مجدداً به اینترنت متصل شدید.',
           variant: 'success',
           duration: 3000
         });
-      }).catch(() => {
-        // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+      } else {
         console.log('اتصال به اینترنت برقرار شد');
-      });
+      }
     } catch (error) {
       console.log('اتصال به اینترنت برقرار شد');
     }
@@ -136,17 +134,16 @@ export function setupOfflineDetection(): void {
     
     // استفاده از toast سیستم یکپارچه
     try {
-      import('@/hooks/toast/toast-utils').then(({ toast }) => {
-        toast({
+      if (window.showToast) {
+        window.showToast({
           title: 'حالت آفلاین',
           description: 'شما در حالت آفلاین هستید. برنامه همچنان کار می‌کند.',
           variant: 'warning',
           duration: 5000
         });
-      }).catch(() => {
-        // اگر سیستم toast در دسترس نبود، عملیات خاصی انجام نمیدهیم
+      } else {
         console.log('اتصال به اینترنت قطع شد');
-      });
+      }
     } catch (error) {
       console.log('اتصال به اینترنت قطع شد');
     }
