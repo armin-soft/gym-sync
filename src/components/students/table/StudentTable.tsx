@@ -23,6 +23,9 @@ interface StudentTableProps {
   sortField?: string;
   sortOrder?: "asc" | "desc";
   onSortChange?: (field: string) => void;
+  exercises?: any[];
+  meals?: any[];
+  supplements?: any[];
 }
 
 export const StudentTable: React.FC<StudentTableProps> = ({
@@ -40,7 +43,10 @@ export const StudentTable: React.FC<StudentTableProps> = ({
   isProfileComplete,
   sortField,
   sortOrder,
-  onSortChange
+  onSortChange,
+  exercises,
+  meals,
+  supplements
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -88,6 +94,9 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                 searchQuery={searchQuery}
                 onAddStudent={onAddStudent}
                 onClearSearch={onClearSearch}
+                exercises={exercises}
+                meals={meals}
+                supplements={supplements}
               />
             </Table>
           </div>

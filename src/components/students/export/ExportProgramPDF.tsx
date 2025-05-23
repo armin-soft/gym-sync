@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Student } from "@/components/students/StudentTypes";
 import { jsPDF } from "jspdf";
 import autoTable from 'jspdf-autotable';
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { getCurrentPersianDate } from "@/lib/utils/persianDate";
+import { getDayName } from "@/lib/utils/getDayName";
 
 interface ExportProgramPDFProps {
   student: Student;
@@ -253,11 +253,10 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     }
     
     // نمایش نکات رژیم غذایی
-    // Fix for lastAutoTable - use the return value of autoTable instead
     let finalY = 280;
-    const tables = doc.internal.getPageInfo(doc.internal.getCurrentPageInfo().pageNumber).tables;
-    if (tables && tables.length > 0) {
-      finalY = tables[tables.length - 1].finalY;
+    let lastTableY = doc.previousAutoTable?.finalY;
+    if (lastTableY) {
+      finalY = lastTableY;
     }
     
     if (student.mealNotes) {
@@ -323,10 +322,9 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     
     // جدول ویتامین‌ها
     let vitaminY = startY;
-    // Fix for lastAutoTable - use the return value of autoTable instead
-    const tables = doc.internal.getPageInfo(doc.internal.getCurrentPageInfo().pageNumber).tables;
-    if (tables && tables.length > 0) {
-      vitaminY = tables[tables.length - 1].finalY + 20;
+    let lastTableY = doc.previousAutoTable?.finalY;
+    if (lastTableY) {
+      vitaminY = lastTableY + 20;
     } else {
       vitaminY += 20;
     }
@@ -369,11 +367,10 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     }
     
     // نمایش نکات مکمل و ویتامین
-    // Fix for lastAutoTable - use the return value of autoTable instead
     let finalY = 280;
-    const finalTables = doc.internal.getPageInfo(doc.internal.getCurrentPageInfo().pageNumber).tables;
-    if (finalTables && finalTables.length > 0) {
-      finalY = finalTables[finalTables.length - 1].finalY;
+    lastTableY = doc.previousAutoTable?.finalY;
+    if (lastTableY) {
+      finalY = lastTableY;
     }
     
     if (student.notes) {
@@ -386,18 +383,6 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
         maxWidth: 170,
         align: 'justify'
       });
-    }
-  };
-  
-  // کمک‌کننده: تبدیل شماره روز به نام روز هفته
-  const getDayName = (dayNumber: number): string => {
-    switch(dayNumber) {
-      case 1: return "شنبه";
-      case 2: return "یکشنبه";
-      case 3: return "دوشنبه";
-      case 4: return "سه‌شنبه";
-      case 5: return "چهارشنبه";
-      default: return "روز نامشخص";
     }
   };
 
@@ -441,4 +426,3 @@ export const ExportProgramPDF: React.FC<ExportProgramPDFProps> = ({
     </div>
   );
 };
-
