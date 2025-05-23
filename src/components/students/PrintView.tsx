@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { useReactToPrint } from "react-to-print";
 import { Button } from "@/components/ui/button";
-import { Printer, FilePdf } from "lucide-react";
+import { Printer } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { getCurrentPersianDate } from "@/lib/utils/persianDate";
 import { motion } from "framer-motion";
@@ -35,11 +35,12 @@ const PrintView: React.FC<PrintViewProps> = ({
   
   // Handle print function using react-to-print
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
     documentTitle: `برنامه-${student.name}-${new Date().getTime()}`,
     onAfterPrint: () => {
       console.log("Print completed");
-    }
+    },
+    // Changed from 'content' to 'contentRef'
+    contentRef: () => printRef.current
   });
 
   // Find exercise details by ID

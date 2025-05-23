@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Printer, FilePdf } from "lucide-react";
+import { Printer } from "lucide-react";
 import { Student } from "@/components/students/StudentTypes";
 import PrintView from "./PrintView";
 
@@ -10,7 +10,7 @@ interface PrintButtonProps {
   exercises: any[];
   meals: any[];
   supplements: any[];
-  variant?: "default" | "outline" | "ghost" | "icon" | "link";
+  variant?: "default" | "outline" | "ghost" | "link" | "destructive" | "secondary" | "gradient" | "success" | "warning" | "info";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
 }

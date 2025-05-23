@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Table,
@@ -12,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button"; // Added Button import
 import {
   Pagination,
   PaginationContent,
@@ -22,7 +24,7 @@ import {
 } from "@/components/ui/pagination";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { cn } from "@/lib/utils";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import { ReloadIcon } from "@radix-ui/react-icons"; // Now correctly imported
 import { StudentActions } from "../StudentActions";
 import { StudentListViewProps } from "./types";
 
@@ -130,7 +132,7 @@ export const StudentTableView: React.FC<StudentListViewProps> = ({
                 </TableCell>
               </TableRow>
             ) : (
-              sortedAndFilteredStudents.map((student) => (
+              paginatedStudents.map((student) => (
                 <TableRow key={student.id}>
                   <TableCell className="font-medium">
                     <input type="checkbox" className="cursor-pointer" />
@@ -149,7 +151,6 @@ export const StudentTableView: React.FC<StudentListViewProps> = ({
                     {student.startDate ? toPersianNumbers(student.startDate) : "وارد نشده"}
                   </TableCell>
                   
-                  {/* Actions cell */}
                   <TableCell className="text-right">
                     <div className="flex justify-end items-center gap-2">
                       <StudentActions
@@ -160,8 +161,8 @@ export const StudentTableView: React.FC<StudentListViewProps> = ({
                         onEdit={() => onEdit(student)}
                         onDelete={() => onDelete(student.id)}
                         onAddExercise={() => onAddExercise(student)}
-                        onAddDiet={() => onAddExercise(student)}
-                        onAddSupplement={() => onAddExercise(student)}
+                        onAddDiet={() => onAddDiet(student)}
+                        onAddSupplement={() => onAddSupplement(student)}
                         onDownload={(student) => {}}
                       />
                     </div>
@@ -185,10 +186,10 @@ export const StudentTableView: React.FC<StudentListViewProps> = ({
               />
             </PaginationItem>
             {Array.from({ length: totalPages }, (_, i) => (
-              <PaginationItem key={i + 1} active={currentPage === i + 1}>
+              <PaginationItem key={i + 1}>
                 <PaginationLink
                   href="#"
-                  isCurrent={currentPage === i + 1}
+                  isActive={currentPage === i + 1}
                   onClick={() => setCurrentPage(i + 1)}
                 >
                   {toPersianNumbers(i + 1)}
