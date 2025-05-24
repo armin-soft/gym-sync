@@ -3,27 +3,22 @@ import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getDayName } from '@/lib/utils';
-import { createSectionHeader, configureTableStyles } from './pdf-styling';
 import { getMealName, getMealType } from './data-helpers';
 
-// ایجاد برنامه غذایی
+// ایجاد برنامه غذایی کامپکت
 export function createDietPlan(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
-  // هدر بخش
-  content.push(createSectionHeader("برنامه غذایی هفتگی", '#27ae60'));
-  
-  // جدول غذایی برای همه روزهای هفته
+  // جدول کامپکت همه وعده‌های غذایی
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
-      { text: 'هفته', style: 'tableHeader', direction: 'rtl' },
+      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
       { text: 'وعده غذایی', style: 'tableHeader', direction: 'rtl' },
       { text: 'غذا', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
-  let rowIndex = 1;
+  let hasAnyMeal = false;
   
   // برای هر روز هفته
   for (let day = 1; day <= 7; day++) {
@@ -31,21 +26,16 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     const meals = student[dayKey] as number[] || [];
     
     if (meals && meals.length > 0) {
+      hasAnyMeal = true;
       const dayName = getDayName(day);
       
-      meals.forEach((mealId) => {
+      meals.forEach((mealId, index) => {
         const mealName = getMealName(mealId) || '-';
         const mealType = getMealType(mealId) || '-';
         
         tableData.push([
           { 
-            text: toPersianDigits(rowIndex), 
-            style: 'tableCell', 
-            alignment: 'center',
-            direction: 'rtl'
-          },
-          { 
-            text: preprocessPersianText(dayName), 
+            text: index === 0 ? preprocessPersianText(dayName) : '', 
             style: 'tableCell',
             direction: 'rtl' 
           },
@@ -60,17 +50,14 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
             direction: 'rtl' 
           }
         ]);
-        
-        rowIndex++;
       });
     }
   }
   
-  // اگر غذایی وجود داشت، جدول را نمایش بده
-  if (tableData.length > 1) {
+  if (hasAnyMeal) {
     content.push({
       table: {
-        widths: ['10%', '20%', '25%', '45%'],
+        widths: ['20%', '30%', '50%'],
         body: tableData,
         headerRows: 1
       },
@@ -86,7 +73,6 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       margin: [0, 0, 0, 15]
     });
   } else {
-    // اگر هیچ غذایی وجود نداشت
     content.push({
       text: 'برنامه غذایی تعیین نشده است.',
       style: 'notes',
@@ -95,17 +81,18 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     });
   }
   
-  // نکات تغذیه‌ای
+  // نکات تغذیه‌ای (اگر وجود داشت)
   if (student.mealNotes) {
-    content.push(createSectionHeader("نکات تغذیه‌ای", '#27ae60'));
+    content.push({
+      text: 'نکات تغذیه‌ای:',
+      style: 'sectionTitle',
+      margin: [0, 15, 0, 5],
+      direction: 'rtl'
+    });
     content.push({
       text: preprocessPersianText(student.mealNotes),
-      style: {
-        fontSize: 11,
-        alignment: 'right',
-        margin: [0, 10, 0, 0],
-        direction: 'rtl'
-      }
+      style: 'notes',
+      direction: 'rtl'
     });
   }
   
