@@ -1,6 +1,6 @@
 
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits } from './pdf-fonts';
 
@@ -15,9 +15,9 @@ const persianFonts = {
   }
 };
 
-// Add fonts to pdfMake
-pdfMake.fonts = {
-  ...pdfMake.fonts,
+// اضافه کردن فونت‌ها به pdfMake
+(pdfMake as any).fonts = {
+  ...(pdfMake as any).fonts,
   Vazir: persianFonts.Vazir
 };
 
