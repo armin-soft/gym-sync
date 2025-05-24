@@ -1,7 +1,7 @@
 
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
-import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
+import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 import { getCurrentPersianDate } from '../persianDate';
 
 // دریافت نسخه از Manifest.json
@@ -30,7 +30,8 @@ export function createDocumentHeader(student: Student, trainerProfile: TrainerPr
               style: 'header',
               fillColor: '#7c3aed',
               color: 'white',
-              margin: [0, 10, 0, 10]
+              margin: [0, 10, 0, 10],
+              direction: 'rtl'
             }
           ],
           [
@@ -39,7 +40,8 @@ export function createDocumentHeader(student: Student, trainerProfile: TrainerPr
               alignment: 'center',
               fontSize: 14,
               color: '#666666',
-              margin: [0, 5, 0, 10]
+              margin: [0, 5, 0, 10],
+              direction: 'rtl'
             }
           ]
         ]
@@ -52,7 +54,8 @@ export function createDocumentHeader(student: Student, trainerProfile: TrainerPr
       text: preprocessPersianText(pageTitle),
       style: 'subheader',
       alignment: 'center',
-      margin: [0, 20, 0, 20]
+      margin: [0, 20, 0, 20],
+      direction: 'rtl'
     },
     
     // اطلاعات دانش‌آموز
@@ -61,10 +64,26 @@ export function createDocumentHeader(student: Student, trainerProfile: TrainerPr
         widths: ['25%', '25%', '25%', '25%'],
         body: [
           [
-            { text: preprocessPersianText(`نام: ${student.name || "-"}`), style: 'tableCell' },
-            { text: preprocessPersianText(`جنسیت: ${student.gender === 'male' ? 'مرد' : student.gender === 'female' ? 'زن' : '-'}`), style: 'tableCell' },
-            { text: preprocessPersianText(`قد: ${toPersianDigits(student.height || 0)} سانتی‌متر`), style: 'tableCell' },
-            { text: preprocessPersianText(`وزن: ${toPersianDigits(student.weight || 0)} کیلوگرم`), style: 'tableCell' }
+            { 
+              text: preprocessPersianText(`نام: ${student.name || "-"}`), 
+              style: 'tableCell',
+              direction: 'rtl'
+            },
+            { 
+              text: preprocessPersianText(`جنسیت: ${student.gender === 'male' ? 'مرد' : student.gender === 'female' ? 'زن' : '-'}`), 
+              style: 'tableCell',
+              direction: 'rtl'
+            },
+            { 
+              text: preprocessPersianText(`قد: ${toPersianDigits(student.height || 0)} سانتی‌متر`), 
+              style: 'tableCell',
+              direction: 'rtl'
+            },
+            { 
+              text: preprocessPersianText(`وزن: ${toPersianDigits(student.weight || 0)} کیلوگرم`), 
+              style: 'tableCell',
+              direction: 'rtl'
+            }
           ]
         ]
       },
@@ -83,7 +102,8 @@ export function createDocumentHeader(student: Student, trainerProfile: TrainerPr
       text: preprocessPersianText(`تاریخ: ${getCurrentPersianDate()}`),
       alignment: 'left',
       fontSize: 10,
-      margin: [0, 0, 0, 30]
+      margin: [0, 0, 0, 30],
+      direction: 'rtl'
     }
   ];
 }
@@ -94,10 +114,20 @@ export async function addPageFooter(trainerProfile: TrainerProfile): Promise<any
   
   return {
     text: [
-      { text: preprocessPersianText(`تهیه شده توسط نرم‌افزار GymSync نسخه ${toPersianDigits(appVersion)}`), fontSize: 8, alignment: 'center' },
-      trainerProfile.phone ? { text: preprocessPersianText(` | شماره تماس: ${toPersianDigits(trainerProfile.phone)}`), fontSize: 8 } : ''
+      { 
+        text: preprocessPersianText(`تهیه شده توسط نرم‌افزار GymSync نسخه ${toPersianDigits(appVersion)}`), 
+        fontSize: 8, 
+        alignment: 'center',
+        direction: 'rtl'
+      },
+      trainerProfile.phone ? { 
+        text: preprocessPersianText(` | شماره تماس: ${toPersianDigits(trainerProfile.phone)}`), 
+        fontSize: 8,
+        direction: 'rtl'
+      } : ''
     ],
     alignment: 'center',
-    margin: [0, 20, 0, 0]
+    margin: [0, 20, 0, 0],
+    direction: 'rtl'
   };
 }

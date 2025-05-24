@@ -2,7 +2,7 @@
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
-import { toPersianDigits } from './pdf-fonts';
+import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 
 // تنظیم فونت‌های پیش‌فرض
 pdfMake.vfs = (pdfFonts as any).pdfMake?.vfs || pdfFonts;
@@ -30,6 +30,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
     font: 'Vazir',
     fontSize: 12,
     alignment: 'right',
+    direction: 'rtl', // اضافه کردن جهت RTL به صورت پیش‌فرض
   },
 };
 
@@ -45,31 +46,36 @@ export function createPdfDocument(content: any[]): any {
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 20],
-        color: '#7c3aed'
+        color: '#7c3aed',
+        direction: 'rtl', // اضافه کردن جهت RTL
       },
       subheader: {
         fontSize: 14,
         bold: true,
         alignment: 'right',
         margin: [0, 10, 0, 10],
-        color: '#4a5568'
+        color: '#4a5568',
+        direction: 'rtl', // اضافه کردن جهت RTL
       },
       tableHeader: {
         bold: true,
         fontSize: 12,
         color: 'white',
         fillColor: '#7c3aed',
-        alignment: 'center'
+        alignment: 'center',
+        direction: 'rtl', // اضافه کردن جهت RTL
       },
       tableCell: {
         fontSize: 10,
-        alignment: 'right'
+        alignment: 'right',
+        direction: 'rtl', // اضافه کردن جهت RTL
       },
       notes: {
         fontSize: 11,
         italics: true,
         alignment: 'right',
-        margin: [0, 10, 0, 0]
+        margin: [0, 10, 0, 0],
+        direction: 'rtl', // اضافه کردن جهت RTL
       }
     }
   };
@@ -105,6 +111,6 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
 }
 
 // صادر کردن توابع کمکی
-export { toPersianDigits } from './pdf-fonts';
+export { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 export { createDocumentHeader, addPageFooter } from './pdf-layout';
 export { configureTableStyles, createSectionHeader } from './pdf-styling';

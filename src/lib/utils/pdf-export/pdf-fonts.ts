@@ -31,10 +31,24 @@ export function preprocessPersianText(text: string): string {
   }
 }
 
-// تابع کمکی برای نوشتن متن RTL
+// تابع بهبودیافته برای نوشتن متن RTL
 export function createRTLText(text: string): any {
+  if (!text) return { text: '' };
+  
   return {
     text: preprocessPersianText(text),
+    alignment: 'right',
+    direction: 'rtl'
+  };
+}
+
+// تابع کمکی برای ایجاد متن‌های چندبخشی RTL
+export function createRTLTextArray(parts: { text: string, style?: any }[]): any {
+  return {
+    text: parts.map(part => ({
+      text: preprocessPersianText(part.text),
+      ...part.style
+    })),
     alignment: 'right',
     direction: 'rtl'
   };

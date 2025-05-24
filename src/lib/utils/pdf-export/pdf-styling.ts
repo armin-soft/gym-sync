@@ -1,56 +1,52 @@
 
-import { TableThemeOptions } from './types';
 import { preprocessPersianText } from './pdf-fonts';
 
-// پیکربندی استایل‌های جدول
-export function configureTableStyles(theme: string = 'primary'): any {
-  const themes: Record<string, TableThemeOptions> = {
-    primary: {
-      headerColor: '#7c3aed',
-      headerTextColor: 'white',
-      rowColor: '#ffffff',
-      alternateRowColor: '#f8fafc'
-    },
-    success: {
-      headerColor: '#27ae60',
-      headerTextColor: 'white',
-      rowColor: '#ffffff',
-      alternateRowColor: '#f0fff4'
-    },
-    warning: {
-      headerColor: '#e67e22',
-      headerTextColor: 'white',
-      rowColor: '#ffffff',
-      alternateRowColor: '#fffbf0'
-    },
-    info: {
-      headerColor: '#3498db',
-      headerTextColor: 'white',
-      rowColor: '#ffffff',
-      alternateRowColor: '#f0f9ff'
-    }
-  };
-  
-  const themeConfig = themes[theme] || themes.primary;
-  
+// تنظیم استایل‌های جدول
+export function configureTableStyles(headerColor: string = '#7c3aed'): any {
   return {
-    fillColor: function (rowIndex: number) {
-      return rowIndex === 0 ? themeConfig.headerColor : 
-             rowIndex % 2 === 0 ? themeConfig.alternateRowColor : themeConfig.rowColor;
+    tableHeader: {
+      bold: true,
+      fontSize: 12,
+      color: 'white',
+      fillColor: headerColor,
+      alignment: 'center',
+      direction: 'rtl'
     },
-    hLineWidth: () => 1,
-    vLineWidth: () => 1,
-    hLineColor: () => '#e2e8f0',
-    vLineColor: () => '#e2e8f0'
+    tableCell: {
+      fontSize: 10,
+      alignment: 'right',
+      direction: 'rtl'
+    },
+    alternateRow: {
+      fillColor: '#f8fafc'
+    }
   };
 }
 
 // ایجاد هدر بخش
-export function createSectionHeader(title: string, color: string = '#7c3aed'): any {
+export function createSectionHeader(title: string, iconName?: string): any {
   return {
-    text: preprocessPersianText(title),
-    style: 'subheader',
-    color: color,
-    margin: [0, 20, 0, 10]
+    stack: [
+      {
+        text: preprocessPersianText(title),
+        style: 'subheader',
+        color: '#4a5568',
+        alignment: 'right',
+        margin: [0, 10, 0, 10],
+        direction: 'rtl'
+      },
+      {
+        canvas: [
+          {
+            type: 'line',
+            x1: 0, y1: 5, 
+            x2: 515, y2: 5,
+            lineWidth: 1,
+            lineColor: '#e2e8f0'
+          }
+        ]
+      }
+    ],
+    margin: [0, 10, 0, 15]
   };
 }
