@@ -1,4 +1,3 @@
-
 import { Toast, ToastVariant } from "./toast-types";
 import { dispatch, genId } from "./toast-reducer";
 import * as React from "react";
@@ -22,8 +21,8 @@ const createActionElement = (action: ToastActionProps): ToastActionElement => {
     children: action.label
   });
   
-  // Type assertion is safe here because we know ToastAction creates a valid ToastActionElement
-  return element as ToastActionElement;
+  // Two-step type assertion as recommended by TypeScript
+  return element as unknown as ToastActionElement;
 };
 
 // Toast function to show notifications - compatible with both interfaces
