@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MoreHorizontal, Download, Eye, FileText, Share2, Sparkles, Printer, BookOpen } from "lucide-react";
+import { CalendarDays, MoreHorizontal, Download, Eye, FileText, Sparkles, BookOpen } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,7 +55,7 @@ export const StudentActions = ({
     setIsPreviewOpen(true);
     
     toast({
-      title: "🔍 در حال آماده‌سازی پیش‌نمایش",
+      title: "در حال آماده‌سازی پیش‌نمایش",
       description: `پیش‌نمایش برنامه ${student.name} در حال بارگیری است...`,
     });
   };
@@ -67,7 +67,7 @@ export const StudentActions = ({
     setIsExporting(true);
     
     toast({
-      title: "📄 در حال آماده‌سازی برنامه",
+      title: "در حال آماده‌سازی برنامه",
       description: `برنامه ${student.name} در حال تولید است، لطفاً صبر کنید...`,
     });
     
@@ -75,7 +75,7 @@ export const StudentActions = ({
       await exportStudentProgramToPdf(student);
       
       toast({
-        title: "✅ دانلود موفقیت‌آمیز",
+        title: "دانلود موفقیت‌آمیز",
         description: `برنامه ${student.name} با موفقیت به صورت PDF دانلود شد`,
         variant: "default",
       });
@@ -83,7 +83,7 @@ export const StudentActions = ({
       console.error("Error exporting program:", error);
       toast({
         variant: "destructive",
-        title: "❌ خطا در دانلود",
+        title: "خطا در دانلود",
         description: "مشکلی در صدور برنامه پیش آمد. لطفاً مجدداً تلاش کنید.",
       });
     } finally {
@@ -98,7 +98,7 @@ export const StudentActions = ({
     setIsGeneratingReport(true);
     
     toast({
-      title: "📊 در حال تولید گزارش کامل",
+      title: "در حال تولید گزارش کامل",
       description: `گزارش جامع ${student.name} در حال آماده‌سازی است...`,
     });
     
@@ -106,7 +106,7 @@ export const StudentActions = ({
       await generateComprehensiveReport(student);
       
       toast({
-        title: "🎉 گزارش کامل آماده شد",
+        title: "گزارش کامل آماده شد",
         description: `گزارش جامع ${student.name} با موفقیت تولید و دانلود شد`,
         variant: "default",
       });
@@ -114,7 +114,7 @@ export const StudentActions = ({
       console.error("Error generating comprehensive report:", error);
       toast({
         variant: "destructive",
-        title: "❌ خطا در تولید گزارش",
+        title: "خطا در تولید گزارش",
         description: "مشکلی در تولید گزارش کامل پیش آمد. لطفاً مجدداً تلاش کنید.",
       });
     } finally {
@@ -156,7 +156,7 @@ export const StudentActions = ({
             <ModernMenuItemWithAnimation
               icon={<CalendarDays className="h-4 w-4 text-purple-600 dark:text-purple-400" />}
               onClick={handleProgramClick}
-              label="📋 تخصیص برنامه"
+              label="تخصیص برنامه"
               description="ایجاد برنامه جدید"
               index={0}
               bgHoverClass="hover:bg-gradient-to-l hover:from-purple-50 hover:to-purple-100 dark:hover:from-purple-900/20 dark:hover:to-purple-800/20"
@@ -168,7 +168,7 @@ export const StudentActions = ({
             <ModernMenuItemWithAnimation
               icon={<Eye className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
               onClick={handlePreviewProgramClick}
-              label="👁️ پیش‌نمایش مدرن"
+              label="پیش‌نمایش مدرن"
               description="مشاهده زنده برنامه"
               index={1}
               bgHoverClass="hover:bg-gradient-to-l hover:from-blue-50 hover:to-cyan-50 dark:hover:from-blue-900/20 dark:hover:to-cyan-900/20"
@@ -182,7 +182,7 @@ export const StudentActions = ({
                 <Download className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               )}
               onClick={handleExportProgramClick}
-              label={isExporting ? "در حال دانلود..." : "💾 دانلود برنامه"}
+              label={isExporting ? "در حال دانلود..." : "دانلود برنامه"}
               description={isExporting ? `${toPersianNumbers(0)}% تکمیل شده` : "فایل PDF کامل"}
               index={2}
               disabled={isExporting}
@@ -197,7 +197,7 @@ export const StudentActions = ({
                 <BookOpen className="h-4 w-4 text-amber-600 dark:text-amber-400" />
               )}
               onClick={handleGenerateReportClick}
-              label={isGeneratingReport ? "در حال تولید..." : "📊 گزارش کامل"}
+              label={isGeneratingReport ? "در حال تولید..." : "گزارش کامل"}
               description={isGeneratingReport ? "آماده‌سازی گزارش جامع" : "گزارش تفصیلی پیشرفت"}
               index={3}
               disabled={isGeneratingReport}
@@ -208,7 +208,7 @@ export const StudentActions = ({
           {/* پایین منو */}
           <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60">
             <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
-              🚀 نسخه پیشرفته GymSync
+              نسخه پیشرفته GymSync
             </div>
           </div>
         </DropdownMenuContent>

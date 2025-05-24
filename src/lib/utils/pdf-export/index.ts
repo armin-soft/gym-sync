@@ -12,7 +12,7 @@ import { toPersianDigits } from './pdf-fonts';
 // تولید پیش‌نمایش PDF با UI مدرن
 export const previewStudentProgramPDF = async (student: Student): Promise<string> => {
   try {
-    console.log(`🔄 در حال ایجاد پیش‌نمایش PDF برای ${student.name}`);
+    console.log(`در حال ایجاد پیش‌نمایش PDF برای ${student.name}`);
     
     // دریافت پروفایل مربی
     const trainerProfileStr = localStorage.getItem('trainerProfile');
@@ -29,17 +29,17 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
     });
     
     // صفحه ۱: برنامه تمرینی
-    content.push(...createDocumentHeader(student, trainerProfile, "💪 برنامه تمرینی"));
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه تمرینی"));
     content.push(...createExerciseProgram(student, trainerProfile));
     
     // صفحه ۲: برنامه غذایی
     content.push({ text: '', pageBreak: 'before' });
-    content.push(...createDocumentHeader(student, trainerProfile, "🍎 برنامه غذایی"));
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه غذایی"));
     content.push(...createDietPlan(student, trainerProfile));
     
     // صفحه ۳: برنامه مکمل
     content.push({ text: '', pageBreak: 'before' });
-    content.push(...createDocumentHeader(student, trainerProfile, "💊 برنامه مکمل و ویتامین"));
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه مکمل و ویتامین"));
     content.push(...createSupplementPlan(student, trainerProfile));
     
     // پاورقی مدرن
@@ -51,12 +51,12 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
     
     // تولید URL پیش‌نمایش
     const previewUrl = await generatePDFPreview(docDefinition);
-    console.log(`✅ پیش‌نمایش PDF با موفقیت ایجاد شد`);
+    console.log(`پیش‌نمایش PDF با موفقیت ایجاد شد`);
     
     return previewUrl;
     
   } catch (error) {
-    console.error("❌ خطا در ایجاد پیش‌نمایش PDF:", error);
+    console.error("خطا در ایجاد پیش‌نمایش PDF:", error);
     throw new Error("خطا در تولید پیش‌نمایش - لطفاً مجدداً تلاش کنید");
   }
 };
@@ -64,7 +64,7 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
 // صادر کردن PDF با نمایش پیشرفت
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
   try {
-    console.log(`🚀 شروع صدور PDF برای ${student.name}`);
+    console.log(`شروع صدور PDF برای ${student.name}`);
     
     // دریافت پروفایل مربی
     const trainerProfileStr = localStorage.getItem('trainerProfile');
@@ -86,7 +86,7 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
         widths: ['*'],
         body: [
           [{
-            text: '📋 خلاصه اطلاعات',
+            text: 'خلاصه اطلاعات',
             style: 'sectionTitle',
             fillColor: '#eff6ff',
             border: [false, false, false, false],
@@ -97,10 +97,10 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
               widths: ['25%', '25%', '25%', '25%'],
               body: [
                 [
-                  { text: `👤 نام: ${student.name}`, style: 'tableCell' },
-                  { text: `📏 قد: ${toPersianDigits(student.height || 0)} سانتی‌متر`, style: 'tableCell' },
-                  { text: `⚖️ وزن: ${toPersianDigits(student.weight || 0)} کیلوگرم`, style: 'tableCell' },
-                  { text: `📅 تاریخ: ${getCurrentPersianDate()}`, style: 'tableCell' }
+                  { text: `نام: ${student.name}`, style: 'tableCell' },
+                  { text: `قد: ${toPersianDigits(student.height || 0)} سانتی‌متر`, style: 'tableCell' },
+                  { text: `وزن: ${toPersianDigits(student.weight || 0)} کیلوگرم`, style: 'tableCell' },
+                  { text: `تاریخ: ${getCurrentPersianDate()}`, style: 'tableCell' }
                 ]
               ]
             },
@@ -135,10 +135,10 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
     
     // دانلود PDF
     await generatePDF(docDefinition, fileName);
-    console.log(`✅ PDF با موفقیت صادر شد: ${fileName}`);
+    console.log(`PDF با موفقیت صادر شد: ${fileName}`);
     
   } catch (error) {
-    console.error("❌ خطا در صدور PDF:", error);
+    console.error("خطا در صدور PDF:", error);
     throw new Error("خطا در صدور فایل - لطفاً مجدداً تلاش کنید");
   }
 };
@@ -146,7 +146,7 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
 // تولید گزارش کامل PDF
 export const generateComprehensiveReport = async (student: Student): Promise<void> => {
   try {
-    console.log(`📊 در حال تولید گزارش کامل برای ${student.name}`);
+    console.log(`در حال تولید گزارش کامل برای ${student.name}`);
     
     const trainerProfileStr = localStorage.getItem('trainerProfile');
     const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
@@ -155,7 +155,7 @@ export const generateComprehensiveReport = async (student: Student): Promise<voi
     
     // جلد گزارش
     content.push({
-      text: '📈 گزارش جامع پیشرفت و برنامه‌ریزی',
+      text: 'گزارش جامع پیشرفت و برنامه‌ریزی',
       style: 'documentTitle',
       margin: [0, 100, 0, 50]
     });
@@ -189,10 +189,10 @@ export const generateComprehensiveReport = async (student: Student): Promise<voi
     const fileName = `گزارش_کامل_${student.name?.replace(/\s/g, '_')}_${getCurrentPersianDate().replace(/\s/g, '_')}.pdf`;
     await generatePDF(docDefinition, fileName);
     
-    console.log(`✅ گزارش کامل با موفقیت تولید شد`);
+    console.log(`گزارش کامل با موفقیت تولید شد`);
     
   } catch (error) {
-    console.error("❌ خطا در تولید گزارش کامل:", error);
+    console.error("خطا در تولید گزارش کامل:", error);
     throw error;
   }
 };
