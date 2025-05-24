@@ -5,18 +5,18 @@ import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getDayName } from '@/lib/utils';
 import { getExerciseName } from './data-helpers';
 
-// ایجاد برنامه تمرینی کامپکت - فقط با داده‌های واقعی شاگرد
+// ایجاد برنامه تمرینی با ترتیب ستون‌های جدید
 export function createExerciseProgram(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
-  // جدول کامپکت همه تمرینات
+  // جدول با ترتیب: شماره، روز، ست، تکرار، نام تمرین
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'نام تمرین', style: 'tableHeader', direction: 'rtl' },
-      { text: 'تکرار', style: 'tableHeader', direction: 'rtl' },
-      { text: 'ست', style: 'tableHeader', direction: 'rtl' },
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
       { text: 'روز', style: 'tableHeader', direction: 'rtl' },
-      { text: 'شماره', style: 'tableHeader', direction: 'rtl' }
+      { text: 'ست', style: 'tableHeader', direction: 'rtl' },
+      { text: 'تکرار', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام تمرین', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
@@ -45,11 +45,11 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         const repInfo = reps[exerciseId] || '-';
         
         tableData.push([
-          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
           { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
+          { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
         ]);
         
         rowNumber++;
@@ -69,11 +69,11 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
       const repInfo = reps[exerciseId] || '-';
       
       tableData.push([
-        { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
         { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
+        { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
       ]);
       
       rowNumber++;
@@ -83,7 +83,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
   if (hasAnyExercise) {
     content.push({
       table: {
-        widths: ['40%', '15%', '15%', '20%', '10%'],
+        widths: ['10%', '20%', '15%', '15%', '40%'],
         body: tableData,
         headerRows: 1
       },
