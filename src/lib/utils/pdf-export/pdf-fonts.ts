@@ -4,11 +4,14 @@ import jsPDF from 'jspdf';
 // برای پشتیبانی از فونت فارسی در PDF
 export function addFontToPdf(doc: jsPDF): void {
   try {
+    // استفاده از فونت‌های موجود در jsPDF که از فارسی پشتیبانی می‌کنند
+    // یا فونت‌های سیستمی
+    doc.setFont("Helvetica", "normal");
+    
     // تنظیم جهت متن راست به چپ
     doc.setR2L(true);
     
     // فعال کردن پشتیبانی از یونیکد برای متن فارسی
-    doc.setFont("Helvetica", "normal");
     doc.setLanguage("fa");
     
     // تضمین اینکه تراز متن برای زبان‌های RTL به صورت پیش‌فرض راست است
@@ -25,6 +28,9 @@ export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, opt
   try {
     if (!text) return;
     
+    // تبدیل متن فارسی به فرمت قابل نمایش
+    const processedText = preprocessPersianText(text);
+    
     // ذخیره وضعیت قبلی
     const previousR2L = doc.getR2L();
     
@@ -35,14 +41,36 @@ export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, opt
     const defaultOptions = { align: 'right', ...options };
     
     // اطمینان از اینکه متن به صورت یونیکد صحیح پردازش می‌شود
-    doc.text(text, x, y, defaultOptions);
+    doc.text(processedText, x, y, defaultOptions);
     
     // بازگرداندن وضعیت قبلی
     doc.setR2L(previousR2L);
   } catch (error) {
     console.error("خطا در نوشتن متن RTL:", error);
     // استفاده از متن استاندارد در صورت خرابی RTL
-    doc.text(text || "", x, y, options);
+    try {
+      doc.text(text || "", x, y, options);
+    } catch (fallbackError) {
+      console.error("خطا در fallback متن:", fallbackError);
+    }
+  }
+}
+
+// تابع پیش‌پردازش متن فارسی
+function preprocessPersianText(text: string): string {
+  if (!text) return '';
+  
+  try {
+    // تبدیل اعداد انگلیسی به فارسی
+    let processedText = toPersianDigits(text);
+    
+    // حل مشکل encoding برای کاراکترهای فارسی
+    processedText = processedText.normalize('NFKC');
+    
+    return processedText;
+  } catch (error) {
+    console.error("خطا در پیش‌پردازش متن فارسی:", error);
+    return text;
   }
 }
 

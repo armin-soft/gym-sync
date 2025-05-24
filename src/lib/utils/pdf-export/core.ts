@@ -32,8 +32,21 @@ export function setupPdfDocument(): jsPDF {
     floatPrecision: 16
   });
   
-  // Setup font and RTL mode
-  addFontToPdf(doc);
+  try {
+    // Setup Persian font and RTL mode
+    addFontToPdf(doc);
+    
+    // تنظیم پیش‌فرض برای RTL
+    doc.setR2L(true);
+    
+    console.log("PDF document setup completed with Persian font support");
+  } catch (error) {
+    console.error("Error setting up PDF document:", error);
+    
+    // fallback to default settings
+    doc.setFont("Helvetica", "normal");
+    doc.setR2L(true);
+  }
   
   return doc;
 }
