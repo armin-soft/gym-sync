@@ -1,6 +1,6 @@
 
 import { Student } from '@/components/students/StudentTypes';
-import { TrainerProfile } from './types';
+import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getDayName } from '@/lib/utils';
 import { createSectionHeader, configureTableStyles } from './pdf-styling';
@@ -33,7 +33,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
       });
       
       // جدول تمرینات
-      const tableData = [
+      const tableData: (TableCellContent | { text: string; style: string })[][] = [
         [
           { text: '#', style: 'tableHeader' },
           { text: 'تمرین', style: 'tableHeader' },
@@ -48,10 +48,10 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         const repInfo = reps[exerciseId] || '-';
         
         tableData.push([
-          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
+          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
           { text: preprocessPersianText(exerciseName), style: 'tableCell' },
-          { text: setCount, style: 'tableCell', alignment: 'center' as const },
-          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center' as const }
+          { text: setCount, style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center' }
         ]);
       });
       

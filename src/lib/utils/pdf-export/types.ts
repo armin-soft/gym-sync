@@ -34,3 +34,10 @@ export interface PdfPreviewOptions {
   trainerProfile: TrainerProfile;
   showHeader?: boolean;
 }
+
+// Interface for table cell content with alignment
+export interface TableCellContent {
+  text: string;
+  style: string;
+  alignment?: 'left' | 'center' | 'right' | 'justify';
+}

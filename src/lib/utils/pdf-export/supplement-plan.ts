@@ -1,6 +1,6 @@
 
 import { Student } from '@/components/students/StudentTypes';
-import { TrainerProfile } from './types';
+import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { createSectionHeader, configureTableStyles } from './pdf-styling';
 import { getSupplementName, getSupplementType } from './data-helpers';
@@ -20,7 +20,7 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       color: '#e67e22'
     });
     
-    const supplementsData = [
+    const supplementsData: (TableCellContent | { text: string; style: string })[][] = [
       [
         { text: '#', style: 'tableHeader' },
         { text: 'نام مکمل', style: 'tableHeader' },
@@ -33,9 +33,9 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const suppType = getSupplementType(suppId) || '-';
       
       supplementsData.push([
-        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
+        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
         { text: preprocessPersianText(suppName), style: 'tableCell' },
-        { text: preprocessPersianText(suppType), style: 'tableCell', alignment: 'center' as const }
+        { text: preprocessPersianText(suppType), style: 'tableCell', alignment: 'center' }
       ]);
     });
     
@@ -57,7 +57,7 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       color: '#9b59b6'
     });
     
-    const vitaminsData = [
+    const vitaminsData: (TableCellContent | { text: string; style: string })[][] = [
       [
         { text: '#', style: 'tableHeader' },
         { text: 'نام ویتامین', style: 'tableHeader' },
@@ -70,9 +70,9 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const vitaminType = getSupplementType(vitaminId) || '-';
       
       vitaminsData.push([
-        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
+        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
         { text: preprocessPersianText(vitaminName), style: 'tableCell' },
-        { text: preprocessPersianText(vitaminType), style: 'tableCell', alignment: 'center' as const }
+        { text: preprocessPersianText(vitaminType), style: 'tableCell', alignment: 'center' }
       ]);
     });
     

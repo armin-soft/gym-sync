@@ -1,6 +1,6 @@
 
 import { Student } from '@/components/students/StudentTypes';
-import { TrainerProfile } from './types';
+import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getDayName } from '@/lib/utils';
 import { createSectionHeader, configureTableStyles } from './pdf-styling';
@@ -29,7 +29,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       });
       
       // جدول وعده‌های غذایی
-      const tableData = [
+      const tableData: (TableCellContent | { text: string; style: string })[][] = [
         [
           { text: 'ردیف', style: 'tableHeader' },
           { text: 'نام وعده', style: 'tableHeader' },
@@ -42,9 +42,9 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
         const mealType = getMealType(mealId) || '-';
         
         tableData.push([
-          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
+          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
           { text: preprocessPersianText(mealName), style: 'tableCell' },
-          { text: preprocessPersianText(mealType), style: 'tableCell', alignment: 'center' as const }
+          { text: preprocessPersianText(mealType), style: 'tableCell', alignment: 'center' }
         ]);
       });
       
