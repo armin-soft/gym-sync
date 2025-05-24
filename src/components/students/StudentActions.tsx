@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MoreHorizontal, Download, FileText } from "lucide-react";
+import { CalendarDays, MoreHorizontal, Printer, FileText } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +10,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { exportStudentProgramToHtml } from "@/lib/utils/pdf-export";
+import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
 import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 interface StudentActionsProps {
@@ -30,9 +31,11 @@ export const StudentActions = ({
   onAddExercise,
   isCard = false,
 }: StudentActionsProps) => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
+  // Add a console log to debug when this menu is rendered
   console.log("Rendering StudentActions for student:", student.name);
 
   // تخصیص برنامه
@@ -53,17 +56,19 @@ export const StudentActions = ({
   const handleExportProgramClick = () => {
     console.log("StudentActions: Export Program clicked for student:", student.name);
     
+    // Show the toast notification that export is in progress
     toast({
       title: "در حال آماده سازی برنامه",
       description: "لطفا منتظر بمانید...",
     });
     
+    // Call the export function
     setTimeout(() => {
-      exportStudentProgramToHtml(student)
+      exportStudentProgramToPdf(student)
         .then(() => {
           toast({
             title: "صدور برنامه انجام شد",
-            description: "برنامه با موفقیت به صورت HTML صادر شد",
+            description: "برنامه با موفقیت به صورت PDF صادر شد",
           });
         })
         .catch((error) => {
@@ -123,9 +128,9 @@ export const StudentActions = ({
             
             {/* صدور برنامه */}
             <MenuItemWithAnimation
-              icon={<Download className="h-4 w-4 text-green-600 dark:text-green-400" />}
+              icon={<Printer className="h-4 w-4 text-green-600 dark:text-green-400" />}
               onClick={handleExportProgramClick}
-              label="دانلود برنامه"
+              label="صدور برنامه"
               index={2}
               bgHoverClass="hover:bg-green-50 dark:hover:bg-green-900/20"
             />

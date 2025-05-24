@@ -7,13 +7,49 @@ export function toPersianDigits(text: string | number): string {
   return String(text).replace(/\d/g, match => persianDigits[parseInt(match)]);
 }
 
-// پردازش متن فارسی برای PDF
+// پیش‌پردازش متن فارسی
 export function preprocessPersianText(text: string): string {
   if (!text) return '';
-  return text;
+  
+  try {
+    // تبدیل اعداد انگلیسی به فارسی
+    let processedText = toPersianDigits(text);
+    
+    // نرمال‌سازی متن
+    processedText = processedText.normalize('NFKC');
+    
+    // تبدیل کاراکترهای مشکل‌ساز
+    processedText = processedText
+      .replace(/ی/g, 'ی')
+      .replace(/ک/g, 'ک')
+      .replace(/‌/g, ' '); // تبدیل نیم‌فاصله به فاصله
+    
+    return processedText;
+  } catch (error) {
+    console.error("خطا در پیش‌پردازش متن فارسی:", error);
+    return text;
+  }
 }
 
-// ایجاد متن RTL
-export function createRTLText(text: string): string {
-  return preprocessPersianText(text);
+// تابع بهبودیافته برای نوشتن متن RTL
+export function createRTLText(text: string): any {
+  if (!text) return { text: '' };
+  
+  return {
+    text: preprocessPersianText(text),
+    alignment: 'right',
+    direction: 'rtl'
+  };
+}
+
+// تابع کمکی برای ایجاد متن‌های چندبخشی RTL
+export function createRTLTextArray(parts: { text: string, style?: any }[]): any {
+  return {
+    text: parts.map(part => ({
+      text: preprocessPersianText(part.text),
+      ...part.style
+    })),
+    alignment: 'right',
+    direction: 'rtl'
+  };
 }

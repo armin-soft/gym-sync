@@ -1,39 +1,52 @@
 
-// ایجاد هدر بخش
-export function createSectionHeader(title: string, color: string): any {
+import { preprocessPersianText } from './pdf-fonts';
+
+// تنظیم استایل‌های جدول
+export function configureTableStyles(headerColor: string = '#7c3aed'): any {
   return {
-    text: title,
-    style: 'subheader',
-    margin: [0, 20, 0, 10],
-    color: color,
-    direction: 'rtl'
+    tableHeader: {
+      bold: true,
+      fontSize: 12,
+      color: 'white',
+      fillColor: headerColor,
+      alignment: 'center',
+      direction: 'rtl'
+    },
+    tableCell: {
+      fontSize: 10,
+      alignment: 'right',
+      direction: 'rtl'
+    },
+    alternateRow: {
+      fillColor: '#f8fafc'
+    }
   };
 }
 
-// استایل‌های PDF
-export const pdfStyles = {
-  header: {
-    fontSize: 22,
-    bold: true,
-    alignment: 'center',
-    margin: [0, 0, 0, 20],
-    direction: 'rtl'
-  },
-  subheader: {
-    fontSize: 16,
-    bold: true,
-    alignment: 'center',
-    margin: [0, 10, 0, 5],
-    direction: 'rtl'
-  },
-  tableHeader: {
-    bold: true,
-    fillColor: '#f0f0f0',
-    alignment: 'center',
-    direction: 'rtl'
-  },
-  tableCell: {
-    alignment: 'center',
-    direction: 'rtl'
-  }
-};
+// ایجاد هدر بخش
+export function createSectionHeader(title: string, iconName?: string): any {
+  return {
+    stack: [
+      {
+        text: preprocessPersianText(title),
+        style: 'subheader',
+        color: iconName || '#4a5568',
+        alignment: 'right',
+        margin: [0, 10, 0, 10],
+        direction: 'rtl'
+      },
+      {
+        canvas: [
+          {
+            type: 'line',
+            x1: 0, y1: 5, 
+            x2: 515, y2: 5,
+            lineWidth: 1,
+            lineColor: '#e2e8f0'
+          }
+        ]
+      }
+    ],
+    margin: [0, 10, 0, 15]
+  };
+}
