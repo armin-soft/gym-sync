@@ -7,7 +7,7 @@ import { getDayName } from '@/lib/utils';
 import { getExerciseName, getMealName, getMealType, getSupplementName } from './data-helpers';
 
 // تنظیم فونت‌ها
-pdfMake.vfs = pdfFonts;
+pdfMake.vfs = pdfFonts.vfs;
 
 // تولید PDF با طراحی مشابه HTML
 export const generateStudentProgramPDF = async (student: Student): Promise<void> => {
