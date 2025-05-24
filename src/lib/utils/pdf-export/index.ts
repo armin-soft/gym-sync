@@ -1,125 +1,110 @@
 
-import jsPDF from 'jspdf';
 import { Student } from '@/components/students/StudentTypes';
-import { PDF_OPTIONS, setupPdfDocument } from './core';
+import { TrainerProfile } from './types';
+import { createPdfDocument, generatePDF, generatePDFPreview } from './core';
+import { createDocumentHeader, addPageFooter } from './pdf-layout';
 import { createExerciseProgram } from './exercise-program';
 import { createDietPlan } from './diet-plan';
 import { createSupplementPlan } from './supplement-plan';
-import { TrainerProfile } from './types';
-import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
-import { createDocumentHeader } from './pdf-layout';
-import { addFontToPdf, writeRTLText } from './pdf-fonts';
 
-// دریافت نسخه برنامه از فایل manifest
-const getAppVersionFromManifest = async (): Promise<string> => {
+// تولید پیش‌نمایش PDF
+export const previewStudentProgramPDF = async (student: Student): Promise<string> => {
   try {
-    const response = await fetch('./Manifest.json');
-    const manifest = await response.json();
-    return manifest.version || '';
+    console.log("در حال ایجاد پیش‌نمایش PDF با pdfmake");
+    
+    // دریافت پروفایل مربی
+    const trainerProfileStr = localStorage.getItem('trainerProfile');
+    const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
+    
+    // ایجاد محتوای PDF
+    const content: any[] = [];
+    
+    // هدر سند
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه جامع"));
+    
+    // برنامه تمرینی
+    content.push(...createExerciseProgram(student, trainerProfile));
+    
+    // فاصله بین بخش‌ها
+    content.push({ text: '', pageBreak: 'before' });
+    
+    // برنامه غذایی
+    content.push(...createDietPlan(student, trainerProfile));
+    
+    // فاصله بین بخش‌ها
+    content.push({ text: '', pageBreak: 'before' });
+    
+    // برنامه مکمل
+    content.push(...createSupplementPlan(student, trainerProfile));
+    
+    // پاورقی
+    const footer = await addPageFooter(trainerProfile);
+    
+    // ایجاد سند PDF
+    const docDefinition = createPdfDocument(content);
+    docDefinition.footer = footer;
+    
+    // تولید URL پیش‌نمایش
+    return await generatePDFPreview(docDefinition);
+    
   } catch (error) {
-    console.error('خطا در بارگیری نسخه از manifest:', error);
-    
-    // تلاش برای دریافت از localStorage در صورت دسترسی
-    const cachedVersion = localStorage.getItem('app_version');
-    if (cachedVersion) {
-      return cachedVersion;
-    }
-    
-    return '';
+    console.error("خطا در ایجاد پیش‌نمایش PDF:", error);
+    throw error;
   }
 };
 
-// تابع برای پیش‌نمایش PDF
-export const previewStudentProgramPDF = async (student: Student): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      // ایجاد یک سند PDF جدید با پشتیبانی RTL
-      const doc = await setupPdfDocument();
-      
-      console.log("در حال ایجاد پیش‌نمایش PDF");
-      
-      // دریافت پروفایل مربی از localStorage
-      const trainerProfileStr = localStorage.getItem('trainerProfile');
-      const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
-      
-      console.log("در حال ایجاد PDF با پشتیبانی RTL");
-      console.log("پروفایل مربی:", trainerProfile);
-      console.log("شاگرد:", student.name);
-      
-      // اطلاعات عمومی فقط در صفحه اول نمایش داده می‌شود
-      await createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
-      
-      // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار بخش
-      await createExerciseProgram(doc, student, trainerProfile, false);
-      
-      // صفحه 2: برنامه غذایی هفتگی
-      doc.addPage();
-      await createDietPlan(doc, student, trainerProfile, false);
-      
-      // صفحه 3: مکمل‌ها و ویتامین‌ها
-      doc.addPage();
-      await createSupplementPlan(doc, student, trainerProfile, false);
-      
-      // بازگرداندن URL داده برای پیش‌نمایش
-      const pdfDataUrl = doc.output('dataurlstring');
-      resolve(pdfDataUrl);
-      
-    } catch (error) {
-      console.error("خطا در ایجاد پیش‌نمایش PDF:", error);
-      reject(error);
-    }
-  });
-};
-
+// صادر کردن PDF
 export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      // ایجاد یک سند PDF جدید با پشتیبانی RTL
-      const doc = await setupPdfDocument();
-      
-      console.log("در حال ایجاد سند PDF");
-      
-      // دریافت پروفایل مربی از localStorage
-      const trainerProfileStr = localStorage.getItem('trainerProfile');
-      const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
-      
-      console.log("در حال ایجاد PDF با پشتیبانی RTL");
-      console.log("پروفایل مربی:", trainerProfile);
-      console.log("شاگرد:", student.name);
-      
-      // اطلاعات عمومی فقط در صفحه اول نمایش داده می‌شود
-      await createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
-      
-      // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار بخش
-      await createExerciseProgram(doc, student, trainerProfile, false);
-      
-      // صفحه 2: برنامه غذایی هفتگی
-      doc.addPage();
-      await createDietPlan(doc, student, trainerProfile, false);
-      
-      // صفحه 3: مکمل‌ها و ویتامین‌ها
-      doc.addPage();
-      await createSupplementPlan(doc, student, trainerProfile, false);
-      
-      // ذخیره PDF با نامی بر اساس نام دانش‌آموز و تاریخ فعلی
-      const currentDate = getCurrentPersianDate().replace(/\s/g, '_');
-      const fileName = `برنامه_${student.name || 'بدون_نام'}_${currentDate}.pdf`;
-      
-      doc.save(fileName);
-      
-      resolve();
-    } catch (error) {
-      console.error("خطا در ایجاد PDF:", error);
-      reject(error);
-    }
-  });
+  try {
+    console.log("در حال ایجاد PDF با pdfmake");
+    
+    // دریافت پروفایل مربی
+    const trainerProfileStr = localStorage.getItem('trainerProfile');
+    const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
+    
+    // ایجاد محتوای PDF
+    const content: any[] = [];
+    
+    // هدر سند
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه جامع"));
+    
+    // برنامه تمرینی
+    content.push(...createExerciseProgram(student, trainerProfile));
+    
+    // فاصله بین بخش‌ها
+    content.push({ text: '', pageBreak: 'before' });
+    
+    // برنامه غذایی
+    content.push(...createDietPlan(student, trainerProfile));
+    
+    // فاصله بین بخش‌ها
+    content.push({ text: '', pageBreak: 'before' });
+    
+    // برنامه مکمل
+    content.push(...createSupplementPlan(student, trainerProfile));
+    
+    // پاورقی
+    const footer = await addPageFooter(trainerProfile);
+    
+    // ایجاد سند PDF
+    const docDefinition = createPdfDocument(content);
+    docDefinition.footer = footer;
+    
+    // نام فایل
+    const currentDate = getCurrentPersianDate().replace(/\s/g, '_');
+    const fileName = `برنامه_${student.name || 'بدون_نام'}_${currentDate}.pdf`;
+    
+    // دانلود PDF
+    await generatePDF(docDefinition, fileName);
+    
+  } catch (error) {
+    console.error("خطا در ایجاد PDF:", error);
+    throw error;
+  }
 };
 
-// صادر کردن تمام ماژول‌ها برای واردات آسان‌تر
+// صادر کردن همه ماژول‌ها
 export * from './types';
 export * from './core';
 export * from './data-helpers';
-export * from './exercise-program';
-export * from './diet-plan';
-export * from './supplement-plan';

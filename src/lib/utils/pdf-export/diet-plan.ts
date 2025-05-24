@@ -1,88 +1,72 @@
 
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { Student } from '@/components/students/StudentTypes';
-import { toPersianNumbers } from '../numbers';
-import { getDayName } from '@/lib/utils';
-import { addPageFooter, createSectionHeader, configureTableStyles } from './core';
 import { TrainerProfile } from './types';
+import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
+import { getDayName } from '@/lib/utils';
+import { createSectionHeader, configureTableStyles } from './pdf-styling';
 import { getMealName, getMealType } from './data-helpers';
 
-// Create the diet plan page with all days on a single page
-export async function createDietPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, showHeader = true) {
-  // Define starting Y position
-  let yPos = showHeader ? 120 : 20;
+// ایجاد برنامه غذایی
+export function createDietPlan(student: Student, trainerProfile: TrainerProfile): any[] {
+  const content: any[] = [];
   
-  // Add section header
-  yPos = await createSectionHeader(doc, "برنامه غذایی هفتگی", yPos, [39, 174, 96]);
+  // هدر بخش
+  content.push(createSectionHeader("برنامه غذایی هفتگی", '#27ae60'));
   
-  // Process each day's meal plan in a single page layout
+  // برای هر روز هفته
   for (let day = 1; day <= 7; day++) {
     const dayKey = `mealsDay${day}` as keyof Student;
     const meals = student[dayKey] as number[] || [];
     
     if (meals && meals.length > 0) {
-      // Add day header with styled box
+      // نام روز
       const dayName = getDayName(day);
-      doc.setFillColor(39, 174, 96, 0.1);
-      doc.roundedRect(15, yPos, 180, 10, 2, 2, 'F');
+      content.push({
+        text: preprocessPersianText(`روز ${toPersianDigits(day)}: ${dayName}`),
+        style: 'subheader',
+        color: '#27ae60',
+        margin: [0, 15, 0, 5]
+      });
       
-      doc.setFontSize(12);
-      doc.setTextColor(39, 174, 96);
-      doc.text(`روز ${toPersianNumbers(day)}: ${dayName}`, 105, yPos + 7, { align: 'center' });
-      yPos += 15;
+      // جدول وعده‌های غذایی
+      const tableData = [
+        [
+          { text: 'ردیف', style: 'tableHeader' },
+          { text: 'نام وعده', style: 'tableHeader' },
+          { text: 'نوع', style: 'tableHeader' }
+        ]
+      ];
       
-      // Create table for meals with improved styling
-      const tableData = meals.map((mealId, index) => {
-        const mealName = getMealName(mealId) || `وعده ${toPersianNumbers(index + 1)}`;
+      meals.forEach((mealId, index) => {
+        const mealName = getMealName(mealId) || `وعده ${toPersianDigits(index + 1)}`;
         const mealType = getMealType(mealId) || '-';
-        return [toPersianNumbers(index + 1), mealName, mealType];
+        
+        tableData.push([
+          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(mealName), style: 'tableCell' },
+          { text: preprocessPersianText(mealType), style: 'tableCell', alignment: 'center' }
+        ]);
       });
       
-      // Apply table styling based on centralized configuration
-      autoTable(doc, {
-        startY: yPos,
-        head: [['ردیف', 'نام وعده', 'نوع']],
-        body: tableData,
-        ...configureTableStyles('success'),
-        columnStyles: {
-          0: { cellWidth: 15, halign: 'center' },
-          1: { cellWidth: 'auto', halign: 'right' },
-          2: { cellWidth: 40, halign: 'center' },
+      content.push({
+        table: {
+          widths: ['15%', '60%', '25%'],
+          body: tableData
         },
-        styles: {
-          fontSize: 9,
-          cellPadding: 3,
-        }
+        layout: configureTableStyles('success'),
+        margin: [0, 0, 0, 10]
       });
-      
-      yPos = (doc as any).lastAutoTable.finalY + 10;
-      
-      // Check if we need to add a new page
-      if (yPos > 250 && day < 7) {
-        doc.addPage();
-        yPos = 20;
-      }
     }
   }
   
-  // Add notes if available with modern styling
+  // نکات تغذیه‌ای
   if (student.mealNotes) {
-    // Create notes section with styled header
-    yPos = await createSectionHeader(doc, "نکات تغذیه‌ای", yPos, [39, 174, 96]);
-    
-    // Add styled notes box
-    doc.setFillColor(240, 250, 240);
-    doc.roundedRect(15, yPos, 180, 30, 3, 3, 'F');
-    
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    
-    // Add notes text with line wrapping
-    const splitNotes = doc.splitTextToSize(student.mealNotes, 165);
-    doc.text(splitNotes, 105, yPos + 7, { align: 'center' });
+    content.push(createSectionHeader("نکات تغذیه‌ای", '#27ae60'));
+    content.push({
+      text: preprocessPersianText(student.mealNotes),
+      style: 'notes'
+    });
   }
   
-  // Add footer
-  await addPageFooter(doc, trainerProfile);
+  return content;
 }

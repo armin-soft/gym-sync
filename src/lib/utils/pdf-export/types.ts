@@ -1,17 +1,4 @@
 
-import { Student } from "@/components/students/StudentTypes";
-
-// PDF export types
-export interface PDFOptions {
-  orientation: 'portrait' | 'landscape';
-  unit: 'mm' | 'cm' | 'in';
-  format: string;
-  hotfixes?: string[];
-  compress?: boolean;
-  putOnlyUsedFonts?: boolean;  // Added missing property
-  floatPrecision?: number;     // Added missing property
-}
-
 export interface TrainerProfile {
   name?: string;
   gymName?: string;
@@ -24,13 +11,26 @@ export interface TrainerProfile {
   [key: string]: any;
 }
 
+export interface PDFDocumentOptions {
+  pageSize: string;
+  pageOrientation: 'portrait' | 'landscape';
+  pageMargins: number[];
+  defaultStyle: {
+    font: string;
+    fontSize: number;
+    alignment: string;
+  };
+}
+
 export interface TableThemeOptions {
-  headColor: number[];
-  altColor: number[];
+  headerColor: string;
+  headerTextColor: string;
+  rowColor: string;
+  alternateRowColor: string;
 }
 
 export interface PdfPreviewOptions {
-  student: Student;
+  student: any;
   trainerProfile: TrainerProfile;
   showHeader?: boolean;
 }

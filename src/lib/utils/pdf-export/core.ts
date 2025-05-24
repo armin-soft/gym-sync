@@ -1,57 +1,103 @@
 
-import jsPDF from 'jspdf';
-import { PDFOptions } from './types';
-import autoTable from 'jspdf-autotable';
-import { addFontToPdf } from './pdf-fonts';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { PDFDocumentOptions } from './types';
+import { toPersianDigits } from './pdf-fonts';
 
-// Export the reusable functions from our new modules
-export { addFontToPdf, writeRTLText, toPersianDigits } from './pdf-fonts';
-export { createDocumentHeader, addPageFooter } from './pdf-layout';
-export { configureTableStyles, createSectionHeader } from './pdf-styling';
+// تنظیم فونت‌های پیش‌فرض
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
-// Configure jsPDF options
-export const PDF_OPTIONS: PDFOptions = {
-  orientation: 'portrait',
-  unit: 'mm',
-  format: 'a4',
-  hotfixes: ["px_scaling"],
-  compress: true,
-  putOnlyUsedFonts: true,
-  floatPrecision: 16,
+// فونت‌های فارسی
+const persianFonts = {
+  Vazir: {
+    normal: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
+    bold: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf',
+  }
 };
 
-// Setup PDF with appropriate fonts and RTL support
-export async function setupPdfDocument(): Promise<jsPDF> {
-  const doc = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4',
-    putOnlyUsedFonts: true,
-    hotfixes: ["px_scaling"],
-    compress: true,
-    floatPrecision: 16
-  });
-  
-  try {
-    // Setup Persian font support and RTL mode
-    await addFontToPdf(doc);
-    
-    // تنظیمات اضافی برای بهبود نمایش فارسی
-    doc.setR2L(true);
-    doc.setFontSize(12);
-    
-    // تنظیم خصوصیات پیش‌فرض برای متن
-    doc.setTextColor(0, 0, 0);
-    
-    console.log("PDF document setup completed with Persian font support");
-  } catch (error) {
-    console.error("Error setting up PDF document:", error);
-    
-    // fallback to default settings
-    doc.setFont("helvetica", "normal");
-    doc.setR2L(true);
-    doc.setFontSize(12);
-  }
-  
-  return doc;
+// تنظیمات پیش‌فرض PDF
+export const PDF_OPTIONS: PDFDocumentOptions = {
+  pageSize: 'A4',
+  pageOrientation: 'portrait',
+  pageMargins: [40, 60, 40, 60],
+  defaultStyle: {
+    font: 'Vazir',
+    fontSize: 12,
+    alignment: 'right',
+  },
+};
+
+// ایجاد سند PDF با تنظیمات فارسی
+export function createPdfDocument(content: any[]): any {
+  return {
+    content,
+    ...PDF_OPTIONS,
+    styles: {
+      header: {
+        fontSize: 18,
+        bold: true,
+        alignment: 'center',
+        margin: [0, 0, 0, 20],
+        color: '#7c3aed'
+      },
+      subheader: {
+        fontSize: 14,
+        bold: true,
+        alignment: 'right',
+        margin: [0, 10, 0, 10],
+        color: '#4a5568'
+      },
+      tableHeader: {
+        bold: true,
+        fontSize: 12,
+        color: 'white',
+        fillColor: '#7c3aed',
+        alignment: 'center'
+      },
+      tableCell: {
+        fontSize: 10,
+        alignment: 'right'
+      },
+      notes: {
+        fontSize: 11,
+        italics: true,
+        alignment: 'right',
+        margin: [0, 10, 0, 0]
+      }
+    }
+  };
 }
+
+// تولید و دانلود PDF
+export function generatePDF(docDefinition: any, filename: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      const pdfDoc = pdfMake.createPdf(docDefinition);
+      pdfDoc.download(filename);
+      resolve();
+    } catch (error) {
+      console.error('خطا در تولید PDF:', error);
+      reject(error);
+    }
+  });
+}
+
+// تولید URL پیش‌نمایش PDF
+export function generatePDFPreview(docDefinition: any): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      const pdfDoc = pdfMake.createPdf(docDefinition);
+      pdfDoc.getDataUrl((dataUrl) => {
+        resolve(dataUrl);
+      });
+    } catch (error) {
+      console.error('خطا در تولید پیش‌نمایش PDF:', error);
+      reject(error);
+    }
+  });
+}
+
+// صادر کردن توابع کمکی
+export { toPersianDigits } from './pdf-fonts';
+export { createDocumentHeader, addPageFooter } from './pdf-layout';
+export { configureTableStyles, createSectionHeader } from './pdf-styling';

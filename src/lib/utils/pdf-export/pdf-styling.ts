@@ -1,77 +1,56 @@
 
-import jsPDF from 'jspdf';
 import { TableThemeOptions } from './types';
-import { writeRTLText, addFontToPdf } from './pdf-fonts';
+import { preprocessPersianText } from './pdf-fonts';
 
-// پیکربندی استایل‌های جدول برای ظاهر یکنواخت
+// پیکربندی استایل‌های جدول
 export function configureTableStyles(theme: string = 'primary'): any {
   const themes: Record<string, TableThemeOptions> = {
     primary: {
-      headColor: [124, 58, 237],
-      altColor: [245, 240, 255]
+      headerColor: '#7c3aed',
+      headerTextColor: 'white',
+      rowColor: '#ffffff',
+      alternateRowColor: '#f8fafc'
     },
     success: {
-      headColor: [39, 174, 96],
-      altColor: [240, 250, 240]
+      headerColor: '#27ae60',
+      headerTextColor: 'white',
+      rowColor: '#ffffff',
+      alternateRowColor: '#f0fff4'
     },
     warning: {
-      headColor: [230, 126, 34],
-      altColor: [253, 242, 233]
+      headerColor: '#e67e22',
+      headerTextColor: 'white',
+      rowColor: '#ffffff',
+      alternateRowColor: '#fffbf0'
     },
     info: {
-      headColor: [52, 152, 219],
-      altColor: [235, 245, 255]
+      headerColor: '#3498db',
+      headerTextColor: 'white',
+      rowColor: '#ffffff',
+      alternateRowColor: '#f0f9ff'
     }
   };
   
   const themeConfig = themes[theme] || themes.primary;
   
   return {
-    headStyles: {
-      fillColor: themeConfig.headColor,
-      textColor: [255, 255, 255],
-      halign: 'right', // تغییر به راست برای RTL
-      fontStyle: 'bold',
-      fontSize: 12,
-      cellPadding: 3,
+    fillColor: function (rowIndex: number) {
+      return rowIndex === 0 ? themeConfig.headerColor : 
+             rowIndex % 2 === 0 ? themeConfig.alternateRowColor : themeConfig.rowColor;
     },
-    bodyStyles: {
-      halign: 'right', // تغییر به راست برای RTL
-      fontSize: 10,
-      cellPadding: 3,
-    },
-    alternateRowStyles: {
-      fillColor: themeConfig.altColor,
-    },
-    theme: 'grid',
-    margin: { right: 15, left: 15 },
-    tableWidth: 'auto',
-    styles: {
-      overflow: 'linebreak',
-      cellWidth: 'wrap',
-      fontSize: 10,
-      direction: 'rtl', // تنظیم جهت RTL برای جداول
-    },
+    hLineWidth: () => 1,
+    vLineWidth: () => 1,
+    hLineColor: () => '#e2e8f0',
+    vLineColor: () => '#e2e8f0'
   };
 }
 
-// ایجاد هدر بخش با استایل
-export async function createSectionHeader(doc: jsPDF, title: string, yPos: number, color: number[]): Promise<number> {
-  try {
-    // اطمینان از استفاده از فونت وزیر
-    await addFontToPdf(doc);
-    
-    // افزودن هدر بخش با استایل
-    doc.setFillColor(color[0], color[1], color[2], 0.1);
-    doc.roundedRect(15, yPos, 180, 10, 3, 3, 'F');
-    
-    doc.setFontSize(14);
-    doc.setTextColor(color[0], color[1], color[2]);
-    writeRTLText(doc, title, 105, yPos + 7, { align: 'center' });
-    
-    return yPos + 15; // بازگرداندن موقعیت Y به‌روز شده
-  } catch (error) {
-    console.error("خطا در ایجاد هدر بخش:", error);
-    return yPos + 15; // بازگرداندن موقعیت پیش‌فرض در صورت بروز خطا
-  }
+// ایجاد هدر بخش
+export function createSectionHeader(title: string, color: string = '#7c3aed'): any {
+  return {
+    text: preprocessPersianText(title),
+    style: 'subheader',
+    color: color,
+    margin: [0, 20, 0, 10]
+  };
 }

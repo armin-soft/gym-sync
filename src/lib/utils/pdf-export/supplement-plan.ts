@@ -1,116 +1,99 @@
 
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { Student } from '@/components/students/StudentTypes';
-import { toPersianNumbers } from '../numbers';
-import { addPageFooter, createSectionHeader, configureTableStyles } from './core';
 import { TrainerProfile } from './types';
+import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
+import { createSectionHeader, configureTableStyles } from './pdf-styling';
 import { getSupplementName, getSupplementType } from './data-helpers';
 
-// Create the supplements and vitamins page with a 4-section layout
-export async function createSupplementPlan(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, showHeader = true) {
-  // Define starting Y position
-  let yPos = showHeader ? 120 : 20;
+// ایجاد برنامه مکمل و ویتامین
+export function createSupplementPlan(student: Student, trainerProfile: TrainerProfile): any[] {
+  const content: any[] = [];
   
-  // Add section header
-  yPos = await createSectionHeader(doc, "برنامه مکمل و ویتامین", yPos, [230, 126, 34]);
+  // هدر بخش
+  content.push(createSectionHeader("برنامه مکمل و ویتامین", '#e67e22'));
   
-  // Define grid layout for supplements and vitamins
-  const gridWidth = 85;
-  const gridGap = 10;
-  const gridColumns = 2;
-  
-  // Process supplements in a grid layout (2x2)
+  // مکمل‌ها
   if (student.supplements && student.supplements.length > 0) {
-    // Add heading for supplements section
-    doc.setFontSize(14);
-    doc.setTextColor(230, 126, 34);
-    doc.text("مکمل‌های پیشنهادی", 105, yPos + 5, { align: 'center' });
-    yPos += 10;
+    content.push({
+      text: preprocessPersianText("مکمل‌های پیشنهادی"),
+      style: 'subheader',
+      color: '#e67e22'
+    });
     
-    // Create supplements table - first section (top-right)
-    const supplementsData = student.supplements.map((suppId, index) => {
-      const suppName = getSupplementName(suppId) || `مکمل ${toPersianNumbers(index + 1)}`;
+    const supplementsData = [
+      [
+        { text: '#', style: 'tableHeader' },
+        { text: 'نام مکمل', style: 'tableHeader' },
+        { text: 'نوع', style: 'tableHeader' }
+      ]
+    ];
+    
+    student.supplements.forEach((suppId, index) => {
+      const suppName = getSupplementName(suppId) || `مکمل ${toPersianDigits(index + 1)}`;
       const suppType = getSupplementType(suppId) || '-';
-      return [toPersianNumbers(index + 1), suppName, suppType];
+      
+      supplementsData.push([
+        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
+        { text: preprocessPersianText(suppName), style: 'tableCell' },
+        { text: preprocessPersianText(suppType), style: 'tableCell', alignment: 'center' }
+      ]);
     });
     
-    // Position at top-right quadrant
-    autoTable(doc, {
-      startY: yPos,
-      margin: { left: 15 },
-      head: [['#', 'نام مکمل', 'نوع']],
-      body: supplementsData,
-      ...configureTableStyles('warning'),
-      tableWidth: gridWidth,
-      styles: {
-        fontSize: 9,
-        cellPadding: 2,
+    content.push({
+      table: {
+        widths: ['15%', '60%', '25%'],
+        body: supplementsData
       },
-      columnStyles: {
-        0: { cellWidth: 10, halign: 'center' },
-        1: { cellWidth: 'auto', halign: 'right' },
-        2: { cellWidth: 25, halign: 'center' },
-      }
+      layout: configureTableStyles('warning'),
+      margin: [0, 0, 0, 15]
     });
-    
-    const supplementsHeight = (doc as any).lastAutoTable.finalY - yPos;
   }
   
-  // Process vitamins
+  // ویتامین‌ها
   if (student.vitamins && student.vitamins.length > 0) {
-    // Position at top-left quadrant (next to supplements)
-    const vitaminData = student.vitamins.map((vitaminId, index) => {
-      const vitaminName = getSupplementName(vitaminId) || `ویتامین ${toPersianNumbers(index + 1)}`;
+    content.push({
+      text: preprocessPersianText("ویتامین‌های پیشنهادی"),
+      style: 'subheader',
+      color: '#9b59b6'
+    });
+    
+    const vitaminsData = [
+      [
+        { text: '#', style: 'tableHeader' },
+        { text: 'نام ویتامین', style: 'tableHeader' },
+        { text: 'نوع', style: 'tableHeader' }
+      ]
+    ];
+    
+    student.vitamins.forEach((vitaminId, index) => {
+      const vitaminName = getSupplementName(vitaminId) || `ویتامین ${toPersianDigits(index + 1)}`;
       const vitaminType = getSupplementType(vitaminId) || '-';
-      return [toPersianNumbers(index + 1), vitaminName, vitaminType];
+      
+      vitaminsData.push([
+        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
+        { text: preprocessPersianText(vitaminName), style: 'tableCell' },
+        { text: preprocessPersianText(vitaminType), style: 'tableCell', alignment: 'center' }
+      ]);
     });
     
-    // Add heading for vitamins (top-left section)
-    doc.setFontSize(14);
-    doc.setTextColor(155, 89, 182);
-    doc.text("ویتامین‌های پیشنهادی", gridWidth + gridGap + 15 + gridWidth/2, yPos + 5, { align: 'center' });
-    
-    // Position at top-left quadrant
-    autoTable(doc, {
-      startY: yPos + 10,
-      margin: { left: 15 + gridWidth + gridGap },
-      head: [['#', 'نام ویتامین', 'نوع']],
-      body: vitaminData,
-      ...configureTableStyles('info'),
-      tableWidth: gridWidth,
-      styles: {
-        fontSize: 9,
-        cellPadding: 2,
+    content.push({
+      table: {
+        widths: ['15%', '60%', '25%'],
+        body: vitaminsData
       },
-      columnStyles: {
-        0: { cellWidth: 10, halign: 'center' },
-        1: { cellWidth: 'auto', halign: 'right' },
-        2: { cellWidth: 25, halign: 'center' },
-      }
+      layout: configureTableStyles('info'),
+      margin: [0, 0, 0, 15]
     });
   }
   
-  // Move down for the second row of the grid
-  yPos = Math.max((doc as any).lastAutoTable?.finalY || yPos + 80) + 15;
-  
-  // Add any additional notes with modern styling
+  // نکات مصرف مکمل
   if (student.supplementNotes) {
-    // Create notes section with styled header
-    yPos = await createSectionHeader(doc, "نکات مصرف مکمل", yPos, [230, 126, 34]);
-    
-    // Add styled notes box
-    doc.setFillColor(253, 242, 233);
-    doc.roundedRect(15, yPos, 180, 30, 3, 3, 'F');
-    
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    
-    // Add notes text with line wrapping
-    const splitNotes = doc.splitTextToSize(student.supplementNotes || "", 165);
-    doc.text(splitNotes, 105, yPos + 7, { align: 'center' });
+    content.push(createSectionHeader("نکات مصرف مکمل", '#e67e22'));
+    content.push({
+      text: preprocessPersianText(student.supplementNotes),
+      style: 'notes'
+    });
   }
   
-  // Add footer
-  await addPageFooter(doc, trainerProfile);
+  return content;
 }
