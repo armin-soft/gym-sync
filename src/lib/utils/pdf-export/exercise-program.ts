@@ -12,14 +12,16 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
   // جدول کامپکت همه تمرینات
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
       { text: 'روز', style: 'tableHeader', direction: 'rtl' },
-      { text: 'تمرین', style: 'tableHeader', direction: 'rtl' },
       { text: 'ست', style: 'tableHeader', direction: 'rtl' },
-      { text: 'تکرار', style: 'tableHeader', direction: 'rtl' }
+      { text: 'تکرار', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام تمرین', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
   let hasAnyExercise = false;
+  let rowNumber = 1;
   
   // برای هر روز تمرینی (5 روز)
   for (let day = 1; day <= 5; day++) {
@@ -37,21 +39,20 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
       hasAnyExercise = true;
       const dayName = getDayName(day);
       
-      exercises.forEach((exerciseId, index) => {
+      exercises.forEach((exerciseId) => {
         const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
         const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
         const repInfo = reps[exerciseId] || '-';
         
         tableData.push([
-          { 
-            text: index === 0 ? preprocessPersianText(dayName) : '', 
-            style: 'tableCell', 
-            direction: 'rtl' 
-          },
-          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
+          { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
           { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' }
+          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
         ]);
+        
+        rowNumber++;
       });
     }
   }
@@ -62,28 +63,27 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     const sets = student.exerciseSets || {};
     const reps = student.exerciseReps || {};
     
-    student.exercises.forEach((exerciseId, index) => {
+    student.exercises.forEach((exerciseId) => {
       const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
       const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
       const repInfo = reps[exerciseId] || '-';
       
       tableData.push([
-        { 
-          text: index === 0 ? 'برنامه کلی' : '', 
-          style: 'tableCell', 
-          direction: 'rtl' 
-        },
-        { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
         { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' }
+        { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
       ]);
+      
+      rowNumber++;
     });
   }
   
   if (hasAnyExercise) {
     content.push({
       table: {
-        widths: ['20%', '50%', '15%', '15%'],
+        widths: ['10%', '20%', '15%', '15%', '40%'],
         body: tableData,
         headerRows: 1
       },

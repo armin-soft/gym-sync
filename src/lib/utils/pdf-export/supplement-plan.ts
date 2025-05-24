@@ -11,14 +11,15 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   // جدول کامپکت مکمل‌ها و ویتامین‌ها
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'ردیف', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نوع', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نام مکمل/ویتامین', style: 'tableHeader', direction: 'rtl' },
-      { text: 'زمان مصرف', style: 'tableHeader', direction: 'rtl' }
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
+      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
+      { text: 'دوز مصرف', style: 'tableHeader', direction: 'rtl' },
+      { text: 'زمان مصرف', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام مکمل یا ویتامین', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
-  let rowIndex = 1;
+  let rowNumber = 1;
   let hasAnyItem = false;
   
   console.log('بررسی مکمل‌های شاگرد:', student.supplements);
@@ -31,13 +32,14 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const name = getSupplementName(suppId) || `مکمل ناشناخته (${suppId})`;
       
       tableData.push([
-        { text: toPersianDigits(rowIndex), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'مکمل', style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' },
-        { text: 'بعد از تمرین', style: 'tableCell', direction: 'rtl' }
+        { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: 'روزانه', style: 'tableCell', direction: 'rtl' },
+        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: 'بعد از تمرین', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
       ]);
       
-      rowIndex++;
+      rowNumber++;
     });
   }
   
@@ -48,20 +50,21 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const name = getSupplementName(vitaminId) || `ویتامین ناشناخته (${vitaminId})`;
       
       tableData.push([
-        { text: toPersianDigits(rowIndex), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'ویتامین', style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' },
-        { text: 'صبح ناشتا', style: 'tableCell', direction: 'rtl' }
+        { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: 'روزانه', style: 'tableCell', direction: 'rtl' },
+        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: 'صبح ناشتا', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
       ]);
       
-      rowIndex++;
+      rowNumber++;
     });
   }
   
   if (hasAnyItem) {
     content.push({
       table: {
-        widths: ['10%', '20%', '50%', '20%'],
+        widths: ['10%', '15%', '15%', '20%', '40%'],
         body: tableData,
         headerRows: 1
       },

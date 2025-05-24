@@ -12,13 +12,15 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   // جدول کامپکت همه وعده‌های غذایی
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
       { text: 'روز', style: 'tableHeader', direction: 'rtl' },
       { text: 'وعده غذایی', style: 'tableHeader', direction: 'rtl' },
-      { text: 'غذا', style: 'tableHeader', direction: 'rtl' }
+      { text: 'نام غذا', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
   let hasAnyMeal = false;
+  let rowNumber = 1;
   
   // برای هر روز هفته (1-7 به جای 1-5)
   for (let day = 1; day <= 7; day++) {
@@ -31,27 +33,18 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       hasAnyMeal = true;
       const dayName = getDayName(day);
       
-      meals.forEach((mealId, index) => {
+      meals.forEach((mealId) => {
         const mealName = getMealName(mealId) || `غذای ناشناخته (${mealId})`;
         const mealType = getMealType(mealId) || 'نامشخص';
         
         tableData.push([
-          { 
-            text: index === 0 ? preprocessPersianText(dayName) : '', 
-            style: 'tableCell',
-            direction: 'rtl' 
-          },
-          { 
-            text: preprocessPersianText(mealType), 
-            style: 'tableCell',
-            direction: 'rtl' 
-          },
-          { 
-            text: preprocessPersianText(mealName), 
-            style: 'tableCell',
-            direction: 'rtl' 
-          }
+          { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
         ]);
+        
+        rowNumber++;
       });
     }
   }
@@ -59,34 +52,25 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را بررسی کن
   if (!hasAnyMeal && student.meals && student.meals.length > 0) {
     hasAnyMeal = true;
-    student.meals.forEach((mealId, index) => {
+    student.meals.forEach((mealId) => {
       const mealName = getMealName(mealId) || `غذای ناشناخته (${mealId})`;
       const mealType = getMealType(mealId) || 'نامشخص';
       
       tableData.push([
-        { 
-          text: index === 0 ? 'برنامه کلی' : '', 
-          style: 'tableCell',
-          direction: 'rtl' 
-        },
-        { 
-          text: preprocessPersianText(mealType), 
-          style: 'tableCell',
-          direction: 'rtl' 
-        },
-        { 
-          text: preprocessPersianText(mealName), 
-          style: 'tableCell',
-          direction: 'rtl' 
-        }
+        { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
       ]);
+      
+      rowNumber++;
     });
   }
   
   if (hasAnyMeal) {
     content.push({
       table: {
-        widths: ['20%', '30%', '50%'],
+        widths: ['10%', '20%', '30%', '40%'],
         body: tableData,
         headerRows: 1
       },
