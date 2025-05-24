@@ -11,11 +11,11 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   // جدول کامپکت مکمل‌ها و ویتامین‌ها
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
-      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
-      { text: 'دوز مصرف', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام مکمل یا ویتامین', style: 'tableHeader', direction: 'rtl' },
       { text: 'زمان مصرف', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نام مکمل یا ویتامین', style: 'tableHeader', direction: 'rtl' }
+      { text: 'دوز مصرف', style: 'tableHeader', direction: 'rtl' },
+      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
@@ -32,11 +32,11 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const name = getSupplementName(suppId) || `مکمل ناشناخته (${suppId})`;
       
       tableData.push([
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'روزانه', style: 'tableCell', direction: 'rtl' },
-        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' },
         { text: 'بعد از تمرین', style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: 'روزانه', style: 'tableCell', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
       ]);
       
       rowNumber++;
@@ -50,11 +50,11 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const name = getSupplementName(vitaminId) || `ویتامین ناشناخته (${vitaminId})`;
       
       tableData.push([
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'روزانه', style: 'tableCell', direction: 'rtl' },
-        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' },
         { text: 'صبح ناشتا', style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: 'روزانه', style: 'tableCell', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
       ]);
       
       rowNumber++;
@@ -64,7 +64,7 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   if (hasAnyItem) {
     content.push({
       table: {
-        widths: ['10%', '15%', '15%', '20%', '40%'],
+        widths: ['40%', '20%', '15%', '15%', '10%'],
         body: tableData,
         headerRows: 1
       },

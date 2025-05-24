@@ -12,10 +12,10 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   // جدول کامپکت همه وعده‌های غذایی
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
-      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام غذا', style: 'tableHeader', direction: 'rtl' },
       { text: 'وعده غذایی', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نام غذا', style: 'tableHeader', direction: 'rtl' }
+      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
@@ -38,10 +38,10 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
         const mealType = getMealType(mealId) || 'نامشخص';
         
         tableData.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' },
           { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
+          { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
         ]);
         
         rowNumber++;
@@ -57,10 +57,10 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       const mealType = getMealType(mealId) || 'نامشخص';
       
       tableData.push([
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' },
         { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
+        { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
       ]);
       
       rowNumber++;
@@ -70,7 +70,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   if (hasAnyMeal) {
     content.push({
       table: {
-        widths: ['10%', '20%', '30%', '40%'],
+        widths: ['40%', '30%', '20%', '10%'],
         body: tableData,
         headerRows: 1
       },
