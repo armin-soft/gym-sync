@@ -70,7 +70,7 @@ export function createDocumentHeader(student: Student, trainerProfile: TrainerPr
               direction: 'rtl'
             },
             { 
-              text: preprocessPersianText(`جنسیت: ${student.gender === 'male' ? 'مرد' : student.gender === 'female' ? 'زن' : '-'}`), 
+              text: preprocessPersianText(`جنسیت: مرد`), 
               style: 'tableCell',
               direction: 'rtl'
             },

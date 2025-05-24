@@ -29,8 +29,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
   defaultStyle: {
     font: 'Vazir',
     fontSize: 12,
-    alignment: 'right',
-    direction: 'rtl', // اضافه کردن جهت RTL به صورت پیش‌فرض
+    alignment: 'right'
   },
 };
 
@@ -46,36 +45,31 @@ export function createPdfDocument(content: any[]): any {
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 20],
-        color: '#7c3aed',
-        direction: 'rtl', // اضافه کردن جهت RTL
+        color: '#7c3aed'
       },
       subheader: {
         fontSize: 14,
         bold: true,
         alignment: 'right',
         margin: [0, 10, 0, 10],
-        color: '#4a5568',
-        direction: 'rtl', // اضافه کردن جهت RTL
+        color: '#4a5568'
       },
       tableHeader: {
         bold: true,
         fontSize: 12,
         color: 'white',
         fillColor: '#7c3aed',
-        alignment: 'center',
-        direction: 'rtl', // اضافه کردن جهت RTL
+        alignment: 'center'
       },
       tableCell: {
         fontSize: 10,
-        alignment: 'right',
-        direction: 'rtl', // اضافه کردن جهت RTL
+        alignment: 'right'
       },
       notes: {
         fontSize: 11,
         italics: true,
         alignment: 'right',
-        margin: [0, 10, 0, 0],
-        direction: 'rtl', // اضافه کردن جهت RTL
+        margin: [0, 10, 0, 0]
       }
     }
   };
