@@ -19,6 +19,7 @@ export interface PDFDocumentOptions {
     font: string;
     fontSize: number;
     alignment: string;
+    direction?: string; // Added direction property
   };
 }
 
@@ -35,9 +36,10 @@ export interface PdfPreviewOptions {
   showHeader?: boolean;
 }
 
-// Interface for table cell content with alignment
+// Interface for table cell content with alignment and direction
 export interface TableCellContent {
   text: string;
   style: string;
   alignment?: 'left' | 'center' | 'right' | 'justify';
+  direction?: 'rtl' | 'ltr'; // Added direction property
 }
