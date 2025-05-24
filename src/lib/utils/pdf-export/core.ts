@@ -7,13 +7,13 @@ import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fon
 // تنظیم فونت‌های پیش‌فرض
 pdfMake.vfs = (pdfFonts as any).pdfMake?.vfs || pdfFonts;
 
-// فونت‌های فارسی
+// فونت‌های فارسی مدرن
 const persianFonts = {
   Vazir: {
     normal: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
     bold: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf',
-    italics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf', // اضافه کردن استایل italics با همان فونت عادی
-    bolditalics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf' // اضافه کردن استایل bolditalics با همان فونت بولد
+    italics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
+    bolditalics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf'
   }
 };
 
@@ -23,72 +23,126 @@ pdfMake.fonts = {
   Vazir: persianFonts.Vazir
 };
 
-// تنظیمات پیش‌فرض PDF
+// تنظیمات مدرن PDF با طراحی حرفه‌ای
 export const PDF_OPTIONS: PDFDocumentOptions = {
   pageSize: 'A4',
   pageOrientation: 'portrait',
-  pageMargins: [40, 60, 40, 60],
+  pageMargins: [50, 80, 50, 80],
   defaultStyle: {
     font: 'Vazir',
-    fontSize: 12,
+    fontSize: 11,
     alignment: 'right',
-    direction: 'rtl' // اضافه کردن جهت RTL به صورت پیش‌فرض
+    direction: 'rtl',
+    lineHeight: 1.6
   },
 };
 
-// ایجاد سند PDF با تنظیمات فارسی
+// ایجاد سند PDF با استایل‌های مدرن و حرفه‌ای
 export function createPdfDocument(content: any[]): any {
   return {
     content,
     ...PDF_OPTIONS,
     fonts: persianFonts,
     styles: {
-      header: {
-        fontSize: 18,
+      documentTitle: {
+        fontSize: 24,
         bold: true,
         alignment: 'center',
-        margin: [0, 0, 0, 20],
-        color: '#7c3aed',
+        margin: [0, 0, 0, 30],
+        color: '#2563eb',
+        direction: 'rtl'
+      },
+      header: {
+        fontSize: 20,
+        bold: true,
+        alignment: 'center',
+        margin: [0, 0, 0, 25],
+        color: '#1e40af',
         direction: 'rtl'
       },
       subheader: {
+        fontSize: 16,
+        bold: true,
+        alignment: 'right',
+        margin: [0, 15, 0, 12],
+        color: '#374151',
+        direction: 'rtl'
+      },
+      sectionTitle: {
         fontSize: 14,
         bold: true,
         alignment: 'right',
-        margin: [0, 10, 0, 10],
-        color: '#4a5568',
+        margin: [0, 12, 0, 8],
+        color: '#4f46e5',
         direction: 'rtl'
       },
       tableHeader: {
         bold: true,
         fontSize: 12,
         color: 'white',
-        fillColor: '#7c3aed',
+        fillColor: '#4f46e5',
         alignment: 'center',
-        direction: 'rtl'
+        direction: 'rtl',
+        margin: [5, 8, 5, 8]
       },
       tableCell: {
-        fontSize: 10,
+        fontSize: 11,
         alignment: 'right',
-        direction: 'rtl'
+        direction: 'rtl',
+        margin: [5, 6, 5, 6]
+      },
+      tableSubHeader: {
+        fontSize: 11,
+        bold: true,
+        fillColor: '#f1f5f9',
+        color: '#475569',
+        alignment: 'right',
+        direction: 'rtl',
+        margin: [5, 6, 5, 6]
       },
       notes: {
-        fontSize: 11,
-        italics: false, // تغییر از italics به false برای جلوگیری از استفاده از استایل italics
+        fontSize: 10,
         alignment: 'right',
-        margin: [0, 10, 0, 0],
+        margin: [0, 12, 0, 0],
+        direction: 'rtl',
+        color: '#64748b'
+      },
+      footer: {
+        fontSize: 9,
+        alignment: 'center',
+        color: '#94a3b8',
         direction: 'rtl'
+      },
+      highlight: {
+        fillColor: '#fef3c7',
+        color: '#92400e',
+        bold: true
+      },
+      success: {
+        color: '#059669',
+        bold: true
+      },
+      warning: {
+        color: '#d97706',
+        bold: true
+      },
+      danger: {
+        color: '#dc2626',
+        bold: true
       }
     }
   };
 }
 
-// تولید و دانلود PDF
+// تولید و دانلود PDF با نمایش پیشرفت
 export function generatePDF(docDefinition: any, filename: string): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
+      console.log(`در حال تولید PDF: ${filename}`);
       const pdfDoc = pdfMake.createPdf(docDefinition);
+      
       pdfDoc.download(filename);
+      console.log(`PDF با موفقیت دانلود شد: ${filename}`);
       resolve();
     } catch (error) {
       console.error('خطا در تولید PDF:', error);
@@ -97,16 +151,34 @@ export function generatePDF(docDefinition: any, filename: string): Promise<void>
   });
 }
 
-// تولید URL پیش‌نمایش PDF
+// تولید URL پیش‌نمایش PDF با کیفیت بالا
 export function generatePDFPreview(docDefinition: any): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
+      console.log('در حال تولید پیش‌نمایش PDF...');
       const pdfDoc = pdfMake.createPdf(docDefinition);
+      
       pdfDoc.getDataUrl((dataUrl) => {
+        console.log('پیش‌نمایش PDF با موفقیت تولید شد');
         resolve(dataUrl);
       });
     } catch (error) {
       console.error('خطا در تولید پیش‌نمایش PDF:', error);
+      reject(error);
+    }
+  });
+}
+
+// تولید بلاب PDF برای عملیات پیشرفته
+export function generatePDFBlob(docDefinition: any): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    try {
+      const pdfDoc = pdfMake.createPdf(docDefinition);
+      
+      pdfDoc.getBlob((blob) => {
+        resolve(blob);
+      });
+    } catch (error) {
       reject(error);
     }
   });
