@@ -36,47 +36,55 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     console.log(`بررسی روز ${day}: ${dayKey}`, exercises);
     
     if (exercises && exercises.length > 0) {
-      hasAnyExercise = true;
       const dayName = getDayName(day);
       
       exercises.forEach((exerciseId) => {
-        const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
-        const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
-        const repInfo = reps[exerciseId] || '-';
+        const exerciseName = getExerciseName(exerciseId);
         
-        tableData.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
-          { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
-        ]);
-        
-        rowNumber++;
+        // فقط اگر نام تمرین موجود باشد آن را اضافه کن
+        if (exerciseName) {
+          hasAnyExercise = true;
+          const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
+          const repInfo = reps[exerciseId] || '';
+          
+          tableData.push([
+            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+            { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
+            { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+            { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+            { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
+          ]);
+          
+          rowNumber++;
+        }
       });
     }
   }
   
   // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را بررسی کن
   if (!hasAnyExercise && student.exercises && student.exercises.length > 0) {
-    hasAnyExercise = true;
     const sets = student.exerciseSets || {};
     const reps = student.exerciseReps || {};
     
     student.exercises.forEach((exerciseId) => {
-      const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
-      const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
-      const repInfo = reps[exerciseId] || '-';
+      const exerciseName = getExerciseName(exerciseId);
       
-      tableData.push([
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
-        { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
-      ]);
-      
-      rowNumber++;
+      // فقط اگر نام تمرین موجود باشد آن را اضافه کن
+      if (exerciseName) {
+        hasAnyExercise = true;
+        const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
+        const repInfo = reps[exerciseId] || '';
+        
+        tableData.push([
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
+          { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
+        ]);
+        
+        rowNumber++;
+      }
     });
   }
   

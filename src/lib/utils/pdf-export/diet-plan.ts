@@ -34,36 +34,42 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       const dayName = getDayName(day);
       
       meals.forEach((mealId) => {
-        const mealName = getMealName(mealId) || `غذای ناشناخته (${mealId})`;
-        const mealType = getMealType(mealId) || 'نامشخص';
+        const mealName = getMealName(mealId);
+        const mealType = getMealType(mealId);
         
-        tableData.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
-        ]);
-        
-        rowNumber++;
+        // فقط اگر نام غذا موجود باشد آن را اضافه کن
+        if (mealName) {
+          tableData.push([
+            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+            { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
+            { text: preprocessPersianText(mealType || ''), style: 'tableCell', direction: 'rtl' },
+            { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
+          ]);
+          
+          rowNumber++;
+        }
       });
     }
   }
   
   // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را بررسی کن
   if (!hasAnyMeal && student.meals && student.meals.length > 0) {
-    hasAnyMeal = true;
     student.meals.forEach((mealId) => {
-      const mealName = getMealName(mealId) || `غذای ناشناخته (${mealId})`;
-      const mealType = getMealType(mealId) || 'نامشخص';
+      const mealName = getMealName(mealId);
+      const mealType = getMealType(mealId);
       
-      tableData.push([
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
-      ]);
-      
-      rowNumber++;
+      // فقط اگر نام غذا موجود باشد آن را اضافه کن
+      if (mealName) {
+        hasAnyMeal = true;
+        tableData.push([
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(mealType || ''), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
+        ]);
+        
+        rowNumber++;
+      }
     });
   }
   

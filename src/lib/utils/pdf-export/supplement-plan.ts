@@ -34,8 +34,8 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       tableData.push([
         { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
         { text: 'مکمل', style: 'tableCell', direction: 'rtl' },
-        { text: 'بعد از تمرین', style: 'tableCell', direction: 'rtl' },
-        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: '', style: 'tableCell', direction: 'rtl' },
+        { text: '', style: 'tableCell', direction: 'rtl' },
         { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
       ]);
       
@@ -52,8 +52,8 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       tableData.push([
         { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
         { text: 'ویتامین', style: 'tableCell', direction: 'rtl' },
-        { text: 'صبح ناشتا', style: 'tableCell', direction: 'rtl' },
-        { text: '۱ عدد', style: 'tableCell', direction: 'rtl' },
+        { text: '', style: 'tableCell', direction: 'rtl' },
+        { text: '', style: 'tableCell', direction: 'rtl' },
         { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
       ]);
       
