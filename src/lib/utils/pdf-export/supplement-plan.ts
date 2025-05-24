@@ -4,7 +4,7 @@ import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getSupplementName, getSupplementType } from './data-helpers';
 
-// ایجاد برنامه مکمل و ویتامین کامپکت
+// ایجاد برنامه مکمل و ویتامین کامپکت - فقط با داده‌های واقعی شاگرد
 export function createSupplementPlan(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
@@ -21,11 +21,14 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   let rowIndex = 1;
   let hasAnyItem = false;
   
+  console.log('بررسی مکمل‌های شاگرد:', student.supplements);
+  console.log('بررسی ویتامین‌های شاگرد:', student.vitamins);
+  
   // پردازش مکمل‌ها
   if (student.supplements && student.supplements.length > 0) {
     student.supplements.forEach((suppId) => {
       hasAnyItem = true;
-      const name = getSupplementName(suppId) || `مکمل ${toPersianDigits(rowIndex)}`;
+      const name = getSupplementName(suppId) || `مکمل ناشناخته (${suppId})`;
       
       tableData.push([
         { text: toPersianDigits(rowIndex), style: 'tableCell', alignment: 'center', direction: 'rtl' },
@@ -42,7 +45,7 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   if (student.vitamins && student.vitamins.length > 0) {
     student.vitamins.forEach((vitaminId) => {
       hasAnyItem = true;
-      const name = getSupplementName(vitaminId) || `ویتامین ${toPersianDigits(rowIndex)}`;
+      const name = getSupplementName(vitaminId) || `ویتامین ناشناخته (${vitaminId})`;
       
       tableData.push([
         { text: toPersianDigits(rowIndex), style: 'tableCell', alignment: 'center', direction: 'rtl' },
@@ -74,6 +77,7 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       margin: [0, 0, 0, 15]
     });
   } else {
+    console.log('هیچ مکمل یا ویتامینی برای این شاگرد یافت نشد');
     content.push({
       text: 'برنامه مکمل و ویتامین تعیین نشده است.',
       style: 'notes',

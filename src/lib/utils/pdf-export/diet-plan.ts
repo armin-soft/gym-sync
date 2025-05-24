@@ -5,7 +5,7 @@ import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getDayName } from '@/lib/utils';
 import { getMealName, getMealType } from './data-helpers';
 
-// ایجاد برنامه غذایی کامپکت
+// ایجاد برنامه غذایی کامپکت - فقط با داده‌های واقعی شاگرد
 export function createDietPlan(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
@@ -20,18 +20,20 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   
   let hasAnyMeal = false;
   
-  // برای هر روز هفته
+  // برای هر روز هفته (1-7 به جای 1-5)
   for (let day = 1; day <= 7; day++) {
     const dayKey = `mealsDay${day}` as keyof Student;
     const meals = student[dayKey] as number[] || [];
+    
+    console.log(`بررسی روز ${day}: ${dayKey}`, meals);
     
     if (meals && meals.length > 0) {
       hasAnyMeal = true;
       const dayName = getDayName(day);
       
       meals.forEach((mealId, index) => {
-        const mealName = getMealName(mealId) || '-';
-        const mealType = getMealType(mealId) || '-';
+        const mealName = getMealName(mealId) || `غذای ناشناخته (${mealId})`;
+        const mealType = getMealType(mealId) || 'نامشخص';
         
         tableData.push([
           { 
@@ -54,6 +56,33 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     }
   }
   
+  // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را بررسی کن
+  if (!hasAnyMeal && student.meals && student.meals.length > 0) {
+    hasAnyMeal = true;
+    student.meals.forEach((mealId, index) => {
+      const mealName = getMealName(mealId) || `غذای ناشناخته (${mealId})`;
+      const mealType = getMealType(mealId) || 'نامشخص';
+      
+      tableData.push([
+        { 
+          text: index === 0 ? 'برنامه کلی' : '', 
+          style: 'tableCell',
+          direction: 'rtl' 
+        },
+        { 
+          text: preprocessPersianText(mealType), 
+          style: 'tableCell',
+          direction: 'rtl' 
+        },
+        { 
+          text: preprocessPersianText(mealName), 
+          style: 'tableCell',
+          direction: 'rtl' 
+        }
+      ]);
+    });
+  }
+  
   if (hasAnyMeal) {
     content.push({
       table: {
@@ -73,6 +102,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       margin: [0, 0, 0, 15]
     });
   } else {
+    console.log('هیچ برنامه غذایی برای این شاگرد یافت نشد');
     content.push({
       text: 'برنامه غذایی تعیین نشده است.',
       style: 'notes',

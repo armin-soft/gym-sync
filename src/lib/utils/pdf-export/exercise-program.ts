@@ -5,7 +5,7 @@ import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getDayName } from '@/lib/utils';
 import { getExerciseName } from './data-helpers';
 
-// ایجاد برنامه تمرینی کامپکت
+// ایجاد برنامه تمرینی کامپکت - فقط با داده‌های واقعی شاگرد
 export function createExerciseProgram(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
@@ -31,12 +31,14 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     const sets = student[daySetKey] as Record<number, number> || {};
     const reps = student[dayRepsKey] as Record<number, string> || {};
     
+    console.log(`بررسی روز ${day}: ${dayKey}`, exercises);
+    
     if (exercises && exercises.length > 0) {
       hasAnyExercise = true;
       const dayName = getDayName(day);
       
       exercises.forEach((exerciseId, index) => {
-        const exerciseName = getExerciseName(exerciseId) || `تمرین ${toPersianDigits(index + 1)}`;
+        const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
         const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
         const repInfo = reps[exerciseId] || '-';
         
@@ -52,6 +54,30 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         ]);
       });
     }
+  }
+  
+  // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را بررسی کن
+  if (!hasAnyExercise && student.exercises && student.exercises.length > 0) {
+    hasAnyExercise = true;
+    const sets = student.exerciseSets || {};
+    const reps = student.exerciseReps || {};
+    
+    student.exercises.forEach((exerciseId, index) => {
+      const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
+      const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
+      const repInfo = reps[exerciseId] || '-';
+      
+      tableData.push([
+        { 
+          text: index === 0 ? 'برنامه کلی' : '', 
+          style: 'tableCell', 
+          direction: 'rtl' 
+        },
+        { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
+        { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' }
+      ]);
+    });
   }
   
   if (hasAnyExercise) {
@@ -73,6 +99,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
       margin: [0, 0, 0, 15]
     });
   } else {
+    console.log('هیچ برنامه تمرینی برای این شاگرد یافت نشد');
     content.push({
       text: 'برنامه تمرینی تعیین نشده است.',
       style: 'notes',
