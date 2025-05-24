@@ -33,13 +33,13 @@ export function setupPdfDocument(): jsPDF {
   });
   
   try {
-    // Setup Persian font and RTL mode
+    // Setup Persian font (Vazir) and RTL mode
     addFontToPdf(doc);
     
     // تنظیم پیش‌فرض برای RTL
     doc.setR2L(true);
     
-    console.log("PDF document setup completed with Persian font support");
+    console.log("PDF document setup completed with Vazir Persian font support");
   } catch (error) {
     console.error("Error setting up PDF document:", error);
     

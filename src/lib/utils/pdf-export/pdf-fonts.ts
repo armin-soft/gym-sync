@@ -4,9 +4,8 @@ import jsPDF from 'jspdf';
 // برای پشتیبانی از فونت فارسی در PDF
 export function addFontToPdf(doc: jsPDF): void {
   try {
-    // استفاده از فونت‌های موجود در jsPDF که از فارسی پشتیبانی می‌کنند
-    // یا فونت‌های سیستمی
-    doc.setFont("Helvetica", "normal");
+    // تنظیم فونت Vazir برای متن فارسی
+    doc.setFont("Vazir", "normal");
     
     // تنظیم جهت متن راست به چپ
     doc.setR2L(true);
@@ -17,9 +16,12 @@ export function addFontToPdf(doc: jsPDF): void {
     // تضمین اینکه تراز متن برای زبان‌های RTL به صورت پیش‌فرض راست است
     doc.setTextColor(0, 0, 0);
     
-    console.log("تنظیمات فونت فارسی با موفقیت انجام شد");
+    console.log("تنظیمات فونت فارسی Vazir با موفقیت انجام شد");
   } catch (error) {
     console.error("خطا در تنظیم فونت فارسی:", error);
+    // بازگشت به فونت پیش‌فرض در صورت خرابی
+    doc.setFont("Helvetica", "normal");
+    doc.setR2L(true);
   }
 }
 
