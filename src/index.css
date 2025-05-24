@@ -1,3 +1,4 @@
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
 
 @tailwind base;
 @tailwind components;
@@ -50,7 +51,6 @@
   }
 }
 
-/* بقیه استایل‌های موجود را حفظ می‌کنیم */
 @layer base {
   * {
     @apply border-border;
@@ -61,7 +61,7 @@
   }
   
   html {
-    font-family: "Vazirmatn", sans-serif;
+    font-family: "Vazir", "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     direction: rtl;
     @apply text-base antialiased;
     font-size: 14px;
@@ -81,6 +81,7 @@
   
   body {
     @apply bg-background text-foreground min-h-screen h-full;
+    font-family: "Vazir", "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 
   /* تنظیمات تایپوگرافی */

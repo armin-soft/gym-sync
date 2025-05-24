@@ -36,8 +36,12 @@ export function setupPdfDocument(): jsPDF {
     // Setup Persian font support and RTL mode
     addFontToPdf(doc);
     
-    // تنظیم پیش‌فرض برای RTL
+    // تنظیمات اضافی برای بهبود نمایش فارسی
     doc.setR2L(true);
+    doc.setFontSize(12);
+    
+    // تنظیم خصوصیات پیش‌فرض برای متن
+    doc.setTextColor(0, 0, 0);
     
     console.log("PDF document setup completed with Persian font support");
   } catch (error) {
@@ -46,6 +50,7 @@ export function setupPdfDocument(): jsPDF {
     // fallback to default settings
     doc.setFont("helvetica", "normal");
     doc.setR2L(true);
+    doc.setFontSize(12);
   }
   
   return doc;

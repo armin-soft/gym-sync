@@ -4,17 +4,16 @@ import jsPDF from 'jspdf';
 // برای پشتیبانی از فونت فارسی در PDF
 export function addFontToPdf(doc: jsPDF): void {
   try {
-    // استفاده از فونت‌های پیش‌فرض که از یونیکد پشتیبانی می‌کنند
+    // استفاده از فونت‌های موجود در سیستم که از فارسی پشتیبانی می‌کنند
     doc.setFont("helvetica", "normal");
     
-    // تنظیم جهت متن راست به چپ
+    // تنظیمات خاص برای متن فارسی
+    doc.setFontSize(12);
     doc.setR2L(true);
     
-    // فعال کردن پشتیبانی از یونیکد برای متن فارسی
-    doc.setLanguage("fa");
-    
-    // تضمین اینکه تراز متن برای زبان‌های RTL به صورت پیش‌فرض راست است
-    doc.setTextColor(0, 0, 0);
+    // تنظیم encoding برای پشتیبانی بهتر از یونیکد
+    doc.setCharSpace(0);
+    doc.setWordSpace(0);
     
     console.log("تنظیمات فونت فارسی با موفقیت انجام شد");
   } catch (error) {
@@ -39,10 +38,14 @@ export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, opt
     // فعال‌سازی RTL
     doc.setR2L(true);
     
-    // تنظیم گزینه‌های پیش‌فرض برای متن RTL - تراز راست برای فارسی مهم است
-    const defaultOptions = { align: 'right', ...options };
+    // تنظیم گزینه‌های پیش‌فرض برای متن RTL
+    const defaultOptions = { 
+      align: 'right',
+      direction: 'rtl',
+      ...options 
+    };
     
-    // اطمینان از اینکه متن به صورت یونیکد صحیح پردازش می‌شود
+    // نوشتن متن با تنظیمات RTL
     doc.text(processedText, x, y, defaultOptions);
     
     // بازگرداندن وضعیت قبلی
