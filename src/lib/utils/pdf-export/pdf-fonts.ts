@@ -11,10 +11,6 @@ export function addFontToPdf(doc: jsPDF): void {
     doc.setFontSize(12);
     doc.setR2L(true);
     
-    // تنظیم encoding برای پشتیبانی بهتر از یونیکد
-    doc.setCharSpace(0);
-    doc.setWordSpace(0);
-    
     console.log("تنظیمات فونت فارسی با موفقیت انجام شد");
   } catch (error) {
     console.error("خطا در تنظیم فونت فارسی:", error);
