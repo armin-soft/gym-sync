@@ -5,7 +5,7 @@ import { PDFDocumentOptions } from './types';
 import { toPersianDigits } from './pdf-fonts';
 
 // تنظیم فونت‌های پیش‌فرض
-(pdfMake as any).vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts;
+pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts;
 
 // فونت‌های فارسی
 const persianFonts = {
@@ -16,8 +16,8 @@ const persianFonts = {
 };
 
 // اضافه کردن فونت‌ها به pdfMake
-(pdfMake as any).fonts = {
-  ...(pdfMake as any).fonts,
+pdfMake.fonts = {
+  ...(pdfMake.fonts || {}),
   Vazir: persianFonts.Vazir
 };
 
