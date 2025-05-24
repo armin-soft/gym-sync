@@ -34,6 +34,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   
   let hasAnyMeal = false;
   let rowNumber = 1;
+  const allMealRows: any[] = [];
   
   // برای هر روز هفته (1-7)
   for (let day = 1; day <= 7; day++) {
@@ -52,7 +53,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
         
         // فقط اگر نام غذا موجود باشد آن را اضافه کن
         if (mealName) {
-          tableData.push([
+          allMealRows.push([
             { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
             { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
             { text: preprocessPersianText(mealType || ''), style: 'tableCell', direction: 'rtl' },
@@ -74,7 +75,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       // فقط اگر نام غذا موجود باشد آن را اضافه کن
       if (mealName) {
         hasAnyMeal = true;
-        tableData.push([
+        allMealRows.push([
           { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
           { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
           { text: preprocessPersianText(mealType || ''), style: 'tableCell', direction: 'rtl' },
@@ -85,6 +86,9 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       }
     });
   }
+  
+  // اضافه کردن ردیف‌ها به جدول (بدون تغییر ترتیب)
+  tableData.push(...allMealRows);
   
   if (hasAnyMeal) {
     content.push({

@@ -33,6 +33,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
   
   let hasAnyExercise = false;
   let rowNumber = 1;
+  const allExerciseRows: any[] = [];
   
   // برای هر روز تمرینی (5 روز)
   for (let day = 1; day <= 5; day++) {
@@ -45,6 +46,8 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     const reps = student[dayRepsKey] as Record<number, string> || {};
     
     console.log(`بررسی روز ${day}: ${dayKey}`, exercises);
+    console.log(`ست‌های روز ${day}:`, sets);
+    console.log(`تکرارهای روز ${day}:`, reps);
     
     if (exercises && exercises.length > 0) {
       const dayName = getExerciseDayName(day);
@@ -58,7 +61,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
           const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
           const repInfo = reps[exerciseId] || '';
           
-          tableData.push([
+          allExerciseRows.push([
             { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
             { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
             { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
@@ -86,7 +89,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
         const repInfo = reps[exerciseId] || '';
         
-        tableData.push([
+        allExerciseRows.push([
           { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
           { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
           { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
@@ -98,6 +101,9 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
       }
     });
   }
+  
+  // اضافه کردن ردیف‌ها به جدول (بدون تغییر ترتیب)
+  tableData.push(...allExerciseRows);
   
   if (hasAnyExercise) {
     content.push({
