@@ -15,9 +15,9 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   text
 }) => {
   const sizeClasses = {
-    sm: "h-4 w-4 border-2",
-    md: "h-8 w-8 border-3",
-    lg: "h-16 w-16 border-4"
+    sm: "h-4 w-4",
+    md: "h-8 w-8",
+    lg: "h-16 w-16"
   };
   
   return (
