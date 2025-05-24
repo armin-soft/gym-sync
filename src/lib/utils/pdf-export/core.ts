@@ -1,11 +1,11 @@
 
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits } from './pdf-fonts';
 
 // تنظیم فونت‌های پیش‌فرض
-pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfFonts;
+pdfMake.vfs = (pdfFonts as any).pdfMake?.vfs || pdfFonts;
 
 // فونت‌های فارسی
 const persianFonts = {
