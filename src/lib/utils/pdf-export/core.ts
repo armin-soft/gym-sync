@@ -5,7 +5,7 @@ import { PDFDocumentOptions } from './types';
 import { toPersianDigits } from './pdf-fonts';
 
 // تنظیم فونت‌های پیش‌فرض
-pdfMake.vfs = (pdfFonts as any).pdfMake?.vfs || pdfFonts;
+pdfMake.vfs = (pdfFonts as any).pdfMake?.vfs || (pdfFonts as any).vfs || {};
 
 // فونت‌های فارسی
 const persianFonts = {
