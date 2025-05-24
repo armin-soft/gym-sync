@@ -20,22 +20,21 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
     // ایجاد محتوای PDF
     const content: any[] = [];
     
+    // صفحه 1: برنامه تمرینی
     // هدر سند
-    content.push(...createDocumentHeader(student, trainerProfile, "برنامه جامع"));
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه تمرینی"));
     
     // برنامه تمرینی
     content.push(...createExerciseProgram(student, trainerProfile));
     
-    // فاصله بین بخش‌ها
+    // صفحه 2: برنامه غذایی
     content.push({ text: '', pageBreak: 'before' });
-    
-    // برنامه غذایی
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه غذایی"));
     content.push(...createDietPlan(student, trainerProfile));
     
-    // فاصله بین بخش‌ها
+    // صفحه 3: برنامه مکمل
     content.push({ text: '', pageBreak: 'before' });
-    
-    // برنامه مکمل
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه مکمل و ویتامین"));
     content.push(...createSupplementPlan(student, trainerProfile));
     
     // پاورقی
@@ -66,22 +65,21 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
     // ایجاد محتوای PDF
     const content: any[] = [];
     
+    // صفحه 1: برنامه تمرینی
     // هدر سند
-    content.push(...createDocumentHeader(student, trainerProfile, "برنامه جامع"));
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه تمرینی"));
     
     // برنامه تمرینی
     content.push(...createExerciseProgram(student, trainerProfile));
     
-    // فاصله بین بخش‌ها
+    // صفحه 2: برنامه غذایی
     content.push({ text: '', pageBreak: 'before' });
-    
-    // برنامه غذایی
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه غذایی"));
     content.push(...createDietPlan(student, trainerProfile));
     
-    // فاصله بین بخش‌ها
+    // صفحه 3: برنامه مکمل
     content.push({ text: '', pageBreak: 'before' });
-    
-    // برنامه مکمل
+    content.push(...createDocumentHeader(student, trainerProfile, "برنامه مکمل و ویتامین"));
     content.push(...createSupplementPlan(student, trainerProfile));
     
     // پاورقی

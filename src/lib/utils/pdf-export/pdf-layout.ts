@@ -112,20 +112,45 @@ export function createDocumentHeader(student: Student, trainerProfile: TrainerPr
 export async function addPageFooter(trainerProfile: TrainerProfile): Promise<any> {
   const appVersion = await getAppVersion();
   
+  const footerParts = [];
+  
+  // اضافه کردن نام نرم‌افزار و نسخه
+  footerParts.push({ 
+    text: preprocessPersianText(`تهیه شده توسط نرم‌افزار GymSync نسخه ${toPersianDigits(appVersion)}`), 
+    fontSize: 8, 
+    alignment: 'center',
+    direction: 'rtl'
+  });
+  
+  // اضافه کردن شماره تماس مربی
+  if (trainerProfile.phone) { 
+    footerParts.push({ 
+      text: preprocessPersianText(` | شماره تماس: ${toPersianDigits(trainerProfile.phone)}`), 
+      fontSize: 8,
+      direction: 'rtl'
+    });
+  }
+  
+  // اضافه کردن آدرس وب‌سایت
+  if (trainerProfile.website) { 
+    footerParts.push({ 
+      text: preprocessPersianText(` | وب‌سایت: ${trainerProfile.website}`), 
+      fontSize: 8,
+      direction: 'rtl'
+    });
+  }
+  
+  // اضافه کردن آدرس اینستاگرام
+  if (trainerProfile.instagram) { 
+    footerParts.push({ 
+      text: preprocessPersianText(` | اینستاگرام: ${trainerProfile.instagram}`), 
+      fontSize: 8,
+      direction: 'rtl'
+    });
+  }
+  
   return {
-    text: [
-      { 
-        text: preprocessPersianText(`تهیه شده توسط نرم‌افزار GymSync نسخه ${toPersianDigits(appVersion)}`), 
-        fontSize: 8, 
-        alignment: 'center',
-        direction: 'rtl'
-      },
-      trainerProfile.phone ? { 
-        text: preprocessPersianText(` | شماره تماس: ${toPersianDigits(trainerProfile.phone)}`), 
-        fontSize: 8,
-        direction: 'rtl'
-      } : ''
-    ],
+    text: footerParts,
     alignment: 'center',
     margin: [0, 20, 0, 0],
     direction: 'rtl'

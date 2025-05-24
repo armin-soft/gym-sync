@@ -1,73 +1,97 @@
 
-import { getDayName } from "@/lib/utils";
-
-// Helper functions to get name information from IDs
-export function getExerciseName(exerciseId: number): string {
+// تابع کمکی برای استخراج نام تمرین از آیدی
+export function getExerciseName(exerciseId: number): string | undefined {
   try {
-    const exercisesStr = localStorage.getItem('exercises');
-    if (!exercisesStr) return '';
+    // بررسی آیا اطلاعات تمرین‌ها در localStorage ذخیره شده‌اند
+    const exercisesDataStr = localStorage.getItem('exercises');
+    if (!exercisesDataStr) return undefined;
     
-    const exercises = JSON.parse(exercisesStr);
-    const exercise = exercises.find((ex: any) => ex.id === exerciseId);
-    return exercise ? exercise.name : '';
-  } catch (e) {
-    console.error("Error getting exercise name:", e);
-    return '';
+    const exercisesData = JSON.parse(exercisesDataStr);
+    const exercise = exercisesData.find((ex: any) => ex.id === exerciseId);
+    
+    return exercise?.name;
+  } catch (error) {
+    console.error("خطا در گرفتن نام تمرین:", error);
+    return undefined;
   }
 }
 
-export function getMealName(mealId: number): string {
+// تابع کمکی برای استخراج نام غذا از آیدی
+export function getMealName(mealId: number): string | undefined {
   try {
-    const mealsStr = localStorage.getItem('meals');
-    if (!mealsStr) return '';
+    // بررسی آیا اطلاعات غذاها در localStorage ذخیره شده‌اند
+    const mealsDataStr = localStorage.getItem('meals');
+    if (!mealsDataStr) return undefined;
     
-    const meals = JSON.parse(mealsStr);
-    const meal = meals.find((m: any) => m.id === mealId);
-    return meal ? meal.name : '';
-  } catch (e) {
-    console.error("Error getting meal name:", e);
-    return '';
+    const mealsData = JSON.parse(mealsDataStr);
+    const meal = mealsData.find((meal: any) => meal.id === mealId);
+    
+    return meal?.name;
+  } catch (error) {
+    console.error("خطا در گرفتن نام غذا:", error);
+    return undefined;
   }
 }
 
-export function getMealType(mealId: number): string {
+// تابع کمکی برای استخراج نوع غذا از آیدی
+export function getMealType(mealId: number): string | undefined {
   try {
-    const mealsStr = localStorage.getItem('meals');
-    if (!mealsStr) return '';
+    // بررسی آیا اطلاعات غذاها در localStorage ذخیره شده‌اند
+    const mealsDataStr = localStorage.getItem('meals');
+    if (!mealsDataStr) return undefined;
     
-    const meals = JSON.parse(mealsStr);
-    const meal = meals.find((m: any) => m.id === mealId);
-    return meal ? meal.type : '';
-  } catch (e) {
-    console.error("Error getting meal type:", e);
-    return '';
+    const mealsData = JSON.parse(mealsDataStr);
+    const meal = mealsData.find((meal: any) => meal.id === mealId);
+    
+    return meal?.type;
+  } catch (error) {
+    console.error("خطا در گرفتن نوع غذا:", error);
+    return undefined;
   }
 }
 
-export function getSupplementName(supplementId: number): string {
+// تابع کمکی برای استخراج نام مکمل از آیدی
+export function getSupplementName(suppId: number): string | undefined {
   try {
-    const supplementsStr = localStorage.getItem('supplements');
-    if (!supplementsStr) return '';
+    // بررسی آیا اطلاعات مکمل‌ها در localStorage ذخیره شده‌اند
+    const supplementsDataStr = localStorage.getItem('supplements');
+    if (!supplementsDataStr) return undefined;
     
-    const supplements = JSON.parse(supplementsStr);
-    const supplement = supplements.find((s: any) => s.id === supplementId);
-    return supplement ? supplement.name : '';
-  } catch (e) {
-    console.error("Error getting supplement name:", e);
-    return '';
+    const supplementsData = JSON.parse(supplementsDataStr);
+    const supplement = supplementsData.find((supp: any) => supp.id === suppId);
+    
+    return supplement?.name;
+  } catch (error) {
+    console.error("خطا در گرفتن نام مکمل:", error);
+    return undefined;
   }
 }
 
-export function getSupplementType(supplementId: number): string {
+// تابع کمکی برای استخراج نوع مکمل از آیدی
+export function getSupplementType(suppId: number): string | undefined {
   try {
-    const supplementsStr = localStorage.getItem('supplements');
-    if (!supplementsStr) return '';
+    // بررسی آیا اطلاعات مکمل‌ها در localStorage ذخیره شده‌اند
+    const supplementsDataStr = localStorage.getItem('supplements');
+    if (!supplementsDataStr) return undefined;
     
-    const supplements = JSON.parse(supplementsStr);
-    const supplement = supplements.find((s: any) => s.id === supplementId);
-    return supplement ? supplement.type : '';
-  } catch (e) {
-    console.error("Error getting supplement type:", e);
-    return '';
+    const supplementsData = JSON.parse(supplementsDataStr);
+    const supplement = supplementsData.find((supp: any) => supp.id === suppId);
+    
+    return supplement?.category || supplement?.type;
+  } catch (error) {
+    console.error("خطا در گرفتن نوع مکمل:", error);
+    return undefined;
   }
+}
+
+// تابع کمکی برای گرفتن وزن مناسب مصرف مکمل
+export function getSupplementDosage(suppId: number): string {
+  // این تابع می‌تواند در آینده برای اطلاعات واقعی دوز مکمل‌ها تکمیل شود
+  return '1 عدد';
+}
+
+// تابع کمکی برای گرفتن زمان مصرف مناسب مکمل
+export function getSupplementTiming(suppId: number): string {
+  // این تابع می‌تواند در آینده برای اطلاعات واقعی زمان مصرف مکمل‌ها تکمیل شود
+  return 'بعد از تمرین';
 }

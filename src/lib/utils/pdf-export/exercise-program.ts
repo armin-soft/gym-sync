@@ -11,10 +11,13 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
   const content: any[] = [];
   
   // هدر بخش
-  content.push(createSectionHeader("برنامه تمرینی هفتگی"));
+  content.push(createSectionHeader("برنامه تمرینی هفتگی", '#7c3aed'));
+  
+  // حداکثر تعداد روزهای تمرینی
+  const maxDays = 5;
   
   // برای هر روز تمرینی (5 روز)
-  for (let day = 1; day <= 5; day++) {
+  for (let day = 1; day <= maxDays; day++) {
     const dayKey = `exercisesDay${day}` as keyof Student;
     const daySetKey = `exerciseSetsDay${day}` as keyof Student;
     const dayRepsKey = `exerciseRepsDay${day}` as keyof Student;
@@ -23,22 +26,26 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     const sets = student[daySetKey] as Record<number, number> || {};
     const reps = student[dayRepsKey] as Record<number, string> || {};
     
+    // اگر تمرینی برای این روز وجود دارد نمایش بده
     if (exercises && exercises.length > 0) {
       // نام روز
       const dayName = getDayName(day);
       content.push({
         text: preprocessPersianText(`روز ${toPersianDigits(day)}: ${dayName}`),
         style: 'subheader',
-        margin: [0, 15, 0, 5]
+        fontSize: 15,
+        margin: [0, 15, 0, 5],
+        color: '#7c3aed',
+        direction: 'rtl'
       });
       
       // جدول تمرینات
       const tableData: (TableCellContent | { text: string; style: string })[][] = [
         [
-          { text: '#', style: 'tableHeader' },
-          { text: 'تمرین', style: 'tableHeader' },
-          { text: 'ست', style: 'tableHeader' },
-          { text: 'تکرار', style: 'tableHeader' }
+          { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
+          { text: 'تمرین', style: 'tableHeader', direction: 'rtl' },
+          { text: 'ست', style: 'tableHeader', direction: 'rtl' },
+          { text: 'تکرار', style: 'tableHeader', direction: 'rtl' }
         ]
       ];
       
@@ -48,30 +55,40 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         const repInfo = reps[exerciseId] || '-';
         
         tableData.push([
-          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(exerciseName), style: 'tableCell' },
-          { text: setCount, style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center' }
+          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
+          { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' }
         ]);
       });
       
       content.push({
         table: {
-          widths: ['8%', '52%', '20%', '20%'],
-          body: tableData
+          widths: ['10%', '50%', '20%', '20%'],
+          body: tableData,
+          headerRows: 1
         },
-        layout: configureTableStyles('primary'),
-        margin: [0, 0, 0, 10]
+        layout: {
+          fillColor: function(rowIndex: number) {
+            return (rowIndex === 0) ? '#7c3aed' : (rowIndex % 2 === 0 ? '#f8fafc' : null);
+          },
+          hLineWidth: () => 1,
+          vLineWidth: () => 1,
+          hLineColor: () => '#e2e8f0',
+          vLineColor: () => '#e2e8f0'
+        },
+        margin: [0, 0, 0, 15]
       });
     }
   }
   
   // نکات تمرینی
   if (student.notes) {
-    content.push(createSectionHeader("نکات تمرینی"));
+    content.push(createSectionHeader("نکات تمرینی", '#7c3aed'));
     content.push({
       text: preprocessPersianText(student.notes),
-      style: 'notes'
+      style: 'notes',
+      direction: 'rtl'
     });
   }
   

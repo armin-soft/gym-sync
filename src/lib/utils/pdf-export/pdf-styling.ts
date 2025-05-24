@@ -30,7 +30,7 @@ export function createSectionHeader(title: string, iconName?: string): any {
       {
         text: preprocessPersianText(title),
         style: 'subheader',
-        color: '#4a5568',
+        color: iconName || '#4a5568',
         alignment: 'right',
         margin: [0, 10, 0, 10],
         direction: 'rtl'
