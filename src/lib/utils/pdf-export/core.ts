@@ -15,6 +15,12 @@ const persianFonts = {
   }
 };
 
+// Add fonts to pdfMake
+pdfMake.fonts = {
+  ...pdfMake.fonts,
+  Vazir: persianFonts.Vazir
+};
+
 // تنظیمات پیش‌فرض PDF
 export const PDF_OPTIONS: PDFDocumentOptions = {
   pageSize: 'A4',
@@ -32,6 +38,7 @@ export function createPdfDocument(content: any[]): any {
   return {
     content,
     ...PDF_OPTIONS,
+    fonts: persianFonts,
     styles: {
       header: {
         fontSize: 18,
