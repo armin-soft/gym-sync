@@ -1,4 +1,3 @@
-
 import { Toast, ToastVariant } from "./toast-types";
 import { dispatch, genId } from "./toast-reducer";
 import * as React from "react";
@@ -15,12 +14,12 @@ interface ToastActionProps {
 
 // Helper function to convert simple action to proper ToastActionElement
 const createActionElement = (action: ToastActionProps): ToastActionElement => {
-  // Create a proper React element with all required props
+  // Create a proper React element with all required props - remove the problematic type assertion
   return React.createElement(ToastAction, {
     onClick: action.onClick,
     altText: action.label, // Required prop for ToastAction
     children: action.label
-  }) as ToastActionElement;
+  });
 };
 
 // Toast function to show notifications - compatible with both interfaces
