@@ -1,8 +1,8 @@
 
 import { Student } from '@/components/students/StudentTypes';
-import { TrainerProfile } from './types';
-import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
-import { getCurrentPersianDate } from '../persianDate';
+import { TrainerProfile } from './pdf-export/types';
+import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-export/pdf-fonts';
+import { getCurrentPersianDate } from './persianDate';
 
 // دریافت نسخه از Manifest.json
 async function getAppVersion(): Promise<string> {

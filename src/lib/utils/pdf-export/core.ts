@@ -112,5 +112,5 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
 
 // صادر کردن توابع کمکی
 export { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
-export { createDocumentHeader, addPageFooter } from './pdf-layout';
+export { createDocumentHeader, addPageFooter } from '../pdf-layout';
 export { configureTableStyles, createSectionHeader } from './pdf-styling';

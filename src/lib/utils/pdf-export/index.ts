@@ -2,7 +2,7 @@
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
 import { createPdfDocument, generatePDF, generatePDFPreview } from './core';
-import { createDocumentHeader, addPageFooter } from './pdf-layout';
+import { createDocumentHeader, addPageFooter } from '../pdf-layout';
 import { createExerciseProgram } from './exercise-program';
 import { createDietPlan } from './diet-plan';
 import { createSupplementPlan } from './supplement-plan';
