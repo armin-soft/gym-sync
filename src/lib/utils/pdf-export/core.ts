@@ -33,12 +33,15 @@ export async function setupPdfDocument(): Promise<jsPDF> {
   });
   
   try {
+    console.log("شروع تنظیم سند PDF با پشتیبانی فارسی...");
+    
     // Setup Persian font support and RTL mode
     await addFontToPdf(doc);
     
     // تنظیمات اضافی برای بهبود نمایش فارسی
     doc.setR2L(true);
     doc.setFontSize(12);
+    doc.setCharSpace(0.1);
     
     // تنظیم خصوصیات پیش‌فرض برای متن
     doc.setTextColor(0, 0, 0);
