@@ -33,6 +33,8 @@ export function setupPdfDocument(): jsPDF {
   });
   
   try {
+    console.log("شروع تنظیم سند PDF با پشتیبانی از فونت فارسی...");
+    
     // Setup Persian font and RTL mode
     addFontToPdf(doc);
     

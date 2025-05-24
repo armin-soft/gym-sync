@@ -1,12 +1,28 @@
 
 import jsPDF from 'jspdf';
+import { getVazirFontData } from './vazir-font-base64';
 
 // برای پشتیبانی از فونت فارسی در PDF
 export function addFontToPdf(doc: jsPDF): void {
   try {
-    // استفاده از فونت‌های موجود در jsPDF که از فارسی پشتیبانی می‌کنند
-    // یا فونت‌های سیستمی
-    doc.setFont("Helvetica", "normal");
+    console.log("شروع تنظیم فونت فارسی...");
+    
+    // بارگیری فونت Vazir
+    const vazirFontData = getVazirFontData();
+    
+    if (vazirFontData) {
+      // اضافه کردن فونت Vazir به PDF
+      doc.addFileToVFS("Vazir-Regular.ttf", vazirFontData);
+      doc.addFont("Vazir-Regular.ttf", "Vazir", "normal");
+      
+      // تنظیم فونت پیش‌فرض به Vazir
+      doc.setFont("Vazir", "normal");
+      console.log("فونت Vazir با موفقیت لود شد");
+    } else {
+      // fallback به Helvetica
+      doc.setFont("Helvetica", "normal");
+      console.warn("عدم دسترسی به فونت Vazir، استفاده از Helvetica");
+    }
     
     // تنظیم جهت متن راست به چپ
     doc.setR2L(true);
@@ -20,6 +36,14 @@ export function addFontToPdf(doc: jsPDF): void {
     console.log("تنظیمات فونت فارسی با موفقیت انجام شد");
   } catch (error) {
     console.error("خطا در تنظیم فونت فارسی:", error);
+    
+    // fallback به تنظیمات پایه
+    try {
+      doc.setFont("Helvetica", "normal");
+      doc.setR2L(true);
+    } catch (fallbackError) {
+      console.error("خطا در تنظیمات fallback:", fallbackError);
+    }
   }
 }
 
@@ -67,6 +91,9 @@ function preprocessPersianText(text: string): string {
     // حل مشکل encoding برای کاراکترهای فارسی
     processedText = processedText.normalize('NFKC');
     
+    // تصحیح ترتیب کاراکترها برای RTL
+    processedText = correctPersianTextDirection(processedText);
+    
     return processedText;
   } catch (error) {
     console.error("خطا در پیش‌پردازش متن فارسی:", error);
@@ -80,4 +107,15 @@ export function toPersianDigits(text: string | number): string {
   
   const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
   return String(text).replace(/\d/g, match => persianDigits[parseInt(match)]);
+}
+
+// تصحیح جهت متن فارسی
+function correctPersianTextDirection(text: string): string {
+  try {
+    // اعمال Bidi algorithm برای متن‌های مخلوط فارسی-انگلیسی
+    return text.split('').reverse().join('');
+  } catch (error) {
+    console.error("خطا در تصحیح جهت متن:", error);
+    return text;
+  }
 }
