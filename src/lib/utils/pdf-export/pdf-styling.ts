@@ -1,3 +1,4 @@
+
 import jsPDF from 'jspdf';
 import { TableThemeOptions } from './types';
 import { writeRTLText, addFontToPdf } from './pdf-fonts';
@@ -55,10 +56,10 @@ export function configureTableStyles(theme: string = 'primary'): any {
 }
 
 // ایجاد هدر بخش با استایل
-export function createSectionHeader(doc: jsPDF, title: string, yPos: number, color: number[]): number {
+export async function createSectionHeader(doc: jsPDF, title: string, yPos: number, color: number[]): Promise<number> {
   try {
     // اطمینان از استفاده از فونت وزیر
-    addFontToPdf(doc);
+    await addFontToPdf(doc);
     
     // افزودن هدر بخش با استایل
     doc.setFillColor(color[0], color[1], color[2], 0.1);

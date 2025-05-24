@@ -1,18 +1,50 @@
 
 import jsPDF from 'jspdf';
 
-// فونت وزیر به صورت Base64 (نسخه کوچک‌شده)
-const VAZIR_FONT_BASE64 = "data:font/truetype;charset=utf-8;base64,AAEAAAAOAIAAAwBgT1MvMj3hSQEAAADsAAAAVmNtYXDOXM6wAAABRAAAAUpjdnQgBkFGRgAAApAAAAA+ZnBnbXf4YKkAAALQAAABbGdhc3D//wADAAAEPAAAAAhnbHlmw7qUQQAABEQAAAOIaGVhZAUl3i0AAAXMAAAANmhoZWEHsgSNAAAGBAAAACRobXR4GAsE+gAABigAAAAkbG9jYQLwBJoAAAZMAAAAFG1heHABHQC4AAAGYAAAACBuYW1l9xr0tgAABoAAAAJlcG9zdAAbAJkAAAjoAAAAFgABAAAAAQAACKpjOl8PPPUACwGNAAAAANZ0L+oAAAAA1nQv6gAA/4ABjQGNAAAACAACAAAAAAAAAAEAAAGN/4AAAAGN//8AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAQAAQAAABAAAAAAAQAAAACAASAAAQACAAIABABBQAFAP8A/wGNAAAAAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAA==";
-
 let isVazirFontAdded = false;
+let vazirFontData: string | null = null;
+
+// دریافت فونت وزیر کامل از CDN
+export async function loadVazirFont(): Promise<string> {
+  if (vazirFontData) {
+    return vazirFontData;
+  }
+  
+  try {
+    console.log("در حال دریافت فونت وزیر از CDN...");
+    const response = await fetch('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const fontArrayBuffer = await response.arrayBuffer();
+    vazirFontData = btoa(String.fromCharCode(...new Uint8Array(fontArrayBuffer)));
+    
+    console.log("فونت وزیر با موفقیت دریافت شد");
+    return vazirFontData;
+  } catch (error) {
+    console.error("خطا در دریافت فونت وزیر:", error);
+    
+    // بازگشت به فونت پیش‌فرض ساده
+    vazirFontData = "AAEAAAAOAIAAAwBgT1MvMj3hSQEAAADsAAAAVmNtYXDOXM6wAAABRAAAAUpjdnQgBkFGRgAAApAAAAA+ZnBnbXf4YKkAAALQAAABbGdhc3D//wADAAAEPAAAAAhnbHlmw7qUQQAABEQAAAOIaGVhZAUl3i0AAAXMAAAANmhoZWEHsgSNAAAGBAAAACRobXR4GAsE+gAABigAAAAkbG9jYQLwBJoAAAZMAAAAFG1heHABHQC4AAAGYAAAACBuYW1l9xr0tgAABoAAAAJlcG9zdAAbAJkAAAjoAAAAFgABAAAAAQAACKpjOl8PPPUACwGNAAAAANZ0L+oAAAAA1nQv6gAA/4ABjQGNAAAACAACAAAAAAAAAAEAAAGN/4AAAAGN//8AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAQAAQAAABAAAAAAAQAAAACAASAAAQACAAIABABBQAFAP8A/wGNAAAAAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAA==";
+    return vazirFontData;
+  }
+}
 
 // برای پشتیبانی از فونت فارسی در PDF
-export function addFontToPdf(doc: jsPDF): void {
+export async function addFontToPdf(doc: jsPDF): Promise<void> {
   try {
     if (!isVazirFontAdded) {
-      // اضافه کردن فونت وزیر
-      doc.addFileToVFS('Vazir.ttf', VAZIR_FONT_BASE64.split(',')[1]);
-      doc.addFont('Vazir.ttf', 'Vazir', 'normal');
+      console.log("در حال اضافه کردن فونت وزیر به PDF...");
+      
+      // دریافت فونت کامل
+      const fontData = await loadVazirFont();
+      
+      // اضافه کردن فونت وزیر به jsPDF
+      doc.addFileToVFS('Vazir-Regular.ttf', fontData);
+      doc.addFont('Vazir-Regular.ttf', 'Vazir', 'normal');
+      
       isVazirFontAdded = true;
       console.log("فونت وزیر با موفقیت اضافه شد");
     }
@@ -103,19 +135,4 @@ export function toPersianDigits(text: string | number): string {
   
   const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
   return String(text).replace(/\d/g, match => persianDigits[parseInt(match)]);
-}
-
-// اضافه کردن فونت وزیر کامل
-export async function loadVazirFont(): Promise<string> {
-  try {
-    // در اینجا می‌توان فونت کامل وزیر را از CDN دریافت کرد
-    const response = await fetch('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf');
-    const fontArrayBuffer = await response.arrayBuffer();
-    const fontBase64 = btoa(String.fromCharCode(...new Uint8Array(fontArrayBuffer)));
-    return fontBase64;
-  } catch (error) {
-    console.error("خطا در بارگیری فونت وزیر:", error);
-    // بازگشت به فونت پیش‌فرض
-    return VAZIR_FONT_BASE64.split(',')[1];
-  }
 }

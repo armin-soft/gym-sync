@@ -35,7 +35,7 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
   return new Promise(async (resolve, reject) => {
     try {
       // ایجاد یک سند PDF جدید با پشتیبانی RTL
-      const doc = setupPdfDocument();
+      const doc = await setupPdfDocument();
       
       console.log("در حال ایجاد پیش‌نمایش PDF");
       
@@ -48,7 +48,7 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
       console.log("شاگرد:", student.name);
       
       // اطلاعات عمومی فقط در صفحه اول نمایش داده می‌شود
-      createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
+      await createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
       
       // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار بخش
       await createExerciseProgram(doc, student, trainerProfile, false);
@@ -76,7 +76,7 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
   return new Promise(async (resolve, reject) => {
     try {
       // ایجاد یک سند PDF جدید با پشتیبانی RTL
-      const doc = setupPdfDocument();
+      const doc = await setupPdfDocument();
       
       console.log("در حال ایجاد سند PDF");
       
@@ -89,7 +89,7 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
       console.log("شاگرد:", student.name);
       
       // اطلاعات عمومی فقط در صفحه اول نمایش داده می‌شود
-      createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
+      await createDocumentHeader(doc, student, trainerProfile, "برنامه جامع");
       
       // صفحه 1: برنامه تمرینی به صورت یک صفحه با چهار بخش
       await createExerciseProgram(doc, student, trainerProfile, false);

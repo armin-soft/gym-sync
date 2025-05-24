@@ -1,3 +1,4 @@
+
 import jsPDF from 'jspdf';
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
@@ -34,10 +35,10 @@ async function getAppVersion(): Promise<string> {
 }
 
 // ایجاد هدر برای هر صفحه
-export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, pageTitle: string) {
+export async function createDocumentHeader(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, pageTitle: string) {
   try {
     // اطمینان از اضافه شدن فونت وزیر
-    addFontToPdf(doc);
+    await addFontToPdf(doc);
     
     // پس‌زمینه برای هدر - جلوه گرادیان
     doc.setFillColor(124, 58, 237); // رنگ اصلی
@@ -125,7 +126,7 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
 export async function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) {
   try {
     // اطمینان از استفاده از فونت وزیر
-    addFontToPdf(doc);
+    await addFontToPdf(doc);
     
     const pageCount = doc.getNumberOfPages();
     const currentPage = doc.getCurrentPageInfo().pageNumber;

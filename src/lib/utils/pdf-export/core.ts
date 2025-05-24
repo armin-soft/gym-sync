@@ -21,7 +21,7 @@ export const PDF_OPTIONS: PDFOptions = {
 };
 
 // Setup PDF with appropriate fonts and RTL support
-export function setupPdfDocument(): jsPDF {
+export async function setupPdfDocument(): Promise<jsPDF> {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -34,7 +34,7 @@ export function setupPdfDocument(): jsPDF {
   
   try {
     // Setup Persian font support and RTL mode
-    addFontToPdf(doc);
+    await addFontToPdf(doc);
     
     // تنظیمات اضافی برای بهبود نمایش فارسی
     doc.setR2L(true);
