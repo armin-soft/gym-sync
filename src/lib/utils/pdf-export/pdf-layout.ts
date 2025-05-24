@@ -40,8 +40,6 @@ export async function createDocumentHeader(doc: jsPDF, student: Student, trainer
     // اطمینان از اضافه شدن فونت وزیر
     await addFontToPdf(doc);
     
-    console.log("در حال ایجاد هدر سند با فونت فارسی...");
-    
     // پس‌زمینه برای هدر - جلوه گرادیان
     doc.setFillColor(124, 58, 237); // رنگ اصلی
     doc.rect(0, 0, 210, 50, 'F');
@@ -51,7 +49,6 @@ export async function createDocumentHeader(doc: jsPDF, student: Student, trainer
     // افزودن لوگو/نام باشگاه
     doc.setFontSize(22);
     doc.setTextColor(255, 255, 255);
-    doc.setFont("Vazir", "normal");
     writeRTLText(doc, trainerProfile.gymName || "باشگاه بدنسازی", 105, 20, { align: 'center' });
     
     // افزودن نام مربی
@@ -120,8 +117,6 @@ export async function createDocumentHeader(doc: jsPDF, student: Student, trainer
         }
       }
     }
-    
-    console.log("هدر سند با موفقیت ایجاد شد");
   } catch (error) {
     console.error("خطا در ایجاد هدر سند:", error);
   }
@@ -144,7 +139,6 @@ export async function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) 
     // افزودن شماره صفحه با استایل مدرن
     doc.setFontSize(10);
     doc.setTextColor(124, 58, 237);
-    doc.setFont("Vazir", "normal");
     
     // نشانگر شماره صفحه
     doc.setFillColor(124, 58, 237, 0.1);

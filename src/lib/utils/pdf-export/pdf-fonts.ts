@@ -4,9 +4,6 @@ import jsPDF from 'jspdf';
 let isVazirFontAdded = false;
 let vazirFontData: string | null = null;
 
-// فونت وزیر به صورت Base64 - نسخه کامل
-const VAZIR_FONT_BASE64 = `AAEAAAAOAIAAAwBgT1MvMj3hSQEAAADsAAAAVmNtYXDOXM6wAAABRAAAAUpjdnQgBkFGRgAAApAAAAA+ZnBnbXf4YKkAAALQAAABbGdhc3D//wADAAAEPAAAAAhnbHlmw7qUQQAABEQAAAOIaGVhZAUl3i0AAAXMAAAANmhoZWEHsgSNAAAGBAAAACRobXR4GAsE+gAABigAAAAkbG9jYQLwBJoAAAZMAAAAFG1heHABHQC4AAAGYAAAACBuYW1l9xr0tgAABoAAAAJlcG9zdAAbAJkAAAjoAAAAFgABAAAAAQAACKpjOl8PPPUACwGNAAAAANZ0L+oAAAAA1nQv6gAA/4ABjQGNAAAACAACAAAAAAAAAAEAAAGN/4AAAAGN//8AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAQAAQAAABAAAAAAAQAAAACAASAAAQACAAIABABBQAFAP8A/wGNAAAAAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAA==`;
-
 // دریافت فونت وزیر کامل از CDN
 export async function loadVazirFont(): Promise<string> {
   if (vazirFontData) {
@@ -15,53 +12,22 @@ export async function loadVazirFont(): Promise<string> {
   
   try {
     console.log("در حال دریافت فونت وزیر از CDN...");
+    const response = await fetch('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf');
     
-    // تلاش برای دریافت فونت از چندین منبع CDN
-    const fontSources = [
-      'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
-      'https://raw.githubusercontent.com/rastikerdar/vazir-font/master/dist/Vazir-Regular.ttf',
-      'https://fonts.gstatic.com/s/vazirmatn/v13/Dxx78j6PP2D_kU2muijPEe1n2vVbfJRklWgyOReZ5jDu8iNu.ttf'
-    ];
-    
-    let fontArrayBuffer: ArrayBuffer | null = null;
-    
-    for (const fontUrl of fontSources) {
-      try {
-        console.log(`تلاش برای دریافت فونت از: ${fontUrl}`);
-        const response = await fetch(fontUrl, {
-          mode: 'cors',
-          headers: {
-            'Accept': 'application/font-ttf, font/ttf, */*'
-          }
-        });
-        
-        if (response.ok) {
-          fontArrayBuffer = await response.arrayBuffer();
-          console.log(`فونت با موفقیت از ${fontUrl} دریافت شد`);
-          break;
-        }
-      } catch (error) {
-        console.warn(`خطا در دریافت فونت از ${fontUrl}:`, error);
-        continue;
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    if (fontArrayBuffer) {
-      // تبدیل به Base64
-      const fontBytes = new Uint8Array(fontArrayBuffer);
-      vazirFontData = btoa(String.fromCharCode.apply(null, Array.from(fontBytes)));
-      console.log("فونت وزیر با موفقیت به Base64 تبدیل شد");
-      return vazirFontData;
-    } else {
-      throw new Error("امکان دریافت فونت از هیچ منبعی وجود نداشت");
-    }
+    const fontArrayBuffer = await response.arrayBuffer();
+    vazirFontData = btoa(String.fromCharCode(...new Uint8Array(fontArrayBuffer)));
     
+    console.log("فونت وزیر با موفقیت دریافت شد");
+    return vazirFontData;
   } catch (error) {
     console.error("خطا در دریافت فونت وزیر:", error);
     
-    // استفاده از فونت Base64 پیش‌فرض
-    console.log("استفاده از فونت پیش‌فرض Base64");
-    vazirFontData = VAZIR_FONT_BASE64;
+    // بازگشت به فونت پیش‌فرض ساده
+    vazirFontData = "AAEAAAAOAIAAAwBgT1MvMj3hSQEAAADsAAAAVmNtYXDOXM6wAAABRAAAAUpjdnQgBkFGRgAAApAAAAA+ZnBnbXf4YKkAAALQAAABbGdhc3D//wADAAAEPAAAAAhnbHlmw7qUQQAABEQAAAOIaGVhZAUl3i0AAAXMAAAANmhoZWEHsgSNAAAGBAAAACRobXR4GAsE+gAABigAAAAkbG9jYQLwBJoAAAZMAAAAFG1heHABHQC4AAAGYAAAACBuYW1l9xr0tgAABoAAAAJlcG9zdAAbAJkAAAjoAAAAFgABAAAAAQAACKpjOl8PPPUACwGNAAAAANZ0L+oAAAAA1nQv6gAA/4ABjQGNAAAACAACAAAAAAAAAAEAAAGN/4AAAAGN//8AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAQAAQAAABAAAAAAAQAAAACAASAAAQACAAIABABBQAFAP8A/wGNAAAAAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAAEAAgABAAEAAgABAAEAAAABAAAAAAAAAAEAAAABAAAAAA==";
     return vazirFontData;
   }
 }
@@ -86,10 +52,7 @@ export async function addFontToPdf(doc: jsPDF): Promise<void> {
     // استفاده از فونت وزیر
     doc.setFont("Vazir", "normal");
     doc.setFontSize(12);
-    
-    // تنظیم RTL برای نمایش صحیح فارسی
     doc.setR2L(true);
-    doc.setCharSpace(0.1);
     
     console.log("تنظیمات فونت فارسی با موفقیت انجام شد");
   } catch (error) {
@@ -105,7 +68,7 @@ export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, opt
   try {
     if (!text) return;
     
-    // پیش‌پردازش متن فارسی
+    // تبدیل متن فارسی به فرمت قابل نمایش
     const processedText = preprocessPersianText(text);
     
     // ذخیره وضعیت قبلی
@@ -123,7 +86,6 @@ export function writeRTLText(doc: jsPDF, text: string, x: number, y: number, opt
     const defaultOptions = { 
       align: 'right',
       direction: 'rtl',
-      charSpace: 0.1,
       ...options 
     };
     
@@ -151,18 +113,14 @@ function preprocessPersianText(text: string): string {
     // تبدیل اعداد انگلیسی به فارسی
     let processedText = toPersianDigits(text);
     
-    // نرمال‌سازی متن برای حل مشکلات encoding
-    processedText = processedText.normalize('NFC');
+    // حل مشکل encoding برای کاراکترهای فارسی
+    processedText = processedText.normalize('NFKC');
     
-    // تبدیل کاراکترهای عربی به فارسی
+    // تبدیل کاراکترهای مشکل‌ساز
     processedText = processedText
-      .replace(/ي/g, 'ی')  // ی عربی به فارسی
-      .replace(/ك/g, 'ک')  // ک عربی به فارسی
-      .replace(/‌/g, ' ')   // تبدیل نیم‌فاصله به فاصله
-      .replace(/ء/g, 'ٔ')   // همزه
-      .replace(/ؤ/g, 'ؤ')  // واو همزه‌دار
-      .replace(/ئ/g, 'یٔ')  // یای همزه‌دار
-      .replace(/أ/g, 'أ'); // الف همزه‌دار
+      .replace(/ی/g, 'ی')
+      .replace(/ک/g, 'ک')
+      .replace(/‌/g, ' '); // تبدیل نیم‌فاصله به فاصله
     
     return processedText;
   } catch (error) {
