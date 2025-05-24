@@ -14,7 +14,7 @@ export async function createDietPlan(doc: jsPDF, student: Student, trainerProfil
   let yPos = showHeader ? 120 : 20;
   
   // Add section header
-  yPos = createSectionHeader(doc, "برنامه غذایی هفتگی", yPos, [39, 174, 96]);
+  yPos = await createSectionHeader(doc, "برنامه غذایی هفتگی", yPos, [39, 174, 96]);
   
   // Process each day's meal plan in a single page layout
   for (let day = 1; day <= 7; day++) {
@@ -69,7 +69,7 @@ export async function createDietPlan(doc: jsPDF, student: Student, trainerProfil
   // Add notes if available with modern styling
   if (student.mealNotes) {
     // Create notes section with styled header
-    yPos = createSectionHeader(doc, "نکات تغذیه‌ای", yPos, [39, 174, 96]);
+    yPos = await createSectionHeader(doc, "نکات تغذیه‌ای", yPos, [39, 174, 96]);
     
     // Add styled notes box
     doc.setFillColor(240, 250, 240);

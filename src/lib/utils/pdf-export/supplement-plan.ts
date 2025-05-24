@@ -13,7 +13,7 @@ export async function createSupplementPlan(doc: jsPDF, student: Student, trainer
   let yPos = showHeader ? 120 : 20;
   
   // Add section header
-  yPos = createSectionHeader(doc, "برنامه مکمل و ویتامین", yPos, [230, 126, 34]);
+  yPos = await createSectionHeader(doc, "برنامه مکمل و ویتامین", yPos, [230, 126, 34]);
   
   // Define grid layout for supplements and vitamins
   const gridWidth = 85;
@@ -97,7 +97,7 @@ export async function createSupplementPlan(doc: jsPDF, student: Student, trainer
   // Add any additional notes with modern styling
   if (student.supplementNotes) {
     // Create notes section with styled header
-    yPos = createSectionHeader(doc, "نکات مصرف مکمل", yPos, [230, 126, 34]);
+    yPos = await createSectionHeader(doc, "نکات مصرف مکمل", yPos, [230, 126, 34]);
     
     // Add styled notes box
     doc.setFillColor(253, 242, 233);

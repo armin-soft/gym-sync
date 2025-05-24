@@ -14,7 +14,7 @@ export async function createExerciseProgram(doc: jsPDF, student: Student, traine
   let yPos = showHeader ? 120 : 20;
   
   // Add program introduction
-  yPos = createSectionHeader(doc, "برنامه تمرینی هفتگی", yPos, [124, 58, 237]);
+  yPos = await createSectionHeader(doc, "برنامه تمرینی هفتگی", yPos, [124, 58, 237]);
   
   // Calculate number of exercise days (max 5)
   const totalDays = 5;
@@ -104,7 +104,7 @@ export async function createExerciseProgram(doc: jsPDF, student: Student, traine
   // Add notes if available with modern styling
   if (student.notes) {
     // Create notes section with styled header
-    yPos = createSectionHeader(doc, "نکات تمرینی", yPos, [124, 58, 237]);
+    yPos = await createSectionHeader(doc, "نکات تمرینی", yPos, [124, 58, 237]);
     
     // Add styled notes box
     doc.setFillColor(248, 246, 255);
