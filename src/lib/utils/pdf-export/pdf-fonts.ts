@@ -4,8 +4,8 @@ import jsPDF from 'jspdf';
 // برای پشتیبانی از فونت فارسی در PDF
 export function addFontToPdf(doc: jsPDF): void {
   try {
-    // تنظیم فونت Vazir برای متن فارسی
-    doc.setFont("Vazir", "normal");
+    // استفاده از فونت‌های پیش‌فرض که از یونیکد پشتیبانی می‌کنند
+    doc.setFont("helvetica", "normal");
     
     // تنظیم جهت متن راست به چپ
     doc.setR2L(true);
@@ -16,11 +16,11 @@ export function addFontToPdf(doc: jsPDF): void {
     // تضمین اینکه تراز متن برای زبان‌های RTL به صورت پیش‌فرض راست است
     doc.setTextColor(0, 0, 0);
     
-    console.log("تنظیمات فونت فارسی Vazir با موفقیت انجام شد");
+    console.log("تنظیمات فونت فارسی با موفقیت انجام شد");
   } catch (error) {
     console.error("خطا در تنظیم فونت فارسی:", error);
     // بازگشت به فونت پیش‌فرض در صورت خرابی
-    doc.setFont("Helvetica", "normal");
+    doc.setFont("helvetica", "normal");
     doc.setR2L(true);
   }
 }
@@ -68,6 +68,12 @@ function preprocessPersianText(text: string): string {
     
     // حل مشکل encoding برای کاراکترهای فارسی
     processedText = processedText.normalize('NFKC');
+    
+    // تبدیل کاراکترهای مشکل‌ساز
+    processedText = processedText
+      .replace(/ی/g, 'ی')
+      .replace(/ک/g, 'ک')
+      .replace(/‌/g, ' '); // تبدیل نیم‌فاصله به فاصله
     
     return processedText;
   } catch (error) {
