@@ -100,8 +100,12 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     content.push(createSectionHeader("نکات تغذیه‌ای", '#27ae60'));
     content.push({
       text: preprocessPersianText(student.mealNotes),
-      style: 'notes',
-      direction: 'rtl'
+      style: {
+        fontSize: 11,
+        alignment: 'right',
+        margin: [0, 10, 0, 0],
+        direction: 'rtl'
+      }
     });
   }
   

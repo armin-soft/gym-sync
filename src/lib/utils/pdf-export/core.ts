@@ -12,6 +12,8 @@ const persianFonts = {
   Vazir: {
     normal: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
     bold: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf',
+    italics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf', // اضافه کردن استایل italics با همان فونت عادی
+    bolditalics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf' // اضافه کردن استایل bolditalics با همان فونت بولد
   }
 };
 
@@ -72,7 +74,7 @@ export function createPdfDocument(content: any[]): any {
       },
       notes: {
         fontSize: 11,
-        italics: true,
+        italics: false, // تغییر از italics به false برای جلوگیری از استفاده از استایل italics
         alignment: 'right',
         margin: [0, 10, 0, 0],
         direction: 'rtl'

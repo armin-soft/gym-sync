@@ -1,4 +1,3 @@
-
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
@@ -140,9 +139,11 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   if (Object.values(dailySupplements).flat().length === 0 && Object.values(dailyVitamins).flat().length === 0) {
     content.push({
       text: 'برنامه مکمل و ویتامین تعیین نشده است.',
-      style: 'notes',
-      alignment: 'center',
-      direction: 'rtl'
+      style: {
+        fontSize: 11,
+        alignment: 'center',
+        direction: 'rtl'
+      }
     });
   }
   
@@ -151,8 +152,12 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
     content.push(createSectionHeader("نکات مصرف مکمل", '#e67e22'));
     content.push({
       text: preprocessPersianText(student.supplementNotes),
-      style: 'notes',
-      direction: 'rtl'
+      style: {
+        fontSize: 11,
+        alignment: 'right',
+        margin: [0, 10, 0, 0],
+        direction: 'rtl'
+      }
     });
   }
   

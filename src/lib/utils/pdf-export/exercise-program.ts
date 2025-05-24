@@ -1,4 +1,3 @@
-
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
@@ -87,8 +86,12 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     content.push(createSectionHeader("نکات تمرینی", '#7c3aed'));
     content.push({
       text: preprocessPersianText(student.notes),
-      style: 'notes',
-      direction: 'rtl'
+      style: {
+        fontSize: 11,
+        alignment: 'right',
+        margin: [0, 10, 0, 0],
+        direction: 'rtl'
+      }
     });
   }
   
