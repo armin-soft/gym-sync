@@ -1,10 +1,9 @@
-
 import jsPDF from 'jspdf';
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
 import { toPersianNumbers } from '../numbers';
 import { getCurrentPersianDate } from '../persianDate';
-import { writeRTLText, toPersianDigits } from './pdf-fonts';
+import { writeRTLText, toPersianDigits, addFontToPdf } from './pdf-fonts';
 
 // دریافت نسخه از Manifest.json
 async function getAppVersion(): Promise<string> {
@@ -37,6 +36,9 @@ async function getAppVersion(): Promise<string> {
 // ایجاد هدر برای هر صفحه
 export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfile: TrainerProfile, pageTitle: string) {
   try {
+    // اطمینان از اضافه شدن فونت وزیر
+    addFontToPdf(doc);
+    
     // پس‌زمینه برای هدر - جلوه گرادیان
     doc.setFillColor(124, 58, 237); // رنگ اصلی
     doc.rect(0, 0, 210, 50, 'F');
@@ -122,6 +124,9 @@ export function createDocumentHeader(doc: jsPDF, student: Student, trainerProfil
 // افزودن پاورقی به هر صفحه
 export async function addPageFooter(doc: jsPDF, trainerProfile: TrainerProfile) {
   try {
+    // اطمینان از استفاده از فونت وزیر
+    addFontToPdf(doc);
+    
     const pageCount = doc.getNumberOfPages();
     const currentPage = doc.getCurrentPageInfo().pageNumber;
     const appVersion = await getAppVersion();
