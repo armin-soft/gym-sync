@@ -1,15 +1,14 @@
-
 import React, { useState } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu, Printer, FileText } from "lucide-react";
+import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu, Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
 import { useToast } from "@/hooks/use-toast";
-import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { exportStudentProgramToHtml } from "@/lib/utils/pdf-export";
 import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 interface StudentTableRowProps {
@@ -41,7 +40,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
     setIsPreviewOpen(true);
   };
 
-  // اضافه کردن تابع برای صدور برنامه به صورت PDF
+  // اضافه کردن تابع برای صدور برنامه به صورت HTML
   const handleExportProgramClick = () => {
     toast({
       title: "در حال آماده سازی برنامه",
@@ -49,11 +48,11 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
     });
     
     setTimeout(() => {
-      exportStudentProgramToPdf(student)
+      exportStudentProgramToHtml(student)
         .then(() => {
           toast({
             title: "صدور برنامه انجام شد",
-            description: "برنامه با موفقیت به صورت PDF صادر شد",
+            description: "برنامه با موفقیت به صورت HTML صادر شد",
           });
         })
         .catch((error) => {
@@ -142,8 +141,8 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
                 پیش‌نمایش
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleExportProgramClick} className="cursor-pointer">
-                <Printer className="h-3.5 w-3.5 mr-2" />
-                صدور برنامه
+                <Download className="h-3.5 w-3.5 mr-2" />
+                دانلود برنامه
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onDelete(student.id)} className="cursor-pointer text-red-600 dark:text-red-400">
                 <Trash2 className="h-3.5 w-3.5 mr-2" />
@@ -180,8 +179,8 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
               className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/20 dark:hover:text-green-400 transition-colors"
               onClick={handleExportProgramClick}
             >
-              <Printer className="h-3.5 w-3.5" />
-              <span>صدور</span>
+              <Download className="h-3.5 w-3.5" />
+              <span>دانلود</span>
             </Button>
             
             {onEdit && (

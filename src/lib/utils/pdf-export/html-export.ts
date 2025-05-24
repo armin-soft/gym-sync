@@ -1,10 +1,17 @@
 
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
-import { toPersianDigits } from './pdf-fonts';
 import { getDayName } from '@/lib/utils';
 import { getExerciseName, getMealName, getMealType, getSupplementName } from './data-helpers';
 import { createHTMLTemplate } from './html-template';
+
+// تبدیل اعداد انگلیسی به فارسی
+function toPersianDigits(text: string | number): string {
+  if (text === undefined || text === null) return '';
+  
+  const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  return String(text).replace(/\d/g, match => persianDigits[parseInt(match)]);
+}
 
 // تولید HTML برای پیش‌نمایش و صدور
 export const generateHTMLExport = (student: Student): string => {
@@ -106,8 +113,8 @@ export const generateHTMLExport = (student: Student): string => {
         supplements.push({
           index: supplementIndex,
           name: supplementName,
-          dosage: '1 عدد', // می‌توان از داده واقعی استفاده کرد
-          timing: 'بعد از تمرین' // می‌توان از داده واقعی استفاده کرد
+          dosage: '1 عدد',
+          timing: 'بعد از تمرین'
         });
         
         supplementIndex++;
@@ -122,8 +129,8 @@ export const generateHTMLExport = (student: Student): string => {
         supplements.push({
           index: supplementIndex,
           name: vitaminName,
-          dosage: '1 عدد', // می‌توان از داده واقعی استفاده کرد
-          timing: 'صبح' // می‌توان از داده واقعی استفاده کرد
+          dosage: '1 عدد',
+          timing: 'صبح'
         });
         
         supplementIndex++;
