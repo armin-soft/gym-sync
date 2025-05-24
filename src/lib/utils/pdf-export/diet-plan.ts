@@ -2,8 +2,21 @@
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
-import { getDayName } from '@/lib/utils';
 import { getMealName, getMealType } from './data-helpers';
+
+// تابع دریافت نام روز برای برنامه غذایی (شنبه تا جمعه)
+function getDietDayName(day: number): string {
+  const dayNames: Record<number, string> = {
+    1: 'شنبه',
+    2: 'یکشنبه', 
+    3: 'دوشنبه',
+    4: 'سه شنبه',
+    5: 'چهارشنبه',
+    6: 'پنج شنبه',
+    7: 'جمعه'
+  };
+  return dayNames[day] || `روز ${day}`;
+}
 
 // ایجاد برنامه غذایی با ترتیب ستون‌های جدید
 export function createDietPlan(student: Student, trainerProfile: TrainerProfile): any[] {
@@ -22,7 +35,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   let hasAnyMeal = false;
   let rowNumber = 1;
   
-  // برای هر روز هفته (1-7 به جای 1-5)
+  // برای هر روز هفته (1-7)
   for (let day = 1; day <= 7; day++) {
     const dayKey = `mealsDay${day}` as keyof Student;
     const meals = student[dayKey] as number[] || [];
@@ -31,7 +44,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     
     if (meals && meals.length > 0) {
       hasAnyMeal = true;
-      const dayName = getDayName(day);
+      const dayName = getDietDayName(day);
       
       meals.forEach((mealId) => {
         const mealName = getMealName(mealId);

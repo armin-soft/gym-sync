@@ -2,8 +2,19 @@
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
-import { getDayName } from '@/lib/utils';
 import { getExerciseName } from './data-helpers';
+
+// تابع دریافت نام روز برای برنامه تمرینی (روز اول تا روز پنجم)
+function getExerciseDayName(day: number): string {
+  const dayNames: Record<number, string> = {
+    1: 'روز اول',
+    2: 'روز دوم', 
+    3: 'روز سوم',
+    4: 'روز چهارم',
+    5: 'روز پنجم'
+  };
+  return dayNames[day] || `روز ${day}`;
+}
 
 // ایجاد برنامه تمرینی با ترتیب ستون‌های جدید
 export function createExerciseProgram(student: Student, trainerProfile: TrainerProfile): any[] {
@@ -36,7 +47,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     console.log(`بررسی روز ${day}: ${dayKey}`, exercises);
     
     if (exercises && exercises.length > 0) {
-      const dayName = getDayName(day);
+      const dayName = getExerciseDayName(day);
       
       exercises.forEach((exerciseId) => {
         const exerciseName = getExerciseName(exerciseId);
