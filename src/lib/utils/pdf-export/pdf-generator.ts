@@ -1,5 +1,5 @@
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { vfs } from 'pdfmake/build/vfs_fonts';
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
@@ -7,7 +7,7 @@ import { getDayName } from '@/lib/utils';
 import { getExerciseName, getMealName, getMealType, getSupplementName } from './data-helpers';
 
 // تنظیم فونت‌ها
-pdfMake.vfs = pdfFonts.vfs;
+pdfMake.vfs = vfs;
 
 // تولید PDF با طراحی مشابه HTML
 export const generateStudentProgramPDF = async (student: Student): Promise<void> => {
