@@ -91,8 +91,8 @@ function preprocessPersianText(text: string): string {
     // حل مشکل encoding برای کاراکترهای فارسی
     processedText = processedText.normalize('NFKC');
     
-    // تصحیح ترتیب کاراکترها برای RTL
-    processedText = correctPersianTextDirection(processedText);
+    // حذف تابع معکوس کردن متن که باعث مشکل می‌شد
+    // بجای آن از پشتیبانی داخلی jsPDF برای RTL استفاده می‌کنیم
     
     return processedText;
   } catch (error) {
@@ -107,15 +107,4 @@ export function toPersianDigits(text: string | number): string {
   
   const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
   return String(text).replace(/\d/g, match => persianDigits[parseInt(match)]);
-}
-
-// تصحیح جهت متن فارسی
-function correctPersianTextDirection(text: string): string {
-  try {
-    // اعمال Bidi algorithm برای متن‌های مخلوط فارسی-انگلیسی
-    return text.split('').reverse().join('');
-  } catch (error) {
-    console.error("خطا در تصحیح جهت متن:", error);
-    return text;
-  }
 }
