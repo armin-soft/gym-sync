@@ -7,6 +7,7 @@ import { createExerciseProgram } from './exercise-program';
 import { createDietPlan } from './diet-plan';
 import { createSupplementPlan } from './supplement-plan';
 import { getCurrentPersianDate } from '../persianDate';
+import { generateHTMLExport, exportStudentProgramToHTML } from './html-export';
 
 // تولید پیش‌نمایش PDF
 export const previewStudentProgramPDF = async (student: Student): Promise<string> => {
@@ -49,6 +50,16 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
     
   } catch (error) {
     console.error("خطا در ایجاد پیش‌نمایش PDF:", error);
+    throw error;
+  }
+};
+
+// تولید پیش‌نمایش HTML
+export const previewStudentProgramHTML = (student: Student): string => {
+  try {
+    return generateHTMLExport(student);
+  } catch (error) {
+    console.error("خطا در ایجاد پیش‌نمایش HTML:", error);
     throw error;
   }
 };
@@ -106,3 +117,4 @@ export const exportStudentProgramToPdf = async (student: Student): Promise<void>
 export * from './types';
 export * from './core';
 export * from './data-helpers';
+export * from './html-export';
