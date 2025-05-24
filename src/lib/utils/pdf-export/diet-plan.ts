@@ -38,7 +38,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
         const mealType = getMealType(mealId) || 'نامشخص';
         
         tableData.push([
-          { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
           { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
           { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
           { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
@@ -57,7 +57,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       const mealType = getMealType(mealId) || 'نامشخص';
       
       tableData.push([
-        { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
         { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
         { text: preprocessPersianText(mealType), style: 'tableCell', direction: 'rtl' },
         { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }

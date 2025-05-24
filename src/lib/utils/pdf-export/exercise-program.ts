@@ -45,7 +45,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         const repInfo = reps[exerciseId] || '-';
         
         tableData.push([
-          { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
           { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
           { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
           { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
@@ -69,7 +69,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
       const repInfo = reps[exerciseId] || '-';
       
       tableData.push([
-        { text: toPersianDigits(rowNumber), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
         { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
         { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
         { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
