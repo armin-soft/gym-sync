@@ -33,9 +33,9 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const suppType = getSupplementType(suppId) || '-';
       
       supplementsData.push([
-        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
+        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
         { text: preprocessPersianText(suppName), style: 'tableCell' },
-        { text: preprocessPersianText(suppType), style: 'tableCell', alignment: 'center' }
+        { text: preprocessPersianText(suppType), style: 'tableCell', alignment: 'center' as const }
       ]);
     });
     
@@ -70,9 +70,9 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       const vitaminType = getSupplementType(vitaminId) || '-';
       
       vitaminsData.push([
-        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
+        { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
         { text: preprocessPersianText(vitaminName), style: 'tableCell' },
-        { text: preprocessPersianText(vitaminType), style: 'tableCell', alignment: 'center' }
+        { text: preprocessPersianText(vitaminType), style: 'tableCell', alignment: 'center' as const }
       ]);
     });
     

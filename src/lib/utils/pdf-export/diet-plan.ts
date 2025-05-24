@@ -42,9 +42,9 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
         const mealType = getMealType(mealId) || '-';
         
         tableData.push([
-          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
+          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
           { text: preprocessPersianText(mealName), style: 'tableCell' },
-          { text: preprocessPersianText(mealType), style: 'tableCell', alignment: 'center' }
+          { text: preprocessPersianText(mealType), style: 'tableCell', alignment: 'center' as const }
         ]);
       });
       

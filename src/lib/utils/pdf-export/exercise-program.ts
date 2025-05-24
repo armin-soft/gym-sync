@@ -48,10 +48,10 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         const repInfo = reps[exerciseId] || '-';
         
         tableData.push([
-          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' },
+          { text: toPersianDigits(index + 1), style: 'tableCell', alignment: 'center' as const },
           { text: preprocessPersianText(exerciseName), style: 'tableCell' },
-          { text: setCount, style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center' }
+          { text: setCount, style: 'tableCell', alignment: 'center' as const },
+          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center' as const }
         ]);
       });
       
