@@ -1,0 +1,77 @@
+
+/* تنظیمات لایوت */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body, #root {
+    @apply h-full w-full overflow-hidden;
+  }
+
+  /* تنظیمات جداول */
+  table {
+    direction: rtl;
+    @apply w-full text-xs sm:text-sm md:text-base border-collapse;
+  }
+
+  th {
+    @apply font-semibold text-right p-2 sm:p-3 border-b;
+  }
+
+  td {
+    @apply p-2 sm:p-3 border-b;
+  }
+
+  /* تنظیمات کارت‌ها */
+  .card {
+    @apply bg-card text-card-foreground rounded-lg border shadow-sm w-full;
+  }
+
+  /* تنظیمات گرید و فلکس */
+  .grid {
+    @apply gap-2 sm:gap-4 md:gap-6 lg:gap-8;
+  }
+
+  .flex {
+    direction: rtl;
+  }
+
+  /* تنظیمات فاصله‌گذاری */
+  .section {
+    @apply py-4 sm:py-6 md:py-8 lg:py-12;
+  }
+}
+
+@layer components {
+  /* تنظیمات باکس‌ها */
+  .container {
+    @apply px-2 xs:px-3 sm:px-4 md:px-6 mx-auto h-full w-full;
+  }
+
+  /* کامپوننت‌های پاسخگو */
+  .responsive-container {
+    @apply container mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 w-full h-full;
+  }
+
+  .responsive-grid {
+    @apply grid gap-2 xs:gap-3 sm:gap-4 md:gap-6 lg:gap-8;
+  }
+
+  .responsive-flex {
+    @apply flex flex-col xs:flex-row;
+  }
+
+  /* تمام صفحه */
+  .full-page {
+    @apply min-h-screen h-full w-full;
+  }
+  
+  .full-container {
+    @apply h-full w-full flex flex-col;
+  }
+  
+  .full-content {
+    @apply flex-1 overflow-auto;
+  }
+}
