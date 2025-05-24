@@ -1,6 +1,17 @@
 
 import { Student } from '@/components/students/StudentTypes';
+import { generateStudentProgramPDF } from './pdf-generator';
 import { generateHTMLExport, exportStudentProgramToHTML } from './html-export';
+
+// تولید و دانلود PDF
+export const exportStudentProgramToPdf = async (student: Student): Promise<void> => {
+  try {
+    await generateStudentProgramPDF(student);
+  } catch (error) {
+    console.error("خطا در صدور PDF:", error);
+    throw error;
+  }
+};
 
 // تولید پیش‌نمایش HTML
 export const previewStudentProgramHTML = (student: Student): string => {
@@ -26,3 +37,4 @@ export const exportStudentProgramToHtml = async (student: Student): Promise<void
 export * from './types';
 export * from './data-helpers';
 export * from './html-export';
+export * from './pdf-generator';
