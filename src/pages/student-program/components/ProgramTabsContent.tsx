@@ -14,7 +14,7 @@ interface ProgramTabsContentProps {
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[]) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
-  onShowPdfPreview?: () => void; // Added this prop to fix the TypeScript error
+  onShowPdfPreview?: () => void;
 }
 
 const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
