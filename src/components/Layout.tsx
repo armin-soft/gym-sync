@@ -7,19 +7,16 @@ import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-// برای جلوگیری از بارگذاری مجدد صفحه هنگام تغییر مسیرها
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-// استفاده از memo برای جلوگیری از رندرهای غیرضروری
 export const Layout = memo(({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const deviceInfo = useDeviceInfo();
   
-  // بارگذاری اطلاعات با محدودیت دفعات اجرا
   useEffect(() => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
@@ -32,20 +29,17 @@ export const Layout = memo(({ children }: LayoutProps) => {
     }
   }, []);
 
-  // استفاده از useRef برای ذخیره وضعیت اسکرول برای کارایی بهتر
   const scrollHandler = useRef(() => {
     const offset = window.scrollY;
     setScrolled(offset > 10);
   });
   
-  // جداسازی کد اسکرول برای کاهش رندرهای اضافی
   useEffect(() => {
     const currentHandler = scrollHandler.current;
     window.addEventListener('scroll', currentHandler, { passive: true });
     return () => window.removeEventListener('scroll', currentHandler);
   }, []);
   
-  // محاسبه استایل ها یکبار
   const headerHeight = deviceInfo.isMobile ? "h-10" : deviceInfo.isTablet ? "h-12" : "h-14";
   const headerPadding = deviceInfo.isMobile ? "px-1 xs:px-2" : deviceInfo.isTablet ? "px-2 sm:px-3" : "px-3 md:px-4 lg:px-6";
   const buttonSize = deviceInfo.isMobile ? "p-1" : deviceInfo.isTablet ? "p-1.5" : "p-2";
@@ -54,8 +48,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
   const titleSize = deviceInfo.isMobile ? "text-xs" : deviceInfo.isTablet ? "text-sm" : "text-base";
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
-      {/* اینجا Sidebar را فقط در صورت نیاز نمایش می‌دهیم */}
+    <div className="h-screen w-full overflow-hidden bg-background persian-numbers" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       
       <header 

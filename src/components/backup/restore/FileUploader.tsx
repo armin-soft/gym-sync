@@ -1,9 +1,8 @@
 
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Check, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Check, X } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface FileUploaderProps {
