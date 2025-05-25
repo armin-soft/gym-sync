@@ -9,7 +9,6 @@ import { ModernDietContentArea } from "@/components/diet/modern/ModernDietConten
 import { useDietState } from "@/components/diet/hooks";
 import { MealType, WeekDay } from "@/types/meal";
 
-// تعریف ثابت‌ها با اصلاح فضای خالی
 const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
@@ -30,7 +29,6 @@ const mealTypes: MealType[] = [
 ] as MealType[];
 
 const Index = () => {
-  // استفاده از هوک استخراج شده برای حالت رژیم غذایی
   const {
     meals,
     open,
@@ -49,76 +47,50 @@ const Index = () => {
     toggleSortOrder
   } = useDietState();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 24 }
-    }
-  };
+  console.log('Diet Index - Total meals:', meals.length);
+  console.log('Diet Index - Filtered meals:', filteredMeals.length);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-gray-950 dark:via-blue-950/20 dark:to-indigo-950/30" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-gray-950 dark:to-blue-950/20" dir="rtl">
       <PageContainer 
         withBackground={false}
         fullWidth 
         fullHeight 
         noPadding
-        className="flex flex-col overflow-hidden"
+        className="flex flex-col"
       >
         <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="h-full w-full overflow-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="h-full w-full p-6 space-y-6 max-w-7xl mx-auto"
         >
-          <div className="h-full w-full py-6 space-y-8 px-4 sm:px-6 md:px-8 max-w-[1800px] mx-auto">
-            
-            {/* سرصفحه مدرن */}
-            <motion.div variants={itemVariants}>
-              <ModernDietPageHeader onAddMeal={handleOpen} />
-            </motion.div>
-            
-            {/* کنترل‌های جستجو و مرتب‌سازی مدرن */}
-            <motion.div variants={itemVariants}>
-              <ModernSearchAndFilters
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                sortOrder={sortOrder}
-                onSortOrderChange={toggleSortOrder}
-                mealsCount={filteredMeals.length}
-              />
-            </motion.div>
-            
-            {/* محتوای اصلی مدرن */}
-            <motion.div variants={itemVariants} className="flex-1">
-              <ModernDietContentArea 
-                meals={filteredMeals}
-                mealTypes={mealTypes}
-                selectedDay={selectedDay}
-                sortOrder={sortOrder}
-                onDayChange={setSelectedDay}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            </motion.div>
-            
-          </div>
+          
+          {/* Header */}
+          <ModernDietPageHeader onAddMeal={handleOpen} />
+          
+          {/* Search and Filters */}
+          <ModernSearchAndFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortOrder={sortOrder}
+            onSortOrderChange={toggleSortOrder}
+            mealsCount={filteredMeals.length}
+          />
+          
+          {/* Content */}
+          <ModernDietContentArea 
+            meals={filteredMeals}
+            mealTypes={mealTypes}
+            selectedDay={selectedDay}
+            sortOrder={sortOrder}
+            onDayChange={setSelectedDay}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+          
         </motion.div>
         
-        {/* دیالوگ وعده غذایی */}
+        {/* Dialog */}
         <MealDialog
           open={open}
           onOpenChange={setOpen}

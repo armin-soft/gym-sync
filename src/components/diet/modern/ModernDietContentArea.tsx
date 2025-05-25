@@ -24,15 +24,16 @@ export const ModernDietContentArea = ({
   onEdit,
   onDelete,
 }: ModernDietContentAreaProps) => {
+  console.log('ModernDietContentArea - Received meals:', meals.length);
+  
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 rounded-3xl overflow-hidden shadow-2xl shadow-blue-500/10"
+      className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl overflow-hidden shadow-sm"
     >
-      <ScrollArea className="h-[calc(100vh-400px)] w-full">
-        <div className="p-8">
+      <ScrollArea className="h-[calc(100vh-300px)] w-full">
+        <div className="p-6">
           <ModernDayMeals
             meals={meals}
             mealTypes={mealTypes}
