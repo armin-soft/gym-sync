@@ -16,11 +16,11 @@ function getExerciseDayName(day: number): string {
   return dayNames[day] || `روز ${day}`;
 }
 
-// ایجاد برنامه تمرینی با ترتیب ستون‌های جدید
+// ایجاد برنامه تمرینی با ترتیب درست
 export function createExerciseProgram(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
-  // جدول با ترتیب: شماره، روز، ست، تکرار، نام تمرین
+  // جدول با ترتیب صحیح: شماره، روز، ست، تکرار، نام تمرین
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
       { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
@@ -58,8 +58,8 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
         // فقط اگر نام تمرین موجود باشد آن را اضافه کن
         if (exerciseName) {
           hasAnyExercise = true;
-          const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
-          const repInfo = reps[exerciseId] || '';
+          const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '۰';
+          const repInfo = reps[exerciseId] || '۰';
           
           allExerciseRows.push([
             { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
@@ -86,8 +86,8 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
       // فقط اگر نام تمرین موجود باشد آن را اضافه کن
       if (exerciseName) {
         hasAnyExercise = true;
-        const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
-        const repInfo = reps[exerciseId] || '';
+        const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '۰';
+        const repInfo = reps[exerciseId] || '۰';
         
         allExerciseRows.push([
           { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
@@ -102,7 +102,7 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     });
   }
   
-  // اضافه کردن ردیف‌ها به جدول (بدون تغییر ترتیب)
+  // اضافه کردن ردیف‌ها به جدول
   tableData.push(...allExerciseRows);
   
   if (hasAnyExercise) {

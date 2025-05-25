@@ -2,9 +2,9 @@
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
-import { getSupplementName, getSupplementType } from './data-helpers';
+import { getSupplementName } from './data-helpers';
 
-// ایجاد برنامه مکمل و ویتامین
+// ایجاد برنامه مکمل و ویتامین با اطلاعات کامل
 export function createSupplementPlan(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
@@ -26,57 +26,59 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   console.log('بررسی مکمل‌های شاگرد:', student.supplements);
   console.log('بررسی ویتامین‌های شاگرد:', student.vitamins);
   
+  // دریافت داده‌های مکمل‌ها از دیتابیس
+  const supplementsData = JSON.parse(localStorage.getItem('supplements') || '[]');
+  console.log('داده‌های مکمل از دیتابیس:', supplementsData);
+  
   // پردازش مکمل‌ها
   if (student.supplements && student.supplements.length > 0) {
     student.supplements.forEach((suppId) => {
-      hasAnyItem = true;
-      const name = getSupplementName(suppId) || `مکمل ناشناخته (${suppId})`;
-      
-      // دریافت اطلاعات دوز و زمان مصرف از دیتابیس
-      const supplementsData = JSON.parse(localStorage.getItem('supplements') || '[]');
       const supplementInfo = supplementsData.find((supp: any) => supp.id === suppId);
       
-      const dosage = supplementInfo?.dosage || '';
-      const timing = supplementInfo?.timing || '';
-      
-      allSupplementRows.push([
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'مکمل', style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
-      ]);
-      
-      rowNumber++;
+      if (supplementInfo) {
+        hasAnyItem = true;
+        const name = supplementInfo.name || `مکمل ناشناخته (${suppId})`;
+        const dosage = supplementInfo.dosage || 'نامشخص';
+        const timing = supplementInfo.timing || 'نامشخص';
+        
+        allSupplementRows.push([
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: 'مکمل', style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+        ]);
+        
+        rowNumber++;
+      }
     });
   }
   
   // پردازش ویتامین‌ها
   if (student.vitamins && student.vitamins.length > 0) {
     student.vitamins.forEach((vitaminId) => {
-      hasAnyItem = true;
-      const name = getSupplementName(vitaminId) || `ویتامین ناشناخته (${vitaminId})`;
-      
-      // دریافت اطلاعات دوز و زمان مصرف از دیتابیس
-      const supplementsData = JSON.parse(localStorage.getItem('supplements') || '[]');
       const vitaminInfo = supplementsData.find((supp: any) => supp.id === vitaminId);
       
-      const dosage = vitaminInfo?.dosage || '';
-      const timing = vitaminInfo?.timing || '';
-      
-      allSupplementRows.push([
-        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-        { text: 'ویتامین', style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
-        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
-      ]);
-      
-      rowNumber++;
+      if (vitaminInfo) {
+        hasAnyItem = true;
+        const name = vitaminInfo.name || `ویتامین ناشناخته (${vitaminId})`;
+        const dosage = vitaminInfo.dosage || 'نامشخص';
+        const timing = vitaminInfo.timing || 'نامشخص';
+        
+        allSupplementRows.push([
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: 'ویتامین', style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+        ]);
+        
+        rowNumber++;
+      }
     });
   }
   
-  // اضافه کردن ردیف‌ها به جدول (بدون تغییر ترتیب)
+  // اضافه کردن ردیف‌ها به جدول
   tableData.push(...allSupplementRows);
   
   if (hasAnyItem) {
