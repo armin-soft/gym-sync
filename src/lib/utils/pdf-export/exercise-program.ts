@@ -2,38 +2,26 @@
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
+import { getDayName } from '@/lib/utils';
 import { getExerciseName } from './data-helpers';
 
-// تابع دریافت نام روز برای برنامه تمرینی (روز اول تا روز پنجم)
-function getExerciseDayName(day: number): string {
-  const dayNames: Record<number, string> = {
-    1: 'روز اول',
-    2: 'روز دوم', 
-    3: 'روز سوم',
-    4: 'روز چهارم',
-    5: 'روز پنجم'
-  };
-  return dayNames[day] || `روز ${day}`;
-}
-
-// ایجاد برنامه تمرینی با ترتیب ستون‌های جدید
+// ایجاد برنامه تمرینی کامپکت - فقط با داده‌های واقعی شاگرد
 export function createExerciseProgram(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
-  // جدول با ترتیب: شماره، روز، ست، تکرار، نام تمرین
+  // جدول کامپکت همه تمرینات
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
-      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
-      { text: 'ست', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام تمرین', style: 'tableHeader', direction: 'rtl' },
       { text: 'تکرار', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نام تمرین', style: 'tableHeader', direction: 'rtl' }
+      { text: 'ست', style: 'tableHeader', direction: 'rtl' },
+      { text: 'روز', style: 'tableHeader', direction: 'rtl' },
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
   let hasAnyExercise = false;
   let rowNumber = 1;
-  const allExerciseRows: any[] = [];
   
   // برای هر روز تمرینی (5 روز)
   for (let day = 1; day <= 5; day++) {
@@ -46,69 +34,56 @@ export function createExerciseProgram(student: Student, trainerProfile: TrainerP
     const reps = student[dayRepsKey] as Record<number, string> || {};
     
     console.log(`بررسی روز ${day}: ${dayKey}`, exercises);
-    console.log(`ست‌های روز ${day}:`, sets);
-    console.log(`تکرارهای روز ${day}:`, reps);
     
     if (exercises && exercises.length > 0) {
-      const dayName = getExerciseDayName(day);
+      hasAnyExercise = true;
+      const dayName = getDayName(day);
       
       exercises.forEach((exerciseId) => {
-        const exerciseName = getExerciseName(exerciseId);
+        const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
+        const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
+        const repInfo = reps[exerciseId] || '-';
         
-        // فقط اگر نام تمرین موجود باشد آن را اضافه کن
-        if (exerciseName) {
-          hasAnyExercise = true;
-          const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
-          const repInfo = reps[exerciseId] || '';
-          
-          allExerciseRows.push([
-            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-            { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
-            { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
-            { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-            { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
-          ]);
-          
-          rowNumber++;
-        }
+        tableData.push([
+          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
+        ]);
+        
+        rowNumber++;
       });
     }
   }
   
   // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را بررسی کن
   if (!hasAnyExercise && student.exercises && student.exercises.length > 0) {
+    hasAnyExercise = true;
     const sets = student.exerciseSets || {};
     const reps = student.exerciseReps || {};
     
     student.exercises.forEach((exerciseId) => {
-      const exerciseName = getExerciseName(exerciseId);
+      const exerciseName = getExerciseName(exerciseId) || `تمرین ناشناخته (${exerciseId})`;
+      const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId]) : '-';
+      const repInfo = reps[exerciseId] || '-';
       
-      // فقط اگر نام تمرین موجود باشد آن را اضافه کن
-      if (exerciseName) {
-        hasAnyExercise = true;
-        const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '';
-        const repInfo = reps[exerciseId] || '';
-        
-        allExerciseRows.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
-          { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' }
-        ]);
-        
-        rowNumber++;
-      }
+      tableData.push([
+        { text: preprocessPersianText(exerciseName), style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(repInfo), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: setCount, style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' }
+      ]);
+      
+      rowNumber++;
     });
   }
-  
-  // اضافه کردن ردیف‌ها به جدول (بدون تغییر ترتیب)
-  tableData.push(...allExerciseRows);
   
   if (hasAnyExercise) {
     content.push({
       table: {
-        widths: ['10%', '20%', '15%', '15%', '40%'],
+        widths: ['40%', '15%', '15%', '20%', '10%'],
         body: tableData,
         headerRows: 1
       },
