@@ -62,7 +62,7 @@ const Index = () => {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="h-full w-full p-6 space-y-6 max-w-7xl mx-auto"
+          className="h-full w-full p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto"
         >
           
           {/* Header */}

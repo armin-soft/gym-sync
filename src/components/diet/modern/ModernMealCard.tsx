@@ -25,35 +25,35 @@ export const ModernMealCard = ({ meal, onEdit, onDelete, index }: ModernMealCard
       className="group"
     >
       <Card className="border border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/50 h-full">
-        <div className="p-4 text-right h-full flex flex-col">
+        <div className="p-3 sm:p-4 text-right h-full flex flex-col" dir="rtl">
           
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600 dark:hover:text-emerald-400"
+                className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600 dark:hover:text-emerald-400"
                 onClick={() => onEdit(meal)}
               >
-                <Edit className="h-3.5 w-3.5" />
+                <Edit className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+                className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
                 onClick={() => onDelete(meal.id)}
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Button>
             </div>
             
-            <h4 className="font-medium text-gray-900 dark:text-white">
+            <h4 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base text-right flex-1">
               {meal.name}
             </h4>
           </div>
           
           {meal.description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2 text-right">
               {meal.description}
             </p>
           )}

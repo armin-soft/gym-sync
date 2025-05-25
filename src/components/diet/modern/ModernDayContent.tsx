@@ -24,14 +24,14 @@ export const ModernDayContent = ({ day, mealTypes, meals, onEdit, onDelete, cent
   });
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6" dir="rtl">
       {/* Day Header */}
-      <div className="bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-200/50 dark:border-blue-700/30">
+      <div className="bg-blue-50/50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-xl border border-blue-200/50 dark:border-blue-700/30">
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
             برنامه غذایی روز {day}
           </h2>
-          <p className="text-blue-600 dark:text-blue-400">
+          <p className="text-sm sm:text-base text-blue-600 dark:text-blue-400">
             {meals.length > 0 ? `${meals.length} وعده غذایی` : "هیچ وعده‌ای ثبت نشده"}
           </p>
         </div>
@@ -60,17 +60,17 @@ export const ModernDayContent = ({ day, mealTypes, meals, onEdit, onDelete, cent
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-12"
+          className="text-center py-8 sm:py-12"
         >
-          <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <UtensilsCrossed className="w-8 h-8 text-gray-400" />
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 dark:bg-gray-700 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <UtensilsCrossed className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
           </div>
           
-          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
             هنوز برنامه‌ای تنظیم نشده
           </h3>
           
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
             برای روز {day} هیچ وعده غذایی ثبت نشده است
           </p>
         </motion.div>
