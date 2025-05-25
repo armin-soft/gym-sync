@@ -18,17 +18,17 @@ function getDietDayName(day: number): string {
   return dayNames[day] || `روز ${day}`;
 }
 
-// ایجاد برنامه غذایی فقط برای روزهایی که داده دارند
+// ایجاد برنامه غذایی با ترتیب ستون‌های جدید
 export function createDietPlan(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
-  // جدول با ترتیب صحیح: شماره، روز هفته، وعده غذایی، نام غذا
+  // جدول با ترتیب: شماره، روز هفته، وعده غذایی، نام غذا
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', alignment: 'center' },
-      { text: 'روز هفته', style: 'tableHeader', alignment: 'center' },
-      { text: 'وعده غذایی', style: 'tableHeader', alignment: 'center' },
-      { text: 'نام غذا', style: 'tableHeader', alignment: 'right' }
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
+      { text: 'روز هفته', style: 'tableHeader', direction: 'rtl' },
+      { text: 'وعده غذایی', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام غذا', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
@@ -36,14 +36,13 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   let rowNumber = 1;
   const allMealRows: any[] = [];
   
-  // برای هر روز هفته (1-7) - فقط روزهایی که داده دارند
+  // برای هر روز هفته (1-7)
   for (let day = 1; day <= 7; day++) {
     const dayKey = `mealsDay${day}` as keyof Student;
     const meals = student[dayKey] as number[] || [];
     
     console.log(`بررسی روز ${day}: ${dayKey}`, meals);
     
-    // فقط اگر این روز غذا داشت نمایش بده
     if (meals && meals.length > 0) {
       hasAnyMeal = true;
       const dayName = getDietDayName(day);
@@ -55,10 +54,10 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
         // فقط اگر نام غذا موجود باشد آن را اضافه کن
         if (mealName) {
           allMealRows.push([
-            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
-            { text: preprocessPersianText(dayName), style: 'tableCell', alignment: 'center' },
-            { text: preprocessPersianText(mealType || ''), style: 'tableCell', alignment: 'center' },
-            { text: preprocessPersianText(mealName), style: 'tableCell', alignment: 'right' }
+            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+            { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
+            { text: preprocessPersianText(mealType || ''), style: 'tableCell', direction: 'rtl' },
+            { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
           ]);
           
           rowNumber++;
@@ -67,7 +66,28 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     }
   }
   
-  // اضافه کردن ردیف‌ها به جدول
+  // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را بررسی کن
+  if (!hasAnyMeal && student.meals && student.meals.length > 0) {
+    student.meals.forEach((mealId) => {
+      const mealName = getMealName(mealId);
+      const mealType = getMealType(mealId);
+      
+      // فقط اگر نام غذا موجود باشد آن را اضافه کن
+      if (mealName) {
+        hasAnyMeal = true;
+        allMealRows.push([
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+          { text: 'برنامه کلی', style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(mealType || ''), style: 'tableCell', direction: 'rtl' },
+          { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
+        ]);
+        
+        rowNumber++;
+      }
+    });
+  }
+  
+  // اضافه کردن ردیف‌ها به جدول (بدون تغییر ترتیب)
   tableData.push(...allMealRows);
   
   if (hasAnyMeal) {
@@ -93,7 +113,8 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     content.push({
       text: 'برنامه غذایی تعیین نشده است.',
       style: 'notes',
-      alignment: 'center'
+      alignment: 'center',
+      direction: 'rtl'
     });
   }
   
@@ -103,12 +124,12 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       text: 'نکات تغذیه‌ای:',
       style: 'sectionTitle',
       margin: [0, 15, 0, 5],
-      alignment: 'right'
+      direction: 'rtl'
     });
     content.push({
       text: preprocessPersianText(student.mealNotes),
       style: 'notes',
-      alignment: 'right'
+      direction: 'rtl'
     });
   }
   

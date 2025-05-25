@@ -2,20 +2,20 @@
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
-import { getSupplementName } from './data-helpers';
+import { getSupplementName, getSupplementType } from './data-helpers';
 
-// ایجاد برنامه مکمل و ویتامین با اطلاعات کامل
+// ایجاد برنامه مکمل و ویتامین
 export function createSupplementPlan(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
   // جدول مکمل‌ها و ویتامین‌ها
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', alignment: 'center' },
-      { text: 'نوع', style: 'tableHeader', alignment: 'center' },
-      { text: 'زمان مصرف', style: 'tableHeader', alignment: 'center' },
-      { text: 'دوز مصرف', style: 'tableHeader', alignment: 'center' },
-      { text: 'نام مکمل یا ویتامین', style: 'tableHeader', alignment: 'right' }
+      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نوع', style: 'tableHeader', direction: 'rtl' },
+      { text: 'زمان مصرف', style: 'tableHeader', direction: 'rtl' },
+      { text: 'دوز مصرف', style: 'tableHeader', direction: 'rtl' },
+      { text: 'نام مکمل یا ویتامین', style: 'tableHeader', direction: 'rtl' }
     ]
   ];
   
@@ -26,59 +26,57 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   console.log('بررسی مکمل‌های شاگرد:', student.supplements);
   console.log('بررسی ویتامین‌های شاگرد:', student.vitamins);
   
-  // دریافت داده‌های مکمل‌ها از دیتابیس
-  const supplementsData = JSON.parse(localStorage.getItem('supplements') || '[]');
-  console.log('داده‌های مکمل از دیتابیس:', supplementsData);
-  
   // پردازش مکمل‌ها
   if (student.supplements && student.supplements.length > 0) {
     student.supplements.forEach((suppId) => {
+      hasAnyItem = true;
+      const name = getSupplementName(suppId) || `مکمل ناشناخته (${suppId})`;
+      
+      // دریافت اطلاعات دوز و زمان مصرف از دیتابیس
+      const supplementsData = JSON.parse(localStorage.getItem('supplements') || '[]');
       const supplementInfo = supplementsData.find((supp: any) => supp.id === suppId);
       
-      if (supplementInfo) {
-        hasAnyItem = true;
-        const name = supplementInfo.name || `مکمل ناشناخته (${suppId})`;
-        const dosage = supplementInfo.dosage || '';
-        const timing = supplementInfo.timing || '';
-        
-        allSupplementRows.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
-          { text: 'مکمل', style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(timing), style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(dosage), style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(name), style: 'tableCell', alignment: 'right' }
-        ]);
-        
-        rowNumber++;
-      }
+      const dosage = supplementInfo?.dosage || '';
+      const timing = supplementInfo?.timing || '';
+      
+      allSupplementRows.push([
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: 'مکمل', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+      ]);
+      
+      rowNumber++;
     });
   }
   
   // پردازش ویتامین‌ها
   if (student.vitamins && student.vitamins.length > 0) {
     student.vitamins.forEach((vitaminId) => {
+      hasAnyItem = true;
+      const name = getSupplementName(vitaminId) || `ویتامین ناشناخته (${vitaminId})`;
+      
+      // دریافت اطلاعات دوز و زمان مصرف از دیتابیس
+      const supplementsData = JSON.parse(localStorage.getItem('supplements') || '[]');
       const vitaminInfo = supplementsData.find((supp: any) => supp.id === vitaminId);
       
-      if (vitaminInfo) {
-        hasAnyItem = true;
-        const name = vitaminInfo.name || `ویتامین ناشناخته (${vitaminId})`;
-        const dosage = vitaminInfo.dosage || '';
-        const timing = vitaminInfo.timing || '';
-        
-        allSupplementRows.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
-          { text: 'ویتامین', style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(timing), style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(dosage), style: 'tableCell', alignment: 'center' },
-          { text: preprocessPersianText(name), style: 'tableCell', alignment: 'right' }
-        ]);
-        
-        rowNumber++;
-      }
+      const dosage = vitaminInfo?.dosage || '';
+      const timing = vitaminInfo?.timing || '';
+      
+      allSupplementRows.push([
+        { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
+        { text: 'ویتامین', style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
+        { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+      ]);
+      
+      rowNumber++;
     });
   }
   
-  // اضافه کردن ردیف‌ها به جدول
+  // اضافه کردن ردیف‌ها به جدول (بدون تغییر ترتیب)
   tableData.push(...allSupplementRows);
   
   if (hasAnyItem) {
@@ -104,7 +102,8 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
     content.push({
       text: 'برنامه مکمل و ویتامین تعیین نشده است.',
       style: 'notes',
-      alignment: 'center'
+      alignment: 'center',
+      direction: 'rtl'
     });
   }
   
@@ -114,12 +113,12 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       text: 'نکات مصرف مکمل:',
       style: 'sectionTitle',
       margin: [0, 15, 0, 5],
-      alignment: 'right'
+      direction: 'rtl'
     });
     content.push({
       text: preprocessPersianText(student.supplementNotes),
       style: 'notes',
-      alignment: 'right'
+      direction: 'rtl'
     });
   }
   
