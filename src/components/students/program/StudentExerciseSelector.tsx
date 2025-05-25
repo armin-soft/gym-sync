@@ -93,6 +93,28 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
       )}>
         <Card className="shadow-sm">
           <CardContent className="p-4">
+            <h4 className="font-medium mb-3 text-right">لیست تمرین‌ها</h4>
+            
+            {filteredExercises.length > 0 ? (
+              <ExerciseListDisplay
+                filteredExercises={filteredExercises}
+                selectedExercises={selectedExercises}
+                selectedType={selectedType}
+                selectedCategoryId={selectedCategoryId}
+                toggleExercise={toggleExercise}
+                viewMode={viewMode}
+              />
+            ) : (
+              <div className="text-center p-4">
+                <p className="text-muted-foreground">هیچ تمرینی برای نمایش وجود ندارد</p>
+                <p className="text-sm text-muted-foreground mt-1">لطفا یک دسته‌بندی انتخاب کنید</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        
+        <Card className="shadow-sm">
+          <CardContent className="p-4">
             <h4 className="font-medium mb-3 flex items-center gap-2 justify-center">
               <Dumbbell className="h-4 w-4 text-indigo-500" />
               <span>تمرین‌های انتخاب شده برای {getDayLabel()}</span>
@@ -113,29 +135,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
             ) : (
               <div className="text-center p-4">
                 <p className="text-muted-foreground">هیچ تمرینی انتخاب نشده است</p>
-                <p className="text-sm text-muted-foreground mt-1">از لیست سمت راست تمرین را انتخاب کنید</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <h4 className="font-medium mb-3 text-right">لیست تمرین‌ها</h4>
-            
-            {filteredExercises.length > 0 ? (
-              <ExerciseListDisplay
-                filteredExercises={filteredExercises}
-                selectedExercises={selectedExercises}
-                selectedType={selectedType}
-                selectedCategoryId={selectedCategoryId}
-                toggleExercise={toggleExercise}
-                viewMode={viewMode}
-              />
-            ) : (
-              <div className="text-center p-4">
-                <p className="text-muted-foreground">هیچ تمرینی برای نمایش وجود ندارد</p>
-                <p className="text-sm text-muted-foreground mt-1">لطفا یک دسته‌بندی انتخاب کنید</p>
+                <p className="text-sm text-muted-foreground mt-1">از لیست سمت چپ تمرین را انتخاب کنید</p>
               </div>
             )}
           </CardContent>
