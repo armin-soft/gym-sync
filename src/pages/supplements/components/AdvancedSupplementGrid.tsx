@@ -202,7 +202,7 @@ const AdvancedSupplementCard: React.FC<{
             <div className="flex items-center gap-1 sm:gap-2 text-xs text-slate-600">
               <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-500" />
               <span className="font-medium">دوز:</span>
-              <span className="text-xs">{toPersianNumbers(supplement.dosage)}</span>
+              <span className="text-xs">{supplement.dosage}</span>
             </div>
           )}
           
@@ -283,7 +283,7 @@ const AdvancedSupplementListItem: React.FC<{
                   {supplement.dosage && (
                     <span className="flex items-center gap-1">
                       <Award className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-emerald-500" />
-                      <span className="text-xs">{toPersianNumbers(supplement.dosage)}</span>
+                      <span className="text-xs">{supplement.dosage}</span>
                     </span>
                   )}
                   {supplement.timing && (

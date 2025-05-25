@@ -25,6 +25,9 @@ interface AdvancedSupplementTabsProps {
   onDeleteSupplement: (id: number) => void;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
+  addCategory: (name: string) => void;
+  updateCategory: (id: number, name: string) => void;
+  deleteCategory: (category: SupplementCategory) => void;
 }
 
 export const AdvancedSupplementTabs: React.FC<AdvancedSupplementTabsProps> = ({
@@ -41,6 +44,9 @@ export const AdvancedSupplementTabs: React.FC<AdvancedSupplementTabsProps> = ({
   onDeleteSupplement,
   selectedCategory,
   setSelectedCategory,
+  addCategory,
+  updateCategory,
+  deleteCategory,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -75,6 +81,20 @@ export const AdvancedSupplementTabs: React.FC<AdvancedSupplementTabsProps> = ({
     
     return matchesSearch && matchesCategory;
   });
+
+  const handleAddCategory = () => {
+    // This will trigger the dialog in AdvancedCategoryManager
+    onAddCategory();
+  };
+
+  const handleEditCategory = (category: SupplementCategory) => {
+    // This will trigger the dialog in AdvancedCategoryManager
+    onEditCategory(category);
+  };
+
+  const handleDeleteCategory = (category: SupplementCategory) => {
+    deleteCategory(category);
+  };
 
   return (
     <motion.div 
@@ -195,9 +215,9 @@ export const AdvancedSupplementTabs: React.FC<AdvancedSupplementTabsProps> = ({
                   categories={categories}
                   selectedCategory={selectedCategory}
                   onSelectCategory={setSelectedCategory}
-                  onAddCategory={onAddCategory}
-                  onEditCategory={onEditCategory}
-                  onDeleteCategory={onDeleteCategory}
+                  onAddCategory={handleAddCategory}
+                  onEditCategory={handleEditCategory}
+                  onDeleteCategory={handleDeleteCategory}
                   activeTab={activeTab}
                 />
               </motion.div>
