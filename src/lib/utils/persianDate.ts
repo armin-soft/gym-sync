@@ -24,8 +24,8 @@ export function formatPersianDateForFilename(): string {
   const minutes = format(now, 'mm');
   const seconds = format(now, 'ss');
   
-  // Create the format: Gym-Sync-1404-03-04-10:42-25.json
-  return `Gym-Sync-${persianYear}-${persianMonth}-${persianDay}-${hours}:${minutes}-${seconds}`;
+  // Create the format: Gym-Sync-1404-03-04-10-45-24.json
+  return `Gym-Sync-${persianYear}-${persianMonth}-${persianDay}-${hours}-${minutes}-${seconds}`;
 }
 
 export function getCurrentPersianDate(withTime: boolean = false): string {
