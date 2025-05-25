@@ -36,48 +36,44 @@ export const TabContent: React.FC<TabContentProps> = ({
   onSelectCategory,
 }) => {
   return (
-    <TabsContent value={activeTab} className="m-0 flex-1 flex flex-col space-y-4 sm:space-y-6 overflow-hidden">
+    <TabsContent value={activeTab} className="m-0 flex-1 flex flex-col space-y-6 overflow-hidden">
       {/* Categories Section */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
         className="z-10"
       >
-        <Card className="bg-gradient-to-r from-slate-50/80 to-white/80 dark:from-slate-800/80 dark:to-slate-700/80 backdrop-blur-sm border-0 shadow-lg rounded-xl overflow-hidden">
-          <CategoryTable 
-            categories={categories}
-            onAdd={onAddCategory}
-            onEdit={onEditCategory}
-            onDelete={onDeleteCategory}
-            selectedCategory={selectedCategory}
-            onSelectCategory={onSelectCategory}
-          />
-        </Card>
+        <CategoryTable 
+          categories={categories}
+          onAdd={onAddCategory}
+          onEdit={onEditCategory}
+          onDelete={onDeleteCategory}
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
+        />
       </motion.div>
       
       {/* Supplements Content Section */}
       <motion.div 
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
         className="flex-1 overflow-hidden"
       >
         <Card className={cn(
-          "h-full shadow-xl border-0 backdrop-blur-sm rounded-xl overflow-hidden",
-          activeTab === "supplement" 
-            ? "bg-gradient-to-br from-purple-50/80 via-white/80 to-violet-50/80 dark:from-purple-950/40 dark:via-slate-800/80 dark:to-violet-950/40" 
-            : "bg-gradient-to-br from-blue-50/80 via-white/80 to-indigo-50/80 dark:from-blue-950/40 dark:via-slate-800/80 dark:to-indigo-950/40"
+          "h-full shadow-2xl border border-slate-200/30 dark:border-slate-700/30 backdrop-blur-xl rounded-3xl overflow-hidden",
+          "bg-white/90 dark:bg-slate-800/90"
         )}>
-          {/* Header gradient */}
+          {/* Decorative Header */}
           <div className={cn(
-            "h-1 bg-gradient-to-r",
+            "h-2 bg-gradient-to-r",
             activeTab === "supplement" 
-              ? "from-purple-400 via-purple-500 to-violet-500" 
-              : "from-blue-400 via-blue-500 to-indigo-500"
+              ? "from-emerald-400 via-emerald-500 to-blue-500" 
+              : "from-blue-400 via-blue-500 to-purple-500"
           )}></div>
           
-          <div className="p-4 sm:p-6 h-full">
+          <div className="p-6 md:p-8 h-full">
             <SupplementContent 
               supplements={supplements}
               onAddSupplement={onAddSupplement}

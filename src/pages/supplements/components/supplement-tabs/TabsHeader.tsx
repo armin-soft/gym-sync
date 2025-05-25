@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { FlaskConical, Pill, Sparkles } from "lucide-react";
+import { FlaskConical, Pill, Zap, Target } from "lucide-react";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TabsHeaderProps {
@@ -15,89 +15,106 @@ export const TabsHeader: React.FC<TabsHeaderProps> = ({ activeTab }) => {
   
   return (
     <motion.div
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
-      className="mb-6 md:mb-8"
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="mb-8"
     >
-      <TabsList className="grid w-full grid-cols-2 h-14 sm:h-16 md:h-18 overflow-hidden rounded-2xl shadow-xl border-0 backdrop-blur-sm bg-gradient-to-r from-slate-100/90 via-white/90 to-slate-100/90 dark:from-gray-800/90 dark:via-gray-700/90 dark:to-gray-800/90 p-1.5">
-        <TabsTrigger 
-          value="supplement" 
-          className={cn(
-            "relative gap-2 sm:gap-3 text-base sm:text-lg font-semibold rounded-xl",
-            "transition-all duration-500 ease-in-out transform",
-            "data-[state=active]:text-white data-[state=active]:shadow-2xl",
-            "hover:bg-purple-50 dark:hover:bg-purple-950/20",
-            "data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:via-purple-600 data-[state=active]:to-violet-600",
-            "data-[state=active]:scale-105"
-          )}
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-2 shadow-2xl border border-slate-200/30 dark:border-slate-700/30">
+        <TabsList className="grid w-full grid-cols-2 h-20 md:h-24 bg-transparent p-1 gap-2">
+          <TabsTrigger 
+            value="supplement" 
             className={cn(
-              "rounded-full flex items-center justify-center relative",
-              activeTab === "supplement" ? "bg-white/20 p-2" : "bg-purple-100 dark:bg-purple-900/40 p-2",
-              deviceInfo.isMobile ? "p-1.5" : "p-2"
+              "relative rounded-2xl transition-all duration-500 ease-out transform group",
+              "data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-blue-600",
+              "data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:scale-105",
+              "data-[state=inactive]:hover:bg-emerald-50 dark:data-[state=inactive]:hover:bg-emerald-900/20",
+              "data-[state=inactive]:text-slate-600 dark:data-[state=inactive]:text-slate-300"
             )}
           >
-            <FlaskConical className={cn(
-              deviceInfo.isMobile ? "w-4 h-4" : "w-5 h-5 md:w-6 md:h-6",
-              activeTab === "supplement" ? "text-white" : "text-purple-600 dark:text-purple-400"
-            )} />
+            <div className="flex flex-col items-center gap-2 py-2">
+              <div className={cn(
+                "relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300",
+                activeTab === "supplement" 
+                  ? "bg-white/20 backdrop-blur-sm" 
+                  : "bg-emerald-100 dark:bg-emerald-900/40 group-hover:bg-emerald-200 dark:group-hover:bg-emerald-800/60"
+              )}>
+                <FlaskConical className={cn(
+                  "w-6 h-6 transition-all duration-300",
+                  activeTab === "supplement" 
+                    ? "text-white" 
+                    : "text-emerald-600 dark:text-emerald-400"
+                )} />
+                {activeTab === "supplement" && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1 -right-1"
+                  >
+                    <Zap className="w-4 h-4 text-yellow-300 animate-pulse" />
+                  </motion.div>
+                )}
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-lg">مکمل‌ها</div>
+                <div className="text-xs opacity-80">Supplements</div>
+              </div>
+            </div>
             {activeTab === "supplement" && (
-              <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
+              <motion.div
+                layoutId="activeIndicator"
+                className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-yellow-400 rounded-full"
+              />
             )}
-          </motion.div>
-          <span className="font-bold">مکمل‌ها</span>
-          {activeTab === "supplement" && (
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"
-            />
-          )}
-        </TabsTrigger>
-        <TabsTrigger 
-          value="vitamin" 
-          className={cn(
-            "relative gap-2 sm:gap-3 text-base sm:text-lg font-semibold rounded-xl",
-            "transition-all duration-500 ease-in-out transform",
-            "data-[state=active]:text-white data-[state=active]:shadow-2xl",
-            "hover:bg-blue-50 dark:hover:bg-blue-950/20",
-            "data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:via-blue-600 data-[state=active]:to-indigo-600",
-            "data-[state=active]:scale-105"
-          )}
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
+          </TabsTrigger>
+
+          <TabsTrigger 
+            value="vitamin" 
             className={cn(
-              "rounded-full flex items-center justify-center relative",
-              activeTab === "vitamin" ? "bg-white/20 p-2" : "bg-blue-100 dark:bg-blue-900/40 p-2",
-              deviceInfo.isMobile ? "p-1.5" : "p-2"
+              "relative rounded-2xl transition-all duration-500 ease-out transform group",
+              "data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600",
+              "data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:scale-105",
+              "data-[state=inactive]:hover:bg-blue-50 dark:data-[state=inactive]:hover:bg-blue-900/20",
+              "data-[state=inactive]:text-slate-600 dark:data-[state=inactive]:text-slate-300"
             )}
           >
-            <Pill className={cn(
-              deviceInfo.isMobile ? "w-4 h-4" : "w-5 h-5 md:w-6 md:h-6",
-              activeTab === "vitamin" ? "text-white" : "text-blue-600 dark:text-blue-400"
-            )} />
+            <div className="flex flex-col items-center gap-2 py-2">
+              <div className={cn(
+                "relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300",
+                activeTab === "vitamin" 
+                  ? "bg-white/20 backdrop-blur-sm" 
+                  : "bg-blue-100 dark:bg-blue-900/40 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/60"
+              )}>
+                <Pill className={cn(
+                  "w-6 h-6 transition-all duration-300",
+                  activeTab === "vitamin" 
+                    ? "text-white" 
+                    : "text-blue-600 dark:text-blue-400"
+                )} />
+                {activeTab === "vitamin" && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1 -right-1"
+                  >
+                    <Target className="w-4 h-4 text-yellow-300 animate-pulse" />
+                  </motion.div>
+                )}
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-lg">ویتامین‌ها</div>
+                <div className="text-xs opacity-80">Vitamins</div>
+              </div>
+            </div>
             {activeTab === "vitamin" && (
-              <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
+              <motion.div
+                layoutId="activeIndicator"
+                className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-yellow-400 rounded-full"
+              />
             )}
-          </motion.div>
-          <span className="font-bold">ویتامین‌ها</span>
-          {activeTab === "vitamin" && (
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"
-            />
-          )}
-        </TabsTrigger>
-      </TabsList>
+          </TabsTrigger>
+        </TabsList>
+      </div>
     </motion.div>
   );
 };

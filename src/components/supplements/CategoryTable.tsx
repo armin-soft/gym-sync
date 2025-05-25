@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Edit, Trash2, Info, Sparkles } from "lucide-react";
+import { Plus, Edit, Trash2, Layers, Sparkles2, Database } from "lucide-react";
 import { 
   Tooltip,
   TooltipContent,
@@ -35,152 +35,184 @@ export const CategoryTable = ({
   const deviceInfo = useDeviceInfo();
   
   return (
-    <div className="overflow-hidden">
-      {/* Header */}
-      <div className="p-4 sm:p-6 flex items-center justify-between bg-gradient-to-r from-slate-50/80 to-purple-50/50 dark:from-slate-700/80 dark:to-purple-900/20 border-b border-purple-100/50 dark:border-purple-800/30">
-        <div className="flex items-center">
-          <div className="flex items-center justify-center p-3 rounded-xl bg-gradient-to-br from-purple-100/80 to-purple-50/40 dark:from-purple-900/40 dark:to-purple-800/20 ml-3 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-            <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-500 animate-pulse" />
-          </div>
-          <div>
-            <h3 className="font-bold text-gray-900 dark:text-white text-lg">دسته‌بندی‌ها</h3>
-            <div className="flex items-center gap-2">
-              <p className="text-sm text-gray-500 dark:text-gray-400">مدیریت دسته‌بندی‌های موجود</p>
-              <Badge variant="outline" className="text-xs bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-900/30 dark:border-purple-700 dark:text-purple-300">
-                {toPersianNumbers(categories.length)} دسته
-              </Badge>
+    <Card className="overflow-hidden bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-slate-200/30 dark:border-slate-700/30 shadow-2xl rounded-3xl">
+      {/* Modern Header */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-emerald-50 to-blue-50 dark:from-slate-800 dark:via-emerald-900/20 dark:to-blue-900/20"></div>
+        <div className="relative p-6 md:p-8 border-b border-slate-200/30 dark:border-slate-700/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Database className="h-8 w-8 text-white" />
+                </div>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center"
+                >
+                  <Sparkles2 className="w-4 h-4 text-white" />
+                </motion.div>
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-2">دسته‌بندی‌ها</h3>
+                <div className="flex items-center gap-3">
+                  <p className="text-slate-600 dark:text-slate-300">مدیریت هوشمند دسته‌بندی‌ها</p>
+                  <Badge className="bg-gradient-to-r from-emerald-500 to-blue-600 text-white border-0 shadow-lg">
+                    {toPersianNumbers(categories.length)} دسته
+                  </Badge>
+                </div>
+              </div>
             </div>
+            <Button 
+              onClick={onAdd}
+              className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white border-0 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 rounded-2xl px-6 py-3 gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              افزودن دسته جدید
+              <Sparkles2 className="w-4 h-4 animate-pulse" />
+            </Button>
           </div>
         </div>
-        <Button 
-          variant="default" 
-          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-all duration-300 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-          size="sm"
-          onClick={onAdd}
-        >
-          <Plus className="ml-1 h-4 w-4" />
-          افزودن دسته
-        </Button>
       </div>
 
-      {/* Content */}
-      <div className="p-4 sm:p-6">
+      {/* Content Area */}
+      <div className="p-6 md:p-8">
         {categories.length === 0 ? (
           <motion.div 
-            initial={{ opacity: 0, y: 10 }} 
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center p-8 text-center"
+            initial={{ opacity: 0, scale: 0.9 }} 
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center py-16"
           >
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-800/20 flex items-center justify-center mb-4 relative">
-              <Info className="h-8 w-8 text-purple-500 dark:text-purple-400" />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-transparent animate-pulse"></div>
+            <div className="relative inline-block mb-6">
+              <div className="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 rounded-3xl flex items-center justify-center">
+                <Layers className="h-12 w-12 text-slate-400 dark:text-slate-500" />
+              </div>
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-bounce">
+                <Plus className="w-4 h-4 text-white" />
+              </div>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">هنوز دسته‌بندی وجود ندارد</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md leading-relaxed">
-              برای شروع، یک دسته‌بندی جدید ایجاد کنید تا بتوانید مکمل‌ها و ویتامین‌های خود را به صورت حرفه‌ای سازماندهی کنید.
+            <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-4">
+              هنوز دسته‌بندی‌ای ایجاد نشده
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto leading-relaxed">
+              برای شروع کار با سیستم مدیریت مکمل‌ها، ابتدا دسته‌بندی‌های مورد نیاز خود را ایجاد کنید
             </p>
             <Button 
-              variant="outline"
-              size="sm" 
               onClick={onAdd}
-              className="border-purple-200 text-purple-600 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-400 dark:hover:bg-purple-900/20 shadow-md hover:shadow-lg transition-all duration-300"
+              className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white border-0 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 rounded-2xl px-8 py-4 gap-3"
             >
-              <Plus className="ml-1 h-4 w-4" />
-              افزودن اولین دسته
+              <Plus className="w-5 h-5" />
+              ایجاد اولین دسته‌بندی
+              <Sparkles2 className="w-4 h-4 animate-pulse" />
             </Button>
           </motion.div>
         ) : (
-          <AnimatePresence mode="popLayout">
-            <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <AnimatePresence mode="popLayout">
               {categories.map((category, index) => (
                 <motion.div 
-                  key={category.id} 
-                  initial={{ opacity: 0, scale: 0.9, y: 10 }} 
-                  animate={{ opacity: 1, scale: 1, y: 0 }} 
-                  exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                  key={category.id}
                   layout
+                  initial={{ opacity: 0, scale: 0.8, y: 20 }} 
+                  animate={{ opacity: 1, scale: 1, y: 0 }} 
+                  exit={{ opacity: 0, scale: 0.8, y: -20 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="group"
                 >
-                  <Badge 
-                    variant="outline"
+                  <Card 
                     onClick={() => onSelectCategory(category.name)}
                     className={cn(
-                      "py-3 px-4 cursor-pointer transition-all duration-300 text-sm gap-2 flex items-center relative overflow-hidden",
-                      "hover:shadow-lg transform hover:scale-105 border-2 rounded-xl",
+                      "relative p-6 cursor-pointer transition-all duration-500 border-2 rounded-2xl overflow-hidden",
+                      "hover:shadow-2xl transform",
                       selectedCategory === category.name 
-                        ? "bg-gradient-to-r from-purple-100 to-purple-50 dark:from-purple-900/40 dark:to-purple-800/20 border-purple-300 dark:border-purple-600 text-purple-800 dark:text-purple-200 shadow-lg scale-105" 
-                        : "bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-purple-50/80 dark:hover:bg-purple-900/20 hover:border-purple-200 dark:hover:border-purple-700"
+                        ? "bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-900/30 dark:to-blue-900/30 border-emerald-400 dark:border-emerald-500 shadow-xl scale-105" 
+                        : "bg-white/90 dark:bg-slate-800/90 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-emerald-300 dark:hover:border-emerald-600"
                     )}
                   >
-                    {selectedCategory === category.name && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-violet-500/10 dark:from-purple-400/10 dark:to-violet-400/10"
-                      />
-                    )}
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-5">
+                      <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full"></div>
+                      <div className="absolute bottom-4 left-4 w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full"></div>
+                    </div>
                     
-                    <span className="font-medium relative z-10">{category.name}</span>
-                    
-                    {selectedCategory === category.name && (
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="flex gap-1 relative z-10"
-                      >
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onEdit(category);
-                                }}
-                                className="h-6 w-6 p-0 text-purple-600 dark:text-purple-400 hover:bg-purple-200/50 dark:hover:bg-purple-800/30 hover:text-purple-700 dark:hover:text-purple-300 rounded-lg transition-all duration-200"
-                              >
-                                <Edit className="h-3.5 w-3.5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>ویرایش</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-bold text-lg text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                          {category.name}
+                        </h4>
+                        <div className={cn(
+                          "w-3 h-3 rounded-full transition-all duration-300",
+                          selectedCategory === category.name 
+                            ? "bg-emerald-500 shadow-lg" 
+                            : "bg-slate-300 dark:bg-slate-600 group-hover:bg-emerald-400"
+                        )}></div>
+                      </div>
+                      
+                      {selectedCategory === category.name && (
+                        <motion.div 
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="flex gap-2 pt-4 border-t border-emerald-200 dark:border-emerald-700"
+                        >
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEdit(category);
+                                  }}
+                                  className="h-8 w-8 p-0 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-xl"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-slate-800 text-white border-slate-700">
+                                <p>ویرایش دسته‌بندی</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
 
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onDelete(category);
-                                }}
-                                className="h-6 w-6 p-0 text-red-500 dark:text-red-400 hover:bg-red-100/50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-300 rounded-lg transition-all duration-200"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>حذف</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </motion.div>
-                    )}
-                  </Badge>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete(category);
+                                  }}
+                                  className="h-8 w-8 p-0 text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-slate-800 text-white border-slate-700">
+                                <p>حذف دسته‌بندی</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </motion.div>
+                      )}
+                    </div>
+                    
+                    {/* Hover Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                  </Card>
                 </motion.div>
               ))}
-            </div>
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
