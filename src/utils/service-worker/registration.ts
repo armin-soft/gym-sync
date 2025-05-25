@@ -1,4 +1,3 @@
-
 /**
  * بهینه‌سازی شده - سرویس ورکر با تمرکز بر عملکرد و سرعت با بهبود تحمل خطا
  */
@@ -35,19 +34,19 @@ const getAppVersionFromManifest = async () => {
         });
         if (retryResponse.type === 'opaque') {
           // درخواست no-cors نمی‌تواند محتوا را بخواند، پس از نسخه پیش‌فرض استفاده می‌کنیم
-          return cachedVersion || '2.2.0'; // استفاده از نسخه پیش‌فرض اگر کش نداشتیم
+          return cachedVersion || '2.3.0'; // استفاده از نسخه پیش‌فرض اگر کش نداشتیم - Updated to 2.3.0
         }
         const retryData = await retryResponse.json();
         return retryData.version;
       } catch (retryError) {
         console.error('خطای دوم در بارگیری نسخه:', retryError);
         // استفاده از نسخه پیش‌فرض یا کش شده
-        return cachedVersion || '2.2.0';
+        return cachedVersion || '2.3.0'; // Updated to 2.3.0
       }
     }
   } catch (finalError) {
     console.error('خطای نهایی در بارگیری نسخه:', finalError);
-    return '2.2.0'; // همیشه یک مقدار برگشت بده
+    return '2.3.0'; // همیشه یک مقدار برگشت بده - Updated to 2.3.0
   }
 };
 

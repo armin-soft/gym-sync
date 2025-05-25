@@ -1,8 +1,7 @@
-
 // سرویس ورکر اصلی - بهینه‌سازی و تحمل خطای بالا
 
 // متغیر برای نام کش
-const CACHE_NAME = 'gym-sync-v215';
+const CACHE_NAME = 'gym-sync-v230'; // Updated from v215 to v230
 
 // لیست منابع برای کش
 const STATIC_ASSETS = [
@@ -11,7 +10,7 @@ const STATIC_ASSETS = [
   './Offline.html',
   './Assets/Image/Logo.png',
   './Assets/Image/Place-Holder.svg',
-  './Manifest.json',
+  './Manifest.json', // Manifest itself is cached
   './assets/index.css',
   './assets/index.js'
 ];
@@ -26,7 +25,9 @@ self.addEventListener('install', (event) => {
         console.log('[Service Worker] کش کردن منابع استاتیک');
         // کش کردن هر منبع جداگانه برای جلوگیری از شکست کامل فرآیند کش
         const cachePromises = STATIC_ASSETS.map(url => {
-          return fetch(new Request(url, { cache: 'reload' }))
+          // For Manifest.json, ensure it's fetched fresh during SW install
+          const request = (url === './Manifest.json') ? new Request(url, { cache: 'reload' }) : new Request(url);
+          return fetch(request)
             .then(response => {
               if (response.status === 200) {
                 return cache.put(url, response);
