@@ -33,9 +33,9 @@
     @apply gap-2 sm:gap-4 md:gap-6 lg:gap-8;
   }
 
-  .flex {
-    direction: rtl;
-  }
+  /* .flex {
+    direction: rtl; // این خط حذف می‌شود
+  } */
 
   /* تنظیمات فاصله‌گذاری */
   .section {
@@ -75,3 +75,4 @@
     @apply flex-1 overflow-auto;
   }
 }
+
