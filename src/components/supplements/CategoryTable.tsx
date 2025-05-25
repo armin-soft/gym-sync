@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Edit, Trash2, Layers, Sparkles2, Database } from "lucide-react";
+import { Plus, Edit, Trash2, Layers, Sparkles, Database } from "lucide-react";
 import { 
   Tooltip,
   TooltipContent,
@@ -51,7 +51,7 @@ export const CategoryTable = ({
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                   className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center"
                 >
-                  <Sparkles2 className="w-4 h-4 text-white" />
+                  <Sparkles className="w-4 h-4 text-white" />
                 </motion.div>
               </div>
               <div>
@@ -70,7 +70,7 @@ export const CategoryTable = ({
             >
               <Plus className="w-5 h-5" />
               افزودن دسته جدید
-              <Sparkles2 className="w-4 h-4 animate-pulse" />
+              <Sparkles className="w-4 h-4 animate-pulse" />
             </Button>
           </div>
         </div>
@@ -105,7 +105,7 @@ export const CategoryTable = ({
             >
               <Plus className="w-5 h-5" />
               ایجاد اولین دسته‌بندی
-              <Sparkles2 className="w-4 h-4 animate-pulse" />
+              <Sparkles className="w-4 h-4 animate-pulse" />
             </Button>
           </motion.div>
         ) : (
