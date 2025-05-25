@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,8 +49,8 @@ export function BackupSection({ dataKeys }: BackupSectionProps) {
         }
       });
       
-      // Create filename with Persian date format
-      const filename = `GymSync-Backup-${formatPersianDateForFilename()}.json`;
+      // Create filename with new format
+      const filename = `${formatPersianDateForFilename()}.json`;
       const backupString = JSON.stringify(backupData, null, 2);
       
       // Create download file

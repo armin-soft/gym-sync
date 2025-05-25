@@ -1,4 +1,3 @@
-
 import { toPersianNumbers } from './numbers';
 
 function getPersianMonth(month: number): string {
@@ -46,8 +45,8 @@ export function formatPersianDateForFilename(): string {
   const formattedPersianMonth = persianMonth.toString().padStart(2, '0');
   const formattedPersianDay = persianDay.toString().padStart(2, '0');
   
-  // Create the Persian date string in the requested format
-  return `برنامه-مدیریت-${persianYear}-${formattedPersianMonth}-${formattedPersianDay}-${formattedHours}-${formattedMinutes}-${formattedSeconds}`;
+  // Create the new format: Gym-Sync-1404-03-04-10:42-25.json
+  return `Gym-Sync-${persianYear}-${formattedPersianMonth}-${formattedPersianDay}-${formattedHours}:${formattedMinutes}-${formattedSeconds}`;
 }
 
 export function getCurrentPersianDate(withTime: boolean = false): string {
