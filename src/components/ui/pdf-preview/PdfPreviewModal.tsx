@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Student } from "../../students/StudentTypes";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import { previewStudentProgramPDF } from "@/lib/utils/pdf-export";
 import { useToast } from "@/hooks/use-toast";
 
@@ -54,20 +52,8 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] p-0 gap-0 overflow-hidden bg-white rounded-lg border shadow-lg">
-        <div className="flex flex-col h-full">
-          {/* Simple close button */}
-          <div className="absolute top-2 right-2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-gray-800"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-
-          {/* PDF Content */}
+        <div className="flex flex-col h-full w-full">
+          {/* PDF Content - فقط محتوای PDF بدون هیچ منوی اضافی */}
           <div className="flex-1 w-full h-full">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
@@ -80,13 +66,6 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <p className="text-red-600 mb-4">{error}</p>
-                  <Button 
-                    onClick={() => window.location.reload()} 
-                    variant="outline"
-                    size="sm"
-                  >
-                    تلاش مجدد
-                  </Button>
                 </div>
               </div>
             ) : (
