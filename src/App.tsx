@@ -8,15 +8,14 @@ import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { initializeServiceWorker } from "@/utils/RegisterServiceWorker";
 import "./App.css";
 
-// بهینه‌سازی React Query با استفاده از گزینه‌های بهتر برای سرعت بیشتر
+// بهینه‌سازی React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 10 * 60 * 1000, // 10 minutes - افزایش زمان برای کاهش درخواست‌ها
-      retry: 0, // عدم تلاش مجدد برای سرعت بیشتر
+      staleTime: 10 * 60 * 1000,
+      retry: 0,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
     },
@@ -24,19 +23,6 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  // راه‌اندازی سرویس ورکر در لود اولیه با مدیریت خطا
-  useEffect(() => {
-    // استفاده از setTimeout برای اطمینان از اینکه سرویس ورکر بعد از رندر اولیه راه‌اندازی می‌شود
-    const timer = setTimeout(() => {
-      initializeServiceWorker().catch(error => {
-        console.error("خطا در راه‌اندازی سرویس ورکر:", error);
-        // ادامه اجرای برنامه بدون سرویس ورکر
-      });
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <AuthWrapper>
       <Layout>
@@ -47,14 +33,15 @@ function AppContent() {
 }
 
 function App() {
-  // استفاده ثابت از مسیر پایه
-  const basePath = '/';
-  
+  useEffect(() => {
+    console.log('App component mounted successfully');
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <BrowserRouter basename={basePath}>
+          <BrowserRouter basename="/">
             <AppContent />
             <Toaster />
           </BrowserRouter>

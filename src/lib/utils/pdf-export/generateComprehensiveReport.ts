@@ -5,12 +5,13 @@ import { createPdfDocument, generatePDF } from './core';
 import { createExerciseProgram } from './exercise-program';
 import { createDietPlan } from './diet-plan';
 import { createSupplementPlan } from './supplement-plan';
+import { createSharedHeader, createSharedFooter } from './shared-header';
 import { getCurrentPersianDate } from '../persianDate';
 
-// تولید گزارش کامل PDF - فقط با داده‌های واقعی شاگرد
+// تولید گزارش کامل PDF با هدر مشترک
 export const generateComprehensiveReport = async (student: Student): Promise<void> => {
   try {
-    console.log(`در حال تولید گزارش کامل برای ${student.name} با داده‌های واقعی`);
+    console.log(`در حال تولید گزارش کامل برای ${student.name} با ساختار بهینه`);
     const trainerProfileStr = localStorage.getItem('trainerProfile');
     const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
     const content: any[] = [];
@@ -27,57 +28,83 @@ export const generateComprehensiveReport = async (student: Student): Promise<voi
 
     const hasSupplementData = student.supplements?.length || student.vitamins?.length;
 
-    // صفحه ۱: عنوان گزارش
-    content.push({
-      text: `گزارش جامع ${student.name}`,
-      style: 'documentTitle',
-      margin: [0, 0, 0, 20],
-      color: '#4f46e5'
-    });
+    // هدر مشترک فقط یکبار در ابتدا
+    content.push(...createSharedHeader(student, trainerProfile));
 
-    content.push({
-      text: getCurrentPersianDate(),
-      style: 'subheader',
-      alignment: 'center',
-      margin: [0, 0, 0, 20]
-    });
-
-    // برنامه تمرینی (در صورت وجود)
+    // بخش برنامه تمرینی
     if (hasExerciseData) {
+      content.push({
+        text: 'برنامه تمرینی',
+        style: 'sectionTitle',
+        margin: [0, 20, 0, 15],
+        color: '#7c3aed',
+        direction: 'rtl'
+      });
       content.push(...createExerciseProgram(student, trainerProfile));
     } else {
       content.push({
-        text: 'برنامه تمرینی تعیین نشده است.',
+        text: 'برنامه تمرینی',
+        style: 'sectionTitle',
+        margin: [0, 20, 0, 15],
+        color: '#7c3aed',
+        direction: 'rtl'
+      });
+      content.push({
+        text: 'هیچ برنامه تمرینی برای این شاگرد تعیین نشده است.',
         style: 'notes',
         alignment: 'center',
         direction: 'rtl',
-        margin: [0, 20, 0, 20]
+        margin: [0, 20, 0, 40]
       });
     }
 
-    // صفحه ۲: برنامه غذایی (در صورت وجود)
+    // بخش برنامه غذایی
     if (hasDietData) {
-      content.push({ text: '', pageBreak: 'before' });
+      content.push({
+        text: 'برنامه غذایی',
+        style: 'sectionTitle',
+        margin: [0, 20, 0, 15],
+        color: '#27ae60',
+        direction: 'rtl'
+      });
       content.push(...createDietPlan(student, trainerProfile));
     } else {
-      content.push({ text: '', pageBreak: 'before' });
       content.push({
-        text: 'برنامه غذایی تعیین نشده است.',
+        text: 'برنامه غذایی',
+        style: 'sectionTitle',
+        margin: [0, 20, 0, 15],
+        color: '#27ae60',
+        direction: 'rtl'
+      });
+      content.push({
+        text: 'هیچ برنامه غذایی برای این شاگرد تعیین نشده است.',
         style: 'notes',
         alignment: 'center',
         direction: 'rtl',
-        margin: [0, 20, 0, 20]
+        margin: [0, 20, 0, 40]
       });
     }
 
-    // صفحه ۳: برنامه مکمل (در صورت وجود)
+    // بخش برنامه مکمل و ویتامین
     if (hasSupplementData) {
-      content.push({ text: '', pageBreak: 'before' });
+      content.push({
+        text: 'برنامه مکمل و ویتامین',
+        style: 'sectionTitle',
+        margin: [0, 20, 0, 15],
+        color: '#e67e22',
+        direction: 'rtl'
+      });
       content.push(...createSupplementPlan(student, trainerProfile));
     } else {
-      content.push({ text: '', pageBreak: 'before' });
       content.push({
-        text: 'برنامه مکمل و ویتامین تعیین نشده است.',
+        text: 'برنامه مکمل و ویتامین',
+        style: 'sectionTitle',
+        margin: [0, 20, 0, 15],
+        color: '#e67e22',
+        direction: 'rtl'
+      });
+      content.push({
+        text: 'هیچ برنامه مکمل یا ویتامینی برای این شاگرد تعیین نشده است.',
         style: 'notes',
         alignment: 'center',
         direction: 'rtl',
@@ -85,7 +112,12 @@ export const generateComprehensiveReport = async (student: Student): Promise<voi
       });
     }
 
-    const docDefinition = createPdfDocument(content);
+    // ایجاد سند PDF
+    const docDefinition = {
+      ...createPdfDocument(content),
+      footer: createSharedFooter(trainerProfile)
+    };
+
     const fileName = `گزارش_کامل_${student.name?.replace(/\s/g, '_')}_${getCurrentPersianDate().replace(/\s/g, '_')}.pdf`;
     await generatePDF(docDefinition, fileName);
 
