@@ -1,4 +1,5 @@
 import { toPersianNumbers } from './numbers';
+import { format } from 'date-fns-jalali';
 
 function getPersianMonth(month: number): string {
   const persianMonths = [
@@ -15,38 +16,16 @@ export function formatPersianDateForFilename(): string {
   // Get current date
   const now = new Date();
   
-  // Get Gregorian date components
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1; // 0-indexed to 1-indexed
-  const day = now.getDate();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
+  // Use date-fns-jalali for accurate Persian date conversion
+  const persianYear = format(now, 'yyyy');
+  const persianMonth = format(now, 'MM');
+  const persianDay = format(now, 'dd');
+  const hours = format(now, 'HH');
+  const minutes = format(now, 'mm');
+  const seconds = format(now, 'ss');
   
-  // Calculate Persian year based on month
-  // If we're in the first 3 months of Gregorian year, we're in the previous Persian year
-  const isPreviousPersianYear = month <= 3;
-  const persianYear = year - 621 - (isPreviousPersianYear ? 1 : 0);
-  
-  // Very simplified conversion (this is not accurate for all dates)
-  // For a proper implementation, a complete Jalali calendar conversion library would be needed
-  let persianMonth = month + 3;
-  let persianDay = day;
-  
-  // Adjust for year boundary
-  if (persianMonth > 12) {
-    persianMonth -= 12;
-  }
-  
-  // Format all components as 2-digit numbers with leading zeros
-  const formattedHours = hours.toString().padStart(2, '0');
-  const formattedMinutes = minutes.toString().padStart(2, '0');
-  const formattedSeconds = seconds.toString().padStart(2, '0');
-  const formattedPersianMonth = persianMonth.toString().padStart(2, '0');
-  const formattedPersianDay = persianDay.toString().padStart(2, '0');
-  
-  // Create the new format: Gym-Sync-1404-03-04-10:42-25.json
-  return `Gym-Sync-${persianYear}-${formattedPersianMonth}-${formattedPersianDay}-${formattedHours}:${formattedMinutes}-${formattedSeconds}`;
+  // Create the format: Gym-Sync-1404-03-04-10:42-25.json
+  return `Gym-Sync-${persianYear}-${persianMonth}-${persianDay}-${hours}:${minutes}-${seconds}`;
 }
 
 export function getCurrentPersianDate(withTime: boolean = false): string {
