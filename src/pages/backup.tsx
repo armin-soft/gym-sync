@@ -186,29 +186,6 @@ const BackupPage = () => {
             </TabsContent>
           </Tabs>
         </motion.div>
-
-        {/* Footer Information */}
-        <motion.div variants={itemVariants} className="mt-8 sm:mt-12 text-center">
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 mx-auto max-w-5xl border border-white/20 dark:border-slate-700/20" dir="rtl">
-            <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-3 text-right">
-              نکات مهم پشتیبان‌گیری
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-              <div className="flex items-center justify-start gap-2" dir="rtl">
-                <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
-                <span>امنیت بالا</span>
-              </div>
-              <div className="flex items-center justify-start gap-2" dir="rtl">
-                <Archive className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
-                <span>فشرده‌سازی خودکار</span>
-              </div>
-              <div className="flex items-center justify-start gap-2" dir="rtl">
-                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 text-purple-500 flex-shrink-0" />
-                <span>بازیابی سریع</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </motion.div>
     </PageContainer>
   );
