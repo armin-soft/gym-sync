@@ -2,7 +2,8 @@
 /**
  * سیستم ثبت سرویس ورکر بهینه شده برای سرعت بارگذاری و تحمل خطا
  */
-import { registerServiceWorker, setupOfflineDetection } from './service-worker/registration';
+import { registerServiceWorker } from './service-worker/registration';
+import { setupOfflineDetection } from './service-worker/offline'; // Updated import path
 import { toast } from '@/hooks/use-toast';
 
 // تابع راه‌اندازی سرویس ورکر که از main.tsx فراخوانی می‌شود
@@ -46,7 +47,7 @@ export function initializeServiceWorker(): Promise<ServiceWorkerRegistration | n
         }
       }
       
-      setupOfflineDetection();
+      setupOfflineDetection(); // This function is now imported from offline.ts
       resolve(registration);
     } catch (error) {
       console.error('خطا در راه‌اندازی سرویس ورکر:', error);
