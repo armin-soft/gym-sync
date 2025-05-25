@@ -11,11 +11,11 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
   // جدول مکمل‌ها و ویتامین‌ها
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نوع', style: 'tableHeader', direction: 'rtl' },
-      { text: 'زمان مصرف', style: 'tableHeader', direction: 'rtl' },
-      { text: 'دوز مصرف', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نام مکمل یا ویتامین', style: 'tableHeader', direction: 'rtl' }
+      { text: 'شماره', style: 'tableHeader', alignment: 'center' },
+      { text: 'نوع', style: 'tableHeader', alignment: 'center' },
+      { text: 'زمان مصرف', style: 'tableHeader', alignment: 'center' },
+      { text: 'دوز مصرف', style: 'tableHeader', alignment: 'center' },
+      { text: 'نام مکمل یا ویتامین', style: 'tableHeader', alignment: 'right' }
     ]
   ];
   
@@ -38,15 +38,15 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       if (supplementInfo) {
         hasAnyItem = true;
         const name = supplementInfo.name || `مکمل ناشناخته (${suppId})`;
-        const dosage = supplementInfo.dosage || 'نامشخص';
-        const timing = supplementInfo.timing || 'نامشخص';
+        const dosage = supplementInfo.dosage || '';
+        const timing = supplementInfo.timing || '';
         
         allSupplementRows.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: 'مکمل', style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
+          { text: 'مکمل', style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(timing), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(dosage), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(name), style: 'tableCell', alignment: 'right' }
         ]);
         
         rowNumber++;
@@ -62,15 +62,15 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       if (vitaminInfo) {
         hasAnyItem = true;
         const name = vitaminInfo.name || `ویتامین ناشناخته (${vitaminId})`;
-        const dosage = vitaminInfo.dosage || 'نامشخص';
-        const timing = vitaminInfo.timing || 'نامشخص';
+        const dosage = vitaminInfo.dosage || '';
+        const timing = vitaminInfo.timing || '';
         
         allSupplementRows.push([
-          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-          { text: 'ویتامین', style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(timing), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(dosage), style: 'tableCell', direction: 'rtl' },
-          { text: preprocessPersianText(name), style: 'tableCell', direction: 'rtl' }
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
+          { text: 'ویتامین', style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(timing), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(dosage), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(name), style: 'tableCell', alignment: 'right' }
         ]);
         
         rowNumber++;
@@ -104,8 +104,7 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
     content.push({
       text: 'برنامه مکمل و ویتامین تعیین نشده است.',
       style: 'notes',
-      alignment: 'center',
-      direction: 'rtl'
+      alignment: 'center'
     });
   }
   
@@ -115,12 +114,12 @@ export function createSupplementPlan(student: Student, trainerProfile: TrainerPr
       text: 'نکات مصرف مکمل:',
       style: 'sectionTitle',
       margin: [0, 15, 0, 5],
-      direction: 'rtl'
+      alignment: 'right'
     });
     content.push({
       text: preprocessPersianText(student.supplementNotes),
       style: 'notes',
-      direction: 'rtl'
+      alignment: 'right'
     });
   }
   

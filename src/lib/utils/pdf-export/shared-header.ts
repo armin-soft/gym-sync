@@ -13,8 +13,7 @@ export function createSharedHeader(student: Student, trainerProfile: TrainerProf
       style: 'documentTitle',
       alignment: 'center',
       margin: [0, 0, 0, 15],
-      color: '#7c3aed',
-      direction: 'rtl'
+      color: '#7c3aed'
     },
     
     // اطلاعات کامل در یک جدول
@@ -26,32 +25,32 @@ export function createSharedHeader(student: Student, trainerProfile: TrainerProf
             { 
               text: preprocessPersianText(`نام مربی: ${trainerProfile.name || "-"}`), 
               style: 'tableCell',
-              direction: 'rtl'
+              alignment: 'right'
             },
             { 
               text: preprocessPersianText(`نام شاگرد: ${student.name || "-"}`), 
               style: 'tableCell',
-              direction: 'rtl'
+              alignment: 'right'
             },
             { 
               text: preprocessPersianText(`موبایل: ${toPersianDigits(student.phone || "-")}`), 
               style: 'tableCell',
-              direction: 'rtl'
+              alignment: 'right'
             },
             { 
               text: preprocessPersianText(`قد: ${toPersianDigits(student.height || 0)} سانتی‌متر`), 
               style: 'tableCell',
-              direction: 'rtl'
+              alignment: 'right'
             },
             { 
               text: preprocessPersianText(`وزن: ${toPersianDigits(student.weight || 0)} کیلوگرم`), 
               style: 'tableCell',
-              direction: 'rtl'
+              alignment: 'right'
             },
             { 
               text: preprocessPersianText(`تاریخ: ${getCurrentPersianDate()}`), 
               style: 'tableCell',
-              direction: 'rtl'
+              alignment: 'right'
             }
           ]
         ]
@@ -91,7 +90,6 @@ export function createSharedFooter(trainerProfile: TrainerProfile): any {
       alignment: 'center',
       fontSize: 8,
       margin: [0, 10, 0, 0],
-      direction: 'rtl',
       color: '#636363'
     };
   };

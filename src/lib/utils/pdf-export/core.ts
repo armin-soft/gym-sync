@@ -47,32 +47,28 @@ export function createPdfDocument(content: any[]): any {
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 30],
-        color: '#2563eb',
-        direction: 'rtl'
+        color: '#2563eb'
       },
       header: {
         fontSize: 20,
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 25],
-        color: '#1e40af',
-        direction: 'rtl'
+        color: '#1e40af'
       },
       subheader: {
         fontSize: 16,
         bold: true,
         alignment: 'right',
         margin: [0, 15, 0, 12],
-        color: '#374151',
-        direction: 'rtl'
+        color: '#374151'
       },
       sectionTitle: {
         fontSize: 14,
         bold: true,
         alignment: 'right',
         margin: [0, 12, 0, 8],
-        color: '#4f46e5',
-        direction: 'rtl'
+        color: '#4f46e5'
       },
       tableHeader: {
         bold: true,
@@ -80,13 +76,11 @@ export function createPdfDocument(content: any[]): any {
         color: 'white',
         fillColor: '#4f46e5',
         alignment: 'center',
-        direction: 'rtl',
         margin: [5, 8, 5, 8]
       },
       tableCell: {
         fontSize: 11,
         alignment: 'right',
-        direction: 'rtl',
         margin: [5, 6, 5, 6]
       },
       tableSubHeader: {
@@ -95,21 +89,18 @@ export function createPdfDocument(content: any[]): any {
         fillColor: '#f1f5f9',
         color: '#475569',
         alignment: 'right',
-        direction: 'rtl',
         margin: [5, 6, 5, 6]
       },
       notes: {
         fontSize: 10,
         alignment: 'right',
         margin: [0, 12, 0, 0],
-        direction: 'rtl',
         color: '#64748b'
       },
       footer: {
         fontSize: 9,
         alignment: 'center',
-        color: '#94a3b8',
-        direction: 'rtl'
+        color: '#94a3b8'
       },
       highlight: {
         fillColor: '#fef3c7',

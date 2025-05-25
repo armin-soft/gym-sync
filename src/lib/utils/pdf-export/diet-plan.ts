@@ -25,10 +25,10 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   // جدول با ترتیب صحیح: شماره، روز هفته، وعده غذایی، نام غذا
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: 'شماره', style: 'tableHeader', direction: 'rtl' },
-      { text: 'روز هفته', style: 'tableHeader', direction: 'rtl' },
-      { text: 'وعده غذایی', style: 'tableHeader', direction: 'rtl' },
-      { text: 'نام غذا', style: 'tableHeader', direction: 'rtl' }
+      { text: 'شماره', style: 'tableHeader', alignment: 'center' },
+      { text: 'روز هفته', style: 'tableHeader', alignment: 'center' },
+      { text: 'وعده غذایی', style: 'tableHeader', alignment: 'center' },
+      { text: 'نام غذا', style: 'tableHeader', alignment: 'right' }
     ]
   ];
   
@@ -55,10 +55,10 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
         // فقط اگر نام غذا موجود باشد آن را اضافه کن
         if (mealName) {
           allMealRows.push([
-            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center', direction: 'rtl' },
-            { text: preprocessPersianText(dayName), style: 'tableCell', direction: 'rtl' },
-            { text: preprocessPersianText(mealType || ''), style: 'tableCell', direction: 'rtl' },
-            { text: preprocessPersianText(mealName), style: 'tableCell', direction: 'rtl' }
+            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
+            { text: preprocessPersianText(dayName), style: 'tableCell', alignment: 'center' },
+            { text: preprocessPersianText(mealType || ''), style: 'tableCell', alignment: 'center' },
+            { text: preprocessPersianText(mealName), style: 'tableCell', alignment: 'right' }
           ]);
           
           rowNumber++;
@@ -67,38 +67,35 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     }
   }
   
-  // اگر هیچ برنامه روزانه‌ای نبود، برنامه کلی را نادیده بگیر
-  if (!hasAnyMeal) {
+  // اضافه کردن ردیف‌ها به جدول
+  tableData.push(...allMealRows);
+  
+  if (hasAnyMeal) {
+    content.push({
+      table: {
+        widths: ['10%', '20%', '30%', '40%'],
+        body: tableData,
+        headerRows: 1
+      },
+      layout: {
+        fillColor: function(rowIndex: number) {
+          return (rowIndex === 0) ? '#27ae60' : (rowIndex % 2 === 0 ? '#f0fff4' : null);
+        },
+        hLineWidth: () => 1,
+        vLineWidth: () => 1,
+        hLineColor: () => '#e2e8f0',
+        vLineColor: () => '#e2e8f0'
+      },
+      margin: [0, 0, 0, 15]
+    });
+  } else {
     console.log('هیچ برنامه غذایی برای این شاگرد یافت نشد');
     content.push({
       text: 'برنامه غذایی تعیین نشده است.',
       style: 'notes',
-      alignment: 'center',
-      direction: 'rtl'
+      alignment: 'center'
     });
-    return content;
   }
-  
-  // اضافه کردن ردیف‌ها به جدول
-  tableData.push(...allMealRows);
-  
-  content.push({
-    table: {
-      widths: ['10%', '20%', '30%', '40%'],
-      body: tableData,
-      headerRows: 1
-    },
-    layout: {
-      fillColor: function(rowIndex: number) {
-        return (rowIndex === 0) ? '#27ae60' : (rowIndex % 2 === 0 ? '#f0fff4' : null);
-      },
-      hLineWidth: () => 1,
-      vLineWidth: () => 1,
-      hLineColor: () => '#e2e8f0',
-      vLineColor: () => '#e2e8f0'
-    },
-    margin: [0, 0, 0, 15]
-  });
   
   // نکات تغذیه‌ای (اگر وجود داشت)
   if (student.mealNotes) {
@@ -106,12 +103,12 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       text: 'نکات تغذیه‌ای:',
       style: 'sectionTitle',
       margin: [0, 15, 0, 5],
-      direction: 'rtl'
+      alignment: 'right'
     });
     content.push({
       text: preprocessPersianText(student.mealNotes),
       style: 'notes',
-      direction: 'rtl'
+      alignment: 'right'
     });
   }
   
