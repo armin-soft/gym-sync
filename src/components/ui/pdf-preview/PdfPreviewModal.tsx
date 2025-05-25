@@ -53,6 +53,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] p-0 gap-0 overflow-hidden bg-white rounded-lg border shadow-lg">
         <div className="flex flex-col h-full w-full">
+          {/* PDF Content - فقط محتوای PDF بدون هیچ منوی اضافی */}
           <div className="flex-1 w-full h-full">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">

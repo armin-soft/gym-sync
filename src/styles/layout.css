@@ -33,6 +33,10 @@
     @apply gap-2 sm:gap-4 md:gap-6 lg:gap-8;
   }
 
+  .flex {
+    direction: rtl;
+  }
+
   /* تنظیمات فاصله‌گذاری */
   .section {
     @apply py-4 sm:py-6 md:py-8 lg:py-12;
