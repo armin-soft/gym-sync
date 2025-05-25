@@ -1,10 +1,11 @@
 
 import React from "react";
-import { TabsContent } from "@/components/ui/tabs";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { SupplementCategory } from "@/types/supplement";
-import { CategorySection } from "./CategorySection";
+import { cn } from "@/lib/utils";
+import { TabsContent } from "@/components/ui/tabs";
+import { Supplement, SupplementCategory } from "@/types/supplement";
+import { CategoryTable } from "@/components/supplements/CategoryTable";
 import { SupplementContent } from "../supplement-content";
 
 interface TabContentProps {
@@ -13,9 +14,9 @@ interface TabContentProps {
   onAddCategory: () => void;
   onEditCategory: (category: SupplementCategory) => void;
   onDeleteCategory: (category: SupplementCategory) => void;
-  supplements: any[];
+  supplements: Supplement[];
   onAddSupplement: () => void;
-  onEditSupplement: (supplement: any) => void;
+  onEditSupplement: (supplement: Supplement) => void;
   onDeleteSupplement: (id: number) => void;
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
@@ -34,80 +35,47 @@ export const TabContent: React.FC<TabContentProps> = ({
   selectedCategory,
   onSelectCategory,
 }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 24 }
-    }
-  };
-
   return (
-    <div className="flex-1 overflow-hidden" dir="rtl">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          variants={containerVariants}
-          className="h-full"
-        >
-          <TabsContent value={activeTab} className="mt-0 h-full flex flex-col">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 h-full">
-              {/* Categories Section */}
-              <motion.div variants={itemVariants} className="xl:col-span-1">
-                <Card className="h-full bg-gradient-to-br from-white via-gray-50/50 to-blue-50/30 backdrop-blur-sm border-2 border-white/60 shadow-2xl rounded-3xl overflow-hidden">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-indigo-500/5" />
-                    <div className="relative p-4 sm:p-6 h-full">
-                      <CategorySection
-                        activeTab={activeTab}
-                        categories={categories}
-                        onAddCategory={onAddCategory}
-                        onEditCategory={onEditCategory}
-                        onDeleteCategory={onDeleteCategory}
-                        selectedCategory={selectedCategory}
-                        onSelectCategory={onSelectCategory}
-                      />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-
-              {/* Supplements Section */}
-              <motion.div variants={itemVariants} className="xl:col-span-2">
-                <Card className="h-full bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/30 backdrop-blur-sm border-2 border-white/60 shadow-2xl rounded-3xl overflow-hidden">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-blue-500/5" />
-                    <div className="relative p-4 sm:p-6 h-full">
-                      <SupplementContent
-                        supplements={supplements}
-                        onAddSupplement={onAddSupplement}
-                        onEditSupplement={onEditSupplement}
-                        onDeleteSupplement={onDeleteSupplement}
-                        activeTab={activeTab}
-                      />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </div>
-          </TabsContent>
-        </motion.div>
-      </AnimatePresence>
-    </div>
+    <TabsContent value={activeTab} className="m-0 flex-1 flex flex-col space-y-4 sm:space-y-6 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="z-10"
+      >
+        <CategoryTable 
+          categories={categories}
+          onAdd={onAddCategory}
+          onEdit={onEditCategory}
+          onDelete={onDeleteCategory}
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
+        />
+      </motion.div>
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="flex-1 overflow-hidden"
+      >
+        <Card className={cn(
+          "h-full shadow-md border-muted/30",
+          activeTab === "supplement" 
+            ? "bg-gradient-to-br from-purple-50/50 to-violet-100/50 dark:from-purple-950/20 dark:to-violet-900/20" 
+            : "bg-gradient-to-br from-blue-50/50 to-indigo-100/50 dark:from-blue-950/20 dark:to-indigo-900/20"
+        )}>
+          <div className="p-4 h-full">
+            <SupplementContent 
+              supplements={supplements}
+              onAddSupplement={onAddSupplement}
+              onEditSupplement={onEditSupplement}
+              onDeleteSupplement={onDeleteSupplement}
+              activeTab={activeTab}
+            />
+          </div>
+        </Card>
+      </motion.div>
+    </TabsContent>
   );
 };
