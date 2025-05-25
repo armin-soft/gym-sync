@@ -42,18 +42,20 @@ export function SidebarMenuList({ items, onClose }: SidebarMenuListProps) {
       initial="closed"
       animate="open"
       className="py-4 px-3"
+      dir="rtl"
     >
       {items.map((item) => (
-        <SidebarMenuItem
-          key={item.href}
-          title={item.title}
-          href={item.href}
-          icon={item.icon}
-          description={item.description}
-          badge={item.badge}
-          badgeColor={item.badgeColor}
-          onClose={onClose}
-        />
+        <div key={item.href} dir="rtl">
+          <SidebarMenuItem
+            title={item.title}
+            href={item.href}
+            icon={item.icon}
+            description={item.description}
+            badge={item.badge}
+            badgeColor={item.badgeColor}
+            onClose={onClose}
+          />
+        </div>
       ))}
     </motion.div>
   );

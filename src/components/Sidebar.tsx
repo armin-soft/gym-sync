@@ -126,16 +126,19 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           getSidebarWidth(),
           "p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
         )}
+        dir="rtl"
       >
-        <div className="flex h-full flex-col overflow-hidden">
-          <SidebarProfile 
-            name={trainerProfile.name}
-            email={trainerProfile.email}
-            image={trainerProfile.image}
-            onClose={onClose}
-          />
+        <div className="flex h-full flex-col overflow-hidden" dir="rtl">
+          <div dir="rtl">
+            <SidebarProfile 
+              name={trainerProfile.name}
+              email={trainerProfile.email}
+              image={trainerProfile.image}
+              onClose={onClose}
+            />
+          </div>
           
-          <div className="px-4 py-3 border-b bg-muted/30">
+          <div className="px-4 py-3 border-b bg-muted/30" dir="rtl">
             <h4 className={cn(
               "text-sm font-medium text-center text-muted-foreground",
               deviceInfo.isMobile ? "text-xs" : 
@@ -145,11 +148,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </h4>
           </div>
           
-          <ScrollArea className="flex-1">
-            <SidebarMenuList items={sidebarItems} onClose={onClose} />
+          <ScrollArea className="flex-1" dir="rtl">
+            <div dir="rtl">
+              <SidebarMenuList items={sidebarItems} onClose={onClose} />
+            </div>
           </ScrollArea>
           
-          <SidebarFooter gymName={gymName} />
+          <div dir="rtl">
+            <SidebarFooter gymName={gymName} />
+          </div>
         </div>
       </SheetContent>
     </Sheet>

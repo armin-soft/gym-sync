@@ -70,6 +70,7 @@ export function SidebarMenuItem({
       variants={itemVariants}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      dir="rtl"
     >
       <Link
         to={href}
@@ -81,6 +82,7 @@ export function SidebarMenuItem({
             ? "bg-primary text-primary-foreground" 
             : "hover:bg-muted"
         )}
+        dir="rtl"
       >
         {isActive && (
           <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 opacity-90"></div>
@@ -97,9 +99,9 @@ export function SidebarMenuItem({
           )}
         </AnimatePresence>
         
-        <div className="relative flex items-center">
+        <div className="relative flex items-center" dir="rtl">
           <div className={cn(
-            "flex-shrink-0 rounded-md flex items-center justify-center mr-3",
+            "flex-shrink-0 rounded-md flex items-center justify-center ml-3",
             getIconContainer(),
             isActive 
               ? "bg-white/20 text-white" 
@@ -108,10 +110,10 @@ export function SidebarMenuItem({
             <Icon className={getIconSize()} />
           </div>
           
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
+          <div className="flex-1" dir="rtl">
+            <div className="flex items-center justify-between" dir="rtl">
               <span className={cn(
-                "font-medium",
+                "font-medium text-right",
                 getFontSize(),
                 isActive ? "text-white" : ""
               )}>
@@ -120,7 +122,7 @@ export function SidebarMenuItem({
               
               {badge && (
                 <span className={cn(
-                  "px-1.5 py-0.5 rounded-full font-medium",
+                  "px-1.5 py-0.5 rounded-full font-medium mr-2",
                   "text-[10px]",
                   badgeColor || "bg-primary",
                   isActive ? "text-white bg-white/20" : "text-white"
@@ -132,7 +134,7 @@ export function SidebarMenuItem({
             
             {description && (
               <p className={cn(
-                "mt-0.5",
+                "mt-0.5 text-right",
                 getDescriptionSize(),
                 isActive ? "text-white/70" : "text-muted-foreground"
               )}>
