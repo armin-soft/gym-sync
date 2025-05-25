@@ -1,14 +1,14 @@
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/useSupplementsManager";
 import { PageContainer } from "@/components/ui/page-container";
-import { SupplementsHeader } from "./components/SupplementsHeader";
-import { SupplementTabs } from "./components/supplement-tabs";
 import { SupplementDialog } from "@/components/supplements/SupplementDialog";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { AdvancedSupplementsHeader } from "./components/AdvancedSupplementsHeader";
+import { AdvancedSupplementTabs } from "./components/AdvancedSupplementTabs";
 
 const SupplementsPage = () => {
   const { toast } = useToast();
@@ -108,17 +108,6 @@ const SupplementsPage = () => {
     }
     setSupplementDialogOpen(false);
   };
-  
-  // Animation for page content
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
 
   return (
     <PageContainer 
@@ -128,39 +117,47 @@ const SupplementsPage = () => {
       withBackground={true}
       noPadding={true}
     >
-      <div className="relative w-full h-full flex flex-col overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
-        
-        <div className="flex-1 flex flex-col h-full overflow-hidden p-2 sm:p-3 md:p-4 lg:p-6">
+      <div className="relative w-full h-full flex flex-col overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/20" dir="rtl">
+        {/* Advanced Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-purple-500/8 via-indigo-500/5 to-transparent rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-blue-500/8 via-cyan-500/5 to-transparent rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
+          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-gradient-to-r from-emerald-500/6 to-teal-500/4 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        </div>
+
+        <div className="relative z-10 flex-1 flex flex-col h-full overflow-hidden">
           <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="space-y-3 sm:space-y-4 md:space-y-6 h-full flex flex-col"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex-shrink-0 p-4 md:p-6"
           >
-            <SupplementsHeader />
-            
-            <div className="flex-1 overflow-hidden">
-              <SupplementTabs 
-                activeTab={activeTab}
-                onTabChange={(value) => {
-                  setActiveTab(value as 'supplement' | 'vitamin');
-                }}
-                isLoading={isLoading}
-                categories={relevantCategories}
-                onAddCategory={handleAddCategory}
-                onEditCategory={handleEditCategory}
-                onDeleteCategory={deleteCategory}
-                supplements={filteredSupplements}
-                onAddSupplement={handleAddSupplement}
-                onEditSupplement={handleEditSupplement}
-                onDeleteSupplement={deleteSupplement}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
-            </div>
+            <AdvancedSupplementsHeader />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            className="flex-1 overflow-hidden px-4 md:px-6 pb-6"
+          >
+            <AdvancedSupplementTabs 
+              activeTab={activeTab}
+              onTabChange={(value) => {
+                setActiveTab(value as 'supplement' | 'vitamin');
+              }}
+              isLoading={isLoading}
+              categories={relevantCategories}
+              onAddCategory={handleAddCategory}
+              onEditCategory={handleEditCategory}
+              onDeleteCategory={deleteCategory}
+              supplements={filteredSupplements}
+              onAddSupplement={handleAddSupplement}
+              onEditSupplement={handleEditSupplement}
+              onDeleteSupplement={deleteSupplement}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
           </motion.div>
         </div>
 
