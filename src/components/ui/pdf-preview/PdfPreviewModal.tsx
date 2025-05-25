@@ -3,15 +3,9 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Student } from "../../students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { X, Download, Printer, FileText, Share2, Eye } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { previewStudentProgramPDF, exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { X } from "lucide-react";
+import { previewStudentProgramPDF } from "@/lib/utils/pdf-export";
 import { useToast } from "@/hooks/use-toast";
-import { PdfPreviewHeader } from "./PdfPreviewHeader";
-import { PdfPreviewContent } from "./PdfPreviewContent";
-import { PdfPreviewActions } from "./PdfPreviewActions";
-import { PdfPreviewLoadingState } from "./PdfPreviewLoadingState";
-import { PdfPreviewErrorState } from "./PdfPreviewErrorState";
 
 interface PdfPreviewModalProps {
   isOpen: boolean;
@@ -27,7 +21,6 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
   const [pdfUrl, setPdfUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isExporting, setIsExporting] = useState<boolean>(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -58,117 +51,54 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
     }
   }, [isOpen, student, toast]);
 
-  const handleExport = async () => {
-    try {
-      setIsExporting(true);
-      
-      toast({
-        title: "در حال آماده‌سازی PDF",
-        description: "لطفاً کمی صبر کنید...",
-      });
-      
-      await exportStudentProgramToPdf(student);
-      
-      toast({
-        title: "دانلود موفقیت‌آمیز",
-        description: "فایل PDF با موفقیت دانلود شد.",
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("خطا در صدور PDF:", error);
-      toast({
-        title: "خطا در دانلود",
-        description: "متأسفانه مشکلی در دانلود فایل PDF پیش آمد.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const handlePrint = () => {
-    if (pdfUrl) {
-      const printWindow = window.open(pdfUrl, "_blank");
-      if (printWindow) {
-        printWindow.addEventListener('load', () => {
-          setTimeout(() => {
-            printWindow.print();
-          }, 500);
-        });
-        
-        toast({
-          title: "ارسال به چاپگر",
-          description: "فایل برای چاپ آماده شد.",
-        });
-      } else {
-        toast({
-          title: "خطا در چاپ",
-          description: "لطفاً اجازه باز شدن پنجره‌های جدید را فعال کنید.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
-
-  const handleRetry = () => {
-    setIsLoading(true);
-    setError(null);
-    
-    previewStudentProgramPDF(student)
-      .then((url) => {
-        setPdfUrl(url);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setError("خطا در بارگیری پیش‌نمایش PDF");
-        setIsLoading(false);
-      });
-  };
-
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="max-w-7xl w-[95vw] h-[95vh] p-0 gap-0 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 rounded-2xl border-2 border-slate-200/50 dark:border-slate-800/50 shadow-2xl">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="flex flex-col h-full"
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] p-0 gap-0 overflow-hidden bg-white rounded-lg border shadow-lg">
+        <div className="flex flex-col h-full">
+          {/* Simple close button */}
+          <div className="absolute top-2 right-2 z-10">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="w-8 h-8 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-gray-800"
             >
-              {/* Header */}
-              <PdfPreviewHeader
-                studentName={student.name}
-                onClose={onClose}
-              />
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
 
-              {/* Content */}
-              <div className="flex-1 flex flex-col overflow-hidden">
-                {isLoading ? (
-                  <PdfPreviewLoadingState />
-                ) : error ? (
-                  <PdfPreviewErrorState
-                    error={error}
-                    onRetry={handleRetry}
-                  />
-                ) : (
-                  <PdfPreviewContent pdfUrl={pdfUrl} />
-                )}
+          {/* PDF Content */}
+          <div className="flex-1 w-full h-full">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-600">در حال بارگذاری...</p>
+                </div>
               </div>
-
-              {/* Actions */}
-              {!isLoading && !error && (
-                <PdfPreviewActions
-                  onExport={handleExport}
-                  onPrint={handlePrint}
-                  isExporting={isExporting}
-                />
-              )}
-            </motion.div>
-          </DialogContent>
-        </Dialog>
-      )}
-    </AnimatePresence>
+            ) : error ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <p className="text-red-600 mb-4">{error}</p>
+                  <Button 
+                    onClick={() => window.location.reload()} 
+                    variant="outline"
+                    size="sm"
+                  >
+                    تلاش مجدد
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <iframe
+                src={pdfUrl}
+                className="w-full h-full border-0"
+                title="پیش‌نمایش PDF"
+              />
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
