@@ -72,58 +72,61 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
 
   return (
     <TabsContent value="exercise" className="m-0 h-full">
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="mb-4 h-full flex flex-col rtl"
-      >
-        <motion.div variants={itemVariants}>
-          <div className="flex flex-wrap items-center justify-between mb-4">
-            <h3 className="font-semibold text-lg mb-2 sm:mb-0">
-              برنامه تمرینی روز {toPersianNumbers(currentDay)}
-            </h3>
-          </div>
+      <div className="text-right" dir="rtl">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="mb-4 h-full flex flex-col rtl"
+        >
+          <motion.div variants={itemVariants}>
+            <div className="flex flex-wrap items-center justify-between mb-4">
+              <h3 className="font-semibold text-lg mb-2 sm:mb-0 text-right">
+                برنامه تمرینی روز {toPersianNumbers(currentDay)}
+              </h3>
+            </div>
+          </motion.div>
+          
+          <motion.div variants={itemVariants}>
+            <DaySelector 
+              days={days}
+              dayLabels={dayLabels}
+              currentDay={currentDay}
+              setCurrentDay={setCurrentDay}
+              editingDay={editingDay}
+              setEditingDay={setEditingDay}
+              tempDayLabel={tempDayLabel}
+              setTempDayLabel={setTempDayLabel}
+              setShowAddDayDialog={setShowAddDayDialog}
+              confirmDeleteDay={confirmDeleteDay}
+              maxDays={maxDays}
+            />
+          </motion.div>
+          
+          <motion.div variants={itemVariants} className="flex-1 overflow-auto">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`day-${currentDay}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                className="h-full"
+              >
+                <div dir="rtl" className="text-right">
+                  <StudentExerciseSelector 
+                    selectedExercises={selectedExercises}
+                    setSelectedExercises={setSelectedExercises}
+                    dayNumber={currentDay}
+                    exercises={exercises}
+                    dayLabel={getDayLabel(currentDay)}
+                  />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
         </motion.div>
-        
-        <motion.div variants={itemVariants}>
-          <DaySelector 
-            days={days}
-            dayLabels={dayLabels}
-            currentDay={currentDay}
-            setCurrentDay={setCurrentDay}
-            editingDay={editingDay}
-            setEditingDay={setEditingDay}
-            tempDayLabel={tempDayLabel}
-            setTempDayLabel={setTempDayLabel}
-            setShowAddDayDialog={setShowAddDayDialog}
-            confirmDeleteDay={confirmDeleteDay}
-            maxDays={maxDays}
-          />
-        </motion.div>
-        
-        <motion.div variants={itemVariants} className="flex-1 overflow-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`day-${currentDay}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 24 }}
-              className="h-full"
-            >
-              {/* Always show the StudentExerciseSelector, even if no exercises are selected */}
-              <StudentExerciseSelector 
-                selectedExercises={selectedExercises}
-                setSelectedExercises={setSelectedExercises}
-                dayNumber={currentDay}
-                exercises={exercises}
-                dayLabel={getDayLabel(currentDay)}
-              />
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
-      </motion.div>
+      </div>
     </TabsContent>
   );
 };

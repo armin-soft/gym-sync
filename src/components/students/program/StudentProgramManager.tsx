@@ -57,7 +57,7 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
   });
 
   return (
-    <div className="space-y-4 h-full w-full flex flex-col">
+    <div className="space-y-4 h-full w-full flex flex-col text-right" dir="rtl">
       <StudentProgramHeader 
         student={student} 
         onClose={onClose} 
