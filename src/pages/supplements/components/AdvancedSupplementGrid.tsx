@@ -60,26 +60,26 @@ export const AdvancedSupplementGrid: React.FC<AdvancedSupplementGridProps> = ({
 
   if (supplements.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex-1 flex items-center justify-center p-3 sm:p-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center space-y-4 max-w-sm"
+          className="text-center space-y-3 sm:space-y-4 max-w-xs sm:max-w-sm"
         >
           <div className="relative">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto">
-              <Pill className="w-8 h-8 text-purple-400" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto">
+              <Pill className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
             </div>
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-              <Package className="w-3 h-3 text-white" />
+            <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+              <Package className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
             </div>
           </div>
           
-          <div className="space-y-2">
-            <h3 className="text-lg font-bold text-slate-700">
+          <div className="space-y-1 sm:space-y-2">
+            <h3 className="text-sm sm:text-lg font-bold text-slate-700">
               {searchQuery || selectedCategory !== 'all' ? 'موردی یافت نشد' : `هیچ ${activeTab === 'supplement' ? 'مکملی' : 'ویتامینی'} ثبت نشده`}
             </h3>
-            <p className="text-slate-500 leading-relaxed text-sm">
+            <p className="text-slate-500 leading-relaxed text-xs sm:text-sm">
               {searchQuery || selectedCategory !== 'all' 
                 ? 'با تغییر معیارهای جستجو یا فیلتر، موارد بیشتری را مشاهده کنید'
                 : `اولین ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} خود را اضافه کنید`
@@ -93,7 +93,7 @@ export const AdvancedSupplementGrid: React.FC<AdvancedSupplementGridProps> = ({
               onClick={() => {
                 // Clear filters logic would go here
               }}
-              className="bg-white hover:bg-slate-50 text-sm"
+              className="bg-white hover:bg-slate-50 text-xs sm:text-sm"
             >
               پاک کردن فیلترها
             </Button>
@@ -104,16 +104,16 @@ export const AdvancedSupplementGrid: React.FC<AdvancedSupplementGridProps> = ({
   }
 
   return (
-    <div className="flex-1 overflow-auto p-4" dir="rtl">
+    <div className="flex-1 overflow-auto p-2 sm:p-4" dir="rtl">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className={cn(
-          "gap-4",
+          "gap-2 sm:gap-4",
           viewMode === 'grid' 
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" 
-            : "flex flex-col space-y-3"
+            ? "grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6" 
+            : "flex flex-col space-y-2 sm:space-y-3"
         )}
       >
         <AnimatePresence mode="popLayout">
@@ -162,21 +162,21 @@ const AdvancedSupplementCard: React.FC<{
   const TypeIcon = getTypeIcon();
 
   return (
-    <Card className="group relative overflow-hidden bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/20 border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
+    <Card className="group relative overflow-hidden bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/20 border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg sm:rounded-xl">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5" />
       
       {/* Header */}
-      <div className="relative z-10 p-4">
-        <div className="flex items-start justify-between mb-3">
+      <div className="relative z-10 p-2 sm:p-4">
+        <div className="flex items-start justify-between mb-2 sm:mb-3">
           <div className="flex-1 text-right">
-            <h3 className="font-bold text-sm text-slate-800 mb-1 line-clamp-2 leading-tight">
+            <h3 className="font-bold text-xs sm:text-sm text-slate-800 mb-1 line-clamp-2 leading-tight">
               {supplement.name}
             </h3>
             <Badge 
               variant="outline" 
               className={cn(
-                "text-xs font-medium border",
+                "text-xs font-medium border scale-75 sm:scale-100 origin-right",
                 activeTab === 'supplement' 
                   ? "bg-purple-50 text-purple-700 border-purple-200" 
                   : "bg-blue-50 text-blue-700 border-blue-200"
@@ -187,30 +187,30 @@ const AdvancedSupplementCard: React.FC<{
           </div>
           
           <div className={cn(
-            "w-8 h-8 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0",
+            "w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0",
             activeTab === 'supplement' 
               ? "bg-gradient-to-br from-purple-500 to-indigo-600" 
               : "bg-gradient-to-br from-blue-500 to-cyan-600"
           )}>
-            <TypeIcon className="w-4 h-4 text-white" />
+            <TypeIcon className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
           </div>
         </div>
 
         {/* Details */}
-        <div className="space-y-2">
+        <div className="space-y-1 sm:space-y-2">
           {supplement.dosage && (
-            <div className="flex items-center gap-2 text-xs text-slate-600">
-              <Award className="w-3 h-3 text-emerald-500" />
+            <div className="flex items-center gap-1 sm:gap-2 text-xs text-slate-600">
+              <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-500" />
               <span className="font-medium">دوز:</span>
-              <span>{toPersianNumbers(supplement.dosage)}</span>
+              <span className="text-xs">{toPersianNumbers(supplement.dosage)}</span>
             </div>
           )}
           
           {supplement.timing && (
-            <div className="flex items-center gap-2 text-xs text-slate-600">
-              <Clock className="w-3 h-3 text-orange-500" />
+            <div className="flex items-center gap-1 sm:gap-2 text-xs text-slate-600">
+              <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-500" />
               <span className="font-medium">زمان:</span>
-              <span>{supplement.timing}</span>
+              <span className="text-xs">{supplement.timing}</span>
             </div>
           )}
 
@@ -222,23 +222,23 @@ const AdvancedSupplementCard: React.FC<{
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="flex items-center gap-1 sm:gap-2 mt-2 sm:mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <Button
             variant="ghost"
             size="sm"
             onClick={onEdit}
-            className="flex-1 h-7 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg text-xs"
+            className="flex-1 h-6 sm:h-7 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-md sm:rounded-lg text-xs"
           >
-            <Edit className="w-3 h-3 ml-1" />
-            ویرایش
+            <Edit className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-1" />
+            <span className="hidden sm:inline">ویرایش</span>
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={onDelete}
-            className="h-7 px-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg"
+            className="h-6 sm:h-7 px-1.5 sm:px-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md sm:rounded-lg"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
           </Button>
         </div>
       </div>
@@ -256,40 +256,40 @@ const AdvancedSupplementListItem: React.FC<{
   const TypeIcon = activeTab === 'supplement' ? Pill : Zap;
 
   return (
-    <Card className="group relative overflow-hidden bg-gradient-to-l from-white via-purple-50/20 to-indigo-50/10 border border-white/60 hover:shadow-lg transition-all duration-300 rounded-xl">
-      <div className="p-4">
-        <div className="flex items-center gap-4">
+    <Card className="group relative overflow-hidden bg-gradient-to-l from-white via-purple-50/20 to-indigo-50/10 border border-white/60 hover:shadow-lg transition-all duration-300 rounded-lg sm:rounded-xl">
+      <div className="p-2 sm:p-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {/* Icon */}
           <div className={cn(
-            "w-8 h-8 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0",
+            "w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0",
             activeTab === 'supplement' 
               ? "bg-gradient-to-br from-purple-500 to-indigo-600" 
               : "bg-gradient-to-br from-blue-500 to-cyan-600"
           )}>
-            <TypeIcon className="w-4 h-4 text-white" />
+            <TypeIcon className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
           </div>
 
           {/* Content */}
           <div className="flex-1 text-right">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h3 className="font-bold text-sm text-slate-800 mb-1">
+                <h3 className="font-bold text-xs sm:text-sm text-slate-800 mb-1">
                   {supplement.name}
                 </h3>
-                <div className="flex items-center gap-3 text-xs text-slate-600">
-                  <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 text-xs">
+                <div className="flex items-center gap-2 sm:gap-3 text-xs text-slate-600 flex-wrap">
+                  <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 text-xs scale-75 sm:scale-100 origin-right">
                     {supplement.category}
                   </Badge>
                   {supplement.dosage && (
                     <span className="flex items-center gap-1">
-                      <Award className="w-2.5 h-2.5 text-emerald-500" />
-                      {toPersianNumbers(supplement.dosage)}
+                      <Award className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-emerald-500" />
+                      <span className="text-xs">{toPersianNumbers(supplement.dosage)}</span>
                     </span>
                   )}
                   {supplement.timing && (
                     <span className="flex items-center gap-1">
-                      <Clock className="w-2.5 h-2.5 text-orange-500" />
-                      {supplement.timing}
+                      <Clock className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-orange-500" />
+                      <span className="text-xs">{supplement.timing}</span>
                     </span>
                   )}
                 </div>
@@ -301,23 +301,23 @@ const AdvancedSupplementListItem: React.FC<{
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="flex items-center gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onEdit}
-                  className="h-7 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg text-xs px-2"
+                  className="h-6 sm:h-7 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-md sm:rounded-lg text-xs px-1.5 sm:px-2"
                 >
-                  <Edit className="w-3 h-3 ml-1" />
-                  ویرایش
+                  <Edit className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-1" />
+                  <span className="hidden sm:inline">ویرایش</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onDelete}
-                  className="h-7 px-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                  className="h-6 sm:h-7 px-1.5 sm:px-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md sm:rounded-lg"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 </Button>
               </div>
             </div>
