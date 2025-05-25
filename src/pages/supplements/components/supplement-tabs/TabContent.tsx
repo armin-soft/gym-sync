@@ -36,12 +36,11 @@ export const TabContent: React.FC<TabContentProps> = ({
   onSelectCategory,
 }) => {
   return (
-    <TabsContent value={activeTab} className="m-0 flex-1 flex flex-col space-y-6 overflow-hidden">
-      {/* Categories Section */}
+    <TabsContent value={activeTab} className="m-0 flex-1 flex flex-col space-y-4 sm:space-y-6 overflow-hidden">
       <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
         className="z-10"
       >
         <CategoryTable 
@@ -54,26 +53,19 @@ export const TabContent: React.FC<TabContentProps> = ({
         />
       </motion.div>
       
-      {/* Supplements Content Section */}
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
         className="flex-1 overflow-hidden"
       >
         <Card className={cn(
-          "h-full shadow-2xl border border-slate-200/30 dark:border-slate-700/30 backdrop-blur-xl rounded-3xl overflow-hidden",
-          "bg-white/90 dark:bg-slate-800/90"
+          "h-full shadow-md border-muted/30",
+          activeTab === "supplement" 
+            ? "bg-gradient-to-br from-purple-50/50 to-violet-100/50 dark:from-purple-950/20 dark:to-violet-900/20" 
+            : "bg-gradient-to-br from-blue-50/50 to-indigo-100/50 dark:from-blue-950/20 dark:to-indigo-900/20"
         )}>
-          {/* Decorative Header */}
-          <div className={cn(
-            "h-2 bg-gradient-to-r",
-            activeTab === "supplement" 
-              ? "from-emerald-400 via-emerald-500 to-blue-500" 
-              : "from-blue-400 via-blue-500 to-purple-500"
-          )}></div>
-          
-          <div className="p-6 md:p-8 h-full">
+          <div className="p-4 h-full">
             <SupplementContent 
               supplements={supplements}
               onAddSupplement={onAddSupplement}

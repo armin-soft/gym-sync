@@ -1,119 +1,157 @@
 
+import { FlaskConical, Pill, Package } from "lucide-react";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
-import { FlaskConical, Pill, Star, Shield, Heart } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export const SupplementsHeader = () => {
+  const deviceInfo = useDeviceInfo();
+
+  const getHeaderSize = () => {
+    if (deviceInfo.isMobile) {
+      return "text-xl";
+    } else if (deviceInfo.isTablet) {
+      return "text-2xl";
+    } else {
+      return "text-3xl";
+    }
+  };
+
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -30 }}
+    <motion.div 
+      initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="relative overflow-hidden mb-8"
-      dir="rtl"
+      transition={{ duration: 0.5 }}
+      className="relative overflow-hidden"
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 via-indigo-400/5 to-blue-400/10 rounded-xl sm:rounded-2xl lg:rounded-3xl" />
       
-      <Card className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-emerald-200/30 dark:border-slate-700/30 shadow-2xl rounded-3xl overflow-hidden">
-        {/* Top Decorative Border */}
-        <div className="h-2 bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-500"></div>
-        
-        <div className="p-8 md:p-12">
-          {/* Main Header */}
-          <div className="flex flex-col lg:flex-row items-center gap-6 mb-8">
-            {/* Icon Section */}
-            <div className="relative">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl"></div>
-                <FlaskConical className="w-10 h-10 md:w-12 md:h-12 text-white relative z-10" />
-                <Star className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-pulse" />
+      <div className="absolute right-0 top-0 h-24 w-24 md:h-40 md:w-40 bg-gradient-to-br from-purple-500/20 to-blue-500/10 rounded-full blur-2xl -mr-12 -mt-12" />
+      <div className="absolute left-0 bottom-0 h-20 w-20 md:h-32 md:w-32 bg-gradient-to-br from-blue-500/10 to-purple-500/20 rounded-full blur-xl -ml-10 -mb-10" />
+      
+      <div className="relative backdrop-blur-sm p-4 sm:p-6 md:p-8 overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl border border-white/10 dark:border-gray-800/50 shadow-xl">
+        <div className="grid grid-cols-6 gap-2 sm:gap-4">
+          <div className="col-span-6 sm:col-span-4 flex items-start gap-3 sm:gap-4">
+            <motion.div 
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative flex-shrink-0"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/80 to-indigo-600/80 blur-md rounded-2xl transform -rotate-3" />
+              <div className="relative p-2.5 sm:p-4 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-2xl transform rotate-3">
+                <Package className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              {/* Floating Elements */}
-              <motion.div 
-                animate={{ y: [-5, 5, -5] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-br from-pink-400 to-red-500 rounded-full opacity-80"
-              ></motion.div>
-              <motion.div 
-                animate={{ y: [5, -5, 5] }}
-                transition={{ duration: 2.5, repeat: Infinity }}
-                className="absolute -bottom-2 -right-2 w-6 h-6 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-70"
-              ></motion.div>
-            </div>
+            </motion.div>
             
-            {/* Text Content */}
-            <div className="flex-1 text-center lg:text-right">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 mb-4">
-                مدیریت مکمل‌ها و ویتامین‌ها
-              </h1>
-              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
-                سامانه هوشمند مدیریت و سازماندهی مکمل‌های غذایی و ویتامین‌ها با امکانات پیشرفته
-              </p>
-            </div>
+            <motion.div variants={container} initial="hidden" animate="visible">
+              <motion.h2 
+                variants={item}
+                className={`${getHeaderSize()} font-extrabold tracking-tight text-gradient bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent`}
+              >
+                مکمل ها و ویتامین ها
+              </motion.h2>
+              <motion.p 
+                variants={item}
+                className="text-sm sm:text-base text-gray-500 dark:text-gray-400 font-medium mt-1"
+              >
+                در این بخش می توانید مکمل های ورزشی و ویتامین های خود را مدیریت کنید
+              </motion.p>
+            </motion.div>
           </div>
           
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <motion.div 
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 rounded-2xl p-6 border border-emerald-200/30 dark:border-emerald-700/30"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
-                  <FlaskConical className="w-6 h-6 text-white" />
+          <div className="col-span-6 sm:col-span-2 flex justify-center sm:justify-end items-end">
+            <div className="hidden sm:flex space-x-4 items-center">
+              <motion.div 
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.6, type: "spring" }}
+                className="relative flex-shrink-0"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/80 to-purple-600/80 blur-md rounded-full" />
+                <div className="relative p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full shadow-lg">
+                  <FlaskConical className="h-5 w-5 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-emerald-700 dark:text-emerald-300">مکمل‌های غذایی</h3>
-              </div>
-              <p className="text-emerald-600 dark:text-emerald-400 text-sm">
-                مدیریت حرفه‌ای انواع مکمل‌های غذایی و پروتئین‌ها
-              </p>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border border-blue-200/30 dark:border-blue-700/30"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                  <Pill className="w-6 h-6 text-white" />
+              </motion.div>
+              
+              <motion.div 
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.7, type: "spring" }}
+                className="relative flex-shrink-0"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/80 to-blue-600/80 blur-md rounded-full" />
+                <div className="relative p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg">
+                  <Pill className="h-5 w-5 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-blue-700 dark:text-blue-300">ویتامین‌ها</h3>
-              </div>
-              <p className="text-blue-600 dark:text-blue-400 text-sm">
-                کنترل و نظارت بر مصرف انواع ویتامین‌ها و مواد معدنی
-              </p>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border border-purple-200/30 dark:border-purple-700/30"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-purple-700 dark:text-purple-300">سلامت و تناسب</h3>
-              </div>
-              <p className="text-purple-600 dark:text-purple-400 text-sm">
-                بهینه‌سازی برنامه تغذیه‌ای و مکمل‌یاری ورزشکاران
-              </p>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
         </div>
         
-        {/* Bottom Decorative Pattern */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-emerald-50/50 to-transparent dark:from-slate-800/50 pointer-events-none"></div>
-        <div className="absolute bottom-4 right-8 opacity-10 dark:opacity-5">
-          <Heart className="w-24 h-24 text-emerald-500" />
-        </div>
-      </Card>
+        {/* Animated floating icons */}
+        <motion.div 
+          className="absolute right-8 top-1/4 opacity-5"
+          animate={{ 
+            y: [0, -8, 0],
+            rotate: [0, 5, 0]
+          }}
+          transition={{ 
+            duration: 4, 
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        >
+          <FlaskConical size={40} />
+        </motion.div>
+        
+        <motion.div 
+          className="absolute right-24 bottom-1/4 opacity-5"
+          animate={{ 
+            y: [0, 6, 0],
+            rotate: [0, -3, 0]
+          }}
+          transition={{ 
+            duration: 5, 
+            repeat: Infinity,
+            repeatType: "reverse",
+            delay: 0.5
+          }}
+        >
+          <Pill size={35} />
+        </motion.div>
+        
+        <motion.div 
+          className="absolute left-12 top-1/3 opacity-5"
+          animate={{ 
+            y: [0, 5, 0],
+            rotate: [0, -5, 0]
+          }}
+          transition={{ 
+            duration: 4.5, 
+            repeat: Infinity,
+            repeatType: "reverse",
+            delay: 0.8
+          }}
+        >
+          <Package size={30} />
+        </motion.div>
+      </div>
     </motion.div>
   );
 };
