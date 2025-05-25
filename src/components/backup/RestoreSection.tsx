@@ -1,8 +1,9 @@
 
 import { Card } from "@/components/ui/card";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { RestoreGuide, FileUploader, useRestoreData, SectionHeader } from "./restore";
+import { RotateCcw } from "lucide-react";
 
 interface RestoreSectionProps {
   dataKeys: string[];
@@ -18,39 +19,59 @@ export function RestoreSection({ dataKeys }: RestoreSectionProps) {
     handleFileRestore 
   } = useRestoreData({ dataKeys });
 
-  const getInnerCardClasses = () => {
-    return "bg-white dark:bg-gray-800 rounded-xl p-2 sm:p-3 md:p-4 shadow-sm h-full";
-  };
-
-  const getGridClasses = () => {
-    return "grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 lg:gap-6 flex-1";
-  };
-
-  const getCardClasses = () => {
-    const baseClasses = "p-3 sm:p-4 md:p-5 lg:p-6 h-full";
-    return `${baseClasses} bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-indigo-950 dark:via-gray-900 dark:to-purple-950 border-indigo-100 dark:border-indigo-900`;
-  };
-
   return (
-    <Card className={getCardClasses()}>
-      <div className="flex flex-col space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 h-full">
-        <SectionHeader />
-
-        <div className={getGridClasses()}>
-          <div className={getInnerCardClasses()}>
-            <RestoreGuide />
-          </div>
-
-          <div className={getInnerCardClasses()}>
-            <FileUploader
-              onFileSelected={handleFileRestore}
-              isLoading={isLoading}
-              restoreSuccess={restoreSuccess}
-              restoreMessage={restoreMessage}
-            />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 p-6 md:p-8">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+              <RotateCcw className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                بازیابی اطلاعات
+              </h2>
+              <p className="text-indigo-100">
+                اطلاعات خود را از فایل پشتیبان بازگردانید
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </Card>
+
+        <div className="p-6 md:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+            {/* Guide Section */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-800 rounded-2xl p-6 border border-indigo-200 dark:border-slate-600"
+            >
+              <RestoreGuide />
+            </motion.div>
+
+            {/* Upload Section */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-700 dark:to-slate-800 rounded-2xl p-6 border border-purple-200 dark:border-slate-600"
+            >
+              <FileUploader
+                onFileSelected={handleFileRestore}
+                isLoading={isLoading}
+                restoreSuccess={restoreSuccess}
+                restoreMessage={restoreMessage}
+              />
+            </motion.div>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
   );
 }
