@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, FileText, Check, X, CloudUpload } from "lucide-react";
 import { motion } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { formatNumber } from "@/lib/utils/numbers";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface FileUploaderProps {
   onFileSelected: (file: File) => void;
@@ -55,8 +55,8 @@ export function FileUploader({ onFileSelected, isLoading, restoreSuccess, restor
   };
 
   return (
-    <div className="h-full">
-      <h4 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-2">
+    <div className="h-full" dir="rtl">
+      <h4 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 justify-start" dir="rtl">
         <CloudUpload className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0" />
         <span>آپلود فایل پشتیبان</span>
       </h4>
@@ -83,6 +83,7 @@ export function FileUploader({ onFileSelected, isLoading, restoreSuccess, restor
         onClick={handleRestoreClick}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
+        dir="rtl"
       >
         <div className="flex flex-col items-center gap-3 sm:gap-4">
           <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl sm:rounded-2xl flex items-center justify-center">
@@ -91,14 +92,14 @@ export function FileUploader({ onFileSelected, isLoading, restoreSuccess, restor
           
           {selectedFile ? (
             <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="flex items-center justify-center gap-2 mb-2" dir="rtl">
                 <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0" />
                 <span className="font-medium text-slate-800 dark:text-white text-sm sm:text-base truncate max-w-40 sm:max-w-60">
                   {selectedFile.name}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                {formatNumber((selectedFile.size / 1024).toFixed(1))} KB
+                {toPersianNumbers((selectedFile.size / 1024).toFixed(1))} کیلوبایت
               </p>
             </div>
           ) : (
@@ -122,14 +123,15 @@ export function FileUploader({ onFileSelected, isLoading, restoreSuccess, restor
         onClick={handleRestoreClick} 
         disabled={isLoading}
         className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white border-0 rounded-lg sm:rounded-xl py-3 sm:py-4 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base"
+        dir="rtl"
       >
         {isLoading ? (
-          <div className="flex items-center justify-center gap-2 sm:gap-3">
+          <div className="flex items-center justify-center gap-2 sm:gap-3" dir="rtl">
             <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             <span>در حال بازیابی...</span>
           </div>
         ) : (
-          <div className="flex items-center justify-center gap-2 sm:gap-3">
+          <div className="flex items-center justify-center gap-2 sm:gap-3" dir="rtl">
             <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>{selectedFile ? "شروع بازیابی" : "انتخاب فایل پشتیبان"}</span>
           </div>
@@ -146,8 +148,9 @@ export function FileUploader({ onFileSelected, isLoading, restoreSuccess, restor
               ? "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 border-green-200 dark:border-green-700" 
               : "bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30 border-red-200 dark:border-red-700"
           }`}
+          dir="rtl"
         >
-          <div className="flex items-start gap-2 sm:gap-3">
+          <div className="flex items-start gap-2 sm:gap-3" dir="rtl">
             <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
               restoreSuccess ? "bg-green-500" : "bg-red-500"
             }`}>
@@ -157,7 +160,7 @@ export function FileUploader({ onFileSelected, isLoading, restoreSuccess, restor
                 <X className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-white" />
               )}
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 text-right">
               <h5 className={`font-semibold mb-1 text-sm sm:text-base ${
                 restoreSuccess 
                   ? "text-green-800 dark:text-green-200" 
