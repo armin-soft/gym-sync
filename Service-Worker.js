@@ -2,7 +2,7 @@
 // سرویس ورکر اصلی - بهینه‌سازی و تحمل خطای بالا
 
 // متغیر برای نام کش
-const CACHE_NAME = 'gym-sync-v240'; // Updated from v234 to v240
+const CACHE_NAME = 'gym-sync-v242'; // Updated from v240 to v242
 
 // لیست منابع برای کش
 const STATIC_ASSETS = [
