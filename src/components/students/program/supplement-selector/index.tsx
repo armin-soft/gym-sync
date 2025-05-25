@@ -100,17 +100,17 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   return (
     <div className="h-full flex flex-col text-right" dir="rtl">
       {dayLabel && (
-        <div className="mb-4 text-center">
-          <h3 className="text-lg font-semibold text-indigo-700">
+        <div className="mb-4 text-center" dir="rtl">
+          <h3 className="text-lg font-semibold text-indigo-700 text-right">
             {activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'} - {dayLabel}
           </h3>
         </div>
       )}
       
       {/* Category Selection */}
-      <div className="p-3 space-y-2 mb-4 border rounded-lg">
-        <h4 className="text-sm font-medium">دسته‌بندی</h4>
-        <div className="flex">
+      <div className="p-3 space-y-2 mb-4 border rounded-lg text-right" dir="rtl">
+        <h4 className="text-sm font-medium text-right">دسته‌بندی</h4>
+        <div className="flex justify-end" dir="rtl">
           <CategorySelector 
             categories={categoryObjects}
             selectedCategory={selectedCategory}
@@ -121,37 +121,45 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
       </div>
 
       {/* Search */}
-      <SupplementSearch 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        activeTab={activeTab}
-      />
+      <div dir="rtl">
+        <SupplementSearch 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          activeTab={activeTab}
+        />
+      </div>
 
       {/* Display active filters */}
-      <ActiveFilters 
-        selectedCategory={selectedCategory} 
-        clearCategory={() => setSelectedCategory(null)} 
-      />
+      <div dir="rtl">
+        <ActiveFilters 
+          selectedCategory={selectedCategory} 
+          clearCategory={() => setSelectedCategory(null)} 
+        />
+      </div>
 
       {/* Item Grid */}
-      <ScrollArea className="flex-1">
-        <SupplementGrid 
-          filteredItems={filteredItems}
-          selectedItems={selectedItems}
-          toggleItem={toggleItem}
-          searchQuery={searchQuery}
-          selectedCategory={selectedCategory}
-          clearFilters={clearFilters}
-        />
+      <ScrollArea className="flex-1" dir="rtl">
+        <div dir="rtl">
+          <SupplementGrid 
+            filteredItems={filteredItems}
+            selectedItems={selectedItems}
+            toggleItem={toggleItem}
+            searchQuery={searchQuery}
+            selectedCategory={selectedCategory}
+            clearFilters={clearFilters}
+          />
+        </div>
       </ScrollArea>
       
       {/* Selected count */}
-      <SupplementStatistics 
-        filteredItemsCount={filteredItems.length}
-        selectedItemsCount={selectedItems.length}
-        activeTab={activeTab}
-        dayLabel={dayLabel}
-      />
+      <div dir="rtl">
+        <SupplementStatistics 
+          filteredItemsCount={filteredItems.length}
+          selectedItemsCount={selectedItems.length}
+          activeTab={activeTab}
+          dayLabel={dayLabel}
+        />
+      </div>
     </div>
   );
 };

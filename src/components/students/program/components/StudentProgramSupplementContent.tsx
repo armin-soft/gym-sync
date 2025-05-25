@@ -80,20 +80,21 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   };
 
   return (
-    <TabsContent value="supplement" className="m-0 h-full">
+    <TabsContent value="supplement" className="m-0 h-full" dir="rtl">
       <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="mb-4 h-full flex flex-col rtl"
+        className="mb-4 h-full flex flex-col text-right"
+        dir="rtl"
       >
-        <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2">
-          <h3 className="font-semibold text-lg">
+        <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2" dir="rtl">
+          <h3 className="font-semibold text-lg text-right">
             مکمل و ویتامین روز {toPersianNumbers(currentDay)}
           </h3>
         </motion.div>
         
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} dir="rtl">
           <DaySelector 
             days={days}
             dayLabels={dayLabels}
@@ -110,19 +111,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
         </motion.div>
         
         {/* Tab Selector for Supplement vs Vitamin */}
-        <motion.div variants={itemVariants} className="mb-4">
-          <div className="flex bg-muted/20 rounded-lg p-1 w-full sm:w-auto">
-            <button
-              onClick={() => setActiveTab('supplement')}
-              className={cn(
-                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
-                activeTab === 'supplement'
-                  ? "bg-white text-purple-700 shadow-sm" 
-                  : "text-gray-600 hover:bg-white/50"
-              )}
-            >
-              مکمل‌ها
-            </button>
+        <motion.div variants={itemVariants} className="mb-4" dir="rtl">
+          <div className="flex bg-muted/20 rounded-lg p-1 w-full sm:w-auto" dir="rtl">
             <button
               onClick={() => setActiveTab('vitamin')}
               className={cn(
@@ -134,10 +124,21 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
             >
               ویتامین‌ها
             </button>
+            <button
+              onClick={() => setActiveTab('supplement')}
+              className={cn(
+                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
+                activeTab === 'supplement'
+                  ? "bg-white text-purple-700 shadow-sm" 
+                  : "text-gray-600 hover:bg-white/50"
+              )}
+            >
+              مکمل‌ها
+            </button>
           </div>
         </motion.div>
         
-        <motion.div variants={itemVariants} className="flex-1 overflow-auto">
+        <motion.div variants={itemVariants} className="flex-1 overflow-auto" dir="rtl">
           <AnimatePresence mode="wait">
             <motion.div
               key={`${activeTab}-day-${currentDay}`}
@@ -146,9 +147,10 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
               className="h-full"
+              dir="rtl"
             >
-              <Card className="border border-border/40 bg-white/90 backdrop-blur-sm shadow-sm h-full">
-                <div className="p-4 h-full">
+              <Card className="border border-border/40 bg-white/90 backdrop-blur-sm shadow-sm h-full" dir="rtl">
+                <div className="p-4 h-full text-right" dir="rtl">
                   <StudentSupplementSelector 
                     supplements={supplements}
                     selectedSupplements={selectedSupplements}
@@ -167,14 +169,14 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
           </AnimatePresence>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="mt-4 text-muted-foreground text-sm text-center">
-          <div className="flex items-center justify-center gap-2">
-            <Pill className="h-4 w-4" />
-            <span>
+        <motion.div variants={itemVariants} className="mt-4 text-muted-foreground text-sm text-center" dir="rtl">
+          <div className="flex items-center justify-center gap-2" dir="rtl">
+            <span className="text-right">
               {activeTab === 'supplement' 
                 ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده برای ${getDayLabel(currentDay)}` 
                 : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده برای ${getDayLabel(currentDay)}`}
             </span>
+            <Pill className="h-4 w-4" />
           </div>
         </motion.div>
       </motion.div>

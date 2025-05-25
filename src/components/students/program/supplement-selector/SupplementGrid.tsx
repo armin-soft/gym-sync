@@ -58,6 +58,7 @@ const SupplementGrid: React.FC<SupplementGridProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            dir="rtl"
           >
             <SupplementCard
               item={item}
