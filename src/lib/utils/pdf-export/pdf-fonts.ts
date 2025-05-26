@@ -25,12 +25,12 @@ export function preprocessPersianText(text: string): string {
       .replace(/‌/g, ' '); // تبدیل نیم‌فاصله به فاصله
     
     // اضافه کردن مارکر RTL برای درست کردن جهت متن
-    processedText = '\u202E' + processedText + '\u202C';
+    processedText = '\u202B' + processedText + '\u202C';
     
     return processedText;
   } catch (error) {
     console.error("خطا در پیش‌پردازش متن فارسی:", error);
-    return '\u202E' + text + '\u202C';
+    return '\u202B' + text + '\u202C';
   }
 }
 
@@ -42,7 +42,7 @@ export function createRTLText(text: string): any {
     text: preprocessPersianText(text),
     alignment: 'right',
     direction: 'rtl',
-    bidi: true // فعال کردن پردازش دوجهته
+    bidi: false // غیرفعال کردن پردازش خودکار دوجهته
   };
 }
 
@@ -55,6 +55,6 @@ export function createRTLTextArray(parts: { text: string, style?: any }[]): any 
     })),
     alignment: 'right',
     direction: 'rtl',
-    bidi: true
+    bidi: false
   };
 }

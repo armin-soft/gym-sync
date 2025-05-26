@@ -23,25 +23,24 @@ export function createExerciseProgramPageOne(student: Student, trainerProfile: T
   
   // عنوان صفحه اول
   content.push({
-    text: preprocessPersianText('برنامه تمرینی'),
+    text: 'برنامه تمرینی',
     style: 'sectionTitle',
     margin: [0, 20, 0, 15],
     color: '#7c3aed',
     direction: 'rtl',
     fontSize: 18,
     bold: true,
-    alignment: 'center',
-    bidi: true
+    alignment: 'center'
   });
   
   // جدول تمرینات با ترتیب: شماره، روز، نام تمرین، ست، تکرار
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
     [
-      { text: preprocessPersianText('ردیف'), style: 'tableHeader', alignment: 'center' },
-      { text: preprocessPersianText('روز تمرین'), style: 'tableHeader', alignment: 'center' },
-      { text: preprocessPersianText('نام تمرین'), style: 'tableHeader', alignment: 'right' },
-      { text: preprocessPersianText('تعداد ست'), style: 'tableHeader', alignment: 'center' },
-      { text: preprocessPersianText('تعداد تکرار'), style: 'tableHeader', alignment: 'center' }
+      { text: 'ردیف', style: 'tableHeader', alignment: 'center' },
+      { text: 'روز تمرین', style: 'tableHeader', alignment: 'center' },
+      { text: 'نام تمرین', style: 'tableHeader', alignment: 'right' },
+      { text: 'تعداد ست', style: 'tableHeader', alignment: 'center' },
+      { text: 'تعداد تکرار', style: 'tableHeader', alignment: 'center' }
     ]
   ];
   
@@ -113,7 +112,7 @@ export function createExerciseProgramPageOne(student: Student, trainerProfile: T
   } else {
     console.log('هیچ برنامه تمرینی برای این شاگرد یافت نشد');
     content.push({
-      text: preprocessPersianText('برنامه تمرینی تعیین نشده است.'),
+      text: 'برنامه تمرینی تعیین نشده است.',
       style: 'notes',
       alignment: 'center',
       margin: [0, 50, 0, 50]
@@ -123,7 +122,7 @@ export function createExerciseProgramPageOne(student: Student, trainerProfile: T
   // نکات تمرینی (اگر وجود داشت)
   if (student.notes) {
     content.push({
-      text: preprocessPersianText('نکات تمرینی:'),
+      text: 'نکات تمرینی:',
       style: 'sectionTitle',
       margin: [0, 30, 0, 10],
       alignment: 'right',
