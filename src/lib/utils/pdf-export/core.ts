@@ -18,22 +18,27 @@ function initializePdfMake() {
       return false;
     }
 
-    // Initialize VFS fonts with multiple fallback strategies
-    let fonts;
+    // Initialize VFS fonts with safer approach
     try {
-      fonts = pdfFonts;
-      if (fonts && typeof fonts === 'object') {
-        if (fonts.pdfMake && fonts.pdfMake.vfs) {
-          pdfMake.vfs = fonts.pdfMake.vfs;
-        } else if (fonts.vfs) {
-          pdfMake.vfs = fonts.vfs;
+      // Check if pdfFonts exists and has the right structure
+      if (pdfFonts && typeof pdfFonts === 'object') {
+        // Try different possible structures
+        if (pdfFonts.pdfMake?.vfs) {
+          pdfMake.vfs = pdfFonts.pdfMake.vfs;
+        } else if (pdfFonts.vfs) {
+          pdfMake.vfs = pdfFonts.vfs;
+        } else if (Object.keys(pdfFonts).length > 0) {
+          // If pdfFonts is the vfs object itself
+          pdfMake.vfs = pdfFonts;
         } else {
-          // If fonts is the vfs object itself
-          pdfMake.vfs = fonts;
+          throw new Error('No valid VFS structure found');
         }
+      } else {
+        throw new Error('pdfFonts not available');
       }
     } catch (fontError) {
       console.warn('Could not load custom fonts, using defaults:', fontError);
+      // Set empty VFS as fallback
       pdfMake.vfs = {};
     }
 
@@ -47,12 +52,11 @@ function initializePdfMake() {
       }
     };
 
-    // Ensure global pdfMake availability with better error handling
+    // Ensure global pdfMake availability
     if (typeof window !== 'undefined') {
       if (!window.pdfMake) {
         window.pdfMake = pdfMake;
       }
-      // Additional safety check for createPdf method
       if (window.pdfMake && !window.pdfMake.createPdf) {
         window.pdfMake.createPdf = pdfMake.createPdf;
       }

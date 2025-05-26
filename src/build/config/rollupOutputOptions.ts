@@ -1,5 +1,5 @@
 
-// تنظیمات خروجی برای rollup
+// تنظیمات خروجی برای rollup - ساده‌سازی شده
 export const rollupOutputOptions = {
   // تنظیم ساختار خروجی
   entryFileNames: 'Assets/Script/[name].js',
@@ -9,7 +9,7 @@ export const rollupOutputOptions = {
     
     // برای فایل‌های CSS
     if (info.endsWith('.css')) {
-      return 'Assets/Style/Menu.css';
+      return 'Assets/Style/[name].[ext]';
     }
     
     // برای فایل‌های تصویر
@@ -20,5 +20,4 @@ export const rollupOutputOptions = {
     // برای سایر فایل‌ها
     return 'Assets/[name][extname]';
   }
-  // حذف manualChunks از اینجا تا از تداخل جلوگیری شود
 };

@@ -32,22 +32,6 @@ export default defineConfig(({ mode }) => {
       host: "::",
       open: false
     },
-    build: {
-      ...buildOptions,
-      // حذف تنظیمات experimental که باعث مشکل می‌شود
-      rollupOptions: {
-        output: {
-          entryFileNames: 'Assets/Script/[name].js',
-          chunkFileNames: 'Assets/Script/[name].js',
-          assetFileNames: (assetInfo) => {
-            if (assetInfo.name?.endsWith('.css')) {
-              return 'Assets/Style/[name].[ext]';
-            }
-            return 'Assets/[name].[ext]';
-          },
-          manualChunks: buildOptions.rollupOptions?.output?.manualChunks
-        }
-      }
-    }
+    build: buildOptions
   };
 })

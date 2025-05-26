@@ -24,7 +24,40 @@ export const copyFilesPlugin = () => {
         if (fs.existsSync(distIndexPath)) {
           let indexContent = fs.readFileSync(distIndexPath, 'utf-8');
           
-          // تنظیم مسیرهای مطلق برای سازگاری بهتر
+          // ساخت فهرست فایل‌های موجود در dist
+          const distAssetsPath = 'dist/Assets';
+          let preloadLinks = '';
+          
+          if (fs.existsSync(distAssetsPath)) {
+            const scriptPath = path.join(distAssetsPath, 'Script');
+            const stylePath = path.join(distAssetsPath, 'Style');
+            
+            // اضافه کردن لینک‌های preload برای فایل‌های موجود
+            if (fs.existsSync(scriptPath)) {
+              const scriptFiles = fs.readdirSync(scriptPath).filter(f => f.endsWith('.js'));
+              scriptFiles.forEach(file => {
+                preloadLinks += `    <link rel="modulepreload" href="/Assets/Script/${file}" />\n`;
+              });
+            }
+            
+            if (fs.existsSync(stylePath)) {
+              const styleFiles = fs.readdirSync(stylePath).filter(f => f.endsWith('.css'));
+              styleFiles.forEach(file => {
+                preloadLinks += `    <link rel="stylesheet" crossorigin href="/Assets/Style/${file}" />\n`;
+              });
+            }
+          }
+          
+          // پیدا کردن فایل اصلی
+          const mainScriptPattern = /src="[^"]*index[^"]*\.js"/;
+          const mainScriptMatch = indexContent.match(mainScriptPattern);
+          let mainScript = '/Assets/Script/index.js';
+          
+          if (mainScriptMatch) {
+            mainScript = mainScriptMatch[0].replace(/src="([^"]*)"/, '$1');
+          }
+          
+          // تنظیم index.html بهینه‌سازی شده
           const indexTemplate = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
   <head>
@@ -58,34 +91,10 @@ export const copyFilesPlugin = () => {
       rel="stylesheet"
     />
 
-    <!-- Styles -->
-    <link rel="stylesheet" crossorigin href="/Assets/Style/Menu.css" />
-
-    <!-- Module Preloads -->
-    <link rel="modulepreload" href="/Assets/Script/Utils.js" />
-    <link rel="modulepreload" href="/Assets/Script/Vendors.js" />
-    <link rel="modulepreload" href="/Assets/Script/Animation.js" />
-    <link rel="modulepreload" href="/Assets/Script/PDF-Core.js" />
-    <link rel="modulepreload" href="/Assets/Script/PDF-Fonts.js" />
-    <link rel="modulepreload" href="/Assets/Script/PDF-Export.js" />
-    <link rel="modulepreload" href="/Assets/Script/UI.js" />
-    <link rel="modulepreload" href="/Assets/Script/Routing.js" />
-    <link rel="modulepreload" href="/Assets/Script/Data-Management.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Exercises.js" />
-    <link rel="modulepreload" href="/Assets/Script/Feature-Exercises.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Index.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Students.js" />
-    <link rel="modulepreload" href="/Assets/Script/Feature-Nutrition.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Diet.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Supplements.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Trainer.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Backup.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Student-program.js" />
-    <link rel="modulepreload" href="/Assets/Script/Page-Student-history.js" />
-    <link rel="modulepreload" href="/Assets/Script/React.js" />
-
+    <!-- Preloads -->
+${preloadLinks}
     <!-- Main JS Entry -->
-    <script type="module" crossorigin src="/Assets/Script/index.js"></script>
+    <script type="module" crossorigin src="${mainScript}"></script>
   </head>
 
   <body>
