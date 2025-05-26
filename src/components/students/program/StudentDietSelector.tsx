@@ -53,25 +53,15 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("all");
   
-  // Filter meals based on search and type - حذف تکراری‌ها
-  const filteredMeals = React.useMemo(() => {
-    // ابتدا فیلتر کردن بر اساس جستجو و نوع
-    let filtered = meals.filter(meal => {
-      const matchesSearch = meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           meal.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesType = selectedTypeFilter === "all" || meal.type === selectedTypeFilter;
-      const matchesMealType = !currentMealType || currentMealType === "all" || meal.type === currentMealType;
-      
-      return matchesSearch && matchesType && matchesMealType;
-    });
-
-    // حذف تکراری‌ها بر اساس ID
-    const uniqueMeals = filtered.filter((meal, index, self) => 
-      self.findIndex(m => m.id === meal.id) === index
-    );
-
-    return uniqueMeals;
-  }, [meals, searchQuery, selectedTypeFilter, currentMealType]);
+  // Filter meals based on search and type
+  const filteredMeals = meals.filter(meal => {
+    const matchesSearch = meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         meal.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = selectedTypeFilter === "all" || meal.type === selectedTypeFilter;
+    const matchesMealType = !currentMealType || currentMealType === "all" || meal.type === currentMealType;
+    
+    return matchesSearch && matchesType && matchesMealType;
+  });
 
   const toggleMeal = (mealId: number) => {
     setSelectedMeals(prev => 
