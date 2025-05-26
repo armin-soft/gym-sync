@@ -3,24 +3,23 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
+import { modernPdfStyles, printPageSettings } from './modern-styles';
 
 // Initialize pdfMake with fonts immediately
 try {
-  // Type assertion to handle the vfs fonts structure
   const fonts = pdfFonts as any;
   if (fonts && fonts.pdfMake && fonts.pdfMake.vfs) {
     pdfMake.vfs = fonts.pdfMake.vfs;
   } else if (fonts && fonts.vfs) {
     pdfMake.vfs = fonts.vfs;
   } else {
-    // Fallback - use the entire fonts object as vfs
     pdfMake.vfs = fonts;
   }
 } catch (error) {
   console.error('Error setting up pdfMake vfs:', error);
 }
 
-// فونت‌های فارسی مدرن
+// فونت‌های فارسی مدرن و بهینه شده
 const persianFonts = {
   Vazir: {
     normal: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
@@ -46,135 +45,38 @@ try {
   console.error('Error initializing pdfMake fonts:', error);
 }
 
-// تنظیمات مدرن PDF با طراحی حرفه‌ای و حل مشکل RTL
+// تنظیمات مدرن PDF برای چاپ حرفه‌ای
 export const PDF_OPTIONS: PDFDocumentOptions = {
-  pageSize: 'A4',
-  pageOrientation: 'portrait',
-  pageMargins: [50, 80, 50, 80],
+  ...printPageSettings,
   defaultStyle: {
-    font: 'Vazir',
-    fontSize: 11,
-    alignment: 'right',
-    direction: 'rtl',
-    bidi: false // Now properly typed
-  },
+    ...printPageSettings.defaultStyle,
+    bidi: false
+  }
 };
 
-// ایجاد سند PDF با استایل‌های مدرن و حرفه‌ای
+// ایجاد سند PDF مدرن و حرفه‌ای
 export function createPdfDocument(content: any[]): any {
   return {
     content,
     ...PDF_OPTIONS,
     fonts: persianFonts,
-    styles: {
-      documentTitle: {
-        fontSize: 24,
-        bold: true,
+    styles: modernPdfStyles,
+    // اضافه کردن واترمارک نرم‌افزار
+    background: function(currentPage: number) {
+      return {
+        text: 'GymSync Pro',
+        fontSize: 60,
+        color: '#f8fafc',
+        opacity: 0.03,
         alignment: 'center',
-        margin: [0, 0, 0, 30],
-        color: '#2563eb',
-        direction: 'rtl',
-        bidi: false
-      },
-      header: {
-        fontSize: 20,
-        bold: true,
-        alignment: 'center',
-        margin: [0, 0, 0, 25],
-        color: '#1e40af',
-        direction: 'rtl',
-        bidi: false
-      },
-      subheader: {
-        fontSize: 16,
-        bold: true,
-        alignment: 'right',
-        margin: [0, 15, 0, 12],
-        color: '#374151',
-        direction: 'rtl',
-        bidi: false
-      },
-      sectionTitle: {
-        fontSize: 14,
-        bold: true,
-        alignment: 'right',
-        margin: [0, 12, 0, 8],
-        color: '#4f46e5',
-        direction: 'rtl',
-        bidi: false
-      },
-      tableHeader: {
-        bold: true,
-        fontSize: 12,
-        color: 'white',
-        fillColor: '#4f46e5',
-        alignment: 'center',
-        margin: [5, 8, 5, 8],
-        direction: 'rtl',
-        bidi: false
-      },
-      tableCell: {
-        fontSize: 11,
-        alignment: 'right',
-        margin: [5, 6, 5, 6],
-        direction: 'rtl',
-        bidi: false
-      },
-      tableSubHeader: {
-        fontSize: 11,
-        bold: true,
-        fillColor: '#f1f5f9',
-        color: '#475569',
-        alignment: 'right',
-        margin: [5, 6, 5, 6],
-        direction: 'rtl',
-        bidi: false
-      },
-      notes: {
-        fontSize: 10,
-        alignment: 'right',
-        margin: [0, 12, 0, 0],
-        color: '#64748b',
-        direction: 'rtl',
-        bidi: false
-      },
-      footer: {
-        fontSize: 9,
-        alignment: 'center',
-        color: '#94a3b8',
-        direction: 'rtl',
-        bidi: false
-      },
-      highlight: {
-        fillColor: '#fef3c7',
-        color: '#92400e',
-        bold: true,
-        direction: 'rtl',
-        bidi: false
-      },
-      success: {
-        color: '#059669',
-        bold: true,
-        direction: 'rtl',
-        bidi: false
-      },
-      warning: {
-        color: '#d97706',
-        bold: true,
-        direction: 'rtl',
-        bidi: false
-      },
-      danger: {
-        color: '#dc2626',
-        bold: true,
-        direction: 'rtl',
-        bidi: false
-      }
+        margin: [0, 300, 0, 0],
+        direction: 'rtl'
+      };
     }
   };
 }
 
-// تولید و دانلود PDF با نمایش پیشرفت
+// تولید و دانلود PDF با کیفیت بالا
 export function generatePDF(docDefinition: any, filename: string): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
@@ -182,11 +84,11 @@ export function generatePDF(docDefinition: any, filename: string): Promise<void>
         throw new Error('pdfMake is not properly initialized');
       }
       
-      console.log(`در حال تولید PDF: ${filename}`);
+      console.log(`در حال تولید PDF حرفه‌ای: ${filename}`);
       const pdfDoc = pdfMake.createPdf(docDefinition);
       
       pdfDoc.download(filename);
-      console.log(`PDF با موفقیت دانلود شد: ${filename}`);
+      console.log(`PDF حرفه‌ای با موفقیت دانلود شد: ${filename}`);
       resolve();
     } catch (error) {
       console.error('خطا در تولید PDF:', error);
@@ -203,11 +105,11 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
         throw new Error('pdfMake is not properly initialized');
       }
       
-      console.log('در حال تولید پیش‌نمایش PDF...');
+      console.log('در حال تولید پیش‌نمایش PDF مدرن...');
       const pdfDoc = pdfMake.createPdf(docDefinition);
       
       pdfDoc.getDataUrl((dataUrl) => {
-        console.log('پیش‌نمایش PDF با موفقیت تولید شد');
+        console.log('پیش‌نمایش PDF مدرن با موفقیت تولید شد');
         resolve(dataUrl);
       });
     } catch (error) {

@@ -3,8 +3,9 @@ import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile, TableCellContent } from './types';
 import { toPersianDigits, preprocessPersianText } from './pdf-fonts';
 import { getExerciseName } from './data-helpers';
+import { modernTableLayout } from './modern-styles';
 
-// تابع دریافت نام روز برای برنامه تمرینی (روز اول تا روز ششم)
+// تابع دریافت نام روز برای برنامه تمرینی
 function getExerciseDayName(day: number): string {
   const dayNames: Record<number, string> = {
     1: 'روز اول',
@@ -14,33 +15,33 @@ function getExerciseDayName(day: number): string {
     5: 'روز پنجم',
     6: 'روز ششم'
   };
-  return dayNames[day] || `روز ${day}`;
+  return dayNames[day] || `روز ${toPersianDigits(day)}`;
 }
 
-// ایجاد صفحه اول: فقط برنامه تمرینی
+// ایجاد صفحه اول مدرن: برنامه تمرینی
 export function createExerciseProgramPageOne(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
   
-  // عنوان صفحه اول
+  // عنوان مدرن صفحه اول
   content.push({
-    text: 'برنامه تمرینی',
+    text: preprocessPersianText('برنامه تمرینی'),
     style: 'sectionTitle',
-    margin: [0, 20, 0, 15],
+    margin: [0, 25, 0, 20],
     color: '#7c3aed',
     direction: 'rtl',
-    fontSize: 18,
+    fontSize: 20,
     bold: true,
     alignment: 'center'
   });
   
-  // جدول تمرینات با ترتیب: شماره، روز، نام تمرین، ست، تکرار
-  const tableData: (TableCellContent | { text: string; style: string })[][] = [
+  // جدول تمرینات با طراحی مدرن
+  const tableData: (TableCellContent | { text: string; style: string; alignment?: string })[][] = [
     [
-      { text: 'ردیف', style: 'tableHeader', alignment: 'center' },
-      { text: 'روز تمرین', style: 'tableHeader', alignment: 'center' },
-      { text: 'نام تمرین', style: 'tableHeader', alignment: 'right' },
-      { text: 'تعداد ست', style: 'tableHeader', alignment: 'center' },
-      { text: 'تعداد تکرار', style: 'tableHeader', alignment: 'center' }
+      { text: preprocessPersianText('ردیف'), style: 'tableHeader', alignment: 'center' },
+      { text: preprocessPersianText('روز تمرین'), style: 'tableHeader', alignment: 'center' },
+      { text: preprocessPersianText('نام تمرین'), style: 'tableHeader', alignment: 'right' },
+      { text: preprocessPersianText('تعداد ست'), style: 'tableHeader', alignment: 'center' },
+      { text: preprocessPersianText('تعداد تکرار'), style: 'tableHeader', alignment: 'center' }
     ]
   ];
   
@@ -48,7 +49,7 @@ export function createExerciseProgramPageOne(student: Student, trainerProfile: T
   let rowNumber = 1;
   const allExerciseRows: any[] = [];
   
-  // برای هر روز تمرینی (تا 6 روز) - روزهای 1-4 اجباری، 5-6 اختیاری
+  // برای هر روز تمرینی (تا 6 روز)
   for (let day = 1; day <= 6; day++) {
     const dayKey = `exercisesDay${day}` as keyof Student;
     const daySetKey = `exerciseSetsDay${day}` as keyof Student;
@@ -58,10 +59,6 @@ export function createExerciseProgramPageOne(student: Student, trainerProfile: T
     const sets = student[daySetKey] as Record<number, number> || {};
     const reps = student[dayRepsKey] as Record<number, string> || {};
     
-    console.log(`بررسی روز ${day}: ${dayKey}`, exercises);
-    console.log(`ست‌های روز ${day}:`, sets);
-    console.log(`تکرارهای روز ${day}:`, reps);
-    
     if (exercises && exercises.length > 0) {
       hasAnyExercise = true;
       const dayName = getExerciseDayName(day);
@@ -69,17 +66,36 @@ export function createExerciseProgramPageOne(student: Student, trainerProfile: T
       exercises.forEach((exerciseId) => {
         const exerciseName = getExerciseName(exerciseId);
         
-        // فقط اگر نام تمرین موجود باشد آن را اضافه کن
         if (exerciseName) {
-          const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : '۳';
-          const repInfo = reps[exerciseId] ? preprocessPersianText(reps[exerciseId]) : '۸-۱۲';
+          const setCount = sets[exerciseId] ? toPersianDigits(sets[exerciseId].toString()) : toPersianDigits('3');
+          const repInfo = reps[exerciseId] ? preprocessPersianText(reps[exerciseId]) : preprocessPersianText('۸-۱۲');
           
           allExerciseRows.push([
-            { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
-            { text: preprocessPersianText(dayName), style: 'tableCell', alignment: 'center' },
-            { text: preprocessPersianText(exerciseName), style: 'tableCell', alignment: 'right' },
-            { text: setCount, style: 'tableCell', alignment: 'center' },
-            { text: repInfo, style: 'tableCell', alignment: 'center' }
+            { 
+              text: toPersianDigits(rowNumber.toString()), 
+              style: 'tableCellCenter', 
+              alignment: 'center' 
+            },
+            { 
+              text: preprocessPersianText(dayName), 
+              style: 'tableCellCenter', 
+              alignment: 'center' 
+            },
+            { 
+              text: preprocessPersianText(exerciseName), 
+              style: 'tableCell', 
+              alignment: 'right' 
+            },
+            { 
+              text: setCount, 
+              style: 'tableCellCenter', 
+              alignment: 'center' 
+            },
+            { 
+              text: repInfo, 
+              style: 'tableCellCenter', 
+              alignment: 'center' 
+            }
           ]);
           
           rowNumber++;
@@ -94,46 +110,59 @@ export function createExerciseProgramPageOne(student: Student, trainerProfile: T
   if (hasAnyExercise) {
     content.push({
       table: {
-        widths: ['8%', '22%', '45%', '12%', '13%'],
+        widths: ['10%', '20%', '45%', '12%', '13%'],
         body: tableData,
         headerRows: 1
       },
+      layout: modernTableLayout,
+      margin: [0, 0, 0, 25]
+    });
+  } else {
+    content.push({
+      text: preprocessPersianText('برنامه تمرینی تعیین نشده است.'),
+      style: 'notes',
+      alignment: 'center',
+      margin: [0, 60, 0, 60],
+      fontSize: 14,
+      color: '#64748b'
+    });
+  }
+  
+  // نکات تمرینی با طراحی مدرن
+  if (student.notes) {
+    content.push({
+      text: preprocessPersianText('نکات تمرینی:'),
+      style: 'sectionTitle',
+      margin: [0, 35, 0, 15],
+      alignment: 'right',
+      fontSize: 16,
+      color: '#4f46e5'
+    });
+    
+    content.push({
+      table: {
+        widths: ['*'],
+        body: [
+          [
+            {
+              text: preprocessPersianText(student.notes),
+              style: 'notes',
+              alignment: 'right',
+              fontSize: 12,
+              margin: [15, 15, 15, 15],
+              direction: 'rtl'
+            }
+          ]
+        ]
+      },
       layout: {
-        fillColor: function(rowIndex: number) {
-          return (rowIndex === 0) ? '#7c3aed' : (rowIndex % 2 === 0 ? '#f8fafc' : null);
-        },
+        fillColor: '#f8fafc',
         hLineWidth: () => 1,
         vLineWidth: () => 1,
         hLineColor: () => '#e2e8f0',
         vLineColor: () => '#e2e8f0'
       },
-      margin: [0, 0, 0, 20]
-    });
-  } else {
-    console.log('هیچ برنامه تمرینی برای این شاگرد یافت نشد');
-    content.push({
-      text: 'برنامه تمرینی تعیین نشده است.',
-      style: 'notes',
-      alignment: 'center',
-      margin: [0, 50, 0, 50]
-    });
-  }
-  
-  // نکات تمرینی (اگر وجود داشت)
-  if (student.notes) {
-    content.push({
-      text: 'نکات تمرینی:',
-      style: 'sectionTitle',
-      margin: [0, 30, 0, 10],
-      alignment: 'right',
-      fontSize: 14
-    });
-    content.push({
-      text: preprocessPersianText(student.notes),
-      style: 'notes',
-      alignment: 'right',
-      fontSize: 11,
-      margin: [0, 0, 0, 20]
+      margin: [0, 0, 0, 25]
     });
   }
   
