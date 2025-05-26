@@ -52,13 +52,13 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       rollupOptions: {
         output: {
-          entryFileNames: 'assets/[name].js',
-          chunkFileNames: 'assets/[name].js',
+          entryFileNames: 'assets/index.js',
+          chunkFileNames: 'assets/[name]-[hash].js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name?.endsWith('.css')) {
               return 'assets/index.css';
             }
-            return 'assets/[name].[ext]';
+            return 'assets/[name]-[hash].[ext]';
           },
           manualChunks: {
             'vendor': ['react', 'react-dom', 'react-router-dom'],
