@@ -51,11 +51,19 @@ export const rollupOutputOptions = {
       return 'Charts';
     }
     
-    // تولید PDF
+    // تقسیم بهتر کتابخانه‌های PDF - جداسازی pdfmake
+    if (id.includes('node_modules/pdfmake/build/pdfmake')) {
+      return 'PDF-Core';
+    }
+    
+    if (id.includes('node_modules/pdfmake/build/vfs_fonts')) {
+      return 'PDF-Fonts';
+    }
+    
     if (id.includes('jspdf') || 
         id.includes('pdf-lib') || 
         id.includes('pdfmake')) {
-      return 'PDF';
+      return 'PDF-Utils';
     }
     
     // کتابخانه‌های انیمیشن
@@ -97,6 +105,11 @@ export const rollupOutputOptions = {
     if (id.includes('/src/components/diet/') || 
         id.includes('/src/components/nutrition/')) {
       return 'Feature-Nutrition';
+    }
+    
+    // جداسازی ماژول‌های PDF داخلی
+    if (id.includes('/src/lib/utils/pdf-export/')) {
+      return 'PDF-Export';
     }
     
     // سایر node_modules
