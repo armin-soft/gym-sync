@@ -1,10 +1,15 @@
+
 import pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 
-// تنظیم فونت‌های پیش‌فرض
-pdfMake.vfs = (pdfFonts as any).pdfMake?.vfs || pdfFonts;
+// Initialize pdfMake with fonts immediately
+if (pdfFonts && pdfFonts.pdfMake && pdfFonts.pdfMake.vfs) {
+  pdfMake.vfs = pdfFonts.pdfMake.vfs;
+} else if (pdfFonts) {
+  pdfMake.vfs = pdfFonts;
+}
 
 // فونت‌های فارسی مدرن
 const persianFonts = {
@@ -16,11 +21,21 @@ const persianFonts = {
   }
 };
 
-// اضافه کردن فونت‌ها به pdfMake
-pdfMake.fonts = {
-  ...(pdfMake.fonts || {}),
-  Vazir: persianFonts.Vazir
-};
+// Initialize fonts safely
+try {
+  pdfMake.fonts = {
+    Roboto: {
+      normal: 'Roboto-Regular.ttf',
+      bold: 'Roboto-Medium.ttf',
+      italics: 'Roboto-Italic.ttf',
+      bolditalics: 'Roboto-MediumItalic.ttf'
+    },
+    ...persianFonts
+  };
+  console.log('pdfMake fonts initialized successfully');
+} catch (error) {
+  console.error('Error initializing pdfMake fonts:', error);
+}
 
 // تنظیمات مدرن PDF با طراحی حرفه‌ای
 export const PDF_OPTIONS: PDFDocumentOptions = {
@@ -127,6 +142,10 @@ export function createPdfDocument(content: any[]): any {
 export function generatePDF(docDefinition: any, filename: string): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
+      if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
+        throw new Error('pdfMake is not properly initialized');
+      }
+      
       console.log(`در حال تولید PDF: ${filename}`);
       const pdfDoc = pdfMake.createPdf(docDefinition);
       
@@ -144,6 +163,10 @@ export function generatePDF(docDefinition: any, filename: string): Promise<void>
 export function generatePDFPreview(docDefinition: any): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
+      if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
+        throw new Error('pdfMake is not properly initialized');
+      }
+      
       console.log('در حال تولید پیش‌نمایش PDF...');
       const pdfDoc = pdfMake.createPdf(docDefinition);
       
@@ -162,6 +185,10 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
 export function generatePDFBlob(docDefinition: any): Promise<Blob> {
   return new Promise((resolve, reject) => {
     try {
+      if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
+        throw new Error('pdfMake is not properly initialized');
+      }
+      
       const pdfDoc = pdfMake.createPdf(docDefinition);
       
       pdfDoc.getBlob((blob) => {
