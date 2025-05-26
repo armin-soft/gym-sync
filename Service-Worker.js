@@ -1,6 +1,6 @@
 
 // سرویس ورکر ساده شده برای Lovable
-const CACHE_NAME = 'gym-sync-v310';
+const CACHE_NAME = 'gym-sync-v316';
 
 // منابع اصلی برای کش
 const STATIC_ASSETS = [
