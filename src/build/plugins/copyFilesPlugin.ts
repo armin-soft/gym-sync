@@ -1,6 +1,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { glob } from 'glob';
 
 export const copyFilesPlugin = () => {
   return {
@@ -40,6 +41,17 @@ export const copyFilesPlugin = () => {
           console.log('کپی Offline.html');
         }
 
+        // پیدا کردن فایل‌های CSS و JS با hash
+        const cssFiles = glob.sync('dist/assets/*.css');
+        const jsFiles = glob.sync('dist/assets/*.js');
+        
+        // پیدا کردن فایل اصلی (معمولاً بزرگترین فایل)
+        const mainCssFile = cssFiles.find(file => file.includes('index')) || cssFiles[0];
+        const mainJsFile = jsFiles.find(file => file.includes('index')) || jsFiles[0];
+
+        const cssFileName = mainCssFile ? path.basename(mainCssFile) : 'index.css';
+        const jsFileName = mainJsFile ? path.basename(mainJsFile) : 'index.js';
+
         // بازنویسی index.html با مسیرهای صحیح و کامل
         const distIndexPath = 'dist/index.html';
         if (fs.existsSync(distIndexPath)) {
@@ -76,7 +88,7 @@ export const copyFilesPlugin = () => {
     />
     
     <!-- CSS -->
-    <link rel="stylesheet" href="./assets/index.css" />
+    <link rel="stylesheet" href="./assets/${cssFileName}" />
   </head>
 
   <body>
@@ -84,7 +96,7 @@ export const copyFilesPlugin = () => {
 
     <!-- Scripts -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script src="./assets/index.js" type="module"></script>
+    <script src="./assets/${jsFileName}" type="module"></script>
     
     <noscript>برای استفاده از این برنامه، لطفا جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
   </body>
@@ -100,8 +112,14 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.html [QSA,L]
 
-# Cache static assets
-<filesMatch "\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+# Cache static assets with hash
+<filesMatch "\\.(css|js)$">
+  ExpiresActive On
+  ExpiresDefault "access plus 1 year"
+</filesMatch>
+
+# Cache images
+<filesMatch "\\.(png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
   ExpiresActive On
   ExpiresDefault "access plus 1 month"
 </filesMatch>
@@ -117,17 +135,24 @@ RewriteRule ^ index.html [QSA,L]
   AddOutputFilterByType DEFLATE application/rss+xml
   AddOutputFilterByType DEFLATE application/javascript
   AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options nosniff
+  Header always set X-Frame-Options DENY
+  Header always set X-XSS-Protection "1; mode=block"
 </IfModule>`;
 
         fs.writeFileSync('dist/.htaccess', htaccessContent);
         console.log('فایل .htaccess ایجاد شد');
 
         console.log('✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.7!');
-        console.log('📁 ساختار dist:');
-        console.log('  ├── index.html (بهینه‌شده)');
+        console.log('📁 ساختار dist بهینه‌شده:');
+        console.log('  ├── index.html (با فایل‌های hash دار)');
         console.log('  ├── assets/');
-        console.log('  │   ├── index.js');
-        console.log('  │   ├── index.css');
+        console.log('  │   ├── چندین فایل JS تقسیم‌شده');
+        console.log('  │   ├── چندین فایل CSS تقسیم‌شده');
         console.log('  │   └── images/');
         console.log('  │       ├── Logo.png');
         console.log('  │       └── Place-Holder.svg');

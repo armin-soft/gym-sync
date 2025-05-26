@@ -1,20 +1,35 @@
 
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-// پیش بارگذاری کامپوننت‌ها برای لود سریعتر 
-import Dashboard from "./pages/Index";
-import StudentsPage from "./pages/students";
-import AddEditStudentPage from "./pages/students/add-edit";
-import ExercisesPage from "./pages/exercises";
-import ExerciseHierarchicalView from "./pages/exercises/hierarchical-view";
-import DietPage from "./pages/diet";
-import SupplementsPage from "./pages/supplements";
-import TrainerPage from "./pages/trainer";
-import BackupPage from "./pages/backup";
-import StudentProgramPage from "./pages/student-program";
-import StudentHistoryPage from "./pages/student-history";
+// Lazy loading برای بهینه‌سازی اندازه bundle
+const Dashboard = lazy(() => import("./pages/Index"));
+const StudentsPage = lazy(() => import("./pages/students"));
+const AddEditStudentPage = lazy(() => import("./pages/students/add-edit"));
+const ExercisesPage = lazy(() => import("./pages/exercises"));
+const ExerciseHierarchicalView = lazy(() => import("./pages/exercises/hierarchical-view"));
+const DietPage = lazy(() => import("./pages/diet"));
+const SupplementsPage = lazy(() => import("./pages/supplements"));
+const TrainerPage = lazy(() => import("./pages/trainer"));
+const BackupPage = lazy(() => import("./pages/backup"));
+const StudentProgramPage = lazy(() => import("./pages/student-program"));
+const StudentHistoryPage = lazy(() => import("./pages/student-history"));
+
+// کامپوننت wrapper برای lazy loading
+const LazyWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <AuthenticatedContent>
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner className="w-8 h-8" />
+        <span className="mr-2">در حال بارگذاری...</span>
+      </div>
+    }>
+      {children}
+    </Suspense>
+  </AuthenticatedContent>
+);
 
 const AppRoutes: React.FC = () => {
   console.log('AppRoutes component rendered');
@@ -24,9 +39,9 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <Dashboard />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       
@@ -34,57 +49,57 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/Coach-Profile"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <TrainerPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/Students"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <StudentsPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/Student-History"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <StudentHistoryPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/Exercise-Movements"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <ExerciseHierarchicalView />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/Diet-Plan"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <DietPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/Supplements-Vitamins"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <SupplementsPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/Backup-Restore"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <BackupPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       
@@ -92,81 +107,81 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/students"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <StudentsPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/student-history"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <StudentHistoryPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/students/add-edit/:studentId?"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <AddEditStudentPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/exercises"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <ExercisesPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/exercises/hierarchical"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <ExerciseHierarchicalView />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/diet"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <DietPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/supplements"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <SupplementsPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/trainer"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <TrainerPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/backup"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <BackupPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       <Route
         path="/student-program/:studentId"
         element={
-          <AuthenticatedContent>
+          <LazyWrapper>
             <StudentProgramPage />
-          </AuthenticatedContent>
+          </LazyWrapper>
         }
       />
       
