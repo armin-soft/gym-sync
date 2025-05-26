@@ -1,4 +1,3 @@
-
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
@@ -18,23 +17,20 @@ function initializePdfMake() {
       return false;
     }
 
-    // Initialize VFS fonts with safer approach
+    // Initialize VFS fonts with proper type handling
     try {
-      // Check if pdfFonts exists and has the right structure
-      if (pdfFonts && typeof pdfFonts === 'object') {
-        // Try different possible structures
-        if (pdfFonts.pdfMake?.vfs) {
-          pdfMake.vfs = pdfFonts.pdfMake.vfs;
-        } else if (pdfFonts.vfs) {
-          pdfMake.vfs = pdfFonts.vfs;
-        } else if (Object.keys(pdfFonts).length > 0) {
-          // If pdfFonts is the vfs object itself
-          pdfMake.vfs = pdfFonts;
-        } else {
-          throw new Error('No valid VFS structure found');
-        }
+      // Cast pdfFonts to any to handle the dynamic structure
+      const fontsModule = pdfFonts as any;
+      
+      // Try different possible VFS structures
+      if (fontsModule.vfs) {
+        pdfMake.vfs = fontsModule.vfs;
+      } else if (typeof fontsModule === 'object' && Object.keys(fontsModule).length > 0) {
+        // If pdfFonts is the vfs object itself
+        pdfMake.vfs = fontsModule;
       } else {
-        throw new Error('pdfFonts not available');
+        console.warn('No VFS fonts found, using empty VFS');
+        pdfMake.vfs = {};
       }
     } catch (fontError) {
       console.warn('Could not load custom fonts, using defaults:', fontError);
