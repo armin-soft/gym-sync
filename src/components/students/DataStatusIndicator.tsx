@@ -57,7 +57,7 @@ export const DataStatusIndicator: React.FC<DataStatusIndicatorProps> = ({
     if (!isOnline) {
       toast({
         title: "اتصال به اینترنت قطع شد",
-        description: "در حالت آفلاین هستید. برخی عملکردها محدود خواهند بود.",
+        description: "اتصال شما به اینترنت قطع شده است.",
         variant: "warning",
         duration: 7000
       });

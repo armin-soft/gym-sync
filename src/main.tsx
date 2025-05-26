@@ -22,7 +22,7 @@ function MainApp() {
   );
 }
 
-// تابع راه‌اندازی اصلی برنامه - بهینه شده برای سرعت بیشتر
+// تابع راه‌اندازی اصلی برنامه
 function startApp() {
   try {
     console.log('Starting app initialization for version 3.3.7...');
@@ -37,17 +37,6 @@ function startApp() {
     root.render(<MainApp />);
     
     console.log('برنامه نسخه 3.3.7 با موفقیت راه‌اندازی شد');
-    
-    // راه‌اندازی سرویس ورکر با تأخیر بیشتر برای اولویت‌دهی به رندر اصلی
-    setTimeout(() => {
-      import('./utils/RegisterServiceWorker')
-        .then(({ initializeServiceWorker }) => {
-          initializeServiceWorker().catch(console.error);
-        })
-        .catch(err => {
-          console.log('خطای بارگیری سرویس ورکر:', err);
-        });
-    }, 2000); // کاهش تأخیر برای لود سریعتر
   } catch (error) {
     console.error('خطا در راه‌اندازی برنامه نسخه 3.3.7:', error);
     // نمایش پیام خطا برای کاربر
