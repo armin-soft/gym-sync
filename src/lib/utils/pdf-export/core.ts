@@ -56,7 +56,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
     fontSize: 11,
     alignment: 'right',
     direction: 'rtl',
-    bidi: false // غیرفعال کردن پردازش خودکار دوجهته
+    bidi: false // Now properly typed
   },
 };
 

@@ -19,7 +19,8 @@ export interface PDFDocumentOptions {
     font: string;
     fontSize: number;
     alignment: string;
-    direction?: string; // Added direction property
+    direction?: string;
+    bidi?: boolean; // Added bidi property
   };
 }
 
