@@ -3,14 +3,12 @@ import React, { useState } from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import StudentSupplementSelector from "../supplement-selector";
 import { Pill } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import useDayManagement from "./exercise/useDayManagement";
 import DaySelector from "./exercise/DaySelector";
-import ProgramSpeechToText from "./ProgramSpeechToText";
 
 interface StudentProgramSupplementContentProps {
   selectedSupplements: number[];
@@ -31,9 +29,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   currentDay,
   setCurrentDay,
 }) => {
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   // Use our custom hook for day management with fixed 5 days
   const {
@@ -59,59 +55,6 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
     },
     onDayChange: setCurrentDay
   });
-
-  const handleSpeechSave = (transcript: string) => {
-    // Parse the transcript to extract supplement/vitamin names
-    const itemNames = transcript
-      .split(/[،,\n]/)
-      .map(name => name.trim())
-      .filter(name => name.length > 0);
-
-    if (itemNames.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: `هیچ ${activeTab === 'supplement' ? 'مکملی' : 'ویتامینی'} در متن گفتاری یافت نشد`
-      });
-      return;
-    }
-
-    // Find matching supplements/vitamins
-    const matchedItems: number[] = [];
-    const targetType = activeTab === 'supplement' ? 'supplement' : 'vitamin';
-    
-    itemNames.forEach(name => {
-      const foundItem = supplements.find(item => 
-        item.type === targetType && (item.name.includes(name) || name.includes(item.name))
-      );
-      
-      if (foundItem) {
-        const currentSelected = activeTab === 'supplement' ? selectedSupplements : selectedVitamins;
-        if (!currentSelected.includes(foundItem.id)) {
-          matchedItems.push(foundItem.id);
-        }
-      }
-    });
-
-    if (matchedItems.length > 0) {
-      if (activeTab === 'supplement') {
-        setSelectedSupplements(prev => [...prev, ...matchedItems]);
-      } else {
-        setSelectedVitamins(prev => [...prev, ...matchedItems]);
-      }
-      
-      toast({
-        title: "افزودن موفق",
-        description: `${toPersianNumbers(matchedItems.length)} ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} از گفتار شما اضافه شد`
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: `هیچ ${activeTab === 'supplement' ? 'مکملی' : 'ویتامینی'} یافت نشد`,
-        description: `لطفا نام ${activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'} را واضح‌تر بیان کنید`
-      });
-    }
-  };
   
   // Animation variants
   const containerVariants = {
@@ -191,15 +134,6 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
             </button>
           </div>
         </motion.div>
-
-        {/* Speech to Text for Supplement/Vitamin Input */}
-        <motion.div variants={itemVariants} className="mb-4">
-          <ProgramSpeechToText
-            onSave={handleSpeechSave}
-            title={`افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} با گفتار`}
-            placeholder={`نام ${activeTab === 'supplement' ? 'مکمل‌های' : 'ویتامین‌های'} مورد نظر را بگویید`}
-          />
-        </motion.div>
         
         <motion.div variants={itemVariants} className="flex-1 overflow-auto text-right" dir="rtl">
           <AnimatePresence mode="wait">
@@ -221,8 +155,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
                     selectedVitamins={selectedVitamins}
                     setSelectedVitamins={setSelectedVitamins}
                     activeTab={activeTab}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
+                    selectedCategory={null}
+                    setSelectedCategory={() => {}}
                     dayLabel={getDayLabel(currentDay)}
                     dayNumber={currentDay}
                   />
