@@ -1,8 +1,6 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { StudentsHeader } from "@/components/students/StudentsHeader";
-import { StudentStatsCards } from "@/components/students/StudentStatsCards";
 import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; 
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
@@ -12,11 +10,13 @@ import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { History } from "lucide-react";
 
-// Import from the correct paths
+// Import new modern components
+import { ModernStudentsHeader } from "@/components/students/modern/ModernStudentsHeader";
+import { ModernStudentsGrid } from "@/components/students/modern/ModernStudentsGrid";
+import { ModernSearchAndFilters } from "@/components/students/modern/ModernSearchAndFilters";
+
+// Import existing components and hooks
 import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
-import StudentSearchControls from "./students/components/StudentSearchControls";
-// Import from the list-views folder instead of local components
-import { StudentTableView } from "@/components/students/list-views";
 import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
@@ -24,6 +24,7 @@ import { useStudentHistory } from "@/hooks/useStudentHistory";
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const deviceInfo = useDeviceInfo();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   
@@ -89,6 +90,16 @@ const StudentsPage = () => {
     setSelectedStudentForProgram(student);
   };
 
+  // Calculate statistics
+  const activeStudents = students.filter(s => s.status === "active").length;
+  const newStudentsThisWeek = students.filter(s => {
+    if (!s.startDate) return false;
+    const studentDate = new Date(s.startDate);
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return studentDate >= weekAgo;
+  }).length;
+
   // Determine the appropriate classes based on device type
   const getContentPadding = () => {
     if (deviceInfo.isMobile) return "px-2";
@@ -115,50 +126,55 @@ const StudentsPage = () => {
   return (
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
-        <div className="flex justify-between items-center">
-          <StudentsHeader 
-            onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
-            onRefresh={triggerRefresh}
-            lastRefreshTime={lastRefresh}
-          />
+        {/* Header with history link */}
+        <div className="flex justify-between items-start mb-6">
+          <div className="flex-1">
+            <ModernStudentsHeader 
+              totalStudents={students.length}
+              activeStudents={activeStudents}
+              newStudentsThisWeek={newStudentsThisWeek}
+              onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+              onRefresh={triggerRefresh}
+            />
+          </div>
           
           <Link to="/student-history">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2 mt-4">
               <History className="h-4 w-4" />
               <span>تاریخچه</span>
             </Button>
           </Link>
         </div>
         
-        <StudentStatsCards students={students} />
-        
-        <div className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
-          <div className="flex justify-end mb-4 md:mb-6">
-            <StudentSearchControls 
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              handleClearSearch={handleClearSearch}
-            />
-          </div>
-          
-          <StudentTableView 
-            students={students}
-            sortedAndFilteredStudents={sortedAndFilteredStudents}
+        <div className="w-full flex-1 flex flex-col">
+          {/* Search and Filters */}
+          <ModernSearchAndFilters 
             searchQuery={searchQuery}
-            refreshTrigger={refreshTrigger}
-            onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
-            onDelete={handleDeleteWithHistory}
-            onAddExercise={handleOpenProgramManager}
-            onAddDiet={handleOpenProgramManager}
-            onAddSupplement={handleOpenProgramManager}
-            onAddStudent={() => dialogManagerRef.current?.handleAdd()}
-            onClearSearch={handleClearSearch}
-            viewMode="table"
-            isProfileComplete={isProfileComplete}
+            setSearchQuery={setSearchQuery}
             sortField={sortField}
             sortOrder={sortOrder}
             onSortChange={toggleSort}
+            onClearSearch={handleClearSearch}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            totalResults={sortedAndFilteredStudents.length}
           />
+          
+          {/* Students Grid */}
+          <div className="flex-1 overflow-auto">
+            <ModernStudentsGrid 
+              students={sortedAndFilteredStudents}
+              searchQuery={searchQuery}
+              onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+              onDelete={handleDeleteWithHistory}
+              onAddExercise={handleOpenProgramManager}
+              onAddDiet={handleOpenProgramManager}
+              onAddSupplement={handleOpenProgramManager}
+              onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+              onClearSearch={handleClearSearch}
+              isProfileComplete={isProfileComplete}
+            />
+          </div>
         </div>
 
         <StudentDialogManager
@@ -177,4 +193,3 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
-
