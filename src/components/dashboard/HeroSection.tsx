@@ -76,8 +76,9 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600/90 via-violet-600/90 to-purple-600/90 p-6 md:p-8 text-white shadow-2xl min-h-[300px]"
+      className="relative overflow-hidden rounded-2xl p-6 md:p-8 text-white shadow-2xl min-h-[300px]"
       style={{
+        background: 'linear-gradient(135deg, rgb(99 102 241 / 0.9) 0%, rgb(139 92 246 / 0.9) 50%, rgb(168 85 247 / 0.9) 100%)',
         backgroundImage: `url(${patternUrl})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -85,7 +86,7 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
       }}
     >
       {/* Enhanced animated background elements */}
-      <div className="absolute inset-0 opacity-10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 via-violet-600/20 to-purple-600/20" />
       
       {/* Animated background gradients */}
       <motion.div 
