@@ -36,17 +36,17 @@ export const buildOptions = {
         // UI کامپوننت‌ها
         'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', 'framer-motion'],
         // کتابخانه‌های PDF
-        'pdf-vendor': ['pdfmake', 'jspdf'],
+        'pdf-vendor': ['pdfmake'],
         // سایر کتابخانه‌های vendor
         'vendor': ['@tanstack/react-query', 'date-fns', 'zod', 'uuid']
       },
-      entryFileNames: 'Assets/Script/[name].js',
-      chunkFileNames: 'Assets/Script/[name].js',
+      entryFileNames: 'Assets/Script/[name]-[hash].js',
+      chunkFileNames: 'Assets/Script/[name]-[hash].js',
       assetFileNames: (assetInfo: { name?: string; type?: string }) => {
         if (assetInfo.name?.endsWith('.css')) {
-          return 'Assets/Style/[name].[ext]';
+          return 'Assets/Style/[name]-[hash].[ext]';
         }
-        return 'Assets/[name].[ext]';
+        return 'Assets/[name]-[hash].[ext]';
       }
     }
   }

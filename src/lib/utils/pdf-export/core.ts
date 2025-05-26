@@ -1,3 +1,4 @@
+
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
@@ -38,9 +39,16 @@ function initializePdfMake() {
       pdfMake.vfs = {};
     }
 
-    // Set up fonts with fallback
+    // Set up fonts with Roboto as default (since Vazir may not be available in pdfMake)
     pdfMake.fonts = {
       Roboto: {
+        normal: 'Roboto-Regular.ttf',
+        bold: 'Roboto-Medium.ttf',
+        italics: 'Roboto-Italic.ttf',
+        bolditalics: 'Roboto-MediumItalic.ttf'
+      },
+      // Add Vazir font mapping to Roboto as fallback
+      Vazir: {
         normal: 'Roboto-Regular.ttf',
         bold: 'Roboto-Medium.ttf',
         italics: 'Roboto-Italic.ttf',
@@ -59,7 +67,7 @@ function initializePdfMake() {
     }
 
     pdfMakeInitialized = true;
-    console.log('pdfMake initialized successfully');
+    console.log('pdfMake initialized successfully with font support');
     return true;
   } catch (error) {
     console.error('Error initializing pdfMake:', error);
