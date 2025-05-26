@@ -25,5 +25,42 @@ export const buildOptions = {
     }
   },
   // فعال کردن source maps برای تولید (می‌تواند برای کاهش حجم غیرفعال شود)
-  sourcemap: false
+  sourcemap: false,
+  // تنظیمات index.html transformation
+  rollupOptions: {
+    output: {
+      // تقسیم‌بندی chunk ها برای بهینه‌سازی
+      manualChunks: {
+        'Utils': ['src/lib/utils'],
+        'Vendors': ['react', 'react-dom', '@tanstack/react-query'],
+        'Animation': ['framer-motion'],
+        'PDF-Core': ['jspdf'],
+        'PDF-Fonts': ['pdfmake'],
+        'PDF-Export': ['jspdf-autotable'],
+        'UI': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+        'Routing': ['react-router-dom'],
+        'Data-Management': ['zod', '@hookform/resolvers'],
+        'Page-Exercises': ['src/pages/exercises'],
+        'Feature-Exercises': ['src/components/exercises'],
+        'Page-Index': ['src/pages/Index'],
+        'Page-Students': ['src/pages/students'],
+        'Feature-Nutrition': ['src/components/nutrition'],
+        'Page-Diet': ['src/pages/diet'],
+        'Page-Supplements': ['src/pages/supplements'],
+        'Page-Trainer': ['src/pages/trainer'],
+        'Page-Backup': ['src/pages/backup'],
+        'Page-Student-program': ['src/pages/student-program'],
+        'Page-Student-history': ['src/pages/student-history'],
+        'React': ['react', 'react-dom']
+      },
+      entryFileNames: 'Assets/Script/[name].js',
+      chunkFileNames: 'Assets/Script/[name].js',
+      assetFileNames: (assetInfo) => {
+        if (assetInfo.name?.endsWith('.css')) {
+          return 'Assets/Style/[name].[ext]';
+        }
+        return 'Assets/[name].[ext]';
+      }
+    }
+  }
 };
