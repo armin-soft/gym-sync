@@ -1,6 +1,6 @@
 
 // سرویس ورکر ساده شده برای Lovable
-const CACHE_NAME = 'gym-sync-v340';
+const CACHE_NAME = 'gym-sync-v336'; // نسخه جدید
 
 // منابع اصلی برای کش
 const STATIC_ASSETS = [
@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
 
 // نصب سرویس ورکر
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] نصب سرویس ورکر');
+  console.log('[Service Worker] نصب سرویس ورکر نسخه 3.3.6');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -32,8 +32,23 @@ self.addEventListener('install', (event) => {
 
 // فعال‌سازی
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] فعال‌سازی');
-  event.waitUntil(self.clients.claim());
+  console.log('[Service Worker] فعال‌سازی نسخه 3.3.6');
+  
+  event.waitUntil(
+    // حذف کش‌های قدیمی
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME && cacheName.startsWith('gym-sync-')) {
+            console.log('[Service Worker] حذف کش قدیمی:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      return self.clients.claim();
+    })
+  );
 });
 
 // مدیریت درخواست‌ها
@@ -44,10 +59,10 @@ self.addEventListener('fetch', (event) => {
     fetch(event.request)
       .catch(() => {
         return caches.match(event.request).then(response => {
-          return response || new Response('آفلاین');
+          return response || new Response('آفلاین - نسخه 3.3.6');
         });
       })
   );
 });
 
-console.log('[Service Worker] سرویس ورکر ساده راه‌اندازی شد');
+console.log('[Service Worker] سرویس ورکر نسخه 3.3.6 راه‌اندازی شد');

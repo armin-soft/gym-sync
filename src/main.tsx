@@ -10,7 +10,7 @@ function MainApp() {
   const [isLoading, setIsLoading] = useState(true);
   
   const handleLoadingComplete = () => {
-    console.log('Loading completed, showing main app');
+    console.log('Loading completed for version 3.3.6, showing main app');
     setIsLoading(false);
   };
   
@@ -25,7 +25,7 @@ function MainApp() {
 // تابع راه‌اندازی اصلی برنامه - بهینه شده برای سرعت بیشتر
 function startApp() {
   try {
-    console.log('Starting app initialization...');
+    console.log('Starting app initialization for version 3.3.6...');
     const rootElement = document.getElementById('root');
     if (!rootElement) {
       console.error('عنصر root پیدا نشد');
@@ -36,7 +36,7 @@ function startApp() {
     const root = createRoot(rootElement);
     root.render(<MainApp />);
     
-    console.log('برنامه با موفقیت راه‌اندازی شد');
+    console.log('برنامه نسخه 3.3.6 با موفقیت راه‌اندازی شد');
     
     // راه‌اندازی سرویس ورکر با تأخیر بیشتر برای اولویت‌دهی به رندر اصلی
     setTimeout(() => {
@@ -47,11 +47,11 @@ function startApp() {
         .catch(err => {
           console.log('خطای بارگیری سرویس ورکر:', err);
         });
-    }, 3000);
+    }, 2000); // کاهش تأخیر برای لود سریعتر
   } catch (error) {
-    console.error('خطا در راه‌اندازی برنامه:', error);
+    console.error('خطا در راه‌اندازی برنامه نسخه 3.3.6:', error);
     // نمایش پیام خطا برای کاربر
-    document.body.innerHTML = '<div style="padding: 20px; text-align: center;">خطا در بارگذاری برنامه. لطفا صفحه را رفرش کنید.</div>';
+    document.body.innerHTML = '<div style="padding: 20px; text-align: center;">خطا در بارگذاری برنامه نسخه 3.3.6. لطفا صفحه را رفرش کنید.</div>';
   }
 }
 
