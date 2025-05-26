@@ -1,7 +1,6 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { getAssetPath } from "@/utils/basePath";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface PageContainerProps {
@@ -24,7 +23,6 @@ export const PageContainer = React.memo(({
   fullScreen = false
 }: PageContainerProps) => {
   const deviceInfo = useDeviceInfo();
-  const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
   
   // بهینه‌سازی پدینگ ریسپانسیو براساس نوع دستگاه با مقادیر ثابت
   const getPadding = React.useMemo(() => {
@@ -44,7 +42,6 @@ export const PageContainer = React.memo(({
   const backgroundElements = withBackground ? (
     <>
       <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 -z-10" />
-      <div className={`absolute inset-0 bg-[url('${patternUrl}')] opacity-50 [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)] dark:opacity-30 -z-10`} />
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 -z-10" />
     </>
   ) : null;

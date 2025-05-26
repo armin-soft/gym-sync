@@ -3,7 +3,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Users, Boxes, Pill, Sparkles } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard";
-import { getAssetPath } from "@/utils/basePath";
 import { ProfileSection } from "./hero/ProfileSection";
 import { DateTimeSection } from "./hero/DateTimeSection";
 import { QuickStatsCard } from "./hero/QuickStatsCard";
@@ -18,8 +17,6 @@ interface HeroSectionProps {
 }
 
 export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionProps) => {
-  const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
-  
   console.log('HeroSection props:', { stats, trainerProfile });
   
   // اطمینان از وجود داده‌ها
@@ -78,11 +75,7 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
       transition={{ duration: 0.6 }}
       className="relative overflow-hidden rounded-2xl p-6 md:p-8 text-white shadow-2xl min-h-[300px]"
       style={{
-        background: 'linear-gradient(135deg, rgb(99 102 241 / 0.9) 0%, rgb(139 92 246 / 0.9) 50%, rgb(168 85 247 / 0.9) 100%)',
-        backgroundImage: `url(${patternUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundBlendMode: 'overlay'
+        background: 'linear-gradient(135deg, rgb(99 102 241 / 0.9) 0%, rgb(139 92 246 / 0.9) 50%, rgb(168 85 247 / 0.9) 100%)'
       }}
     >
       {/* Enhanced animated background elements */}
