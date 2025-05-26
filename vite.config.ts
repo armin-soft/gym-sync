@@ -53,18 +53,12 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           entryFileNames: 'assets/index.js',
-          chunkFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/index.js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name?.endsWith('.css')) {
               return 'assets/index.css';
             }
-            return 'assets/[name]-[hash].[ext]';
-          },
-          manualChunks: {
-            'vendor': ['react', 'react-dom', 'react-router-dom'],
-            'ui': ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-tabs'],
-            'pdf': ['pdfmake'],
-            'utils': ['date-fns', 'uuid', 'zod', 'clsx']
+            return 'assets/[name].[ext]';
           }
         }
       }
