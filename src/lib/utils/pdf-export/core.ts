@@ -56,7 +56,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
     fontSize: 11,
     alignment: 'right',
     direction: 'rtl',
-    bidi: false // Now properly typed
+    bidi: true // فعال کردن پردازش دوجهته
   },
 };
 
@@ -74,7 +74,7 @@ export function createPdfDocument(content: any[]): any {
         margin: [0, 0, 0, 30],
         color: '#2563eb',
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       header: {
         fontSize: 20,
@@ -83,7 +83,7 @@ export function createPdfDocument(content: any[]): any {
         margin: [0, 0, 0, 25],
         color: '#1e40af',
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       subheader: {
         fontSize: 16,
@@ -92,7 +92,7 @@ export function createPdfDocument(content: any[]): any {
         margin: [0, 15, 0, 12],
         color: '#374151',
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       sectionTitle: {
         fontSize: 14,
@@ -101,7 +101,7 @@ export function createPdfDocument(content: any[]): any {
         margin: [0, 12, 0, 8],
         color: '#4f46e5',
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       tableHeader: {
         bold: true,
@@ -111,14 +111,14 @@ export function createPdfDocument(content: any[]): any {
         alignment: 'center',
         margin: [5, 8, 5, 8],
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       tableCell: {
         fontSize: 11,
         alignment: 'right',
         margin: [5, 6, 5, 6],
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       tableSubHeader: {
         fontSize: 11,
@@ -128,7 +128,7 @@ export function createPdfDocument(content: any[]): any {
         alignment: 'right',
         margin: [5, 6, 5, 6],
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       notes: {
         fontSize: 10,
@@ -136,39 +136,39 @@ export function createPdfDocument(content: any[]): any {
         margin: [0, 12, 0, 0],
         color: '#64748b',
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       footer: {
         fontSize: 9,
         alignment: 'center',
         color: '#94a3b8',
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       highlight: {
         fillColor: '#fef3c7',
         color: '#92400e',
         bold: true,
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       success: {
         color: '#059669',
         bold: true,
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       warning: {
         color: '#d97706',
         bold: true,
         direction: 'rtl',
-        bidi: false
+        bidi: true
       },
       danger: {
         color: '#dc2626',
         bold: true,
         direction: 'rtl',
-        bidi: false
+        bidi: true
       }
     }
   };
