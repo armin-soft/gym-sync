@@ -24,7 +24,7 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
   setSelectedExercises,
   exercises,
 }) => {
-  // Use our custom hook for day management with fixed 5 days
+  // Use our custom hook for day management with 6 days (1-4 mandatory, 5-6 optional)
   const {
     days,
     dayLabels,
@@ -37,14 +37,17 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
     confirmDeleteDay,
     maxDays,
     getDayLabel,
+    isDayMandatory,
+    isDayOptional
   } = useDayManagement({
-    initialDays: [1, 2, 3, 4, 5],
+    initialDays: [1, 2, 3, 4, 5, 6], // Updated to include day 6
     initialDayLabels: {
       1: "روز اول",
       2: "روز دوم",
       3: "روز سوم",
       4: "روز چهارم",
       5: "روز پنجم",
+      6: "روز ششم", // Added day 6
     },
     onDayChange: setCurrentDay
   });
@@ -81,9 +84,21 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
         >
           <motion.div variants={itemVariants}>
             <div className="flex flex-wrap items-center justify-between mb-4">
-              <h3 className="font-semibold text-lg mb-2 sm:mb-0 text-right">
-                برنامه تمرینی روز {toPersianNumbers(currentDay)}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-lg mb-2 sm:mb-0 text-right">
+                  برنامه تمرینی روز {toPersianNumbers(currentDay)}
+                </h3>
+                {isDayMandatory(currentDay) && (
+                  <span className="text-xs bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-2 py-1 rounded-full font-medium">
+                    اجباری
+                  </span>
+                )}
+                {isDayOptional(currentDay) && (
+                  <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full font-medium">
+                    اختیاری
+                  </span>
+                )}
+              </div>
             </div>
           </motion.div>
           
@@ -100,6 +115,8 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
               setShowAddDayDialog={setShowAddDayDialog}
               confirmDeleteDay={confirmDeleteDay}
               maxDays={maxDays}
+              isDayMandatory={isDayMandatory}
+              isDayOptional={isDayOptional}
             />
           </motion.div>
           
@@ -120,6 +137,8 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
                     dayNumber={currentDay}
                     exercises={exercises}
                     dayLabel={getDayLabel(currentDay)}
+                    isDayMandatory={isDayMandatory(currentDay)}
+                    isDayOptional={isDayOptional(currentDay)}
                   />
                 </div>
               </motion.div>

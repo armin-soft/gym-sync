@@ -10,16 +10,17 @@ export interface DayManagementProps {
 }
 
 export const useDayManagement = ({
-  initialDays = [1, 2, 3, 4, 5],
+  initialDays = [1, 2, 3, 4, 5, 6], // Updated to include day 6
   initialDayLabels = {
     1: "روز اول",
-    2: "روز دوم",
+    2: "روز دوم", 
     3: "روز سوم",
     4: "روز چهارم",
     5: "روز پنجم",
+    6: "روز ششم", // Added day 6
   },
   onDayChange,
-  maxDays = 5
+  maxDays = 6 // Updated max days to 6
 }: DayManagementProps = {}) => {
   const [days, setDays] = useState<number[]>(initialDays);
   const [dayLabels, setDayLabels] = useState<Record<number, string>>(initialDayLabels);
@@ -78,11 +79,20 @@ export const useDayManagement = ({
   };
 
   const prepareDeleteDay = (day: number) => {
+    // Days 1-4 are mandatory, cannot be deleted
+    if (day <= 4) {
+      return;
+    }
     setDayToDelete(day);
     setShowDeleteDayDialog(true);
   };
 
   const confirmDeleteDay = (day: number) => {
+    // Days 1-4 are mandatory, cannot be deleted
+    if (day <= 4) {
+      return;
+    }
+    
     // Filter out the day
     setDays(prev => prev.filter(d => d !== day));
     
@@ -100,6 +110,12 @@ export const useDayManagement = ({
     setDayToDelete(null);
     setShowDeleteDayDialog(false);
   };
+
+  // Check if a day is mandatory (days 1-4)
+  const isDayMandatory = (day: number) => day <= 4;
+
+  // Check if a day is optional (days 5-6)
+  const isDayOptional = (day: number) => day >= 5;
 
   return {
     days,
@@ -124,7 +140,9 @@ export const useDayManagement = ({
     handleAddDay,
     prepareDeleteDay,
     confirmDeleteDay,
-    maxDays
+    maxDays,
+    isDayMandatory,
+    isDayOptional
   };
 };
 

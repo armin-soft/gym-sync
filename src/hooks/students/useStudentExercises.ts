@@ -38,6 +38,7 @@ export const useStudentExercises = (
           updatedStudent.exerciseRepsDay3 = updatedStudent.exerciseRepsDay3 || {};
           updatedStudent.exerciseRepsDay4 = updatedStudent.exerciseRepsDay4 || {};
           updatedStudent.exerciseRepsDay5 = updatedStudent.exerciseRepsDay5 || {};
+          updatedStudent.exerciseRepsDay6 = updatedStudent.exerciseRepsDay6 || {}; // Added day 6
           
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
@@ -78,6 +79,22 @@ export const useStudentExercises = (
                 updatedStudent.exerciseSetsDay5 = exerciseSets;
                 updatedStudent.exerciseRepsDay5 = exerciseReps;
                 break;
+              case 6:
+                // Initialize day 6 properties if they don't exist
+                if (!updatedStudent.exercisesDay6) {
+                  updatedStudent.exercisesDay6 = [];
+                }
+                if (!updatedStudent.exerciseSetsDay6) {
+                  updatedStudent.exerciseSetsDay6 = {};
+                }
+                if (!updatedStudent.exerciseRepsDay6) {
+                  updatedStudent.exerciseRepsDay6 = {};
+                }
+                
+                updatedStudent.exercisesDay6 = exerciseIds;
+                updatedStudent.exerciseSetsDay6 = exerciseSets;
+                updatedStudent.exerciseRepsDay6 = exerciseReps;
+                break;
               default:
                 // For invalid day number, update day 1
                 updatedStudent.exercisesDay1 = exerciseIds;
@@ -97,7 +114,7 @@ export const useStudentExercises = (
           if (updatedStudent.exercises?.length) progressCount++;
           if (updatedStudent.exercisesDay1?.length || updatedStudent.exercisesDay2?.length || 
               updatedStudent.exercisesDay3?.length || updatedStudent.exercisesDay4?.length ||
-              updatedStudent.exercisesDay5?.length) {  // Include day 5 in progress calculation
+              updatedStudent.exercisesDay5?.length || updatedStudent.exercisesDay6?.length) {  // Include day 6 in progress calculation
             progressCount++;
           }
           if (updatedStudent.meals?.length) progressCount++;

@@ -16,16 +16,17 @@ export const useExerciseTabState = (
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
-  // Exercise cache for day switching - updated for 5 days
+  // Exercise cache for day switching - updated for 6 days
   const exerciseCacheRef = useRef<Record<number, ExerciseWithSets[]>>({
     1: [],
     2: [],
     3: [],
     4: [],
-    5: []
+    5: [],
+    6: [] // Added day 6
   });
   
-  // Initializing cache once on load - updated for 5 days
+  // Initializing cache once on load - updated for 6 days
   useEffect(() => {
     const cachedExercises = { ...exerciseCacheRef.current };
     
@@ -76,6 +77,16 @@ export const useExerciseTabState = (
         sets: student.exerciseSetsDay5?.[id] || 3,
         reps: student.exerciseRepsDay5?.[id] || "12",
         day: 5
+      }));
+    }
+    
+    // Day 6 (added)
+    if (student.exercisesDay6) {
+      cachedExercises[6] = student.exercisesDay6.map(id => ({
+        id,
+        sets: student.exerciseSetsDay6?.[id] || 3,
+        reps: student.exerciseRepsDay6?.[id] || "12",
+        day: 6
       }));
     }
     

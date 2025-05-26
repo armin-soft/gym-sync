@@ -9,7 +9,8 @@ interface UseExerciseSelectionProps {
   initialExercisesDay2?: number[];
   initialExercisesDay3?: number[];
   initialExercisesDay4?: number[];
-  initialExercisesDay5?: number[]; // Added day 5
+  initialExercisesDay5?: number[];
+  initialExercisesDay6?: number[]; // Added day 6
 }
 
 export function useExerciseSelection({
@@ -18,14 +19,16 @@ export function useExerciseSelection({
   initialExercisesDay2 = [],
   initialExercisesDay3 = [],
   initialExercisesDay4 = [],
-  initialExercisesDay5 = [] // Added day 5
+  initialExercisesDay5 = [],
+  initialExercisesDay6 = [] // Added day 6
 }: UseExerciseSelectionProps = {}) {
   // Setup individual day hooks
   const day1 = useExerciseDaySelection({ initialExercises: initialExercisesDay1 });
   const day2 = useExerciseDaySelection({ initialExercises: initialExercisesDay2 });
   const day3 = useExerciseDaySelection({ initialExercises: initialExercisesDay3 });
   const day4 = useExerciseDaySelection({ initialExercises: initialExercisesDay4 });
-  const day5 = useExerciseDaySelection({ initialExercises: initialExercisesDay5 }); // Added day 5
+  const day5 = useExerciseDaySelection({ initialExercises: initialExercisesDay5 });
+  const day6 = useExerciseDaySelection({ initialExercises: initialExercisesDay6 }); // Added day 6
   
   // For backward compatibility, also maintain the original exercise state
   const mainSelection = useExerciseDaySelection({ initialExercises });
@@ -33,7 +36,7 @@ export function useExerciseSelection({
   // Update state when initialExercises props change
   useEffect(() => {
     // This effect ensures that when initialExercises props change, the state is updated accordingly
-  }, [initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, initialExercisesDay5]);
+  }, [initialExercises, initialExercisesDay1, initialExercisesDay2, initialExercisesDay3, initialExercisesDay4, initialExercisesDay5, initialExercisesDay6]);
 
   return {
     // Original selection
@@ -81,7 +84,7 @@ export function useExerciseSelection({
     handleRepsChangeDay4: day4.handleRepsChange,
     getSelectedExercisesWithSetsDay4: day4.getSelectedExercisesWithSets,
     
-    // Day 5 (added)
+    // Day 5
     selectedExercisesDay5: day5.selectedExercises,
     toggleExerciseDay5: day5.toggleExercise,
     exerciseSetsDay5: day5.exerciseSets,
@@ -89,5 +92,14 @@ export function useExerciseSelection({
     exerciseRepsDay5: day5.exerciseReps,
     handleRepsChangeDay5: day5.handleRepsChange,
     getSelectedExercisesWithSetsDay5: day5.getSelectedExercisesWithSets,
+
+    // Day 6 (added)
+    selectedExercisesDay6: day6.selectedExercises,
+    toggleExerciseDay6: day6.toggleExercise,
+    exerciseSetsDay6: day6.exerciseSets,
+    handleSetsChangeDay6: day6.handleSetsChange,
+    exerciseRepsDay6: day6.exerciseReps,
+    handleRepsChangeDay6: day6.handleRepsChange,
+    getSelectedExercisesWithSetsDay6: day6.getSelectedExercisesWithSets,
   };
 }
