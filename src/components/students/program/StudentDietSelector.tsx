@@ -49,24 +49,24 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-8 text-right" dir="rtl">
         <Utensils className="h-16 w-16 text-gray-300 mb-4" />
-        <p className="text-gray-500 text-lg">لطفا یک روز از هفته را انتخاب کنید</p>
-        <p className="text-gray-400 text-sm mt-2">برای مشاهده و انتخاب وعده‌های غذایی، ابتدا روز مورد نظر را انتخاب کنید</p>
+        <p className="text-gray-500 text-lg text-right">لطفا یک روز از هفته را انتخاب کنید</p>
+        <p className="text-gray-400 text-sm mt-2 text-right">برای مشاهده و انتخاب وعده‌های غذایی، ابتدا روز مورد نظر را انتخاب کنید</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4 text-right" dir="rtl">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" dir="rtl">
-        <Card className="shadow-sm" dir="rtl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-right" dir="rtl">
+        <Card className="shadow-sm text-right" dir="rtl">
           <CardContent className="p-4 text-right" dir="rtl">
-            <h4 className="font-medium mb-3 flex items-center gap-2 text-right">
+            <h4 className="font-medium mb-3 flex items-center gap-2 text-right justify-start" dir="rtl">
               <Utensils className="h-4 w-4 text-green-500" />
-              غذاهای انتخاب شده ({toPersianNumbers(selectedMeals.length)})
+              <span className="text-right">غذاهای انتخاب شده ({toPersianNumbers(selectedMeals.length)})</span>
               {currentMealType && <span className="text-sm text-blue-500 mr-1">({currentMealType})</span>}
             </h4>
             
-            <div dir="rtl">
+            <div className="text-right" dir="rtl">
               <SelectedMealsList
                 meals={meals}
                 selectedMeals={selectedMeals}
@@ -78,14 +78,14 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
           </CardContent>
         </Card>
         
-        <Card className="shadow-sm" dir="rtl">
+        <Card className="shadow-sm text-right" dir="rtl">
           <CardContent className="p-4 text-right" dir="rtl">
             <h4 className="font-medium mb-3 text-right">
               لیست غذاها
               {currentMealType && <span className="text-sm text-blue-500 mr-2">({currentMealType})</span>}
             </h4>
             
-            <div dir="rtl">
+            <div className="text-right" dir="rtl">
               <MealsList
                 meals={dayFilteredMeals}
                 selectedMeals={selectedMeals}

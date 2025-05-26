@@ -38,12 +38,12 @@ const VitaminSelector: React.FC<VitaminSelectorProps> = ({
           }`}
           dir="rtl"
         >
-          <div className={`flex-shrink-0 ${selectedIds.includes(vitamin.id) ? "text-blue-500" : "text-gray-300"}`}>
-            <CheckCircle className="h-5 w-5" />
-          </div>
           <div className="flex-grow text-right">
             <p className="font-medium text-sm text-right">{vitamin.name}</p>
             {vitamin.dosage && <p className="text-xs text-gray-500 text-right">{vitamin.dosage}</p>}
+          </div>
+          <div className={`flex-shrink-0 ${selectedIds.includes(vitamin.id) ? "text-blue-500" : "text-gray-300"}`}>
+            <CheckCircle className="h-5 w-5" />
           </div>
         </motion.div>
       ))}

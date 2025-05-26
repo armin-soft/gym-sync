@@ -97,21 +97,22 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
   };
 
   return (
-    <TabsContent value="diet" className="m-0 h-full" dir="rtl">
+    <TabsContent value="diet" className="m-0 h-full text-right" dir="rtl">
       <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="mb-4 h-full flex flex-col"
+        className="mb-4 h-full flex flex-col text-right"
+        dir="rtl"
       >
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="text-right" dir="rtl">
           <h3 className="font-semibold text-lg mb-4 text-center">
             برنامه غذایی روز {toPersianNumbers(currentDietDay)}
           </h3>
         </motion.div>
         
         {/* Day selector - Centered */}
-        <motion.div variants={itemVariants} className="mb-4">
+        <motion.div variants={itemVariants} className="mb-4 text-right" dir="rtl">
           <div className="flex items-center justify-center pb-2">
             <div className="flex flex-wrap items-center justify-center gap-2">
               {weekDays.map((day) => (
@@ -120,7 +121,7 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentDietDay(day.id)}
                   className={cn(
-                    "h-10 px-4 py-2 rounded-lg transition-all",
+                    "h-10 px-4 py-2 rounded-lg transition-all text-center",
                     currentDietDay === day.id 
                       ? "bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-md" 
                       : "bg-white/80 text-gray-700 border border-gray-200/80 hover:bg-gray-50"
@@ -134,7 +135,7 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
         </motion.div>
         
         {/* Only show meal type selector if a day is selected - Centered */}
-        <motion.div variants={itemVariants} className="mb-6">
+        <motion.div variants={itemVariants} className="mb-6 text-right" dir="rtl">
           <div className="flex items-center justify-center pb-2">
             <div className="flex flex-wrap items-center justify-center gap-2">
               <motion.button
@@ -181,16 +182,17 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
           </div>
         </motion.div>
         
-        <motion.div variants={itemVariants} className="flex-1 overflow-auto">
+        <motion.div variants={itemVariants} className="flex-1 overflow-auto text-right" dir="rtl">
           <AnimatePresence mode="wait">
             <motion.div
               key={`day-${currentDietDay}-type-${currentMealType}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="h-full"
+              className="h-full text-right"
+              dir="rtl"
             >
-              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-gray-100/80">
+              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-gray-100/80 text-right" dir="rtl">
                 <StudentDietSelector 
                   meals={filteredMeals}
                   selectedMeals={selectedMeals}
