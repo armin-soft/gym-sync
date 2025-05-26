@@ -1,7 +1,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { glob } from 'glob';
 
 export const copyFilesPlugin = () => {
   return {
@@ -41,18 +40,25 @@ export const copyFilesPlugin = () => {
           console.log('کپی Offline.html');
         }
 
-        // پیدا کردن فایل‌های CSS و JS با hash
-        const cssFiles = glob.sync('dist/assets/*.css');
-        const jsFiles = glob.sync('dist/assets/*.js');
+        // پیدا کردن فایل‌های CSS و JS بدون استفاده از glob
+        const getFilesWithExtension = (dir: string, ext: string): string[] => {
+          if (!fs.existsSync(dir)) return [];
+          return fs.readdirSync(dir)
+            .filter(file => file.endsWith(ext))
+            .map(file => path.join(dir, file));
+        };
+
+        const cssFiles = getFilesWithExtension('dist/assets', '.css');
+        const jsFiles = getFilesWithExtension('dist/assets', '.js');
         
-        // پیدا کردن فایل اصلی (معمولاً بزرگترین فایل)
+        // پیدا کردن فایل اصلی
         const mainCssFile = cssFiles.find(file => file.includes('index')) || cssFiles[0];
         const mainJsFile = jsFiles.find(file => file.includes('index')) || jsFiles[0];
 
         const cssFileName = mainCssFile ? path.basename(mainCssFile) : 'index.css';
         const jsFileName = mainJsFile ? path.basename(mainJsFile) : 'index.js';
 
-        // بازنویسی index.html با مسیرهای صحیح و کامل
+        // بازنویسی index.html با مسیرهای صحیح
         const distIndexPath = 'dist/index.html';
         if (fs.existsSync(distIndexPath)) {
           const indexContent = `<!DOCTYPE html>
@@ -106,25 +112,22 @@ export const copyFilesPlugin = () => {
           console.log('index.html با مسیرهای بهینه‌شده بازنویسی شد');
         }
 
-        // ایجاد فایل .htaccess برای سرورهای Apache
+        // ایجاد فایل .htaccess
         const htaccessContent = `Options -MultiViews
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.html [QSA,L]
 
-# Cache static assets with hash
 <filesMatch "\\.(css|js)$">
   ExpiresActive On
   ExpiresDefault "access plus 1 year"
 </filesMatch>
 
-# Cache images
 <filesMatch "\\.(png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
   ExpiresActive On
   ExpiresDefault "access plus 1 month"
 </filesMatch>
 
-# Gzip compression
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/html
@@ -135,29 +138,12 @@ RewriteRule ^ index.html [QSA,L]
   AddOutputFilterByType DEFLATE application/rss+xml
   AddOutputFilterByType DEFLATE application/javascript
   AddOutputFilterByType DEFLATE application/x-javascript
-</IfModule>
-
-# Security headers
-<IfModule mod_headers.c>
-  Header always set X-Content-Type-Options nosniff
-  Header always set X-Frame-Options DENY
-  Header always set X-XSS-Protection "1; mode=block"
 </IfModule>`;
 
         fs.writeFileSync('dist/.htaccess', htaccessContent);
         console.log('فایل .htaccess ایجاد شد');
 
         console.log('✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.7!');
-        console.log('📁 ساختار dist بهینه‌شده:');
-        console.log('  ├── index.html (با فایل‌های hash دار)');
-        console.log('  ├── assets/');
-        console.log('  │   ├── چندین فایل JS تقسیم‌شده');
-        console.log('  │   ├── چندین فایل CSS تقسیم‌شده');
-        console.log('  │   └── images/');
-        console.log('  │       ├── Logo.png');
-        console.log('  │       └── Place-Holder.svg');
-        console.log('  ├── Offline.html');
-        console.log('  └── .htaccess');
 
       } catch (error) {
         console.error('❌ خطا در کپی یا بهینه‌سازی فایل‌ها:', error);

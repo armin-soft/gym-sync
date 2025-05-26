@@ -34,9 +34,9 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
-      chunkSizeWarningLimit: 800, // کاهش حد هشدار
+      chunkSizeWarningLimit: 2000,
       assetsInlineLimit: 0,
-      cssCodeSplit: true, // فعال‌سازی تقسیم CSS
+      cssCodeSplit: true,
       minify: 'terser',
       terserOptions: {
         compress: {
@@ -52,66 +52,28 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       rollupOptions: {
         output: {
-          entryFileNames: 'assets/[name].[hash].js',
-          chunkFileNames: 'assets/[name].[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/[name]-[hash].js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name?.endsWith('.css')) {
-              return 'assets/[name].[hash].css';
+              return 'assets/[name]-[hash].css';
             }
             if (assetInfo.name?.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
               return 'assets/images/[name].[ext]';
             }
-            return 'assets/[name].[hash].[ext]';
+            return 'assets/[name]-[hash].[ext]';
           },
-          // تقسیم‌بندی دستی chunk ها برای بهینه‌سازی
           manualChunks: {
-            // کتابخانه‌های اصلی React
-            'react-vendor': ['react', 'react-dom'],
-            
-            // کتابخانه‌های UI
-            'ui-vendor': [
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-ui': [
               '@radix-ui/react-dialog',
               '@radix-ui/react-dropdown-menu',
               '@radix-ui/react-select',
               '@radix-ui/react-tabs',
-              '@radix-ui/react-toast',
-              '@radix-ui/react-popover',
-              '@radix-ui/react-accordion'
+              '@radix-ui/react-toast'
             ],
-            
-            // کتابخانه‌های روتینگ و حالت
-            'router-vendor': ['react-router-dom', '@tanstack/react-query'],
-            
-            // کتابخانه‌های انیمیشن و آیکون
-            'animation-vendor': ['framer-motion', 'lucide-react'],
-            
-            // کتابخانه‌های PDF و چارت
-            'utility-vendor': ['pdfmake', 'jspdf', 'recharts', 'date-fns', 'date-fns-jalali'],
-            
-            // کامپوننت‌های صفحات اصلی
-            'pages': [
-              'src/pages/Index.tsx',
-              'src/pages/students.tsx',
-              'src/pages/exercises.tsx',
-              'src/pages/diet/index.tsx',
-              'src/pages/supplements/index.tsx',
-              'src/pages/trainer.tsx',
-              'src/pages/backup.tsx'
-            ],
-            
-            // کامپوننت‌های دانش‌آموز
-            'students': [
-              'src/components/students/StudentCard.tsx',
-              'src/components/students/StudentDialog.tsx',
-              'src/components/students/StudentForm.tsx'
-            ],
-            
-            // کامپوننت‌های تمرین
-            'exercises': [
-              'src/components/exercises/ExerciseCard.tsx',
-              'src/components/exercises/ExerciseDialog.tsx',
-              'src/components/exercises/ExerciseTable.tsx'
-            ]
+            'vendor-router': ['react-router-dom', '@tanstack/react-query'],
+            'vendor-utils': ['framer-motion', 'lucide-react', 'date-fns', 'date-fns-jalali']
           }
         }
       }
