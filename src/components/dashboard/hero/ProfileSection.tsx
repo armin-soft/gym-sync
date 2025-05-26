@@ -17,6 +17,12 @@ interface ProfileSectionProps {
 }
 
 export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) => {
+  // اطمینان از وجود داده‌ها
+  const profileName = trainerProfile?.name || "مربی حرفه‌ای";
+  const profileImage = trainerProfile?.image || "/placeholder.svg";
+  const totalStudents = stats?.totalStudents || 0;
+  const studentsProgress = stats?.studentsProgress || 0;
+
   return (
     <motion.div 
       initial={{ opacity: 0, x: -20 }}
@@ -29,7 +35,7 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
           {/* Enhanced glow effect */}
           <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 opacity-70 blur-lg animate-pulse" />
           <Avatar className="h-16 w-16 border-4 border-white/30 relative shadow-xl hover:scale-105 transition-transform duration-300">
-            <AvatarImage src={trainerProfile.image} alt="تصویر پروفایل" />
+            <AvatarImage src={profileImage} alt="تصویر پروفایل" />
             <AvatarFallback>
               <Crown className="w-6 h-6 text-white" />
             </AvatarFallback>
@@ -50,7 +56,7 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
               خوش آمدید <span className="inline-block animate-wave ml-1">👋</span>
             </h1>
             <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm hover:bg-white/30 transition-colors self-start sm:self-auto">
-              {trainerProfile.name || "مربی حرفه‌ای"}
+              {profileName}
             </Badge>
           </div>
           <p className="mt-2 text-white/80 flex items-center gap-2">

@@ -25,6 +25,11 @@ export const QuickStatsCard = ({
   accentColor,
   index
 }: QuickStatsCardProps) => {
+  // اطمینان از وجود مقادیر
+  const safeValue = value || 0;
+  const safeGrowth = growth || 0;
+  const safeTitle = title || "نامشخص";
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -53,23 +58,23 @@ export const QuickStatsCard = ({
           <Icon className="h-5 w-5" />
         </div>
         <div className={`text-xs font-medium flex items-center gap-1.5 px-2.5 py-1 rounded-full ${
-          growth >= 0 
+          safeGrowth >= 0 
             ? 'bg-green-500/20 text-green-300' 
             : 'bg-red-500/20 text-red-300'
         }`}>
-          {growth >= 0 ? (
+          {safeGrowth >= 0 ? (
             <TrendingUp className="w-3.5 h-3.5" />
           ) : (
             <Activity className="w-3.5 h-3.5" />
           )}
-          {toPersianNumbers(Math.abs(growth))}٪
+          {toPersianNumbers(Math.abs(safeGrowth).toString())}٪
         </div>
       </div>
       
       <div className="flex-1 relative z-10">
-        <p className="text-sm text-white/70">{title}</p>
+        <p className="text-sm text-white/70">{safeTitle}</p>
         <p className={`mt-1 text-xl font-bold ${textColor}`}>
-          {toPersianNumbers(value)}
+          {toPersianNumbers(safeValue.toString())}
         </p>
       </div>
 
@@ -77,7 +82,7 @@ export const QuickStatsCard = ({
         <motion.div 
           className={`h-full rounded-full bg-gradient-to-r from-${accentColor}-500 to-${accentColor}-400`}
           initial={{ width: 0 }}
-          animate={{ width: `${Math.min((value / (value * 1.5)) * 100, 100)}%` }}
+          animate={{ width: `${Math.min((safeValue / (safeValue * 1.5 || 1)) * 100, 100)}%` }}
           transition={{ duration: 1, delay: 0.5 + (index * 0.1) }}
         />
       </div>

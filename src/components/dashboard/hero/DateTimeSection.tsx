@@ -11,7 +11,7 @@ interface DateTimeSectionProps {
 
 export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
   const { dateInfo, isLoading } = useShamsiDate();
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(currentTime || new Date());
   
   // Effect to update the time every second
   useEffect(() => {
@@ -19,14 +19,8 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
       setTime(new Date());
     }, 1000);
     
-    return () => clearInterval(timer); // Cleanup on unmount
+    return () => clearInterval(timer);
   }, []);
-
-  // اضافه کردن کد دیباگ برای بررسی اطلاعات دریافتی
-  useEffect(() => {
-    console.log("DateTimeSection dateInfo:", dateInfo);
-    console.log("DateTimeSection isLoading:", isLoading);
-  }, [dateInfo, isLoading]);
 
   // Animation variants for badges
   const badgeVariants = {
@@ -70,10 +64,14 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
                 variant="outline" 
                 className="border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 hover:bg-white/20 transition-colors group"
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform">{dateInfo.Season_Emoji}</span>
+                <span className="text-2xl group-hover:scale-110 transition-transform">
+                  {dateInfo.Season_Emoji || "🌟"}
+                </span>
                 <Calendar className="w-3.5 h-3.5 mr-1 text-yellow-300 opacity-80" />
-                <span>{dateInfo.Shamsi_Date}</span>
-                <span className="text-white/60 text-xs px-1.5 py-0.5 bg-white/10 rounded-full">{dateInfo.Season}</span>
+                <span>{dateInfo.Shamsi_Date || "تاریخ نامشخص"}</span>
+                <span className="text-white/60 text-xs px-1.5 py-0.5 bg-white/10 rounded-full">
+                  {dateInfo.Season || "فصل"}
+                </span>
               </Badge>
             </motion.div>
             
@@ -82,7 +80,9 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
                 variant="outline" 
                 className="border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 hover:bg-white/20 transition-colors group"
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform">{dateInfo.Time_Based_Emoji}</span>
+                <span className="text-2xl group-hover:scale-110 transition-transform">
+                  {dateInfo.Time_Based_Emoji || "⏰"}
+                </span>
                 <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300 opacity-80" />
                 <motion.span 
                   key={time.getTime()} 
@@ -92,11 +92,28 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
                 >
                   {time.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </motion.span>
-                <span className="text-white/60 text-xs px-1.5 py-0.5 bg-white/10 rounded-full">{dateInfo.Time_Based}</span>
+                <span className="text-white/60 text-xs px-1.5 py-0.5 bg-white/10 rounded-full">
+                  {dateInfo.Time_Based || "زمان"}
+                </span>
               </Badge>
             </motion.div>
           </motion.div>
-        ) : null}
+        ) : (
+          <motion.div
+            key="fallback"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Badge 
+              variant="outline" 
+              className="border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2"
+            >
+              <Clock className="w-4 h-4 text-blue-300" />
+              <span>{time.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}</span>
+            </Badge>
+          </motion.div>
+        )}
       </AnimatePresence>
     </motion.div>
   );
