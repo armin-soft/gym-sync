@@ -7,12 +7,6 @@ export const copyFilesPlugin = () => {
     name: 'copy-files',
     closeBundle: async () => {
       try {
-        // کپی Manifest.json از public
-        if (fs.existsSync('public/Manifest.json')) {
-          fs.copyFileSync('public/Manifest.json', 'dist/Manifest.json');
-          console.log('کپی Manifest.json به dist');
-        }
-
         // بازنویسی index.html با مسیرهای صحیح
         const distIndexPath = 'dist/index.html';
         if (fs.existsSync(distIndexPath)) {
@@ -31,7 +25,6 @@ export const copyFilesPlugin = () => {
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <link rel="manifest" href="./Manifest.json" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
