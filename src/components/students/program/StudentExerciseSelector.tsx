@@ -67,33 +67,35 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center">در حال بارگذاری...</div>;
+    return <div className="p-8 text-center text-right" dir="rtl">در حال بارگذاری...</div>;
   }
 
   return (
     <div className={cn(
-      "space-y-4 rtl",
+      "space-y-4 text-right",
       noScroll ? "h-full flex flex-col" : ""
-    )}>
+    )} dir="rtl">
       {/* نمایش منوی سلسله مراتبی انتخاب */}
-      <ExerciseTypeCategory
-        selectedType={selectedType}
-        setSelectedType={setSelectedType}
-        selectedCategoryId={selectedCategoryId}
-        setSelectedCategoryId={setSelectedCategoryId}
-        exerciseTypes={exerciseTypes}
-        filteredCategories={filteredCategories}
-        filteredExercises={filteredExercises}
-        clearFilters={clearFilters}
-      />
+      <div dir="rtl">
+        <ExerciseTypeCategory
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          selectedCategoryId={selectedCategoryId}
+          setSelectedCategoryId={setSelectedCategoryId}
+          exerciseTypes={exerciseTypes}
+          filteredCategories={filteredCategories}
+          filteredExercises={filteredExercises}
+          clearFilters={clearFilters}
+        />
+      </div>
       
       <div className={cn(
         "grid grid-cols-1 lg:grid-cols-2 gap-4",
         noScroll ? "flex-1 overflow-auto" : ""
-      )}>
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
-            <h4 className="font-medium mb-3 flex items-center gap-2 justify-center">
+      )} dir="rtl">
+        <Card className="shadow-sm" dir="rtl">
+          <CardContent className="p-4 text-right" dir="rtl">
+            <h4 className="font-medium mb-3 flex items-center gap-2 justify-start text-right">
               <Dumbbell className="h-4 w-4 text-indigo-500" />
               <span>تمرین‌های انتخاب شده برای {getDayLabel()}</span>
               <span className="inline-flex items-center justify-center bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full h-5 min-w-[20px] px-1.5">
@@ -102,38 +104,42 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
             </h4>
             
             {selectedExercises.length > 0 ? (
-              <SelectedExercisesList
-                selectedExercises={selectedExercises}
-                exercises={exercises}
-                dayLabel={getDayLabel()}
-                toggleExercise={toggleExercise}
-                handleSetsChange={handleSetsChange}
-                handleRepsChange={handleRepsChange}
-              />
+              <div dir="rtl">
+                <SelectedExercisesList
+                  selectedExercises={selectedExercises}
+                  exercises={exercises}
+                  dayLabel={getDayLabel()}
+                  toggleExercise={toggleExercise}
+                  handleSetsChange={handleSetsChange}
+                  handleRepsChange={handleRepsChange}
+                />
+              </div>
             ) : (
-              <div className="text-center p-4">
+              <div className="text-center p-4 text-right" dir="rtl">
                 <p className="text-muted-foreground">هیچ تمرینی انتخاب نشده است</p>
-                <p className="text-sm text-muted-foreground mt-1">از لیست سمت راست تمرین را انتخاب کنید</p>
+                <p className="text-sm text-muted-foreground mt-1">از لیست سمت چپ تمرین را انتخاب کنید</p>
               </div>
             )}
           </CardContent>
         </Card>
         
-        <Card className="shadow-sm">
-          <CardContent className="p-4">
+        <Card className="shadow-sm" dir="rtl">
+          <CardContent className="p-4 text-right" dir="rtl">
             <h4 className="font-medium mb-3 text-right">لیست تمرین‌ها</h4>
             
             {filteredExercises.length > 0 ? (
-              <ExerciseListDisplay
-                filteredExercises={filteredExercises}
-                selectedExercises={selectedExercises}
-                selectedType={selectedType}
-                selectedCategoryId={selectedCategoryId}
-                toggleExercise={toggleExercise}
-                viewMode={viewMode}
-              />
+              <div dir="rtl">
+                <ExerciseListDisplay
+                  filteredExercises={filteredExercises}
+                  selectedExercises={selectedExercises}
+                  selectedType={selectedType}
+                  selectedCategoryId={selectedCategoryId}
+                  toggleExercise={toggleExercise}
+                  viewMode={viewMode}
+                />
+              </div>
             ) : (
-              <div className="text-center p-4">
+              <div className="text-center p-4 text-right" dir="rtl">
                 <p className="text-muted-foreground">هیچ تمرینی برای نمایش وجود ندارد</p>
                 <p className="text-sm text-muted-foreground mt-1">لطفا یک دسته‌بندی انتخاب کنید</p>
               </div>

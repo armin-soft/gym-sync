@@ -24,30 +24,31 @@ const VitaminSelector: React.FC<VitaminSelectorProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-right" dir="rtl">
       {vitamins.map(vitamin => (
         <motion.div
           key={vitamin.id}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => toggleVitamin(vitamin.id)}
-          className={`p-3 rounded-lg border cursor-pointer flex items-center gap-2 transition-colors ${
+          className={`p-3 rounded-lg border cursor-pointer flex items-center gap-2 transition-colors text-right ${
             selectedIds.includes(vitamin.id)
               ? "bg-blue-50 border-blue-300"
               : "bg-white border-gray-200 hover:bg-gray-50"
           }`}
+          dir="rtl"
         >
           <div className={`flex-shrink-0 ${selectedIds.includes(vitamin.id) ? "text-blue-500" : "text-gray-300"}`}>
             <CheckCircle className="h-5 w-5" />
           </div>
-          <div className="flex-grow">
-            <p className="font-medium text-sm">{vitamin.name}</p>
-            {vitamin.dosage && <p className="text-xs text-gray-500">{vitamin.dosage}</p>}
+          <div className="flex-grow text-right">
+            <p className="font-medium text-sm text-right">{vitamin.name}</p>
+            {vitamin.dosage && <p className="text-xs text-gray-500 text-right">{vitamin.dosage}</p>}
           </div>
         </motion.div>
       ))}
       {vitamins.length === 0 && (
-        <div className="p-4 text-center text-gray-500 col-span-2 bg-gray-50 rounded-lg">
+        <div className="p-4 text-center text-gray-500 col-span-2 bg-gray-50 rounded-lg text-right" dir="rtl">
           هیچ ویتامینی یافت نشد
         </div>
       )}
