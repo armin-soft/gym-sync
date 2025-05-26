@@ -4,51 +4,24 @@
  * Works for any deployment path including subdirectories
  */
 export function getBasePath(): string {
-  // In development environment, always use root path
+  // در محیط توسعه همیشه از مسیر اصلی استفاده کن
   if (process.env.NODE_ENV === 'development') {
+    console.log('Development mode - using root path');
     return '/';
   }
   
-  // When not in a browser environment
+  // زمانی که در محیط مرورگر نیستیم
   if (typeof window === 'undefined') {
+    console.log('No window object - using root path');
     return '/';
   }
   
   try {
-    // For production: Get base URL from window location
-    // This is more reliable than parsing script tags
-    const pathName = window.location.pathname;
+    console.log('Determining base path for production...');
+    console.log('Current location:', window.location);
     
-    // If we're at the root or a direct route
-    if (pathName === '/' || pathName.indexOf('.') !== -1) {
-      return '/';
-    }
-    
-    // Check for specific paths that should be excluded from the base path
-    const routePaths = [
-      '/Coach-Profile', 
-      '/Students', 
-      '/Student-History',
-      '/Exercise-Movements', 
-      '/Diet-Plan', 
-      '/Supplements-Vitamins', 
-      '/Backup-Restore',
-      '/students',
-      '/student-history',
-      '/exercises',
-      '/diet',
-      '/supplements',
-      '/trainer',
-      '/backup'
-    ];
-    
-    // If the current path is one of our application routes, use root
-    for (const route of routePaths) {
-      if (pathName.startsWith(route)) {
-        return '/';
-      }
-    }
-    
+    // برای production: همیشه از مسیر اصلی استفاده کن
+    // این رویکرد ساده‌تر و قابل اعتمادتر است
     console.log("Using root path as basename");
     return '/';
   } catch (e) {
@@ -62,9 +35,11 @@ export function getBasePath(): string {
  */
 export function getAssetPath(assetPath: string): string {
   const basePath = getBasePath();
-  // Remove any leading slash from asset path to avoid double slashes
+  // حذف اسلش ابتدایی از مسیر asset برای جلوگیری از دابل اسلش
   const cleanAssetPath = assetPath.startsWith('/') ? assetPath.substring(1) : assetPath;
   
-  // Join paths and clean up any potential double slashes
-  return `${basePath}${cleanAssetPath}`.replace(/([^:])\/+/g, '$1/');
+  // ترکیب مسیرها و پاک کردن هر دابل اسلش احتمالی
+  const fullPath = `${basePath}${cleanAssetPath}`.replace(/([^:])\/+/g, '$1/');
+  console.log('Asset path resolved:', { assetPath, basePath, cleanAssetPath, fullPath });
+  return fullPath;
 }

@@ -10,6 +10,7 @@ function MainApp() {
   const [isLoading, setIsLoading] = useState(true);
   
   const handleLoadingComplete = () => {
+    console.log('Loading completed, showing main app');
     setIsLoading(false);
   };
   
@@ -24,12 +25,14 @@ function MainApp() {
 // تابع راه‌اندازی اصلی برنامه - بهینه شده برای سرعت بیشتر
 function startApp() {
   try {
+    console.log('Starting app initialization...');
     const rootElement = document.getElementById('root');
     if (!rootElement) {
       console.error('عنصر root پیدا نشد');
       return;
     }
     
+    console.log('Root element found, creating React root...');
     const root = createRoot(rootElement);
     root.render(<MainApp />);
     
@@ -47,8 +50,14 @@ function startApp() {
     }, 3000);
   } catch (error) {
     console.error('خطا در راه‌اندازی برنامه:', error);
+    // نمایش پیام خطا برای کاربر
+    document.body.innerHTML = '<div style="padding: 20px; text-align: center;">خطا در بارگذاری برنامه. لطفا صفحه را رفرش کنید.</div>';
   }
 }
 
-// بلافاصله شروع به کار کن
-startApp();
+// بررسی آماده بودن DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startApp);
+} else {
+  startApp();
+}

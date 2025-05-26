@@ -35,13 +35,15 @@ function AppContent() {
 function App() {
   useEffect(() => {
     console.log('App component mounted successfully');
+    console.log('Current URL:', window.location.href);
+    console.log('Current pathname:', window.location.pathname);
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <BrowserRouter basename="/">
+          <BrowserRouter>
             <AppContent />
             <Toaster />
           </BrowserRouter>

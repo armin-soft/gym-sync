@@ -1,5 +1,4 @@
 
-
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
@@ -18,6 +17,8 @@ import StudentProgramPage from "./pages/student-program";
 import StudentHistoryPage from "./pages/student-history";
 
 const AppRoutes: React.FC = () => {
+  console.log('AppRoutes component rendered');
+  
   return (
     <Routes>
       <Route
@@ -169,11 +170,10 @@ const AppRoutes: React.FC = () => {
         }
       />
       
-      {/* مسیر پیشفرض */}
+      {/* مسیر پیشفرض - هر آدرس نامعتبر به صفحه اصلی برگردد */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
 
 export default AppRoutes;
-
