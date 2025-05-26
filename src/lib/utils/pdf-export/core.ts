@@ -13,30 +13,29 @@ function initializePdfMake() {
   
   try {
     // Check if pdfMake is available
-    if (!pdfMake) {
+    if (typeof pdfMake === 'undefined' || !pdfMake) {
       console.error('pdfMake is not available');
       return false;
     }
 
     // Initialize VFS fonts with multiple fallback strategies
-    const fonts = pdfFonts as any;
-    if (fonts && fonts.pdfMake && fonts.pdfMake.vfs) {
-      pdfMake.vfs = fonts.pdfMake.vfs;
-    } else if (fonts && fonts.vfs) {
-      pdfMake.vfs = fonts.vfs;
-    } else {
-      pdfMake.vfs = fonts;
-    }
-
-    // فونت‌های فارسی مدرن و بهینه شده
-    const persianFonts = {
-      Vazir: {
-        normal: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
-        bold: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf',
-        italics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
-        bolditalics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf'
+    let fonts;
+    try {
+      fonts = pdfFonts;
+      if (fonts && typeof fonts === 'object') {
+        if (fonts.pdfMake && fonts.pdfMake.vfs) {
+          pdfMake.vfs = fonts.pdfMake.vfs;
+        } else if (fonts.vfs) {
+          pdfMake.vfs = fonts.vfs;
+        } else {
+          // If fonts is the vfs object itself
+          pdfMake.vfs = fonts;
+        }
       }
-    };
+    } catch (fontError) {
+      console.warn('Could not load custom fonts, using defaults:', fontError);
+      pdfMake.vfs = {};
+    }
 
     // Set up fonts with fallback
     pdfMake.fonts = {
@@ -45,21 +44,17 @@ function initializePdfMake() {
         bold: 'Roboto-Medium.ttf',
         italics: 'Roboto-Italic.ttf',
         bolditalics: 'Roboto-MediumItalic.ttf'
-      },
-      ...persianFonts
+      }
     };
 
     pdfMakeInitialized = true;
-    console.log('pdfMake initialized successfully with Persian fonts');
+    console.log('pdfMake initialized successfully');
     return true;
   } catch (error) {
     console.error('Error initializing pdfMake:', error);
     return false;
   }
 }
-
-// Initialize immediately
-initializePdfMake();
 
 // تنظیمات مدرن PDF برای چاپ حرفه‌ای
 export const PDF_OPTIONS: PDFDocumentOptions = {
@@ -99,8 +94,8 @@ export function generatePDF(docDefinition: any, filename: string): Promise<void>
         throw new Error('pdfMake initialization failed');
       }
 
-      if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
-        throw new Error('pdfMake is not properly initialized');
+      if (typeof pdfMake?.createPdf !== 'function') {
+        throw new Error('pdfMake.createPdf is not available');
       }
       
       console.log(`در حال تولید PDF حرفه‌ای: ${filename}`);
@@ -124,8 +119,8 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
         throw new Error('pdfMake initialization failed');
       }
 
-      if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
-        throw new Error('pdfMake is not properly initialized');
+      if (typeof pdfMake?.createPdf !== 'function') {
+        throw new Error('pdfMake.createPdf is not available');
       }
       
       console.log('در حال تولید پیش‌نمایش PDF مدرن...');
@@ -150,8 +145,8 @@ export function generatePDFBlob(docDefinition: any): Promise<Blob> {
         throw new Error('pdfMake initialization failed');
       }
 
-      if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
-        throw new Error('pdfMake is not properly initialized');
+      if (typeof pdfMake?.createPdf !== 'function') {
+        throw new Error('pdfMake.createPdf is not available');
       }
       
       const pdfDoc = pdfMake.createPdf(docDefinition);
@@ -163,6 +158,13 @@ export function generatePDFBlob(docDefinition: any): Promise<Blob> {
       reject(error);
     }
   });
+}
+
+// Initialize on module load
+try {
+  initializePdfMake();
+} catch (error) {
+  console.warn('Could not initialize pdfMake on module load:', error);
 }
 
 // صادر کردن توابع کمکی
