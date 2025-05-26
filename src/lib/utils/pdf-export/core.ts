@@ -5,45 +5,61 @@ import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 import { modernPdfStyles, printPageSettings } from './modern-styles';
 
-// Initialize pdfMake with fonts immediately
-try {
-  const fonts = pdfFonts as any;
-  if (fonts && fonts.pdfMake && fonts.pdfMake.vfs) {
-    pdfMake.vfs = fonts.pdfMake.vfs;
-  } else if (fonts && fonts.vfs) {
-    pdfMake.vfs = fonts.vfs;
-  } else {
-    pdfMake.vfs = fonts;
+// Safe pdfMake initialization with better error handling
+let pdfMakeInitialized = false;
+
+function initializePdfMake() {
+  if (pdfMakeInitialized) return true;
+  
+  try {
+    // Check if pdfMake is available
+    if (!pdfMake) {
+      console.error('pdfMake is not available');
+      return false;
+    }
+
+    // Initialize VFS fonts with multiple fallback strategies
+    const fonts = pdfFonts as any;
+    if (fonts && fonts.pdfMake && fonts.pdfMake.vfs) {
+      pdfMake.vfs = fonts.pdfMake.vfs;
+    } else if (fonts && fonts.vfs) {
+      pdfMake.vfs = fonts.vfs;
+    } else {
+      pdfMake.vfs = fonts;
+    }
+
+    // فونت‌های فارسی مدرن و بهینه شده
+    const persianFonts = {
+      Vazir: {
+        normal: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
+        bold: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf',
+        italics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
+        bolditalics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf'
+      }
+    };
+
+    // Set up fonts with fallback
+    pdfMake.fonts = {
+      Roboto: {
+        normal: 'Roboto-Regular.ttf',
+        bold: 'Roboto-Medium.ttf',
+        italics: 'Roboto-Italic.ttf',
+        bolditalics: 'Roboto-MediumItalic.ttf'
+      },
+      ...persianFonts
+    };
+
+    pdfMakeInitialized = true;
+    console.log('pdfMake initialized successfully with Persian fonts');
+    return true;
+  } catch (error) {
+    console.error('Error initializing pdfMake:', error);
+    return false;
   }
-} catch (error) {
-  console.error('Error setting up pdfMake vfs:', error);
 }
 
-// فونت‌های فارسی مدرن و بهینه شده
-const persianFonts = {
-  Vazir: {
-    normal: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
-    bold: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf',
-    italics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.ttf',
-    bolditalics: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.ttf'
-  }
-};
-
-// Initialize fonts safely
-try {
-  pdfMake.fonts = {
-    Roboto: {
-      normal: 'Roboto-Regular.ttf',
-      bold: 'Roboto-Medium.ttf',
-      italics: 'Roboto-Italic.ttf',
-      bolditalics: 'Roboto-MediumItalic.ttf'
-    },
-    ...persianFonts
-  };
-  console.log('pdfMake fonts initialized successfully');
-} catch (error) {
-  console.error('Error initializing pdfMake fonts:', error);
-}
+// Initialize immediately
+initializePdfMake();
 
 // تنظیمات مدرن PDF برای چاپ حرفه‌ای
 export const PDF_OPTIONS: PDFDocumentOptions = {
@@ -59,7 +75,6 @@ export function createPdfDocument(content: any[]): any {
   return {
     content,
     ...PDF_OPTIONS,
-    fonts: persianFonts,
     styles: modernPdfStyles,
     // اضافه کردن واترمارک نرم‌افزار
     background: function(currentPage: number) {
@@ -80,6 +95,10 @@ export function createPdfDocument(content: any[]): any {
 export function generatePDF(docDefinition: any, filename: string): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
+      if (!initializePdfMake()) {
+        throw new Error('pdfMake initialization failed');
+      }
+
       if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
         throw new Error('pdfMake is not properly initialized');
       }
@@ -101,6 +120,10 @@ export function generatePDF(docDefinition: any, filename: string): Promise<void>
 export function generatePDFPreview(docDefinition: any): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
+      if (!initializePdfMake()) {
+        throw new Error('pdfMake initialization failed');
+      }
+
       if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
         throw new Error('pdfMake is not properly initialized');
       }
@@ -123,6 +146,10 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
 export function generatePDFBlob(docDefinition: any): Promise<Blob> {
   return new Promise((resolve, reject) => {
     try {
+      if (!initializePdfMake()) {
+        throw new Error('pdfMake initialization failed');
+      }
+
       if (!pdfMake || typeof pdfMake.createPdf !== 'function') {
         throw new Error('pdfMake is not properly initialized');
       }
