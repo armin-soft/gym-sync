@@ -10,6 +10,8 @@ import ExerciseListDisplay from "./selectors/ExerciseListDisplay";
 import { useExerciseSelector } from "./hooks/useExerciseSelector";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import ProgramSpeechToText from "./components/ProgramSpeechToText";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentExerciseSelectorProps {
   selectedExercises: ExerciseWithSets[];
@@ -18,8 +20,8 @@ interface StudentExerciseSelectorProps {
   exercises: any[]; 
   dayLabel?: string;
   noScroll?: boolean;
-  isDayMandatory?: boolean; // Added missing prop
-  isDayOptional?: boolean; // Added missing prop
+  isDayMandatory?: boolean;
+  isDayOptional?: boolean;
 }
 
 const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
@@ -32,6 +34,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   isDayMandatory,
   isDayOptional,
 }) => {
+  const { toast } = useToast();
   const { categories, exerciseTypes, isLoading } = useExerciseData();
   
   const {
@@ -65,8 +68,57 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
       case 3: return "روز سوم";
       case 4: return "روز چهارم";
       case 5: return "روز پنجم";
-      case 6: return "روز ششم"; // Added day 6
+      case 6: return "روز ششم";
       default: return `روز ${toPersianNumbers(dayNumber)}`;
+    }
+  };
+
+  const handleSpeechSave = (transcript: string) => {
+    // Parse the transcript to extract exercise names
+    const exerciseNames = transcript
+      .split(/[،,\n]/)
+      .map(name => name.trim())
+      .filter(name => name.length > 0);
+
+    if (exerciseNames.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "هیچ تمرینی در متن گفتاری یافت نشد"
+      });
+      return;
+    }
+
+    // Find matching exercises
+    const matchedExercises: ExerciseWithSets[] = [];
+    
+    exerciseNames.forEach(name => {
+      const foundExercise = exercises.find(ex => 
+        ex.name.includes(name) || name.includes(ex.name)
+      );
+      
+      if (foundExercise && !selectedExercises.find(sel => sel.id === foundExercise.id)) {
+        matchedExercises.push({
+          id: foundExercise.id,
+          sets: 3,
+          reps: "12",
+          day: dayNumber
+        });
+      }
+    });
+
+    if (matchedExercises.length > 0) {
+      setSelectedExercises(prev => [...prev, ...matchedExercises]);
+      toast({
+        title: "افزودن موفق",
+        description: `${toPersianNumbers(matchedExercises.length)} تمرین از گفتار شما اضافه شد`
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "هیچ تمرینی یافت نشد",
+        description: "لطفا نام تمرین‌ها را واضح‌تر بیان کنید"
+      });
     }
   };
 
@@ -129,11 +181,25 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         </Card>
       </motion.div>
 
-      {/* Filter Section */}
+      {/* Speech to Text for Exercise Input */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
+      >
+        <ProgramSpeechToText
+          onSave={handleSpeechSave}
+          title="افزودن تمرین با گفتار"
+          placeholder="نام تمرین‌های مورد نظر را بگویید، مثل: پرس سینه، اسکات، ددلیفت"
+          className="mb-4"
+        />
+      </motion.div>
+
+      {/* Filter Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
         className="text-right"
         dir="rtl"
       >
@@ -157,7 +223,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.3 }}
         >
           <Card className="shadow-lg border-0 bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-700/90 backdrop-blur-sm h-full">
             <CardContent className="p-6 h-full flex flex-col">
@@ -203,7 +269,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.4 }}
         >
           <Card className="shadow-lg border-0 bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-700/90 backdrop-blur-sm h-full">
             <CardContent className="p-6 h-full flex flex-col">

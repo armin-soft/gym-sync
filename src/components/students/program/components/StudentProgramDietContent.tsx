@@ -1,14 +1,10 @@
 
 import React, { useState, useEffect } from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import StudentDietSelector from "../StudentDietSelector";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Utensils } from "lucide-react";
-import { MealType } from "@/types/meal";
-import { Badge } from "@/components/ui/badge";
 
 interface StudentProgramDietContentProps {
   selectedMeals: number[];
@@ -41,40 +37,15 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
   selectedMeals,
   setSelectedMeals,
   meals,
-  currentDietDay = 1, // Changed default to 1 (Saturday) instead of 0
+  currentDietDay = 1,
   setCurrentDietDay = () => {}
 }) => {
-  const [currentMealType, setCurrentMealType] = useState<number>(0); // 0 means all meal types
-  const [activeMealTypeCount, setActiveMealTypeCount] = useState<Record<number, number>>({});
+  const [currentMealType, setCurrentMealType] = useState<string>("all");
 
   // Reset meal type when day changes
   useEffect(() => {
-    setCurrentMealType(0);
+    setCurrentMealType("all");
   }, [currentDietDay]);
-
-  // Count meals by type
-  useEffect(() => {
-    if (meals && meals.length > 0) {
-      const counts: Record<number, number> = {};
-      
-      meals.forEach(meal => {
-        const typeObj = mealTypes.find(t => t.name === meal.type);
-        if (typeObj) {
-          counts[typeObj.id] = (counts[typeObj.id] || 0) + 1;
-        }
-      });
-      
-      setActiveMealTypeCount(counts);
-    }
-  }, [meals]);
-
-  // Filter meals by selected type if a specific type is selected
-  const filteredMeals = currentMealType === 0 
-    ? meals 
-    : meals.filter(meal => {
-        const typeName = mealTypes.find(t => t.id === currentMealType)?.name;
-        return meal.type === typeName;
-      });
 
   // Animation variants
   const containerVariants = {
@@ -134,73 +105,62 @@ const StudentProgramDietContent: React.FC<StudentProgramDietContentProps> = ({
           </div>
         </motion.div>
         
-        {/* Only show meal type selector if a day is selected - Centered */}
+        {/* Meal type selector - Centered */}
         <motion.div variants={itemVariants} className="mb-6 text-right" dir="rtl">
           <div className="flex items-center justify-center pb-2">
             <div className="flex flex-wrap items-center justify-center gap-2">
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setCurrentMealType(0)}
+                onClick={() => setCurrentMealType("all")}
                 className={cn(
                   "h-10 px-4 py-2 rounded-lg transition-all flex items-center gap-2",
-                  currentMealType === 0
+                  currentMealType === "all"
                     ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md"
                     : "bg-white/80 text-gray-700 border border-gray-200/80 hover:bg-gray-50"
                 )}
               >
-                <span>همه وعده‌ها</span>
-                <Badge variant="secondary" className="bg-white/20 text-white">
-                  {toPersianNumbers(meals.length)}
-                </Badge>
+                همه وعده‌ها
               </motion.button>
-              {mealTypes.map((type) => (
+              
+              {mealTypes.map((mealType) => (
                 <motion.button
-                  key={type.id}
+                  key={mealType.id}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentMealType(type.id)}
+                  onClick={() => setCurrentMealType(mealType.name)}
                   className={cn(
-                    "h-10 px-4 py-2 rounded-lg transition-all flex items-center gap-2",
-                    currentMealType === type.id 
-                      ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md" 
+                    "h-10 px-4 py-2 rounded-lg transition-all",
+                    currentMealType === mealType.name
+                      ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md"
                       : "bg-white/80 text-gray-700 border border-gray-200/80 hover:bg-gray-50"
                   )}
                 >
-                  <span>{type.name}</span>
-                  {activeMealTypeCount[type.id] > 0 && (
-                    <Badge variant="secondary" className={cn(
-                      "text-xs",
-                      currentMealType === type.id 
-                        ? "bg-white/20 text-white" 
-                        : "bg-gray-100 text-gray-700"
-                    )}>
-                      {toPersianNumbers(activeMealTypeCount[type.id] || 0)}
-                    </Badge>
-                  )}
+                  {mealType.name}
                 </motion.button>
               ))}
             </div>
           </div>
         </motion.div>
         
+        {/* Diet Content */}
         <motion.div variants={itemVariants} className="flex-1 overflow-auto text-right" dir="rtl">
           <AnimatePresence mode="wait">
             <motion.div
-              key={`day-${currentDietDay}-type-${currentMealType}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              key={`${currentDietDay}-${currentMealType}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
               className="h-full text-right"
               dir="rtl"
             >
-              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm border border-gray-100/80 text-right" dir="rtl">
-                <StudentDietSelector 
-                  meals={filteredMeals}
-                  selectedMeals={selectedMeals}
-                  setSelectedMeals={setSelectedMeals}
-                  currentDay={currentDietDay}
-                  currentMealType={currentMealType > 0 ? mealTypes.find(t => t.id === currentMealType)?.name as MealType : undefined}
-                />
-              </div>
+              <StudentDietSelector
+                selectedMeals={selectedMeals}
+                setSelectedMeals={setSelectedMeals}
+                meals={meals}
+                currentDay={currentDietDay}
+                currentMealType={currentMealType}
+                dayLabel={weekDays.find(d => d.id === currentDietDay)?.name}
+              />
             </motion.div>
           </AnimatePresence>
         </motion.div>
