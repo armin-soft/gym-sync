@@ -39,16 +39,9 @@ function initializePdfMake() {
       pdfMake.vfs = {};
     }
 
-    // Set up fonts with Roboto as default (since Vazir may not be available in pdfMake)
+    // Set up fonts - use only Roboto to avoid font errors
     pdfMake.fonts = {
       Roboto: {
-        normal: 'Roboto-Regular.ttf',
-        bold: 'Roboto-Medium.ttf',
-        italics: 'Roboto-Italic.ttf',
-        bolditalics: 'Roboto-MediumItalic.ttf'
-      },
-      // Add Vazir font mapping to Roboto as fallback
-      Vazir: {
         normal: 'Roboto-Regular.ttf',
         bold: 'Roboto-Medium.ttf',
         italics: 'Roboto-Italic.ttf',
@@ -67,7 +60,7 @@ function initializePdfMake() {
     }
 
     pdfMakeInitialized = true;
-    console.log('pdfMake initialized successfully with font support');
+    console.log('pdfMake initialized successfully with Roboto font support');
     return true;
   } catch (error) {
     console.error('Error initializing pdfMake:', error);
@@ -80,6 +73,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
   ...printPageSettings,
   defaultStyle: {
     ...printPageSettings.defaultStyle,
+    font: 'Roboto', // Use Roboto instead of Vazir
     bidi: false
   }
 };
@@ -89,7 +83,18 @@ export function createPdfDocument(content: any[]): any {
   return {
     content,
     ...PDF_OPTIONS,
-    styles: modernPdfStyles,
+    styles: {
+      ...modernPdfStyles,
+      // Override any Vazir font references with Roboto
+      header: {
+        ...modernPdfStyles.header,
+        font: 'Roboto'
+      },
+      subheader: {
+        ...modernPdfStyles.subheader,
+        font: 'Roboto'
+      }
+    },
     // اضافه کردن واترمارک نرم‌افزار
     background: function(currentPage: number) {
       return {
@@ -99,7 +104,7 @@ export function createPdfDocument(content: any[]): any {
         opacity: 0.03,
         alignment: 'center',
         margin: [0, 300, 0, 0],
-        direction: 'rtl'
+        font: 'Roboto'
       };
     }
   };

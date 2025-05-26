@@ -27,7 +27,7 @@ export const buildOptions = {
   // تنظیمات rollup - ساده‌سازی شده
   rollupOptions: {
     output: {
-      // ساده‌سازی تقسیم‌بندی chunk ها
+      // تقسیم‌بندی chunk ها با نام‌گذاری ثابت
       manualChunks: {
         // کتابخانه‌های اصلی React
         'react-vendor': ['react', 'react-dom'],
@@ -40,13 +40,45 @@ export const buildOptions = {
         // سایر کتابخانه‌های vendor
         'vendor': ['@tanstack/react-query', 'date-fns', 'zod', 'uuid']
       },
-      entryFileNames: 'Assets/Script/[name]-[hash].js',
-      chunkFileNames: 'Assets/Script/[name]-[hash].js',
-      assetFileNames: (assetInfo: { name?: string; type?: string }) => {
-        if (assetInfo.name?.endsWith('.css')) {
-          return 'Assets/Style/[name]-[hash].[ext]';
+      // استفاده از نام‌های ثابت برای فایل‌های اصلی
+      entryFileNames: (chunkInfo) => {
+        const facadeModuleId = chunkInfo.facadeModuleId;
+        if (facadeModuleId?.includes('main.tsx')) {
+          return 'Assets/Script/index.js';
         }
-        return 'Assets/[name]-[hash].[ext]';
+        return 'Assets/Script/[name].js';
+      },
+      chunkFileNames: (chunkInfo) => {
+        // استفاده از نام‌های قابل پیش‌بینی برای chunk های مهم
+        if (chunkInfo.name?.includes('react-vendor')) {
+          return 'Assets/Script/react-vendor.js';
+        }
+        if (chunkInfo.name?.includes('pdf-vendor')) {
+          return 'Assets/Script/pdf-vendor.js';
+        }
+        if (chunkInfo.name?.includes('ui-vendor')) {
+          return 'Assets/Script/ui-vendor.js';
+        }
+        return 'Assets/Script/[name].js';
+      },
+      assetFileNames: (assetInfo) => {
+        const info = assetInfo.name || '';
+        
+        // برای فایل‌های CSS
+        if (info.endsWith('.css')) {
+          if (info.includes('index')) {
+            return 'Assets/Style/index.css';
+          }
+          return 'Assets/Style/[name].[ext]';
+        }
+        
+        // برای فایل‌های تصویر
+        if (info.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
+          return 'Assets/Image/[name][extname]';
+        }
+        
+        // برای سایر فایل‌ها
+        return 'Assets/[name][extname]';
       }
     }
   }
