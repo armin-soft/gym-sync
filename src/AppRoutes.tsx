@@ -1,4 +1,5 @@
 
+
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthenticatedContent } from "./components/auth/AuthenticatedContent";
@@ -27,6 +28,66 @@ const AppRoutes: React.FC = () => {
           </AuthenticatedContent>
         }
       />
+      
+      {/* مسیرهای اصلی با نام‌های انگلیسی */}
+      <Route
+        path="/Coach-Profile"
+        element={
+          <AuthenticatedContent>
+            <TrainerPage />
+          </AuthenticatedContent>
+        }
+      />
+      <Route
+        path="/Students"
+        element={
+          <AuthenticatedContent>
+            <StudentsPage />
+          </AuthenticatedContent>
+        }
+      />
+      <Route
+        path="/Student-History"
+        element={
+          <AuthenticatedContent>
+            <StudentHistoryPage />
+          </AuthenticatedContent>
+        }
+      />
+      <Route
+        path="/Exercise-Movements"
+        element={
+          <AuthenticatedContent>
+            <ExerciseHierarchicalView />
+          </AuthenticatedContent>
+        }
+      />
+      <Route
+        path="/Diet-Plan"
+        element={
+          <AuthenticatedContent>
+            <DietPage />
+          </AuthenticatedContent>
+        }
+      />
+      <Route
+        path="/Supplements-Vitamins"
+        element={
+          <AuthenticatedContent>
+            <SupplementsPage />
+          </AuthenticatedContent>
+        }
+      />
+      <Route
+        path="/Backup-Restore"
+        element={
+          <AuthenticatedContent>
+            <BackupPage />
+          </AuthenticatedContent>
+        }
+      />
+      
+      {/* مسیرهای فارسی - تبدیل به انگلیسی */}
       <Route
         path="/students"
         element={
@@ -108,15 +169,6 @@ const AppRoutes: React.FC = () => {
         }
       />
       
-      {/* مسیرهای جایگزین برای لینک‌های منو */}
-      <Route path="/Coach-Profile" element={<Navigate to="/trainer" replace />} />
-      <Route path="/Students" element={<Navigate to="/students" replace />} />
-      <Route path="/Student-History" element={<Navigate to="/student-history" replace />} />
-      <Route path="/Exercise-Movements" element={<Navigate to="/exercises" replace />} />
-      <Route path="/Diet-Plan" element={<Navigate to="/diet" replace />} />
-      <Route path="/Supplements-Vitamins" element={<Navigate to="/supplements" replace />} />
-      <Route path="/Backup-Restore" element={<Navigate to="/backup" replace />} />
-      
       {/* مسیر پیشفرض */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
@@ -124,3 +176,4 @@ const AppRoutes: React.FC = () => {
 };
 
 export default AppRoutes;
+

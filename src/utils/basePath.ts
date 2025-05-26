@@ -28,10 +28,18 @@ export function getBasePath(): string {
     const routePaths = [
       '/Coach-Profile', 
       '/Students', 
+      '/Student-History',
       '/Exercise-Movements', 
       '/Diet-Plan', 
       '/Supplements-Vitamins', 
-      '/Backup-Restore'
+      '/Backup-Restore',
+      '/students',
+      '/student-history',
+      '/exercises',
+      '/diet',
+      '/supplements',
+      '/trainer',
+      '/backup'
     ];
     
     // If the current path is one of our application routes, use root
