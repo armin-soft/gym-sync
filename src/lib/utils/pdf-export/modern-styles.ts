@@ -1,86 +1,197 @@
 
-// سبک‌های مدرن و حرفه‌ای برای اسناد PDF
+import { toPersianDigits } from './pdf-fonts';
+
+// استایل‌های مدرن و حرفه‌ای برای PDF
 export const modernPdfStyles = {
-  header: {
-    fontSize: 18,
+  // تایتل اصلی سند
+  documentTitle: {
+    fontSize: 26,
     bold: true,
     alignment: 'center',
-    margin: [0, 0, 0, 10],
-    color: '#2563eb',
-    font: 'Roboto'
+    margin: [0, 0, 0, 25],
+    color: '#1a365d',
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
   },
-  subheader: {
+  
+  // هدر اصلی
+  mainHeader: {
+    fontSize: 22,
+    bold: true,
+    alignment: 'center',
+    margin: [0, 0, 0, 20],
+    color: '#2563eb',
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
+  },
+  
+  // زیرعنوان‌های اصلی
+  sectionTitle: {
     fontSize: 16,
     bold: true,
-    margin: [0, 10, 0, 5],
-    color: '#1e40af',
-    font: 'Roboto'
-  },
-  quote: {
-    fontSize: 12,
-    italics: true,
     alignment: 'right',
-    margin: [0, 0, 0, 5],
-    font: 'Roboto'
+    margin: [0, 15, 0, 10],
+    color: '#4f46e5',
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
   },
-  small: {
-    fontSize: 8,
-    margin: [0, 0, 0, 2],
-    font: 'Roboto'
-  },
+  
+  // هدر جدول
   tableHeader: {
     bold: true,
     fontSize: 13,
     color: 'white',
-    fillColor: '#3b82f6',
+    fillColor: '#4f46e5',
     alignment: 'center',
-    font: 'Roboto'
+    margin: [8, 10, 8, 10],
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
   },
+  
+  // سلول‌های جدول
   tableCell: {
-    fontSize: 11,
+    fontSize: 12,
+    alignment: 'right',
+    margin: [8, 8, 8, 8],
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir',
+    lineHeight: 1.4
+  },
+  
+  // سلول‌های مرکز (اعداد)
+  tableCellCenter: {
+    fontSize: 12,
     alignment: 'center',
-    margin: [2, 4, 2, 4],
-    font: 'Roboto'
+    margin: [8, 8, 8, 8],
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir',
+    lineHeight: 1.4
   },
-  exerciseTitle: {
-    fontSize: 14,
+  
+  // زیرهدر جدول
+  tableSubHeader: {
+    fontSize: 12,
     bold: true,
+    fillColor: '#f1f5f9',
+    color: '#475569',
+    alignment: 'right',
+    margin: [8, 8, 8, 8],
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
+  },
+  
+  // نکات و توضیحات
+  notes: {
+    fontSize: 11,
+    alignment: 'right',
+    margin: [0, 15, 0, 0],
+    color: '#64748b',
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir',
+    lineHeight: 1.5
+  },
+  
+  // پاورقی
+  footer: {
+    fontSize: 10,
+    alignment: 'center',
+    color: '#94a3b8',
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
+  },
+  
+  // متن برجسته
+  highlight: {
+    fillColor: '#fef3c7',
+    color: '#92400e',
+    bold: true,
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
+  },
+  
+  // متن موفقیت
+  success: {
     color: '#059669',
-    margin: [0, 5, 0, 3],
-    font: 'Roboto'
-  },
-  mealTitle: {
-    fontSize: 14,
     bold: true,
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
+  },
+  
+  // متن هشدار
+  warning: {
+    color: '#d97706',
+    bold: true,
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
+  },
+  
+  // متن خطر
+  danger: {
     color: '#dc2626',
-    margin: [0, 5, 0, 3],
-    font: 'Roboto'
-  },
-  supplementTitle: {
-    fontSize: 14,
     bold: true,
-    color: '#7c3aed',
-    margin: [0, 5, 0, 3],
-    font: 'Roboto'
+    direction: 'rtl',
+    bidi: false,
+    font: 'Vazir'
+  }
+};
+
+// لایوت مدرن برای جداول
+export const modernTableLayout = {
+  fillColor: function(rowIndex: number, node: any, columnIndex: number) {
+    if (rowIndex === 0) {
+      return '#4f46e5'; // هدر آبی
+    }
+    return (rowIndex % 2 === 0) ? '#f8fafc' : null; // ردیف‌های متناوب
+  },
+  hLineWidth: function(i: number, node: any) {
+    return 1.5;
+  },
+  vLineWidth: function(i: number, node: any) {
+    return 1;
+  },
+  hLineColor: function(i: number, node: any) {
+    return '#e2e8f0';
+  },
+  vLineColor: function(i: number, node: any) {
+    return '#e2e8f0';
+  },
+  paddingLeft: function(i: number, node: any) {
+    return 8;
+  },
+  paddingRight: function(i: number, node: any) {
+    return 8;
+  },
+  paddingTop: function(i: number, node: any) {
+    return 8;
+  },
+  paddingBottom: function(i: number, node: any) {
+    return 8;
   }
 };
 
 // تنظیمات صفحه برای چاپ
 export const printPageSettings = {
-  pageSize: 'A4' as const,
+  pageSize: 'A4',
   pageOrientation: 'portrait' as const,
-  pageMargins: [40, 60, 40, 60] as [number, number, number, number],
+  pageMargins: [40, 60, 40, 60], // چپ، بالا، راست، پایین
   defaultStyle: {
-    fontSize: 11,
-    font: 'Roboto',
-    lineHeight: 1.3,
-    alignment: 'right' as const,
-    direction: 'rtl' as const
-  },
-  info: {
-    title: 'برنامه تمرینی و تغذیه‌ای',
-    author: 'GymSync Pro',
-    subject: 'برنامه شخصی‌سازی شده',
-    creator: 'GymSync Pro System'
+    font: 'Vazir',
+    fontSize: 12,
+    alignment: 'right',
+    direction: 'rtl',
+    bidi: false,
+    lineHeight: 1.3
   }
 };

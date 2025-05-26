@@ -1,4 +1,3 @@
-
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
@@ -39,7 +38,7 @@ function initializePdfMake() {
       pdfMake.vfs = {};
     }
 
-    // Set up fonts - use only Roboto to avoid font errors
+    // Set up fonts with fallback
     pdfMake.fonts = {
       Roboto: {
         normal: 'Roboto-Regular.ttf',
@@ -60,7 +59,7 @@ function initializePdfMake() {
     }
 
     pdfMakeInitialized = true;
-    console.log('pdfMake initialized successfully with Roboto font support');
+    console.log('pdfMake initialized successfully');
     return true;
   } catch (error) {
     console.error('Error initializing pdfMake:', error);
@@ -73,7 +72,6 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
   ...printPageSettings,
   defaultStyle: {
     ...printPageSettings.defaultStyle,
-    font: 'Roboto', // Use Roboto instead of Vazir
     bidi: false
   }
 };
@@ -83,18 +81,7 @@ export function createPdfDocument(content: any[]): any {
   return {
     content,
     ...PDF_OPTIONS,
-    styles: {
-      ...modernPdfStyles,
-      // Override any Vazir font references with Roboto
-      header: {
-        ...modernPdfStyles.header,
-        font: 'Roboto'
-      },
-      subheader: {
-        ...modernPdfStyles.subheader,
-        font: 'Roboto'
-      }
-    },
+    styles: modernPdfStyles,
     // اضافه کردن واترمارک نرم‌افزار
     background: function(currentPage: number) {
       return {
@@ -104,7 +91,7 @@ export function createPdfDocument(content: any[]): any {
         opacity: 0.03,
         alignment: 'center',
         margin: [0, 300, 0, 0],
-        font: 'Roboto'
+        direction: 'rtl'
       };
     }
   };
