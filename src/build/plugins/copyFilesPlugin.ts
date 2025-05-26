@@ -2,7 +2,6 @@
 import fs from 'fs';
 import path from 'path';
 
-// پلاگین ساده شده برای کپی فایل‌ها و بهینه‌سازی index.html
 export const copyFilesPlugin = () => {
   return {
     name: 'copy-files',
@@ -25,42 +24,46 @@ export const copyFilesPlugin = () => {
         if (fs.existsSync(distIndexPath)) {
           let indexContent = fs.readFileSync(distIndexPath, 'utf-8');
           
-          // اضافه کردن modulepreload links برای فایل‌های JS
-          const jsFiles = [
-            'Utils.js', 'Vendors.js', 'Animation.js', 'PDF-Core.js', 'PDF-Fonts.js',
-            'PDF-Export.js', 'UI.js', 'Routing.js', 'Data-Management.js',
-            'Page-Exercises.js', 'Feature-Exercises.js', 'Page-Index.tsx.js',
-            'Page-Students.js', 'Page-Students.tsx.js', 'Feature-Nutrition.js',
-            'Page-Diet.js', 'Page-Supplements.js', 'Page-Trainer.tsx.js',
-            'Page-Backup.js', 'Page-Student-program.js', 'Page-Student-history.tsx.js',
-            'React.js'
-          ];
+          // تبدیل همه مسیرها به relative
+          indexContent = indexContent.replace(/href="\/([^"]+)"/g, 'href="./$1"');
+          indexContent = indexContent.replace(/src="\/([^"]+)"/g, 'src="./$1"');
           
-          // ایجاد modulepreload links
-          const modulePreloads = jsFiles.map(file => 
-            `    <link rel="modulepreload" href="/Assets/Script/${file}" />`
-          ).join('\n');
-          
-          // اضافه کردن CSS link
-          const cssLink = '    <link rel="stylesheet" crossorigin href="/Assets/Style/Menu.css" />';
-          
-          // جایگذاری در head
-          indexContent = indexContent.replace(
-            '</head>',
-            `
+          // اضافه کردن modulepreload links و CSS
+          const additionalLinks = `
     <!-- Styles -->
-${cssLink}
+    <link rel="stylesheet" crossorigin href="./Assets/Style/Menu.css" />
 
     <!-- Module Preloads -->
-${modulePreloads}
+    <link rel="modulepreload" href="./Assets/Script/Utils.js" />
+    <link rel="modulepreload" href="./Assets/Script/Vendors.js" />
+    <link rel="modulepreload" href="./Assets/Script/Animation.js" />
+    <link rel="modulepreload" href="./Assets/Script/PDF-Core.js" />
+    <link rel="modulepreload" href="./Assets/Script/PDF-Fonts.js" />
+    <link rel="modulepreload" href="./Assets/Script/PDF-Export.js" />
+    <link rel="modulepreload" href="./Assets/Script/UI.js" />
+    <link rel="modulepreload" href="./Assets/Script/Routing.js" />
+    <link rel="modulepreload" href="./Assets/Script/Data-Management.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Exercises.js" />
+    <link rel="modulepreload" href="./Assets/Script/Feature-Exercises.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Index.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Students.js" />
+    <link rel="modulepreload" href="./Assets/Script/Feature-Nutrition.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Diet.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Supplements.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Trainer.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Backup.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Student-program.js" />
+    <link rel="modulepreload" href="./Assets/Script/Page-Student-history.js" />
+    <link rel="modulepreload" href="./Assets/Script/React.js" />
 
-    <!-- Main JS Entry (Only once) -->
-    <script type="module" crossorigin src="/Assets/Script/index.js"></script>
-  </head>`
-          );
+    <!-- Main JS Entry -->
+    <script type="module" crossorigin src="./Assets/Script/index.js"></script>`;
+          
+          // اضافه کردن قبل از </head>
+          indexContent = indexContent.replace('</head>', `${additionalLinks}\n  </head>`);
           
           fs.writeFileSync(distIndexPath, indexContent);
-          console.log('بهینه‌سازی index.html در dist انجام شد');
+          console.log('بهینه‌سازی index.html برای relative paths انجام شد');
         }
 
         console.log('فایل‌ها با موفقیت کپی و بهینه‌سازی شدند!');

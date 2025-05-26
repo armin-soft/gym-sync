@@ -37,6 +37,15 @@ function App() {
     console.log('App component mounted successfully');
     console.log('Current URL:', window.location.href);
     console.log('Current pathname:', window.location.pathname);
+    
+    // اضافه کردن error handler برای خطاهای JavaScript
+    window.addEventListener('error', (e) => {
+      console.error('Global error:', e.error);
+    });
+    
+    window.addEventListener('unhandledrejection', (e) => {
+      console.error('Unhandled promise rejection:', e.reason);
+    });
   }, []);
 
   return (

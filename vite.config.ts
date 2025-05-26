@@ -4,25 +4,14 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import { copyFilesPlugin } from './src/build/plugins/copyFilesPlugin'
 import { buildOptions } from './src/build/config/buildOptions'
-import { rollupOutputOptions } from './src/build/config/rollupOutputOptions'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // تنظیمات ساخت را با گزینه‌های rollup ترکیب می‌کنیم
-  const buildWithRollupOptions = {
-    ...buildOptions,
-    rollupOptions: {
-      output: rollupOutputOptions
-    }
-  };
-
   return {
     plugins: [
       react({
-        // رفع هشدار useLayoutEffect در React 18 در SSR/build
         jsxRuntime: 'automatic',
         babel: {
-          // افزودن این مورد برای رفع خطای useLayoutEffect
           plugins: [
             ['@babel/plugin-transform-react-jsx', {
               runtime: 'automatic',
@@ -31,7 +20,6 @@ export default defineConfig(({ mode }) => {
           ]
         }
       }),
-      // حذف componentTagger از اینجا
       copyFilesPlugin()
     ].filter(Boolean),
     resolve: {
@@ -42,8 +30,30 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 8080,
       host: "::",
-      open: false // غیرفعال کردن باز شدن خودکار مرورگر یا DevTools
+      open: false
     },
-    build: buildWithRollupOptions
+    build: {
+      ...buildOptions,
+      // حذف base برای سازگاری بیشتر
+      rollupOptions: {
+        output: {
+          entryFileNames: 'Assets/Script/[name].js',
+          chunkFileNames: 'Assets/Script/[name].js',
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name?.endsWith('.css')) {
+              return 'Assets/Style/[name].[ext]';
+            }
+            return 'Assets/[name].[ext]';
+          },
+          manualChunks: buildOptions.rollupOptions?.output?.manualChunks
+        }
+      }
+    },
+    // اضافه کردن تنظیمات برای relative paths
+    experimental: {
+      renderBuiltUrl(filename, { hostType }) {
+        return `./${filename}`;
+      }
+    }
   };
 })
