@@ -7,7 +7,40 @@ export const copyFilesPlugin = () => {
     name: 'copy-files',
     closeBundle: async () => {
       try {
-        // بازنویسی index.html با مسیرهای صحیح
+        console.log('شروع کپی فایل‌ها و بهینه‌سازی برای نسخه 3.3.7...');
+
+        // اطمینان از وجود پوشه‌های مقصد
+        const assetsDir = 'dist/assets';
+        const imagesDir = 'dist/assets/images';
+        
+        if (!fs.existsSync(assetsDir)) {
+          fs.mkdirSync(assetsDir, { recursive: true });
+        }
+        if (!fs.existsSync(imagesDir)) {
+          fs.mkdirSync(imagesDir, { recursive: true });
+        }
+
+        // کپی تصاویر از public/Assets/Image به dist/assets/images
+        const publicImagesPath = 'public/Assets/Image';
+        if (fs.existsSync(publicImagesPath)) {
+          const imageFiles = fs.readdirSync(publicImagesPath);
+          imageFiles.forEach(file => {
+            const sourcePath = path.join(publicImagesPath, file);
+            const destPath = path.join(imagesDir, file);
+            if (fs.statSync(sourcePath).isFile()) {
+              fs.copyFileSync(sourcePath, destPath);
+              console.log(`کپی تصویر: ${file}`);
+            }
+          });
+        }
+
+        // کپی فایل Offline.html
+        if (fs.existsSync('public/Offline.html')) {
+          fs.copyFileSync('public/Offline.html', 'dist/Offline.html');
+          console.log('کپی Offline.html');
+        }
+
+        // بازنویسی index.html با مسیرهای صحیح و کامل
         const distIndexPath = 'dist/index.html';
         if (fs.existsSync(distIndexPath)) {
           const indexContent = `<!DOCTYPE html>
@@ -20,8 +53,8 @@ export const copyFilesPlugin = () => {
     <title>مدیریت برنامه - نسخه 3.3.7</title>
 
     <!-- Favicon and PWA -->
-    <link rel="icon" type="image/png" href="./Assets/Image/Logo.png" />
-    <link rel="apple-touch-icon" href="./Assets/Image/Logo.png" />
+    <link rel="icon" type="image/png" href="./assets/images/Logo.png" />
+    <link rel="apple-touch-icon" href="./assets/images/Logo.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -50,6 +83,7 @@ export const copyFilesPlugin = () => {
     <div id="root"></div>
 
     <!-- Scripts -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script src="./assets/index.js" type="module"></script>
     
     <noscript>برای استفاده از این برنامه، لطفا جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
@@ -57,12 +91,51 @@ export const copyFilesPlugin = () => {
 </html>`;
           
           fs.writeFileSync(distIndexPath, indexContent);
-          console.log('index.html با مسیرهای صحیح بازنویسی شد');
+          console.log('index.html با مسیرهای بهینه‌شده بازنویسی شد');
         }
 
-        console.log('فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.7!');
+        // ایجاد فایل .htaccess برای سرورهای Apache
+        const htaccessContent = `Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [QSA,L]
+
+# Cache static assets
+<filesMatch "\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+</filesMatch>
+
+# Gzip compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>`;
+
+        fs.writeFileSync('dist/.htaccess', htaccessContent);
+        console.log('فایل .htaccess ایجاد شد');
+
+        console.log('✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.7!');
+        console.log('📁 ساختار dist:');
+        console.log('  ├── index.html (بهینه‌شده)');
+        console.log('  ├── assets/');
+        console.log('  │   ├── index.js');
+        console.log('  │   ├── index.css');
+        console.log('  │   └── images/');
+        console.log('  │       ├── Logo.png');
+        console.log('  │       └── Place-Holder.svg');
+        console.log('  ├── Offline.html');
+        console.log('  └── .htaccess');
+
       } catch (error) {
-        console.log('خطا در کپی یا بهینه‌سازی فایل‌ها:', error);
+        console.error('❌ خطا در کپی یا بهینه‌سازی فایل‌ها:', error);
       }
     },
   };

@@ -1,5 +1,5 @@
 
-// تنظیمات ساخت پروژه - ساده‌شده برای نسخه 3.3.6
+// تنظیمات ساخت پروژه - بهینه‌شده برای نسخه 3.3.7
 export const buildOptions = {
   outDir: 'dist',
   assetsDir: 'assets',
@@ -11,12 +11,34 @@ export const buildOptions = {
     compress: {
       drop_console: false,
       drop_debugger: true,
-      pure_funcs: ['console.log'],
+      pure_funcs: [],
       passes: 2
     },
     mangle: {
       safari10: true
     }
   },
-  sourcemap: false
+  sourcemap: false,
+  rollupOptions: {
+    output: {
+      entryFileNames: 'assets/index.js',
+      chunkFileNames: 'assets/[name].js',
+      assetFileNames: (assetInfo: { name?: string }) => {
+        const info = assetInfo.name || '';
+        
+        // برای فایل‌های CSS
+        if (info.endsWith('.css')) {
+          return 'assets/index.css';
+        }
+        
+        // برای فایل‌های تصویر
+        if (info.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
+          return 'assets/images/[name].[ext]';
+        }
+        
+        // برای سایر فایل‌ها
+        return 'assets/[name].[ext]';
+      }
+    }
+  }
 };

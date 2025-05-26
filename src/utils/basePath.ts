@@ -1,7 +1,7 @@
 
 /**
  * Gets the base path for the application based on the current window location
- * Fixed for universal deployment compatibility
+ * Optimized for universal deployment compatibility - version 3.3.7
  */
 export function getBasePath(): string {
   // در محیط توسعه همیشه از مسیر اصلی استفاده کن
@@ -17,24 +17,30 @@ export function getBasePath(): string {
   }
   
   try {
-    console.log('Determining base path for production...');
+    console.log('Determining base path for production version 3.3.7...');
     console.log('Current location:', window.location);
     
-    // برای production: استفاده از pathname اما تنها در صورت نیاز
     const pathname = window.location.pathname;
     
-    // اگر در ریشه دامنه هستیم، مسیر خالی برگردان
-    if (pathname === '/' || pathname === '/index.html') {
+    // اگر در ریشه دامنه هستیم یا فایل index.html
+    if (pathname === '/' || pathname === '/index.html' || pathname.endsWith('/')) {
       console.log("Using root path for domain root");
       return '';
     }
     
     // اگر در پوشه‌ای هستیم، آن پوشه را به عنوان base path برگردان
     const pathSegments = pathname.split('/').filter(Boolean);
-    if (pathSegments.length > 0 && !pathSegments[pathSegments.length - 1].includes('.')) {
-      const basePath = '/' + pathSegments.join('/');
-      console.log("Using subdirectory base path:", basePath);
-      return basePath;
+    if (pathSegments.length > 0) {
+      // حذف index.html اگر در آخر مسیر باشد
+      if (pathSegments[pathSegments.length - 1] === 'index.html') {
+        pathSegments.pop();
+      }
+      
+      if (pathSegments.length > 0) {
+        const basePath = '/' + pathSegments.join('/');
+        console.log("Using subdirectory base path:", basePath);
+        return basePath;
+      }
     }
     
     console.log("Using empty base path as fallback");
@@ -47,11 +53,37 @@ export function getBasePath(): string {
 
 /**
  * Gets the full URL for an asset based on the base path
+ * Optimized for build output structure
  */
 export function getAssetPath(assetPath: string): string {
   const basePath = getBasePath();
-  const cleanAssetPath = assetPath.startsWith('/') ? assetPath : `/${assetPath}`;
+  
+  // اگر مسیر به صورت مطلق است، همان‌طور که هست برگردان
+  if (assetPath.startsWith('http') || assetPath.startsWith('//')) {
+    return assetPath;
+  }
+  
+  // تنظیم مسیر asset برای ساختار جدید
+  let cleanAssetPath = assetPath;
+  
+  // اگر مسیر قدیمی Assets/Image استفاده شده، به مسیر جدید تبدیل کن
+  if (cleanAssetPath.includes('Assets/Image/')) {
+    cleanAssetPath = cleanAssetPath.replace('Assets/Image/', 'assets/images/');
+  }
+  
+  // اطمینان از شروع با /
+  if (!cleanAssetPath.startsWith('/')) {
+    cleanAssetPath = '/' + cleanAssetPath;
+  }
+  
   const fullPath = basePath + cleanAssetPath;
   console.log('Asset path resolved:', { assetPath, basePath, fullPath });
   return fullPath;
+}
+
+/**
+ * Helper function to get image paths for the new structure
+ */
+export function getImagePath(imageName: string): string {
+  return getAssetPath(`assets/images/${imageName}`);
 }

@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
         }
       }),
       copyFilesPlugin()
-    ].filter(Boolean),
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
         compress: {
           drop_console: false,
           drop_debugger: true,
-          pure_funcs: ['console.log'],
+          pure_funcs: [],
           passes: 2
         },
         mangle: {
@@ -58,10 +58,14 @@ export default defineConfig(({ mode }) => {
             if (assetInfo.name?.endsWith('.css')) {
               return 'assets/index.css';
             }
+            if (assetInfo.name?.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
+              return 'assets/images/[name].[ext]';
+            }
             return 'assets/[name].[ext]';
           }
         }
       }
-    }
+    },
+    publicDir: 'public'
   };
 })
