@@ -14,6 +14,8 @@ interface StudentProgramSupplementContentProps {
   selectedVitamins: number[];
   setSelectedVitamins: React.Dispatch<React.SetStateAction<number[]>>;
   supplements: any[];
+  currentDay: number;
+  setCurrentDay: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentProps> = ({
@@ -22,6 +24,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   selectedVitamins,
   setSelectedVitamins,
   supplements,
+  currentDay,
+  setCurrentDay,
 }) => {
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
   
