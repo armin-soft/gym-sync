@@ -3,7 +3,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { copyFilesPlugin } from './src/build/plugins/copyFilesPlugin'
-import { buildOptions } from './src/build/config/buildOptions'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -33,19 +32,40 @@ export default defineConfig(({ mode }) => {
       open: false
     },
     build: {
-      ...buildOptions,
-      // حذف تنظیمات experimental که باعث مشکل می‌شود
+      outDir: 'dist',
+      assetsDir: 'assets',
+      chunkSizeWarningLimit: 1500,
+      assetsInlineLimit: 0,
+      cssCodeSplit: false,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: false,
+          drop_debugger: true,
+          pure_funcs: ['console.log'],
+          passes: 2
+        },
+        mangle: {
+          safari10: true
+        }
+      },
+      sourcemap: false,
       rollupOptions: {
         output: {
-          entryFileNames: 'Assets/Script/[name].js',
-          chunkFileNames: 'Assets/Script/[name].js',
+          entryFileNames: 'assets/js/[name]-[hash].js',
+          chunkFileNames: 'assets/js/[name]-[hash].js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name?.endsWith('.css')) {
-              return 'Assets/Style/[name].[ext]';
+              return 'assets/css/[name]-[hash].[ext]';
             }
-            return 'Assets/[name].[ext]';
+            return 'assets/[name]-[hash].[ext]';
           },
-          manualChunks: buildOptions.rollupOptions?.output?.manualChunks
+          manualChunks: {
+            'vendor': ['react', 'react-dom', 'react-router-dom'],
+            'ui': ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-tabs'],
+            'pdf': ['pdfmake'],
+            'utils': ['date-fns', 'uuid', 'zod', 'clsx']
+          }
         }
       }
     }

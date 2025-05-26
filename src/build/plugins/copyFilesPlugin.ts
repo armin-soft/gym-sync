@@ -19,12 +19,12 @@ export const copyFilesPlugin = () => {
           console.log('کپی Manifest.json به dist');
         }
 
-        // بهینه‌سازی index.html در dist برای حل مشکل صفحه سفید
+        // بهینه‌سازی index.html در dist - نسخه ساده‌شده
         const distIndexPath = 'dist/index.html';
         if (fs.existsSync(distIndexPath)) {
           let indexContent = fs.readFileSync(distIndexPath, 'utf-8');
           
-          // تنظیم مسیرهای مطلق برای سازگاری بهتر - نسخه 3.3.6
+          // تنظیم مسیرهای نسبی ساده
           const indexTemplate = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
   <head>
@@ -35,12 +35,12 @@ export const copyFilesPlugin = () => {
     <title>مدیریت برنامه - نسخه 3.3.6</title>
 
     <!-- Favicon and PWA -->
-    <link rel="icon" type="image/png" href="/Assets/Image/Logo.png" />
-    <link rel="apple-touch-icon" href="/Assets/Image/Logo.png" />
+    <link rel="icon" type="image/png" href="./Assets/Image/Logo.png" />
+    <link rel="apple-touch-icon" href="./Assets/Image/Logo.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <link rel="manifest" href="/Manifest.json" />
+    <link rel="manifest" href="./Manifest.json" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -57,19 +57,6 @@ export const copyFilesPlugin = () => {
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap"
       rel="stylesheet"
     />
-
-    <!-- Styles -->
-    <link rel="stylesheet" crossorigin href="/Assets/Style/Menu.css" />
-
-    <!-- Module Preloads - simplified for version 3.3.6 -->
-    <link rel="modulepreload" href="/Assets/Script/react.js" />
-    <link rel="modulepreload" href="/Assets/Script/ui.js" />
-    <link rel="modulepreload" href="/Assets/Script/pdf.js" />
-    <link rel="modulepreload" href="/Assets/Script/utils.js" />
-    <link rel="modulepreload" href="/Assets/Script/vendors.js" />
-
-    <!-- Main JS Entry -->
-    <script type="module" crossorigin src="/Assets/Script/index.js"></script>
   </head>
 
   <body>
@@ -77,7 +64,7 @@ export const copyFilesPlugin = () => {
 
     <!-- Lovable required script -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-
+    
     <noscript>برای استفاده از این برنامه، لطفا جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
   </body>
 </html>`;
