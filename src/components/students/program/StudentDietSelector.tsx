@@ -4,11 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Utensils, Plus, Minus, Search, Filter } from "lucide-react";
+import { Utensils, Plus, Minus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Meal, MealType } from "@/types/meal";
 import ProgramSpeechToText from "./components/ProgramSpeechToText";
 import { useToast } from "@/hooks/use-toast";
@@ -32,15 +32,6 @@ const weekDays = [
   { id: 7, name: "جمعه" },
 ];
 
-const mealTypes = [
-  "صبحانه",
-  "میان وعده صبح",
-  "ناهار",
-  "میان وعده عصر",
-  "شام",
-  "میان وعده"
-];
-
 const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
   selectedMeals,
   setSelectedMeals,
@@ -51,17 +42,24 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
 }) => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("all");
   
-  // Filter meals based on search and type
-  const filteredMeals = meals.filter(meal => {
-    const matchesSearch = meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         meal.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = selectedTypeFilter === "all" || meal.type === selectedTypeFilter;
-    const matchesMealType = !currentMealType || currentMealType === "all" || meal.type === currentMealType;
+  // Filter meals based on search and current meal type
+  const filteredMeals = React.useMemo(() => {
+    const filtered = meals.filter(meal => {
+      const matchesSearch = meal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           meal.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesMealType = !currentMealType || currentMealType === "all" || meal.type === currentMealType;
+      
+      return matchesSearch && matchesMealType;
+    });
     
-    return matchesSearch && matchesType && matchesMealType;
-  });
+    // Remove duplicates by filtering unique meal IDs
+    const uniqueMeals = filtered.filter((meal, index, self) => 
+      self.findIndex(m => m.id === meal.id) === index
+    );
+    
+    return uniqueMeals;
+  }, [meals, searchQuery, currentMealType]);
 
   const toggleMeal = (mealId: number) => {
     setSelectedMeals(prev => 
@@ -72,7 +70,6 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
   };
 
   const handleSpeechSave = (transcript: string) => {
-    // Parse the transcript to extract meal names
     const mealNames = transcript
       .split(/[،,\n]/)
       .map(name => name.trim())
@@ -87,7 +84,6 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
       return;
     }
 
-    // Find matching meals
     const matchedMeals: number[] = [];
     
     mealNames.forEach(name => {
@@ -155,12 +151,11 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
         />
       </motion.div>
 
-      {/* Search and Filter */}
+      {/* Simple Search */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="space-y-3"
       >
         <div className="relative">
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -172,145 +167,154 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
             dir="rtl"
           />
         </div>
-
-        <div className="flex gap-2 flex-wrap">
-          <Button
-            variant={selectedTypeFilter === "all" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedTypeFilter("all")}
-          >
-            همه
-          </Button>
-          {mealTypes.map(type => (
-            <Button
-              key={type}
-              variant={selectedTypeFilter === type ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedTypeFilter(type)}
-            >
-              {type}
-            </Button>
-          ))}
-        </div>
       </motion.div>
 
-      {/* Selected Meals */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <Card className="border-primary/20">
-          <CardContent className="p-4">
-            <h4 className="font-medium mb-3 flex items-center gap-2">
-              <Utensils className="h-4 w-4" />
-              غذاهای انتخاب شده ({toPersianNumbers(selectedMeals.length)})
-            </h4>
-            
-            {selectedMeals.length > 0 ? (
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {selectedMeals.map(mealId => {
-                  const meal = meals.find(m => m.id === mealId);
-                  if (!meal) return null;
-                  
-                  return (
-                    <div
-                      key={mealId}
-                      className="flex items-center justify-between p-2 bg-muted/30 rounded-lg"
-                    >
-                      <div className="flex-1 text-right">
-                        <p className="font-medium">{meal.name}</p>
-                        <Badge variant="secondary" className="text-xs">
-                          {meal.type}
-                        </Badge>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleMeal(mealId)}
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  );
-                })}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Selected Meals */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Card className="shadow-lg border-0 bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-700/90 backdrop-blur-sm h-full">
+            <CardContent className="p-6 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Utensils className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-right">
+                  <h4 className="font-bold text-lg text-gray-800 dark:text-gray-100">
+                    غذاهای انتخاب شده
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {toPersianNumbers(selectedMeals.length)} غذا
+                  </p>
+                </div>
               </div>
-            ) : (
-              <p className="text-muted-foreground text-center py-4">
-                هیچ غذایی انتخاب نشده
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
+              
+              <div className="flex-1 overflow-auto">
+                {selectedMeals.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedMeals.map(mealId => {
+                      const meal = meals.find(m => m.id === mealId);
+                      if (!meal) return null;
+                      
+                      return (
+                        <div
+                          key={mealId}
+                          className="flex items-center justify-between p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20"
+                        >
+                          <div className="flex-1 text-right">
+                            <p className="font-medium">{meal.name}</p>
+                            <Badge variant="secondary" className="text-xs mt-1">
+                              {meal.type}
+                            </Badge>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleMeal(mealId)}
+                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                    <div className="w-16 h-16 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-700 rounded-2xl flex items-center justify-center mb-4">
+                      <Utensils className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">هیچ غذایی انتخاب نشده</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">از لیست سمت راست غذا انتخاب کنید</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-      {/* Available Meals */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <Card>
-          <CardContent className="p-4">
-            <h4 className="font-medium mb-3">
-              غذاهای موجود ({toPersianNumbers(filteredMeals.length)})
-            </h4>
-            
-            <ScrollArea className="h-96">
-              <div className="space-y-2">
-                {filteredMeals.map(meal => (
-                  <motion.div
-                    key={meal.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className={cn(
-                      "flex items-center justify-between p-3 rounded-lg border transition-all",
-                      selectedMeals.includes(meal.id)
-                        ? "bg-primary/10 border-primary/30"
-                        : "bg-background hover:bg-muted/50 border-border"
-                    )}
-                  >
-                    <div className="flex-1 text-right">
-                      <p className="font-medium">{meal.name}</p>
-                      {meal.description && (
-                        <p className="text-sm text-muted-foreground">{meal.description}</p>
-                      )}
-                      <div className="flex gap-2 mt-1">
-                        <Badge variant="secondary" className="text-xs">
-                          {meal.type}
-                        </Badge>
-                        {meal.day && (
-                          <Badge variant="outline" className="text-xs">
-                            {meal.day}
-                          </Badge>
+        {/* Available Meals */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card className="shadow-lg border-0 bg-gradient-to-br from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-700/90 backdrop-blur-sm h-full">
+            <CardContent className="p-6 h-full flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Utensils className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-right">
+                  <h4 className="font-bold text-lg text-gray-800 dark:text-gray-100">
+                    لیست غذاها
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {toPersianNumbers(filteredMeals.length)} غذا موجود
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex-1 overflow-auto">
+                <ScrollArea className="h-full">
+                  <div className="space-y-2">
+                    {filteredMeals.map(meal => (
+                      <motion.div
+                        key={meal.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className={cn(
+                          "flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer",
+                          selectedMeals.includes(meal.id)
+                            ? "bg-primary/10 border-primary/30"
+                            : "bg-background hover:bg-muted/50 border-border hover:border-primary/20"
                         )}
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleMeal(meal.id)}
-                      className={cn(
-                        "h-8 w-8 p-0",
-                        selectedMeals.includes(meal.id)
-                          ? "text-red-600 hover:text-red-700"
-                          : "text-green-600 hover:text-green-700"
-                      )}
-                    >
-                      {selectedMeals.includes(meal.id) ? (
-                        <Minus className="h-4 w-4" />
-                      ) : (
-                        <Plus className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </motion.div>
-                ))}
+                        onClick={() => toggleMeal(meal.id)}
+                      >
+                        <div className="flex-1 text-right">
+                          <p className="font-medium">{meal.name}</p>
+                          {meal.description && (
+                            <p className="text-sm text-muted-foreground">{meal.description}</p>
+                          )}
+                          <div className="flex gap-2 mt-1">
+                            <Badge variant="secondary" className="text-xs">
+                              {meal.type}
+                            </Badge>
+                            {meal.day && (
+                              <Badge variant="outline" className="text-xs">
+                                {meal.day}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={cn(
+                            "h-8 w-8 p-0",
+                            selectedMeals.includes(meal.id)
+                              ? "text-red-600 hover:text-red-700 hover:bg-red-50"
+                              : "text-green-600 hover:text-green-700 hover:bg-green-50"
+                          )}
+                        >
+                          {selectedMeals.includes(meal.id) ? (
+                            <Minus className="h-4 w-4" />
+                          ) : (
+                            <Plus className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </motion.div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 };
