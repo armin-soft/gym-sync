@@ -18,42 +18,41 @@ function initializePdfMake() {
       return false;
     }
 
-    // Initialize VFS fonts with proper type handling
+    // Initialize VFS fonts with multiple fallback strategies
+    let fonts;
     try {
-      // Cast pdfFonts to any to handle the dynamic structure
-      const fontsModule = pdfFonts as any;
-      
-      // Try different possible VFS structures
-      if (fontsModule.vfs) {
-        pdfMake.vfs = fontsModule.vfs;
-      } else if (typeof fontsModule === 'object' && Object.keys(fontsModule).length > 0) {
-        // If pdfFonts is the vfs object itself
-        pdfMake.vfs = fontsModule;
-      } else {
-        console.warn('No VFS fonts found, using empty VFS');
-        pdfMake.vfs = {};
+      fonts = pdfFonts;
+      if (fonts && typeof fonts === 'object') {
+        if (fonts.pdfMake && fonts.pdfMake.vfs) {
+          pdfMake.vfs = fonts.pdfMake.vfs;
+        } else if (fonts.vfs) {
+          pdfMake.vfs = fonts.vfs;
+        } else {
+          // If fonts is the vfs object itself
+          pdfMake.vfs = fonts;
+        }
       }
     } catch (fontError) {
       console.warn('Could not load custom fonts, using defaults:', fontError);
-      // Set empty VFS as fallback
       pdfMake.vfs = {};
     }
 
-    // Set up fonts with simple fallback that uses available fonts
+    // Set up fonts with fallback
     pdfMake.fonts = {
       Roboto: {
-        normal: 'Helvetica',
-        bold: 'Helvetica-Bold',
-        italics: 'Helvetica-Oblique',
-        bolditalics: 'Helvetica-BoldOblique'
+        normal: 'Roboto-Regular.ttf',
+        bold: 'Roboto-Medium.ttf',
+        italics: 'Roboto-Italic.ttf',
+        bolditalics: 'Roboto-MediumItalic.ttf'
       }
     };
 
-    // Ensure global pdfMake availability
+    // Ensure global pdfMake availability with better error handling
     if (typeof window !== 'undefined') {
       if (!window.pdfMake) {
         window.pdfMake = pdfMake;
       }
+      // Additional safety check for createPdf method
       if (window.pdfMake && !window.pdfMake.createPdf) {
         window.pdfMake.createPdf = pdfMake.createPdf;
       }
