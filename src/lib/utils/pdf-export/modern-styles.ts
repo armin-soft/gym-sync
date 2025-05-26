@@ -12,7 +12,7 @@ export const modernPdfStyles = {
     color: '#1a365d',
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // هدر اصلی
@@ -24,7 +24,7 @@ export const modernPdfStyles = {
     color: '#2563eb',
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // زیرعنوان‌های اصلی
@@ -36,7 +36,7 @@ export const modernPdfStyles = {
     color: '#4f46e5',
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // هدر جدول
@@ -49,7 +49,7 @@ export const modernPdfStyles = {
     margin: [8, 10, 8, 10],
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // سلول‌های جدول
@@ -59,7 +59,7 @@ export const modernPdfStyles = {
     margin: [8, 8, 8, 8],
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir',
+    font: 'Roboto',
     lineHeight: 1.4
   },
   
@@ -70,7 +70,7 @@ export const modernPdfStyles = {
     margin: [8, 8, 8, 8],
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir',
+    font: 'Roboto',
     lineHeight: 1.4
   },
   
@@ -84,7 +84,7 @@ export const modernPdfStyles = {
     margin: [8, 8, 8, 8],
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // نکات و توضیحات
@@ -95,7 +95,7 @@ export const modernPdfStyles = {
     color: '#64748b',
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir',
+    font: 'Roboto',
     lineHeight: 1.5
   },
   
@@ -106,7 +106,7 @@ export const modernPdfStyles = {
     color: '#94a3b8',
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // متن برجسته
@@ -116,7 +116,7 @@ export const modernPdfStyles = {
     bold: true,
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // متن موفقیت
@@ -125,7 +125,7 @@ export const modernPdfStyles = {
     bold: true,
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // متن هشدار
@@ -134,7 +134,7 @@ export const modernPdfStyles = {
     bold: true,
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   },
   
   // متن خطر
@@ -143,7 +143,7 @@ export const modernPdfStyles = {
     bold: true,
     direction: 'rtl',
     bidi: false,
-    font: 'Vazir'
+    font: 'Roboto'
   }
 };
 
@@ -187,7 +187,7 @@ export const printPageSettings = {
   pageOrientation: 'portrait' as const,
   pageMargins: [40, 60, 40, 60], // چپ، بالا، راست، پایین
   defaultStyle: {
-    font: 'Vazir',
+    font: 'Roboto',
     fontSize: 12,
     alignment: 'right',
     direction: 'rtl',
