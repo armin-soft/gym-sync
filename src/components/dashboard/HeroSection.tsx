@@ -20,12 +20,33 @@ interface HeroSectionProps {
 export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionProps) => {
   const patternUrl = getAssetPath("Assets/Image/Pattern.svg");
   
+  console.log('HeroSection props:', { stats, trainerProfile });
+  
+  // اطمینان از وجود داده‌ها
+  const safeStats = stats || {
+    totalStudents: 0,
+    totalMeals: 0,
+    totalSupplements: 0,
+    studentGrowth: 0,
+    mealGrowth: 0,
+    supplementGrowth: 0,
+    studentsProgress: 0,
+    maxCapacity: 50,
+    mealCompletionRate: 0,
+    supplementCompletionRate: 0
+  };
+
+  const safeTrainerProfile = trainerProfile || {
+    name: "مربی حرفه‌ای",
+    image: "/placeholder.svg"
+  };
+  
   const quickStats = [
     { 
       title: "شاگردان", 
       icon: Users, 
-      value: stats.totalStudents, 
-      growth: stats.studentGrowth,
+      value: safeStats.totalStudents, 
+      growth: safeStats.studentGrowth,
       color: "from-blue-600/20 to-blue-400/20",
       textColor: "text-blue-400",
       accentColor: "blue"
@@ -33,8 +54,8 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
     { 
       title: "برنامه‌های غذایی", 
       icon: Boxes, 
-      value: stats.totalMeals, 
-      growth: stats.mealGrowth,
+      value: safeStats.totalMeals, 
+      growth: safeStats.mealGrowth,
       color: "from-emerald-600/20 to-emerald-400/20",
       textColor: "text-emerald-400",
       accentColor: "emerald"
@@ -42,8 +63,8 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
     { 
       title: "مکمل‌ها", 
       icon: Pill, 
-      value: stats.totalSupplements, 
-      growth: stats.supplementGrowth,
+      value: safeStats.totalSupplements, 
+      growth: safeStats.supplementGrowth,
       color: "from-purple-600/20 to-purple-400/20",
       textColor: "text-purple-400",
       accentColor: "purple"
@@ -55,7 +76,7 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600/90 via-violet-600/90 to-purple-600/90 p-6 md:p-8 text-white shadow-2xl"
+      className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600/90 via-violet-600/90 to-purple-600/90 p-6 md:p-8 text-white shadow-2xl min-h-[300px]"
       style={{
         backgroundImage: `url(${patternUrl})`,
         backgroundSize: 'cover',
@@ -118,7 +139,7 @@ export const HeroSection = ({ stats, currentTime, trainerProfile }: HeroSectionP
       <div className="relative z-10">
         <div className="flex flex-col space-y-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <ProfileSection trainerProfile={trainerProfile} stats={stats} />
+            <ProfileSection trainerProfile={safeTrainerProfile} stats={safeStats} />
             <DateTimeSection currentTime={currentTime} />
           </div>
 

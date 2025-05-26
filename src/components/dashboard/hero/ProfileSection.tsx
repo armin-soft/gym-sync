@@ -17,11 +17,13 @@ interface ProfileSectionProps {
 }
 
 export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) => {
-  // اطمینان از وجود داده‌ها
+  // اطمینان از وجود داده‌ها با fallback بهتر
   const profileName = trainerProfile?.name || "مربی حرفه‌ای";
   const profileImage = trainerProfile?.image || "/placeholder.svg";
   const totalStudents = stats?.totalStudents || 0;
   const studentsProgress = stats?.studentsProgress || 0;
+
+  console.log('ProfileSection data:', { trainerProfile, stats, profileName, profileImage });
 
   return (
     <motion.div 
@@ -35,8 +37,15 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
           {/* Enhanced glow effect */}
           <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 opacity-70 blur-lg animate-pulse" />
           <Avatar className="h-16 w-16 border-4 border-white/30 relative shadow-xl hover:scale-105 transition-transform duration-300">
-            <AvatarImage src={profileImage} alt="تصویر پروفایل" />
-            <AvatarFallback>
+            <AvatarImage 
+              src={profileImage} 
+              alt="تصویر پروفایل"
+              onError={(e) => {
+                console.log('Avatar image failed to load, using fallback');
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white">
               <Crown className="w-6 h-6 text-white" />
             </AvatarFallback>
           </Avatar>
@@ -50,10 +59,10 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
             <Sparkles className="w-3 h-3 text-white" />
           </motion.div>
         </div>
-        <div>
+        <div className="flex-1">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center">
-              خوش آمدید <span className="inline-block animate-wave ml-1">👋</span>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center text-white">
+              خوش آمدید <span className="inline-block animate-bounce ml-1">👋</span>
             </h1>
             <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm hover:bg-white/30 transition-colors self-start sm:self-auto">
               {profileName}
@@ -70,6 +79,11 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
               <Activity className="w-3 h-3" /> فعال
             </motion.span>
           </p>
+          {/* اضافه کردن اطلاعات آمار برای نمایش */}
+          <div className="mt-3 flex gap-4 text-sm text-white/70">
+            <span>شاگردان: {toPersianNumbers(totalStudents.toString())}</span>
+            <span>پیشرفت: {toPersianNumbers(studentsProgress.toString())}٪</span>
+          </div>
         </div>
       </div>
     </motion.div>
