@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ExerciseWithSets } from "@/types/exercise";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +18,8 @@ interface StudentExerciseSelectorProps {
   exercises: any[]; 
   dayLabel?: string;
   noScroll?: boolean;
+  isDayMandatory?: boolean; // Added missing prop
+  isDayOptional?: boolean; // Added missing prop
 }
 
 const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
@@ -28,6 +29,8 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
   exercises,
   dayLabel,
   noScroll = false,
+  isDayMandatory,
+  isDayOptional,
 }) => {
   const { categories, exerciseTypes, isLoading } = useExerciseData();
   
@@ -62,6 +65,7 @@ const StudentExerciseSelector: React.FC<StudentExerciseSelectorProps> = ({
       case 3: return "روز سوم";
       case 4: return "روز چهارم";
       case 5: return "روز پنجم";
+      case 6: return "روز ششم"; // Added day 6
       default: return `روز ${toPersianNumbers(dayNumber)}`;
     }
   };
