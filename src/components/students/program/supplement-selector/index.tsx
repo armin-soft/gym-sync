@@ -14,8 +14,6 @@ interface StudentSupplementSelectorProps {
   activeTab: 'supplement' | 'vitamin';
   selectedCategory: string | null;
   setSelectedCategory: React.Dispatch<React.SetStateAction<string | null>>;
-  dayLabel?: string;
-  dayNumber?: number;
 }
 
 const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
@@ -25,13 +23,12 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   selectedVitamins,
   setSelectedVitamins,
   activeTab,
-  dayLabel,
 }) => {
   // Get currently selected items based on activeTab
   const selectedItems = activeTab === 'supplement' ? selectedSupplements : selectedVitamins;
   const setSelectedItems = activeTab === 'supplement' ? setSelectedSupplements : setSelectedVitamins;
 
-  // Filter supplements based on activeTab only (no search or category filtering)
+  // Filter supplements based on activeTab only
   const filteredItems = React.useMemo(() => {
     return supplements.filter(item => item.type === activeTab);
   }, [supplements, activeTab]);
@@ -47,13 +44,11 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
 
   return (
     <div className="h-full flex flex-col text-right" dir="rtl">
-      {dayLabel && (
-        <div className="mb-4 text-center" dir="rtl">
-          <h3 className="text-lg font-semibold text-indigo-700 text-right">
-            {activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'} - {dayLabel}
-          </h3>
-        </div>
-      )}
+      <div className="mb-4 text-center" dir="rtl">
+        <h3 className="text-lg font-semibold text-indigo-700 text-right">
+          {activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}
+        </h3>
+      </div>
 
       {/* Item Grid */}
       <ScrollArea className="flex-1" dir="rtl">
@@ -75,7 +70,6 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
           filteredItemsCount={filteredItems.length}
           selectedItemsCount={selectedItems.length}
           activeTab={activeTab}
-          dayLabel={dayLabel}
         />
       </div>
     </div>
