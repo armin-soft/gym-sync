@@ -2,11 +2,10 @@
 import React, { useState } from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import StudentSupplementSelector from "../supplement-selector";
-import { Pill, Capsule, Heart, Shield } from "lucide-react";
+import { Pill } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import useDayManagement from "./exercise/useDayManagement";
@@ -36,6 +35,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
+  // Use our custom hook for day management with fixed 5 days
   const {
     days,
     dayLabels,
@@ -61,6 +61,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   });
 
   const handleSpeechSave = (transcript: string) => {
+    // Parse the transcript to extract supplement/vitamin names
     const itemNames = transcript
       .split(/[،,\n]/)
       .map(name => name.trim())
@@ -75,6 +76,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
       return;
     }
 
+    // Find matching supplements/vitamins
     const matchedItems: number[] = [];
     const targetType = activeTab === 'supplement' ? 'supplement' : 'vitamin';
     
@@ -111,6 +113,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
     }
   };
   
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -130,149 +133,67 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
     }
   };
 
-  const tabs = [
-    {
-      key: 'supplement',
-      label: 'مکمل‌ها',
-      icon: Pill,
-      count: selectedSupplements.length,
-      gradient: 'from-purple-500 to-indigo-600',
-      bgGradient: 'from-purple-50 to-indigo-50',
-      darkBgGradient: 'from-purple-900/20 to-indigo-900/20'
-    },
-    {
-      key: 'vitamin',
-      label: 'ویتامین‌ها',
-      icon: Heart,
-      count: selectedVitamins.length,
-      gradient: 'from-pink-500 to-rose-600',
-      bgGradient: 'from-pink-50 to-rose-50',
-      darkBgGradient: 'from-pink-900/20 to-rose-900/20'
-    }
-  ];
-
   return (
-    <div className="h-full p-6 text-right" dir="rtl">
+    <TabsContent value="supplement" className="m-0 h-full text-right" dir="rtl">
       <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="h-full flex flex-col"
+        className="mb-4 h-full flex flex-col text-right"
+        dir="rtl"
       >
-        {/* Header Section */}
-        <motion.div variants={itemVariants} className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Pill className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  مکمل و ویتامین روز {toPersianNumbers(currentDay)}
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  <span>{getDayLabel(currentDay)}</span>
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200/50 dark:border-purple-700/50">
-                <CardContent className="p-3 text-center">
-                  <Pill className="w-5 h-5 text-purple-600 dark:text-purple-400 mx-auto mb-1" />
-                  <p className="text-xs text-purple-600 dark:text-purple-400">مکمل</p>
-                  <p className="text-sm font-bold text-purple-800 dark:text-purple-300">
-                    {toPersianNumbers(selectedSupplements.length)}
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 border-pink-200/50 dark:border-pink-700/50">
-                <CardContent className="p-3 text-center">
-                  <Heart className="w-5 h-5 text-pink-600 dark:text-pink-400 mx-auto mb-1" />
-                  <p className="text-xs text-pink-600 dark:text-pink-400">ویتامین</p>
-                  <p className="text-sm font-bold text-pink-800 dark:text-pink-300">
-                    {toPersianNumbers(selectedVitamins.length)}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+        <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2 text-right" dir="rtl">
+          <h3 className="font-semibold text-lg text-right">
+            مکمل و ویتامین روز {toPersianNumbers(currentDay)}
+          </h3>
         </motion.div>
         
-        {/* Day Selector */}
-        <motion.div variants={itemVariants} className="mb-6">
-          <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
-            <CardContent className="p-4">
-              <DaySelector 
-                days={days}
-                dayLabels={dayLabels}
-                currentDay={currentDay}
-                setCurrentDay={setCurrentDay}
-                editingDay={editingDay}
-                setEditingDay={setEditingDay}
-                tempDayLabel={tempDayLabel}
-                setTempDayLabel={setTempDayLabel}
-                setShowAddDayDialog={setShowAddDayDialog}
-                confirmDeleteDay={confirmDeleteDay}
-                maxDays={maxDays}
-              />
-            </CardContent>
-          </Card>
+        <motion.div variants={itemVariants} className="text-right" dir="rtl">
+          <DaySelector 
+            days={days}
+            dayLabels={dayLabels}
+            currentDay={currentDay}
+            setCurrentDay={setCurrentDay}
+            editingDay={editingDay}
+            setEditingDay={setEditingDay}
+            tempDayLabel={tempDayLabel}
+            setTempDayLabel={setTempDayLabel}
+            setShowAddDayDialog={setShowAddDayDialog}
+            confirmDeleteDay={confirmDeleteDay}
+            maxDays={maxDays}
+          />
+        </motion.div>
+        
+        {/* Tab Selector for Supplement vs Vitamin */}
+        <motion.div variants={itemVariants} className="mb-4 text-right" dir="rtl">
+          <div className="flex bg-muted/20 rounded-lg p-1 w-full sm:w-auto justify-center">
+            <button
+              onClick={() => setActiveTab('supplement')}
+              className={cn(
+                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
+                activeTab === 'supplement'
+                  ? "bg-white text-purple-700 shadow-sm" 
+                  : "text-gray-600 hover:bg-white/50"
+              )}
+            >
+              مکمل‌ها
+            </button>
+            <button
+              onClick={() => setActiveTab('vitamin')}
+              className={cn(
+                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
+                activeTab === 'vitamin'
+                  ? "bg-white text-purple-700 shadow-sm" 
+                  : "text-gray-600 hover:bg-white/50"
+              )}
+            >
+              ویتامین‌ها
+            </button>
+          </div>
         </motion.div>
 
-        {/* Tab Selector */}
-        <motion.div variants={itemVariants} className="mb-6">
-          <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
-            <CardContent className="p-4">
-              <div className="flex bg-muted/20 rounded-xl p-1 w-full justify-center">
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
-                  const isActive = activeTab === tab.key;
-                  
-                  return (
-                    <motion.button
-                      key={tab.key}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setActiveTab(tab.key as 'supplement' | 'vitamin')}
-                      className={cn(
-                        "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2",
-                        isActive
-                          ? `bg-gradient-to-r ${tab.bgGradient} dark:bg-gradient-to-r dark:${tab.darkBgGradient} text-gray-800 dark:text-gray-100 shadow-sm border border-white/50`
-                          : "text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-700/50"
-                      )}
-                    >
-                      <Icon className={cn(
-                        "w-4 h-4",
-                        isActive 
-                          ? `text-transparent bg-gradient-to-r ${tab.gradient} bg-clip-text` 
-                          : ""
-                      )} />
-                      <span>{tab.label}</span>
-                      {tab.count > 0 && (
-                        <Badge 
-                          variant="secondary" 
-                          className={cn(
-                            "text-xs",
-                            isActive 
-                              ? "bg-white/80 text-gray-700" 
-                              : "bg-gray-200 text-gray-600"
-                          )}
-                        >
-                          {toPersianNumbers(tab.count)}
-                        </Badge>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Speech to Text */}
-        <motion.div variants={itemVariants} className="mb-6">
+        {/* Speech to Text for Supplement/Vitamin Input */}
+        <motion.div variants={itemVariants} className="mb-4">
           <ProgramSpeechToText
             onSave={handleSpeechSave}
             title={`افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} با گفتار`}
@@ -280,19 +201,19 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
           />
         </motion.div>
         
-        {/* Supplement Content */}
-        <motion.div variants={itemVariants} className="flex-1 overflow-hidden">
-          <Card className="h-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-            <CardContent className="p-0 h-full">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeTab}-day-${currentDay}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="h-full"
-                >
+        <motion.div variants={itemVariants} className="flex-1 overflow-auto text-right" dir="rtl">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${activeTab}-day-${currentDay}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="h-full text-right"
+              dir="rtl"
+            >
+              <Card className="border border-border/40 bg-white/90 backdrop-blur-sm shadow-sm h-full text-right" dir="rtl">
+                <div className="p-4 h-full text-right" dir="rtl">
                   <StudentSupplementSelector 
                     supplements={supplements}
                     selectedSupplements={selectedSupplements}
@@ -305,13 +226,24 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
                     dayLabel={getDayLabel(currentDay)}
                     dayNumber={currentDay}
                   />
-                </motion.div>
-              </AnimatePresence>
-            </CardContent>
-          </Card>
+                </div>
+              </Card>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="mt-4 text-muted-foreground text-sm text-center" dir="rtl">
+          <div className="flex items-center justify-center gap-2" dir="rtl">
+            <Pill className="h-4 w-4" />
+            <span className="text-right">
+              {activeTab === 'supplement' 
+                ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده برای ${getDayLabel(currentDay)}` 
+                : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده برای ${getDayLabel(currentDay)}`}
+            </span>
+          </div>
         </motion.div>
       </motion.div>
-    </div>
+    </TabsContent>
   );
 };
 
