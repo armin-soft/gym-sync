@@ -37,15 +37,36 @@ function App() {
     console.log('App component mounted successfully');
     console.log('Current URL:', window.location.href);
     console.log('Current pathname:', window.location.pathname);
+    console.log('Current hostname:', window.location.hostname);
+    console.log('Current origin:', window.location.origin);
+    
+    // تست دسترسی به عناصر DOM
+    const rootElement = document.getElementById('root');
+    console.log('Root element exists:', !!rootElement);
+    
+    // بررسی بارگذاری منابع
+    const scripts = document.querySelectorAll('script[src]');
+    console.log('Scripts loaded:', scripts.length);
+    scripts.forEach((script, index) => {
+      console.log(`Script ${index}:`, (script as HTMLScriptElement).src);
+    });
+    
+    const links = document.querySelectorAll('link[href]');
+    console.log('Links loaded:', links.length);
     
     // اضافه کردن error handler برای خطاهای JavaScript
     window.addEventListener('error', (e) => {
       console.error('Global error:', e.error);
+      console.error('Error filename:', e.filename);
+      console.error('Error line number:', e.lineno);
     });
     
     window.addEventListener('unhandledrejection', (e) => {
       console.error('Unhandled promise rejection:', e.reason);
     });
+    
+    // تست رندر کامپوننت
+    console.log('App render successful');
   }, []);
 
   return (

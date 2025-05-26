@@ -53,7 +53,7 @@ export const buildOptions = {
       },
       entryFileNames: 'Assets/Script/[name].js',
       chunkFileNames: 'Assets/Script/[name].js',
-      assetFileNames: (assetInfo) => {
+      assetFileNames: (assetInfo: { name?: string }) => {
         if (assetInfo.name?.endsWith('.css')) {
           return 'Assets/Style/[name].[ext]';
         }

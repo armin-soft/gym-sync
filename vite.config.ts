@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       ...buildOptions,
-      // حذف base برای سازگاری بیشتر
+      // حذف تنظیمات experimental که باعث مشکل می‌شود
       rollupOptions: {
         output: {
           entryFileNames: 'Assets/Script/[name].js',
@@ -47,12 +47,6 @@ export default defineConfig(({ mode }) => {
           },
           manualChunks: buildOptions.rollupOptions?.output?.manualChunks
         }
-      }
-    },
-    // اضافه کردن تنظیمات برای relative paths
-    experimental: {
-      renderBuiltUrl(filename, { hostType }) {
-        return `./${filename}`;
       }
     }
   };

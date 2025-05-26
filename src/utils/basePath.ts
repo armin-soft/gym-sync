@@ -1,7 +1,7 @@
 
 /**
  * Gets the base path for the application based on the current window location
- * Works for any deployment path including subdirectories
+ * Fixed for universal deployment compatibility
  */
 export function getBasePath(): string {
   // در محیط توسعه همیشه از مسیر اصلی استفاده کن
@@ -20,12 +20,25 @@ export function getBasePath(): string {
     console.log('Determining base path for production...');
     console.log('Current location:', window.location);
     
-    // برای production: استفاده از relative path برای سازگاری بیشتر
+    // برای production: استفاده از pathname اما تنها در صورت نیاز
     const pathname = window.location.pathname;
-    const basePath = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
     
-    console.log("Using base path:", basePath);
-    return basePath || '';
+    // اگر در ریشه دامنه هستیم، مسیر خالی برگردان
+    if (pathname === '/' || pathname === '/index.html') {
+      console.log("Using root path for domain root");
+      return '';
+    }
+    
+    // اگر در پوشه‌ای هستیم، آن پوشه را به عنوان base path برگردان
+    const pathSegments = pathname.split('/').filter(Boolean);
+    if (pathSegments.length > 0 && !pathSegments[pathSegments.length - 1].includes('.')) {
+      const basePath = '/' + pathSegments.join('/');
+      console.log("Using subdirectory base path:", basePath);
+      return basePath;
+    }
+    
+    console.log("Using empty base path as fallback");
+    return '';
   } catch (e) {
     console.error("Error determining base path:", e);
     return '';
@@ -36,8 +49,9 @@ export function getBasePath(): string {
  * Gets the full URL for an asset based on the base path
  */
 export function getAssetPath(assetPath: string): string {
-  // برای relative paths، فقط asset path را برگردان
+  const basePath = getBasePath();
   const cleanAssetPath = assetPath.startsWith('/') ? assetPath : `/${assetPath}`;
-  console.log('Asset path resolved:', { assetPath, cleanAssetPath });
-  return cleanAssetPath;
+  const fullPath = basePath + cleanAssetPath;
+  console.log('Asset path resolved:', { assetPath, basePath, fullPath });
+  return fullPath;
 }
