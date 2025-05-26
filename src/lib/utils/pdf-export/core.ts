@@ -47,6 +47,17 @@ function initializePdfMake() {
       }
     };
 
+    // Ensure global pdfMake availability with better error handling
+    if (typeof window !== 'undefined') {
+      if (!window.pdfMake) {
+        window.pdfMake = pdfMake;
+      }
+      // Additional safety check for createPdf method
+      if (window.pdfMake && !window.pdfMake.createPdf) {
+        window.pdfMake.createPdf = pdfMake.createPdf;
+      }
+    }
+
     pdfMakeInitialized = true;
     console.log('pdfMake initialized successfully');
     return true;
@@ -86,25 +97,33 @@ export function createPdfDocument(content: any[]): any {
   };
 }
 
+// Safe pdfMake access with initialization
+function ensurePdfMakeAvailable() {
+  if (!initializePdfMake()) {
+    throw new Error('pdfMake initialization failed');
+  }
+
+  // Get the appropriate pdfMake reference
+  let pdfMakeInstance = pdfMake;
+  if (typeof window !== 'undefined' && window.pdfMake) {
+    pdfMakeInstance = window.pdfMake;
+  }
+
+  if (!pdfMakeInstance || typeof pdfMakeInstance.createPdf !== 'function') {
+    throw new Error('pdfMake.createPdf is not available');
+  }
+
+  return pdfMakeInstance;
+}
+
 // تولید و دانلود PDF با کیفیت بالا
 export function generatePDF(docDefinition: any, filename: string): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
-      if (!initializePdfMake()) {
-        throw new Error('pdfMake initialization failed');
-      }
-
-      // Additional check to ensure pdfMake is properly loaded
-      if (typeof window !== 'undefined' && window.pdfMake) {
-        window.pdfMake.createPdf = window.pdfMake.createPdf || pdfMake.createPdf;
-      }
-
-      if (typeof pdfMake?.createPdf !== 'function') {
-        throw new Error('pdfMake.createPdf is not available');
-      }
+      const pdfMakeInstance = ensurePdfMakeAvailable();
       
       console.log(`در حال تولید PDF حرفه‌ای: ${filename}`);
-      const pdfDoc = pdfMake.createPdf(docDefinition);
+      const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
       
       pdfDoc.download(filename);
       console.log(`PDF حرفه‌ای با موفقیت دانلود شد: ${filename}`);
@@ -120,21 +139,10 @@ export function generatePDF(docDefinition: any, filename: string): Promise<void>
 export function generatePDFPreview(docDefinition: any): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
-      if (!initializePdfMake()) {
-        throw new Error('pdfMake initialization failed');
-      }
-
-      // Additional check to ensure pdfMake is properly loaded
-      if (typeof window !== 'undefined' && window.pdfMake) {
-        window.pdfMake.createPdf = window.pdfMake.createPdf || pdfMake.createPdf;
-      }
-
-      if (typeof pdfMake?.createPdf !== 'function') {
-        throw new Error('pdfMake.createPdf is not available');
-      }
+      const pdfMakeInstance = ensurePdfMakeAvailable();
       
       console.log('در حال تولید پیش‌نمایش PDF مدرن...');
-      const pdfDoc = pdfMake.createPdf(docDefinition);
+      const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
       
       pdfDoc.getDataUrl((dataUrl) => {
         console.log('پیش‌نمایش PDF مدرن با موفقیت تولید شد');
@@ -151,20 +159,9 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
 export function generatePDFBlob(docDefinition: any): Promise<Blob> {
   return new Promise((resolve, reject) => {
     try {
-      if (!initializePdfMake()) {
-        throw new Error('pdfMake initialization failed');
-      }
-
-      // Additional check to ensure pdfMake is properly loaded
-      if (typeof window !== 'undefined' && window.pdfMake) {
-        window.pdfMake.createPdf = window.pdfMake.createPdf || pdfMake.createPdf;
-      }
-
-      if (typeof pdfMake?.createPdf !== 'function') {
-        throw new Error('pdfMake.createPdf is not available');
-      }
+      const pdfMakeInstance = ensurePdfMakeAvailable();
       
-      const pdfDoc = pdfMake.createPdf(docDefinition);
+      const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
       
       pdfDoc.getBlob((blob) => {
         resolve(blob);
@@ -175,15 +172,16 @@ export function generatePDFBlob(docDefinition: any): Promise<Blob> {
   });
 }
 
-// Initialize on module load with better error handling
-try {
-  if (typeof window !== 'undefined') {
-    // Ensure pdfMake is available globally
-    window.pdfMake = window.pdfMake || pdfMake;
-  }
-  initializePdfMake();
-} catch (error) {
-  console.warn('Could not initialize pdfMake on module load:', error);
+// Initialize on module load with delayed initialization for better reliability
+if (typeof window !== 'undefined') {
+  // Delay initialization to ensure all dependencies are loaded
+  setTimeout(() => {
+    try {
+      initializePdfMake();
+    } catch (error) {
+      console.warn('Could not initialize pdfMake on module load:', error);
+    }
+  }, 100);
 }
 
 // صادر کردن توابع کمکی

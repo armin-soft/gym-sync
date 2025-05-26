@@ -7,8 +7,6 @@ export const buildOptions = {
   chunkSizeWarningLimit: 1500, // افزایش به 1.5MB
   // رفع مشکل رزولوشن URL الگو
   assetsInlineLimit: 0,
-  // تنظیمات rollup در فایل جداگانه تعریف شده است
-  rollupOptions: {}, // این در فایل اصلی پر خواهد شد
   // فعال کردن تقسیم کد CSS
   cssCodeSplit: true,
   // گزینه‌های کوچک‌سازی
@@ -26,7 +24,7 @@ export const buildOptions = {
   },
   // فعال کردن source maps برای تولید (می‌تواند برای کاهش حجم غیرفعال شود)
   sourcemap: false,
-  // تنظیمات index.html transformation
+  // تنظیمات rollup - یکبار تعریف شده
   rollupOptions: {
     output: {
       // تقسیم‌بندی chunk ها برای بهینه‌سازی
