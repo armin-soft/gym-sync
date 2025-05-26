@@ -7,7 +7,7 @@ export function toPersianDigits(text: string | number): string {
   return String(text).replace(/\d/g, match => persianDigits[parseInt(match)]);
 }
 
-// پیش‌پردازش متن فارسی
+// پیش‌پردازش متن فارسی با حل مشکل RTL
 export function preprocessPersianText(text: string): string {
   if (!text) return '';
   
@@ -24,10 +24,13 @@ export function preprocessPersianText(text: string): string {
       .replace(/ک/g, 'ک')
       .replace(/‌/g, ' '); // تبدیل نیم‌فاصله به فاصله
     
+    // اضافه کردن مارکر RTL برای درست کردن جهت متن
+    processedText = '\u202B' + processedText + '\u202C';
+    
     return processedText;
   } catch (error) {
     console.error("خطا در پیش‌پردازش متن فارسی:", error);
-    return text;
+    return '\u202B' + text + '\u202C';
   }
 }
 
@@ -38,7 +41,8 @@ export function createRTLText(text: string): any {
   return {
     text: preprocessPersianText(text),
     alignment: 'right',
-    direction: 'rtl'
+    direction: 'rtl',
+    bidi: false // غیرفعال کردن پردازش خودکار دوجهته
   };
 }
 
@@ -50,6 +54,7 @@ export function createRTLTextArray(parts: { text: string, style?: any }[]): any 
       ...part.style
     })),
     alignment: 'right',
-    direction: 'rtl'
+    direction: 'rtl',
+    bidi: false
   };
 }

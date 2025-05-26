@@ -46,7 +46,7 @@ try {
   console.error('Error initializing pdfMake fonts:', error);
 }
 
-// تنظیمات مدرن PDF با طراحی حرفه‌ای
+// تنظیمات مدرن PDF با طراحی حرفه‌ای و حل مشکل RTL
 export const PDF_OPTIONS: PDFDocumentOptions = {
   pageSize: 'A4',
   pageOrientation: 'portrait',
@@ -55,7 +55,8 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
     font: 'Vazir',
     fontSize: 11,
     alignment: 'right',
-    direction: 'rtl'
+    direction: 'rtl',
+    bidi: false // غیرفعال کردن پردازش خودکار دوجهته
   },
 };
 
@@ -71,28 +72,36 @@ export function createPdfDocument(content: any[]): any {
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 30],
-        color: '#2563eb'
+        color: '#2563eb',
+        direction: 'rtl',
+        bidi: false
       },
       header: {
         fontSize: 20,
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 25],
-        color: '#1e40af'
+        color: '#1e40af',
+        direction: 'rtl',
+        bidi: false
       },
       subheader: {
         fontSize: 16,
         bold: true,
         alignment: 'right',
         margin: [0, 15, 0, 12],
-        color: '#374151'
+        color: '#374151',
+        direction: 'rtl',
+        bidi: false
       },
       sectionTitle: {
         fontSize: 14,
         bold: true,
         alignment: 'right',
         margin: [0, 12, 0, 8],
-        color: '#4f46e5'
+        color: '#4f46e5',
+        direction: 'rtl',
+        bidi: false
       },
       tableHeader: {
         bold: true,
@@ -100,12 +109,16 @@ export function createPdfDocument(content: any[]): any {
         color: 'white',
         fillColor: '#4f46e5',
         alignment: 'center',
-        margin: [5, 8, 5, 8]
+        margin: [5, 8, 5, 8],
+        direction: 'rtl',
+        bidi: false
       },
       tableCell: {
         fontSize: 11,
         alignment: 'right',
-        margin: [5, 6, 5, 6]
+        margin: [5, 6, 5, 6],
+        direction: 'rtl',
+        bidi: false
       },
       tableSubHeader: {
         fontSize: 11,
@@ -113,35 +126,49 @@ export function createPdfDocument(content: any[]): any {
         fillColor: '#f1f5f9',
         color: '#475569',
         alignment: 'right',
-        margin: [5, 6, 5, 6]
+        margin: [5, 6, 5, 6],
+        direction: 'rtl',
+        bidi: false
       },
       notes: {
         fontSize: 10,
         alignment: 'right',
         margin: [0, 12, 0, 0],
-        color: '#64748b'
+        color: '#64748b',
+        direction: 'rtl',
+        bidi: false
       },
       footer: {
         fontSize: 9,
         alignment: 'center',
-        color: '#94a3b8'
+        color: '#94a3b8',
+        direction: 'rtl',
+        bidi: false
       },
       highlight: {
         fillColor: '#fef3c7',
         color: '#92400e',
-        bold: true
+        bold: true,
+        direction: 'rtl',
+        bidi: false
       },
       success: {
         color: '#059669',
-        bold: true
+        bold: true,
+        direction: 'rtl',
+        bidi: false
       },
       warning: {
         color: '#d97706',
-        bold: true
+        bold: true,
+        direction: 'rtl',
+        bidi: false
       },
       danger: {
         color: '#dc2626',
-        bold: true
+        bold: true,
+        direction: 'rtl',
+        bidi: false
       }
     }
   };
