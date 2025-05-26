@@ -61,17 +61,12 @@ export const copyFilesPlugin = () => {
     <!-- Styles -->
     <link rel="stylesheet" crossorigin href="/Assets/Style/Menu.css" />
 
-    <!-- Module Preloads for version 3.3.6 -->
-    <link rel="modulepreload" href="/Assets/Script/Utils.js" />
-    <link rel="modulepreload" href="/Assets/Script/Vendors.js" />
-    <link rel="modulepreload" href="/Assets/Script/Animation.js" />
-    <link rel="modulepreload" href="/Assets/Script/PDF-Core.js" />
-    <link rel="modulepreload" href="/Assets/Script/PDF-Fonts.js" />
-    <link rel="modulepreload" href="/Assets/Script/PDF-Export.js" />
-    <link rel="modulepreload" href="/Assets/Script/UI.js" />
-    <link rel="modulepreload" href="/Assets/Script/Routing.js" />
-    <link rel="modulepreload" href="/Assets/Script/Data-Management.js" />
-    <link rel="modulepreload" href="/Assets/Script/React.js" />
+    <!-- Module Preloads - simplified for version 3.3.6 -->
+    <link rel="modulepreload" href="/Assets/Script/react.js" />
+    <link rel="modulepreload" href="/Assets/Script/ui.js" />
+    <link rel="modulepreload" href="/Assets/Script/pdf.js" />
+    <link rel="modulepreload" href="/Assets/Script/utils.js" />
+    <link rel="modulepreload" href="/Assets/Script/vendors.js" />
 
     <!-- Main JS Entry -->
     <script type="module" crossorigin src="/Assets/Script/index.js"></script>

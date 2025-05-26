@@ -1,6 +1,5 @@
 
 import pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 import { modernPdfStyles, printPageSettings } from './modern-styles';
@@ -18,24 +17,8 @@ function initializePdfMake() {
       return false;
     }
 
-    // Initialize VFS fonts with multiple fallback strategies
-    let fonts;
-    try {
-      fonts = pdfFonts;
-      if (fonts && typeof fonts === 'object') {
-        if (fonts.pdfMake && fonts.pdfMake.vfs) {
-          pdfMake.vfs = fonts.pdfMake.vfs;
-        } else if (fonts.vfs) {
-          pdfMake.vfs = fonts.vfs;
-        } else {
-          // If fonts is the vfs object itself
-          pdfMake.vfs = fonts;
-        }
-      }
-    } catch (fontError) {
-      console.warn('Could not load custom fonts, using defaults:', fontError);
-      pdfMake.vfs = {};
-    }
+    // Initialize with minimal VFS to avoid loading issues
+    pdfMake.vfs = {};
 
     // Set up fonts with fallback
     pdfMake.fonts = {
