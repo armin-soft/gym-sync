@@ -1,6 +1,6 @@
 
 // سرویس ورکر ساده شده برای Lovable
-const CACHE_NAME = 'gym-sync-v336'; // نسخه جدید
+const CACHE_NAME = 'gym-sync-v337'; // نسخه جدید
 
 // منابع اصلی برای کش
 const STATIC_ASSETS = [
@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
 
 // نصب سرویس ورکر
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] نصب سرویس ورکر نسخه 3.3.6');
+  console.log('[Service Worker] نصب سرویس ورکر نسخه 3.3.7');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -32,7 +32,7 @@ self.addEventListener('install', (event) => {
 
 // فعال‌سازی
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] فعال‌سازی نسخه 3.3.6');
+  console.log('[Service Worker] فعال‌سازی نسخه 3.3.7');
   
   event.waitUntil(
     // حذف کش‌های قدیمی
@@ -59,10 +59,10 @@ self.addEventListener('fetch', (event) => {
     fetch(event.request)
       .catch(() => {
         return caches.match(event.request).then(response => {
-          return response || new Response('آفلاین - نسخه 3.3.6');
+          return response || new Response('آفلاین - نسخه 3.3.7');
         });
       })
   );
 });
 
-console.log('[Service Worker] سرویس ورکر نسخه 3.3.6 راه‌اندازی شد');
+console.log('[Service Worker] سرویس ورکر نسخه 3.3.7 راه‌اندازی شد');

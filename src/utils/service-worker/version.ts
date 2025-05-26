@@ -32,18 +32,18 @@ export const getAppVersionFromManifest = async (): Promise<string> => {
         });
         if (retryResponse.type === 'opaque') {
           // درخواست no-cors نمی‌تواند محتوا را بخواند، پس از نسخه پیش‌فرض استفاده می‌کنیم
-          return cachedVersion || '3.3.2'; // استفاده از نسخه پیش‌فرض اگر کش نداشتیم
+          return cachedVersion || '3.3.7'; // استفاده از نسخه پیش‌فرض اگر کش نداشتیم
         }
         const retryData = await retryResponse.json();
         return retryData.version;
       } catch (retryError) {
         console.error('خطای دوم در بارگیری نسخه:', retryError);
         // استفاده از نسخه پیش‌فرض یا کش شده
-        return cachedVersion || '3.3.2';
+        return cachedVersion || '3.3.7';
       }
     }
   } catch (finalError) {
     console.error('خطای نهایی در بارگیری نسخه:', finalError);
-    return '3.3.2'; // همیشه یک مقدار برگشت بده
+    return '3.3.7'; // همیشه یک مقدار برگشت بده
   }
 };

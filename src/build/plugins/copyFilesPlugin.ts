@@ -27,9 +27,9 @@ export const copyFilesPlugin = () => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران - نسخه 3.3.6" />
+    <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران - نسخه 3.3.7" />
     <meta name="theme-color" content="#7c3aed" />
-    <title>مدیریت برنامه - نسخه 3.3.6</title>
+    <title>مدیریت برنامه - نسخه 3.3.7</title>
 
     <!-- Favicon and PWA -->
     <link rel="icon" type="image/png" href="./Assets/Image/Logo.png" />
@@ -73,7 +73,7 @@ export const copyFilesPlugin = () => {
           console.log('index.html با مسیرهای صحیح بازنویسی شد');
         }
 
-        console.log('فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.6!');
+        console.log('فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.7!');
       } catch (error) {
         console.log('خطا در کپی یا بهینه‌سازی فایل‌ها:', error);
       }

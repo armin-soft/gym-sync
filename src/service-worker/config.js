@@ -33,7 +33,7 @@ export async function initializeConfig() {
     console.error('[Service Worker] خطا در دریافت نسخه از manifest', error);
     
     // استفاده از نسخه پیش‌فرض در صورت خطا
-    const fallbackCacheName = 'gym-sync-v336';
+    const fallbackCacheName = 'gym-sync-v337';
     
     // @ts-ignore
     self.CACHE_NAME = fallbackCacheName;
@@ -52,6 +52,6 @@ export async function getAppVersion() {
     return manifest.version;
   } catch (error) {
     console.error('[Service Worker] خطا در دریافت نسخه', error);
-    return '3.3.6'; // نسخه پیش‌فرض
+    return '3.3.7'; // نسخه پیش‌فرض
   }
 }
