@@ -29,7 +29,7 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
         onError={(e) => {
           // Fallback if the path fails
           console.log('Logo load error, trying alternate path');
-          e.currentTarget.src = "./Assets/Image/Logo.png";
+          e.currentTarget.src = "/Assets/Image/Logo.png";
         }}
       />
     </div>

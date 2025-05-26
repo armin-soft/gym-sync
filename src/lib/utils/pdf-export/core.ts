@@ -94,6 +94,11 @@ export function generatePDF(docDefinition: any, filename: string): Promise<void>
         throw new Error('pdfMake initialization failed');
       }
 
+      // Additional check to ensure pdfMake is properly loaded
+      if (typeof window !== 'undefined' && window.pdfMake) {
+        window.pdfMake.createPdf = window.pdfMake.createPdf || pdfMake.createPdf;
+      }
+
       if (typeof pdfMake?.createPdf !== 'function') {
         throw new Error('pdfMake.createPdf is not available');
       }
@@ -117,6 +122,11 @@ export function generatePDFPreview(docDefinition: any): Promise<string> {
     try {
       if (!initializePdfMake()) {
         throw new Error('pdfMake initialization failed');
+      }
+
+      // Additional check to ensure pdfMake is properly loaded
+      if (typeof window !== 'undefined' && window.pdfMake) {
+        window.pdfMake.createPdf = window.pdfMake.createPdf || pdfMake.createPdf;
       }
 
       if (typeof pdfMake?.createPdf !== 'function') {
@@ -145,6 +155,11 @@ export function generatePDFBlob(docDefinition: any): Promise<Blob> {
         throw new Error('pdfMake initialization failed');
       }
 
+      // Additional check to ensure pdfMake is properly loaded
+      if (typeof window !== 'undefined' && window.pdfMake) {
+        window.pdfMake.createPdf = window.pdfMake.createPdf || pdfMake.createPdf;
+      }
+
       if (typeof pdfMake?.createPdf !== 'function') {
         throw new Error('pdfMake.createPdf is not available');
       }
@@ -160,8 +175,12 @@ export function generatePDFBlob(docDefinition: any): Promise<Blob> {
   });
 }
 
-// Initialize on module load
+// Initialize on module load with better error handling
 try {
+  if (typeof window !== 'undefined') {
+    // Ensure pdfMake is available globally
+    window.pdfMake = window.pdfMake || pdfMake;
+  }
   initializePdfMake();
 } catch (error) {
   console.warn('Could not initialize pdfMake on module load:', error);
