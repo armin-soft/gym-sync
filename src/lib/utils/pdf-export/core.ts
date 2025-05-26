@@ -1,14 +1,22 @@
-
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 
 // Initialize pdfMake with fonts immediately
-if (pdfFonts && pdfFonts.pdfMake && pdfFonts.pdfMake.vfs) {
-  pdfMake.vfs = pdfFonts.pdfMake.vfs;
-} else if (pdfFonts) {
-  pdfMake.vfs = pdfFonts;
+try {
+  // Type assertion to handle the vfs fonts structure
+  const fonts = pdfFonts as any;
+  if (fonts && fonts.pdfMake && fonts.pdfMake.vfs) {
+    pdfMake.vfs = fonts.pdfMake.vfs;
+  } else if (fonts && fonts.vfs) {
+    pdfMake.vfs = fonts.vfs;
+  } else {
+    // Fallback - use the entire fonts object as vfs
+    pdfMake.vfs = fonts;
+  }
+} catch (error) {
+  console.error('Error setting up pdfMake vfs:', error);
 }
 
 // فونت‌های فارسی مدرن
