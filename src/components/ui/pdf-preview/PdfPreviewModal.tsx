@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Student } from "../../students/StudentTypes";
-import { previewStudentProgramPDF } from "@/lib/utils/pdf-export";
+import { previewStudentProgramPDF2Pages } from "@/lib/utils/pdf-export/previewStudentProgramPDF2Pages";
 import { useToast } from "@/hooks/use-toast";
 
 interface PdfPreviewModalProps {
@@ -27,7 +27,7 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
       setError(null);
       setPdfUrl("");
 
-      previewStudentProgramPDF(student)
+      previewStudentProgramPDF2Pages(student)
         .then((url) => {
           setPdfUrl(url);
           setIsLoading(false);

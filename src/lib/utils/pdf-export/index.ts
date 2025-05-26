@@ -1,11 +1,11 @@
+// Export the main functions
+export { exportStudentProgramToPdf2Pages as exportStudentProgramToPdf } from './exportStudentProgramToPdf2Pages';
+export { previewStudentProgramPDF2Pages as previewStudentProgramPDF } from './previewStudentProgramPDF2Pages';
 
-// اصلی: فقط صادرات و ایمپورت ساده، توابع جدا شده‌اند
+// Keep the old exports for backward compatibility
+export { exportStudentProgramToPdf as exportStudentProgramToPdfOld } from './exportStudentProgramToPdf';
+export { previewStudentProgramPDF as previewStudentProgramPDFOld } from './previewStudentProgramPDF';
 
-export { previewStudentProgramPDF } from './previewStudentProgramPDF';
-export { exportStudentProgramToPdf } from './exportStudentProgramToPdf';
-export { generateComprehensiveReport } from './generateComprehensiveReport';
-
-// صادر کردن همه ماژول‌ها و هلپرها
-export * from './types';
+// Export other utility functions
 export * from './core';
-export * from './data-helpers';
+export * from './types';

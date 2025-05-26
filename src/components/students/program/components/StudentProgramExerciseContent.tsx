@@ -8,6 +8,8 @@ import useDayManagement from "./exercise/useDayManagement";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dumbbell } from "lucide-react";
+import ProgramSpeechToText from "./ProgramSpeechToText";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentProgramExerciseContentProps {
   currentDay: number;
@@ -24,6 +26,8 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
   setSelectedExercises,
   exercises,
 }) => {
+  const { toast } = useToast();
+  
   // Use our custom hook for day management with 6 days (1-4 mandatory, 5-6 optional)
   const {
     days,
@@ -51,6 +55,59 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
     },
     onDayChange: setCurrentDay
   });
+
+  const handleSpeechSave = (transcript: string) => {
+    // Parse the transcript to extract exercise names
+    const exerciseNames = transcript
+      .split(/[،,\n]/)
+      .map(name => name.trim())
+      .filter(name => name.length > 0);
+
+    if (exerciseNames.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "هیچ تمرینی در متن گفتاری یافت نشد"
+      });
+      return;
+    }
+
+    // Find matching exercises
+    const matchedExercises: ExerciseWithSets[] = [];
+    
+    exerciseNames.forEach(name => {
+      const foundExercise = exercises.find(exercise => 
+        exercise.name.includes(name) || name.includes(exercise.name)
+      );
+      
+      if (foundExercise) {
+        const exerciseWithSets: ExerciseWithSets = {
+          ...foundExercise,
+          sets: 3,
+          reps: "8-12"
+        };
+        
+        const isAlreadySelected = selectedExercises.some(ex => ex.id === foundExercise.id);
+        if (!isAlreadySelected) {
+          matchedExercises.push(exerciseWithSets);
+        }
+      }
+    });
+
+    if (matchedExercises.length > 0) {
+      setSelectedExercises(prev => [...prev, ...matchedExercises]);
+      toast({
+        title: "افزودن موفق",
+        description: `${toPersianNumbers(matchedExercises.length)} تمرین از گفتار شما اضافه شد`
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "هیچ تمرینی یافت نشد",
+        description: "لطفا نام تمرین‌ها را واضح‌تر بیان کنید"
+      });
+    }
+  };
 
   // Animation variants
   const containerVariants = {
@@ -117,6 +174,15 @@ const StudentProgramExerciseContent: React.FC<StudentProgramExerciseContentProps
               maxDays={maxDays}
               isDayMandatory={isDayMandatory}
               isDayOptional={isDayOptional}
+            />
+          </motion.div>
+
+          {/* Speech to Text for Exercise Input */}
+          <motion.div variants={itemVariants} className="mb-4">
+            <ProgramSpeechToText
+              onSave={handleSpeechSave}
+              title="افزودن تمرین با گفتار"
+              placeholder="نام تمرین‌های مورد نظر را بگویید"
             />
           </motion.div>
           
