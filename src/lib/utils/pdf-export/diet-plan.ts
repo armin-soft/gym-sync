@@ -18,9 +18,58 @@ function getDietDayName(day: number): string {
   return dayNames[day] || `روز ${day}`;
 }
 
+// بررسی بهتر وجود داده‌های غذایی
+function hasAnyDietData(student: Student): boolean {
+  // بررسی غذاهای روزانه
+  const dailyMeals = [
+    student.mealsDay1,
+    student.mealsDay2,
+    student.mealsDay3,
+    student.mealsDay4,
+    student.mealsDay5,
+    student.mealsDay6,
+    student.mealsDay7
+  ];
+  
+  const hasDailyMeals = dailyMeals.some(meals => meals && meals.length > 0);
+  
+  // بررسی غذاهای کلی
+  const hasGeneralMeals = student.meals && student.meals.length > 0;
+  
+  console.log('بررسی داده‌های غذایی شاگرد:', {
+    name: student.name,
+    hasGeneralMeals,
+    hasDailyMeals,
+    meals: student.meals,
+    mealsDay1: student.mealsDay1,
+    mealsDay2: student.mealsDay2,
+    mealsDay3: student.mealsDay3,
+    mealsDay4: student.mealsDay4,
+    mealsDay5: student.mealsDay5,
+    mealsDay6: student.mealsDay6,
+    mealsDay7: student.mealsDay7
+  });
+  
+  return hasGeneralMeals || hasDailyMeals;
+}
+
 // ایجاد برنامه غذایی فقط برای روزهایی که داده دارند
 export function createDietPlan(student: Student, trainerProfile: TrainerProfile): any[] {
   const content: any[] = [];
+  
+  console.log('شروع ایجاد برنامه غذایی برای:', student.name);
+  
+  // بررسی وجود هرگونه داده غذایی
+  if (!hasAnyDietData(student)) {
+    console.log('هیچ داده غذایی برای این شاگرد یافت نشد');
+    content.push({
+      text: 'برنامه غذایی تعیین نشده است.',
+      style: 'notes',
+      alignment: 'center',
+      margin: [0, 10, 0, 10]
+    });
+    return content;
+  }
   
   // جدول با ترتیب صحیح: شماره، روز هفته، وعده غذایی، نام غذا
   const tableData: (TableCellContent | { text: string; style: string })[][] = [
@@ -32,11 +81,29 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     ]
   ];
   
-  let hasAnyMeal = false;
   let rowNumber = 1;
   const allMealRows: any[] = [];
   
-  // برای هر روز هفته (1-7) - فقط روزهایی که داده دارند
+  // ابتدا غذاهای کلی را بررسی کن
+  if (student.meals && student.meals.length > 0) {
+    console.log('غذاهای کلی یافت شد:', student.meals);
+    student.meals.forEach((mealId) => {
+      const mealName = getMealName(mealId);
+      const mealType = getMealType(mealId);
+      
+      if (mealName) {
+        allMealRows.push([
+          { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText('کلی'), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(mealType || 'نامشخص'), style: 'tableCell', alignment: 'center' },
+          { text: preprocessPersianText(mealName), style: 'tableCell', alignment: 'right' }
+        ]);
+        rowNumber++;
+      }
+    });
+  }
+  
+  // سپس برای هر روز هفته (1-7) - فقط روزهایی که داده دارند
   for (let day = 1; day <= 7; day++) {
     const dayKey = `mealsDay${day}` as keyof Student;
     const meals = student[dayKey] as number[] || [];
@@ -45,7 +112,6 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
     
     // فقط اگر این روز غذا داشت نمایش بده
     if (meals && meals.length > 0) {
-      hasAnyMeal = true;
       const dayName = getDietDayName(day);
       
       meals.forEach((mealId) => {
@@ -57,7 +123,7 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
           allMealRows.push([
             { text: toPersianDigits(rowNumber.toString()), style: 'tableCell', alignment: 'center' },
             { text: preprocessPersianText(dayName), style: 'tableCell', alignment: 'center' },
-            { text: preprocessPersianText(mealType || ''), style: 'tableCell', alignment: 'center' },
+            { text: preprocessPersianText(mealType || 'نامشخص'), style: 'tableCell', alignment: 'center' },
             { text: preprocessPersianText(mealName), style: 'tableCell', alignment: 'right' }
           ]);
           
@@ -70,7 +136,8 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
   // اضافه کردن ردیف‌ها به جدول
   tableData.push(...allMealRows);
   
-  if (hasAnyMeal) {
+  if (allMealRows.length > 0) {
+    console.log(`${allMealRows.length} ردیف غذا به جدول اضافه شد`);
     content.push({
       table: {
         widths: ['10%', '20%', '30%', '40%'],
@@ -89,11 +156,12 @@ export function createDietPlan(student: Student, trainerProfile: TrainerProfile)
       margin: [0, 0, 0, 15]
     });
   } else {
-    console.log('هیچ برنامه غذایی برای این شاگرد یافت نشد');
+    console.log('هیچ ردیف غذا برای نمایش یافت نشد');
     content.push({
-      text: 'برنامه غذایی تعیین نشده است.',
+      text: 'غذاها یافت شد اما نمی‌توان نام آن‌ها را تشخیص داد.',
       style: 'notes',
-      alignment: 'center'
+      alignment: 'center',
+      margin: [0, 10, 0, 10]
     });
   }
   

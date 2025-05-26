@@ -7,6 +7,35 @@ import { createDietPlan } from './diet-plan';
 import { createSupplementPlan } from './supplement-plan';
 import { createSharedHeader, createSharedFooter } from './shared-header';
 
+// تابع بررسی بهتر وجود داده‌های غذایی
+function checkDietData(student: Student): boolean {
+  const dailyMeals = [
+    student.mealsDay1,
+    student.mealsDay2,
+    student.mealsDay3,
+    student.mealsDay4,
+    student.mealsDay5,
+    student.mealsDay6,
+    student.mealsDay7
+  ];
+  
+  const hasDailyMeals = dailyMeals.some(meals => meals && meals.length > 0);
+  const hasGeneralMeals = student.meals && student.meals.length > 0;
+  
+  console.log('بررسی داده‌های غذایی در PDF:', {
+    studentName: student.name,
+    hasGeneralMeals,
+    hasDailyMeals,
+    generalMealsCount: student.meals?.length || 0,
+    dailyMealsCounts: dailyMeals.map((meals, index) => ({
+      day: index + 1,
+      count: meals?.length || 0
+    }))
+  });
+  
+  return hasGeneralMeals || hasDailyMeals;
+}
+
 // تولید پیش‌نمایش PDF با ساختار بهینه
 export const previewStudentProgramPDF = async (student: Student): Promise<string> => {
   try {
@@ -15,17 +44,20 @@ export const previewStudentProgramPDF = async (student: Student): Promise<string
     const trainerProfile = trainerProfileStr ? JSON.parse(trainerProfileStr) : {} as TrainerProfile;
     const content: any[] = [];
 
-    // بررسی وجود داده‌های واقعی شاگرد
+    // بررسی وجود داده‌های واقعی شاگرد با console.log برای دیباگ
     const hasExerciseData = student.exercisesDay1?.length || student.exercisesDay2?.length || 
                            student.exercisesDay3?.length || student.exercisesDay4?.length || 
                            student.exercisesDay5?.length || student.exercises?.length;
 
-    const hasDietData = student.mealsDay1?.length || student.mealsDay2?.length || 
-                       student.mealsDay3?.length || student.mealsDay4?.length || 
-                       student.mealsDay5?.length || student.mealsDay6?.length || 
-                       student.mealsDay7?.length || student.meals?.length;
-
+    const hasDietData = checkDietData(student);
     const hasSupplementData = student.supplements?.length || student.vitamins?.length;
+
+    console.log('نتایج بررسی داده‌ها:', {
+      studentName: student.name,
+      hasExerciseData,
+      hasDietData,
+      hasSupplementData
+    });
 
     // هدر مشترک فقط یکبار در ابتدا
     content.push(...createSharedHeader(student, trainerProfile));
