@@ -1,170 +1,204 @@
 
-import { useState, useRef, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
-interface ContinuousSpeechRecognitionProps {
+interface UseContinuousSpeechRecognitionOptions {
   onTranscriptChange: (transcript: string) => void;
   initialValue?: string;
   lang?: string;
+  continuous?: boolean;
+  interimResults?: boolean;
+  maxAlternatives?: number;
 }
 
-export function useContinuousSpeechRecognition({ 
-  onTranscriptChange, 
-  initialValue = "",
-  lang = "fa-IR" 
-}: ContinuousSpeechRecognitionProps) {
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
+export const useContinuousSpeechRecognition = ({
+  onTranscriptChange,
+  initialValue = '',
+  lang = 'fa-IR',
+  continuous = true,
+  interimResults = true,
+  maxAlternatives = 1
+}: UseContinuousSpeechRecognitionOptions) => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState(initialValue);
-  const [interimTranscript, setInterimTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const [isSupported, setIsSupported] = useState(false);
+  
   const recognitionRef = useRef<any>(null);
-  const isManualStop = useRef(false);
-  const { toast } = useToast();
-  
+  const restartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const finalTranscriptRef = useRef(initialValue);
+
   // Check browser support
-  const isSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-  
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setIsSupported(!!SpeechRecognition);
+  }, []);
+
   const initializeRecognition = useCallback(() => {
     if (!isSupported) return null;
-    
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    
+
+    recognition.continuous = continuous;
+    recognition.interimResults = interimResults;
     recognition.lang = lang;
-    recognition.continuous = true; // تغییر به true برای ضبط پیوسته
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    
+    recognition.maxAlternatives = maxAlternatives;
+
+    // تنظیم حساسیت بالاتر برای شناسایی سکوت
+    if ('webkitSpeechRecognition' in window) {
+      recognition.serviceURI = 'wss://www.google.com/speech-api/full-duplex/v1/up';
+    }
+
     recognition.onstart = () => {
-      console.log("Continuous speech recognition started");
+      console.log('Speech recognition started');
       setIsListening(true);
-      isManualStop.current = false;
     };
-    
+
     recognition.onresult = (event: any) => {
-      let finalText = "";
-      let interimText = "";
-      
+      let interimText = '';
+      let finalText = finalTranscriptRef.current;
+
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        const resultText = event.results[i][0].transcript;
-        
-        if (event.results[i].isFinal) {
-          finalText += resultText;
+        const result = event.results[i];
+        const transcriptText = result[0].transcript;
+
+        if (result.isFinal) {
+          finalText += transcriptText;
+          finalTranscriptRef.current = finalText;
         } else {
-          interimText += resultText;
+          interimText += transcriptText;
         }
       }
-      
-      if (finalText) {
-        const newTranscript = (transcript + " " + finalText).trim();
-        setTranscript(newTranscript);
-        onTranscriptChange(newTranscript);
-        setInterimTranscript("");
-      } else {
-        setInterimTranscript(interimText);
-      }
+
+      setTranscript(finalText);
+      setInterimTranscript(interimText);
+      onTranscriptChange(finalText + interimText);
     };
-    
+
     recognition.onerror = (event: any) => {
-      console.error("Speech recognition error:", event.error);
+      console.error('Speech recognition error:', event.error);
       
-      // اگر خطا به دلیل توقف دستی نیست، دوباره شروع کن
-      if (!isManualStop.current && event.error !== 'aborted') {
-        if (event.error === 'no-speech') {
-          // در صورت عدم تشخیص صدا، دوباره شروع کن
-          setTimeout(() => {
-            if (!isManualStop.current && recognitionRef.current) {
-              recognitionRef.current.start();
+      // در صورت خطا، تلاش برای شروع مجدد
+      if (event.error === 'no-speech' || event.error === 'audio-capture') {
+        if (isListening) {
+          restartTimeoutRef.current = setTimeout(() => {
+            if (recognitionRef.current && isListening) {
+              try {
+                recognitionRef.current.start();
+              } catch (e) {
+                console.log('Failed to restart recognition:', e);
+              }
             }
           }, 1000);
-        } else {
-          toast({
-            title: "خطا در تشخیص گفتار",
-            description: "در حال تلاش مجدد...",
-            variant: "destructive"
-          });
-          
-          // تلاش مجدد پس از 2 ثانیه
-          setTimeout(() => {
-            if (!isManualStop.current) {
-              startListening();
-            }
-          }, 2000);
         }
       }
-      
-      setInterimTranscript("");
     };
-    
+
     recognition.onend = () => {
-      console.log("Speech recognition ended");
+      console.log('Speech recognition ended');
       
-      // اگر توقف دستی نبوده، دوباره شروع کن
-      if (!isManualStop.current) {
-        setTimeout(() => {
-          if (!isManualStop.current && recognitionRef.current) {
-            recognitionRef.current.start();
+      // اگر کاربر هنوز در حالت گوش دادن است، دوباره شروع کن
+      if (isListening) {
+        restartTimeoutRef.current = setTimeout(() => {
+          if (recognitionRef.current && isListening) {
+            try {
+              recognitionRef.current.start();
+            } catch (e) {
+              console.log('Recognition already started or not available');
+            }
           }
         }, 100);
-      } else {
-        setIsListening(false);
-        setInterimTranscript("");
       }
     };
-    
+
     return recognition;
-  }, [isSupported, lang, transcript, onTranscriptChange, toast]);
-  
+  }, [isSupported, continuous, interimResults, lang, maxAlternatives, onTranscriptChange, isListening]);
+
   const startListening = useCallback(async () => {
-    if (!isSupported) {
-      toast({
-        title: "عدم پشتیبانی مرورگر",
-        description: "مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    if (!isSupported || isListening) return;
+
     try {
-      // Request microphone permission
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      
+      // Clear any existing timeouts
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+        restartTimeoutRef.current = null;
+      }
+
       // Stop any existing recognition
       if (recognitionRef.current) {
-        isManualStop.current = true;
         recognitionRef.current.stop();
       }
+
+      // Initialize new recognition
+      const recognition = initializeRecognition();
+      if (!recognition) return;
+
+      recognitionRef.current = recognition;
       
-      // Create new recognition instance
-      recognitionRef.current = initializeRecognition();
-      
-      if (recognitionRef.current) {
-        isManualStop.current = false;
-        recognitionRef.current.start();
-      }
+      // Reset transcripts
+      setInterimTranscript('');
+      finalTranscriptRef.current = transcript;
+
+      recognition.start();
     } catch (error) {
-      console.error("Error starting speech recognition:", error);
-      toast({
-        title: "خطا در دسترسی به میکروفون",
-        description: "لطفاً دسترسی به میکروفون را فعال کنید",
-        variant: "destructive"
-      });
-    }
-  }, [isSupported, initializeRecognition, toast]);
-  
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
-      isManualStop.current = true;
-      recognitionRef.current.stop();
+      console.error('Error starting speech recognition:', error);
       setIsListening(false);
     }
+  }, [isSupported, isListening, initializeRecognition, transcript]);
+
+  const stopListening = useCallback(() => {
+    if (!isListening) return;
+
+    setIsListening(false);
+    
+    // Clear restart timeout
+    if (restartTimeoutRef.current) {
+      clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
+    }
+
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+
+    // Clear interim transcript
+    setInterimTranscript('');
   }, [isListening]);
-  
+
   const resetTranscript = useCallback(() => {
-    setTranscript("");
-    setInterimTranscript("");
-    onTranscriptChange("");
+    setTranscript('');
+    setInterimTranscript('');
+    finalTranscriptRef.current = '';
+    onTranscriptChange('');
   }, [onTranscriptChange]);
-  
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+      }
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  // Update transcript when initialValue changes
+  useEffect(() => {
+    if (initialValue !== transcript && !isListening) {
+      setTranscript(initialValue);
+      finalTranscriptRef.current = initialValue;
+    }
+  }, [initialValue, transcript, isListening]);
+
   return {
     isListening,
     transcript,
@@ -174,4 +208,6 @@ export function useContinuousSpeechRecognition({
     stopListening,
     resetTranscript
   };
-}
+};
+
+export default useContinuousSpeechRecognition;

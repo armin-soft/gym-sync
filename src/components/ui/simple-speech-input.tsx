@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, RefreshCw } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useSimpleSpeechRecognition } from "@/hooks/speech/useSimpleSpeechRecognition";
+import { useContinuousSpeechRecognition } from "@/hooks/speech/useContinuousSpeechRecognition";
 
 interface SimpleSpeechInputProps {
   value: string;
@@ -13,12 +14,15 @@ interface SimpleSpeechInputProps {
   className?: string;
 }
 
-export function SimpleSpeechInput({ 
-  value, 
-  onChange, 
-  placeholder = "برای شروع ضبط صدا، روی میکروفون کلیک کنید",
-  className 
-}: SimpleSpeechInputProps) {
+export const SimpleSpeechInput: React.FC<SimpleSpeechInputProps> = ({
+  value,
+  onChange,
+  placeholder = "متن خود را وارد کنید یا از گفتار به نوشتار استفاده کنید",
+  className
+}) => {
+  const [isManualEdit, setIsManualEdit] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const {
     isListening,
     transcript,
@@ -27,112 +31,132 @@ export function SimpleSpeechInput({
     startListening,
     stopListening,
     resetTranscript
-  } = useSimpleSpeechRecognition({
-    onTranscriptChange: onChange,
+  } = useContinuousSpeechRecognition({
+    onTranscriptChange: (text) => {
+      onChange(text);
+      setIsManualEdit(false);
+    },
     initialValue: value,
-    lang: "fa-IR"
+    lang: "fa-IR",
+    continuous: true,
+    interimResults: true
   });
 
-  const handleToggle = () => {
+  const handleToggleListening = async () => {
     if (isListening) {
       stopListening();
     } else {
-      startListening();
+      setIsManualEdit(false);
+      try {
+        await startListening();
+      } catch (error) {
+        console.error("Error starting speech recognition:", error);
+      }
     }
   };
 
   const handleClear = () => {
     resetTranscript();
+    onChange("");
+    setIsManualEdit(false);
   };
 
+  const handleManualChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    onChange(newValue);
+    setIsManualEdit(true);
+  };
+
+  const displayText = isManualEdit ? value : (transcript || interimTranscript || value);
+
   return (
-    <div className={cn("space-y-2", className)} dir="rtl">
-      <div className="flex items-stretch w-full">
-        <div 
+    <div className={cn("space-y-3", className)} dir="rtl">
+      <div className="relative">
+        <Textarea
+          ref={textareaRef}
+          value={displayText}
+          onChange={handleManualChange}
+          placeholder={placeholder}
           className={cn(
-            "relative flex-1 rounded-l-md border overflow-hidden transition-all duration-300",
-            isListening 
-              ? "border-red-400 bg-red-50/30" 
-              : "border-input bg-background"
+            "min-h-[120px] max-h-[300px] resize-y text-right pr-3 pl-20",
+            isListening && "border-red-300 ring-2 ring-red-100"
           )}
-        >
-          <div className="px-3 py-2 pr-12 h-11 text-right w-full overflow-hidden whitespace-nowrap text-ellipsis">
-            {transcript || interimTranscript || placeholder}
-            {interimTranscript && (
-              <span className="text-muted-foreground"> {interimTranscript}</span>
-            )}
-          </div>
-          
-          {/* Clear button */}
-          <AnimatePresence>
-            {(transcript || interimTranscript) && !isListening && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition-colors"
-                onClick={handleClear}
-                type="button"
-              >
-                <RefreshCw className="h-4 w-4 text-muted-foreground" />
-              </motion.button>
-            )}
-          </AnimatePresence>
-        </div>
+          dir="rtl"
+        />
         
-        <Button
-          type="button"
-          className={cn(
-            "h-11 px-3 rounded-l-none rounded-r-md transition-all duration-300",
-            isListening 
-              ? "bg-red-500 hover:bg-red-600" 
-              : "bg-primary hover:bg-primary/90"
+        <div className="absolute left-2 top-2 flex flex-col gap-1">
+          {isSupported && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleToggleListening}
+              variant={isListening ? "destructive" : "outline"}
+              className={cn(
+                "h-8 w-8 p-0",
+                isListening && "animate-pulse bg-red-500 hover:bg-red-600"
+              )}
+            >
+              <AnimatePresence mode="wait">
+                {isListening ? (
+                  <motion.div
+                    key="mic-off"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <MicOff className="h-4 w-4" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="mic"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Mic className="h-4 w-4" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
           )}
-          onClick={handleToggle}
-          disabled={!isSupported}
-        >
-          <AnimatePresence mode="wait">
-            {isListening ? (
-              <motion.div
-                key="mic-off"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <MicOff className="h-5 w-5" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="mic"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Mic className="h-5 w-5" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Button>
+          
+          {displayText && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleClear}
+              variant="ghost"
+              className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+            >
+              <VolumeX className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
       
       {isListening && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="text-center"
+          exit={{ opacity: 0, y: 10 }}
+          className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 p-3 rounded-lg border border-red-200 dark:border-red-800"
         >
-          <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-600 text-xs">
-            در حال ضبط... واضح صحبت کنید
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+          <span className="font-medium">در حال ضبط صدا...</span>
+          <span className="text-xs text-muted-foreground">
+            (می‌توانید مکث کنید، ضبط ادامه دارد)
           </span>
         </motion.div>
       )}
       
-      {!isSupported && (
-        <div className="text-xs text-rose-600 text-center px-2 py-1 bg-rose-50 rounded-md">
-          مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند
+      {interimTranscript && !isManualEdit && (
+        <div className="text-xs text-gray-500 text-right bg-gray-50 dark:bg-gray-900 p-2 rounded border">
+          <span className="opacity-60">در حال تایپ: </span>
+          <span className="italic">{interimTranscript}</span>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default SimpleSpeechInput;

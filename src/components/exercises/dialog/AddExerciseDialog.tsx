@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { 
   Dialog,
   DialogContent, 
@@ -47,6 +47,18 @@ export function AddExerciseDialog({
   activeTab,
   setActiveTab,
 }: AddExerciseDialogProps) {
+  
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      onFormDataChange({ 
+        name: "", 
+        categoryId: categories.length > 0 ? categories[0].id : 0 
+      });
+      setGroupText("");
+    }
+  }, [isOpen, categories, onFormDataChange, setGroupText]);
+
   const handleClose = () => {
     if (!isSaving) {
       onOpenChange(false);
@@ -55,13 +67,14 @@ export function AddExerciseDialog({
   
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-indigo-100/50 dark:border-indigo-900/30">
+      <DialogContent className="sm:max-w-lg max-w-[calc(100%-2rem)] mx-auto bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-indigo-100/50 dark:border-indigo-900/30 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-center bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
             افزودن حرکت جدید
           </DialogTitle>
           <DialogClose className="absolute top-2 right-2" />
         </DialogHeader>
+        
         <div className="space-y-6 py-4 text-right">
           <Tabs 
             defaultValue="single" 
@@ -69,7 +82,7 @@ export function AddExerciseDialog({
             value={activeTab}
             onValueChange={setActiveTab}
           >
-            <TabsList className="grid grid-cols-2 mb-4 bg-gray-100 dark:bg-gray-800">
+            <TabsList className="grid grid-cols-2 mb-6 bg-gray-100 dark:bg-gray-800">
               <TabsTrigger 
                 value="single"
                 className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-violet-600 data-[state=active]:text-white"
