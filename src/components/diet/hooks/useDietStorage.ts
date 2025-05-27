@@ -4,25 +4,29 @@ import { Meal, WeekDay } from "@/types/meal";
 import { useToast } from "@/hooks/use-toast";
 
 /**
- * استاندارد کردن روزهای هفته برای جلوگیری از مشکلات تکراری
+ * استاندارد کردن روزهای هفته برای جلوگیری از مشکلات تکراری - نسخه اصلاح شده
  */
 export const normalizeDay = (day: string): string => {
-  // حذف فضای خالی و یکسان‌سازی
-  const normalizedDay = day.trim().toLowerCase();
+  if (!day) return '';
+  
+  // حذف تمام فضاهای خالی و تبدیل به حروف کوچک
+  const cleanDay = day.trim().replace(/\s+/g, '').toLowerCase();
   
   // نگاشت برای استاندارد کردن نوشتار روزها
   const dayMap: Record<string, WeekDay> = {
     'شنبه': 'شنبه',
-    'يکشنبه': 'یکشنبه',
-    'یک شنبه': 'یکشنبه',
+    'یکشنبه': 'یکشنبه',
+    'يکشنبه': 'یکشنبه', // یای عربی
+    'یک‌شنبه': 'یکشنبه',
     'یکشنبه': 'یکشنبه',
     'دوشنبه': 'دوشنبه',
-    'دو شنبه': 'دوشنبه',
+    'دو‌شنبه': 'دوشنبه',
     'سه‌شنبه': 'سه شنبه',
-    'سه شنبه': 'سه شنبه',
-    'سه‌ شنبه': 'سه شنبه',
     'سهشنبه': 'سه شنبه',
+    'سه‌ شنبه': 'سه شنبه',
+    'سه شنبه': 'سه شنبه',
     'چهارشنبه': 'چهارشنبه',
+    'چهار‌شنبه': 'چهارشنبه',
     'چهار شنبه': 'چهارشنبه',
     'پنج‌شنبه': 'پنج شنبه',
     'پنجشنبه': 'پنج شنبه',
@@ -30,14 +34,14 @@ export const normalizeDay = (day: string): string => {
     'جمعه': 'جمعه'
   };
   
-  // یافتن معادل استاندارد
-  for (const [key, value] of Object.entries(dayMap)) {
-    if (key.toLowerCase() === normalizedDay) {
-      return value;
+  // جستجو در نگاشت
+  for (const [variant, standard] of Object.entries(dayMap)) {
+    if (variant.replace(/\s+/g, '').toLowerCase() === cleanDay) {
+      return standard;
     }
   }
   
-  // در صورت عدم تطابق، مقدار اصلی را برگردان
+  // اگر پیدا نشد، همان مقدار اصلی را برگردان
   return day;
 };
 
