@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { SupplementCategory } from "@/types/supplement";
 import { TabsHeader } from "./TabsHeader";
 import { TabContent } from "./TabContent";
+import { SupplementsLoading } from "./SupplementsLoading";
 
 interface SupplementTabsProps {
   activeTab: 'supplement' | 'vitamin';
@@ -39,11 +40,8 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="space-y-4 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary m-auto"></div>
-          <p className="text-muted-foreground">در حال بارگذاری...</p>
-        </div>
+      <div className="h-full flex flex-col overflow-hidden rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-lg backdrop-blur-sm">
+        <SupplementsLoading type={activeTab} />
       </div>
     );
   }
