@@ -1,27 +1,33 @@
 
 import { useState, useEffect } from "react";
-import { Exercise } from "@/types/exercise";
+import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useQueryClient } from "@tanstack/react-query";
+import { useExerciseData } from "./useExerciseData";
 
-export function useExerciseDialogLogic({
+interface UseExerciseDialogLogicProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  selectedExercise?: Exercise;
+  categories: ExerciseCategory[];
+  formData: { name: string; categoryId: number };
+  onFormDataChange: (data: { name: string; categoryId: number }) => void;
+  onSave: (data: { name: string; categoryId: number }) => Promise<void>;
+}
+
+export const useExerciseDialogLogic = ({
   isOpen,
   onOpenChange,
   selectedExercise,
   categories,
   formData,
   onFormDataChange,
-  onSave,
-}: {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  selectedExercise?: Exercise;
-  categories: any[];
-  formData: { name: string; categoryId: number };
-  onFormDataChange: (data: { name: string; categoryId: number }) => void;
-  onSave: (data: { name: string; categoryId: number }) => Promise<void>;
-}) {
+  onSave
+}: UseExerciseDialogLogicProps) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { exercises } = useExerciseData();
+  
   const [groupText, setGroupText] = useState("");
   const [activeTab, setActiveTab] = useState("single");
   const [isSaving, setIsSaving] = useState(false);
@@ -29,119 +35,142 @@ export function useExerciseDialogLogic({
   const [totalToSave, setTotalToSave] = useState(0);
   const [skippedExercises, setSkippedExercises] = useState<string[]>([]);
 
+  // Reset states when dialog opens/closes
   useEffect(() => {
-    if (selectedExercise) {
-      onFormDataChange({
-        name: selectedExercise.name,
-        categoryId: selectedExercise.categoryId
-      });
+    if (!isOpen) {
+      setGroupText("");
       setActiveTab("single");
-    } else {
-      if (!isOpen) {
-        setGroupText("");
-        setActiveTab("single");
-        setSkippedExercises([]);
-        onFormDataChange({ name: "", categoryId: categories[0]?.id || 0 });
-      }
+      setIsSaving(false);
+      setCurrentSaveIndex(0);
+      setTotalToSave(0);
+      setSkippedExercises([]);
     }
-  }, [isOpen, selectedExercise, categories, onFormDataChange]);
+  }, [isOpen]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && isOpen) {
-        if (activeTab === "single" && formData.name.trim()) {
-          handleSave();
-        }
-      }
-    };
+  const saveGroupExercises = async () => {
+    if (!groupText.trim()) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "لطفاً نام حرکت‌ها را وارد کنید"
+      });
+      return;
+    }
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, activeTab, formData.name]);
+    // Split by lines and clean up
+    const exerciseNames = groupText
+      .split('\n')
+      .map(name => name.trim())
+      .filter(name => name.length > 0);
 
-  const handleSave = async () => {
-    if (isSaving) return;
-    
+    if (exerciseNames.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "لطفاً نام حرکت‌ها را وارد کنید"
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    setTotalToSave(exerciseNames.length);
+    setCurrentSaveIndex(0);
+    setSkippedExercises([]);
+
+    const skipped: string[] = [];
+    let savedCount = 0;
+
     try {
-      if (activeTab === "single") {
-        if (!formData.name.trim()) {
-          toast({
-            variant: "destructive",
-            title: "خطا",
-            description: "لطفاً نام حرکت را وارد کنید"
-          });
-          return;
-        }
-        setIsSaving(true);
-        await onSave(formData);
-        onOpenChange(false);
-      } else {
-        const exercises = groupText
-          .split('\n')
-          .map(line => line.trim())
-          .filter(Boolean);
-        
-        if (exercises.length === 0) {
-          toast({
-            variant: "destructive",
-            title: "خطا",
-            description: "لطفاً حداقل یک حرکت را وارد کنید"
-          });
-          return;
+      // Get current exercises list
+      const currentExercises = [...exercises];
+      const newExercises: Exercise[] = [];
+
+      for (let i = 0; i < exerciseNames.length; i++) {
+        const exerciseName = exerciseNames[i];
+        setCurrentSaveIndex(i);
+
+        console.log(`Processing exercise ${i + 1}/${exerciseNames.length}: "${exerciseName}"`);
+
+        // Check for duplicates (case insensitive)
+        const isDuplicate = currentExercises.some(ex => 
+          ex.name.toLowerCase().trim() === exerciseName.toLowerCase().trim()
+        );
+
+        if (isDuplicate) {
+          console.log(`Skipping duplicate exercise: "${exerciseName}"`);
+          skipped.push(exerciseName);
+          continue;
         }
 
-        setIsSaving(true);
-        setTotalToSave(exercises.length);
-        setSkippedExercises([]);
-        let savedCount = 0;
-        let skipped: string[] = [];
-        
-        // ایجاد یک آرایه از وعده‌ها برای ذخیره همزمان حرکت‌ها
-        const savePromises = exercises.map(async (exercise, i) => {
-          try {
-            setCurrentSaveIndex(i);
-            // کمی تأخیر برای جلوگیری از مسدود شدن رابط کاربری
-            await new Promise(resolve => setTimeout(resolve, 50));
-            
-            await onSave({
-              name: exercise,
-              categoryId: formData.categoryId
-            });
-            
-            savedCount++;
-            return { success: true, exercise };
-          } catch (error) {
-            console.error(`خطا در ذخیره حرکت "${exercise}"`, error);
-            skipped.push(exercise);
-            return { success: false, exercise };
-          }
-        });
-        
-        // انتظار برای تکمیل همه وعده‌ها
-        await Promise.all(savePromises);
-        
-        setSkippedExercises(skipped);
+        // Create new exercise
+        const newExercise: Exercise = {
+          id: Date.now() + i, // Ensure unique IDs
+          name: exerciseName,
+          categoryId: formData.categoryId
+        };
 
-        // نمایش خلاصه نتایج
-        if (skipped.length > 0) {
-          toast({
-            title: "هشدار",
-            description: `${toPersianNumbers(savedCount)} حرکت با موفقیت اضافه شد. ${toPersianNumbers(skipped.length)} حرکت به دلیل تکراری بودن رد شد.`,
-          });
-        } else {
-          toast({
-            title: "موفقیت",
-            description: `${toPersianNumbers(savedCount)} حرکت با موفقیت اضافه شد`
-          });
-        }
+        newExercises.push(newExercise);
+        currentExercises.push(newExercise);
+        savedCount++;
 
-        if (savedCount > 0) {
-          onOpenChange(false);
-          setGroupText("");
-        }
+        console.log(`Created exercise: "${exerciseName}" with ID: ${newExercise.id}`);
       }
+
+      // Save all new exercises to localStorage and update cache
+      if (newExercises.length > 0) {
+        localStorage.setItem("exercises", JSON.stringify(currentExercises));
+        queryClient.setQueryData(["exercises"], currentExercises);
+        
+        console.log(`Successfully saved ${newExercises.length} new exercises`);
+      }
+
+      setSkippedExercises(skipped);
+
+      // Show success message
+      if (savedCount > 0) {
+        toast({
+          title: "موفقیت",
+          description: `${savedCount} حرکت جدید با موفقیت اضافه شد` + 
+            (skipped.length > 0 ? ` (${skipped.length} حرکت تکراری رد شد)` : ""),
+          variant: "success",
+        });
+      } else if (skipped.length > 0) {
+        toast({
+          title: "اطلاع",
+          description: "تمام حرکت‌ها قبلاً موجود بودند",
+          variant: "default",
+        });
+      }
+
+      // Close dialog if all successful or some saved
+      if (savedCount > 0) {
+        setTimeout(() => {
+          onOpenChange(false);
+        }, 1500);
+      }
+
+    } catch (error) {
+      console.error('Error saving group exercises:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "خطا در ذخیره‌سازی حرکت‌ها"
+      });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (activeTab === "group") {
+      await saveGroupExercises();
+    } else {
+      // Single exercise save
+      try {
+        await onSave(formData);
+      } catch (error) {
+        console.error('Error saving single exercise:', error);
+      }
     }
   };
 
@@ -156,4 +185,6 @@ export function useExerciseDialogLogic({
     skippedExercises,
     handleSave
   };
-}
+};
+
+export default useExerciseDialogLogic;

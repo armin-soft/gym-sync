@@ -30,11 +30,18 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
   useEffect(() => {
     setFormData(prev => ({ ...prev, categoryId: parseInt(categoryId) || 0 }));
   }, [categoryId]);
+
+  // Clear selected exercises when category changes
+  useEffect(() => {
+    setSelectedExerciseIds([]);
+  }, [categoryId]);
   
   // Filter exercises based on selected category
   const filteredExercises = exercises
     .filter(ex => ex.categoryId.toString() === categoryId)
     .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  
+  console.log(`Filtered exercises for category ${categoryId}:`, filteredExercises);
   
   // Find selected category and type
   const selectedCategory = categories.find(cat => cat.id.toString() === categoryId);
