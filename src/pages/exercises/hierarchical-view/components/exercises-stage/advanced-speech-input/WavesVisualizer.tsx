@@ -35,4 +35,5 @@ const WavesVisualizer: React.FC<WavesVisualizerProps> = ({ isActive, className }
   );
 };
 
+export { WavesVisualizer };
 export default WavesVisualizer;

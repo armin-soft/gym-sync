@@ -7,10 +7,10 @@ import { useMicrophonePermission } from "@/hooks/speech/useMicrophonePermission"
 import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { SpeechPopover } from "./SpeechPopover";
-import { WavesVisualizer } from "./WavesVisualizer";
+import SpeechPopover from "./SpeechPopover";
+import WavesVisualizer from "./WavesVisualizer";
 
-interface AdvancedSpeechInputProps {
+export interface AdvancedSpeechInputProps {
   onTranscriptChange: (transcript: string) => void;
   value?: string;
   placeholder?: string;
@@ -80,43 +80,40 @@ export function AdvancedSpeechInput({
         </div>
         
         <SpeechPopover 
-          isOpen={isPopoverOpen}
-          onOpenChange={setIsPopoverOpen}
+          show={isPopoverOpen}
           isListening={isListening}
-          transcript={transcript}
-          interimTranscript={interimTranscript}
+        />
+        
+        <Button
+          type="button"
+          variant={isListening ? "destructive" : "default"}
+          size="icon"
+          onClick={handleToggle}
+          disabled={!isSupported}
+          className="h-11 w-11"
         >
-          <Button
-            type="button"
-            variant={isListening ? "destructive" : "default"}
-            size="icon"
-            onClick={handleToggle}
-            disabled={!isSupported}
-            className="h-11 w-11"
-          >
-            <AnimatePresence mode="wait">
-              {isListening ? (
-                <motion.div
-                  key="mic-off"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                >
-                  <MicOff className="h-5 w-5" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="mic"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                >
-                  <Mic className="h-5 w-5" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Button>
-        </SpeechPopover>
+          <AnimatePresence mode="wait">
+            {isListening ? (
+              <motion.div
+                key="mic-off"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+              >
+                <MicOff className="h-5 w-5" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="mic"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+              >
+                <Mic className="h-5 w-5" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Button>
         
         {(transcript || interimTranscript) && (
           <Button
