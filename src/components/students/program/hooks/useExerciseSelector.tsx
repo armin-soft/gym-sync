@@ -23,6 +23,14 @@ export const useExerciseSelector = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   
+  // Debug logs
+  useEffect(() => {
+    console.log("Exercise selector data:");
+    console.log("Exercise types:", exerciseTypes);
+    console.log("Categories:", categories);
+    console.log("Exercises:", exercises);
+  }, [exerciseTypes, categories, exercises]);
+  
   // Auto-select type and category if a student has existing exercises
   useEffect(() => {
     if (selectedExercises.length > 0 && !selectedType) {
@@ -42,7 +50,10 @@ export const useExerciseSelector = ({
 
   // Filter categories by selected type
   const filteredCategories = useMemo(() => {
-    if (!selectedType) return [];
+    if (!selectedType) {
+      console.log("No type selected, returning empty categories");
+      return [];
+    }
     
     const filtered = categories.filter(cat => cat.type === selectedType);
     console.log(`Filtered categories for type ${selectedType}:`, filtered);
@@ -51,8 +62,13 @@ export const useExerciseSelector = ({
   
   // Filter exercises by selected type and category
   const filteredExercises = useMemo(() => {
-    if (!selectedType || !selectedCategoryId) {
-      console.log("No type or category selected, returning empty array");
+    if (!selectedType) {
+      console.log("No type selected, returning empty exercises");
+      return [];
+    }
+    
+    if (!selectedCategoryId) {
+      console.log("No category selected, returning empty exercises");
       return [];
     }
     
