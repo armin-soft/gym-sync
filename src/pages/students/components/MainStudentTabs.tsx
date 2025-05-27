@@ -50,15 +50,19 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   isProfileComplete
 }) => {
   // Filter students based on active tab - using safe property access
-  const activeStudents = students.filter(student => !student.archived)
+  const activeStudents = students.filter(student => !(student as any).archived)
     .filter(student =>
       (student.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (student.family || '').toLowerCase().includes(searchQuery.toLowerCase())
+      ((student as any).family || '').toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => {
       const sortByValue = sortBy === 'name' ? 'name' : 'family';
-      const aValue = (a[sortByValue as keyof Student] || '').toString().toLowerCase();
-      const bValue = (b[sortByValue as keyof Student] || '').toString().toLowerCase();
+      const aValue = sortByValue === 'name' 
+        ? (a.name || '').toString().toLowerCase()
+        : ((a as any).family || '').toString().toLowerCase();
+      const bValue = sortByValue === 'name' 
+        ? (b.name || '').toString().toLowerCase()
+        : ((b as any).family || '').toString().toLowerCase();
 
       if (aValue < bValue) {
         return sortOrder === 'asc' ? -1 : 1;
@@ -69,15 +73,19 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
       return 0;
     });
 
-  const archivedStudents = students.filter(student => student.archived)
+  const archivedStudents = students.filter(student => (student as any).archived)
     .filter(student =>
       (student.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (student.family || '').toLowerCase().includes(searchQuery.toLowerCase())
+      ((student as any).family || '').toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => {
       const sortByValue = sortBy === 'name' ? 'name' : 'family';
-      const aValue = (a[sortByValue as keyof Student] || '').toString().toLowerCase();
-      const bValue = (b[sortByValue as keyof Student] || '').toString().toLowerCase();
+      const aValue = sortByValue === 'name' 
+        ? (a.name || '').toString().toLowerCase()
+        : ((a as any).family || '').toString().toLowerCase();
+      const bValue = sortByValue === 'name' 
+        ? (b.name || '').toString().toLowerCase()
+        : ((b as any).family || '').toString().toLowerCase();
 
       if (aValue < bValue) {
         return sortOrder === 'asc' ? -1 : 1;
