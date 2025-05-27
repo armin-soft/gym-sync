@@ -51,19 +51,23 @@ export function AddExerciseDialog({
   // Reset form when dialog opens
   useEffect(() => {
     if (isOpen) {
+      // فقط نام را ریست کن، دسته‌بندی را حفظ کن
       onFormDataChange({ 
         name: "", 
-        categoryId: categories.length > 0 ? categories[0].id : 0 
+        categoryId: formData.categoryId || (categories.length > 0 ? categories[0].id : 0)
       });
       setGroupText("");
     }
-  }, [isOpen, categories, onFormDataChange, setGroupText]);
+  }, [isOpen, categories, onFormDataChange, setGroupText, formData.categoryId]);
 
   const handleClose = () => {
     if (!isSaving) {
       onOpenChange(false);
     }
   };
+
+  // پیدا کردن دسته‌بندی انتخاب شده
+  const selectedCategory = categories.find(c => c.id === formData.categoryId);
   
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -72,6 +76,16 @@ export function AddExerciseDialog({
           <DialogTitle className="text-xl font-bold text-center bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
             افزودن حرکت جدید
           </DialogTitle>
+          {selectedCategory && (
+            <div className="text-center mt-2">
+              <span className="text-sm text-muted-foreground">
+                دسته‌بندی: 
+              </span>
+              <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mr-1">
+                {selectedCategory.name}
+              </span>
+            </div>
+          )}
           <DialogClose className="absolute top-2 right-2" />
         </DialogHeader>
         
@@ -101,6 +115,7 @@ export function AddExerciseDialog({
               <TabsContent 
                 value="single" 
                 className="mt-0 border-0 p-0"
+                key="single"
               >
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -121,6 +136,7 @@ export function AddExerciseDialog({
               <TabsContent 
                 value="group" 
                 className="mt-0 border-0 p-0"
+                key="group"
               >
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -131,7 +147,7 @@ export function AddExerciseDialog({
                   <div className="mb-4">
                     <p className="text-sm text-muted-foreground mb-3">
                       دسته‌بندی انتخاب شده: <span className="font-medium text-indigo-600 dark:text-indigo-400">
-                        {categories.find(c => c.id === formData.categoryId)?.name}
+                        {selectedCategory?.name || 'نامشخص'}
                       </span>
                     </p>
                     <select

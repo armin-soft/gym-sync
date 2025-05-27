@@ -22,13 +22,24 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>();
-  const [formData, setFormData] = useState({ name: "", categoryId: parseInt(categoryId) || 0 });
+  
+  // تنظیم دسته‌بندی پیش‌فرض برای حرکت جدید
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    categoryId: parseInt(categoryId) || 0 
+  });
+  
   const [quickSpeechText, setQuickSpeechText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Update form data when category changes
+  // Update form data when category changes - تنظیم خودکار دسته‌بندی
   useEffect(() => {
-    setFormData(prev => ({ ...prev, categoryId: parseInt(categoryId) || 0 }));
+    const newCategoryId = parseInt(categoryId) || 0;
+    setFormData(prev => ({ 
+      ...prev, 
+      categoryId: newCategoryId 
+    }));
+    console.log(`دسته‌بندی به‌صورت خودکار تنظیم شد: ${newCategoryId}`);
   }, [categoryId]);
 
   // Clear selected exercises when category changes
@@ -134,6 +145,13 @@ export const useExercisesStage = ({ categoryId, typeId }: UseExercisesStageProps
       
       setIsAddDialogOpen(false);
       setSelectedExercise(undefined);
+      
+      // ریست کردن فرم با حفظ دسته‌بندی فعلی
+      setFormData({ 
+        name: "", 
+        categoryId: parseInt(categoryId) || 0 
+      });
+      
       return Promise.resolve();
     } catch (error) {
       console.error('Error saving exercise:', error);
