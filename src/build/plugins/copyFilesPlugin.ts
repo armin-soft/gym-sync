@@ -44,12 +44,6 @@ export const copyFilesPlugin = () => {
           });
         }
 
-        // کپی فایل Offline.html
-        if (fs.existsSync('public/Offline.html')) {
-          fs.copyFileSync('public/Offline.html', 'dist/Offline.html');
-          console.log('کپی Offline.html');
-        }
-
         // پیدا کردن فایل‌های CSS و JS بدون استفاده از glob
         const getFilesWithExtension = (dir: string, ext: string): string[] => {
           if (!fs.existsSync(dir)) return [];
@@ -80,12 +74,9 @@ export const copyFilesPlugin = () => {
     <meta name="theme-color" content="#7c3aed" />
     <title>مدیریت برنامه</title>
 
-    <!-- Favicon and PWA -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="./assets/images/Logo.png" />
     <link rel="apple-touch-icon" href="./assets/images/Logo.png" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
