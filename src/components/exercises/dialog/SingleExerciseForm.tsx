@@ -1,12 +1,11 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ExerciseCategory } from "@/types/exercise";
 import { SimpleSpeechInput } from "@/components/ui/simple-speech-input";
 import { InputTypeSelector } from "./InputTypeSelector";
 import { motion, AnimatePresence } from "framer-motion";
-import { detectExerciseCategory } from "@/utils/categoryDetection";
 
 interface SingleExerciseFormProps {
   value: string;
@@ -24,28 +23,6 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
   onCategoryChange,
 }) => {
   const [inputType, setInputType] = useState<"speech" | "manual">("manual");
-  const [detectedCategory, setDetectedCategory] = useState<ExerciseCategory | null>(null);
-
-  // تشخیص خودکار دسته‌بندی هنگام تغییر نام حرکت
-  useEffect(() => {
-    if (value && value.trim().length > 2) {
-      const detected = detectExerciseCategory(value, categories);
-      if (detected && detected.id !== categoryId) {
-        setDetectedCategory(detected);
-      } else {
-        setDetectedCategory(null);
-      }
-    } else {
-      setDetectedCategory(null);
-    }
-  }, [value, categories, categoryId]);
-
-  const handleApplyDetectedCategory = () => {
-    if (detectedCategory) {
-      onCategoryChange(detectedCategory.id);
-      setDetectedCategory(null);
-    }
-  };
 
   return (
     <div className="space-y-6 text-right">
@@ -91,29 +68,6 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* نمایش پیشنهاد دسته‌بندی خودکار */}
-        {detectedCategory && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg"
-          >
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-blue-700 dark:text-blue-300">
-                <span className="font-medium">دسته‌بندی پیشنهادی: </span>
-                <span className="font-bold">{detectedCategory.name}</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleApplyDetectedCategory}
-                className="text-xs bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"
-              >
-                اعمال
-              </button>
-            </div>
-          </motion.div>
-        )}
       </div>
       
       <div>
