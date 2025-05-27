@@ -1,5 +1,6 @@
 
 export * from './useSimpleSpeechRecognition';
+export * from './useContinuousSpeechRecognition';
 export * from './speech-recognition-types';
 export * from './useMicrophonePermission';
 export * from './useRecognitionSetup';
