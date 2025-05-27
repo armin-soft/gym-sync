@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ExerciseCategory } from "@/types/exercise";
@@ -13,6 +13,7 @@ interface SingleExerciseFormProps {
   categories: ExerciseCategory[];
   categoryId: number;
   onCategoryChange: (id: number) => void;
+  preselectedCategoryId?: number; // اضافه کردن پراپ جدید
 }
 
 export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
@@ -21,8 +22,19 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
   categories,
   categoryId,
   onCategoryChange,
+  preselectedCategoryId
 }) => {
   const [inputType, setInputType] = useState<"speech" | "manual">("manual");
+
+  // تنظیم دسته‌بندی پیش‌فرض در صورت وجود
+  useEffect(() => {
+    if (preselectedCategoryId && categories.length > 0) {
+      const categoryExists = categories.find(cat => cat.id === preselectedCategoryId);
+      if (categoryExists) {
+        onCategoryChange(preselectedCategoryId);
+      }
+    }
+  }, [preselectedCategoryId, categories, onCategoryChange]);
 
   return (
     <div className="space-y-6 text-right">
@@ -72,6 +84,11 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
       
       <div>
         <Label className="text-base mb-3 block">دسته‌بندی تمرین</Label>
+        {preselectedCategoryId && (
+          <p className="text-sm text-green-600 dark:text-green-400 mb-2">
+            ✓ دسته‌بندی به صورت خودکار انتخاب شد
+          </p>
+        )}
         <select
           className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow text-right"
           value={categoryId}
