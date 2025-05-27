@@ -20,7 +20,7 @@ const normalizeDay = (day: string): string => {
   return day.replace(/\s+/g, ' ');  // استفاده از فضای خالی معمولی
 };
 
-// تعریف روزهای هفته با نوع صحیح - اصلاح شده با فضای خالی معمولی
+// تعریف روزهای هفته با ترتیب صحیح از شنبه تا جمعه
 const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
@@ -37,8 +37,8 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     new Set(meals.map(meal => normalizeDay(meal.day || '')))
   ).filter(Boolean) as WeekDay[];
   
-  // استفاده از اولین روز هفته به عنوان روز پیش‌فرض
-  const [selectedDay, setSelectedDay] = useState<WeekDay>(weekDays[0]);
+  // استفاده از شنبه به عنوان روز پیش‌فرض
+  const [selectedDay, setSelectedDay] = useState<WeekDay>('شنبه');
   const deviceInfo = useDeviceInfo();
   
   // تشخیص اینکه آیا کامپوننت هنوز نمایش داده می‌شود
@@ -65,11 +65,6 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
       });
       console.log(`Day ${day} has ${dayMeals.length} meals:`, dayMeals);
     });
-    
-    // اگر داده‌ای نیست، نمایش پیام مناسب
-    if (meals.length === 0) {
-      console.log("No meals data found! This might be the issue.");
-    }
     
     console.log("=== END DAY MEALS COMPONENT DEBUG ===");
     
@@ -113,9 +108,6 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               </h3>
               <p className="text-muted-foreground mb-4">
                 برای شروع، وعده غذایی جدید اضافه کنید
-              </p>
-              <p className="text-sm text-muted-foreground">
-                در حال بارگذاری داده‌ها از localStorage...
               </p>
             </div>
           </div>
