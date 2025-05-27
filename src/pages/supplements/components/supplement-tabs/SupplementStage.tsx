@@ -31,11 +31,11 @@ interface SupplementStageProps {
 
 export const SupplementStage: React.FC<SupplementStageProps> = ({
   type,
-  categories,
+  categories = [],
   onAddCategory,
   onEditCategory,
   onDeleteCategory,
-  supplements,
+  supplements = [],
   onAddSupplement,
   onEditSupplement,
   onDeleteSupplement,
@@ -54,7 +54,7 @@ export const SupplementStage: React.FC<SupplementStageProps> = ({
     type: type
   };
 
-  const displayCategories = [allCategory, ...categories];
+  const displayCategories = [allCategory, ...categories.filter(cat => cat && cat.id !== undefined)];
 
   // Filter supplements based on search and category
   const filteredSupplements = useMemo(() => {
@@ -63,22 +63,25 @@ export const SupplementStage: React.FC<SupplementStageProps> = ({
     // Apply search filter
     if (searchQuery.trim()) {
       filtered = filtered.filter(supplement =>
-        supplement.name.toLowerCase().includes(searchQuery.toLowerCase())
+        supplement?.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Apply category filter
     if (selectedCategory !== 'all') {
-      const selectedCat = categories.find(cat => cat.id.toString() === selectedCategory);
+      const selectedCat = categories.find(cat => 
+        cat && cat.id !== undefined && cat.id.toString() === selectedCategory
+      );
       if (selectedCat) {
         filtered = filtered.filter(supplement => 
-          supplement.categoryId === selectedCat.id
+          supplement?.categoryId === selectedCat.id
         );
       }
     }
 
     // Apply sorting
     filtered = [...filtered].sort((a, b) => {
+      if (!a?.name || !b?.name) return 0;
       const comparison = a.name.localeCompare(b.name, 'fa');
       return sortOrder === 'asc' ? comparison : -comparison;
     });
@@ -91,7 +94,7 @@ export const SupplementStage: React.FC<SupplementStageProps> = ({
     if (categoryId === 'all') {
       return supplements.length;
     }
-    return supplements.filter(s => s.categoryId === categoryId).length;
+    return supplements.filter(s => s?.categoryId === categoryId).length;
   };
 
   const handleClearSearch = () => {
@@ -213,7 +216,7 @@ export const SupplementStage: React.FC<SupplementStageProps> = ({
             )}
             {selectedCategory !== 'all' && (
               <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
-                دسته: {categories.find(c => c.id.toString() === selectedCategory)?.name}
+                دسته: {categories.find(c => c && c.id !== undefined && c.id.toString() === selectedCategory)?.name}
                 <button
                   onClick={() => onSelectCategory('all')}
                   className="ml-1 hover:text-indigo-900"
@@ -297,7 +300,7 @@ export const SupplementStage: React.FC<SupplementStageProps> = ({
                   >
                     {filteredSupplements.map((supplement, index) => (
                       <motion.div
-                        key={supplement.id}
+                        key={supplement?.id || index}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
@@ -306,7 +309,7 @@ export const SupplementStage: React.FC<SupplementStageProps> = ({
                         <SupplementCard
                           supplement={supplement}
                           onEdit={() => onEditSupplement(supplement)}
-                          onDelete={() => onDeleteSupplement(supplement.id)}
+                          onDelete={() => onDeleteSupplement(supplement?.id)}
                         />
                       </motion.div>
                     ))}
@@ -327,7 +330,7 @@ export const SupplementStage: React.FC<SupplementStageProps> = ({
             </span>
             <span>
               {selectedCategory !== 'all' && 
-                `دسته: ${categories.find(c => c.id.toString() === selectedCategory)?.name}`
+                `دسته: ${categories.find(c => c && c.id !== undefined && c.id.toString() === selectedCategory)?.name || ''}`
               }
             </span>
           </div>
