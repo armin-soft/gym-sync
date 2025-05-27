@@ -1,26 +1,28 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Type } from "lucide-react";
-import type { MealFormProps } from "./MealFormSchema";
+import { Control } from "react-hook-form";
+import { MealFormData } from "./MealFormSchema";
 
-export const MealNameField = ({ form }: Pick<MealFormProps, "form">) => {
+interface MealNameFieldProps {
+  control: Control<MealFormData>;
+}
+
+export const MealNameField = ({ control }: MealNameFieldProps) => {
   return (
     <FormField
-      control={form.control}
+      control={control}
       name="name"
       render={({ field }) => (
-        <FormItem className="text-right">
-          <FormLabel className="flex items-center gap-2">
-            <Type className="w-4 h-4 text-muted-foreground" />
-            نام غذا
-          </FormLabel>
+        <FormItem>
+          <FormLabel className="text-right">نام وعده غذایی *</FormLabel>
           <FormControl>
-            <Input 
-              placeholder="نام غذا را وارد کنید" 
-              className="bg-muted/50 focus:bg-background transition-colors duration-300 text-right"
-              {...field} 
-              dir="rtl"
+            <Input
+              placeholder="مثال: املت با نان سبوس‌دار"
+              className="text-right"
+              {...field}
+              autoComplete="off"
+              aria-label="نام وعده غذایی"
             />
           </FormControl>
           <FormMessage />

@@ -1,20 +1,16 @@
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { UtensilsCrossed } from "lucide-react";
-import type { Meal, MealType, WeekDay } from "@/types/meal";
+import React, { useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { MealFormContent } from "./meal-form/MealFormContent";
-import type { MealFormData } from "./meal-form/MealFormSchema";
+import { MealFormFooter } from "./meal-form/MealFormFooter";
+import type { Meal, MealType, WeekDay } from "@/types/meal";
+import { motion } from "framer-motion";
 
-export interface MealDialogProps {
+interface MealDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: Omit<Meal, "id">, mealId?: number) => boolean | void;
-  meal?: Meal | null;
+  onSave: (data: Omit<Meal, "id">, mealId?: number) => boolean;
+  meal?: Meal;
   mealTypes: MealType[];
   weekDays: WeekDay[];
 }
@@ -27,52 +23,60 @@ export const MealDialog = ({
   mealTypes,
   weekDays,
 }: MealDialogProps) => {
-  
-  const handleSubmit = (data: MealFormData) => {
-    // پیش‌پردازش داده‌ها - حذف فضاهای خالی اضافی در نام غذا و سایر فیلدها
-    const processedData = {
-      name: data.name.trim(),
-      type: data.type as MealType,
-      day: data.day as WeekDay,
-      description: data.description?.trim() || "",
-      category: data.category?.trim() || ""
+  const isEdit = !!meal;
+
+  // بستن دیالوگ هنگام فشردن کلید ESC
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && open) {
+        onOpenChange(false);
+      }
     };
-    
-    console.log("====== MEAL DIALOG SUBMISSION ======");
-    console.log("Form submitted with data:", processedData);
-    console.log("Current meal for editing:", meal);
-    console.log("Current meal ID for validation:", meal?.id);
-    
-    // بررسی تکراری بودن توسط تابع handleSave انجام می‌شود - با ارسال ID در صورت ویرایش
-    const result = onSave(processedData, meal?.id);
-    console.log("Save result:", result);
-    
-    // اگر ذخیره موفق بود، فرم را ریست کنیم
-    if (result !== false) {
-      onOpenChange(false);
+
+    if (open) {
+      document.addEventListener("keydown", handleKeyDown);
     }
-    console.log("====== END MEAL DIALOG SUBMISSION ======");
-  };
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0" dir="rtl" aria-describedby="meal-dialog-description">
-        <DialogHeader className="p-6 pb-4 bg-gradient-to-b from-muted/50 to-transparent">
-          <DialogTitle className="flex items-center gap-2 text-lg">
-            <UtensilsCrossed className="w-5 h-5 text-primary" />
-            {meal ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
-          </DialogTitle>
-        </DialogHeader>
-        <div id="meal-dialog-description" className="sr-only">
-          {meal ? "ویرایش اطلاعات وعده غذایی" : "افزودن وعده غذایی جدید به برنامه"}
-        </div>
-        <MealFormContent 
-          onSubmit={handleSubmit}
-          onCancel={() => onOpenChange(false)}
-          meal={meal}
-          mealTypes={mealTypes}
-          weekDays={weekDays}
-        />
+      <DialogContent 
+        className="max-w-2xl max-h-[90vh] overflow-y-auto" 
+        dir="rtl"
+        aria-describedby="meal-dialog-description"
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+        >
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-xl font-bold text-center">
+              {isEdit ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
+            </DialogTitle>
+            <DialogDescription id="meal-dialog-description" className="text-center text-muted-foreground">
+              {isEdit 
+                ? "اطلاعات وعده غذایی را ویرایش کنید" 
+                : "برای افزودن وعده غذایی جدید، فرم زیر را تکمیل کنید"
+              }
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-6">
+            <MealFormContent
+              meal={meal}
+              mealTypes={mealTypes}
+              weekDays={weekDays}
+              onSave={onSave}
+              onCancel={() => onOpenChange(false)}
+            />
+          </div>
+        </motion.div>
       </DialogContent>
     </Dialog>
   );
