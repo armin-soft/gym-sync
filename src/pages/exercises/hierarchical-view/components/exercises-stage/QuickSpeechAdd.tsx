@@ -9,7 +9,7 @@ import { useContinuousSpeechRecognition } from "@/hooks/speech/useContinuousSpee
 interface QuickSpeechAddProps {
   quickSpeechText: string;
   setQuickSpeechText: (value: string) => void;
-  onQuickAdd: () => void;
+  onQuickAdd: (text: string) => Promise<void>;
 }
 
 const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
@@ -34,7 +34,13 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey && quickSpeechText.trim()) {
       e.preventDefault();
-      onQuickAdd();
+      handleQuickAddClick();
+    }
+  };
+
+  const handleQuickAddClick = async () => {
+    if (quickSpeechText.trim()) {
+      await onQuickAdd(quickSpeechText.trim());
     }
   };
 
@@ -61,7 +67,7 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
             <div className="flex gap-2">
               <Button
                 size="sm"
-                onClick={onQuickAdd}
+                onClick={handleQuickAddClick}
                 disabled={!displayText.trim()}
                 className="bg-purple-600 hover:bg-purple-700 text-white"
               >
