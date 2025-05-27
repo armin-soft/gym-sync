@@ -28,7 +28,7 @@ const ExercisesList: React.FC<ExercisesListProps> = ({
   onAddExercise
 }) => {
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto">
+    <div className="flex-1 min-h-0 overflow-y-auto p-4">
       <motion.div 
         className={`grid gap-3 ${
           viewMode === "grid" 

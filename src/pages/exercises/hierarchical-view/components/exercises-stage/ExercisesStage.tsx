@@ -37,19 +37,20 @@ const ExercisesStage = React.memo(({ categoryId, typeId }: ExercisesStageProps) 
     setShowQuickSpeech
   } = useExercisesStage({ categoryId, typeId });
 
-  // اطمینان از ثابت بودن ابعاد صفحه برای جلوگیری از پریدن
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <ExerciseHeader
-        exerciseCount={filteredExercises.length}
-        selectedExerciseIds={selectedExerciseIds}
-        onDeleteClick={() => setIsDeleteDialogOpen(true)}
-        onAddExercise={() => setIsAddDialogOpen(true)}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-      />
+    <div className="flex flex-col h-full w-full">
+      <div className="flex-shrink-0">
+        <ExerciseHeader
+          exerciseCount={filteredExercises.length}
+          selectedExerciseIds={selectedExerciseIds}
+          onDeleteClick={() => setIsDeleteDialogOpen(true)}
+          onAddExercise={() => setIsAddDialogOpen(true)}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+        />
+      </div>
 
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-hidden">
         <ExercisesList
           filteredExercises={filteredExercises}
           selectedCategory={selectedCategory}
@@ -63,7 +64,7 @@ const ExercisesStage = React.memo(({ categoryId, typeId }: ExercisesStageProps) 
       </div>
 
       {showQuickSpeech && (
-        <div className="sticky bottom-0 w-full">
+        <div className="flex-shrink-0 border-t bg-background">
           <QuickSpeechAdd
             onQuickAdd={handleQuickAdd}
             quickSpeechText={quickSpeechText}

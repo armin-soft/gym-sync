@@ -12,27 +12,25 @@ interface StudentExerciseListWrapperProps {
 
 export const StudentExerciseListWrapper: React.FC<StudentExerciseListWrapperProps> = ({
   children,
-  maxHeight = "auto",
+  maxHeight = "100%",
   className = "",
   viewMode = "grid"
 }) => {
   return (
-    <ScrollArea
-      className={cn(
-        "flex-1 p-4 overflow-auto",
-        className
-      )}
-      style={{ maxHeight }}
-    >
-      <div
-        className={cn(
-          "w-full", 
-          viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col space-y-3"
-        )}
-      >
-        {children}
-      </div>
-    </ScrollArea>
+    <div className={cn("flex-1 min-h-0 overflow-hidden", className)}>
+      <ScrollArea className="h-full w-full">
+        <div className="p-4">
+          <div
+            className={cn(
+              "w-full", 
+              viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "flex flex-col space-y-3"
+            )}
+          >
+            {children}
+          </div>
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
 
