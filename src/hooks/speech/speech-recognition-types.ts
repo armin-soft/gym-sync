@@ -99,10 +99,3 @@ export interface SpeechRecognitionConstructor {
   new (): SpeechRecognition;
   prototype: SpeechRecognition;
 }
-
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-  }
-}
