@@ -1,5 +1,5 @@
 
-export * from './useSpeechRecognition';
+export * from './useSimpleSpeechRecognition';
 export * from './speech-recognition-types';
 export * from './useMicrophonePermission';
 export * from './useRecognitionSetup';
@@ -10,5 +10,5 @@ export * from './useBrowserSupport';
 export * from './useRecognitionState';
 export * from './utils';
 
-// Export default for convenience
-export { default } from './useSpeechRecognition';
+// Export the new simple hook as default for convenience
+export { useSimpleSpeechRecognition as default } from './useSimpleSpeechRecognition';

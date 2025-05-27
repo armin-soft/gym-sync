@@ -2,7 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { useSpeechRecognition } from "@/hooks/speech";
+import { useSimpleSpeechRecognition } from "@/hooks/speech/useSimpleSpeechRecognition";
 import { TranscriptDisplay } from "@/components/ui/speech/transcript-display";
 import { ControlButtons } from "@/components/ui/speech/control-buttons";
 import { RecordingIndicator } from "@/components/ui/speech/recording-indicator";
@@ -32,14 +32,12 @@ export const SpeechToText = ({
     startListening,
     stopListening,
     resetTranscript
-  } = useSpeechRecognition({
-    initialValue: value,
+  } = useSimpleSpeechRecognition({
     onTranscriptChange,
-    lang: "fa-IR", // تأکید بر زبان فارسی
-    multiLine
+    initialValue: value,
+    lang: "fa-IR"
   });
 
-  // شروع و پایان ضبط صدا با مدیریت خطاها
   const toggleListening = async () => {
     if (isListening) {
       stopListening();
@@ -65,7 +63,6 @@ export const SpeechToText = ({
     }
   };
 
-  // پاک کردن متن با بازخورد به کاربر
   const clearTranscript = () => {
     resetTranscript();
     toast({
@@ -74,7 +71,6 @@ export const SpeechToText = ({
     });
   };
 
-  // بررسی اگر کلاس compact-speech درخواست شده است
   const isCompact = className?.includes("compact-speech");
 
   return (
@@ -101,7 +97,6 @@ export const SpeechToText = ({
       
       {!isCompact && <RecordingIndicator isRecording={isListening} />}
       
-      {/* راهنمای استفاده بهینه برای کاربر */}
       {isListening && !isCompact && (
         <div className="text-xs text-muted-foreground text-right mt-1 pr-1">
           <p>برای دقت بیشتر، لطفاً واضح و با سرعت معمولی صحبت کنید.</p>

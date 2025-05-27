@@ -2,7 +2,7 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { ExerciseCategory } from "@/types/exercise";
-import { AdvancedSpeechInput } from "@/pages/exercises/hierarchical-view/components/exercises-stage/advanced-speech-input";
+import { SimpleSpeechInput } from "@/components/ui/simple-speech-input";
 
 interface SingleExerciseFormProps {
   value: string;
@@ -23,11 +23,10 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
     <div className="space-y-4 text-right">
       <div>
         <Label className="text-base mb-2 block">نام حرکت</Label>
-        <AdvancedSpeechInput 
+        <SimpleSpeechInput 
           value={value}
           onChange={onChange}
-          placeholder="نام حرکت را وارد کنید"
-          showRegularInput={true}
+          placeholder="نام حرکت را وارد کنید یا روی میکروفون کلیک کنید"
         />
       </div>
       
