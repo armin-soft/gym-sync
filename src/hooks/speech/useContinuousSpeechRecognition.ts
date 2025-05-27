@@ -26,12 +26,21 @@ export const useContinuousSpeechRecognition = ({
   const recognitionRef = useRef<any>(null);
   const restartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const finalTranscriptRef = useRef(initialValue);
+  const lastNotifiedTranscriptRef = useRef(initialValue);
 
   // Check browser support
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     setIsSupported(!!SpeechRecognition);
   }, []);
+
+  // Only notify parent when transcript actually changes to prevent loops
+  const notifyTranscriptChange = useCallback((newTranscript: string) => {
+    if (lastNotifiedTranscriptRef.current !== newTranscript) {
+      lastNotifiedTranscriptRef.current = newTranscript;
+      onTranscriptChange(newTranscript);
+    }
+  }, [onTranscriptChange]);
 
   const initializeRecognition = useCallback(() => {
     if (!isSupported) return null;
@@ -43,11 +52,6 @@ export const useContinuousSpeechRecognition = ({
     recognition.interimResults = interimResults;
     recognition.lang = lang;
     recognition.maxAlternatives = maxAlternatives;
-
-    // تنظیم حساسیت بالاتر برای شناسایی سکوت
-    if ('webkitSpeechRecognition' in window) {
-      recognition.serviceURI = 'wss://www.google.com/speech-api/full-duplex/v1/up';
-    }
 
     recognition.onstart = () => {
       console.log('Speech recognition started');
@@ -72,13 +76,12 @@ export const useContinuousSpeechRecognition = ({
 
       setTranscript(finalText);
       setInterimTranscript(interimText);
-      onTranscriptChange(finalText + interimText);
+      notifyTranscriptChange(finalText + interimText);
     };
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       
-      // در صورت خطا، تلاش برای شروع مجدد
       if (event.error === 'no-speech' || event.error === 'audio-capture') {
         if (isListening) {
           restartTimeoutRef.current = setTimeout(() => {
@@ -97,7 +100,6 @@ export const useContinuousSpeechRecognition = ({
     recognition.onend = () => {
       console.log('Speech recognition ended');
       
-      // اگر کاربر هنوز در حالت گوش دادن است، دوباره شروع کن
       if (isListening) {
         restartTimeoutRef.current = setTimeout(() => {
           if (recognitionRef.current && isListening) {
@@ -112,30 +114,26 @@ export const useContinuousSpeechRecognition = ({
     };
 
     return recognition;
-  }, [isSupported, continuous, interimResults, lang, maxAlternatives, onTranscriptChange, isListening]);
+  }, [isSupported, continuous, interimResults, lang, maxAlternatives, notifyTranscriptChange, isListening]);
 
   const startListening = useCallback(async () => {
     if (!isSupported || isListening) return;
 
     try {
-      // Clear any existing timeouts
       if (restartTimeoutRef.current) {
         clearTimeout(restartTimeoutRef.current);
         restartTimeoutRef.current = null;
       }
 
-      // Stop any existing recognition
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
 
-      // Initialize new recognition
       const recognition = initializeRecognition();
       if (!recognition) return;
 
       recognitionRef.current = recognition;
       
-      // Reset transcripts
       setInterimTranscript('');
       finalTranscriptRef.current = transcript;
 
@@ -151,7 +149,6 @@ export const useContinuousSpeechRecognition = ({
 
     setIsListening(false);
     
-    // Clear restart timeout
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
       restartTimeoutRef.current = null;
@@ -161,7 +158,6 @@ export const useContinuousSpeechRecognition = ({
       recognitionRef.current.stop();
     }
 
-    // Clear interim transcript
     setInterimTranscript('');
   }, [isListening]);
 
@@ -169,8 +165,9 @@ export const useContinuousSpeechRecognition = ({
     setTranscript('');
     setInterimTranscript('');
     finalTranscriptRef.current = '';
-    onTranscriptChange('');
-  }, [onTranscriptChange]);
+    lastNotifiedTranscriptRef.current = '';
+    notifyTranscriptChange('');
+  }, [notifyTranscriptChange]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -184,11 +181,12 @@ export const useContinuousSpeechRecognition = ({
     };
   }, []);
 
-  // Update transcript when initialValue changes
+  // Update transcript when initialValue changes, but prevent circular updates
   useEffect(() => {
-    if (initialValue !== transcript && !isListening) {
+    if (initialValue !== transcript && !isListening && initialValue !== lastNotifiedTranscriptRef.current) {
       setTranscript(initialValue);
       finalTranscriptRef.current = initialValue;
+      lastNotifiedTranscriptRef.current = initialValue;
     }
   }, [initialValue, transcript, isListening]);
 
