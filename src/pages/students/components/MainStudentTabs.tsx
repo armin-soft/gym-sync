@@ -1,9 +1,10 @@
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StudentGridView } from "@/components/students/list-views/StudentGridView";
 import { StudentTableView } from "@/components/students/list-views/StudentTableView";
 import { DataStatusIndicator } from "@/components/students/DataStatusIndicator";
-import { Student } from "@/types/student";
+import { Student } from "@/components/students/StudentTypes";
 
 interface MainStudentTabsProps {
   activeTab: string;
@@ -23,6 +24,8 @@ interface MainStudentTabsProps {
   onManageStudentProgram: (student: Student) => void;
   lastRefreshTime: Date;
   onRefresh: () => void;
+  onAddStudent: () => void;
+  isProfileComplete: boolean;
 }
 
 export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
@@ -42,7 +45,9 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   onViewStudentHistory,
   onManageStudentProgram,
   lastRefreshTime,
-  onRefresh
+  onRefresh,
+  onAddStudent,
+  isProfileComplete
 }) => {
   // Filter students based on active tab
   const activeStudents = students.filter(student => !student.archived)
@@ -83,6 +88,10 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
       return 0;
     });
 
+  const handleClearSearch = () => {
+    // Clear search functionality
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
@@ -106,26 +115,36 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
           {viewMode === "grid" ? (
             <StudentGridView
               students={activeStudents}
-              selectedStudents={selectedStudents}
-              onStudentSelect={onStudentSelect}
-              onStudentSelectAll={onStudentSelectAll}
-              onClearSelection={onClearSelection}
-              onEditStudent={onEditStudent}
-              onDeleteStudent={onDeleteStudent}
-              onViewStudentHistory={onViewStudentHistory}
-              onManageStudentProgram={onManageStudentProgram}
+              searchQuery={searchQuery}
+              onEdit={onEditStudent}
+              onDelete={(id: number) => {
+                const student = activeStudents.find(s => s.id === id);
+                if (student) onDeleteStudent(student);
+              }}
+              onAddExercise={onManageStudentProgram}
+              onAddDiet={onManageStudentProgram}
+              onAddSupplement={onManageStudentProgram}
+              onAddStudent={onAddStudent}
+              onClearSearch={handleClearSearch}
+              isProfileComplete={isProfileComplete}
             />
           ) : (
             <StudentTableView
               students={activeStudents}
-              selectedStudents={selectedStudents}
-              onStudentSelect={onStudentSelect}
-              onStudentSelectAll={onStudentSelectAll}
-              onClearSelection={onClearSelection}
-              onEditStudent={onEditStudent}
-              onDeleteStudent={onDeleteStudent}
-              onViewStudentHistory={onViewStudentHistory}
-              onManageStudentProgram={onManageStudentProgram}
+              sortedAndFilteredStudents={activeStudents}
+              searchQuery={searchQuery}
+              isProfileComplete={isProfileComplete}
+              onEdit={onEditStudent}
+              onDelete={(id: number) => {
+                const student = activeStudents.find(s => s.id === id);
+                if (student) onDeleteStudent(student);
+              }}
+              onAddExercise={onManageStudentProgram}
+              onAddDiet={onManageStudentProgram}
+              onAddSupplement={onManageStudentProgram}
+              onAddStudent={onAddStudent}
+              onClearSearch={handleClearSearch}
+              viewMode="table"
             />
           )}
         </TabsContent>
@@ -134,26 +153,36 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
           {viewMode === "grid" ? (
             <StudentGridView
               students={archivedStudents}
-              selectedStudents={selectedStudents}
-              onStudentSelect={onStudentSelect}
-              onStudentSelectAll={onStudentSelectAll}
-              onClearSelection={onClearSelection}
-              onEditStudent={onEditStudent}
-              onDeleteStudent={onDeleteStudent}
-              onViewStudentHistory={onViewStudentHistory}
-              onManageStudentProgram={onManageStudentProgram}
+              searchQuery={searchQuery}
+              onEdit={onEditStudent}
+              onDelete={(id: number) => {
+                const student = archivedStudents.find(s => s.id === id);
+                if (student) onDeleteStudent(student);
+              }}
+              onAddExercise={onManageStudentProgram}
+              onAddDiet={onManageStudentProgram}
+              onAddSupplement={onManageStudentProgram}
+              onAddStudent={onAddStudent}
+              onClearSearch={handleClearSearch}
+              isProfileComplete={isProfileComplete}
             />
           ) : (
             <StudentTableView
               students={archivedStudents}
-              selectedStudents={selectedStudents}
-              onStudentSelect={onStudentSelect}
-              onStudentSelectAll={onStudentSelectAll}
-              onClearSelection={onClearSelection}
-              onEditStudent={onEditStudent}
-              onDeleteStudent={onDeleteStudent}
-              onViewStudentHistory={onViewStudentHistory}
-              onManageStudentProgram={onManageStudentProgram}
+              sortedAndFilteredStudents={archivedStudents}
+              searchQuery={searchQuery}
+              isProfileComplete={isProfileComplete}
+              onEdit={onEditStudent}
+              onDelete={(id: number) => {
+                const student = archivedStudents.find(s => s.id === id);
+                if (student) onDeleteStudent(student);
+              }}
+              onAddExercise={onManageStudentProgram}
+              onAddDiet={onManageStudentProgram}
+              onAddSupplement={onManageStudentProgram}
+              onAddStudent={onAddStudent}
+              onClearSearch={handleClearSearch}
+              viewMode="table"
             />
           )}
         </TabsContent>
