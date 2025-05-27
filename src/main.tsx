@@ -8,9 +8,30 @@ import './index.css'
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
   const [isLoading, setIsLoading] = useState(true);
+  const [appVersion, setAppVersion] = useState('');
+  
+  // دریافت نسخه از Manifest.json
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        const version = manifest.version || 'نامشخص';
+        setAppVersion(version);
+        localStorage.setItem('app_version', version);
+        console.log(`App version loaded from Manifest.json: ${version}`);
+      } catch (error) {
+        console.error('Error loading version from Manifest.json:', error);
+        const cachedVersion = localStorage.getItem('app_version') || 'خطا در بارگذاری';
+        setAppVersion(cachedVersion);
+      }
+    };
+    
+    fetchVersion();
+  }, []);
   
   const handleLoadingComplete = () => {
-    console.log('Loading completed for version 3.3.9, showing main app');
+    console.log(`Loading completed for version ${appVersion}, showing main app`);
     setIsLoading(false);
   };
   
@@ -25,7 +46,7 @@ function MainApp() {
 // تابع راه‌اندازی اصلی برنامه
 function startApp() {
   try {
-    console.log('Starting app initialization for version 3.3.9...');
+    console.log('Starting app initialization...');
     const rootElement = document.getElementById('root');
     if (!rootElement) {
       console.error('عنصر root پیدا نشد');
@@ -36,11 +57,11 @@ function startApp() {
     const root = createRoot(rootElement);
     root.render(<MainApp />);
     
-    console.log('برنامه نسخه 3.3.9 با موفقیت راه‌اندازی شد');
+    console.log('برنامه با موفقیت راه‌اندازی شد');
   } catch (error) {
-    console.error('خطا در راه‌اندازی برنامه نسخه 3.3.9:', error);
+    console.error('خطا در راه‌اندازی برنامه:', error);
     // نمایش پیام خطا برای کاربر
-    document.body.innerHTML = '<div style="padding: 20px; text-align: center;">خطا در بارگذاری برنامه نسخه 3.3.9. لطفا صفحه را رفرش کنید.</div>';
+    document.body.innerHTML = '<div style="padding: 20px; text-align: center;">خطا در بارگذاری برنامه. لطفا صفحه را رفرش کنید.</div>';
   }
 }
 

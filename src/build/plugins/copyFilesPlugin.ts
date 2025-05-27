@@ -7,7 +7,17 @@ export const copyFilesPlugin = () => {
     name: 'copy-files',
     closeBundle: async () => {
       try {
-        console.log('شروع کپی فایل‌ها و بهینه‌سازی برای نسخه 3.3.9...');
+        // خواندن نسخه از Manifest.json
+        let appVersion = 'نامشخص';
+        try {
+          const manifestContent = fs.readFileSync('public/Manifest.json', 'utf8');
+          const manifest = JSON.parse(manifestContent);
+          appVersion = manifest.version || 'نامشخص';
+          console.log(`شروع کپی فایل‌ها و بهینه‌سازی برای نسخه ${appVersion}...`);
+        } catch (versionError) {
+          console.warn('خطا در خواندن نسخه از Manifest.json:', versionError);
+          console.log('شروع کپی فایل‌ها و بهینه‌سازی...');
+        }
 
         // اطمینان از وجود پوشه‌های مقصد
         const assetsDir = 'dist/assets';
@@ -66,9 +76,9 @@ export const copyFilesPlugin = () => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران - نسخه 3.3.9" />
+    <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران" />
     <meta name="theme-color" content="#7c3aed" />
-    <title>مدیریت برنامه - نسخه 3.3.9</title>
+    <title>مدیریت برنامه</title>
 
     <!-- Favicon and PWA -->
     <link rel="icon" type="image/png" href="./assets/images/Logo.png" />
@@ -143,7 +153,7 @@ RewriteRule ^ index.html [QSA,L]
         fs.writeFileSync('dist/.htaccess', htaccessContent);
         console.log('فایل .htaccess ایجاد شد');
 
-        console.log('✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.9!');
+        console.log(`✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه ${appVersion}!`);
 
       } catch (error) {
         console.error('❌ خطا در کپی یا بهینه‌سازی فایل‌ها:', error);

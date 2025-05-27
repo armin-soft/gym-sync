@@ -1,7 +1,7 @@
 
 /**
  * Gets the base path for the application based on the current window location
- * Optimized for universal deployment compatibility - version 3.3.9
+ * Optimized for universal deployment compatibility - auto-versioned from Manifest.json
  */
 export function getBasePath(): string {
   // در محیط توسعه همیشه از مسیر اصلی استفاده کن
@@ -17,7 +17,7 @@ export function getBasePath(): string {
   }
   
   try {
-    console.log('Determining base path for production version 3.3.9...');
+    console.log('Determining base path for production...');
     console.log('Current location:', window.location);
     
     const pathname = window.location.pathname;
