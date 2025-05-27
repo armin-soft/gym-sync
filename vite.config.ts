@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
-      assetsDir: 'assets',
+      assetsDir: 'Assets',
       chunkSizeWarningLimit: 2000,
       assetsInlineLimit: 0,
       cssCodeSplit: true,
@@ -52,28 +52,68 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       rollupOptions: {
         output: {
-          entryFileNames: 'assets/[name]-[hash].js',
-          chunkFileNames: 'assets/[name]-[hash].js',
+          // تنظیمات نام‌گذاری بهینه با حروف بزرگ
+          entryFileNames: 'Scripts/Main-App-[hash].js',
+          chunkFileNames: (chunkInfo) => {
+            const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
+            const chunkName = facadeModuleId ? facadeModuleId.replace(/\.[^/.]+$/, '') : chunkInfo.name;
+            const formattedName = chunkName
+              .split(/[-_]/)
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join('-');
+            return `Scripts/Components/${formattedName}-[hash].js`;
+          },
           assetFileNames: (assetInfo) => {
-            if (assetInfo.name?.endsWith('.css')) {
-              return 'assets/[name]-[hash].css';
+            const info = assetInfo.name || '';
+            
+            // برای فایل‌های CSS با نام‌گذاری مناسب
+            if (info.endsWith('.css')) {
+              const cssName = info.replace('.css', '')
+                .split(/[-_]/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join('-');
+              return `Styles/${cssName}-[hash].css`;
             }
-            if (assetInfo.name?.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
-              return 'assets/images/[name].[ext]';
+            
+            // برای فایل‌های تصویر
+            if (info.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
+              const imageName = info.replace(/\.[^/.]+$/, '')
+                .split(/[-_]/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join('-');
+              const ext = info.split('.').pop();
+              return `Images/${imageName}.${ext}`;
             }
-            return 'assets/[name]-[hash].[ext]';
+            
+            // برای فونت‌ها
+            if (info.match(/\.(woff|woff2|ttf|eot)$/)) {
+              const fontName = info.replace(/\.[^/.]+$/, '')
+                .split(/[-_]/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join('-');
+              const ext = info.split('.').pop();
+              return `Fonts/${fontName}.${ext}`;
+            }
+            
+            // برای سایر فایل‌ها
+            const fileName = info.replace(/\.[^/.]+$/, '')
+              .split(/[-_]/)
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join('-');
+            const ext = info.split('.').pop();
+            return `Assets/${fileName}-[hash].${ext}`;
           },
           manualChunks: {
-            'vendor-react': ['react', 'react-dom'],
-            'vendor-ui': [
+            'React-Core': ['react', 'react-dom'],
+            'UI-Components': [
               '@radix-ui/react-dialog',
               '@radix-ui/react-dropdown-menu',
               '@radix-ui/react-select',
               '@radix-ui/react-tabs',
               '@radix-ui/react-toast'
             ],
-            'vendor-router': ['react-router-dom', '@tanstack/react-query'],
-            'vendor-utils': ['framer-motion', 'lucide-react', 'date-fns', 'date-fns-jalali']
+            'Router-Query': ['react-router-dom', '@tanstack/react-query'],
+            'Utils-Libraries': ['framer-motion', 'lucide-react', 'date-fns', 'date-fns-jalali']
           }
         }
       }

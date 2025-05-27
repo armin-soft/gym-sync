@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 
@@ -19,24 +18,29 @@ export const copyFilesPlugin = () => {
           console.log('شروع کپی فایل‌ها و بهینه‌سازی...');
         }
 
-        // اطمینان از وجود پوشه‌های مقصد
-        const assetsDir = 'dist/assets';
-        const imagesDir = 'dist/assets/images';
+        // ایجاد ساختار پوشه‌های مرتب و منظم
+        const directories = [
+          'dist/Assets',
+          'dist/Images', 
+          'dist/Styles',
+          'dist/Scripts',
+          'dist/Scripts/Components',
+          'dist/Fonts'
+        ];
         
-        if (!fs.existsSync(assetsDir)) {
-          fs.mkdirSync(assetsDir, { recursive: true });
-        }
-        if (!fs.existsSync(imagesDir)) {
-          fs.mkdirSync(imagesDir, { recursive: true });
-        }
+        directories.forEach(dir => {
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+          }
+        });
 
-        // کپی تصاویر از public/Assets/Image به dist/assets/images
+        // کپی تصاویر از public/Assets/Image به dist/Images
         const publicImagesPath = 'public/Assets/Image';
         if (fs.existsSync(publicImagesPath)) {
           const imageFiles = fs.readdirSync(publicImagesPath);
           imageFiles.forEach(file => {
             const sourcePath = path.join(publicImagesPath, file);
-            const destPath = path.join(imagesDir, file);
+            const destPath = path.join('dist/Images', file);
             if (fs.statSync(sourcePath).isFile()) {
               fs.copyFileSync(sourcePath, destPath);
               console.log(`کپی تصویر: ${file}`);
@@ -44,25 +48,25 @@ export const copyFilesPlugin = () => {
           });
         }
 
-        // پیدا کردن فایل‌های CSS و JS بدون استفاده از glob
+        // پیدا کردن فایل‌های CSS و JS با نام‌گذاری جدید
         const getFilesWithExtension = (dir: string, ext: string): string[] => {
           if (!fs.existsSync(dir)) return [];
-          return fs.readdirSync(dir)
-            .filter(file => file.endsWith(ext))
-            .map(file => path.join(dir, file));
+          return fs.readdirSync(dir, { recursive: true })
+            .filter((file: any) => typeof file === 'string' && file.endsWith(ext))
+            .map((file: any) => path.join(dir, file));
         };
 
-        const cssFiles = getFilesWithExtension('dist/assets', '.css');
-        const jsFiles = getFilesWithExtension('dist/assets', '.js');
+        const cssFiles = getFilesWithExtension('dist/Styles', '.css');
+        const jsFiles = getFilesWithExtension('dist/Scripts', '.js');
         
         // پیدا کردن فایل اصلی
-        const mainCssFile = cssFiles.find(file => file.includes('index')) || cssFiles[0];
-        const mainJsFile = jsFiles.find(file => file.includes('index')) || jsFiles[0];
+        const mainCssFile = cssFiles.find(file => file.includes('Main')) || cssFiles[0];
+        const mainJsFile = jsFiles.find(file => file.includes('Main-App')) || jsFiles[0];
 
-        const cssFileName = mainCssFile ? path.basename(mainCssFile) : 'index.css';
-        const jsFileName = mainJsFile ? path.basename(mainJsFile) : 'index.js';
+        const cssFileName = mainCssFile ? path.relative('dist', mainCssFile) : 'Styles/Main-App.css';
+        const jsFileName = mainJsFile ? path.relative('dist', mainJsFile) : 'Scripts/Main-App.js';
 
-        // بازنویسی index.html با مسیرهای صحیح
+        // بازنویسی index.html با مسیرهای صحیح و منظم
         const distIndexPath = 'dist/index.html';
         if (fs.existsSync(distIndexPath)) {
           const indexContent = `<!DOCTYPE html>
@@ -75,8 +79,8 @@ export const copyFilesPlugin = () => {
     <title>مدیریت برنامه</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="./assets/images/Logo.png" />
-    <link rel="apple-touch-icon" href="./assets/images/Logo.png" />
+    <link rel="icon" type="image/png" href="./Images/Logo.png" />
+    <link rel="apple-touch-icon" href="./Images/Logo.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -95,7 +99,7 @@ export const copyFilesPlugin = () => {
     />
     
     <!-- CSS -->
-    <link rel="stylesheet" href="./assets/${cssFileName}" />
+    <link rel="stylesheet" href="./${cssFileName}" />
   </head>
 
   <body>
@@ -103,17 +107,17 @@ export const copyFilesPlugin = () => {
 
     <!-- Scripts -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script src="./assets/${jsFileName}" type="module"></script>
+    <script src="./${jsFileName}" type="module"></script>
     
-    <noscript>برای استفاده از این برنامه، لطفا جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
+    <noscript>برای استفاده از این برنامه، لطفاً جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
   </body>
 </html>`;
           
           fs.writeFileSync(distIndexPath, indexContent);
-          console.log('index.html با مسیرهای بهینه‌شده بازنویسی شد');
+          console.log('index.html با مسیرهای بهینه‌شده و منظم بازنویسی شد');
         }
 
-        // ایجاد فایل .htaccess امنیتی و کامل
+        // ... keep existing code (htaccess content creation - same as before)
         const htaccessContent = `# ==============================================================================
 # فایل .htaccess برای پروژه مدیریت برنامه تمرینی (نسخه ${appVersion})
 # ==============================================================================
@@ -147,7 +151,7 @@ RewriteEngine On
 # هدایت تمام درخواست‌ها به index.html (برای React Router)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/assets/
+RewriteCond %{REQUEST_URI} !^/(Assets|Images|Styles|Scripts|Fonts)/
 RewriteRule ^ index.html [QSA,L]
 
 # ------------------------------------------------------------------------------
@@ -262,10 +266,6 @@ RewriteRule .* - [F]
 # تنظیمات خاص پروژه
 # ------------------------------------------------------------------------------
 
-# Redirect HTTP به HTTPS (در صورت استفاده از SSL)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
 # تنظیم charset پیش‌فرض
 AddDefaultCharset UTF-8
 
@@ -278,23 +278,11 @@ AddDefaultCharset UTF-8
 </IfModule>
 
 # ------------------------------------------------------------------------------
-# تنظیمات Error Pages
-# ------------------------------------------------------------------------------
-
-# ErrorDocument 404 /index.html
-# ErrorDocument 403 /index.html
-# ErrorDocument 500 /index.html
-
-# ------------------------------------------------------------------------------
 # بهینه‌سازی نهایی
 # ------------------------------------------------------------------------------
 
 # تنظیم ServerTokens
 ServerTokens Prod
-
-# حداکثر اندازه فایل آپلود (در صورت نیاز)
-# php_value upload_max_filesize 10M
-# php_value post_max_size 10M
 
 # ==============================================================================
 # پایان فایل .htaccess
@@ -303,7 +291,7 @@ ServerTokens Prod
         fs.writeFileSync('dist/.htaccess', htaccessContent);
         console.log('فایل .htaccess امنیتی و بهینه ایجاد شد');
 
-        console.log(`✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه ${appVersion}!`);
+        console.log(`✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند با نام‌گذاری منظم برای نسخه ${appVersion}!`);
 
       } catch (error) {
         console.error('❌ خطا در کپی یا بهینه‌سازی فایل‌ها:', error);
