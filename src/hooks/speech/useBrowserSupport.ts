@@ -1,68 +1,55 @@
 
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from 'react';
 
-export function useBrowserSupport() {
-  const [isSupported, setIsSupported] = useState(true);
-  const [supportDetails, setSupportDetails] = useState({
-    hasSpeechRecognition: false,
-    hasWebkitSpeechRecognition: false,
-    hasMozillaSpeechRecognition: false,
-    hasMsSpeechRecognition: false,
-    hasGetUserMedia: false,
-    hasMediaDevices: false,
-    hasEnumerateDevices: false,
-    canUseVoiceRecognition: false
+interface BrowserSupportState {
+  isSupported: boolean;
+  isChecking: boolean;
+  error: string | null;
+}
+
+export const useBrowserSupport = () => {
+  const [state, setState] = useState<BrowserSupportState>({
+    isSupported: false,
+    isChecking: true,
+    error: null
   });
-
+  
+  const hasChecked = useRef(false);
+  
   const checkBrowserSupport = () => {
-    if (typeof window === 'undefined') {
-      return false;
+    // Only check once to prevent infinite loops
+    if (hasChecked.current) {
+      return;
     }
     
-    // بررسی پشتیبانی از تشخیص گفتار
-    const hasSpeechRecognition = 'SpeechRecognition' in window;
-    const hasWebkitSpeechRecognition = 'webkitSpeechRecognition' in window;
-    const hasMozillaSpeechRecognition = 'mozSpeechRecognition' in window;
-    const hasMsSpeechRecognition = 'msSpeechRecognition' in window;
+    hasChecked.current = true;
     
-    // بررسی دسترسی به میکروفون
-    const hasGetUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-    const hasMediaDevices = 'mediaDevices' in navigator;
-    const hasEnumerateDevices = !!(navigator.mediaDevices && navigator.mediaDevices.enumerateDevices);
-    
-    // آیا تشخیص گفتار کاملاً پشتیبانی می‌شود؟
-    const canUseVoiceRecognition = hasSpeechRecognition || 
-                                 hasWebkitSpeechRecognition || 
-                                 hasMozillaSpeechRecognition ||
-                                 hasMsSpeechRecognition;
-    
-    // ذخیره جزئیات پشتیبانی
-    setSupportDetails({
-      hasSpeechRecognition,
-      hasWebkitSpeechRecognition,
-      hasMozillaSpeechRecognition,
-      hasMsSpeechRecognition,
-      hasGetUserMedia,
-      hasMediaDevices,
-      hasEnumerateDevices,
-      canUseVoiceRecognition
-    });
-    
-    // آیا مرورگر می‌تواند از قابلیت تشخیص گفتار استفاده کند؟
-    const isBrowserSupported = canUseVoiceRecognition && hasGetUserMedia;
-    setIsSupported(isBrowserSupported);
-    
-    return isBrowserSupported;
+    try {
+      const isSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+      
+      setState({
+        isSupported,
+        isChecking: false,
+        error: isSupported ? null : 'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند'
+      });
+    } catch (error) {
+      setState({
+        isSupported: false,
+        isChecking: false,
+        error: 'خطا در بررسی پشتیبانی مرورگر'
+      });
+    }
   };
   
-  // بررسی پشتیبانی مرورگر در زمان بارگذاری
   useEffect(() => {
     checkBrowserSupport();
-  }, []);
+  }, []); // Empty dependency array to run only once
   
   return {
-    isSupported,
-    supportDetails,
-    checkBrowserSupport
+    ...state,
+    checkBrowserSupport: () => {
+      hasChecked.current = false;
+      checkBrowserSupport();
+    }
   };
-}
+};
