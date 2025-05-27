@@ -1,123 +1,163 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { History, Users } from "lucide-react";
-import { Student } from "@/components/students/StudentTypes";
-import { StudentHistory } from "@/components/students/history";
-import { HistoryEntry } from "@/hooks/useStudentHistory";
-import { StudentTableView } from "@/components/students/list-views";
-import StudentSearchControls from "./StudentSearchControls";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { StudentGridView } from "@/components/students/list-views/StudentGridView";
+import { StudentTableView } from "@/components/students/list-views/StudentTableView";
 import { DataStatusIndicator } from "@/components/students/DataStatusIndicator";
+import { Student } from "@/types/student";
 
 interface MainStudentTabsProps {
+  activeTab: string;
+  onTabChange: (value: string) => void;
   students: Student[];
-  sortedAndFilteredStudents: Student[];
+  viewMode: "grid" | "table";
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  handleClearSearch: () => void;
-  viewMode: "table";
-  refreshTrigger: number;
-  historyEntries: HistoryEntry[];
-  isLoading?: boolean;
-  onEdit: (student: Student) => void;
-  onDelete: (id: number) => void;
-  onAddExercise: (student: Student) => void;
-  onAddDiet: (student: Student) => void;
-  onAddSupplement: (student: Student) => void;
-  onAddStudent: () => void;
-  sortField?: string;
-  sortOrder?: "asc" | "desc";
-  onSortChange?: (field: string) => void;
-  isProfileComplete: boolean;
+  sortBy: string;
+  sortOrder: "asc" | "desc";
+  selectedStudents: number[];
+  onStudentSelect: (studentId: number) => void;
+  onStudentSelectAll: () => void;
+  onClearSelection: () => void;
+  onEditStudent: (student: Student) => void;
+  onDeleteStudent: (student: Student) => void;
+  onViewStudentHistory: (student: Student) => void;
+  onManageStudentProgram: (student: Student) => void;
+  lastRefreshTime: Date;
+  onRefresh: () => void;
 }
 
-const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
+export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
+  activeTab,
+  onTabChange,
   students,
-  sortedAndFilteredStudents,
-  searchQuery,
-  setSearchQuery,
-  handleClearSearch,
   viewMode,
-  refreshTrigger,
-  historyEntries,
-  isLoading = false,
-  onEdit,
-  onDelete,
-  onAddExercise,
-  onAddDiet,
-  onAddSupplement,
-  onAddStudent,
-  sortField,
+  searchQuery,
+  sortBy,
   sortOrder,
-  onSortChange,
-  isProfileComplete = true
+  selectedStudents,
+  onStudentSelect,
+  onStudentSelectAll,
+  onClearSelection,
+  onEditStudent,
+  onDeleteStudent,
+  onViewStudentHistory,
+  onManageStudentProgram,
+  lastRefreshTime,
+  onRefresh
 }) => {
-  return (
-    <Tabs defaultValue="all" className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-4 md:mb-6">
-        <TabsList className="h-11 w-full md:w-auto">
-          <TabsTrigger value="all" className="flex gap-2 items-center">
-            <Users className="h-4 w-4" />
-            <span className="hidden md:inline">لیست شاگردان</span>
-            <span className="md:hidden">شاگردان</span>
-          </TabsTrigger>
-          <TabsTrigger value="history" className="flex gap-2 items-center">
-            <History className="h-4 w-4" />
-            <span className="hidden md:inline">تاریخچه تغییرات</span>
-            <span className="md:hidden">تاریخچه</span>
-          </TabsTrigger>
-        </TabsList>
+  // Filter students based on active tab
+  const activeStudents = students.filter(student => !student.archived)
+    .filter(student =>
+      student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.lastName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      const sortByValue = sortBy === 'firstName' ? 'firstName' : 'lastName';
+      const aValue = a[sortByValue].toLowerCase();
+      const bValue = b[sortByValue].toLowerCase();
 
-        <div className="flex flex-col md:flex-row md:items-center gap-2">
+      if (aValue < bValue) {
+        return sortOrder === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortOrder === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+  const archivedStudents = students.filter(student => student.archived)
+    .filter(student =>
+      student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.lastName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      const sortByValue = sortBy === 'firstName' ? 'firstName' : 'lastName';
+      const aValue = a[sortByValue].toLowerCase();
+      const bValue = b[sortByValue].toLowerCase();
+
+      if (aValue < bValue) {
+        return sortOrder === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortOrder === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-4">
+        <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="active">شاگردان فعال</TabsTrigger>
+            <TabsTrigger value="archived">شاگردان آرشیو شده</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
+        <div className="mr-4">
           <DataStatusIndicator 
-            lastRefreshTime={new Date()} 
-            isOnline={navigator.onLine} 
-          />
-          
-          <StudentSearchControls
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            handleClearSearch={handleClearSearch}
+            lastRefreshTime={lastRefreshTime}
+            onRefresh={onRefresh}
           />
         </div>
       </div>
 
-      <TabsContent value="all" className="flex-1 mt-0">
-        {isLoading ? (
-          <div className="w-full h-64 flex items-center justify-center">
-            <LoadingSpinner size="lg" />
-          </div>
-        ) : (
-          <StudentTableView
-            viewMode="table"
-            sortedAndFilteredStudents={sortedAndFilteredStudents}
-            students={students}
-            searchQuery={searchQuery}
-            refreshTrigger={refreshTrigger}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onAddExercise={onAddExercise}
-            onAddDiet={onAddDiet}
-            onAddSupplement={onAddSupplement}
-            onAddStudent={onAddStudent}
-            onClearSearch={handleClearSearch}
-            isProfileComplete={isProfileComplete}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            onSortChange={onSortChange}
-          />
-        )}
-      </TabsContent>
-
-      <TabsContent value="history" className="flex-1">
-        <StudentHistory
-          students={students} 
-          historyEntries={historyEntries}
-        />
-      </TabsContent>
-    </Tabs>
+      <Tabs value={activeTab} onValueChange={onTabChange} className="flex-1 flex flex-col">
+        <TabsContent value="active" className="flex-1 mt-0">
+          {viewMode === "grid" ? (
+            <StudentGridView
+              students={activeStudents}
+              selectedStudents={selectedStudents}
+              onStudentSelect={onStudentSelect}
+              onStudentSelectAll={onStudentSelectAll}
+              onClearSelection={onClearSelection}
+              onEditStudent={onEditStudent}
+              onDeleteStudent={onDeleteStudent}
+              onViewStudentHistory={onViewStudentHistory}
+              onManageStudentProgram={onManageStudentProgram}
+            />
+          ) : (
+            <StudentTableView
+              students={activeStudents}
+              selectedStudents={selectedStudents}
+              onStudentSelect={onStudentSelect}
+              onStudentSelectAll={onStudentSelectAll}
+              onClearSelection={onClearSelection}
+              onEditStudent={onEditStudent}
+              onDeleteStudent={onDeleteStudent}
+              onViewStudentHistory={onViewStudentHistory}
+              onManageStudentProgram={onManageStudentProgram}
+            />
+          )}
+        </TabsContent>
+        
+        <TabsContent value="archived" className="flex-1 mt-0">
+          {viewMode === "grid" ? (
+            <StudentGridView
+              students={archivedStudents}
+              selectedStudents={selectedStudents}
+              onStudentSelect={onStudentSelect}
+              onStudentSelectAll={onStudentSelectAll}
+              onClearSelection={onClearSelection}
+              onEditStudent={onEditStudent}
+              onDeleteStudent={onDeleteStudent}
+              onViewStudentHistory={onViewStudentHistory}
+              onManageStudentProgram={onManageStudentProgram}
+            />
+          ) : (
+            <StudentTableView
+              students={archivedStudents}
+              selectedStudents={selectedStudents}
+              onStudentSelect={onStudentSelect}
+              onStudentSelectAll={onStudentSelectAll}
+              onClearSelection={onClearSelection}
+              onEditStudent={onEditStudent}
+              onDeleteStudent={onDeleteStudent}
+              onViewStudentHistory={onViewStudentHistory}
+              onManageStudentProgram={onManageStudentProgram}
+            />
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
-
-export default MainStudentTabs;
