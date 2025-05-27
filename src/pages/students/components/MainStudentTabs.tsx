@@ -50,13 +50,13 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   isProfileComplete
 }) => {
   // Filter students based on active tab - using safe property access
-  const activeStudents = students.filter(student => !student.isArchived)
+  const activeStudents = students.filter(student => !student.archived)
     .filter(student =>
       (student.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (student.lastName || '').toLowerCase().includes(searchQuery.toLowerCase())
+      (student.family || '').toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => {
-      const sortByValue = sortBy === 'name' ? 'name' : 'lastName';
+      const sortByValue = sortBy === 'name' ? 'name' : 'family';
       const aValue = (a[sortByValue as keyof Student] || '').toString().toLowerCase();
       const bValue = (b[sortByValue as keyof Student] || '').toString().toLowerCase();
 
@@ -69,13 +69,13 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
       return 0;
     });
 
-  const archivedStudents = students.filter(student => student.isArchived)
+  const archivedStudents = students.filter(student => student.archived)
     .filter(student =>
       (student.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (student.lastName || '').toLowerCase().includes(searchQuery.toLowerCase())
+      (student.family || '').toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => {
-      const sortByValue = sortBy === 'name' ? 'name' : 'lastName';
+      const sortByValue = sortBy === 'name' ? 'name' : 'family';
       const aValue = (a[sortByValue as keyof Student] || '').toString().toLowerCase();
       const bValue = (b[sortByValue as keyof Student] || '').toString().toLowerCase();
 

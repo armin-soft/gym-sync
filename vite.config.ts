@@ -52,8 +52,8 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       rollupOptions: {
         output: {
-          // تنظیمات نام‌گذاری بهینه با حروف بزرگ
-          entryFileNames: 'Scripts/Main-App-[hash].js',
+          // تنظیمات نام‌گذاری بدون hash
+          entryFileNames: 'Scripts/Main-App.js',
           chunkFileNames: (chunkInfo) => {
             const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
             const chunkName = facadeModuleId ? facadeModuleId.replace(/\.[^/.]+$/, '') : chunkInfo.name;
@@ -61,7 +61,7 @@ export default defineConfig(({ mode }) => {
               .split(/[-_]/)
               .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
               .join('-');
-            return `Scripts/Components/${formattedName}-[hash].js`;
+            return `Scripts/Components/${formattedName}.js`;
           },
           assetFileNames: (assetInfo) => {
             const info = assetInfo.name || '';
@@ -72,7 +72,7 @@ export default defineConfig(({ mode }) => {
                 .split(/[-_]/)
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                 .join('-');
-              return `Styles/${cssName}-[hash].css`;
+              return `Styles/${cssName}.css`;
             }
             
             // برای فایل‌های تصویر
@@ -101,7 +101,7 @@ export default defineConfig(({ mode }) => {
               .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
               .join('-');
             const ext = info.split('.').pop();
-            return `Assets/${fileName}-[hash].${ext}`;
+            return `Assets/${fileName}.${ext}`;
           },
           manualChunks: {
             'React-Core': ['react', 'react-dom'],
