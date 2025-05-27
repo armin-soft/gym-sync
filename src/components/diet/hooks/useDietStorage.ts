@@ -62,25 +62,70 @@ export const useDietStorage = () => {
         setMeals(mealsArray);
         
         console.log("Set meals in state:", mealsArray);
+      } else {
+        console.log("No saved meals found in localStorage, checking existing data...");
         
-        // تست سریع یک وعده غذایی برای دیباگ
-        if (mealsArray.length === 0) {
-          console.log("No meals found, creating test meal...");
-          const testMeal: Meal = {
+        // بررسی اگر اطلاعاتی در localStorage وجود دارد ولی با کلید دیگری
+        const allKeys = Object.keys(localStorage);
+        console.log("All localStorage keys:", allKeys);
+        
+        // جستجو برای هر کلیدی که ممکن است حاوی داده‌های غذایی باشد
+        const possibleKeys = allKeys.filter(key => 
+          key.toLowerCase().includes('meal') || 
+          key.toLowerCase().includes('diet') || 
+          key.toLowerCase().includes('food')
+        );
+        
+        console.log("Possible meal keys found:", possibleKeys);
+        
+        if (possibleKeys.length > 0) {
+          // تلاش برای بارگذاری از اولین کلید احتمالی
+          const testData = localStorage.getItem(possibleKeys[0]);
+          if (testData) {
+            try {
+              const testParsed = JSON.parse(testData);
+              if (Array.isArray(testParsed) && testParsed.length > 0) {
+                console.log("Found meals in alternative key:", possibleKeys[0]);
+                setMeals(testParsed);
+                // ذخیره در کلید صحیح
+                localStorage.setItem('meals', testData);
+                return;
+              }
+            } catch (e) {
+              console.log("Failed to parse data from", possibleKeys[0]);
+            }
+          }
+        }
+        
+        // اگر هیچ داده‌ای یافت نشد، مقادیر نمونه ایجاد کن
+        console.log("Creating sample meals data...");
+        const sampleMeals: Meal[] = [
+          {
             id: 1,
-            name: "صبحانه تست",
+            name: "املت با نان سبوس‌دار",
             type: "صبحانه",
             day: "شنبه",
-            description: "یک وعده غذایی تست"
-          };
-          const testMeals = [testMeal];
-          localStorage.setItem('meals', JSON.stringify(testMeals));
-          setMeals(testMeals);
-          console.log("Test meal created and saved");
-        }
-      } else {
-        console.log("No saved meals found in localStorage");
-        setMeals([]);
+            description: "همراه با چای یا قهوه"
+          },
+          {
+            id: 2,
+            name: "موز و بادام",
+            type: "میان وعده صبح",
+            day: "شنبه",
+            description: "منبع انرژی و پروتئین"
+          },
+          {
+            id: 3,
+            name: "مرغ گریل شده با برنج قهوه‌ای و سبزیجات",
+            type: "ناهار",
+            day: "شنبه",
+            description: "غذای سالم و مغذی"
+          }
+        ];
+        
+        localStorage.setItem('meals', JSON.stringify(sampleMeals));
+        setMeals(sampleMeals);
+        console.log("Sample meals created and saved");
       }
       console.log("=== END DIET STORAGE DEBUG ===");
     } catch (error) {

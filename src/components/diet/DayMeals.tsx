@@ -48,7 +48,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     setIsMounted(true);
     
     // اطلاعات دیباگ
-    console.log("=== DAY MEALS DEBUG ===");
+    console.log("=== DAY MEALS COMPONENT DEBUG ===");
     console.log("Total meals received:", meals.length);
     console.log("All meals:", meals);
     console.log("Days with content:", daysWithContent);
@@ -60,12 +60,18 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
       const dayMeals = meals.filter(meal => {
         const normalizedMealDay = normalizeDay(meal.day || '');
         const normalizedSelectedDay = normalizeDay(day);
-        return normalizedMealDay === normalizedSelectedDay;
+        const matches = normalizedMealDay === normalizedSelectedDay;
+        return matches;
       });
       console.log(`Day ${day} has ${dayMeals.length} meals:`, dayMeals);
     });
     
-    console.log("=== END DAY MEALS DEBUG ===");
+    // اگر داده‌ای نیست، نمایش پیام مناسب
+    if (meals.length === 0) {
+      console.log("No meals data found! This might be the issue.");
+    }
+    
+    console.log("=== END DAY MEALS COMPONENT DEBUG ===");
     
     return () => {
       setIsMounted(false);
@@ -91,6 +97,33 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     return dayMeals;
   };
   
+  // نمایش پیام مناسب اگر داده‌ای وجود ندارد
+  if (meals.length === 0) {
+    return (
+      <div dir="rtl" className="relative">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full"
+        >
+          <div className="text-center py-12">
+            <div className="bg-muted/50 rounded-lg p-8">
+              <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                هیچ وعده غذایی یافت نشد
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                برای شروع، وعده غذایی جدید اضافه کنید
+              </p>
+              <p className="text-sm text-muted-foreground">
+                در حال بارگذاری داده‌ها از localStorage...
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+  
   return (
     <div dir="rtl" className="relative">
       <motion.div
@@ -98,55 +131,42 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
         animate={{ opacity: 1, y: 0 }}
         className="w-full"
       >
-        {meals.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="bg-muted/50 rounded-lg p-8">
-              <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                هیچ وعده غذایی یافت نشد
-              </h3>
-              <p className="text-muted-foreground">
-                برای شروع، وعده غذایی جدید اضافه کنید
-              </p>
+        <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full">
+          <ScrollArea 
+            className="w-full overflow-hidden" 
+            orientation="horizontal"
+          >
+            <div className="min-h-[600px] pb-4">
+              <DayTabs 
+                weekDays={weekDays} 
+                selectedDay={selectedDay} 
+                onDayChange={setSelectedDay}
+                daysWithContent={daysWithContent}
+              >
+                {weekDays.map((day) => {
+                  const dayMeals = getDayMeals(day);
+                  
+                  return (
+                    <TabsContent 
+                      key={day} 
+                      value={day} 
+                      className="mt-6 relative"
+                    >
+                      <DayContent
+                        key={`day-content-${day}`}
+                        day={day}
+                        mealTypes={mealTypes}
+                        meals={dayMeals}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                      />
+                    </TabsContent>
+                  );
+                })}
+              </DayTabs>
             </div>
-          </div>
-        ) : (
-          <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full">
-            <ScrollArea 
-              className="w-full overflow-hidden" 
-              orientation="horizontal"
-            >
-              <div className="min-h-[600px] pb-4">
-                <DayTabs 
-                  weekDays={weekDays} 
-                  selectedDay={selectedDay} 
-                  onDayChange={setSelectedDay}
-                  daysWithContent={daysWithContent}
-                >
-                  {weekDays.map((day) => {
-                    const dayMeals = getDayMeals(day);
-                    
-                    return (
-                      <TabsContent 
-                        key={day} 
-                        value={day} 
-                        className="mt-6 relative"
-                      >
-                        <DayContent
-                          key={`day-content-${day}`}
-                          day={day}
-                          mealTypes={mealTypes}
-                          meals={dayMeals}
-                          onEdit={onEdit}
-                          onDelete={onDelete}
-                        />
-                      </TabsContent>
-                    );
-                  })}
-                </DayTabs>
-              </div>
-            </ScrollArea>
-          </Tabs>
-        )}
+          </ScrollArea>
+        </Tabs>
       </motion.div>
     </div>
   );
