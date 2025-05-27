@@ -23,43 +23,57 @@ export const useExerciseSelector = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   
-  // Auto-select type and category if a student has existing exercises - trigger on day change as well
+  // Auto-select type and category if a student has existing exercises
   useEffect(() => {
-    if (selectedExercises.length > 0) {
+    if (selectedExercises.length > 0 && !selectedType) {
       const firstExercise = selectedExercises[0];
       const exercise = exercises.find(ex => ex.id === firstExercise.id);
       
       if (exercise) {
         const category = categories.find(cat => cat.id === exercise.categoryId);
         if (category) {
+          console.log("Auto-selecting type and category based on existing exercises");
           setSelectedType(category.type);
           setSelectedCategoryId(exercise.categoryId);
         }
       }
     }
-  }, [selectedExercises, exercises, categories, dayNumber]);
+  }, [selectedExercises, exercises, categories, selectedType]);
 
-  // Filter categories by type
+  // Filter categories by selected type
   const filteredCategories = useMemo(() => {
     if (!selectedType) return [];
     
-    return categories.filter(cat => cat.type === selectedType);
+    const filtered = categories.filter(cat => cat.type === selectedType);
+    console.log(`Filtered categories for type ${selectedType}:`, filtered);
+    return filtered;
   }, [categories, selectedType]);
   
-  // Filter exercises by type and category
+  // Filter exercises by selected type and category
   const filteredExercises = useMemo(() => {
-    if (!selectedType || !selectedCategoryId) return [];
+    if (!selectedType || !selectedCategoryId) {
+      console.log("No type or category selected, returning empty array");
+      return [];
+    }
     
-    return exercises.filter(exercise => {
+    const filtered = exercises.filter(exercise => {
       const category = categories.find(cat => cat.id === exercise.categoryId);
-      return category?.type === selectedType && exercise.categoryId === selectedCategoryId;
+      const matches = category?.type === selectedType && exercise.categoryId === selectedCategoryId;
+      return matches;
     });
+    
+    console.log(`Filtered exercises for type ${selectedType} and category ${selectedCategoryId}:`, filtered);
+    return filtered;
   }, [exercises, categories, selectedType, selectedCategoryId]);
 
   const toggleExercise = (exerciseId: number) => {
+    console.log(`Toggling exercise ${exerciseId} for day ${dayNumber}`);
+    
     if (selectedExercises.some(ex => ex.id === exerciseId)) {
+      console.log(`Removing exercise ${exerciseId}`);
       setSelectedExercises(prev => prev.filter(ex => ex.id !== exerciseId));
     } else {
+      console.log(`Adding exercise ${exerciseId} with default values`);
       setSelectedExercises(prev => [
         ...prev, 
         { 
@@ -87,19 +101,34 @@ export const useExerciseSelector = ({
   };
 
   const handleRepsChange = (exerciseId: number, reps: string) => {
+    console.log(`Reps changing for exercise ${exerciseId} to ${reps}`);
     updateExerciseDetails(exerciseId, 'reps', reps);
   };
 
   const clearFilters = () => {
+    console.log("Clearing all filters");
     setSelectedType(null);
     setSelectedCategoryId(null);
   };
 
+  // Handle type selection with proper reset
+  const handleTypeSelection = (type: string | null) => {
+    console.log(`Setting type to: ${type}`);
+    setSelectedType(type);
+    setSelectedCategoryId(null); // Always reset category when type changes
+  };
+
+  // Handle category selection
+  const handleCategorySelection = (categoryId: number | null) => {
+    console.log(`Setting category to: ${categoryId}`);
+    setSelectedCategoryId(categoryId);
+  };
+
   return {
     selectedType,
-    setSelectedType,
+    setSelectedType: handleTypeSelection,
     selectedCategoryId,
-    setSelectedCategoryId,
+    setSelectedCategoryId: handleCategorySelection,
     viewMode,
     setViewMode,
     filteredCategories,
