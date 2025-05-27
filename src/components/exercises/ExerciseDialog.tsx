@@ -12,7 +12,6 @@ interface ExerciseDialogProps {
   onFormChange: (data: { name: string; categoryId: number }) => void;
   onSave: (data: { name: string; categoryId: number }) => Promise<void>;
   isEditing?: boolean;
-  preselectedCategoryId?: number; // اضافه کردن پراپ جدید
 }
 
 // Create a higher-order component to add responsive props
@@ -24,8 +23,7 @@ const ResponsiveExerciseDialog = ({
   formData,
   onFormChange,
   onSave,
-  isEditing,
-  preselectedCategoryId
+  isEditing
 }: ExerciseDialogProps) => {
   const deviceInfo = useDeviceInfo();
   
@@ -40,7 +38,6 @@ const ResponsiveExerciseDialog = ({
       onSave={onSave}
       deviceInfo={deviceInfo} 
       fullScreen={true} // Always use fullscreen mode
-      preselectedCategoryId={preselectedCategoryId}
     />
   );
 };

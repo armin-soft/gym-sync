@@ -9,7 +9,7 @@ import { useContinuousSpeechRecognition } from "@/hooks/speech/useContinuousSpee
 interface QuickSpeechAddProps {
   quickSpeechText: string;
   setQuickSpeechText: (value: string) => void;
-  onQuickAdd: (text: string) => Promise<void>;
+  onQuickAdd: () => void;
 }
 
 const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
@@ -34,13 +34,7 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey && quickSpeechText.trim()) {
       e.preventDefault();
-      handleQuickAddClick();
-    }
-  };
-
-  const handleQuickAddClick = async () => {
-    if (quickSpeechText.trim()) {
-      await onQuickAdd(quickSpeechText.trim());
+      onQuickAdd();
     }
   };
 
@@ -67,7 +61,7 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
             <div className="flex gap-2">
               <Button
                 size="sm"
-                onClick={handleQuickAddClick}
+                onClick={onQuickAdd}
                 disabled={!displayText.trim()}
                 className="bg-purple-600 hover:bg-purple-700 text-white"
               >
@@ -82,24 +76,22 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
                   variant={isListening ? "destructive" : "outline"}
                   className={isListening ? "bg-red-500 hover:bg-red-600 text-white" : ""}
                 >
-                  <AnimatePresence mode="popLayout">
+                  <AnimatePresence mode="wait">
                     {isListening ? (
                       <motion.div
-                        key="mic-off-icon"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.15 }}
+                        key="mic-off"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
                       >
                         <MicOff className="h-4 w-4 ml-1" />
                       </motion.div>
                     ) : (
                       <motion.div
-                        key="mic-icon"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.15 }}
+                        key="mic"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
                       >
                         <Mic className="h-4 w-4 ml-1" />
                       </motion.div>

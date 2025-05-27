@@ -29,7 +29,6 @@ interface AddExerciseDialogProps {
   skippedExercises: string[];
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  preselectedCategoryId?: number; // اضافه کردن پراپ جدید
 }
 
 export function AddExerciseDialog({
@@ -47,20 +46,18 @@ export function AddExerciseDialog({
   skippedExercises,
   activeTab,
   setActiveTab,
-  preselectedCategoryId,
 }: AddExerciseDialogProps) {
   
   // Reset form when dialog opens
   useEffect(() => {
     if (isOpen) {
-      const defaultCategoryId = preselectedCategoryId || (categories.length > 0 ? categories[0].id : 0);
       onFormDataChange({ 
         name: "", 
-        categoryId: defaultCategoryId
+        categoryId: categories.length > 0 ? categories[0].id : 0 
       });
       setGroupText("");
     }
-  }, [isOpen, categories, onFormDataChange, setGroupText, preselectedCategoryId]);
+  }, [isOpen, categories, onFormDataChange, setGroupText]);
 
   const handleClose = () => {
     if (!isSaving) {
@@ -117,7 +114,6 @@ export function AddExerciseDialog({
                     categories={categories}
                     categoryId={formData.categoryId}
                     onCategoryChange={(id) => onFormDataChange({ ...formData, categoryId: id })}
-                    preselectedCategoryId={preselectedCategoryId}
                   />
                 </motion.div>
               </TabsContent>
@@ -137,11 +133,6 @@ export function AddExerciseDialog({
                       دسته‌بندی انتخاب شده: <span className="font-medium text-indigo-600 dark:text-indigo-400">
                         {categories.find(c => c.id === formData.categoryId)?.name}
                       </span>
-                      {preselectedCategoryId && (
-                        <span className="text-green-600 dark:text-green-400 mr-2">
-                          (خودکار انتخاب شده)
-                        </span>
-                      )}
                     </p>
                     <select
                       className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow text-right"

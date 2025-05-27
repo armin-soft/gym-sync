@@ -42,8 +42,7 @@ const ExercisesStage = React.memo(({
     setQuickSpeechText,
     handleQuickAdd,
     showQuickSpeech,
-    setShowQuickSpeech,
-    preselectedCategoryId
+    setShowQuickSpeech
   } = useExercisesStage({ categoryId, typeId });
 
   return (
@@ -102,7 +101,6 @@ const ExercisesStage = React.memo(({
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         onDelete={handleDeleteExercise}
         selectedExerciseIds={selectedExerciseIds}
-        preselectedCategoryId={preselectedCategoryId}
       />
     </div>
   );

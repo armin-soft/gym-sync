@@ -14,7 +14,6 @@ interface ExerciseDialogProps {
   onSave: (data: { name: string; categoryId: number }) => Promise<void>;
   deviceInfo?: any;
   fullScreen?: boolean;
-  preselectedCategoryId?: number; // اضافه کردن پراپ جدید
 }
 
 export function ExerciseDialogMain({
@@ -27,7 +26,6 @@ export function ExerciseDialogMain({
   onSave,
   deviceInfo,
   fullScreen,
-  preselectedCategoryId,
 }: ExerciseDialogProps) {
   const {
     groupText,
@@ -82,7 +80,6 @@ export function ExerciseDialogMain({
       skippedExercises={skippedExercises}
       activeTab={activeTab}
       setActiveTab={setActiveTab}
-      preselectedCategoryId={preselectedCategoryId}
     />
   );
 }

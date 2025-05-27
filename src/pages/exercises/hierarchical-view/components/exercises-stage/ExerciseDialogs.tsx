@@ -17,7 +17,6 @@ interface ExerciseDialogsProps {
   setIsDeleteDialogOpen: (open: boolean) => void;
   onDelete: (id: number) => void;
   selectedExerciseIds: number[];
-  preselectedCategoryId?: number; // اضافه کردن پراپ جدید
 }
 
 const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
@@ -30,8 +29,7 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
   isDeleteDialogOpen,
   setIsDeleteDialogOpen,
   onDelete,
-  selectedExerciseIds,
-  preselectedCategoryId
+  selectedExerciseIds
 }) => {
   // Get categories from hook
   const { categories } = useExerciseData();
@@ -54,7 +52,6 @@ const ExerciseDialogs: React.FC<ExerciseDialogsProps> = ({
         onFormChange={setFormData}
         onSave={onSave}
         isEditing={!!selectedExercise}
-        preselectedCategoryId={preselectedCategoryId}
       />
 
       {/* Delete Confirmation Dialog */}
