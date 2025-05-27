@@ -82,22 +82,24 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
                   variant={isListening ? "destructive" : "outline"}
                   className={isListening ? "bg-red-500 hover:bg-red-600 text-white" : ""}
                 >
-                  <AnimatePresence mode="wait">
+                  <AnimatePresence mode="popLayout">
                     {isListening ? (
                       <motion.div
-                        key="mic-off"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
+                        key="mic-off-icon"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                       >
                         <MicOff className="h-4 w-4 ml-1" />
                       </motion.div>
                     ) : (
                       <motion.div
-                        key="mic"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
+                        key="mic-icon"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                       >
                         <Mic className="h-4 w-4 ml-1" />
                       </motion.div>
