@@ -16,12 +16,14 @@ interface LoadingScreenProps {
 export const LoadingScreen = memo(({ onLoadingComplete, isVisible = true }: LoadingScreenProps) => {
   const { progress, gymName, loadingText } = useLoadingState();
   
-  // اجرای کالبک تکمیل بارگذاری
+  // اجرای کالبک تکمیل بارگذاری با تأخیر بیشتر
   useEffect(() => {
     if (progress === 100 && onLoadingComplete) {
+      console.log('Loading completed, waiting for components to fully initialize...');
       const timer = setTimeout(() => {
+        console.log('All components ready, hiding loading screen');
         onLoadingComplete();
-      }, 500);
+      }, 1500); // تأخیر بیشتر برای اطمینان از بارگذاری کامل
       
       return () => clearTimeout(timer);
     }
@@ -35,7 +37,7 @@ export const LoadingScreen = memo(({ onLoadingComplete, isVisible = true }: Load
         key="loading-screen"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        exit={{ opacity: 0, transition: { duration: 0.8 } }}
         transition={{ duration: 0.4 }} 
         className="fixed inset-0 flex flex-col items-center justify-center z-50 w-screen h-screen overflow-hidden"
       >
