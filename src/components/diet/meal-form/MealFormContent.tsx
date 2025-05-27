@@ -66,7 +66,20 @@ export const MealFormContent = ({
     setIsSubmitting(true);
     
     try {
-      const success = onSave(data, meal?.id);
+      // Ensure required fields are present
+      const mealData: Omit<Meal, "id"> = {
+        name: data.name!,
+        type: data.type! as MealType,
+        day: data.day as WeekDay,
+        description: data.description,
+        category: data.category,
+        calories: data.calories,
+        protein: data.protein,
+        carbs: data.carbs,
+        fat: data.fat,
+      };
+      
+      const success = onSave(mealData, meal?.id);
       if (success) {
         form.reset();
         onCancel();

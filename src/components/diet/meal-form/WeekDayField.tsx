@@ -1,29 +1,32 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarDays } from "lucide-react";
-import type { MealFormProps } from "./MealFormSchema";
+import { Control } from "react-hook-form";
+import { MealFormData } from "./MealFormSchema";
+import type { WeekDay } from "@/types/meal";
 
-export const WeekDayField = ({ form, weekDays }: Pick<MealFormProps, "form" | "weekDays">) => {
+interface WeekDayFieldProps {
+  control: Control<MealFormData>;
+  weekDays: WeekDay[];
+}
+
+export const WeekDayField = ({ control, weekDays }: WeekDayFieldProps) => {
   return (
     <FormField
-      control={form.control}
+      control={control}
       name="day"
       render={({ field }) => (
-        <FormItem className="text-right">
-          <FormLabel className="flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-muted-foreground" />
-            روز هفته
-          </FormLabel>
+        <FormItem>
+          <FormLabel className="text-right">روز هفته *</FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
-              <SelectTrigger className="bg-muted/50 focus:bg-background transition-colors duration-300 text-right">
-                <SelectValue placeholder="روز هفته را انتخاب کنید" />
+              <SelectTrigger className="text-right">
+                <SelectValue placeholder="انتخاب کنید" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent dir="rtl">
+            <SelectContent>
               {weekDays.map((day) => (
-                <SelectItem key={day} value={day}>
+                <SelectItem key={day} value={day} className="text-right">
                   {day}
                 </SelectItem>
               ))}
