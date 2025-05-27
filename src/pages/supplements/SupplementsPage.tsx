@@ -8,11 +8,9 @@ import { SupplementTabs } from "./components/supplement-tabs";
 import { SupplementDialog } from "@/components/supplements/SupplementDialog";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
 import { useToast } from "@/hooks/use-toast";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const SupplementsPage = () => {
   const { toast } = useToast();
-  const deviceInfo = useDeviceInfo();
   const [supplementDialogOpen, setSupplementDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState(null);
@@ -108,82 +106,64 @@ const SupplementsPage = () => {
     }
     setSupplementDialogOpen(false);
   };
-  
-  // Animation for page content
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
 
   return (
-    <PageContainer 
-      className="mx-auto py-0 px-0 space-y-0 max-w-none min-h-screen"
-      fullWidth={true}
-      fullHeight={true}
-      withBackground={true}
-      noPadding={true}
-    >
-      <div className="relative w-full h-full flex flex-col overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
-        
-        <div className="flex-1 flex flex-col h-full overflow-hidden p-2 sm:p-3 md:p-4 lg:p-6">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="space-y-3 sm:space-y-4 md:space-y-6 h-full flex flex-col"
-          >
-            <SupplementsHeader />
-            
-            <div className="flex-1 overflow-hidden">
-              <SupplementTabs 
-                activeTab={activeTab}
-                onTabChange={(value) => {
-                  setActiveTab(value as 'supplement' | 'vitamin');
-                }}
-                isLoading={isLoading}
-                categories={relevantCategories}
-                onAddCategory={handleAddCategory}
-                onEditCategory={handleEditCategory}
-                onDeleteCategory={deleteCategory}
-                supplements={filteredSupplements}
-                onAddSupplement={handleAddSupplement}
-                onEditSupplement={handleEditSupplement}
-                onDeleteSupplement={deleteSupplement}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-950 dark:to-purple-950">
+      <PageContainer 
+        className="mx-auto py-0 px-0 space-y-0 max-w-none h-screen"
+        fullWidth={true}
+        fullHeight={true}
+        withBackground={false}
+        noPadding={true}
+      >
+        <div className="h-full flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full flex flex-col">
+              <SupplementsHeader />
+              
+              <div className="flex-1 overflow-hidden px-2 sm:px-3 md:px-4 lg:px-6 pb-2 sm:pb-3 md:pb-4 lg:pb-6">
+                <SupplementTabs 
+                  activeTab={activeTab}
+                  onTabChange={(value) => {
+                    setActiveTab(value as 'supplement' | 'vitamin');
+                  }}
+                  isLoading={isLoading}
+                  categories={relevantCategories}
+                  onAddCategory={handleAddCategory}
+                  onEditCategory={handleEditCategory}
+                  onDeleteCategory={deleteCategory}
+                  supplements={filteredSupplements}
+                  onAddSupplement={handleAddSupplement}
+                  onEditSupplement={handleEditSupplement}
+                  onDeleteSupplement={deleteSupplement}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                />
+              </div>
             </div>
-          </motion.div>
+          </div>
+
+          {/* Dialogs */}
+          <SupplementDialog
+            open={supplementDialogOpen}
+            onOpenChange={setSupplementDialogOpen}
+            onSubmit={handleSubmitSupplement}
+            defaultValues={editingSupplement || undefined}
+            mode={editingSupplement ? "edit" : "add"}
+            categories={categories.filter(c => c.type === activeTab)}
+            type={activeTab}
+          />
+
+          <CategoryDialog
+            open={categoryDialogOpen}
+            onOpenChange={setCategoryDialogOpen}
+            onSubmit={handleSubmitCategory}
+            defaultValue={editingCategory?.name}
+            mode={editingCategory ? "edit" : "add"}
+          />
         </div>
-
-        {/* Dialogs */}
-        <SupplementDialog
-          open={supplementDialogOpen}
-          onOpenChange={setSupplementDialogOpen}
-          onSubmit={handleSubmitSupplement}
-          defaultValues={editingSupplement || undefined}
-          mode={editingSupplement ? "edit" : "add"}
-          categories={categories.filter(c => c.type === activeTab)}
-          type={activeTab}
-        />
-
-        <CategoryDialog
-          open={categoryDialogOpen}
-          onOpenChange={setCategoryDialogOpen}
-          onSubmit={handleSubmitCategory}
-          defaultValue={editingCategory?.name}
-          mode={editingCategory ? "edit" : "add"}
-        />
-      </div>
-    </PageContainer>
+      </PageContainer>
+    </div>
   );
 };
 

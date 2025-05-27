@@ -49,35 +49,32 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
   }
   
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex flex-col flex-1 h-full w-full overflow-hidden"
-    >
+    <div className="h-full flex flex-col overflow-hidden rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-lg backdrop-blur-sm">
       <Tabs 
         value={activeTab} 
         onValueChange={onTabChange} 
-        className="flex flex-col flex-1 h-full w-full"
+        className="flex flex-col h-full w-full"
       >
         {/* Header */}
         <TabsHeader activeTab={activeTab} />
         
         {/* Content for each tab */}
-        <TabContent
-          activeTab={activeTab}
-          categories={categories.filter(c => c.type === activeTab)}
-          onAddCategory={onAddCategory}
-          onEditCategory={onEditCategory}
-          onDeleteCategory={onDeleteCategory}
-          supplements={supplements.filter(s => s.type === activeTab)}
-          onAddSupplement={onAddSupplement}
-          onEditSupplement={onEditSupplement}
-          onDeleteSupplement={onDeleteSupplement}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+        <div className="flex-1 overflow-hidden">
+          <TabContent
+            activeTab={activeTab}
+            categories={categories.filter(c => c.type === activeTab)}
+            onAddCategory={onAddCategory}
+            onEditCategory={onEditCategory}
+            onDeleteCategory={onDeleteCategory}
+            supplements={supplements.filter(s => s.type === activeTab)}
+            onAddSupplement={onAddSupplement}
+            onEditSupplement={onEditSupplement}
+            onDeleteSupplement={onDeleteSupplement}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        </div>
       </Tabs>
-    </motion.div>
+    </div>
   );
 };
