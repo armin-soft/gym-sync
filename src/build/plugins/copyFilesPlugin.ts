@@ -7,7 +7,7 @@ export const copyFilesPlugin = () => {
     name: 'copy-files',
     closeBundle: async () => {
       try {
-        console.log('شروع کپی فایل‌ها و بهینه‌سازی برای نسخه 3.3.7...');
+        console.log('شروع کپی فایل‌ها و بهینه‌سازی برای نسخه 3.3.9...');
 
         // اطمینان از وجود پوشه‌های مقصد
         const assetsDir = 'dist/assets';
@@ -66,9 +66,9 @@ export const copyFilesPlugin = () => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران - نسخه 3.3.7" />
+    <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران - نسخه 3.3.9" />
     <meta name="theme-color" content="#7c3aed" />
-    <title>مدیریت برنامه - نسخه 3.3.7</title>
+    <title>مدیریت برنامه - نسخه 3.3.9</title>
 
     <!-- Favicon and PWA -->
     <link rel="icon" type="image/png" href="./assets/images/Logo.png" />
@@ -143,7 +143,7 @@ RewriteRule ^ index.html [QSA,L]
         fs.writeFileSync('dist/.htaccess', htaccessContent);
         console.log('فایل .htaccess ایجاد شد');
 
-        console.log('✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.7!');
+        console.log('✅ تمام فایل‌ها با موفقیت کپی و بهینه‌سازی شدند برای نسخه 3.3.9!');
 
       } catch (error) {
         console.error('❌ خطا در کپی یا بهینه‌سازی فایل‌ها:', error);

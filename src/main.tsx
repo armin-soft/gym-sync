@@ -10,7 +10,7 @@ function MainApp() {
   const [isLoading, setIsLoading] = useState(true);
   
   const handleLoadingComplete = () => {
-    console.log('Loading completed for version 3.3.7, showing main app');
+    console.log('Loading completed for version 3.3.9, showing main app');
     setIsLoading(false);
   };
   
@@ -25,7 +25,7 @@ function MainApp() {
 // تابع راه‌اندازی اصلی برنامه
 function startApp() {
   try {
-    console.log('Starting app initialization for version 3.3.7...');
+    console.log('Starting app initialization for version 3.3.9...');
     const rootElement = document.getElementById('root');
     if (!rootElement) {
       console.error('عنصر root پیدا نشد');
@@ -36,11 +36,11 @@ function startApp() {
     const root = createRoot(rootElement);
     root.render(<MainApp />);
     
-    console.log('برنامه نسخه 3.3.7 با موفقیت راه‌اندازی شد');
+    console.log('برنامه نسخه 3.3.9 با موفقیت راه‌اندازی شد');
   } catch (error) {
-    console.error('خطا در راه‌اندازی برنامه نسخه 3.3.7:', error);
+    console.error('خطا در راه‌اندازی برنامه نسخه 3.3.9:', error);
     // نمایش پیام خطا برای کاربر
-    document.body.innerHTML = '<div style="padding: 20px; text-align: center;">خطا در بارگذاری برنامه نسخه 3.3.7. لطفا صفحه را رفرش کنید.</div>';
+    document.body.innerHTML = '<div style="padding: 20px; text-align: center;">خطا در بارگذاری برنامه نسخه 3.3.9. لطفا صفحه را رفرش کنید.</div>';
   }
 }
 
