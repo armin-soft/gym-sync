@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { motion } from "framer-motion";
 import { Meal, MealType } from "@/types/meal";
-import ProgramSpeechToText from "./components/ProgramSpeechToText";
 import { useToast } from "@/hooks/use-toast";
 
 interface StudentDietSelectorProps {
@@ -69,48 +68,6 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
     );
   };
 
-  const handleSpeechSave = (transcript: string) => {
-    const mealNames = transcript
-      .split(/[،,\n]/)
-      .map(name => name.trim())
-      .filter(name => name.length > 0);
-
-    if (mealNames.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "هیچ غذایی در متن گفتاری یافت نشد"
-      });
-      return;
-    }
-
-    const matchedMeals: number[] = [];
-    
-    mealNames.forEach(name => {
-      const foundMeal = meals.find(meal => 
-        meal.name.includes(name) || name.includes(meal.name)
-      );
-      
-      if (foundMeal && !selectedMeals.includes(foundMeal.id)) {
-        matchedMeals.push(foundMeal.id);
-      }
-    });
-
-    if (matchedMeals.length > 0) {
-      setSelectedMeals(prev => [...prev, ...matchedMeals]);
-      toast({
-        title: "افزودن موفق",
-        description: `${toPersianNumbers(matchedMeals.length)} غذا از گفتار شما اضافه شد`
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "هیچ غذایی یافت نشد",
-        description: "لطفا نام غذاها را واضح‌تر بیان کنید"
-      });
-    }
-  };
-
   const getDayName = () => {
     const day = weekDays.find(d => d.id === currentDay);
     return day ? day.name : `روز ${toPersianNumbers(currentDay)}`;
@@ -135,20 +92,6 @@ const StudentDietSelector: React.FC<StudentDietSelectorProps> = ({
         <p className="text-sm text-muted-foreground mt-1">
           {toPersianNumbers(selectedMeals.length)} غذا انتخاب شده
         </p>
-      </motion.div>
-
-      {/* Speech to Text for Meal Input */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <ProgramSpeechToText
-          onSave={handleSpeechSave}
-          title="افزودن غذا با گفتار"
-          placeholder="نام غذاهای مورد نظر را بگویید، مثل: برنج، مرغ، سالاد"
-          className="mb-4"
-        />
       </motion.div>
 
       {/* Simple Search */}
