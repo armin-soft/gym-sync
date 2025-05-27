@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExercisesListProps {
   filteredExercises: Exercise[];
@@ -28,57 +29,65 @@ const ExercisesList: React.FC<ExercisesListProps> = ({
   onAddExercise
 }) => {
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-4">
-      <motion.div 
-        className={`grid gap-3 ${
-          viewMode === "grid" 
-            ? "grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" 
-            : "grid-cols-1"
-        }`}
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { 
-            opacity: 1,
-            transition: { staggerChildren: 0.05 }
-          }
-        }}
-        initial="hidden"
-        animate="visible"
-      >
-        {filteredExercises.length > 0 ? (
-          filteredExercises.map((exercise, index) => {
-            const isSelected = selectedExerciseIds.includes(exercise.id);
-            
-            return (
-              <motion.div 
-                key={exercise.id} 
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1 }
-                }}
-              >
-                <ExerciseCard 
-                  exercise={exercise}
-                  category={selectedCategory}
-                  isSelected={isSelected}
-                  viewMode={viewMode}
-                  onClick={() => {
-                    setSelectedExerciseIds(prev => 
-                      isSelected 
-                        ? prev.filter(id => id !== exercise.id)
-                        : [...prev, exercise.id]
-                    );
+    <div className="h-full overflow-y-auto">
+      <div className="p-4">
+        <motion.div 
+          className={`grid gap-3 ${
+            viewMode === "grid" 
+              ? "grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" 
+              : "grid-cols-1"
+          }`}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { 
+              opacity: 1,
+              transition: { staggerChildren: 0.05 }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+        >
+          {filteredExercises.length > 0 ? (
+            filteredExercises.map((exercise, index) => {
+              const isSelected = selectedExerciseIds.includes(exercise.id);
+              
+              return (
+                <motion.div 
+                  key={exercise.id} 
+                  variants={{
+                    hidden: { y: 20, opacity: 0 },
+                    visible: { y: 0, opacity: 1 }
                   }}
-                  onEdit={() => onEditExercise(exercise)}
-                  onDelete={() => onDeleteExercise(exercise.id)}
-                />
-              </motion.div>
-            );
-          })
-        ) : (
-          <EmptyExerciseState onAddExercise={onAddExercise} />
-        )}
-      </motion.div>
+                  className="relative"
+                >
+                  {/* Exercise Number Badge */}
+                  <div className="absolute top-2 right-2 z-10 bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md">
+                    {toPersianNumbers(index + 1)}
+                  </div>
+                  
+                  <ExerciseCard 
+                    exercise={exercise}
+                    category={selectedCategory}
+                    isSelected={isSelected}
+                    viewMode={viewMode}
+                    onClick={() => {
+                      setSelectedExerciseIds(prev => 
+                        isSelected 
+                          ? prev.filter(id => id !== exercise.id)
+                          : [...prev, exercise.id]
+                      );
+                    }}
+                    onEdit={() => onEditExercise(exercise)}
+                    onDelete={() => onDeleteExercise(exercise.id)}
+                  />
+                </motion.div>
+              );
+            })
+          ) : (
+            <EmptyExerciseState onAddExercise={onAddExercise} />
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 };

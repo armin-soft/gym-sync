@@ -5,13 +5,21 @@ import ExerciseHeader from "./ExerciseHeader";
 import ExercisesList from "./ExercisesList";
 import QuickSpeechAdd from "./QuickSpeechAdd";
 import ExerciseDialogs from "./ExerciseDialogs";
+import BackNavigation from "./BackNavigation";
 
 interface ExercisesStageProps {
   categoryId: string;
   typeId: string;
+  onBackToCategories?: () => void;
+  onBackToTypes?: () => void;
 }
 
-const ExercisesStage = React.memo(({ categoryId, typeId }: ExercisesStageProps) => {
+const ExercisesStage = React.memo(({ 
+  categoryId, 
+  typeId, 
+  onBackToCategories, 
+  onBackToTypes 
+}: ExercisesStageProps) => {
   const {
     isLoading,
     filteredExercises,
@@ -39,6 +47,15 @@ const ExercisesStage = React.memo(({ categoryId, typeId }: ExercisesStageProps) 
 
   return (
     <div className="flex flex-col h-full w-full">
+      {/* Back Navigation */}
+      <div className="flex-shrink-0 mb-4">
+        <BackNavigation
+          onBackToCategories={onBackToCategories}
+          onBackToTypes={onBackToTypes}
+          selectedCategory={selectedCategory}
+        />
+      </div>
+
       <div className="flex-shrink-0">
         <ExerciseHeader
           exerciseCount={filteredExercises.length}

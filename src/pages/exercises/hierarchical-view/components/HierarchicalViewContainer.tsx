@@ -54,7 +54,7 @@ export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps>
         />
         
         <Card className="flex-1 overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30">
-          <div className="h-full p-4 md:p-6 overflow-y-auto">
+          <div className="h-full p-4 md:p-6 overflow-hidden">
             {/* Render the appropriate stage based on the current state */}
             {currentStage === 'types' && (
               <TypeSelectionStage 
@@ -77,6 +77,8 @@ export const HierarchicalViewContainer: React.FC<HierarchicalViewContainerProps>
               <ExercisesStage 
                 typeId={selectedTypeId} 
                 categoryId={selectedCategoryId}
+                onBackToCategories={handleBackToCategories}
+                onBackToTypes={handleBackToTypes}
               />
             )}
           </div>
