@@ -49,6 +49,16 @@ const Index = () => {
     toggleSortOrder
   } = useDietState();
 
+  // اطلاعات دیباگ در کامپوننت اصلی
+  React.useEffect(() => {
+    console.log("=== DIET PAGE DEBUG ===");
+    console.log("Meals from useDietState:", meals);
+    console.log("Filtered meals:", filteredMeals);
+    console.log("Search query:", searchQuery);
+    console.log("Selected day:", selectedDay);
+    console.log("=== END DIET PAGE DEBUG ===");
+  }, [meals, filteredMeals, searchQuery, selectedDay]);
+
   return (
     <PageContainer 
       withBackground 

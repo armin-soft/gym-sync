@@ -48,11 +48,41 @@ export const useDietStorage = () => {
   // بارگذاری برنامه‌های غذایی از localStorage
   useEffect(() => {
     try {
+      console.log("=== DIET STORAGE DEBUG ===");
       const savedMeals = localStorage.getItem('meals');
+      console.log("Raw saved meals from localStorage:", savedMeals);
+      
       if (savedMeals) {
         const parsedMeals = JSON.parse(savedMeals);
-        setMeals(Array.isArray(parsedMeals) ? parsedMeals : []);
+        console.log("Parsed meals:", parsedMeals);
+        console.log("Is array:", Array.isArray(parsedMeals));
+        console.log("Meals count:", parsedMeals?.length || 0);
+        
+        const mealsArray = Array.isArray(parsedMeals) ? parsedMeals : [];
+        setMeals(mealsArray);
+        
+        console.log("Set meals in state:", mealsArray);
+        
+        // تست سریع یک وعده غذایی برای دیباگ
+        if (mealsArray.length === 0) {
+          console.log("No meals found, creating test meal...");
+          const testMeal: Meal = {
+            id: 1,
+            name: "صبحانه تست",
+            type: "صبحانه",
+            day: "شنبه",
+            description: "یک وعده غذایی تست"
+          };
+          const testMeals = [testMeal];
+          localStorage.setItem('meals', JSON.stringify(testMeals));
+          setMeals(testMeals);
+          console.log("Test meal created and saved");
+        }
+      } else {
+        console.log("No saved meals found in localStorage");
+        setMeals([]);
       }
+      console.log("=== END DIET STORAGE DEBUG ===");
     } catch (error) {
       console.error('خطا در بارگیری برنامه‌های غذایی از localStorage:', error);
       toast({
@@ -67,8 +97,10 @@ export const useDietStorage = () => {
   // ذخیره برنامه‌های غذایی در localStorage
   const saveMeals = (updatedMeals: Meal[]): boolean => {
     try {
+      console.log("Saving meals to localStorage:", updatedMeals);
       localStorage.setItem('meals', JSON.stringify(updatedMeals));
       setMeals(updatedMeals);
+      console.log("Meals saved successfully");
       return true;
     } catch (error) {
       console.error('خطا در ذخیره‌سازی برنامه‌های غذایی در localStorage:', error);
