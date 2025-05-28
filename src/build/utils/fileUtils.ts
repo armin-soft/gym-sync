@@ -10,14 +10,19 @@ export const createDirectories = (directories: readonly string[]): void => {
   });
 };
 
-export const copyImages = (sourcePath: string): void => {
+export const copyImages = (sourcePath: string, destinationPath: string = 'dist/Assets/Images'): void => {
   if (!fs.existsSync(sourcePath)) return;
   
   const imageFiles = fs.readdirSync(sourcePath);
   imageFiles.forEach(file => {
     const sourceFilePath = path.join(sourcePath, file);
-    const destPath = path.join('dist/Images', file);
+    const destPath = path.join(destinationPath, file);
     if (fs.statSync(sourceFilePath).isFile()) {
+      // اطمینان از وجود پوشه مقصد
+      const destDir = path.dirname(destPath);
+      if (!fs.existsSync(destDir)) {
+        fs.mkdirSync(destDir, { recursive: true });
+      }
       fs.copyFileSync(sourceFilePath, destPath);
       console.log(`کپی تصویر: ${file}`);
     }
