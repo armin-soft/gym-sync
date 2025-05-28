@@ -28,6 +28,7 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
   setCurrentDay,
 }) => {
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   // Animation variants
   const containerVariants = {
@@ -112,8 +113,8 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
                     selectedVitamins={selectedVitamins}
                     setSelectedVitamins={setSelectedVitamins}
                     activeTab={activeTab}
-                    selectedCategory={null}
-                    setSelectedCategory={() => {}}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
                   />
                 </div>
               </Card>

@@ -33,6 +33,7 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
           isSelected && "border-purple-500 bg-purple-50"
         )}
         onClick={() => onSelect(item.id)}
+        dir="rtl"
       >
         {isSelected && (
           <div className="absolute top-0 right-0">
@@ -56,25 +57,36 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
             )}
           </div>
           
-          {/* Display dosage and timing information */}
-          {(item.dosage || item.timing) && (
-            <div className="flex flex-col gap-1 mt-3 text-xs text-gray-600">
-              {item.dosage && (
-                <div className="flex items-center gap-1 justify-end">
-                  <span>{toPersianNumbers(item.dosage)}</span>
-                  <span className="font-medium">دوز مصرف:</span>
-                  <List className="h-3 w-3 text-purple-500" />
-                </div>
-              )}
-              {item.timing && (
-                <div className="flex items-center gap-1 justify-end">
-                  <span>{item.timing}</span>
-                  <span className="font-medium">زمان مصرف:</span>
-                  <Clock className="h-3 w-3 text-purple-500" />
-                </div>
-              )}
-            </div>
-          )}
+          {/* Display dosage and timing information if available */}
+          <div className="flex flex-col gap-1 mt-3 text-xs text-gray-600">
+            {item.dosage ? (
+              <div className="flex items-center gap-1 justify-end">
+                <span>{item.dosage}</span>
+                <span className="font-medium">دوز مصرف:</span>
+                <List className="h-3 w-3 text-purple-500" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 justify-end text-gray-400">
+                <span>تعریف نشده</span>
+                <span className="font-medium">دوز مصرف:</span>
+                <List className="h-3 w-3 text-gray-400" />
+              </div>
+            )}
+            
+            {item.timing ? (
+              <div className="flex items-center gap-1 justify-end">
+                <span>{item.timing}</span>
+                <span className="font-medium">زمان مصرف:</span>
+                <Clock className="h-3 w-3 text-purple-500" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 justify-end text-gray-400">
+                <span>تعریف نشده</span>
+                <span className="font-medium">زمان مصرف:</span>
+                <Clock className="h-3 w-3 text-gray-400" />
+              </div>
+            )}
+          </div>
         </div>
       </Card>
     </motion.div>

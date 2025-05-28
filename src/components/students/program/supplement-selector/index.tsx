@@ -1,9 +1,14 @@
 
-import React from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, Filter, Grid, List } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Supplement } from "@/types/supplement";
-import SupplementGrid from "./SupplementGrid";
-import SupplementStatistics from "./SupplementStatistics";
+import SupplementCard from "./SupplementCard";
 
 interface StudentSupplementSelectorProps {
   supplements: Supplement[];
@@ -13,7 +18,7 @@ interface StudentSupplementSelectorProps {
   setSelectedVitamins: React.Dispatch<React.SetStateAction<number[]>>;
   activeTab: 'supplement' | 'vitamin';
   selectedCategory: string | null;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectedCategory: (category: string | null) => void;
 }
 
 const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
@@ -23,54 +28,151 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   selectedVitamins,
   setSelectedVitamins,
   activeTab,
+  selectedCategory,
+  setSelectedCategory,
 }) => {
-  // Get currently selected items based on activeTab
-  const selectedItems = activeTab === 'supplement' ? selectedSupplements : selectedVitamins;
-  const setSelectedItems = activeTab === 'supplement' ? setSelectedSupplements : setSelectedVitamins;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
 
-  // Filter supplements based on activeTab only
-  const filteredItems = React.useMemo(() => {
-    return supplements.filter(item => item.type === activeTab);
-  }, [supplements, activeTab]);
-
-  // Toggle selection of an item
-  const toggleItem = (id: number) => {
-    setSelectedItems(prev => 
-      prev.includes(id) 
-        ? prev.filter(itemId => itemId !== id) 
-        : [...prev, id]
+  // Filter supplements based on active tab, search query, and category
+  useEffect(() => {
+    let filtered = supplements.filter(item => 
+      item.type === (activeTab === 'supplement' ? 'supplement' : 'vitamin')
     );
+
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    if (selectedCategory) {
+      filtered = filtered.filter(item => item.category === selectedCategory);
+    }
+
+    setFilteredItems(filtered);
+  }, [supplements, activeTab, searchQuery, selectedCategory]);
+
+  const handleToggleItem = (id: number) => {
+    if (activeTab === 'supplement') {
+      setSelectedSupplements(prev => 
+        prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+      );
+    } else {
+      setSelectedVitamins(prev => 
+        prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+      );
+    }
+  };
+
+  const isSelected = (id: number) => {
+    return activeTab === 'supplement' 
+      ? selectedSupplements.includes(id)
+      : selectedVitamins.includes(id);
+  };
+
+  const getUniqueCategories = () => {
+    const categories = filteredItems
+      .map(item => item.category)
+      .filter((category, index, self) => category && self.indexOf(category) === index);
+    return categories;
   };
 
   return (
-    <div className="h-full flex flex-col text-right" dir="rtl">
-      <div className="mb-4 text-center" dir="rtl">
-        <h3 className="text-lg font-semibold text-indigo-700 text-right">
-          {activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}
-        </h3>
-      </div>
-
-      {/* Item Grid */}
-      <ScrollArea className="flex-1" dir="rtl">
-        <div dir="rtl">
-          <SupplementGrid 
-            filteredItems={filteredItems}
-            selectedItems={selectedItems}
-            toggleItem={toggleItem}
-            searchQuery=""
-            selectedCategory={null}
-            clearFilters={() => {}}
+    <div className="space-y-4 h-full flex flex-col text-right" dir="rtl">
+      {/* Search and Filter Controls */}
+      <div className="flex flex-col gap-3">
+        <div className="relative">
+          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={`جستجو در ${activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}...`}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pr-10 text-right"
+            dir="rtl"
           />
         </div>
-      </ScrollArea>
-      
-      {/* Selected count */}
-      <div dir="rtl">
-        <SupplementStatistics 
-          filteredItemsCount={filteredItems.length}
-          selectedItemsCount={selectedItems.length}
-          activeTab={activeTab}
-        />
+
+        {/* Category Filter */}
+        {getUniqueCategories().length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={selectedCategory === null ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCategory(null)}
+              className="text-xs"
+            >
+              همه
+            </Button>
+            {getUniqueCategories().map(category => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(category)}
+                className="text-xs"
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+        )}
+
+        {/* View Mode Toggle */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-1">
+            <Button
+              variant={viewMode === 'grid' ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+            >
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode('list')}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Items Display */}
+      <div className="flex-1 overflow-auto">
+        {filteredItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <p className="text-muted-foreground">
+              هیچ {activeTab === 'supplement' ? 'مکملی' : 'ویتامینی'} یافت نشد
+            </p>
+          </div>
+        ) : (
+          <motion.div 
+            layout
+            className={cn(
+              "gap-3",
+              viewMode === 'grid' 
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
+                : "flex flex-col"
+            )}
+          >
+            <AnimatePresence>
+              {filteredItems.map(item => (
+                <SupplementCard
+                  key={item.id}
+                  item={item}
+                  isSelected={isSelected(item.id)}
+                  onSelect={handleToggleItem}
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </div>
     </div>
   );
