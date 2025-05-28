@@ -1,3 +1,4 @@
+
 import React from 'react';
 import pdfMake from 'pdfmake/build/pdfmake';
 import { PDFDocumentOptions } from './types';
@@ -33,13 +34,13 @@ async function initializePdfMake(): Promise<boolean> {
       // تنظیم VFS و فونت وزیر فقط
       pdfMake.vfs = pdfMake.vfs || {};
       
-      // استفاده از فونت وزیر فارسی فقط
+      // استفاده از فونت وزیر فارسی فقط - بدون bold variant
       pdfMake.fonts = {
         Vazir: {
           normal: 'Vazir',
-          bold: 'Vazir-Bold',
+          bold: 'Vazir', // استفاده از همان فونت عادی برای bold
           italics: 'Vazir',
-          bolditalics: 'Vazir-Bold'
+          bolditalics: 'Vazir'
         }
       };
 

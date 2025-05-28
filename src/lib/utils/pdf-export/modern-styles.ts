@@ -3,7 +3,7 @@
 export const modernPdfStyles = {
   header: {
     fontSize: 18,
-    bold: false,
+    bold: false, // غیرفعال کردن bold
     alignment: 'center',
     margin: [0, 0, 0, 20],
     color: '#1f2937',
@@ -11,14 +11,14 @@ export const modernPdfStyles = {
   },
   subheader: {
     fontSize: 14,
-    bold: false,
+    bold: false, // غیرفعال کردن bold
     alignment: 'center',
     margin: [0, 0, 0, 10],
     color: '#374151',
     font: 'Vazir'
   },
   tableHeader: {
-    bold: false,
+    bold: false, // غیرفعال کردن bold
     fontSize: 11,
     color: 'white',
     alignment: 'center',

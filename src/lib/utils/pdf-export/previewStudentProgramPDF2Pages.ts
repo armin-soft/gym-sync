@@ -225,7 +225,7 @@ function createPageHeader(student: Student, trainerProfile: TrainerProfile): any
         [
           {
             stack: [
-              { text: preprocessPersianText(`شاگرد: ${student.name || '-'}`), fontSize: 12, bold: true, margin: [0, 0, 0, 3] },
+              { text: preprocessPersianText(`شاگرد: ${student.name || '-'}`), fontSize: 12, bold: false, margin: [0, 0, 0, 3] },
               { text: preprocessPersianText(`شماره موبایل: ${toPersianDigits(student.phone || '-')}`), fontSize: 10, margin: [0, 0, 0, 3] },
               { text: preprocessPersianText(`قد: ${toPersianDigits(student.height || '0')} سانتی‌متر`), fontSize: 10, margin: [0, 0, 0, 3] },
               { text: preprocessPersianText(`وزن: ${toPersianDigits(student.weight || '0')} کیلوگرم`), fontSize: 10 }
@@ -234,7 +234,7 @@ function createPageHeader(student: Student, trainerProfile: TrainerProfile): any
           },
           {
             stack: [
-              { text: preprocessPersianText(`باشگاه: ${trainerProfile.gymName || 'فیکس'}`), fontSize: 12, bold: true, margin: [0, 0, 0, 3] },
+              { text: preprocessPersianText(`باشگاه: ${trainerProfile.gymName || 'فیکس'}`), fontSize: 12, bold: false, margin: [0, 0, 0, 3] },
               { text: preprocessPersianText(`مربی: ${trainerProfile.name || 'محمد عباسی'}`), fontSize: 10 }
             ],
             alignment: 'right'
@@ -307,7 +307,7 @@ export const previewStudentProgramPDF2Pages = async (student: Student): Promise<
       },
       styles: {
         tableHeader: {
-          bold: false,
+          bold: false, // غیرفعال کردن bold
           fontSize: 11,
           color: 'white',
           alignment: 'center',
