@@ -40,15 +40,15 @@ export const SupplementStageContent: React.FC<SupplementStageContentProps> = ({
 }) => {
   return (
     <div className="flex-1 overflow-hidden min-h-0" dir="rtl">
-      <div className="flex flex-col lg:grid lg:grid-cols-4 gap-1 sm:gap-2 md:gap-3 lg:gap-4 h-full p-1 sm:p-2 md:p-3 lg:p-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0.5 sm:gap-1 md:gap-2 lg:gap-3 h-full p-0.5 sm:p-1 md:p-2 lg:p-3">
         {/* سایدبار دسته‌بندی‌ها */}
-        <div className="lg:col-span-1 bg-white/60 dark:bg-gray-900/60 rounded-md sm:rounded-lg md:rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm sm:shadow-md md:shadow-lg order-2 lg:order-1">
-          <div className="p-1.5 sm:p-2 md:p-3 lg:p-4 border-b border-gray-200/50 dark:border-gray-700/50">
-            <h3 className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg text-gray-800 dark:text-gray-200 text-right">
+        <div className="lg:col-span-1 bg-white/60 dark:bg-gray-900/60 rounded sm:rounded-md md:rounded-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm md:shadow-md order-2 lg:order-1">
+          <div className="p-1 sm:p-1.5 md:p-2 lg:p-3 border-b border-gray-200/50 dark:border-gray-700/50">
+            <h3 className="font-semibold text-2xs sm:text-xs md:text-sm lg:text-base text-gray-800 dark:text-gray-200 text-right">
               دسته‌بندی‌ها
             </h3>
           </div>
-          <ScrollArea className="h-24 sm:h-32 md:h-40 lg:h-[calc(100%-3rem)] xl:h-[calc(100%-3.5rem)]" dir="rtl">
+          <ScrollArea className="h-16 sm:h-20 md:h-24 lg:h-[calc(100%-2rem)] xl:h-[calc(100%-2.5rem)]" dir="rtl">
             <CategoryList
               categories={displayCategories}
               selectedCategory={selectedCategory}
@@ -62,15 +62,15 @@ export const SupplementStageContent: React.FC<SupplementStageContentProps> = ({
         </div>
 
         {/* محتوای اصلی - لیست مکمل‌ها/ویتامین‌ها */}
-        <div className="lg:col-span-3 bg-white/60 dark:bg-gray-900/60 rounded-md sm:rounded-lg md:rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm sm:shadow-md md:shadow-lg order-1 lg:order-2">
-          <div className="p-1.5 sm:p-2 md:p-3 lg:p-4 border-b border-gray-200/50 dark:border-gray-700/50">
-            <h3 className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg text-gray-800 dark:text-gray-200 text-right">
+        <div className="lg:col-span-3 bg-white/60 dark:bg-gray-900/60 rounded sm:rounded-md md:rounded-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm md:shadow-md order-1 lg:order-2">
+          <div className="p-1 sm:p-1.5 md:p-2 lg:p-3 border-b border-gray-200/50 dark:border-gray-700/50">
+            <h3 className="font-semibold text-2xs sm:text-xs md:text-sm lg:text-base text-gray-800 dark:text-gray-200 text-right">
               {type === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}
               {selectedCategory !== 'all' && ` - ${selectedCategory}`}
             </h3>
           </div>
-          <ScrollArea className="h-48 sm:h-56 md:h-64 lg:h-[calc(100%-3rem)] xl:h-[calc(100%-3.5rem)]" dir="rtl">
-            <div className="p-1.5 sm:p-2 md:p-3 lg:p-4">
+          <ScrollArea className="h-32 sm:h-36 md:h-40 lg:h-[calc(100%-2rem)] xl:h-[calc(100%-2.5rem)]" dir="rtl">
+            <div className="p-1 sm:p-1.5 md:p-2 lg:p-3">
               <SupplementList
                 supplements={filteredSupplements}
                 onAddSupplement={onAddSupplement}
