@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -33,7 +34,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'Assets',
-      chunkSizeWarningLimit: 1000, // کاهش حد هشدار
+      chunkSizeWarningLimit: 500, // کاهش بیشتر حد هشدار
       assetsInlineLimit: 0,
       cssCodeSplit: true,
       minify: 'terser',
@@ -51,11 +52,66 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       rollupOptions: {
         output: {
-          // تنظیمات نام‌گذاری بدون hash
+          // تنظیمات نام‌گذاری دقیق بدون hash
           entryFileNames: 'Scripts/Main-App.js',
           chunkFileNames: (chunkInfo) => {
             const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
             const chunkName = facadeModuleId ? facadeModuleId.replace(/\.[^/.]+$/, '') : chunkInfo.name;
+            
+            // نام‌گذاری دقیق‌تر بر اساس محتوا
+            if (chunkName.includes('React') || chunkInfo.name === 'React-Core') {
+              return 'Scripts/Libraries/React-Core.js';
+            }
+            if (chunkName.includes('UI') || chunkInfo.name === 'UI-Components') {
+              return 'Scripts/Libraries/UI-Components.js';
+            }
+            if (chunkName.includes('Router') || chunkInfo.name === 'Router-Query') {
+              return 'Scripts/Libraries/Router-Query.js';
+            }
+            if (chunkName.includes('Animation') || chunkInfo.name === 'Animations') {
+              return 'Scripts/Libraries/Framer-Motion.js';
+            }
+            if (chunkName.includes('Icon') || chunkInfo.name === 'Icons') {
+              return 'Scripts/Libraries/Lucide-Icons.js';
+            }
+            if (chunkName.includes('Date') || chunkInfo.name === 'Date-Utils') {
+              return 'Scripts/Utilities/Date-Functions.js';
+            }
+            if (chunkName.includes('Form') || chunkInfo.name === 'Forms') {
+              return 'Scripts/Libraries/Form-Libraries.js';
+            }
+            if (chunkName.includes('PDF') || chunkInfo.name === 'PDF-Canvas') {
+              return 'Scripts/Libraries/PDF-Canvas.js';
+            }
+            if (chunkName.includes('Chart') || chunkInfo.name === 'Charts') {
+              return 'Scripts/Libraries/Recharts.js';
+            }
+            if (chunkName.includes('Vendor') || chunkInfo.name === 'Vendor-Libs') {
+              return 'Scripts/Libraries/Other-Vendors.js';
+            }
+            if (chunkName.includes('Students') || chunkInfo.name.includes('Students')) {
+              return 'Scripts/Pages/Students-Manager.js';
+            }
+            if (chunkName.includes('Exercise') || chunkInfo.name.includes('Exercise')) {
+              return 'Scripts/Pages/Exercise-Manager.js';
+            }
+            if (chunkName.includes('Diet') || chunkInfo.name.includes('Diet')) {
+              return 'Scripts/Pages/Diet-Manager.js';
+            }
+            if (chunkName.includes('Supplement') || chunkInfo.name.includes('Supplement')) {
+              return 'Scripts/Pages/Supplement-Manager.js';
+            }
+            if (chunkName.includes('Utils') || chunkInfo.name === 'Utils-Hooks') {
+              return 'Scripts/Utilities/Hooks-Utils.js';
+            }
+            if (chunkName.includes('Component') || chunkInfo.name.includes('Component')) {
+              return 'Scripts/Components/Custom-Components.js';
+            }
+            if (chunkName.includes('Page') || chunkInfo.name.includes('Page')) {
+              return 'Scripts/Pages/Other-Pages.js';
+            }
+            
+            // نام پیش‌فرض
             const formattedName = chunkName
               .split(/[-_]/)
               .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -65,8 +121,18 @@ export default defineConfig(({ mode }) => {
           assetFileNames: (assetInfo) => {
             const info = assetInfo.name || '';
             
-            // برای فایل‌های CSS با نام‌گذاری مناسب
+            // برای فایل‌های CSS با نام‌گذاری دقیق
             if (info.endsWith('.css')) {
+              if (info.includes('index') || info.includes('main')) {
+                return 'Styles/Main-App.css';
+              }
+              if (info.includes('component')) {
+                return 'Styles/Components.css';
+              }
+              if (info.includes('page')) {
+                return 'Styles/Pages.css';
+              }
+              
               const cssName = info.replace('.css', '')
                 .split(/[-_]/)
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -74,24 +140,34 @@ export default defineConfig(({ mode }) => {
               return `Styles/${cssName}.css`;
             }
             
-            // برای فایل‌های تصویر
+            // برای فایل‌های تصویر با دسته‌بندی
             if (info.match(/\.(png|jpe?g|gif|svg|webp|ico)$/)) {
-              const imageName = info.replace(/\.[^/.]+$/, '')
-                .split(/[-_]/)
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join('-');
-              const ext = info.split('.').pop();
-              return `Images/${imageName}.${ext}`;
+              if (info.toLowerCase().includes('logo')) {
+                return `Images/Branding/${info}`;
+              }
+              if (info.toLowerCase().includes('avatar') || info.toLowerCase().includes('profile')) {
+                return `Images/Profiles/${info}`;
+              }
+              if (info.toLowerCase().includes('icon')) {
+                return `Images/Icons/${info}`;
+              }
+              if (info.toLowerCase().includes('background') || info.toLowerCase().includes('bg')) {
+                return `Images/Backgrounds/${info}`;
+              }
+              
+              return `Images/General/${info}`;
             }
             
-            // برای فونت‌ها
+            // برای فونت‌ها با دسته‌بندی
             if (info.match(/\.(woff|woff2|ttf|eot)$/)) {
-              const fontName = info.replace(/\.[^/.]+$/, '')
-                .split(/[-_]/)
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join('-');
-              const ext = info.split('.').pop();
-              return `Fonts/${fontName}.${ext}`;
+              if (info.toLowerCase().includes('vazir')) {
+                return `Fonts/Vazir/${info}`;
+              }
+              if (info.toLowerCase().includes('noto')) {
+                return `Fonts/Noto/${info}`;
+              }
+              
+              return `Fonts/Other/${info}`;
             }
             
             // برای سایر فایل‌ها
@@ -100,7 +176,7 @@ export default defineConfig(({ mode }) => {
               .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
               .join('-');
             const ext = info.split('.').pop();
-            return `Assets/${fileName}.${ext}`;
+            return `Assets/Other/${fileName}.${ext}`;
           },
           manualChunks: (id) => {
             // بهینه‌سازی chunk splitting برای کاهش اندازه فایل اصلی
