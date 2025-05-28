@@ -5,17 +5,6 @@ import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 
-// اطمینان از دسترسی جهانی React برای جلوگیری از خطاهای hook
-if (typeof window !== 'undefined') {
-  (window as any).React = React;
-  // اطمینان از دسترسی به hooks
-  (window as any).useState = React.useState;
-  (window as any).useEffect = React.useEffect;
-  (window as any).useLayoutEffect = React.useLayoutEffect;
-  (window as any).useCallback = React.useCallback;
-  (window as any).useMemo = React.useMemo;
-}
-
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -46,12 +35,6 @@ function MainApp() {
     setIsLoading(false);
   }, [appVersion]);
   
-  // اطمینان از render صحیح با چک‌های اضافی
-  if (typeof React === 'undefined' || !React.useLayoutEffect) {
-    console.error('React hooks are not properly initialized');
-    return <div>خطا در بارگذاری React - لطفا صفحه را رفرش کنید</div>;
-  }
-  
   return (
     <React.StrictMode>
       {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
@@ -60,19 +43,10 @@ function MainApp() {
   );
 }
 
-// تابع راه‌اندازی اصلی برنامه با چک‌های بیشتر
+// تابع راه‌اندازی اصلی برنامه
 function startApp() {
   try {
     console.log('Starting app initialization...');
-    
-    // چک React availability
-    if (typeof React === 'undefined') {
-      throw new Error('React is not available');
-    }
-    
-    if (!React.useLayoutEffect) {
-      throw new Error('React hooks are not properly initialized');
-    }
     
     const rootElement = document.getElementById('root');
     if (!rootElement) {
@@ -83,11 +57,8 @@ function startApp() {
     console.log('Root element found, creating React root...');
     const root = createRoot(rootElement);
     
-    // اطمینان از mount صحیح
-    setTimeout(() => {
-      root.render(<MainApp />);
-      console.log('برنامه با موفقیت راه‌اندازی شد');
-    }, 50); // تاخیر کوتاه برای اطمینان از آماده بودن DOM
+    root.render(<MainApp />);
+    console.log('برنامه با موفقیت راه‌اندازی شد');
     
   } catch (error) {
     console.error('خطا در راه‌اندازی برنامه:', error);
@@ -104,11 +75,9 @@ function startApp() {
   }
 }
 
-// بررسی آماده بودن DOM با تاخیر اضافی
+// بررسی آماده بودن DOM
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(startApp, 100);
-  });
+  document.addEventListener('DOMContentLoaded', startApp);
 } else {
-  setTimeout(startApp, 100);
+  startApp();
 }
