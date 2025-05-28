@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -34,7 +33,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'Assets',
-      chunkSizeWarningLimit: 2000,
+      chunkSizeWarningLimit: 1000, // کاهش حد هشدار
       assetsInlineLimit: 0,
       cssCodeSplit: true,
       minify: 'terser',
@@ -103,21 +102,114 @@ export default defineConfig(({ mode }) => {
             const ext = info.split('.').pop();
             return `Assets/${fileName}.${ext}`;
           },
-          manualChunks: {
-            'React-Core': ['react', 'react-dom'],
-            'UI-Components': [
-              '@radix-ui/react-dialog',
-              '@radix-ui/react-dropdown-menu',
-              '@radix-ui/react-select',
-              '@radix-ui/react-tabs',
-              '@radix-ui/react-toast'
-            ],
-            'Router-Query': ['react-router-dom', '@tanstack/react-query'],
-            'Utils-Libraries': ['framer-motion', 'lucide-react', 'date-fns', 'date-fns-jalali']
+          manualChunks: (id) => {
+            // بهینه‌سازی chunk splitting برای کاهش اندازه فایل اصلی
+            
+            // React و کتابخانه‌های اصلی
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+              return 'React-Core';
+            }
+            
+            // Radix UI Components
+            if (id.includes('node_modules/@radix-ui')) {
+              return 'UI-Components';
+            }
+            
+            // Router و Query
+            if (id.includes('node_modules/react-router') || id.includes('node_modules/@tanstack/react-query')) {
+              return 'Router-Query';
+            }
+            
+            // Framer Motion
+            if (id.includes('node_modules/framer-motion')) {
+              return 'Animations';
+            }
+            
+            // Lucide Icons
+            if (id.includes('node_modules/lucide-react')) {
+              return 'Icons';
+            }
+            
+            // Date utilities
+            if (id.includes('node_modules/date-fns')) {
+              return 'Date-Utils';
+            }
+            
+            // Form libraries
+            if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/@hookform')) {
+              return 'Forms';
+            }
+            
+            // PDF و Canvas
+            if (id.includes('node_modules/jspdf') || id.includes('node_modules/canvas') || id.includes('node_modules/html2canvas')) {
+              return 'PDF-Canvas';
+            }
+            
+            // Chart libraries
+            if (id.includes('node_modules/recharts')) {
+              return 'Charts';
+            }
+            
+            // Other vendor libraries
+            if (id.includes('node_modules/')) {
+              return 'Vendor-Libs';
+            }
+            
+            // صفحات اصلی
+            if (id.includes('src/pages/')) {
+              if (id.includes('src/pages/students')) {
+                return 'Students-Pages';
+              }
+              if (id.includes('src/pages/exercises')) {
+                return 'Exercises-Pages';
+              }
+              if (id.includes('src/pages/diet')) {
+                return 'Diet-Pages';
+              }
+              if (id.includes('src/pages/supplements')) {
+                return 'Supplements-Pages';
+              }
+              return 'Other-Pages';
+            }
+            
+            // کامپوننت‌های بزرگ
+            if (id.includes('src/components/students')) {
+              return 'Students-Components';
+            }
+            if (id.includes('src/components/exercises')) {
+              return 'Exercises-Components';
+            }
+            if (id.includes('src/components/diet')) {
+              return 'Diet-Components';
+            }
+            if (id.includes('src/components/supplements')) {
+              return 'Supplements-Components';
+            }
+            
+            // سایر کامپوننت‌ها
+            if (id.includes('src/components/')) {
+              return 'UI-Components-Custom';
+            }
+            
+            // Hooks و utilities
+            if (id.includes('src/hooks/') || id.includes('src/lib/') || id.includes('src/utils/')) {
+              return 'Utils-Hooks';
+            }
           }
         }
       }
     },
-    publicDir: 'public'
+    publicDir: 'public',
+    // تنظیمات جدید Vite 6
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+        '@tanstack/react-query',
+        'framer-motion',
+        'lucide-react'
+      ]
+    }
   };
 })
