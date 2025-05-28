@@ -30,22 +30,16 @@ async function initializePdfMake(): Promise<boolean> {
         return;
       }
 
-      // تنظیم VFS و فونت‌های صحیح
+      // تنظیم VFS و فونت وزیر فقط
       pdfMake.vfs = pdfMake.vfs || {};
       
-      // استفاده از فونت‌های سیستمی موجود
+      // استفاده از فونت وزیر فارسی فقط
       pdfMake.fonts = {
-        Roboto: {
-          normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-          bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-          italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-          bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
-        },
         Vazir: {
-          normal: 'Roboto-Regular',
-          bold: 'Roboto-Medium', 
-          italics: 'Roboto-Italic',
-          bolditalics: 'Roboto-MediumItalic'
+          normal: 'Vazir',
+          bold: 'Vazir-Bold',
+          italics: 'Vazir',
+          bolditalics: 'Vazir-Bold'
         }
       };
 
@@ -60,7 +54,7 @@ async function initializePdfMake(): Promise<boolean> {
       }
 
       pdfMakeInitialized = true;
-      console.log('pdfMake initialized successfully with proper fonts');
+      console.log('pdfMake initialized successfully with Vazir font');
       resolve(true);
     } catch (error) {
       console.error('Error initializing pdfMake:', error);
@@ -76,7 +70,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
   ...printPageSettings,
   defaultStyle: {
     ...printPageSettings.defaultStyle,
-    font: 'Roboto', // تغییر به Roboto که دردسترس است
+    font: 'Vazir',
     bidi: false
   }
 };
@@ -93,12 +87,12 @@ export function createPdfDocument(content: any[]): any {
         fontSize: 11,
         color: 'white',
         alignment: 'center',
-        font: 'Roboto'
+        font: 'Vazir'
       },
       tableCell: {
         fontSize: 10,
         margin: [2, 4, 2, 4],
-        font: 'Roboto'
+        font: 'Vazir'
       }
     },
     background: function(currentPage: number) {
@@ -110,7 +104,7 @@ export function createPdfDocument(content: any[]): any {
         alignment: 'center',
         margin: [0, 300, 0, 0],
         direction: 'rtl',
-        font: 'Roboto'
+        font: 'Vazir'
       };
     }
   };

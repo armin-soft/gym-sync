@@ -1,3 +1,4 @@
+
 import { Student } from '@/components/students/StudentTypes';
 import { TrainerProfile } from './types';
 import { createPdfDocument, generatePDFPreview } from './core';
@@ -299,7 +300,7 @@ export const previewStudentProgramPDF2Pages = async (student: Student): Promise<
       ...createPdfDocument(content),
       footer: createFooter(),
       defaultStyle: {
-        font: 'Roboto', // تغییر فونت به Roboto
+        font: 'Vazir',
         fontSize: 11,
         direction: 'rtl',
         alignment: 'right'
@@ -310,12 +311,12 @@ export const previewStudentProgramPDF2Pages = async (student: Student): Promise<
           fontSize: 11,
           color: 'white',
           alignment: 'center',
-          font: 'Roboto' // تغییر فونت به Roboto
+          font: 'Vazir'
         },
         tableCell: {
           fontSize: 10,
           margin: [2, 4, 2, 4],
-          font: 'Roboto' // تغییر فونت به Roboto
+          font: 'Vazir'
         }
       }
     };

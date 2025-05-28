@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -143,7 +142,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Vazirmatn", "sans-serif"],
+        sans: ["Vazir", "sans-serif"],
       },
       spacing: {
         '4.5': '1.125rem',
