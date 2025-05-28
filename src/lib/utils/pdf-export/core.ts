@@ -1,3 +1,4 @@
+
 import pdfMake from 'pdfmake/build/pdfmake';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
@@ -16,16 +17,16 @@ function initializePdfMake() {
       return false;
     }
 
-    // Initialize with minimal VFS to avoid loading issues
+    // Initialize with empty VFS - we'll use system fonts
     pdfMake.vfs = {};
 
-    // Set up fonts with only Vazir
+    // Set up fonts with only system fonts (no custom font files needed)
     pdfMake.fonts = {
       Vazir: {
-        normal: 'Roboto-Regular.ttf',
-        bold: 'Roboto-Regular.ttf',
-        italics: 'Roboto-Regular.ttf',
-        bolditalics: 'Roboto-Regular.ttf'
+        normal: 'Arial',
+        bold: 'Arial',
+        italics: 'Arial',
+        bolditalics: 'Arial'
       }
     };
 
@@ -41,7 +42,7 @@ function initializePdfMake() {
     }
 
     pdfMakeInitialized = true;
-    console.log('pdfMake initialized successfully with Vazir font only');
+    console.log('pdfMake initialized successfully with system fonts');
     return true;
   } catch (error) {
     console.error('Error initializing pdfMake:', error);

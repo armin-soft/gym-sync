@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, VisuallyHidden } from "@/components/ui/dialog";
 import { Student } from "../../students/StudentTypes";
 import { previewStudentProgramPDF2Pages } from "@/lib/utils/pdf-export/previewStudentProgramPDF2Pages";
 import { useToast } from "@/hooks/use-toast";
@@ -52,6 +52,13 @@ export const PdfPreviewModal: React.FC<PdfPreviewModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] p-0 gap-0 overflow-hidden bg-white rounded-lg border shadow-lg">
+        <VisuallyHidden>
+          <DialogTitle>پیش‌نمایش PDF برنامه {student.name}</DialogTitle>
+          <DialogDescription>
+            پیش‌نمایش فایل PDF شامل برنامه تمرینی، غذایی و مکمل‌های {student.name}
+          </DialogDescription>
+        </VisuallyHidden>
+        
         <div className="flex flex-col h-full w-full">
           {/* PDF Content - فقط محتوای PDF بدون هیچ منوی اضافی */}
           <div className="flex-1 w-full h-full">
