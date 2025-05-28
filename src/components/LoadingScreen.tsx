@@ -1,5 +1,5 @@
 
-import React, { memo, useEffect } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoadingBackground } from "./loading/LoadingBackground";
 import { LoadingIcon } from "./loading/LoadingIcon";
@@ -13,11 +13,11 @@ interface LoadingScreenProps {
 }
 
 // استفاده از memo برای جلوگیری از رندر مجدد غیرضروری
-export const LoadingScreen = memo(({ onLoadingComplete, isVisible = true }: LoadingScreenProps) => {
+export const LoadingScreen = React.memo<LoadingScreenProps>(({ onLoadingComplete, isVisible = true }) => {
   const { progress, gymName, loadingText } = useLoadingState();
   
   // اجرای کالبک تکمیل بارگذاری با تأخیر بیشتر
-  useEffect(() => {
+  React.useEffect(() => {
     if (progress === 100 && onLoadingComplete) {
       console.log('Loading completed, waiting for components to fully initialize...');
       const timer = setTimeout(() => {

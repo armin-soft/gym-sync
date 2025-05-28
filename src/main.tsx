@@ -1,17 +1,22 @@
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 
+// Ensure React is available globally to prevent hook errors
+if (typeof window !== 'undefined') {
+  (window as any).React = React;
+}
+
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [appVersion, setAppVersion] = useState('');
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [appVersion, setAppVersion] = React.useState('');
   
   // دریافت نسخه از Manifest.json
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchVersion = async () => {
       try {
         const response = await fetch('/Manifest.json');
@@ -30,10 +35,10 @@ function MainApp() {
     fetchVersion();
   }, []);
   
-  const handleLoadingComplete = () => {
+  const handleLoadingComplete = React.useCallback(() => {
     console.log(`Loading completed for version ${appVersion}, showing main app`);
     setIsLoading(false);
-  };
+  }, [appVersion]);
   
   return (
     <React.StrictMode>

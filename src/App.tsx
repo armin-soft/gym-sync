@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -33,40 +33,35 @@ function AppContent() {
 }
 
 function App() {
-  useEffect(() => {
+  React.useEffect(() => {
     console.log('App component mounted successfully');
+    console.log('React version check:', React.version || 'React available');
     console.log('Current URL:', window.location.href);
-    console.log('Current pathname:', window.location.pathname);
-    console.log('Current hostname:', window.location.hostname);
-    console.log('Current origin:', window.location.origin);
     
     // تست دسترسی به عناصر DOM
     const rootElement = document.getElementById('root');
     console.log('Root element exists:', !!rootElement);
     
-    // بررسی بارگذاری منابع
-    const scripts = document.querySelectorAll('script[src]');
-    console.log('Scripts loaded:', scripts.length);
-    scripts.forEach((script, index) => {
-      console.log(`Script ${index}:`, (script as HTMLScriptElement).src);
-    });
-    
-    const links = document.querySelectorAll('link[href]');
-    console.log('Links loaded:', links.length);
-    
     // اضافه کردن error handler برای خطاهای JavaScript
-    window.addEventListener('error', (e) => {
+    const handleGlobalError = (e: ErrorEvent) => {
       console.error('Global error:', e.error);
       console.error('Error filename:', e.filename);
       console.error('Error line number:', e.lineno);
-    });
+    };
     
-    window.addEventListener('unhandledrejection', (e) => {
+    const handleUnhandledRejection = (e: PromiseRejectionEvent) => {
       console.error('Unhandled promise rejection:', e.reason);
-    });
+    };
     
-    // تست رندر کامپوننت
+    window.addEventListener('error', handleGlobalError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
     console.log('App render successful');
+    
+    return () => {
+      window.removeEventListener('error', handleGlobalError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
   }, []);
 
   return (

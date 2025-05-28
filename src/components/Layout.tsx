@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, memo } from "react";
+import React from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
@@ -13,14 +13,14 @@ interface LayoutProps {
 }
 
 // استفاده از memo برای جلوگیری از رندرهای غیرضروری
-export const Layout = memo(({ children }: LayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [gymName, setGymName] = useState("");
-  const [scrolled, setScrolled] = useState(false);
+export const Layout = React.memo<LayoutProps>(({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [gymName, setGymName] = React.useState("");
+  const [scrolled, setScrolled] = React.useState(false);
   const deviceInfo = useDeviceInfo();
   
   // بارگذاری اطلاعات با محدودیت دفعات اجرا
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
@@ -32,18 +32,17 @@ export const Layout = memo(({ children }: LayoutProps) => {
     }
   }, []);
 
-  // استفاده از useRef برای ذخیره وضعیت اسکرول برای کارایی بهتر
-  const scrollHandler = useRef(() => {
+  // استفاده از useCallback برای ذخیره وضعیت اسکرول برای کارایی بهتر
+  const scrollHandler = React.useCallback(() => {
     const offset = window.scrollY;
     setScrolled(offset > 10);
-  });
+  }, []);
   
   // جداسازی کد اسکرول برای کاهش رندرهای اضافی
-  useEffect(() => {
-    const currentHandler = scrollHandler.current;
-    window.addEventListener('scroll', currentHandler, { passive: true });
-    return () => window.removeEventListener('scroll', currentHandler);
-  }, []);
+  React.useEffect(() => {
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+    return () => window.removeEventListener('scroll', scrollHandler);
+  }, [scrollHandler]);
   
   // محاسبه استایل ها یکبار
   const headerHeight = deviceInfo.isMobile ? "h-10" : deviceInfo.isTablet ? "h-12" : "h-14";
@@ -53,10 +52,18 @@ export const Layout = memo(({ children }: LayoutProps) => {
   const logoGap = deviceInfo.isMobile ? "gap-1" : "gap-1.5";
   const titleSize = deviceInfo.isMobile ? "text-xs" : deviceInfo.isTablet ? "text-sm" : "text-base";
 
+  const handleSidebarClose = React.useCallback(() => {
+    setSidebarOpen(false);
+  }, []);
+
+  const handleSidebarOpen = React.useCallback(() => {
+    setSidebarOpen(true);
+  }, []);
+
   return (
     <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
       {/* اینجا Sidebar را فقط در صورت نیاز نمایش می‌دهیم */}
-      {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+      {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />}
       
       <header 
         className={cn(
@@ -70,7 +77,7 @@ export const Layout = memo(({ children }: LayoutProps) => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setSidebarOpen(true)}
+                onClick={handleSidebarOpen}
                 className={cn("mr-1 rounded-md hover:bg-accent", buttonSize)}
                 aria-label="Open menu"
               >

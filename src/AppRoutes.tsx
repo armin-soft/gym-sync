@@ -17,13 +17,15 @@ import StudentProgramPage from "./pages/student-program";
 import StudentHistoryPage from "./pages/student-history";
 
 // کامپوننت wrapper برای محتوای تأیید شده
-const AuthWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+const AuthWrapper: React.FC<{ children: React.ReactNode }> = React.memo(({ children }) => (
   <AuthenticatedContent>
     {children}
   </AuthenticatedContent>
-);
+));
 
-const AppRoutes: React.FC = () => {
+AuthWrapper.displayName = 'AuthWrapper';
+
+const AppRoutes: React.FC = React.memo(() => {
   console.log('AppRoutes component rendered - all components preloaded');
   
   return (
@@ -181,6 +183,8 @@ const AppRoutes: React.FC = () => {
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
-};
+});
+
+AppRoutes.displayName = 'AppRoutes';
 
 export default AppRoutes;
