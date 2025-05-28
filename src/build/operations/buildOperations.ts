@@ -1,36 +1,18 @@
 
 import path from 'path';
 import { BUILD_DIRECTORIES, SOURCE_PATHS } from '../config/fileStructure';
-import { createDirectories, copyImages, getFilesWithExtension, readVersion } from '../utils/fileUtils';
+import { createDirectoriesConditionally, copyImages, getFilesWithExtension, readVersion } from '../utils/fileUtils';
 import { generateIndexHtml, writeIndexHtml } from '../utils/htmlGenerator';
-
-// تعریف ساختار پوشه‌های جدید - همه چیز در Assets
-const UNIFIED_BUILD_DIRECTORIES = [
-  'dist/Assets',
-  'dist/Assets/Images',
-  'dist/Assets/Images/Branding',
-  'dist/Assets/Images/Profiles', 
-  'dist/Assets/Images/Icons',
-  'dist/Assets/Images/Backgrounds',
-  'dist/Assets/Images/General',
-  'dist/Assets/Styles',
-  'dist/Assets/Scripts',
-  'dist/Assets/Scripts/Libraries',
-  'dist/Assets/Scripts/Pages',
-  'dist/Assets/Scripts/Components',
-  'dist/Assets/Scripts/Utilities',
-  'dist/Assets/Other'
-] as const;
 
 export const performBuildOperations = async (): Promise<void> => {
   try {
     const appVersion = readVersion(SOURCE_PATHS.manifest);
     console.log(`شروع کپی فایل‌ها و بهینه‌سازی برای نسخه ${appVersion}...`);
 
-    // ایجاد ساختار یکپارچه در Assets
-    createDirectories(UNIFIED_BUILD_DIRECTORIES);
+    // ایجاد پوشه اصلی Assets
+    createDirectoriesConditionally(['dist/Assets']);
 
-    // کپی تصاویر به Assets/Images
+    // کپی تصاویر به Assets/Images فقط در صورت وجود
     copyImages(SOURCE_PATHS.publicImages, 'dist/Assets/Images');
 
     // پیدا کردن فایل‌های CSS و JS
@@ -48,20 +30,16 @@ export const performBuildOperations = async (): Promise<void> => {
     writeIndexHtml(SOURCE_PATHS.distIndex, indexContent);
 
     console.log(`✅ تمام فایل‌ها با موفقیت در ساختار یکپارچه Assets سازماندهی شدند برای نسخه ${appVersion}!`);
-    console.log(`📁 ساختار یکپارچه:`);
+    console.log(`📁 ساختار نهایی:`);
     console.log(`  └── Assets/`);
-    console.log(`      ├── Scripts/`);
-    console.log(`      │   ├── Libraries/ (کتابخانه‌های خارجی)`);
-    console.log(`      │   ├── Pages/ (صفحات اصلی)`);
-    console.log(`      │   ├── Components/ (کامپوننت‌ها)`);
-    console.log(`      │   └── Utilities/ (ابزارها و hooks)`);
-    console.log(`      ├── Images/`);
-    console.log(`      │   ├── Branding/ (لوگو و برندینگ)`);
-    console.log(`      │   ├── Profiles/ (تصاویر پروفایل)`);
-    console.log(`      │   ├── Icons/ (آیکون‌ها)`);
-    console.log(`      │   └── General/ (تصاویر عمومی)`);
-    console.log(`      ├── Styles/ (فایل‌های CSS)`);
-    console.log(`      └── Other/ (سایر فایل‌ها)`);
+    
+    // نمایش فقط پوشه‌هایی که واقعاً ایجاد شده‌اند
+    if (cssFiles.length > 0 || jsFiles.length > 0) {
+      console.log(`      ├── Scripts/ (${jsFiles.length} فایل JS)`);
+    }
+    if (cssFiles.length > 0) {
+      console.log(`      ├── Styles/ (${cssFiles.length} فایل CSS)`);
+    }
 
   } catch (error) {
     console.error('❌ خطا در سازماندهی فایل‌ها:', error);

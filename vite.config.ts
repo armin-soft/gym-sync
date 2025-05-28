@@ -154,7 +154,7 @@ export default defineConfig(({ mode }) => {
               return `Assets/Images/General/${info}`;
             }
             
-            // برای فونت‌ها
+            // برای فونت‌ها - فقط در صورت وجود فایل
             if (info.match(/\.(woff|woff2|ttf|eot)$/)) {
               if (info.toLowerCase().includes('vazir')) {
                 return `Assets/Fonts/Vazir/${info}`;
