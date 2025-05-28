@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Meal, MealType, WeekDay } from "@/types/meal";
 import { useDietStorage, normalizeDay } from "./useDietStorage";
@@ -19,6 +19,14 @@ export const useDietState = (): DietStateHook => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  // دیباگ برای بررسی وضعیت
+  useEffect(() => {
+    console.log("=== useDietState DEBUG ===");
+    console.log("Meals from useDietStorage:", meals);
+    console.log("Meals count:", meals.length);
+    console.log("=== END useDietState DEBUG ===");
+  }, [meals]);
   
   // تغییر ترتیب مرتب‌سازی
   const toggleSortOrder = () => {
