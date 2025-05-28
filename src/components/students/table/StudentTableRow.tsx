@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
@@ -9,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
 import { useToast } from "@/hooks/use-toast";
-import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
+import { exportStudentProgramToPdf, exportStudentProgramModern2Pages } from "@/lib/utils/pdf-export";
 import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 interface StudentTableRowProps {
@@ -45,15 +44,15 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   const handleExportProgramClick = () => {
     toast({
       title: "در حال آماده سازی برنامه",
-      description: "لطفا منتظر بمانید...",
+      description: "لطفاً منتظر بمانید (نسخه PDF مدرن)...",
     });
-    
+
     setTimeout(() => {
-      exportStudentProgramToPdf(student)
+      exportStudentProgramModern2Pages(student)
         .then(() => {
           toast({
-            title: "صدور برنامه انجام شد",
-            description: "برنامه با موفقیت به صورت PDF صادر شد",
+            title: "دانلود برنامه انجام شد",
+            description: "برنامه بصورت PDF مدرن دانلود شد",
           });
         })
         .catch((error) => {
@@ -61,7 +60,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
           toast({
             variant: "destructive",
             title: "خطا در صدور برنامه",
-            description: "مشکلی در صدور برنامه پیش آمد. لطفا مجددا تلاش کنید.",
+            description: "مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
           });
         });
     }, 500);
