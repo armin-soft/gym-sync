@@ -34,11 +34,20 @@ export const performBuildOperations = async (): Promise<void> => {
     console.log(`  └── Assets/`);
     
     // نمایش فقط پوشه‌هایی که واقعاً ایجاد شده‌اند
-    if (cssFiles.length > 0 || jsFiles.length > 0) {
+    if (jsFiles.length > 0) {
       console.log(`      ├── Scripts/ (${jsFiles.length} فایل JS)`);
     }
     if (cssFiles.length > 0) {
       console.log(`      ├── Styles/ (${cssFiles.length} فایل CSS)`);
+    }
+    
+    // نمایش پوشه Images فقط اگر تصاویر کپی شده باشند
+    const imageFiles = getFilesWithExtension('dist/Assets/Images', '.png') 
+      .concat(getFilesWithExtension('dist/Assets/Images', '.jpg'))
+      .concat(getFilesWithExtension('dist/Assets/Images', '.svg'));
+    
+    if (imageFiles.length > 0) {
+      console.log(`      └── Images/ (${imageFiles.length} فایل تصویر)`);
     }
 
   } catch (error) {

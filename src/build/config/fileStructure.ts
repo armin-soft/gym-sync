@@ -1,11 +1,10 @@
 
 export const BUILD_DIRECTORIES = [
   'dist/Assets',
-  'dist/Images', 
-  'dist/Styles',
-  'dist/Scripts',
-  'dist/Scripts/Components',
-  'dist/Fonts'
+  'dist/Assets/Styles',
+  'dist/Assets/Scripts',
+  'dist/Assets/Scripts/Components',
+  'dist/Assets/Fonts'
 ] as const;
 
 export const SOURCE_PATHS = {
