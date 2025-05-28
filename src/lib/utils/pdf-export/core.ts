@@ -1,8 +1,8 @@
+
 import pdfMake from 'pdfmake/build/pdfmake';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 import { modernPdfStyles, printPageSettings } from './modern-styles';
-import vazirFont from './vazir-font';
 
 // Safe pdfMake initialization with better error handling
 let pdfMakeInitialized = false;
@@ -20,9 +20,8 @@ function initializePdfMake() {
     // Initialize with minimal VFS to avoid loading issues
     pdfMake.vfs = {};
 
-    // اضافه کردن فونت وزیر و پیش فرض کردن
+    // Set up fonts with fallback
     pdfMake.fonts = {
-      ...vazirFont,
       Roboto: {
         normal: 'Roboto-Regular.ttf',
         bold: 'Roboto-Medium.ttf',

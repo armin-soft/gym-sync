@@ -1,3 +1,4 @@
+
 // Export the main functions
 export { exportStudentProgramToPdf2Pages as exportStudentProgramToPdf } from './exportStudentProgramToPdf2Pages';
 export { previewStudentProgramPDF2Pages as previewStudentProgramPDF } from './previewStudentProgramPDF2Pages';
@@ -12,4 +13,3 @@ export { generateComprehensiveReport } from './generateComprehensiveReport';
 // Export other utility functions
 export * from './core';
 export * from './types';
-export { exportStudentProgramModern2Pages } from './exportStudentProgramModern2Pages';
