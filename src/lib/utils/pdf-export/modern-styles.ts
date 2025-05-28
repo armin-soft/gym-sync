@@ -1,9 +1,9 @@
 
-// تنظیمات استایل مدرن برای PDF
+// تنظیمات استایل مدرن برای PDF - فقط فونت وزیر
 export const modernPdfStyles = {
   header: {
     fontSize: 18,
-    bold: false, // تغییر به false
+    bold: false,
     alignment: 'center',
     margin: [0, 0, 0, 20],
     color: '#1f2937',
@@ -11,14 +11,14 @@ export const modernPdfStyles = {
   },
   subheader: {
     fontSize: 14,
-    bold: false, // تغییر به false  
+    bold: false,
     alignment: 'center',
     margin: [0, 0, 0, 10],
     color: '#374151',
     font: 'Vazir'
   },
   tableHeader: {
-    bold: false, // تغییر به false
+    bold: false,
     fontSize: 11,
     color: 'white',
     alignment: 'center',
