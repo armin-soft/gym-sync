@@ -36,10 +36,10 @@ function MainApp() {
   };
   
   return (
-    <>
+    <React.StrictMode>
       {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
       {!isLoading && <App />}
-    </>
+    </React.StrictMode>
   );
 }
 
