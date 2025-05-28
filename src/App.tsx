@@ -33,10 +33,21 @@ function AppContent() {
 }
 
 function App() {
+  // اطمینان از دسترسی به React hooks
+  React.useLayoutEffect(() => {
+    console.log('App useLayoutEffect executed successfully');
+  }, []);
+
   React.useEffect(() => {
     console.log('App component mounted successfully');
     console.log('React version check:', React.version || 'React available');
     console.log('Current URL:', window.location.href);
+    
+    // بررسی دسترسی به hooks
+    if (!React.useLayoutEffect) {
+      console.error('useLayoutEffect is not available');
+      return;
+    }
     
     // تست دسترسی به عناصر DOM
     const rootElement = document.getElementById('root');
@@ -47,6 +58,12 @@ function App() {
       console.error('Global error:', e.error);
       console.error('Error filename:', e.filename);
       console.error('Error line number:', e.lineno);
+      
+      // جلوگیری از خطاهای useLayoutEffect
+      if (e.error && e.error.message && e.error.message.includes('useLayoutEffect')) {
+        console.error('useLayoutEffect error detected, reloading...');
+        setTimeout(() => window.location.reload(), 1000);
+      }
     };
     
     const handleUnhandledRejection = (e: PromiseRejectionEvent) => {
@@ -63,6 +80,23 @@ function App() {
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
     };
   }, []);
+
+  // چک اولیه React hooks
+  if (!React.useLayoutEffect || !React.useState || !React.useEffect) {
+    console.error('React hooks are not properly available');
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>خطا در بارگذاری React</h2>
+        <p>لطفا صفحه را رفرش کنید</p>
+        <button 
+          onClick={() => window.location.reload()}
+          style={{ padding: '10px 20px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '5px' }}
+        >
+          رفرش
+        </button>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -50,7 +50,13 @@ export default defineConfig(({ mode }) => {
         '@tanstack/react-query',
         'framer-motion',
         'lucide-react'
-      ]
+      ],
+      // جلوگیری از خطاهای useLayoutEffect
+      force: true
+    },
+    define: {
+      // اطمینان از دسترسی جهانی React
+      global: 'globalThis',
     }
   };
 })
