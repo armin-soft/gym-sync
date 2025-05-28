@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -173,8 +172,11 @@ export default defineConfig(({ mode }) => {
             return `Assets/Other/${fileName}.${ext}`;
           },
           manualChunks: (id) => {
-            // React and React-DOM must be bundled together to ensure hooks work properly
-            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            // React and React-DOM must always be bundled together for hooks to work correctly
+            if (
+              id.includes('node_modules/react') ||
+              id.includes('node_modules/react-dom')
+            ) {
               return 'React-Core';
             }
             
@@ -182,7 +184,10 @@ export default defineConfig(({ mode }) => {
               return 'UI-Components';
             }
             
-            if (id.includes('node_modules/react-router') || id.includes('node_modules/@tanstack/react-query')) {
+            if (
+              id.includes('node_modules/react-router') ||
+              id.includes('node_modules/@tanstack/react-query')
+            ) {
               return 'Router-Query';
             }
             
@@ -198,37 +203,46 @@ export default defineConfig(({ mode }) => {
               return 'Date-Utils';
             }
             
-            if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/@hookform')) {
+            if (
+              id.includes('node_modules/react-hook-form') ||
+              id.includes('node_modules/@hookform')
+            ) {
               return 'Forms';
             }
             
-            if (id.includes('node_modules/jspdf') || id.includes('node_modules/canvas') || id.includes('node_modules/html2canvas')) {
+            if (
+              id.includes('node_modules/jspdf') ||
+              id.includes('node_modules/canvas') ||
+              id.includes('node_modules/html2canvas')
+            ) {
               return 'PDF-Canvas';
             }
             
             if (id.includes('node_modules/recharts')) {
               return 'Charts';
             }
-            
+
             // Only put non-React related packages in Vendor-Libs
-            if (id.includes('node_modules/') && 
-                !id.includes('node_modules/react') && 
-                !id.includes('node_modules/react-dom') &&
-                !id.includes('node_modules/@radix-ui') &&
-                !id.includes('node_modules/react-router') &&
-                !id.includes('node_modules/@tanstack/react-query') &&
-                !id.includes('node_modules/framer-motion') &&
-                !id.includes('node_modules/lucide-react') &&
-                !id.includes('node_modules/date-fns') &&
-                !id.includes('node_modules/react-hook-form') &&
-                !id.includes('node_modules/@hookform') &&
-                !id.includes('node_modules/jspdf') &&
-                !id.includes('node_modules/canvas') &&
-                !id.includes('node_modules/html2canvas') &&
-                !id.includes('node_modules/recharts')) {
+            if (
+              id.includes('node_modules/') &&
+              !id.includes('node_modules/react') &&
+              !id.includes('node_modules/react-dom') &&
+              !id.includes('node_modules/@radix-ui') &&
+              !id.includes('node_modules/react-router') &&
+              !id.includes('node_modules/@tanstack/react-query') &&
+              !id.includes('node_modules/framer-motion') &&
+              !id.includes('node_modules/lucide-react') &&
+              !id.includes('node_modules/date-fns') &&
+              !id.includes('node_modules/react-hook-form') &&
+              !id.includes('node_modules/@hookform') &&
+              !id.includes('node_modules/jspdf') &&
+              !id.includes('node_modules/canvas') &&
+              !id.includes('node_modules/html2canvas') &&
+              !id.includes('node_modules/recharts')
+            ) {
               return 'Vendor-Libs';
             }
-            
+
             if (id.includes('src/pages/')) {
               if (id.includes('src/pages/students')) {
                 return 'Students-Pages';
@@ -244,7 +258,7 @@ export default defineConfig(({ mode }) => {
               }
               return 'Other-Pages';
             }
-            
+
             if (id.includes('src/components/students')) {
               return 'Students-Components';
             }
@@ -257,12 +271,14 @@ export default defineConfig(({ mode }) => {
             if (id.includes('src/components/supplements')) {
               return 'Supplements-Components';
             }
-            
             if (id.includes('src/components/')) {
               return 'UI-Components-Custom';
             }
-            
-            if (id.includes('src/hooks/') || id.includes('src/lib/') || id.includes('src/utils/')) {
+            if (
+              id.includes('src/hooks/') ||
+              id.includes('src/lib/') ||
+              id.includes('src/utils/')
+            ) {
               return 'Utils-Hooks';
             }
           }
