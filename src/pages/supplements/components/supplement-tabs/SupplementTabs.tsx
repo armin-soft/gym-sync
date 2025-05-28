@@ -40,14 +40,14 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="w-full h-[calc(100vh-2rem)] sm:h-[calc(100vh-2.5rem)] md:h-[calc(100vh-3rem)] lg:h-[calc(100vh-4rem)] xl:h-[calc(100vh-5rem)] flex flex-col overflow-hidden rounded sm:rounded-md md:rounded-lg border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-sm md:shadow-md backdrop-blur-sm">
+      <div className="w-full h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] md:h-[calc(100vh-6rem)] lg:h-[calc(100vh-7rem)] xl:h-[calc(100vh-8rem)] flex flex-col overflow-hidden rounded-md sm:rounded-lg md:rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-sm sm:shadow-md md:shadow-lg backdrop-blur-sm">
         <SupplementsLoading type={activeTab} />
       </div>
     );
   }
   
   return (
-    <div className="w-full h-[calc(100vh-2rem)] sm:h-[calc(100vh-2.5rem)] md:h-[calc(100vh-3rem)] lg:h-[calc(100vh-4rem)] xl:h-[calc(100vh-5rem)] flex flex-col overflow-hidden rounded sm:rounded-md md:rounded-lg border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-sm md:shadow-md backdrop-blur-sm">
+    <div className="w-full h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] md:h-[calc(100vh-6rem)] lg:h-[calc(100vh-7rem)] xl:h-[calc(100vh-8rem)] flex flex-col overflow-hidden rounded-md sm:rounded-lg md:rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-sm sm:shadow-md md:shadow-lg backdrop-blur-sm">
       <Tabs 
         value={activeTab} 
         onValueChange={onTabChange} 
