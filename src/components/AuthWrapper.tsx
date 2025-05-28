@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { AuthenticatedContent } from "./auth/AuthenticatedContent";
 import { LoginContainer } from "./auth/login/LoginContainer";
 import { defaultProfile } from "@/types/trainer";

@@ -1,5 +1,5 @@
 
-import { memo, useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoadingBackground } from "./loading/LoadingBackground";
 import { LoadingIcon } from "./loading/LoadingIcon";

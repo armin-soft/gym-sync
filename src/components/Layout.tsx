@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef, memo } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
