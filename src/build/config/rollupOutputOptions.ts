@@ -1,10 +1,11 @@
+
 // تنظیمات خروجی برای rollup - GymSync ویژه
 export const rollupOutputOptions = {
   entryFileNames: 'Assets/Scripts/Main-App.js',
   // chunkFileNames و assetFileNames کاملاً وابسته به منطق فعلی
-  chunkFileNames: (chunkInfo) => {
+  chunkFileNames: (chunkInfo: any) => {
     const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
-    const chunkName = facadeModuleId ? facadeModuleId.replace(/\.[^/.]+$/, '') : chunkInfo.name;
+    const chunkName = facadeModuleId ? (facadeModuleId as string).replace(/\.[^/.]+$/, '') : chunkInfo.name;
     
     if (chunkName.includes('React') || chunkInfo.name === 'React-Core') {
       return 'Assets/Scripts/Libraries/React-Core.js';
@@ -57,11 +58,11 @@ export const rollupOutputOptions = {
     
     const formattedName = chunkName
       .split(/[-_]/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join('-');
     return `Assets/Scripts/Components/${formattedName}.js`;
   },
-  assetFileNames: (assetInfo) => {
+  assetFileNames: (assetInfo: any) => {
     const info = assetInfo.name || '';
     
     // برای فایل‌های CSS
@@ -78,7 +79,7 @@ export const rollupOutputOptions = {
       
       const cssName = info.replace('.css', '')
         .split(/[-_]/)
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join('-');
       return `Assets/Styles/${cssName}.css`;
     }
@@ -116,12 +117,12 @@ export const rollupOutputOptions = {
     // برای سایر فایل‌ها
     const fileName = info.replace(/\.[^/.]+$/, '')
       .split(/[-_]/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join('-');
     const ext = info.split('.').pop();
     return `Assets/Other/${fileName}.${ext}`;
   },
-  manualChunks: (id) => {
+  manualChunks: (id: string) => {
     // React and React-DOM must always be bundled together for hooks to work correctly
     if (
       id.includes('node_modules/react') ||
@@ -233,3 +234,4 @@ export const rollupOutputOptions = {
     }
   }
 };
+
