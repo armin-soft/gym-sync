@@ -1,9 +1,8 @@
 
 import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Dumbbell, Utensils, Pill } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { motion } from "framer-motion";
 
 interface StudentProgramTabsProps {
   activeTab: string;
@@ -21,29 +20,46 @@ const StudentProgramTabs: React.FC<StudentProgramTabsProps> = ({
   children
 }) => {
   return (
-    <Tabs defaultValue="exercise" value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
-      <Card className="flex flex-col flex-1">
-        <CardHeader className="pb-0">
-          <TabsList className="grid grid-cols-3 mb-0">
-            <TabsTrigger value="exercise" className="flex items-center gap-2">
-              <Dumbbell className="h-4 w-4" />
-              <span>برنامه تمرینی</span>
+    <div className="h-full flex flex-col" style={{ direction: "rtl" }} dir="rtl">
+      <Tabs defaultValue="exercise" value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
+        <div className="bg-gradient-to-r from-white/90 to-gray-50/90 dark:from-gray-800/90 dark:to-gray-700/90 border-b border-gray-200/50 dark:border-gray-700/50 p-6">
+          <TabsList className="grid grid-cols-3 gap-2 bg-gray-100/80 dark:bg-gray-800/80 p-2 rounded-xl backdrop-blur-sm">
+            <TabsTrigger 
+              value="exercise" 
+              className="flex items-center gap-3 px-6 py-3 rounded-lg transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
+            >
+              <Dumbbell className="h-5 w-5" />
+              <span className="font-medium">برنامه تمرینی</span>
             </TabsTrigger>
-            <TabsTrigger value="diet" className="flex items-center gap-2">
-              <Utensils className="h-4 w-4" />
-              <span>برنامه غذایی</span>
+            <TabsTrigger 
+              value="diet" 
+              className="flex items-center gap-3 px-6 py-3 rounded-lg transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
+            >
+              <Utensils className="h-5 w-5" />
+              <span className="font-medium">برنامه غذایی</span>
             </TabsTrigger>
-            <TabsTrigger value="supplement" className="flex items-center gap-2">
-              <Pill className="h-4 w-4" />
-              <span>مکمل و ویتامین</span>
+            <TabsTrigger 
+              value="supplement" 
+              className="flex items-center gap-3 px-6 py-3 rounded-lg transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
+            >
+              <Pill className="h-5 w-5" />
+              <span className="font-medium">مکمل و ویتامین</span>
             </TabsTrigger>
           </TabsList>
-        </CardHeader>
-        <CardContent className="pt-6 flex-1 overflow-auto">
-          {children}
-        </CardContent>
-      </Card>
-    </Tabs>
+        </div>
+        
+        <div className="flex-1 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="h-full"
+          >
+            {children}
+          </motion.div>
+        </div>
+      </Tabs>
+    </div>
   );
 };
 
