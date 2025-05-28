@@ -30,14 +30,22 @@ async function initializePdfMake(): Promise<boolean> {
         return;
       }
 
-      // تنظیم VFS و فونت‌ها
-      pdfMake.vfs = {};
+      // تنظیم VFS و فونت‌های صحیح
+      pdfMake.vfs = pdfMake.vfs || {};
+      
+      // استفاده از فونت‌های سیستمی موجود
       pdfMake.fonts = {
+        Roboto: {
+          normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+          bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+          italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+          bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        },
         Vazir: {
-          normal: 'Arial',
-          bold: 'Arial',
-          italics: 'Arial',
-          bolditalics: 'Arial'
+          normal: 'Roboto-Regular',
+          bold: 'Roboto-Medium', 
+          italics: 'Roboto-Italic',
+          bolditalics: 'Roboto-MediumItalic'
         }
       };
 
@@ -52,7 +60,7 @@ async function initializePdfMake(): Promise<boolean> {
       }
 
       pdfMakeInitialized = true;
-      console.log('pdfMake initialized successfully');
+      console.log('pdfMake initialized successfully with proper fonts');
       resolve(true);
     } catch (error) {
       console.error('Error initializing pdfMake:', error);
@@ -68,7 +76,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
   ...printPageSettings,
   defaultStyle: {
     ...printPageSettings.defaultStyle,
-    font: 'Vazir',
+    font: 'Roboto', // تغییر به Roboto که دردسترس است
     bidi: false
   }
 };
@@ -85,12 +93,12 @@ export function createPdfDocument(content: any[]): any {
         fontSize: 11,
         color: 'white',
         alignment: 'center',
-        font: 'Vazir'
+        font: 'Roboto'
       },
       tableCell: {
         fontSize: 10,
         margin: [2, 4, 2, 4],
-        font: 'Vazir'
+        font: 'Roboto'
       }
     },
     background: function(currentPage: number) {
@@ -102,7 +110,7 @@ export function createPdfDocument(content: any[]): any {
         alignment: 'center',
         margin: [0, 300, 0, 0],
         direction: 'rtl',
-        font: 'Vazir'
+        font: 'Roboto'
       };
     }
   };
