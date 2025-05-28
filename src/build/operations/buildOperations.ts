@@ -1,5 +1,6 @@
 
 import path from 'path';
+import fs from 'fs';
 import { BUILD_DIRECTORIES, SOURCE_PATHS } from '../config/fileStructure';
 import { createDirectoriesConditionally, copyImages, getFilesWithExtension, readVersion } from '../utils/fileUtils';
 import { generateIndexHtml, writeIndexHtml } from '../utils/htmlGenerator';
@@ -11,6 +12,12 @@ export const performBuildOperations = async (): Promise<void> => {
 
     // ایجاد پوشه اصلی Assets
     createDirectoriesConditionally(['dist/Assets']);
+
+    // حذف پوشه Image اگر وجود دارد (تکراری است)
+    if (fs.existsSync('dist/Image')) {
+      fs.rmSync('dist/Image', { recursive: true, force: true });
+      console.log('🗑️ پوشه تکراری Image حذف شد');
+    }
 
     // کپی تصاویر به Assets/Images فقط در صورت وجود
     copyImages(SOURCE_PATHS.publicImages, 'dist/Assets/Images');
