@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MoreHorizontal, Download, Eye, FileText, Sparkles, BookOpen } from "lucide-react";
+import { CalendarDays, MoreHorizontal, Sparkles } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,10 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
-import { exportStudentProgramToPdf, generateComprehensiveReport } from "@/lib/utils/pdf-export";
-import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ModernMenuItemWithAnimation } from "./ModernMenuItemWithAnimation";
 
 interface StudentActionsProps {
@@ -34,10 +31,6 @@ export const StudentActions = ({
   isCard = false,
 }: StudentActionsProps) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
-  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
   console.log("Rendering modern StudentActions for student:", student.name);
 
@@ -46,79 +39,6 @@ export const StudentActions = ({
     console.log("StudentActions: Add Exercise clicked for student:", student.name);
     if (onAddExercise) {
       onAddExercise(student);
-    }
-  };
-  
-  // پیش‌نمایش مدرن
-  const handlePreviewProgramClick = () => {
-    console.log("StudentActions: Modern Preview Program clicked for student:", student.name);
-    setIsPreviewOpen(true);
-    
-    toast({
-      title: "در حال آماده‌سازی پیش‌نمایش",
-      description: `پیش‌نمایش برنامه ${student.name} در حال بارگیری است...`,
-    });
-  };
-  
-  // صدور برنامه معمولی
-  const handleExportProgramClick = async () => {
-    console.log("StudentActions: Modern Export Program clicked for student:", student.name);
-    
-    setIsExporting(true);
-    
-    toast({
-      title: "در حال آماده‌سازی برنامه",
-      description: `برنامه ${student.name} در حال تولید است، لطفاً صبر کنید...`,
-    });
-    
-    try {
-      await exportStudentProgramToPdf(student);
-      
-      toast({
-        title: "دانلود موفقیت‌آمیز",
-        description: `برنامه ${student.name} با موفقیت به صورت PDF دانلود شد`,
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("Error exporting program:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا در دانلود",
-        description: "مشکلی در صدور برنامه پیش آمد. لطفاً مجدداً تلاش کنید.",
-      });
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  // تولید گزارش کامل
-  const handleGenerateReportClick = async () => {
-    console.log("StudentActions: Generate Comprehensive Report clicked for student:", student.name);
-    
-    setIsGeneratingReport(true);
-    
-    toast({
-      title: "در حال تولید گزارش کامل",
-      description: `گزارش جامع ${student.name} در حال آماده‌سازی است...`,
-    });
-    
-    try {
-      await generateComprehensiveReport(student);
-      
-      toast({
-        title: "گزارش کامل آماده شد",
-        description: `گزارش جامع ${student.name} با موفقیت تولید و دانلود شد`,
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("Error generating comprehensive report:", error);
-      toast({
-        variant: "destructive",
-        title: "خطا در تولید گزارش",
-        description: "مشکلی در تولید گزارش کامل پیش آمد. لطفاً مجدداً تلاش کنید.",
-      });
-    } finally {
-      setIsGeneratingReport(false);
     }
   };
 
@@ -161,48 +81,6 @@ export const StudentActions = ({
               index={0}
               bgHoverClass="hover:bg-gradient-to-l hover:from-purple-50 hover:to-purple-100 dark:hover:from-purple-900/20 dark:hover:to-purple-800/20"
             />
-            
-            <DropdownMenuSeparator className="my-2 bg-slate-200/60 dark:bg-slate-700/60" />
-            
-            {/* پیش‌نمایش مدرن */}
-            <ModernMenuItemWithAnimation
-              icon={<Eye className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
-              onClick={handlePreviewProgramClick}
-              label="پیش‌نمایش مدرن"
-              description="مشاهده زنده برنامه"
-              index={1}
-              bgHoverClass="hover:bg-gradient-to-l hover:from-blue-50 hover:to-cyan-50 dark:hover:from-blue-900/20 dark:hover:to-cyan-900/20"
-            />
-            
-            {/* دانلود برنامه */}
-            <ModernMenuItemWithAnimation
-              icon={isExporting ? (
-                <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Download className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              )}
-              onClick={handleExportProgramClick}
-              label={isExporting ? "در حال دانلود..." : "دانلود برنامه"}
-              description={isExporting ? `${toPersianNumbers(0)}% تکمیل شده` : "فایل PDF کامل"}
-              index={2}
-              disabled={isExporting}
-              bgHoverClass="hover:bg-gradient-to-l hover:from-emerald-50 hover:to-green-50 dark:hover:from-emerald-900/20 dark:hover:to-green-900/20"
-            />
-            
-            {/* گزارش کامل */}
-            <ModernMenuItemWithAnimation
-              icon={isGeneratingReport ? (
-                <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <BookOpen className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              )}
-              onClick={handleGenerateReportClick}
-              label={isGeneratingReport ? "در حال تولید..." : "گزارش کامل"}
-              description={isGeneratingReport ? "آماده‌سازی گزارش جامع" : "گزارش تفصیلی پیشرفت"}
-              index={3}
-              disabled={isGeneratingReport}
-              bgHoverClass="hover:bg-gradient-to-l hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-900/20 dark:hover:to-orange-900/20"
-            />
           </div>
           
           {/* پایین منو */}
@@ -213,12 +91,6 @@ export const StudentActions = ({
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
-      
-      <PdfPreviewModal
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        student={student}
-      />
     </>
   );
 };
