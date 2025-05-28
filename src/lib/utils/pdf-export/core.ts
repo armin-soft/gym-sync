@@ -1,4 +1,4 @@
-
+import React from 'react';
 import pdfMake from 'pdfmake/build/pdfmake';
 import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
