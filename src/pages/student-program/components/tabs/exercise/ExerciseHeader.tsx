@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Save, FileText } from "lucide-react";
+import { Save } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface ExerciseHeaderProps {
@@ -9,33 +9,19 @@ interface ExerciseHeaderProps {
   onSave: () => void;
   isLoading: boolean;
   saveStatus: 'idle' | 'success' | 'error';
-  onShowPdfPreview?: () => void; // Added this prop
 }
 
 const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
   currentDay,
   onSave,
   isLoading,
-  saveStatus,
-  onShowPdfPreview
+  saveStatus
 }) => {
   return (
     <div className="flex justify-between items-center">
       <h3 className="text-lg font-medium">برنامه تمرینی - روز {currentDay}</h3>
       
       <div className="flex gap-2">
-        {onShowPdfPreview && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onShowPdfPreview}
-            className="flex items-center gap-1"
-          >
-            <FileText className="h-4 w-4" />
-            <span>پیش‌نمایش PDF</span>
-          </Button>
-        )}
-        
         <Button 
           onClick={onSave}
           disabled={isLoading}
