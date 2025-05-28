@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -82,9 +83,6 @@ export default defineConfig(({ mode }) => {
             }
             if (chunkName.includes('Chart') || chunkInfo.name === 'Charts') {
               return 'Assets/Scripts/Libraries/Recharts.js';
-            }
-            if (chunkName.includes('Vendor') || chunkInfo.name === 'Vendor-Libs') {
-              return 'Assets/Scripts/Libraries/Other-Vendors.js';
             }
             if (chunkName.includes('Students') || chunkInfo.name.includes('Students')) {
               return 'Assets/Scripts/Pages/Students-Manager.js';
@@ -175,6 +173,7 @@ export default defineConfig(({ mode }) => {
             return `Assets/Other/${fileName}.${ext}`;
           },
           manualChunks: (id) => {
+            // React and React-DOM must be bundled together to ensure hooks work properly
             if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
               return 'React-Core';
             }
@@ -211,7 +210,22 @@ export default defineConfig(({ mode }) => {
               return 'Charts';
             }
             
-            if (id.includes('node_modules/')) {
+            // Only put non-React related packages in Vendor-Libs
+            if (id.includes('node_modules/') && 
+                !id.includes('node_modules/react') && 
+                !id.includes('node_modules/react-dom') &&
+                !id.includes('node_modules/@radix-ui') &&
+                !id.includes('node_modules/react-router') &&
+                !id.includes('node_modules/@tanstack/react-query') &&
+                !id.includes('node_modules/framer-motion') &&
+                !id.includes('node_modules/lucide-react') &&
+                !id.includes('node_modules/date-fns') &&
+                !id.includes('node_modules/react-hook-form') &&
+                !id.includes('node_modules/@hookform') &&
+                !id.includes('node_modules/jspdf') &&
+                !id.includes('node_modules/canvas') &&
+                !id.includes('node_modules/html2canvas') &&
+                !id.includes('node_modules/recharts')) {
               return 'Vendor-Libs';
             }
             
