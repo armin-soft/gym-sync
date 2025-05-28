@@ -22,10 +22,11 @@ export const useExerciseSelector = ({
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  const [hasUserMadeSelection, setHasUserMadeSelection] = useState(false);
   
-  // Auto-select type and category if a student has existing exercises - trigger on day change as well
+  // Only auto-select type and category if user hasn't made a manual selection
   useEffect(() => {
-    if (selectedExercises.length > 0) {
+    if (selectedExercises.length > 0 && !hasUserMadeSelection) {
       const firstExercise = selectedExercises[0];
       const exercise = exercises.find(ex => ex.id === firstExercise.id);
       
@@ -37,7 +38,21 @@ export const useExerciseSelector = ({
         }
       }
     }
-  }, [selectedExercises, exercises, categories, dayNumber]);
+  }, [selectedExercises, exercises, categories, dayNumber, hasUserMadeSelection]);
+
+  // Custom setters that mark user selection
+  const handleSetSelectedType = (type: string | null) => {
+    setSelectedType(type);
+    setHasUserMadeSelection(true);
+    if (type !== selectedType) {
+      setSelectedCategoryId(null); // Reset category when type changes
+    }
+  };
+
+  const handleSetSelectedCategoryId = (categoryId: number | null) => {
+    setSelectedCategoryId(categoryId);
+    setHasUserMadeSelection(true);
+  };
 
   // Filter categories by type
   const filteredCategories = useMemo(() => {
@@ -93,13 +108,14 @@ export const useExerciseSelector = ({
   const clearFilters = () => {
     setSelectedType(null);
     setSelectedCategoryId(null);
+    setHasUserMadeSelection(false); // Reset user selection flag
   };
 
   return {
     selectedType,
-    setSelectedType,
+    setSelectedType: handleSetSelectedType,
     selectedCategoryId,
-    setSelectedCategoryId,
+    setSelectedCategoryId: handleSetSelectedCategoryId,
     viewMode,
     setViewMode,
     filteredCategories,
