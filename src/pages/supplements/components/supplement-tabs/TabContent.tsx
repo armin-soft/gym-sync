@@ -1,9 +1,8 @@
 
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
-import { SupplementCategory } from "@/types/supplement";
 import { SupplementStage } from "./SupplementStage";
+import { SupplementCategory } from "@/types/supplement";
 
 interface TabContentProps {
   activeTab: 'supplement' | 'vitamin';
@@ -34,52 +33,36 @@ export const TabContent: React.FC<TabContentProps> = ({
 }) => {
   return (
     <>
-      <TabsContent value="supplement" className="mt-0 flex-1 h-full overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.3 }}
-          className="h-full"
-        >
-          <SupplementStage
-            type="supplement"
-            categories={categories}
-            onAddCategory={onAddCategory}
-            onEditCategory={onEditCategory}
-            onDeleteCategory={onDeleteCategory}
-            supplements={supplements}
-            onAddSupplement={onAddSupplement}
-            onEditSupplement={onEditSupplement}
-            onDeleteSupplement={onDeleteSupplement}
-            selectedCategory={selectedCategory}
-            onSelectCategory={onSelectCategory}
-          />
-        </motion.div>
+      <TabsContent value="supplement" className="mt-0 h-full" dir="rtl">
+        <SupplementStage
+          type="supplement"
+          categories={categories}
+          onAddCategory={onAddCategory}
+          onEditCategory={onEditCategory}
+          onDeleteCategory={onDeleteCategory}
+          supplements={supplements}
+          onAddSupplement={onAddSupplement}
+          onEditSupplement={onEditSupplement}
+          onDeleteSupplement={onDeleteSupplement}
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
+        />
       </TabsContent>
       
-      <TabsContent value="vitamin" className="mt-0 flex-1 h-full overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.3 }}
-          className="h-full"
-        >
-          <SupplementStage
-            type="vitamin"
-            categories={categories}
-            onAddCategory={onAddCategory}
-            onEditCategory={onEditCategory}
-            onDeleteCategory={onDeleteCategory}
-            supplements={supplements}
-            onAddSupplement={onAddSupplement}
-            onEditSupplement={onEditSupplement}
-            onDeleteSupplement={onDeleteSupplement}
-            selectedCategory={selectedCategory}
-            onSelectCategory={onSelectCategory}
-          />
-        </motion.div>
+      <TabsContent value="vitamin" className="mt-0 h-full" dir="rtl">
+        <SupplementStage
+          type="vitamin"
+          categories={categories}
+          onAddCategory={onAddCategory}
+          onEditCategory={onEditCategory}
+          onDeleteCategory={onDeleteCategory}
+          supplements={supplements}
+          onAddSupplement={onAddSupplement}
+          onEditSupplement={onEditSupplement}
+          onDeleteSupplement={onDeleteSupplement}
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
+        />
       </TabsContent>
     </>
   );

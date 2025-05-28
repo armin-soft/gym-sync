@@ -8,58 +8,55 @@ export const useSupplementStageLogic = (
   onSelectCategory: (category: string) => void
 ) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
+  // Toggle sort order
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  };
 
   // Filter supplements based on search and category
   const filteredSupplements = useMemo(() => {
-    let filtered = supplements;
+    let filtered = [...supplements];
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filtered = filtered.filter(supplement =>
-        supplement?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.dosage && item.dosage.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.timing && item.timing.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
     // Apply category filter
     if (selectedCategory !== 'all') {
-      const selectedCat = categories.find(cat => 
-        cat && cat.id !== undefined && cat.id.toString() === selectedCategory
-      );
-      if (selectedCat) {
-        filtered = filtered.filter(supplement => 
-          supplement?.categoryId === selectedCat.id
-        );
-      }
+      filtered = filtered.filter(item => item.category === selectedCategory);
     }
 
     // Apply sorting
-    filtered = [...filtered].sort((a, b) => {
-      if (!a?.name || !b?.name) return 0;
+    filtered.sort((a, b) => {
       const comparison = a.name.localeCompare(b.name, 'fa');
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
     return filtered;
-  }, [supplements, searchQuery, selectedCategory, categories, sortOrder]);
+  }, [supplements, searchQuery, selectedCategory, sortOrder]);
 
-  // Get count for each category
-  const getCategoryCount = (categoryId: string | number) => {
-    if (categoryId === 'all') {
+  // Get count of supplements in each category
+  const getCategoryCount = (categoryName: string) => {
+    if (categoryName === 'all') {
       return supplements.length;
     }
-    return supplements.filter(s => s?.categoryId === categoryId).length;
+    return supplements.filter(item => item.category === categoryName).length;
   };
 
+  // Clear search
   const handleClearSearch = () => {
     setSearchQuery("");
-    onSelectCategory('all');
-  };
-
-  const toggleSortOrder = () => {
-    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
   };
 
   return {

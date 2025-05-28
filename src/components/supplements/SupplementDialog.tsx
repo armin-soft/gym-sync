@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -15,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -32,12 +34,18 @@ import {
   Pill, 
   ListTodo,
   Save,
-  X
+  X,
+  Clock,
+  Beaker,
+  FileText
 } from "lucide-react";
 
 const supplementFormSchema = z.object({
   name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
   category: z.string().min(1, "انتخاب دسته بندی الزامی است"),
+  dosage: z.string().optional(),
+  timing: z.string().optional(),
+  description: z.string().optional(),
 });
 
 interface SupplementDialogProps {
@@ -64,21 +72,29 @@ export const SupplementDialog = ({
     defaultValues: defaultValues || {
       name: "",
       category: "",
+      dosage: "",
+      timing: "",
+      description: "",
     },
   });
 
   useEffect(() => {
     if (mode === "add") {
-      // در حالت افزودن، دسته‌بندی اول را به صورت پیش‌فرض انتخاب می‌کنیم اگر وجود داشته باشد
       if (categories.length > 0) {
         form.reset({
           name: "",
           category: categories[0].name,
+          dosage: "",
+          timing: "",
+          description: "",
         });
       } else {
         form.reset({
           name: "",
           category: "",
+          dosage: "",
+          timing: "",
+          description: "",
         });
       }
     } else if (defaultValues) {
@@ -89,9 +105,15 @@ export const SupplementDialog = ({
   const placeholders = {
     supplement: {
       name: "نام مکمل را وارد کنید (مثال: کراتین مونوهیدرات)",
+      dosage: "دوز مصرف (مثال: ۵ گرم)",
+      timing: "زمان مصرف (مثال: قبل از تمرین)",
+      description: "توضیحات اضافی در مورد مکمل...",
     },
     vitamin: {
       name: "نام ویتامین را وارد کنید (مثال: ویتامین D3)",
+      dosage: "دوز مصرف (مثال: ۱۰۰۰ واحد بین‌المللی)",
+      timing: "زمان مصرف (مثال: بعد از صبحانه)",
+      description: "توضیحات اضافی در مورد ویتامین...",
     }
   };
 
@@ -99,82 +121,159 @@ export const SupplementDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-lg">
-            {type === 'supplement' ? (
-              <FlaskConical className="h-5 w-5 text-purple-500" />
-            ) : (
-              <Pill className="h-5 w-5 text-blue-500" />
-            )}
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto" dir="rtl">
+        <DialogHeader className="text-right">
+          <DialogTitle className="flex items-center justify-end gap-2 text-xl font-bold">
             {mode === "edit" ? 
               `ویرایش ${type === 'supplement' ? 'مکمل' : 'ویتامین'}` : 
               `افزودن ${type === 'supplement' ? 'مکمل' : 'ویتامین'} جدید`
             }
+            {type === 'supplement' ? (
+              <FlaskConical className="h-6 w-6 text-purple-500" />
+            ) : (
+              <Pill className="h-6 w-6 text-blue-500" />
+            )}
           </DialogTitle>
+          <DialogDescription className="text-right text-gray-600">
+            لطفاً اطلاعات {type === 'supplement' ? 'مکمل' : 'ویتامین'} را وارد کنید
+          </DialogDescription>
         </DialogHeader>
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* نام مکمل/ویتامین */}
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2">
+                  <FormLabel className="flex items-center justify-end gap-2 text-right">
+                    نام {type === 'supplement' ? 'مکمل' : 'ویتامین'}
                     {type === 'supplement' ? 
                       <FlaskConical className="h-4 w-4 text-purple-500" /> : 
                       <Pill className="h-4 w-4 text-blue-500" />
                     }
-                    نام {type === 'supplement' ? 'مکمل' : 'ویتامین'}
                   </FormLabel>
                   <FormControl>
                     <Input 
                       placeholder={currentPlaceholders.name}
-                      className="border-purple-200 focus-visible:ring-purple-500"
+                      className="border-purple-200 focus-visible:ring-purple-500 text-right"
+                      dir="rtl"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-right" />
                 </FormItem>
               )}
             />
 
+            {/* دسته بندی */}
             <FormField
               control={form.control}
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <ListTodo className="h-4 w-4 text-purple-500" />
+                  <FormLabel className="flex items-center justify-end gap-2 text-right">
                     دسته بندی
+                    <ListTodo className="h-4 w-4 text-purple-500" />
                   </FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
                     defaultValue={field.value || (categories.length > 0 ? categories[0].name : "")}
+                    dir="rtl"
                   >
                     <FormControl>
-                      <SelectTrigger className="border-purple-200 focus:ring-purple-500">
+                      <SelectTrigger className="border-purple-200 focus:ring-purple-500 text-right" dir="rtl">
                         <SelectValue placeholder="دسته بندی را انتخاب کنید" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent dir="rtl">
                       {categories.map((category) => (
                         <SelectItem 
                           key={category.id} 
                           value={category.name}
-                          className="focus:bg-purple-50"
+                          className="focus:bg-purple-50 text-right"
                         >
                           {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage className="text-right" />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-end gap-2">
+            {/* دوز مصرف */}
+            <FormField
+              control={form.control}
+              name="dosage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center justify-end gap-2 text-right">
+                    دوز مصرف
+                    <Beaker className="h-4 w-4 text-green-500" />
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder={currentPlaceholders.dosage}
+                      className="border-green-200 focus-visible:ring-green-500 text-right"
+                      dir="rtl"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-right" />
+                </FormItem>
+              )}
+            />
+
+            {/* زمان مصرف */}
+            <FormField
+              control={form.control}
+              name="timing"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center justify-end gap-2 text-right">
+                    زمان مصرف
+                    <Clock className="h-4 w-4 text-orange-500" />
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder={currentPlaceholders.timing}
+                      className="border-orange-200 focus-visible:ring-orange-500 text-right"
+                      dir="rtl"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-right" />
+                </FormItem>
+              )}
+            />
+
+            {/* توضیحات */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center justify-end gap-2 text-right">
+                    توضیحات
+                    <FileText className="h-4 w-4 text-gray-500" />
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder={currentPlaceholders.description}
+                      className="border-gray-200 focus-visible:ring-gray-500 text-right min-h-[80px]"
+                      dir="rtl"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-right" />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end gap-3 pt-4">
               <Button
                 type="button"
                 variant="outline"

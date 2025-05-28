@@ -10,8 +10,8 @@ export interface Supplement {
   name: string;
   category: string;
   type: 'supplement' | 'vitamin';
-  supplementType?: string;  // Added supplementType property as optional
-  description?: string;
-  dosage?: string;
-  timing?: string;
+  dosage?: string;          // دوز مصرف
+  timing?: string;          // زمان مصرف  
+  description?: string;     // توضیحات
+  supplementType?: string;  // نوع مکمل (برای سازگاری با کد قبلی)
 }
