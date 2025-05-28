@@ -12,25 +12,25 @@
   /* تنظیمات جداول */
   table {
     direction: rtl;
-    @apply w-full text-xs sm:text-sm md:text-base border-collapse;
+    @apply w-full text-2xs xs:text-xs sm:text-sm md:text-base border-collapse;
   }
 
   th {
-    @apply font-semibold text-right p-2 sm:p-3 border-b;
+    @apply font-semibold text-right p-1 xs:p-1.5 sm:p-2 md:p-3 border-b;
   }
 
   td {
-    @apply p-2 sm:p-3 border-b;
+    @apply p-1 xs:p-1.5 sm:p-2 md:p-3 border-b;
   }
 
   /* تنظیمات کارت‌ها */
   .card {
-    @apply bg-card text-card-foreground rounded-lg border shadow-sm w-full;
+    @apply bg-card text-card-foreground rounded-md sm:rounded-lg border shadow-sm w-full;
   }
 
   /* تنظیمات گرید و فلکس */
   .grid {
-    @apply gap-2 sm:gap-4 md:gap-6 lg:gap-8;
+    @apply gap-1 xs:gap-1.5 sm:gap-2 md:gap-4 lg:gap-6 xl:gap-8;
   }
 
   .flex {
@@ -39,23 +39,23 @@
 
   /* تنظیمات فاصله‌گذاری */
   .section {
-    @apply py-4 sm:py-6 md:py-8 lg:py-12;
+    @apply py-2 xs:py-3 sm:py-4 md:py-6 lg:py-8 xl:py-12;
   }
 }
 
 @layer components {
   /* تنظیمات باکس‌ها */
   .container {
-    @apply px-2 xs:px-3 sm:px-4 md:px-6 mx-auto h-full w-full;
+    @apply px-1 xs:px-1.5 sm:px-2 md:px-4 lg:px-6 xl:px-8 mx-auto h-full w-full;
   }
 
   /* کامپوننت‌های پاسخگو */
   .responsive-container {
-    @apply container mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 w-full h-full;
+    @apply container mx-auto px-1 xs:px-1.5 sm:px-2 md:px-4 lg:px-6 xl:px-8 w-full h-full;
   }
 
   .responsive-grid {
-    @apply grid gap-2 xs:gap-3 sm:gap-4 md:gap-6 lg:gap-8;
+    @apply grid gap-1 xs:gap-1.5 sm:gap-2 md:gap-4 lg:gap-6 xl:gap-8;
   }
 
   .responsive-flex {
@@ -73,5 +73,103 @@
   
   .full-content {
     @apply flex-1 overflow-auto;
+  }
+
+  /* ریسپانسیو تایپوگرافی */
+  .responsive-text-xs {
+    @apply text-2xs xs:text-xs sm:text-sm;
+  }
+
+  .responsive-text-sm {
+    @apply text-xs xs:text-sm sm:text-base;
+  }
+
+  .responsive-text-base {
+    @apply text-sm xs:text-base sm:text-lg;
+  }
+
+  .responsive-text-lg {
+    @apply text-base xs:text-lg sm:text-xl;
+  }
+
+  .responsive-text-xl {
+    @apply text-lg xs:text-xl sm:text-2xl;
+  }
+
+  /* ریسپانسیو فاصله‌گذاری */
+  .responsive-p-sm {
+    @apply p-1 xs:p-1.5 sm:p-2 md:p-3 lg:p-4;
+  }
+
+  .responsive-p-md {
+    @apply p-1.5 xs:p-2 sm:p-3 md:p-4 lg:p-6;
+  }
+
+  .responsive-p-lg {
+    @apply p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8;
+  }
+
+  .responsive-m-sm {
+    @apply m-1 xs:m-1.5 sm:m-2 md:m-3 lg:m-4;
+  }
+
+  .responsive-m-md {
+    @apply m-1.5 xs:m-2 sm:m-3 md:m-4 lg:m-6;
+  }
+
+  .responsive-m-lg {
+    @apply m-2 xs:m-3 sm:m-4 md:m-6 lg:m-8;
+  }
+
+  /* ریسپانسیو ارتفاع و عرض */
+  .responsive-h-sm {
+    @apply h-6 xs:h-7 sm:h-8 md:h-9 lg:h-10;
+  }
+
+  .responsive-h-md {
+    @apply h-8 xs:h-9 sm:h-10 md:h-12 lg:h-14;
+  }
+
+  .responsive-h-lg {
+    @apply h-10 xs:h-12 sm:h-14 md:h-16 lg:h-20;
+  }
+
+  .responsive-w-sm {
+    @apply w-6 xs:w-7 sm:w-8 md:w-9 lg:w-10;
+  }
+
+  .responsive-w-md {
+    @apply w-8 xs:w-9 sm:w-10 md:w-12 lg:w-14;
+  }
+
+  .responsive-w-lg {
+    @apply w-10 xs:w-12 sm:w-14 md:w-16 lg:w-20;
+  }
+}
+
+/* ریسپانسیو برای کلاس‌های خاص */
+@layer utilities {
+  .text-responsive {
+    @apply text-2xs xs:text-xs sm:text-sm md:text-base lg:text-lg;
+  }
+
+  .gap-responsive {
+    @apply gap-1 xs:gap-1.5 sm:gap-2 md:gap-3 lg:gap-4;
+  }
+
+  .p-responsive {
+    @apply p-1 xs:p-1.5 sm:p-2 md:p-3 lg:p-4;
+  }
+
+  .m-responsive {
+    @apply m-1 xs:m-1.5 sm:m-2 md:m-3 lg:m-4;
+  }
+
+  .rounded-responsive {
+    @apply rounded-sm xs:rounded sm:rounded-md md:rounded-lg lg:rounded-xl;
+  }
+
+  .shadow-responsive {
+    @apply shadow-sm xs:shadow sm:shadow-md md:shadow-lg lg:shadow-xl;
   }
 }

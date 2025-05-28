@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/useSupplementsManager";
@@ -120,7 +121,7 @@ const SupplementsPage = () => {
             <div className="h-full flex flex-col">
               <SupplementsHeader />
               
-              <div className="flex-1 overflow-hidden px-1 sm:px-2 md:px-3 lg:px-4 pb-1 sm:pb-2 md:pb-3 lg:pb-4">
+              <div className="flex-1 overflow-hidden px-0.5 sm:px-1 md:px-2 lg:px-3 xl:px-4 pb-0.5 sm:pb-1 md:pb-2 lg:pb-3 xl:pb-4">
                 <SupplementTabs 
                   activeTab={activeTab}
                   onTabChange={(value) => {
