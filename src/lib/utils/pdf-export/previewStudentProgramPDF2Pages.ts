@@ -307,14 +307,16 @@ export const previewStudentProgramPDF2Pages = async (student: Student): Promise<
       },
       styles: {
         tableHeader: {
-          bold: true,
+          bold: false, // تغییر به false
           fontSize: 11,
           color: 'white',
-          alignment: 'center'
+          alignment: 'center',
+          font: 'Vazir'
         },
         tableCell: {
           fontSize: 10,
-          margin: [2, 4, 2, 4]
+          margin: [2, 4, 2, 4],
+          font: 'Vazir'
         }
       }
     };

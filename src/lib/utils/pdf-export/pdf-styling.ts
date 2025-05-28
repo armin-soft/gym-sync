@@ -1,52 +1,25 @@
 
-import { preprocessPersianText } from './pdf-fonts';
+// توابع کمکی برای استایل‌دهی PDF
 
-// تنظیم استایل‌های جدول
-export function configureTableStyles(headerColor: string = '#7c3aed'): any {
+export function configureTableStyles() {
   return {
-    tableHeader: {
-      bold: true,
-      fontSize: 12,
-      color: 'white',
-      fillColor: headerColor,
-      alignment: 'center',
-      direction: 'rtl'
+    fillColor: function (rowIndex: number) {
+      return (rowIndex === 0) ? '#4a5568' : (rowIndex % 2 === 0 ? '#f7fafc' : null);
     },
-    tableCell: {
-      fontSize: 10,
-      alignment: 'right',
-      direction: 'rtl'
-    },
-    alternateRow: {
-      fillColor: '#f8fafc'
-    }
+    hLineWidth: () => 1,
+    vLineWidth: () => 1,
+    hLineColor: () => '#e2e8f0',
+    vLineColor: () => '#e2e8f0'
   };
 }
 
-// ایجاد هدر بخش
-export function createSectionHeader(title: string, iconName?: string): any {
+export function createSectionHeader(title: string) {
   return {
-    stack: [
-      {
-        text: preprocessPersianText(title),
-        style: 'subheader',
-        color: iconName || '#4a5568',
-        alignment: 'right',
-        margin: [0, 10, 0, 10],
-        direction: 'rtl'
-      },
-      {
-        canvas: [
-          {
-            type: 'line',
-            x1: 0, y1: 5, 
-            x2: 515, y2: 5,
-            lineWidth: 1,
-            lineColor: '#e2e8f0'
-          }
-        ]
-      }
-    ],
-    margin: [0, 10, 0, 15]
+    text: title,
+    style: 'subheader',
+    alignment: 'center',
+    margin: [0, 20, 0, 10],
+    direction: 'rtl',
+    font: 'Vazir'
   };
 }

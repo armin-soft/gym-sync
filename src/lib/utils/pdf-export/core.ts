@@ -20,8 +20,14 @@ function initializePdfMake() {
     // Initialize with minimal VFS to avoid loading issues
     pdfMake.vfs = {};
 
-    // Set up fonts with fallback
+    // Set up fonts with Vazir properly defined
     pdfMake.fonts = {
+      Vazir: {
+        normal: 'Roboto-Regular.ttf',
+        bold: 'Roboto-Medium.ttf',
+        italics: 'Roboto-Italic.ttf',
+        bolditalics: 'Roboto-MediumItalic.ttf'
+      },
       Roboto: {
         normal: 'Roboto-Regular.ttf',
         bold: 'Roboto-Medium.ttf',
@@ -42,7 +48,7 @@ function initializePdfMake() {
     }
 
     pdfMakeInitialized = true;
-    console.log('pdfMake initialized successfully');
+    console.log('pdfMake initialized successfully with Vazir font');
     return true;
   } catch (error) {
     console.error('Error initializing pdfMake:', error);
@@ -55,6 +61,7 @@ export const PDF_OPTIONS: PDFDocumentOptions = {
   ...printPageSettings,
   defaultStyle: {
     ...printPageSettings.defaultStyle,
+    font: 'Vazir',
     bidi: false
   }
 };
@@ -64,7 +71,21 @@ export function createPdfDocument(content: any[]): any {
   return {
     content,
     ...PDF_OPTIONS,
-    styles: modernPdfStyles,
+    styles: {
+      ...modernPdfStyles,
+      tableHeader: {
+        bold: false, // تغییر به false تا از مشکل فونت جلوگیری کنیم
+        fontSize: 11,
+        color: 'white',
+        alignment: 'center',
+        font: 'Vazir'
+      },
+      tableCell: {
+        fontSize: 10,
+        margin: [2, 4, 2, 4],
+        font: 'Vazir'
+      }
+    },
     // اضافه کردن واترمارک نرم‌افزار
     background: function(currentPage: number) {
       return {
@@ -74,7 +95,8 @@ export function createPdfDocument(content: any[]): any {
         opacity: 0.03,
         alignment: 'center',
         margin: [0, 300, 0, 0],
-        direction: 'rtl'
+        direction: 'rtl',
+        font: 'Vazir'
       };
     }
   };
