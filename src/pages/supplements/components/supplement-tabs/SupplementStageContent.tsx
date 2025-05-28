@@ -39,16 +39,16 @@ export const SupplementStageContent: React.FC<SupplementStageContentProps> = ({
   handleClearSearch,
 }) => {
   return (
-    <div className="flex-1 overflow-hidden" dir="rtl">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-full p-4">
+    <div className="flex-1 overflow-hidden min-h-0" dir="rtl">
+      <div className="flex flex-col lg:grid lg:grid-cols-4 gap-2 sm:gap-4 h-full p-2 sm:p-4">
         {/* سایدبار دسته‌بندی‌ها */}
-        <div className="lg:col-span-1 bg-white/60 dark:bg-gray-900/60 rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-lg">
-          <div className="p-4 border-b border-gray-200/50 dark:border-gray-700/50">
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-right">
+        <div className="lg:col-span-1 bg-white/60 dark:bg-gray-900/60 rounded-lg sm:rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-lg order-2 lg:order-1">
+          <div className="p-2 sm:p-4 border-b border-gray-200/50 dark:border-gray-700/50">
+            <h3 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-200 text-right">
               دسته‌بندی‌ها
             </h3>
           </div>
-          <ScrollArea className="h-[calc(100%-60px)]" dir="rtl">
+          <ScrollArea className="h-32 lg:h-[calc(100%-3rem)]" dir="rtl">
             <CategoryList
               categories={displayCategories}
               selectedCategory={selectedCategory}
@@ -62,15 +62,15 @@ export const SupplementStageContent: React.FC<SupplementStageContentProps> = ({
         </div>
 
         {/* محتوای اصلی - لیست مکمل‌ها/ویتامین‌ها */}
-        <div className="lg:col-span-3 bg-white/60 dark:bg-gray-900/60 rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-lg">
-          <div className="p-4 border-b border-gray-200/50 dark:border-gray-700/50">
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-right">
+        <div className="lg:col-span-3 bg-white/60 dark:bg-gray-900/60 rounded-lg sm:rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-lg order-1 lg:order-2">
+          <div className="p-2 sm:p-4 border-b border-gray-200/50 dark:border-gray-700/50">
+            <h3 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-200 text-right">
               {type === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}
               {selectedCategory !== 'all' && ` - ${selectedCategory}`}
             </h3>
           </div>
-          <ScrollArea className="h-[calc(100%-60px)]" dir="rtl">
-            <div className="p-4">
+          <ScrollArea className="h-64 lg:h-[calc(100%-3rem)]" dir="rtl">
+            <div className="p-2 sm:p-4">
               <SupplementList
                 supplements={filteredSupplements}
                 onAddSupplement={onAddSupplement}

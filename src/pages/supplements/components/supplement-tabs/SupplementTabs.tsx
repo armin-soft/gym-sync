@@ -40,14 +40,14 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="h-full flex flex-col overflow-hidden rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-lg backdrop-blur-sm">
+      <div className="w-full h-[calc(100vh-8rem)] flex flex-col overflow-hidden rounded-lg sm:rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-lg backdrop-blur-sm">
         <SupplementsLoading type={activeTab} />
       </div>
     );
   }
   
   return (
-    <div className="h-full flex flex-col overflow-hidden rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-lg backdrop-blur-sm">
+    <div className="w-full h-[calc(100vh-8rem)] flex flex-col overflow-hidden rounded-lg sm:rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-lg backdrop-blur-sm">
       <Tabs 
         value={activeTab} 
         onValueChange={onTabChange} 
@@ -57,7 +57,7 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
         <TabsHeader activeTab={activeTab} />
         
         {/* Content for each tab */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden min-h-0">
           <TabContent
             activeTab={activeTab}
             categories={categories.filter(c => c.type === activeTab)}
