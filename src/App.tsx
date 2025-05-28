@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useLayoutEffect, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -34,17 +34,17 @@ function AppContent() {
 
 function App() {
   // اطمینان از دسترسی به React hooks
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     console.log('App useLayoutEffect executed successfully');
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('App component mounted successfully');
     console.log('React version check:', React.version || 'React available');
     console.log('Current URL:', window.location.href);
     
     // بررسی دسترسی به hooks
-    if (!React.useLayoutEffect) {
+    if (!useLayoutEffect) {
       console.error('useLayoutEffect is not available');
       return;
     }
@@ -82,7 +82,7 @@ function App() {
   }, []);
 
   // چک اولیه React hooks
-  if (!React.useLayoutEffect || !React.useState || !React.useEffect) {
+  if (!useLayoutEffect || !React.useState || !useEffect) {
     console.error('React hooks are not properly available');
     return (
       <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Vazir, sans-serif' }}>
