@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import StudentSupplementSelector from "../supplement-selector";
-import { Pill } from "lucide-react";
+import { Pill, Sparkles, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -29,7 +31,6 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
 }) => {
   const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
   
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -49,62 +50,135 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
     }
   };
 
+  const tabs = [
+    {
+      id: 'supplement',
+      label: 'مکمل‌ها',
+      icon: Pill,
+      color: 'from-purple-500 to-violet-600',
+      bgColor: 'from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20',
+      count: selectedSupplements.length
+    },
+    {
+      id: 'vitamin', 
+      label: 'ویتامین‌ها',
+      icon: Sparkles,
+      color: 'from-orange-500 to-amber-600',
+      bgColor: 'from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20',
+      count: selectedVitamins.length
+    }
+  ];
+
   return (
     <TabsContent value="supplement" className="m-0 h-full text-right" dir="rtl">
       <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="mb-4 h-full flex flex-col text-right"
-        dir="rtl"
+        className="h-full flex flex-col"
       >
-        <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between mb-4 gap-2 text-right" dir="rtl">
-          <h3 className="font-semibold text-lg text-right">
-            مکمل و ویتامین
-          </h3>
+        <motion.div variants={itemVariants} className="mb-6">
+          <Card className={cn(
+            "border-0 bg-gradient-to-r p-4 sm:p-6 rounded-2xl shadow-sm",
+            activeTab === 'supplement' 
+              ? 'from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20'
+              : 'from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20'
+          )}>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-r",
+                  activeTab === 'supplement' ? 'from-purple-500 to-violet-600' : 'from-orange-500 to-amber-600'
+                )}>
+                  {activeTab === 'supplement' ? (
+                    <Pill className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  ) : (
+                    <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-200 text-right mb-1">
+                    {activeTab === 'supplement' ? 'مکمل‌های غذایی' : 'ویتامین‌ها و مواد معدنی'}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-right">
+                    {activeTab === 'supplement' ? 'تقویت عملکرد ورزشی' : 'تامین نیازهای بدن'}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4 text-right" dir="rtl">
+                <div className="text-center">
+                  <div className={cn(
+                    "flex items-center gap-1",
+                    activeTab === 'supplement' ? 'text-purple-600 dark:text-purple-400' : 'text-orange-600 dark:text-orange-400'
+                  )}>
+                    <ShieldCheck className="w-4 h-4" />
+                    <span className="text-xs font-medium">انتخاب شده</span>
+                  </div>
+                  <div className="text-lg font-bold text-gray-800 dark:text-gray-200">
+                    {toPersianNumbers(activeTab === 'supplement' ? selectedSupplements.length : selectedVitamins.length)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
         </motion.div>
         
-        {/* Tab Selector for Supplement vs Vitamin */}
-        <motion.div variants={itemVariants} className="mb-4 text-right" dir="rtl">
-          <div className="flex bg-muted/20 rounded-lg p-1 w-full sm:w-auto justify-center">
-            <button
-              onClick={() => setActiveTab('supplement')}
-              className={cn(
-                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
-                activeTab === 'supplement'
-                  ? "bg-white text-purple-700 shadow-sm" 
-                  : "text-gray-600 hover:bg-white/50"
-              )}
-            >
-              مکمل‌ها
-            </button>
-            <button
-              onClick={() => setActiveTab('vitamin')}
-              className={cn(
-                "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all",
-                activeTab === 'vitamin'
-                  ? "bg-white text-purple-700 shadow-sm" 
-                  : "text-gray-600 hover:bg-white/50"
-              )}
-            >
-              ویتامین‌ها
-            </button>
-          </div>
+        <motion.div variants={itemVariants} className="mb-4">
+          <Card className="border-0 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-xl p-2">
+            <div className="flex bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-1">
+              {tabs.map((tab) => (
+                <Button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as 'supplement' | 'vitamin')}
+                  variant="ghost"
+                  className={cn(
+                    "flex-1 relative py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300",
+                    activeTab === tab.id
+                      ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
+                      : "text-gray-600 dark:text-gray-400 hover:bg-white/60 dark:hover:bg-gray-700/30"
+                  )}
+                >
+                  <div className="flex items-center justify-center gap-2 text-right" dir="rtl">
+                    <tab.icon className="w-4 h-4" />
+                    <span>{tab.label}</span>
+                    {tab.count > 0 && (
+                      <Badge variant="secondary" className={cn(
+                        "text-xs px-1.5 py-0.5 mr-1",
+                        activeTab === tab.id 
+                          ? "bg-white/20 text-white border-white/30" 
+                          : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                      )}>
+                        {toPersianNumbers(tab.count)}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {activeTab === tab.id && (
+                    <motion.div
+                      layoutId="supplementTab"
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 rounded-lg"
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
+                  )}
+                </Button>
+              ))}
+            </div>
+          </Card>
         </motion.div>
         
-        <motion.div variants={itemVariants} className="flex-1 overflow-auto text-right" dir="rtl">
+        <motion.div variants={itemVariants} className="flex-1 overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="h-full text-right"
-              dir="rtl"
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="h-full"
             >
-              <Card className="border border-border/40 bg-white/90 backdrop-blur-sm shadow-sm h-full text-right" dir="rtl">
-                <div className="p-4 h-full text-right" dir="rtl">
+              <Card className="h-full border-0 shadow-lg bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-2xl overflow-hidden">
+                <div className="p-4 h-full">
                   <StudentSupplementSelector 
                     supplements={supplements}
                     selectedSupplements={selectedSupplements}
@@ -119,17 +193,6 @@ const StudentProgramSupplementContent: React.FC<StudentProgramSupplementContentP
               </Card>
             </motion.div>
           </AnimatePresence>
-        </motion.div>
-
-        <motion.div variants={itemVariants} className="mt-4 text-muted-foreground text-sm text-center" dir="rtl">
-          <div className="flex items-center justify-center gap-2" dir="rtl">
-            <Pill className="h-4 w-4" />
-            <span className="text-right">
-              {activeTab === 'supplement' 
-                ? `${toPersianNumbers(selectedSupplements.length)} مکمل انتخاب شده` 
-                : `${toPersianNumbers(selectedVitamins.length)} ویتامین انتخاب شده`}
-            </span>
-          </div>
         </motion.div>
       </motion.div>
     </TabsContent>
