@@ -5,13 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useStudents } from "@/hooks/students";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Save } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import ProgramManager from "./components/ProgramManager";
 import ProgramHeader from "./components/ProgramHeader";
 import { ExerciseWithSets } from "@/types/exercise";
-import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 const StudentProgramPage: React.FC = () => {
   const { studentId } = useParams<{ studentId: string }>();
@@ -19,7 +18,6 @@ const StudentProgramPage: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [student, setStudent] = useState<Student | null>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const { 
     students,
@@ -105,13 +103,6 @@ const StudentProgramPage: React.FC = () => {
     return result;
   };
 
-  // تابع برای نمایش پیش‌نمایش PDF
-  const handleShowPdfPreview = () => {
-    if (student) {
-      setIsPreviewOpen(true);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
@@ -158,16 +149,8 @@ const StudentProgramPage: React.FC = () => {
             onSaveExercises={handleSaveExercisesWithHistory}
             onSaveDiet={handleSaveDietWithHistory}
             onSaveSupplements={handleSaveSupplementsWithHistory}
-            onShowPdfPreview={handleShowPdfPreview}
           />
         </div>
-        
-        {/* مودال پیش‌نمایش PDF */}
-        <PdfPreviewModal
-          isOpen={isPreviewOpen}
-          onClose={() => setIsPreviewOpen(false)}
-          student={student}
-        />
       </motion.div>
     </AnimatePresence>
   );

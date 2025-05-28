@@ -21,7 +21,6 @@ interface ProgramManagerProps {
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[]) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
-  onShowPdfPreview?: () => void;
 }
 
 const ProgramManager: React.FC<ProgramManagerProps> = ({
@@ -31,8 +30,7 @@ const ProgramManager: React.FC<ProgramManagerProps> = ({
   supplements,
   onSaveExercises,
   onSaveDiet,
-  onSaveSupplements,
-  onShowPdfPreview
+  onSaveSupplements
 }) => {
   const { activeTab, setActiveTab } = useProgramTabs();
 
@@ -120,26 +118,11 @@ const ProgramManager: React.FC<ProgramManagerProps> = ({
                     onSaveExercises={onSaveExercises}
                     onSaveDiet={onSaveDiet}
                     onSaveSupplements={onSaveSupplements}
-                    onShowPdfPreview={onShowPdfPreview}
                   />
                 </div>
               </Card>
             </motion.div>
           </Tabs>
-        </div>
-
-        {/* Floating Action Elements */}
-        <div className="fixed bottom-6 left-6 z-20">
-          <div className="flex flex-col gap-3">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={onShowPdfPreview}
-              className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg flex items-center justify-center text-white hover:shadow-xl transition-all duration-300"
-            >
-              <Sparkles className="w-6 h-6" />
-            </motion.button>
-          </div>
         </div>
       </motion.div>
     </div>

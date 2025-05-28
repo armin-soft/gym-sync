@@ -14,7 +14,6 @@ interface ProgramTabsContentProps {
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
   onSaveDiet: (mealIds: number[]) => boolean;
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
-  onShowPdfPreview?: () => void; // Added this prop to fix the TypeScript error
 }
 
 const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
@@ -24,8 +23,7 @@ const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
   supplements,
   onSaveExercises,
   onSaveDiet,
-  onSaveSupplements,
-  onShowPdfPreview
+  onSaveSupplements
 }) => {
   return (
     <div className="flex-1">
@@ -34,7 +32,6 @@ const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
           student={student}
           exercises={exercises}
           onSaveExercises={onSaveExercises}
-          onShowPdfPreview={onShowPdfPreview}
         />
       </TabsContent>
       
@@ -43,7 +40,6 @@ const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
           student={student}
           meals={meals}
           onSaveDiet={onSaveDiet}
-          onShowPdfPreview={onShowPdfPreview}
         />
       </TabsContent>
       
@@ -52,7 +48,6 @@ const ProgramTabsContent: React.FC<ProgramTabsContentProps> = ({
           student={student}
           supplements={supplements}
           onSaveSupplements={onSaveSupplements}
-          onShowPdfPreview={onShowPdfPreview}
         />
       </TabsContent>
     </div>

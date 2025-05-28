@@ -4,13 +4,10 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu, Printer, FileText } from "lucide-react";
+import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
-import { useToast } from "@/hooks/use-toast";
-import { exportStudentProgramToPdf } from "@/lib/utils/pdf-export";
-import { PdfPreviewModal } from "@/components/ui/PdfPreviewModal";
 
 interface StudentTableRowProps {
   student: Student;
@@ -33,40 +30,6 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   isProfileComplete,
   index,
 }) => {
-  const { toast } = useToast();
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-
-  // اضافه کردن تابع برای پیش‌نمایش برنامه
-  const handlePreviewProgramClick = () => {
-    setIsPreviewOpen(true);
-  };
-
-  // اضافه کردن تابع برای صدور برنامه به صورت PDF
-  const handleExportProgramClick = () => {
-    toast({
-      title: "در حال آماده سازی برنامه",
-      description: "لطفا منتظر بمانید...",
-    });
-    
-    setTimeout(() => {
-      exportStudentProgramToPdf(student)
-        .then(() => {
-          toast({
-            title: "صدور برنامه انجام شد",
-            description: "برنامه با موفقیت به صورت PDF صادر شد",
-          });
-        })
-        .catch((error) => {
-          console.error("Error exporting program:", error);
-          toast({
-            variant: "destructive",
-            title: "خطا در صدور برنامه",
-            description: "مشکلی در صدور برنامه پیش آمد. لطفا مجددا تلاش کنید.",
-          });
-        });
-    }, 500);
-  };
-
   return (
     <>
       <TableCell className="p-2">
@@ -137,14 +100,6 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
                 <CalendarDays className="h-3.5 w-3.5 mr-2" />
                 برنامه
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handlePreviewProgramClick} className="cursor-pointer">
-                <FileText className="h-3.5 w-3.5 mr-2" />
-                پیش‌نمایش
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportProgramClick} className="cursor-pointer">
-                <Printer className="h-3.5 w-3.5 mr-2" />
-                صدور برنامه
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onDelete(student.id)} className="cursor-pointer text-red-600 dark:text-red-400">
                 <Trash2 className="h-3.5 w-3.5 mr-2" />
                 حذف
@@ -162,26 +117,6 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
             >
               <CalendarDays className="h-3.5 w-3.5" />
               <span>برنامه</span>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400 transition-colors"
-              onClick={handlePreviewProgramClick}
-            >
-              <FileText className="h-3.5 w-3.5" />
-              <span>پیش‌نمایش</span>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/20 dark:hover:text-green-400 transition-colors"
-              onClick={handleExportProgramClick}
-            >
-              <Printer className="h-3.5 w-3.5" />
-              <span>صدور</span>
             </Button>
             
             {onEdit && (
@@ -208,12 +143,6 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
           </div>
         </div>
       </TableCell>
-      
-      <PdfPreviewModal
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        student={student}
-      />
     </>
   );
 };

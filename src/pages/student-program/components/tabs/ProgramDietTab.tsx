@@ -8,14 +8,12 @@ interface ProgramDietTabProps {
   student: Student;
   meals: any[];
   onSaveDiet: (mealIds: number[]) => boolean;
-  onShowPdfPreview?: () => void;
 }
 
 export const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
   student,
   meals,
-  onSaveDiet,
-  onShowPdfPreview
+  onSaveDiet
 }) => {
   const {
     currentDay,
@@ -42,7 +40,6 @@ export const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
       <ProgramDietHeader 
         onSave={handleSave} 
         isLoading={isLoading}
-        onShowPdfPreview={onShowPdfPreview}
       />
       
       <DaySelector 

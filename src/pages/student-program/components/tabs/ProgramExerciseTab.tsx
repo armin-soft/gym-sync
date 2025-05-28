@@ -9,14 +9,12 @@ interface ProgramExerciseTabProps {
   student: Student;
   exercises: any[];
   onSaveExercises: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  onShowPdfPreview?: () => void;
 }
 
 export const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
   student,
   exercises,
-  onSaveExercises,
-  onShowPdfPreview
+  onSaveExercises
 }) => {
   const {
     currentDay,
@@ -35,7 +33,6 @@ export const ProgramExerciseTab: React.FC<ProgramExerciseTabProps> = ({
         onSave={handleSave} 
         isLoading={isLoading}
         saveStatus={saveStatus}
-        onShowPdfPreview={onShowPdfPreview}
       />
       
       <DaySelector 
