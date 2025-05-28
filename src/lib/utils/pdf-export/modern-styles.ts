@@ -34,7 +34,7 @@ export const modernPdfStyles = {
 // تنظیمات صفحه برای چاپ
 export const printPageSettings = {
   pageSize: 'A4',
-  pageOrientation: 'portrait',
+  pageOrientation: 'portrait' as const,
   pageMargins: [40, 60, 40, 80],
   defaultStyle: {
     font: 'Vazir',
@@ -42,4 +42,15 @@ export const printPageSettings = {
     direction: 'rtl',
     alignment: 'right'
   }
+};
+
+// تنظیمات مدرن جدول
+export const modernTableLayout = {
+  fillColor: function (rowIndex: number) {
+    return (rowIndex === 0) ? '#4a5568' : (rowIndex % 2 === 0 ? '#f7fafc' : null);
+  },
+  hLineWidth: () => 1,
+  vLineWidth: () => 1,
+  hLineColor: () => '#e2e8f0',
+  vLineColor: () => '#e2e8f0'
 };
