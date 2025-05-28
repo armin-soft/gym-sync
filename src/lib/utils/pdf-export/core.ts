@@ -4,50 +4,63 @@ import { PDFDocumentOptions } from './types';
 import { toPersianDigits, preprocessPersianText, createRTLText } from './pdf-fonts';
 import { modernPdfStyles, printPageSettings } from './modern-styles';
 
-// Safe pdfMake initialization with better error handling
+// بهبود سیستم initialization
 let pdfMakeInitialized = false;
+let initializationPromise: Promise<boolean> | null = null;
 
-function initializePdfMake() {
+async function initializePdfMake(): Promise<boolean> {
   if (pdfMakeInitialized) return true;
   
-  try {
-    // Check if pdfMake is available
-    if (typeof pdfMake === 'undefined' || !pdfMake) {
-      console.error('pdfMake is not available');
-      return false;
-    }
-
-    // Initialize with empty VFS - we'll use system fonts
-    pdfMake.vfs = {};
-
-    // Set up fonts with only system fonts (no custom font files needed)
-    pdfMake.fonts = {
-      Vazir: {
-        normal: 'Arial',
-        bold: 'Arial',
-        italics: 'Arial',
-        bolditalics: 'Arial'
-      }
-    };
-
-    // Ensure global pdfMake availability with better error handling
-    if (typeof window !== 'undefined') {
-      if (!window.pdfMake) {
-        window.pdfMake = pdfMake;
-      }
-      // Additional safety check for createPdf method
-      if (window.pdfMake && !window.pdfMake.createPdf) {
-        window.pdfMake.createPdf = pdfMake.createPdf;
-      }
-    }
-
-    pdfMakeInitialized = true;
-    console.log('pdfMake initialized successfully with system fonts');
-    return true;
-  } catch (error) {
-    console.error('Error initializing pdfMake:', error);
-    return false;
+  if (initializationPromise) {
+    return initializationPromise;
   }
+  
+  initializationPromise = new Promise((resolve) => {
+    try {
+      // بررسی دسترسی به React hooks
+      if (typeof window !== 'undefined' && !window.React) {
+        console.warn('React not found in window, setting up...');
+        window.React = React;
+      }
+      
+      // بررسی pdfMake
+      if (typeof pdfMake === 'undefined' || !pdfMake) {
+        console.error('pdfMake is not available');
+        resolve(false);
+        return;
+      }
+
+      // تنظیم VFS و فونت‌ها
+      pdfMake.vfs = {};
+      pdfMake.fonts = {
+        Vazir: {
+          normal: 'Arial',
+          bold: 'Arial',
+          italics: 'Arial',
+          bolditalics: 'Arial'
+        }
+      };
+
+      // تنظیم global pdfMake
+      if (typeof window !== 'undefined') {
+        if (!window.pdfMake) {
+          window.pdfMake = pdfMake;
+        }
+        if (window.pdfMake && !window.pdfMake.createPdf) {
+          window.pdfMake.createPdf = pdfMake.createPdf;
+        }
+      }
+
+      pdfMakeInitialized = true;
+      console.log('pdfMake initialized successfully');
+      resolve(true);
+    } catch (error) {
+      console.error('Error initializing pdfMake:', error);
+      resolve(false);
+    }
+  });
+  
+  return initializationPromise;
 }
 
 // تنظیمات مدرن PDF برای چاپ حرفه‌ای
@@ -68,7 +81,7 @@ export function createPdfDocument(content: any[]): any {
     styles: {
       ...modernPdfStyles,
       tableHeader: {
-        bold: false, // تغییر به false تا از مشکل فونت جلوگیری کنیم
+        bold: false,
         fontSize: 11,
         color: 'white',
         alignment: 'center',
@@ -80,7 +93,6 @@ export function createPdfDocument(content: any[]): any {
         font: 'Vazir'
       }
     },
-    // اضافه کردن واترمارک نرم‌افزار
     background: function(currentPage: number) {
       return {
         text: 'GymSync Pro',
@@ -96,13 +108,13 @@ export function createPdfDocument(content: any[]): any {
   };
 }
 
-// Safe pdfMake access with initialization
-function ensurePdfMakeAvailable() {
-  if (!initializePdfMake()) {
+// دسترسی امن به pdfMake
+async function ensurePdfMakeAvailable() {
+  const initialized = await initializePdfMake();
+  if (!initialized) {
     throw new Error('pdfMake initialization failed');
   }
 
-  // Get the appropriate pdfMake reference
   let pdfMakeInstance = pdfMake;
   if (typeof window !== 'undefined' && window.pdfMake) {
     pdfMakeInstance = window.pdfMake;
@@ -116,71 +128,83 @@ function ensurePdfMakeAvailable() {
 }
 
 // تولید و دانلود PDF با کیفیت بالا
-export function generatePDF(docDefinition: any, filename: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    try {
-      const pdfMakeInstance = ensurePdfMakeAvailable();
-      
-      console.log(`در حال تولید PDF حرفه‌ای: ${filename}`);
-      const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
-      
-      pdfDoc.download(filename);
-      console.log(`PDF حرفه‌ای با موفقیت دانلود شد: ${filename}`);
-      resolve();
-    } catch (error) {
-      console.error('خطا در تولید PDF:', error);
-      reject(error);
-    }
-  });
+export async function generatePDF(docDefinition: any, filename: string): Promise<void> {
+  try {
+    const pdfMakeInstance = await ensurePdfMakeAvailable();
+    
+    console.log(`در حال تولید PDF حرفه‌ای: ${filename}`);
+    const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
+    
+    return new Promise((resolve, reject) => {
+      try {
+        pdfDoc.download(filename);
+        console.log(`PDF حرفه‌ای با موفقیت دانلود شد: ${filename}`);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  } catch (error) {
+    console.error('خطا در تولید PDF:', error);
+    throw error;
+  }
 }
 
 // تولید URL پیش‌نمایش PDF با کیفیت بالا
-export function generatePDFPreview(docDefinition: any): Promise<string> {
-  return new Promise((resolve, reject) => {
-    try {
-      const pdfMakeInstance = ensurePdfMakeAvailable();
-      
-      console.log('در حال تولید پیش‌نمایش PDF مدرن...');
-      const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
-      
-      pdfDoc.getDataUrl((dataUrl) => {
-        console.log('پیش‌نمایش PDF مدرن با موفقیت تولید شد');
-        resolve(dataUrl);
-      });
-    } catch (error) {
-      console.error('خطا در تولید پیش‌نمایش PDF:', error);
-      reject(error);
-    }
-  });
+export async function generatePDFPreview(docDefinition: any): Promise<string> {
+  try {
+    const pdfMakeInstance = await ensurePdfMakeAvailable();
+    
+    console.log('در حال تولید پیش‌نمایش PDF مدرن...');
+    const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
+    
+    return new Promise((resolve, reject) => {
+      try {
+        pdfDoc.getDataUrl((dataUrl) => {
+          console.log('پیش‌نمایش PDF مدرن با موفقیت تولید شد');
+          resolve(dataUrl);
+        });
+      } catch (error) {
+        console.error('خطا در تولید داده URL:', error);
+        reject(error);
+      }
+    });
+  } catch (error) {
+    console.error('خطا در تولید پیش‌نمایش PDF:', error);
+    throw error;
+  }
 }
 
 // تولید بلاب PDF برای عملیات پیشرفته
-export function generatePDFBlob(docDefinition: any): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    try {
-      const pdfMakeInstance = ensurePdfMakeAvailable();
-      
-      const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
-      
-      pdfDoc.getBlob((blob) => {
-        resolve(blob);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
+export async function generatePDFBlob(docDefinition: any): Promise<Blob> {
+  try {
+    const pdfMakeInstance = await ensurePdfMakeAvailable();
+    
+    const pdfDoc = pdfMakeInstance.createPdf(docDefinition);
+    
+    return new Promise((resolve, reject) => {
+      try {
+        pdfDoc.getBlob((blob) => {
+          resolve(blob);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
 }
 
-// Initialize on module load with delayed initialization for better reliability
+// راه‌اندازی تاخیری بهبود یافته
 if (typeof window !== 'undefined') {
-  // Delay initialization to ensure all dependencies are loaded
-  setTimeout(() => {
+  setTimeout(async () => {
     try {
-      initializePdfMake();
+      await initializePdfMake();
     } catch (error) {
       console.warn('Could not initialize pdfMake on module load:', error);
     }
-  }, 100);
+  }, 200);
 }
 
 // صادر کردن توابع کمکی
