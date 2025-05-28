@@ -61,7 +61,7 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
           <div className="flex flex-col gap-1 mt-3 text-xs text-gray-600">
             {item.dosage ? (
               <div className="flex items-center gap-1 justify-end">
-                <span>{item.dosage}</span>
+                <span>{toPersianNumbers(item.dosage)}</span>
                 <span className="font-medium">دوز مصرف:</span>
                 <List className="h-3 w-3 text-purple-500" />
               </div>
@@ -75,7 +75,7 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
             
             {item.timing ? (
               <div className="flex items-center gap-1 justify-end">
-                <span>{item.timing}</span>
+                <span>{toPersianNumbers(item.timing)}</span>
                 <span className="font-medium">زمان مصرف:</span>
                 <Clock className="h-3 w-3 text-purple-500" />
               </div>

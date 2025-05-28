@@ -18,9 +18,9 @@ const StudentProgramHeader: React.FC<StudentProgramHeaderProps> = ({
   onClose,
   handleSaveAll
 }) => {
-  const ageDisplay = student.age ? toPersianNumbers(student.age) : "";
-  const heightDisplay = student.height ? toPersianNumbers(student.height) : "";
-  const weightDisplay = student.weight ? toPersianNumbers(student.weight) : "";
+  const ageDisplay = student.age ? toPersianNumbers(student.age.toString()) : "";
+  const heightDisplay = student.height ? toPersianNumbers(student.height.toString()) : "";
+  const weightDisplay = student.weight ? toPersianNumbers(student.weight.toString()) : "";
   
   return (
     <motion.div 
