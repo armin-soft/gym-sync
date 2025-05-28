@@ -57,57 +57,53 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-gray-900 dark:via-gray-800/50 dark:to-gray-900" style={{ direction: "rtl" }}>
-      <div className="space-y-6 h-full w-full flex flex-col text-right p-6" dir="rtl">
-        <StudentProgramHeader 
-          student={student} 
-          onClose={onClose} 
-          handleSaveAll={handleSaveAll} 
-        />
+    <div className="space-y-4 h-full w-full flex flex-col text-right" dir="rtl">
+      <StudentProgramHeader 
+        student={student} 
+        onClose={onClose} 
+        handleSaveAll={handleSaveAll} 
+      />
 
-        <div className="flex-1 bg-white/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-2xl overflow-hidden">
-          <StudentProgramTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            currentDay={activeTab === "exercise" 
-              ? currentDay 
-              : activeTab === "diet" 
-                ? currentDietDay 
-                : currentSupplementDay}
-            setCurrentDay={activeTab === "exercise" 
-              ? setCurrentDay 
-              : activeTab === "diet" 
-                ? setCurrentDietDay 
-                : setCurrentSupplementDay}
-          >
-            <StudentProgramExerciseContent 
-              currentDay={currentDay}
-              setCurrentDay={setCurrentDay}
-              selectedExercises={selectedExercises}
-              setSelectedExercises={setSelectedExercises}
-              exercises={exercises}
-            />
-            
-            <StudentProgramDietContent 
-              selectedMeals={selectedMeals}
-              setSelectedMeals={setSelectedMeals}
-              meals={meals}
-              currentDietDay={currentDietDay}
-              setCurrentDietDay={setCurrentDietDay}
-            />
-            
-            <StudentProgramSupplementContent 
-              selectedSupplements={selectedSupplements}
-              setSelectedSupplements={setSelectedSupplements}
-              selectedVitamins={selectedVitamins}
-              setSelectedVitamins={setSelectedVitamins}
-              supplements={supplements}
-              currentDay={currentSupplementDay}
-              setCurrentDay={setCurrentSupplementDay}
-            />
-          </StudentProgramTabs>
-        </div>
-      </div>
+      <StudentProgramTabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        currentDay={activeTab === "exercise" 
+          ? currentDay 
+          : activeTab === "diet" 
+            ? currentDietDay 
+            : currentSupplementDay}
+        setCurrentDay={activeTab === "exercise" 
+          ? setCurrentDay 
+          : activeTab === "diet" 
+            ? setCurrentDietDay 
+            : setCurrentSupplementDay}
+      >
+        <StudentProgramExerciseContent 
+          currentDay={currentDay}
+          setCurrentDay={setCurrentDay}
+          selectedExercises={selectedExercises}
+          setSelectedExercises={setSelectedExercises}
+          exercises={exercises}
+        />
+        
+        <StudentProgramDietContent 
+          selectedMeals={selectedMeals}
+          setSelectedMeals={setSelectedMeals}
+          meals={meals}
+          currentDietDay={currentDietDay}
+          setCurrentDietDay={setCurrentDietDay}
+        />
+        
+        <StudentProgramSupplementContent 
+          selectedSupplements={selectedSupplements}
+          setSelectedSupplements={setSelectedSupplements}
+          selectedVitamins={selectedVitamins}
+          setSelectedVitamins={setSelectedVitamins}
+          supplements={supplements}
+          currentDay={currentSupplementDay}
+          setCurrentDay={setCurrentSupplementDay}
+        />
+      </StudentProgramTabs>
     </div>
   );
 };
