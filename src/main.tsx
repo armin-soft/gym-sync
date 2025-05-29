@@ -1,18 +1,26 @@
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import './index.css'
+
+// Import React explicitly to ensure it's available globally
+import React from 'react'
+
+// Make React available globally for components that might need it
+if (typeof window !== 'undefined') {
+  (window as any).React = React;
+}
+
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
-import './index.css'
-import { useState, useEffect, useCallback } from 'react';
 
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [appVersion, setAppVersion] = useState('');
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [appVersion, setAppVersion] = React.useState('');
   
   // دریافت نسخه از Manifest.json
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchVersion = async () => {
       try {
         const response = await fetch('/Manifest.json');
@@ -31,7 +39,7 @@ function MainApp() {
     fetchVersion();
   }, []);
   
-  const handleLoadingComplete = useCallback(() => {
+  const handleLoadingComplete = React.useCallback(() => {
     console.log(`Loading completed for version ${appVersion}, showing main app`);
     setIsLoading(false);
   }, [appVersion]);

@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react({
         jsxRuntime: 'automatic',
+        jsxImportSource: 'react',
         babel: {
           plugins: [
             ['@babel/plugin-transform-react-jsx', {
@@ -53,6 +54,7 @@ export default defineConfig(({ mode }) => {
       include: [
         'react',
         'react-dom',
+        'react/jsx-runtime',
         'react-router-dom',
         '@tanstack/react-query',
         'framer-motion',
@@ -61,12 +63,12 @@ export default defineConfig(({ mode }) => {
       force: true
     },
     define: {
-      'process.env.NODE_ENV': JSON.stringify(mode)
+      'process.env.NODE_ENV': JSON.stringify(mode),
+      global: 'globalThis',
     },
     esbuild: {
-      jsxFactory: 'React.createElement',
-      jsxFragment: 'React.Fragment',
-      loader: 'tsx'
+      jsx: 'automatic',
+      jsxImportSource: 'react'
     }
   };
 })
