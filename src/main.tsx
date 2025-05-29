@@ -36,29 +36,32 @@ function MainApp() {
     setIsLoading(false);
   }, [appVersion]);
   
-  // Fix: Use a single container with absolute positioning to avoid DOM conflicts
+  // بررسی وجود React و ReactDOM قبل از render
+  if (typeof React === 'undefined' || typeof createRoot === 'undefined') {
+    console.error('React or ReactDOM not properly loaded');
+    return null;
+  }
+  
   return (
-    <StrictMode>
-      <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-        {isLoading && (
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
-            <LoadingScreen onLoadingComplete={handleLoadingComplete} />
-          </div>
-        )}
-        <div style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          width: '100%', 
-          height: '100%',
-          opacity: isLoading ? 0 : 1,
-          transition: 'opacity 0.3s ease-in-out',
-          pointerEvents: isLoading ? 'none' : 'auto'
-        }}>
-          <App />
+    <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+      {isLoading && (
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
+          <LoadingScreen onLoadingComplete={handleLoadingComplete} />
         </div>
+      )}
+      <div style={{ 
+        position: 'absolute', 
+        top: 0, 
+        left: 0, 
+        width: '100%', 
+        height: '100%',
+        opacity: isLoading ? 0 : 1,
+        transition: 'opacity 0.3s ease-in-out',
+        pointerEvents: isLoading ? 'none' : 'auto'
+      }}>
+        <App />
       </div>
-    </StrictMode>
+    </div>
   );
 }
 
@@ -82,7 +85,11 @@ function startApp() {
       root = createRoot(rootElement);
     }
     
-    root.render(<MainApp />);
+    root.render(
+      <StrictMode>
+        <MainApp />
+      </StrictMode>
+    );
     console.log('برنامه با موفقیت راه‌اندازی شد');
     
   } catch (error) {
