@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
+import * as React from 'react';
 
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
@@ -61,8 +62,8 @@ function MainApp() {
   );
 }
 
-// اضافه کردن import مناسب React
-import * as React from 'react';
+// متغیر برای نگهداری root
+let root: any = null;
 
 // تابع راه‌اندازی اصلی برنامه
 function startApp() {
@@ -75,8 +76,11 @@ function startApp() {
       return;
     }
     
-    console.log('Root element found, creating React root...');
-    const root = createRoot(rootElement);
+    // بررسی اینکه آیا root قبلاً ایجاد شده است یا خیر
+    if (!root) {
+      console.log('Root element found, creating React root...');
+      root = createRoot(rootElement);
+    }
     
     root.render(<MainApp />);
     console.log('برنامه با موفقیت راه‌اندازی شد');
