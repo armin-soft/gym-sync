@@ -1,3 +1,4 @@
+
 import { ExerciseWithSets } from "@/types/exercise";
 
 export interface Student {
@@ -16,33 +17,33 @@ export interface Student {
   // Progress tracking
   progress?: number;
   
-  // Exercise properties
+  // Exercise properties - main exercises should be ExerciseWithSets for backward compatibility
   exercises: ExerciseWithSets[];
   exerciseSets?: Record<number, number>;
   exerciseReps?: Record<number, string>;
   
-  // Daily exercise properties
-  exercisesDay1: ExerciseWithSets[];
+  // Daily exercise properties - these should be number arrays (exercise IDs)
+  exercisesDay1: number[];
   exerciseSetsDay1?: Record<number, number>;
   exerciseRepsDay1?: Record<number, string>;
   
-  exercisesDay2: ExerciseWithSets[];
+  exercisesDay2: number[];
   exerciseSetsDay2?: Record<number, number>;
   exerciseRepsDay2?: Record<number, string>;
   
-  exercisesDay3: ExerciseWithSets[];
+  exercisesDay3: number[];
   exerciseSetsDay3?: Record<number, number>;
   exerciseRepsDay3?: Record<number, string>;
   
-  exercisesDay4: ExerciseWithSets[];
+  exercisesDay4: number[];
   exerciseSetsDay4?: Record<number, number>;
   exerciseRepsDay4?: Record<number, string>;
   
-  exercisesDay5?: ExerciseWithSets[];
+  exercisesDay5?: number[];
   exerciseSetsDay5?: Record<number, number>;
   exerciseRepsDay5?: Record<number, string>;
   
-  exercisesDay6?: ExerciseWithSets[];
+  exercisesDay6?: number[];
   exerciseSetsDay6?: Record<number, number>;
   exerciseRepsDay6?: Record<number, string>;
   

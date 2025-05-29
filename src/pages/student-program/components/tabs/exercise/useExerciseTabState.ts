@@ -26,68 +26,78 @@ export const useExerciseTabState = (
     6: [] // Added day 6
   });
   
+  // Helper function to convert exercise IDs to ExerciseWithSets
+  const convertToExerciseWithSets = (exerciseIds: number[], sets: Record<number, number> = {}, reps: Record<number, string> = {}, day: number): ExerciseWithSets[] => {
+    return exerciseIds.map(id => ({
+      id,
+      sets: sets[id] || 3,
+      reps: reps[id] || "12",
+      day
+    }));
+  };
+  
   // Initializing cache once on load - updated for 6 days
   useEffect(() => {
     const cachedExercises = { ...exerciseCacheRef.current };
     
     // Day 1
     if (student.exercisesDay1) {
-      cachedExercises[1] = student.exercisesDay1.map(id => ({
-        id,
-        sets: student.exerciseSetsDay1?.[id] || 3,
-        reps: student.exerciseRepsDay1?.[id] || "12",
-        day: 1
-      }));
+      cachedExercises[1] = convertToExerciseWithSets(
+        student.exercisesDay1,
+        student.exerciseSetsDay1,
+        student.exerciseRepsDay1,
+        1
+      );
     }
     
     // Day 2
     if (student.exercisesDay2) {
-      cachedExercises[2] = student.exercisesDay2.map(id => ({
-        id,
-        sets: student.exerciseSetsDay2?.[id] || 3,
-        reps: student.exerciseRepsDay2?.[id] || "12",
-        day: 2
-      }));
+      cachedExercises[2] = convertToExerciseWithSets(
+        student.exercisesDay2,
+        student.exerciseSetsDay2,
+        student.exerciseRepsDay2,
+        2
+      );
     }
     
     // Day 3
     if (student.exercisesDay3) {
-      cachedExercises[3] = student.exercisesDay3.map(id => ({
-        id,
-        sets: student.exerciseSetsDay3?.[id] || 3,
-        reps: student.exerciseRepsDay3?.[id] || "12",
-        day: 3
-      }));
+      cachedExercises[3] = convertToExerciseWithSets(
+        student.exercisesDay3,
+        student.exerciseSetsDay3,
+        student.exerciseRepsDay3,
+        3
+      );
     }
     
     // Day 4
     if (student.exercisesDay4) {
-      cachedExercises[4] = student.exercisesDay4.map(id => ({
-        id,
-        sets: student.exerciseSetsDay4?.[id] || 3,
-        reps: student.exerciseRepsDay4?.[id] || "12",
-        day: 4
-      }));
+      cachedExercises[4] = convertToExerciseWithSets(
+        student.exercisesDay4,
+        student.exerciseSetsDay4,
+        student.exerciseRepsDay4,
+        4
+      );
     }
     
     // Day 5
     if (student.exercisesDay5) {
-      cachedExercises[5] = student.exercisesDay5.map(id => ({
-        id,
-        sets: student.exerciseSetsDay5?.[id] || 3,
-        reps: student.exerciseRepsDay5?.[id] || "12",
-        day: 5
-      }));
+      cachedExercises[5] = convertToExerciseWithSets(
+        student.exercisesDay5,
+        student.exerciseSetsDay5,
+        student.exerciseRepsDay5,
+        5
+      );
     }
     
     // Day 6 (added)
     if (student.exercisesDay6) {
-      cachedExercises[6] = student.exercisesDay6.map(id => ({
-        id,
-        sets: student.exerciseSetsDay6?.[id] || 3,
-        reps: student.exerciseRepsDay6?.[id] || "12",
-        day: 6
-      }));
+      cachedExercises[6] = convertToExerciseWithSets(
+        student.exercisesDay6,
+        student.exerciseSetsDay6,
+        student.exerciseRepsDay6,
+        6
+      );
     }
     
     exerciseCacheRef.current = cachedExercises;
