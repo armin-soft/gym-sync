@@ -1,5 +1,4 @@
-
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, FileText, Check, X, CloudUpload } from "lucide-react";
 import { motion } from "framer-motion";
