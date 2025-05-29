@@ -3,11 +3,11 @@ import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Student } from "@/components/students/StudentTypes";
 import { cn } from "@/lib/utils";
+import { studentFormSchema, StudentFormValues } from "@/lib/validations/student";
 
 // Import our new components
 import { ProfileImageUpload } from "./form-components/ProfileImageUpload";
@@ -15,19 +15,6 @@ import { PersonalInfoSection } from "./form-components/PersonalInfoSection";
 import { MeasurementsSection } from "./form-components/MeasurementsSection";
 import { PaymentField } from "./form-components/PaymentField";
 import { FormActions } from "./form-components/FormActions";
-
-// Define schema for form validation
-const studentFormSchema = z.object({
-  name: z.string().min(2, { message: "نام و نام خانوادگی الزامی است" }),
-  phone: z.string().regex(/^09\d{9}$/, { message: "شماره موبایل معتبر نیست" }),
-  height: z.string().regex(/^\d+$/, { message: "قد باید عدد باشد" }),
-  weight: z.string().regex(/^\d+$/, { message: "وزن باید عدد باشد" }),
-  image: z.string().default("/placeholder.svg"),
-  payment: z.string().regex(/^\d+$/, { message: "مبلغ باید عدد باشد" }),
-});
-
-// Form data type derived from the schema
-type StudentFormValues = z.infer<typeof studentFormSchema>;
 
 interface StudentFormProps {
   student?: Student;
@@ -43,7 +30,7 @@ export const StudentForm = ({
   isDialog = false,
 }: StudentFormProps) => {
   const { toast } = useToast();
-  const [previewImage, setPreviewImage] = useState<string>(student?.image || "/placeholder.svg");
+  const [previewImage, setPreviewImage] = useState<string>(student?.image || "/Assets/Image/Place-Holder.svg");
   
   // Initialize form with default values or student data
   const form = useForm<StudentFormValues>({
@@ -53,8 +40,12 @@ export const StudentForm = ({
       phone: student?.phone || "",
       height: student?.height || "",
       weight: student?.weight || "",
-      image: student?.image || "/placeholder.svg",
+      image: student?.image || "/Assets/Image/Place-Holder.svg",
       payment: student?.payment || "",
+      password: student?.password || "",
+      age: student?.age || "",
+      grade: student?.grade || "",
+      group: student?.group || "",
     },
   });
 
@@ -66,20 +57,28 @@ export const StudentForm = ({
         phone: student.phone || "",
         height: student.height || "",
         weight: student.weight || "",
-        image: student.image || "/placeholder.svg",
+        image: student.image || "/Assets/Image/Place-Holder.svg",
         payment: student.payment || "",
+        password: student.password || "",
+        age: student.age || "",
+        grade: student.grade || "",
+        group: student.group || "",
       });
-      setPreviewImage(student.image || "/placeholder.svg");
+      setPreviewImage(student.image || "/Assets/Image/Place-Holder.svg");
     } else {
       form.reset({
         name: "",
         phone: "",
         height: "",
         weight: "",
-        image: "/placeholder.svg",
+        image: "/Assets/Image/Place-Holder.svg",
         payment: "",
+        password: "",
+        age: "",
+        grade: "",
+        group: "",
       });
-      setPreviewImage("/placeholder.svg");
+      setPreviewImage("/Assets/Image/Place-Holder.svg");
     }
   }, [student, form]);
 

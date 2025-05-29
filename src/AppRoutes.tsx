@@ -15,6 +15,8 @@ import TrainerPage from "./pages/trainer";
 import BackupPage from "./pages/backup";
 import StudentProgramPage from "./pages/student-program";
 import StudentHistoryPage from "./pages/student-history";
+import ManagementPage from "./pages/management";
+import StudentPanel from "./pages/student-panel";
 
 // کامپوننت wrapper برای محتوای تأیید شده
 const AuthWrapper: React.FC<{ children: React.ReactNode }> = React.memo(({ children }) => (
@@ -178,6 +180,20 @@ const AppRoutes: React.FC = React.memo(() => {
           </AuthWrapper>
         }
       />
+      
+      {/* مسیرهای جدید */}
+      <Route
+        path="/Management"
+        element={
+          <AuthWrapper>
+            <ManagementPage />
+          </AuthWrapper>
+        }
+      />
+      
+      {/* مسیر پنل شاگرد - بدون احراز هویت مدیر */}
+      <Route path="/Panel" element={<StudentPanel />} />
+      <Route path="/panel/dashboard/:studentId" element={<StudentPanel />} />
       
       {/* مسیر پیشفرض - هر آدرس نامعتبر به صفحه اصلی برگردد */}
       <Route path="*" element={<Navigate to="/" replace />} />
