@@ -35,10 +35,28 @@ function MainApp() {
     setIsLoading(false);
   }, [appVersion]);
   
+  // Fix: Use a single container with absolute positioning to avoid DOM conflicts
   return (
     <StrictMode>
-      {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
-      {!isLoading && <App />}
+      <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+        {isLoading && (
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
+            <LoadingScreen onLoadingComplete={handleLoadingComplete} />
+          </div>
+        )}
+        <div style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%',
+          opacity: isLoading ? 0 : 1,
+          transition: 'opacity 0.3s ease-in-out',
+          pointerEvents: isLoading ? 'none' : 'auto'
+        }}>
+          <App />
+        </div>
+      </div>
     </StrictMode>
   );
 }
@@ -47,8 +65,6 @@ function MainApp() {
 function startApp() {
   try {
     console.log('Starting app initialization...');
-    console.log('React available:', !!React);
-    console.log('React version:', React.version);
     
     const rootElement = document.getElementById('root');
     if (!rootElement) {
