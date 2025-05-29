@@ -88,6 +88,11 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
               src={image} 
               alt="تصویر پروفایل"
               className="w-full h-full object-cover"
+              onError={(e) => {
+                console.error('Profile image load error:', e);
+                // Reset to placeholder on error
+                onImageChange("/Assets/Image/Place-Holder.svg");
+              }}
             />
           )}
           

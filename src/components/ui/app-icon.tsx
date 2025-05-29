@@ -18,7 +18,7 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
       )}
     >
       <img
-        src="./Assets/Image/Logo.png"
+        src="/Assets/Image/Logo.png"
         alt="لوگوی برنامه"
         className={cn(
           "rounded-xl",
@@ -27,9 +27,9 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
           size === "lg" && "h-14 w-14"
         )}
         onError={(e) => {
-          // Fallback if the path fails
           console.log('Logo load error, trying alternate path');
-          e.currentTarget.src = "/Assets/Image/Logo.png";
+          // Fallback to placeholder if logo fails
+          e.currentTarget.src = "/Assets/Image/Place-Holder.svg";
         }}
       />
     </div>

@@ -1,5 +1,5 @@
 
-import React, { useLayoutEffect, useEffect, useState, useCallback } from "react";
+import React, { useLayoutEffect, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -43,10 +43,6 @@ function App() {
     console.log('App component mounted successfully');
     console.log('React version check:', React.version || 'React available');
     console.log('Current URL:', window.location.href);
-    
-    // تست دسترسی به عناصر DOM
-    const rootElement = document.getElementById('root');
-    console.log('Root element exists:', !!rootElement);
     
     // اضافه کردن error handler برای خطاهای JavaScript
     const handleGlobalError = (e: ErrorEvent) => {
