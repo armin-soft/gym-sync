@@ -81,7 +81,7 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
           whileTap={{ scale: 0.97 }}
         >
           {/* Image or placeholder */}
-          {image === "/Assets/Images/Place-Holder.svg" ? (
+          {image === "/Assets/Image/Place-Holder.svg" ? (
             <ImagePlaceholder />
           ) : (
             <img 
@@ -91,7 +91,7 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
               onError={(e) => {
                 console.error('Profile image load error:', e);
                 // Reset to placeholder on error
-                onImageChange("/Assets/Images/Place-Holder.svg");
+                onImageChange("/Assets/Image/Place-Holder.svg");
               }}
             />
           )}

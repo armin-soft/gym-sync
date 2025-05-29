@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
@@ -35,15 +35,11 @@ function MainApp() {
     setIsLoading(false);
   }, [appVersion]);
   
-  // Fixed: Render in a single container to prevent DOM conflicts
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      {isLoading ? (
-        <LoadingScreen onLoadingComplete={handleLoadingComplete} />
-      ) : (
-        <App />
-      )}
-    </div>
+    <StrictMode>
+      {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
+      {!isLoading && <App />}
+    </StrictMode>
   );
 }
 
