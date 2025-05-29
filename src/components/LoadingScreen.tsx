@@ -23,7 +23,7 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({ onLoadingComplete
       const timer = setTimeout(() => {
         console.log('All components ready, hiding loading screen');
         onLoadingComplete();
-      }, 1500); // تأخیر بیشتر برای اطمینان از بارگذاری کامل
+      }, 1000); // کاهش تأخیر برای جلوگیری از تضاد DOM
       
       return () => clearTimeout(timer);
     }
@@ -32,14 +32,15 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({ onLoadingComplete
   if (!isVisible) return null;
   
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       <motion.div 
         key="loading-screen"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0, transition: { duration: 0.8 } }}
-        transition={{ duration: 0.4 }} 
+        exit={{ opacity: 0, transition: { duration: 0.5 } }}
+        transition={{ duration: 0.3 }} 
         className="fixed inset-0 flex flex-col items-center justify-center z-50 w-screen h-screen overflow-hidden"
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
       >
         <LoadingBackground />
         
