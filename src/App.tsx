@@ -33,6 +33,15 @@ function AppContent() {
 }
 
 function App() {
+  // بررسی اولیه دسترسی به React hooks
+  console.log('App component initializing...');
+  console.log('React hooks check:', {
+    useLayoutEffect: !!useLayoutEffect,
+    useEffect: !!useEffect,
+    useState: !!useState,
+    useCallback: !!useCallback
+  });
+
   // اطمینان از دسترسی به React hooks
   useLayoutEffect(() => {
     console.log('App useLayoutEffect executed successfully');
@@ -42,12 +51,6 @@ function App() {
     console.log('App component mounted successfully');
     console.log('React version check:', React.version || 'React available');
     console.log('Current URL:', window.location.href);
-    
-    // بررسی دسترسی به hooks
-    if (!useLayoutEffect) {
-      console.error('useLayoutEffect is not available');
-      return;
-    }
     
     // تست دسترسی به عناصر DOM
     const rootElement = document.getElementById('root');
@@ -80,23 +83,6 @@ function App() {
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
     };
   }, []);
-
-  // چک اولیه React hooks
-  if (!useLayoutEffect || !useState || !useEffect) {
-    console.error('React hooks are not properly available');
-    return (
-      <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Vazir, sans-serif' }}>
-        <h2>خطا در بارگذاری React</h2>
-        <p>لطفا صفحه را رفرش کنید</p>
-        <button 
-          onClick={() => window.location.reload()}
-          style={{ padding: '10px 20px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '5px', fontFamily: 'Vazir, sans-serif' }}
-        >
-          رفرش
-        </button>
-      </div>
-    );
-  }
 
   return (
     <QueryClientProvider client={queryClient}>

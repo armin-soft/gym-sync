@@ -5,6 +5,11 @@ import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 
+// اطمینان از دسترسی جهانی React
+if (typeof window !== 'undefined') {
+  (window as any).React = React;
+}
+
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -47,6 +52,9 @@ function MainApp() {
 function startApp() {
   try {
     console.log('Starting app initialization...');
+    console.log('React available:', !!React);
+    console.log('React version:', React.version);
+    console.log('useLayoutEffect available:', !!React.useLayoutEffect);
     
     const rootElement = document.getElementById('root');
     if (!rootElement) {
