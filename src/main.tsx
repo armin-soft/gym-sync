@@ -1,5 +1,5 @@
 
-import React, { StrictMode } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
@@ -60,6 +60,9 @@ function MainApp() {
     </StrictMode>
   );
 }
+
+// اضافه کردن import مناسب React
+import * as React from 'react';
 
 // تابع راه‌اندازی اصلی برنامه
 function startApp() {

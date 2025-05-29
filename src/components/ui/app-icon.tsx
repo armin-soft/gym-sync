@@ -27,8 +27,7 @@ export function AppIcon({ size = "md", animated = false }: AppIconProps) {
           size === "lg" && "h-14 w-14"
         )}
         onError={(e) => {
-          console.log('Logo load error, trying alternate path');
-          // Fallback to placeholder if logo fails
+          console.log('Logo load error, using placeholder');
           e.currentTarget.src = "/Assets/Image/Place-Holder.svg";
         }}
       />
