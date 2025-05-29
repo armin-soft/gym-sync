@@ -5,33 +5,6 @@ import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 
-// تعریف فوری React به صورت global - قبل از هر import یا component
-if (typeof window !== 'undefined') {
-  (window as any).React = React;
-  (window as any).useLayoutEffect = React.useLayoutEffect;
-  (window as any).useEffect = React.useEffect;
-  (window as any).useState = React.useState;
-  (window as any).useCallback = React.useCallback;
-  (window as any).useMemo = React.useMemo;
-  (window as any).useRef = React.useRef;
-  (window as any).useContext = React.useContext;
-  (window as any).useReducer = React.useReducer;
-}
-
-// تعریف در globalThis نیز
-(globalThis as any).React = React;
-(globalThis as any).useLayoutEffect = React.useLayoutEffect;
-(globalThis as any).useEffect = React.useEffect;
-(globalThis as any).useState = React.useState;
-(globalThis as any).useCallback = React.useCallback;
-(globalThis as any).useMemo = React.useMemo;
-(globalThis as any).useRef = React.useRef;
-(globalThis as any).useContext = React.useContext;
-(globalThis as any).useReducer = React.useReducer;
-
-console.log('React globally assigned:', !!globalThis.React);
-console.log('useLayoutEffect globally available:', !!globalThis.useLayoutEffect);
-
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -76,8 +49,6 @@ function startApp() {
     console.log('Starting app initialization...');
     console.log('React available:', !!React);
     console.log('React version:', React.version);
-    console.log('useLayoutEffect available:', !!React.useLayoutEffect);
-    console.log('Global React available:', !!(globalThis as any).React);
     
     const rootElement = document.getElementById('root');
     if (!rootElement) {

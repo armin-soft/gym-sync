@@ -37,17 +37,9 @@ export default defineConfig(({ mode }) => {
       ...buildOptions,
       rollupOptions: {
         output: {
-          ...rollupOutputOptions,
-          // تضمین دسترسی به React در همه chunks
-          intro: `
-            if (typeof globalThis !== 'undefined') {
-              globalThis.React = globalThis.React || require('react');
-              globalThis.useLayoutEffect = globalThis.useLayoutEffect || globalThis.React.useLayoutEffect;
-            }
-          `
+          ...rollupOutputOptions
         },
         external: [],
-        // اطمینان از صحیح bundling شدن React
         onwarn(warning, warn) {
           if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
             return;
@@ -66,16 +58,10 @@ export default defineConfig(({ mode }) => {
         'framer-motion',
         'lucide-react'
       ],
-      // جلوگیری از خطاهای useLayoutEffect
       force: true
     },
     define: {
-      // اطمینان از دسترسی جهانی React
-      global: 'globalThis',
-      // اضافه کردن React به global scope
-      'process.env.NODE_ENV': JSON.stringify(mode),
-      // تضمین دسترسی React در runtime
-      'globalThis.React': 'globalThis.React || React'
+      'process.env.NODE_ENV': JSON.stringify(mode)
     },
     esbuild: {
       jsxFactory: 'React.createElement',
