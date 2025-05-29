@@ -38,6 +38,14 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           ...rollupOutputOptions
+        },
+        external: [],
+        // اطمینان از صحیح bundling شدن React
+        onwarn(warning, warn) {
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+            return;
+          }
+          warn(warning);
         }
       }
     },
@@ -57,6 +65,13 @@ export default defineConfig(({ mode }) => {
     define: {
       // اطمینان از دسترسی جهانی React
       global: 'globalThis',
+      // اضافه کردن React به global scope
+      'process.env.NODE_ENV': JSON.stringify(mode)
+    },
+    esbuild: {
+      jsxFactory: 'React.createElement',
+      jsxFragment: 'React.Fragment',
+      loader: 'tsx'
     }
   };
 })

@@ -1,5 +1,5 @@
 
-import React, { useLayoutEffect, useEffect } from "react";
+import React, { useLayoutEffect, useEffect, useState, useCallback } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -82,7 +82,7 @@ function App() {
   }, []);
 
   // چک اولیه React hooks
-  if (!useLayoutEffect || !React.useState || !useEffect) {
+  if (!useLayoutEffect || !useState || !useEffect) {
     console.error('React hooks are not properly available');
     return (
       <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Vazir, sans-serif' }}>
