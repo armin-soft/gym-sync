@@ -1,5 +1,5 @@
 
-import React from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Sidebar } from "./Sidebar";
 import { Menu } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
@@ -12,15 +12,14 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-// استفاده از memo برای جلوگیری از رندرهای غیرضروری
-export const Layout = React.memo<LayoutProps>(({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [gymName, setGymName] = React.useState("");
-  const [scrolled, setScrolled] = React.useState(false);
+export const Layout = ({ children }: LayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [gymName, setGymName] = useState("");
+  const [scrolled, setScrolled] = useState(false);
   const deviceInfo = useDeviceInfo();
   
   // بارگذاری اطلاعات با محدودیت دفعات اجرا
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
@@ -33,13 +32,13 @@ export const Layout = React.memo<LayoutProps>(({ children }) => {
   }, []);
 
   // استفاده از useCallback برای ذخیره وضعیت اسکرول برای کارایی بهتر
-  const scrollHandler = React.useCallback(() => {
+  const scrollHandler = useCallback(() => {
     const offset = window.scrollY;
     setScrolled(offset > 10);
   }, []);
   
   // جداسازی کد اسکرول برای کاهش رندرهای اضافی
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('scroll', scrollHandler, { passive: true });
     return () => window.removeEventListener('scroll', scrollHandler);
   }, [scrollHandler]);
@@ -52,17 +51,16 @@ export const Layout = React.memo<LayoutProps>(({ children }) => {
   const logoGap = deviceInfo.isMobile ? "gap-1" : "gap-1.5";
   const titleSize = deviceInfo.isMobile ? "text-xs" : deviceInfo.isTablet ? "text-sm" : "text-base";
 
-  const handleSidebarClose = React.useCallback(() => {
+  const handleSidebarClose = useCallback(() => {
     setSidebarOpen(false);
   }, []);
 
-  const handleSidebarOpen = React.useCallback(() => {
+  const handleSidebarOpen = useCallback(() => {
     setSidebarOpen(true);
   }, []);
 
   return (
     <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
-      {/* اینجا Sidebar را فقط در صورت نیاز نمایش می‌دهیم */}
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />}
       
       <header 
@@ -102,7 +100,7 @@ export const Layout = React.memo<LayoutProps>(({ children }) => {
       </main>
     </div>
   );
-});
+};
 
 Layout.displayName = "Layout";
 

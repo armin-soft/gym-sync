@@ -1,9 +1,9 @@
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
-import { AuthWrapper } from "@/components/AuthWrapper";
+import { AuthWrapper } from "@/components/auth/AuthWrapper";
 import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -37,14 +37,11 @@ function App() {
 
   useEffect(() => {
     console.log('App component mounted successfully');
-    console.log('React version check:', React.version || 'React available');
     console.log('Current URL:', window.location.href);
     
     // اضافه کردن error handler برای خطاهای JavaScript
     const handleGlobalError = (e: ErrorEvent) => {
       console.error('Global error:', e.error);
-      console.error('Error filename:', e.filename);
-      console.error('Error line number:', e.lineno);
     };
     
     const handleUnhandledRejection = (e: PromiseRejectionEvent) => {

@@ -4,15 +4,15 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
-import * as React from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [appVersion, setAppVersion] = React.useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [appVersion, setAppVersion] = useState('');
   
   // دریافت نسخه از Manifest.json
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchVersion = async () => {
       try {
         const response = await fetch('/Manifest.json');
@@ -31,16 +31,10 @@ function MainApp() {
     fetchVersion();
   }, []);
   
-  const handleLoadingComplete = React.useCallback(() => {
+  const handleLoadingComplete = useCallback(() => {
     console.log(`Loading completed for version ${appVersion}, showing main app`);
     setIsLoading(false);
   }, [appVersion]);
-  
-  // بررسی وجود React و ReactDOM قبل از render
-  if (typeof React === 'undefined' || typeof createRoot === 'undefined') {
-    console.error('React or ReactDOM not properly loaded');
-    return null;
-  }
   
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
