@@ -50,12 +50,10 @@ export const AuthWrapper = React.memo<AuthWrapperProps>(({ children }) => {
         } else {
           // Remember me expired, clear it
           localStorage.removeItem("rememberMeExpiry");
-          // But keep the remembered email
         }
       }
     };
     
-    // بررسی فوری وضعیت احراز هویت بدون نمایش صفحه لودینگ
     checkAuth();
   }, []);
 
