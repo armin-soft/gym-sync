@@ -19,6 +19,9 @@ export const ExerciseDialog: React.FC<ExerciseDialogProps> = ({
 }) => {
   if (!selectedStudent || !onSaveExercises) return null;
 
+  // Convert ExerciseWithSets[] to number[] for main exercises
+  const initialExercises = selectedStudent.exercises?.map(ex => ex.id) || [];
+
   return (
     <StudentExerciseDialog
       open={open}
@@ -27,7 +30,7 @@ export const ExerciseDialog: React.FC<ExerciseDialogProps> = ({
       onSave={(exercisesWithSets, dayNumber) => {
         return onSaveExercises(exercisesWithSets, selectedStudent.id, dayNumber);
       }}
-      initialExercises={selectedStudent.exercises}
+      initialExercises={initialExercises}
       initialExerciseSets={selectedStudent.exerciseSets}
       initialExerciseReps={selectedStudent.exerciseReps}
       initialExercisesDay1={selectedStudent.exercisesDay1}

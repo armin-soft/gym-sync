@@ -1,4 +1,3 @@
-
 import { Student } from '@/components/students/StudentTypes';
 import { useToast } from '@/hooks/use-toast';
 import { ExerciseWithSets } from '@/types/exercise';
@@ -38,7 +37,7 @@ export const useStudentExercises = (
           updatedStudent.exerciseRepsDay3 = updatedStudent.exerciseRepsDay3 || {};
           updatedStudent.exerciseRepsDay4 = updatedStudent.exerciseRepsDay4 || {};
           updatedStudent.exerciseRepsDay5 = updatedStudent.exerciseRepsDay5 || {};
-          updatedStudent.exerciseRepsDay6 = updatedStudent.exerciseRepsDay6 || {}; // Added day 6
+          updatedStudent.exerciseRepsDay6 = updatedStudent.exerciseRepsDay6 || {};
           
           // If dayNumber is provided, update the specific day's exercises
           if (dayNumber !== undefined) {
@@ -103,8 +102,8 @@ export const useStudentExercises = (
                 break;
             }
           } else {
-            // Otherwise update the general exercises
-            updatedStudent.exercises = exerciseIds;
+            // Otherwise update the general exercises - convert to ExerciseWithSets format
+            updatedStudent.exercises = exercisesWithSets;
             updatedStudent.exerciseSets = exerciseSets;
             updatedStudent.exerciseReps = exerciseReps;
           }
@@ -114,7 +113,7 @@ export const useStudentExercises = (
           if (updatedStudent.exercises?.length) progressCount++;
           if (updatedStudent.exercisesDay1?.length || updatedStudent.exercisesDay2?.length || 
               updatedStudent.exercisesDay3?.length || updatedStudent.exercisesDay4?.length ||
-              updatedStudent.exercisesDay5?.length || updatedStudent.exercisesDay6?.length) {  // Include day 6 in progress calculation
+              updatedStudent.exercisesDay5?.length || updatedStudent.exercisesDay6?.length) {
             progressCount++;
           }
           if (updatedStudent.meals?.length) progressCount++;
