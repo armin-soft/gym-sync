@@ -2,91 +2,30 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
-import * as React from 'react';
 
-// کامپوننت اصلی برنامه با نمایش صفحه لودینگ
-function MainApp() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [appVersion, setAppVersion] = React.useState('');
-  
-  // دریافت نسخه از Manifest.json
-  React.useEffect(() => {
-    const fetchVersion = async () => {
-      try {
-        const response = await fetch('/Manifest.json');
-        const manifest = await response.json();
-        const version = manifest.version || 'نامشخص';
-        setAppVersion(version);
-        localStorage.setItem('app_version', version);
-        console.log(`App version loaded from Manifest.json: ${version}`);
-      } catch (error) {
-        console.error('Error loading version from Manifest.json:', error);
-        const cachedVersion = localStorage.getItem('app_version') || 'خطا در بارگذاری';
-        setAppVersion(cachedVersion);
-      }
-    };
-    
-    fetchVersion();
-  }, []);
-  
-  const handleLoadingComplete = React.useCallback(() => {
-    console.log(`Loading completed for version ${appVersion}, showing main app`);
-    setIsLoading(false);
-  }, [appVersion]);
-  
-  // Fix: Use a single container with absolute positioning to avoid DOM conflicts
-  return (
-    <StrictMode>
-      <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-        {isLoading && (
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
-            <LoadingScreen onLoadingComplete={handleLoadingComplete} />
-          </div>
-        )}
-        <div style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          width: '100%', 
-          height: '100%',
-          opacity: isLoading ? 0 : 1,
-          transition: 'opacity 0.3s ease-in-out',
-          pointerEvents: isLoading ? 'none' : 'auto'
-        }}>
-          <App />
-        </div>
-      </div>
-    </StrictMode>
-  );
-}
-
-// متغیر برای نگهداری root
-let root: any = null;
-
-// تابع راه‌اندازی اصلی برنامه
+// تابع راه‌اندازی ساده برنامه
 function startApp() {
   try {
-    console.log('Starting app initialization...');
+    console.log('Starting app...');
     
     const rootElement = document.getElementById('root');
     if (!rootElement) {
-      console.error('عنصر root پیدا نشد');
+      console.error('Root element not found');
       return;
     }
     
-    // بررسی اینکه آیا root قبلاً ایجاد شده است یا خیر
-    if (!root) {
-      console.log('Root element found, creating React root...');
-      root = createRoot(rootElement);
-    }
+    const root = createRoot(rootElement);
+    root.render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
     
-    root.render(<MainApp />);
-    console.log('برنامه با موفقیت راه‌اندازی شد');
+    console.log('App started successfully');
     
   } catch (error) {
-    console.error('خطا در راه‌اندازی برنامه:', error);
+    console.error('Error starting app:', error);
     // نمایش پیام خطا برای کاربر
     document.body.innerHTML = `
       <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
@@ -100,7 +39,7 @@ function startApp() {
   }
 }
 
-// بررسی آماده بودن DOM
+// شروع برنامه
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startApp);
 } else {

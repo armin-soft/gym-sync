@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -33,34 +33,7 @@ function AppContent() {
 }
 
 function App() {
-  console.log('App component initializing...');
-
-  useEffect(() => {
-    console.log('App component mounted successfully');
-    console.log('React version check:', React.version || 'React available');
-    console.log('Current URL:', window.location.href);
-    
-    // اضافه کردن error handler برای خطاهای JavaScript
-    const handleGlobalError = (e: ErrorEvent) => {
-      console.error('Global error:', e.error);
-      console.error('Error filename:', e.filename);
-      console.error('Error line number:', e.lineno);
-    };
-    
-    const handleUnhandledRejection = (e: PromiseRejectionEvent) => {
-      console.error('Unhandled promise rejection:', e.reason);
-    };
-    
-    window.addEventListener('error', handleGlobalError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-    
-    console.log('App render successful');
-    
-    return () => {
-      window.removeEventListener('error', handleGlobalError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-    };
-  }, []);
+  console.log('App component rendering...');
 
   return (
     <QueryClientProvider client={queryClient}>

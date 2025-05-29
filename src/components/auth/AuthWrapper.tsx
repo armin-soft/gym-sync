@@ -11,6 +11,7 @@ interface AuthWrapperProps {
 
 export const AuthWrapper = ({ children }: AuthWrapperProps) => {
   const [authenticated, setAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Initialize default trainer profile if it doesn't exist
@@ -19,13 +20,14 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       localStorage.setItem('trainerProfile', JSON.stringify(defaultProfile));
     }
     
-    // Check if the user is already logged in via session token or remember me
+    // Check if the user is already logged in
     const checkAuth = () => {
       const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
       const rememberMeExpiry = localStorage.getItem("rememberMeExpiry");
       
       if (isLoggedIn) {
         setAuthenticated(true);
+        setIsLoading(false);
         return;
       }
       
@@ -33,7 +35,6 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       if (rememberMeExpiry) {
         const expiryDate = new Date(rememberMeExpiry);
         if (expiryDate > new Date()) {
-          // Remember me token is still valid
           localStorage.setItem("isLoggedIn", "true");
           setAuthenticated(true);
           
@@ -48,14 +49,13 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
             );
           }, 500);
         } else {
-          // Remember me expired, clear it
           localStorage.removeItem("rememberMeExpiry");
-          // But keep the remembered email
         }
       }
+      
+      setIsLoading(false);
     };
     
-    // بررسی فوری وضعیت احراز هویت بدون نمایش صفحه لودینگ
     checkAuth();
   }, []);
 
@@ -68,10 +68,21 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       expiryDate.setDate(expiryDate.getDate() + 30);
       localStorage.setItem("rememberMeExpiry", expiryDate.toString());
     } else {
-      // If not checked, remove any previous remember me expiry
       localStorage.removeItem("rememberMeExpiry");
     }
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-100">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600 font-medium">در حال بارگذاری...</p>
+        </div>
+      </div>
+    );
+  }
 
   // If not authenticated, show the login form
   if (!authenticated) {
