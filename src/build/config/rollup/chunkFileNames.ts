@@ -6,6 +6,7 @@ export function getChunkFileName(chunkInfo: any): string {
   const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
   const chunkName = facadeModuleId ? (facadeModuleId as string).replace(/\.[^/.]+$/, '') : chunkInfo.name;
 
+  // React and core libraries
   if (chunkName.includes('React') || chunkInfo.name === 'React-Core') {
     return 'Assets/Scripts/Libraries/React-Core.js';
   }
@@ -33,28 +34,49 @@ export function getChunkFileName(chunkInfo: any): string {
   if (chunkName.includes('Chart') || chunkInfo.name === 'Charts') {
     return 'Assets/Scripts/Libraries/Recharts.js';
   }
-  if (chunkName.includes('Students') || chunkInfo.name.includes('Students')) {
+
+  // Page-specific chunks - use exact name matching to prevent duplicates
+  if (chunkInfo.name === 'Students-Pages' || (chunkName.includes('Students') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('pages/students'))) {
     return 'Assets/Scripts/Pages/Students-Manager.js';
   }
-  if (chunkName.includes('Exercise') || chunkInfo.name.includes('Exercise')) {
+  if (chunkInfo.name === 'Exercises-Pages' || (chunkName.includes('Exercise') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('pages/exercises'))) {
     return 'Assets/Scripts/Pages/Exercise-Manager.js';
   }
-  if (chunkName.includes('Diet') || chunkInfo.name.includes('Diet')) {
+  if (chunkInfo.name === 'Diet-Pages' || (chunkName.includes('Diet') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('pages/diet'))) {
     return 'Assets/Scripts/Pages/Diet-Manager.js';
   }
-  if (chunkName.includes('Supplement') || chunkInfo.name.includes('Supplement')) {
+  if (chunkInfo.name === 'Supplements-Pages' || (chunkName.includes('Supplement') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('pages/supplements'))) {
     return 'Assets/Scripts/Pages/Supplement-Manager.js';
   }
+
+  // Utility chunks
   if (chunkName.includes('Utils') || chunkInfo.name === 'Utils-Hooks') {
     return 'Assets/Scripts/Utilities/Hooks-Utils.js';
+  }
+
+  // Component chunks
+  if (chunkInfo.name === 'Students-Components' || (chunkName.includes('Component') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('components/students'))) {
+    return 'Assets/Scripts/Components/Students-Components.js';
+  }
+  if (chunkInfo.name === 'Exercises-Components' || (chunkName.includes('Component') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('components/exercises'))) {
+    return 'Assets/Scripts/Components/Exercise-Components.js';
+  }
+  if (chunkInfo.name === 'Diet-Components' || (chunkName.includes('Component') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('components/diet'))) {
+    return 'Assets/Scripts/Components/Diet-Components.js';
+  }
+  if (chunkInfo.name === 'Supplements-Components' || (chunkName.includes('Component') && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.includes('components/supplements'))) {
+    return 'Assets/Scripts/Components/Supplement-Components.js';
   }
   if (chunkName.includes('Component') || chunkInfo.name.includes('Component')) {
     return 'Assets/Scripts/Components/Custom-Components.js';
   }
+
+  // Generic pages fallback
   if (chunkName.includes('Page') || chunkInfo.name.includes('Page')) {
     return 'Assets/Scripts/Pages/Other-Pages.js';
   }
 
+  // Default fallback
   const formattedName = chunkName
     .split(/[-_]/)
     .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
