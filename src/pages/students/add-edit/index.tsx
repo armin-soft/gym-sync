@@ -47,10 +47,10 @@ const AddEditStudent = () => {
     setIsLoading(false);
   }, [id, students, navigate, toast]);
 
-  const handleSaveStudent = (data: any) => {
-    const success = handleSave(data, student);
-    
-    if (success) {
+  const handleSaveStudent = (data: any): boolean => {
+    try {
+      handleSave(data, student);
+      
       toast({
         title: student ? "ویرایش موفق" : "افزودن موفق",
         description: student 
@@ -58,6 +58,10 @@ const AddEditStudent = () => {
           : "شاگرد جدید با موفقیت اضافه شد",
       });
       navigate("/students");
+      return true;
+    } catch (error) {
+      console.error('Error saving student:', error);
+      return false;
     }
   };
 

@@ -63,7 +63,10 @@ const StudentsPage = () => {
     handleSaveSupplementsWithHistory,
     handleDeleteWithHistory
   } = useStudentEvents(
-    handleSave,
+    (data: any, selectedStudent?: Student) => {
+      const result = handleSave(data, selectedStudent);
+      return true; // Always return true since handleSave doesn't return a value
+    },
     handleSaveExercises,
     handleSaveDiet,
     handleSaveSupplements,
@@ -177,4 +180,3 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
-
