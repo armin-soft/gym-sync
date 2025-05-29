@@ -22,25 +22,17 @@ const queryClient = new QueryClient({
   },
 });
 
-function AppContent() {
-  return (
-    <AuthWrapper>
-      <Layout>
-        <AppRoutes />
-      </Layout>
-    </AuthWrapper>
-  );
-}
-
 function App() {
-  console.log('App component rendering...');
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <BrowserRouter>
-            <AppContent />
+            <AuthWrapper>
+              <Layout>
+                <AppRoutes />
+              </Layout>
+            </AuthWrapper>
             <Toaster />
           </BrowserRouter>
         </TooltipProvider>
