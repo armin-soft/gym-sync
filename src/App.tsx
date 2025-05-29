@@ -1,9 +1,10 @@
 
-import React, { useEffect } from "react";
-import { BrowserRouter } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/auth/AuthWrapper";
+import { UserTypeSelection } from "@/components/auth/UserTypeSelection";
 import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -23,6 +24,27 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
+  const [showUserTypeSelection, setShowUserTypeSelection] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if user has already selected a type and is not on Panel route
+    const hasSelectedType = localStorage.getItem("hasSelectedUserType");
+    const isOnPanelRoute = location.pathname.startsWith("/Panel") || location.pathname.startsWith("/panel");
+    
+    // If not on panel route and hasn't selected type, show selection
+    if (!hasSelectedType && !isOnPanelRoute) {
+      setShowUserTypeSelection(true);
+    } else {
+      setShowUserTypeSelection(false);
+    }
+  }, [location.pathname]);
+
+  // Show user type selection for non-panel routes when no type is selected
+  if (showUserTypeSelection) {
+    return <UserTypeSelection />;
+  }
+
   return (
     <AuthWrapper>
       <Layout>

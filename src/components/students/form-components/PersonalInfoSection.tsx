@@ -38,11 +38,11 @@ export const PersonalInfoSection = ({ control, itemVariants }: PersonalInfoSecti
         <StudentFormField
           control={control}
           name="password"
-          label="رمز عبور"
+          label="گذرواژه"
           placeholder="حداقل ۸ کاراکتر شامل حروف و اعداد"
           icon={Lock}
           direction="ltr"
-          description="رمز عبور برای ورود شاگرد به پنل شخصی"
+          description="گذرواژه برای ورود شاگرد به پنل شخصی"
         />
       </motion.div>
     </>
