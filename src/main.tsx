@@ -1,5 +1,5 @@
 
-import React, { StrictMode } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
@@ -36,10 +36,10 @@ function MainApp() {
   }, [appVersion]);
   
   return (
-    <StrictMode>
+    <>
       {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
       {!isLoading && <App />}
-    </StrictMode>
+    </>
   );
 }
 

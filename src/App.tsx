@@ -1,5 +1,5 @@
 
-import React, { useLayoutEffect, useEffect } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
@@ -35,11 +35,7 @@ function AppContent() {
 function App() {
   console.log('App component initializing...');
 
-  useLayoutEffect(() => {
-    console.log('App useLayoutEffect executed successfully');
-  }, []);
-
-  useEffect(() => {
+  React.useEffect(() => {
     console.log('App component mounted successfully');
     console.log('React version check:', React.version || 'React available');
     console.log('Current URL:', window.location.href);
