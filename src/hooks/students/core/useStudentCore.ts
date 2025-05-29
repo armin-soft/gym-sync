@@ -39,6 +39,7 @@ export const useStudentCore = () => {
           weight: student.weight || '',
           image: student.image || '/Assets/Image/Place-Holder.svg',
           payment: student.payment || '', 
+          password: student.password || '',
           exercises: student.exercises || [],
           exercisesDay1: student.exercisesDay1 || [],
           exercisesDay2: student.exercisesDay2 || [],
@@ -47,6 +48,7 @@ export const useStudentCore = () => {
           meals: student.meals || [],
           supplements: student.supplements || [],
           vitamins: student.vitamins || [],
+          progress: student.progress || 0,
           // Add more fields as needed with proper defaults
           age: student.age || '',
           grade: student.grade || '',

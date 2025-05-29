@@ -41,7 +41,7 @@ export const LatestActivitiesTab: React.FC<LatestActivitiesTabProps> = ({
             <Card key={student.id} className="p-4 border-gray-100 dark:border-gray-700 bg-white dark:bg-slate-800">
               <div className="flex items-center gap-3 mb-3 pb-3 border-b border-gray-100 dark:border-gray-700">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={student.picture} alt={student.name} />
+                  <AvatarImage src={student.image} alt={student.name} />
                   <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
