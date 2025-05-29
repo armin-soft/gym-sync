@@ -25,7 +25,7 @@ export const LoginContainer = ({ onLoginSuccess }: LoginContainerProps) => {
 };
 
 // کامپوننت افکت های پس‌زمینه پیشرفته
-const AnimatedBackground = React.memo(() => {
+const AnimatedBackground = () => {
   return (
     <motion.div 
       className="absolute inset-0 z-0 overflow-hidden"
@@ -37,7 +37,7 @@ const AnimatedBackground = React.memo(() => {
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 via-primary/15 to-violet-600/20"></div>
       
       {/* حباب‌های شناور */}
-      {Array.from({ length: 12 }, (_, i) => (
+      {[...Array(12)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute rounded-full bg-gradient-to-r from-primary/10 to-indigo-500/20"
@@ -76,7 +76,7 @@ const AnimatedBackground = React.memo(() => {
           </linearGradient>
         </defs>
         
-        {Array.from({ length: 5 }, (_, i) => {
+        {[...Array(5)].map((_, i) => {
           const baseY = 200 + i * 200;
           const amplitude = 30 + i * 10;
           const period = 800 + i * 200;
@@ -106,6 +106,4 @@ const AnimatedBackground = React.memo(() => {
       </svg>
     </motion.div>
   );
-});
-
-AnimatedBackground.displayName = "AnimatedBackground";
+};

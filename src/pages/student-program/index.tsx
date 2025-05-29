@@ -56,57 +56,51 @@ const StudentProgramPage: React.FC = () => {
   };
 
   // Handle save exercises
-  const handleSaveExercisesWithHistory = (exercisesWithSets: ExerciseWithSets[], dayNumber?: number): boolean => {
+  const handleSaveExercisesWithHistory = (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => {
     if (!student) return false;
     
-    try {
-      handleSaveExercises(student.id, exercisesWithSets, dayNumber);
-      
+    const result = handleSaveExercises(exercisesWithSets, student.id, dayNumber);
+    
+    if (result) {
       toast({
         title: "ذخیره موفق",
         description: `برنامه تمرینی روز ${toPersianNumbers(dayNumber || 1)} با موفقیت ذخیره شد`,
       });
-      return true;
-    } catch (error) {
-      console.error('Error saving exercises:', error);
-      return false;
     }
+    
+    return result;
   };
 
   // Handle save diet
-  const handleSaveDietWithHistory = (mealIds: number[]): boolean => {
+  const handleSaveDietWithHistory = (mealIds: number[]) => {
     if (!student) return false;
     
-    try {
-      handleSaveDiet(student.id, mealIds);
-      
+    const result = handleSaveDiet(mealIds, student.id);
+    
+    if (result) {
       toast({
         title: "ذخیره موفق",
         description: "برنامه غذایی با موفقیت ذخیره شد",
       });
-      return true;
-    } catch (error) {
-      console.error('Error saving diet:', error);
-      return false;
     }
+    
+    return result;
   };
 
   // Handle save supplements
-  const handleSaveSupplementsWithHistory = (data: {supplements: number[], vitamins: number[]}): boolean => {
+  const handleSaveSupplementsWithHistory = (data: {supplements: number[], vitamins: number[]}) => {
     if (!student) return false;
     
-    try {
-      handleSaveSupplements(student.id, data);
-      
+    const result = handleSaveSupplements(data, student.id);
+    
+    if (result) {
       toast({
         title: "ذخیره موفق",
         description: "مکمل و ویتامین با موفقیت ذخیره شد",
       });
-      return true;
-    } catch (error) {
-      console.error('Error saving supplements:', error);
-      return false;
     }
+    
+    return result;
   };
 
   if (isLoading) {
