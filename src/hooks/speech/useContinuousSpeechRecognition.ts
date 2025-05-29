@@ -26,6 +26,7 @@ export const useContinuousSpeechRecognition = ({
   const recognitionRef = useRef<any>(null);
   const restartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const finalTranscriptRef = useRef(initialValue);
+  const isRestartingRef = useRef(false);
 
   // Check browser support
   useEffect(() => {
@@ -44,7 +45,7 @@ export const useContinuousSpeechRecognition = ({
     recognition.lang = lang;
     recognition.maxAlternatives = maxAlternatives;
 
-    // تنظیم حساسیت بالاتر برای شناسایی سکوت
+    // تنظیم برای حداکثر زمان ضبط
     if ('webkitSpeechRecognition' in window) {
       recognition.serviceURI = 'wss://www.google.com/speech-api/full-duplex/v1/up';
     }
@@ -52,6 +53,7 @@ export const useContinuousSpeechRecognition = ({
     recognition.onstart = () => {
       console.log('Speech recognition started');
       setIsListening(true);
+      isRestartingRef.current = false;
     };
 
     recognition.onresult = (event: any) => {
@@ -63,6 +65,7 @@ export const useContinuousSpeechRecognition = ({
         const transcriptText = result[0].transcript;
 
         if (result.isFinal) {
+          // اضافه کردن متن نهایی بدون محدودیت
           finalText += transcriptText;
           finalTranscriptRef.current = finalText;
         } else {
@@ -72,21 +75,24 @@ export const useContinuousSpeechRecognition = ({
 
       setTranscript(finalText);
       setInterimTranscript(interimText);
+      // ارسال کل متن بدون محدودیت کاراکتر
       onTranscriptChange(finalText + interimText);
     };
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       
-      // در صورت خطا، تلاش برای شروع مجدد
-      if (event.error === 'no-speech' || event.error === 'audio-capture') {
-        if (isListening) {
+      // در صورت خطا، تلاش برای شروع مجدد اگر کاربر هنوز گوش می‌دهد
+      if (event.error === 'no-speech' || event.error === 'audio-capture' || event.error === 'network') {
+        if (isListening && !isRestartingRef.current) {
+          isRestartingRef.current = true;
           restartTimeoutRef.current = setTimeout(() => {
-            if (recognitionRef.current && isListening) {
+            if (recognitionRef.current && isListening && !isRestartingRef.current) {
               try {
                 recognitionRef.current.start();
               } catch (e) {
                 console.log('Failed to restart recognition:', e);
+                isRestartingRef.current = false;
               }
             }
           }, 1000);
@@ -97,17 +103,22 @@ export const useContinuousSpeechRecognition = ({
     recognition.onend = () => {
       console.log('Speech recognition ended');
       
-      // اگر کاربر هنوز در حالت گوش دادن است، دوباره شروع کن
-      if (isListening) {
+      // اگر کاربر هنوز در حالت گوش دادن است و restart نمی‌شود، دوباره شروع کن
+      if (isListening && !isRestartingRef.current) {
+        isRestartingRef.current = true;
         restartTimeoutRef.current = setTimeout(() => {
           if (recognitionRef.current && isListening) {
             try {
               recognitionRef.current.start();
+              isRestartingRef.current = false;
             } catch (e) {
               console.log('Recognition already started or not available');
+              isRestartingRef.current = false;
             }
           }
         }, 100);
+      } else if (!isListening) {
+        setIsListening(false);
       }
     };
 
@@ -138,6 +149,7 @@ export const useContinuousSpeechRecognition = ({
       // Reset transcripts
       setInterimTranscript('');
       finalTranscriptRef.current = transcript;
+      isRestartingRef.current = false;
 
       recognition.start();
     } catch (error) {
@@ -150,6 +162,7 @@ export const useContinuousSpeechRecognition = ({
     if (!isListening) return;
 
     setIsListening(false);
+    isRestartingRef.current = false;
     
     // Clear restart timeout
     if (restartTimeoutRef.current) {

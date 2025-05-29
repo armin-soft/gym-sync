@@ -1,137 +1,277 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { correctPersianWords } from "@/utils/persian-word-correction";
 
-import { useState, useRef, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-
-interface SimpleSpeechRecognitionProps {
+interface UseSimpleSpeechRecognitionOptions {
   onTranscriptChange: (transcript: string) => void;
   initialValue?: string;
   lang?: string;
+  continuous?: boolean;
+  interimResults?: boolean;
+  maxAlternatives?: number;
+  multiLine?: boolean;
 }
 
-export function useSimpleSpeechRecognition({ 
-  onTranscriptChange, 
-  initialValue = "",
-  lang = "fa-IR" 
-}: SimpleSpeechRecognitionProps) {
+export const useSimpleSpeechRecognition = ({
+  onTranscriptChange,
+  initialValue = '',
+  lang = 'fa-IR',
+  continuous = true,
+  interimResults = true,
+  maxAlternatives = 3,
+  multiLine = false
+}: UseSimpleSpeechRecognitionOptions) => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState(initialValue);
-  const [interimTranscript, setInterimTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const [isSupported, setIsSupported] = useState(false);
+  
   const recognitionRef = useRef<any>(null);
-  const { toast } = useToast();
-  
+  const restartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const finalTranscriptRef = useRef(initialValue);
+  const isRestartingRef = useRef(false);
+
   // Check browser support
-  const isSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-  
+  useEffect(() => {
+    const SpeechRecognition = 
+      window.SpeechRecognition || 
+      (window as any).webkitSpeechRecognition ||
+      (window as any).mozSpeechRecognition ||
+      (window as any).msSpeechRecognition;
+    setIsSupported(!!SpeechRecognition);
+  }, []);
+
   const initializeRecognition = useCallback(() => {
     if (!isSupported) return null;
+
+    const SpeechRecognition = 
+      window.SpeechRecognition || 
+      (window as any).webkitSpeechRecognition ||
+      (window as any).mozSpeechRecognition ||
+      (window as any).msSpeechRecognition;
     
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return null;
+
     const recognition = new SpeechRecognition();
     
+    // Browser detection for optimized settings
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isAndroid = /android/i.test(navigator.userAgent);
+    const isEdge = /Edge/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isFirefox = /firefox/i.test(navigator.userAgent);
+    
+    // Base configuration for Persian language
     recognition.lang = lang;
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
+    recognition.interimResults = interimResults;
+    recognition.maxAlternatives = maxAlternatives;
+    recognition.continuous = continuous;
     
-    recognition.onstart = () => {
-      console.log("Speech recognition started");
-      setIsListening(true);
-    };
-    
-    recognition.onresult = (event: any) => {
-      let finalText = "";
-      let interimText = "";
-      
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const resultText = event.results[i][0].transcript;
-        
-        if (event.results[i].isFinal) {
-          finalText += resultText;
-        } else {
-          interimText += resultText;
-        }
-      }
-      
-      if (finalText) {
-        const newTranscript = (transcript + " " + finalText).trim();
-        setTranscript(newTranscript);
-        onTranscriptChange(newTranscript);
-        setInterimTranscript("");
-      } else {
-        setInterimTranscript(interimText);
-      }
-    };
-    
-    recognition.onerror = (event: any) => {
-      console.error("Speech recognition error:", event.error);
-      setIsListening(false);
-      setInterimTranscript("");
-      
-      if (event.error !== 'aborted') {
-        toast({
-          title: "خطا در تشخیص گفتار",
-          description: "لطفاً دوباره تلاش کنید",
-          variant: "destructive"
-        });
-      }
-    };
-    
-    recognition.onend = () => {
-      console.log("Speech recognition ended");
-      setIsListening(false);
-      setInterimTranscript("");
-    };
-    
-    return recognition;
-  }, [isSupported, lang, transcript, onTranscriptChange, toast]);
-  
-  const startListening = useCallback(async () => {
-    if (!isSupported) {
-      toast({
-        title: "عدم پشتیبانی مرورگر",
-        description: "مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند",
-        variant: "destructive"
-      });
-      return;
+    // Platform-specific optimizations for unlimited recording
+    if (isEdge || isFirefox) {
+      recognition.continuous = true; // Enable continuous for unlimited text
     }
     
-    try {
-      // Request microphone permission
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (isSafari && !isIOS) {
+      recognition.interimResults = true;
+      recognition.continuous = true;
+    }
+    
+    if (isIOS) {
+      recognition.interimResults = true;
+      recognition.continuous = false; // iOS limitation, but we'll restart automatically
+    }
+    
+    if (isAndroid) {
+      recognition.maxAlternatives = 5;
+      recognition.continuous = true;
+    }
+
+    recognition.onstart = () => {
+      console.log('Speech recognition started - unlimited mode');
+      setIsListening(true);
+      isRestartingRef.current = false;
+    };
+
+    recognition.onend = () => {
+      console.log('Speech recognition ended');
       
+      // Auto-restart for unlimited recording if still listening
+      if (isListening && !isRestartingRef.current) {
+        isRestartingRef.current = true;
+        restartTimeoutRef.current = setTimeout(() => {
+          if (recognitionRef.current && isListening) {
+            try {
+              recognitionRef.current.start();
+              isRestartingRef.current = false;
+            } catch (e) {
+              console.log('Auto-restart failed:', e);
+              isRestartingRef.current = false;
+            }
+          }
+        }, 100);
+      } else if (!isListening) {
+        setIsListening(false);
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      
+      // Handle errors and continue unlimited recording
+      if (event.error === 'no-speech' || event.error === 'audio-capture' || event.error === 'network') {
+        if (isListening && !isRestartingRef.current) {
+          isRestartingRef.current = true;
+          restartTimeoutRef.current = setTimeout(() => {
+            if (recognitionRef.current && isListening) {
+              try {
+                recognitionRef.current.start();
+                isRestartingRef.current = false;
+              } catch (e) {
+                console.log('Error restart failed:', e);
+                isRestartingRef.current = false;
+              }
+            }
+          }, 1000);
+        }
+      }
+    };
+
+    recognition.onresult = (event: any) => {
+      let interim = "";
+      let final = finalTranscriptRef.current;
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        let bestConfidence = 0;
+        let bestTranscript = "";
+        
+        // Find the best recognition result
+        if (isIOS) {
+          bestTranscript = event.results[i][0].transcript;
+        } else {
+          for (let j = 0; j < event.results[i].length; j++) {
+            const currentTranscript = event.results[i][j].transcript;
+            const confidence = event.results[i][j].confidence || 1;
+            
+            if (confidence > bestConfidence) {
+              bestConfidence = confidence;
+              bestTranscript = currentTranscript;
+            }
+          }
+        }
+        
+        if (event.results[i].isFinal) {
+          const processedText = bestTranscript.trim();
+          
+          // Add to existing text without limit
+          final += (final ? " " : "") + processedText;
+          
+          // Persian word correction
+          final = correctPersianWords(final);
+          
+          // Clean up whitespace but preserve content
+          final = final.replace(/\s+/g, " ").trim();
+          
+          // Handle multi-line formatting
+          if (!multiLine) {
+            final = final.replace(/\n/g, " ");
+          }
+          
+          finalTranscriptRef.current = final;
+        } else {
+          interim = bestTranscript;
+        }
+      }
+
+      // Update transcripts without character limits
+      setTranscript(final);
+      onTranscriptChange(final + (interim ? " " + interim : ""));
+      setInterimTranscript(interim);
+    };
+
+    return recognition;
+  }, [isSupported, lang, interimResults, maxAlternatives, continuous, multiLine, onTranscriptChange, isListening]);
+
+  const startListening = useCallback(async () => {
+    if (!isSupported || isListening) return;
+
+    try {
+      // Clear any existing timeouts
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+        restartTimeoutRef.current = null;
+      }
+
       // Stop any existing recognition
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+
+      // Initialize new recognition
+      const recognition = initializeRecognition();
+      if (!recognition) throw new Error('Speech recognition not supported');
+
+      recognitionRef.current = recognition;
       
-      // Create new recognition instance
-      recognitionRef.current = initializeRecognition();
-      
-      if (recognitionRef.current) {
-        recognitionRef.current.start();
-      }
+      // Reset interim but keep existing transcript for unlimited mode
+      setInterimTranscript('');
+      finalTranscriptRef.current = transcript;
+      isRestartingRef.current = false;
+
+      recognition.start();
     } catch (error) {
-      console.error("Error starting speech recognition:", error);
-      toast({
-        title: "خطا در دسترسی به میکروفون",
-        description: "لطفاً دسترسی به میکروفون را فعال کنید",
-        variant: "destructive"
-      });
+      console.error('Error starting unlimited speech recognition:', error);
+      setIsListening(false);
+      throw error;
     }
-  }, [isSupported, initializeRecognition, toast]);
-  
+  }, [isSupported, isListening, initializeRecognition, transcript]);
+
   const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
+    if (!isListening) return;
+
+    setIsListening(false);
+    isRestartingRef.current = false;
+    
+    // Clear restart timeout
+    if (restartTimeoutRef.current) {
+      clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
+    }
+
+    if (recognitionRef.current) {
       recognitionRef.current.stop();
     }
+
+    // Clear interim transcript
+    setInterimTranscript('');
   }, [isListening]);
-  
+
   const resetTranscript = useCallback(() => {
-    setTranscript("");
-    setInterimTranscript("");
-    onTranscriptChange("");
+    setTranscript('');
+    setInterimTranscript('');
+    finalTranscriptRef.current = '';
+    onTranscriptChange('');
   }, [onTranscriptChange]);
-  
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+      }
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  // Update transcript when initialValue changes
+  useEffect(() => {
+    if (initialValue !== transcript && !isListening) {
+      setTranscript(initialValue);
+      finalTranscriptRef.current = initialValue;
+    }
+  }, [initialValue, transcript, isListening]);
+
   return {
     isListening,
     transcript,
@@ -141,4 +281,6 @@ export function useSimpleSpeechRecognition({
     stopListening,
     resetTranscript
   };
-}
+};
+
+export default useSimpleSpeechRecognition;
