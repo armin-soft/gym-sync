@@ -5,9 +5,22 @@ import { StudentLogin } from "@/components/student-panel/StudentLogin";
 import { useStudents } from "@/hooks/students";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
-import { Button } from "@/components/ui/button";
-import { LogOut, User, Dumbbell, Apple, Pill } from "lucide-react";
+import { StudentLayout } from "@/components/student-panel/StudentLayout";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import { 
+  User, 
+  Dumbbell, 
+  Apple, 
+  Pill, 
+  Calendar,
+  Trophy,
+  Target,
+  TrendingUp,
+  Clock,
+  Heart,
+  Zap
+} from "lucide-react";
 
 const StudentPanel = () => {
   const { studentId } = useParams<{ studentId?: string }>();
@@ -27,12 +40,10 @@ const StudentPanel = () => {
         setLoggedInStudent(student);
         setIsLoggedIn(true);
         
-        // If accessing dashboard route, make sure student ID matches
         if (studentId && studentId !== student.id.toString()) {
           navigate(`/panel/dashboard/${student.id}`);
         }
       } else {
-        // Student not found, logout
         handleLogout();
       }
     }
@@ -50,88 +61,260 @@ const StudentPanel = () => {
     });
   };
 
-  // If not logged in, show login form
   if (!isLoggedIn || !loggedInStudent) {
     return <StudentLogin />;
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { scale: 0.95, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
+
   // Student dashboard
   return (
-    <PageContainer withBackground fullHeight>
-      <div className="container mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden">
-              <img 
-                src={loggedInStudent.image} 
-                alt={loggedInStudent.name}
-                className="w-full h-full object-cover"
-              />
+    <StudentLayout student={loggedInStudent} onLogout={handleLogout}>
+      <PageContainer withBackground fullHeight>
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="min-h-full p-4 lg:p-6 overflow-auto"
+        >
+          {/* Hero Section */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 p-6 md:p-8 text-white shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-transparent"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-32 -translate-y-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl transform -translate-x-24 translate-y-24"></div>
+              
+              <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between">
+                <div className="flex items-center gap-4 mb-4 md:mb-0">
+                  <div className="relative">
+                    <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg ring-4 ring-white/20">
+                      <img 
+                        src={loggedInStudent.image} 
+                        alt={loggedInStudent.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-1">سلام، {loggedInStudent.name}! 👋</h1>
+                    <p className="text-white/80 text-lg">آماده برای تمرین امروز هستید؟</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Heart className="h-4 w-4 text-red-400" />
+                      <span className="text-sm text-white/70">وضعیت: فعال</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold">{loggedInStudent.progress || 0}%</div>
+                    <div className="text-sm text-white/70">پیشرفت کلی</div>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div 
+                      className="bg-white rounded-full h-2 transition-all duration-500"
+                      style={{ width: `${loggedInStudent.progress || 0}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">خوش آمدید، {loggedInStudent.name}</h1>
-              <p className="text-muted-foreground">پنل شخصی شاگرد</p>
-            </div>
-          </div>
-          <Button variant="outline" onClick={handleLogout} className="gap-2">
-            <LogOut className="h-4 w-4" />
-            خروج
-          </Button>
-        </div>
+          </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Personal Info Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <div className="flex items-center gap-3 mb-4">
-              <User className="h-6 w-6 text-indigo-500" />
-              <h2 className="text-lg font-semibold">اطلاعات شخصی</h2>
+          {/* Quick Stats */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
+                    <Dumbbell className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">
+                      {(loggedInStudent.exercisesDay1?.length || 0) + 
+                       (loggedInStudent.exercisesDay2?.length || 0) + 
+                       (loggedInStudent.exercisesDay3?.length || 0) + 
+                       (loggedInStudent.exercisesDay4?.length || 0)}
+                    </div>
+                    <div className="text-sm text-gray-600">تمرینات</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
+                    <Apple className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">{loggedInStudent.meals?.length || 0}</div>
+                    <div className="text-sm text-gray-600">وعده غذایی</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-violet-500 rounded-xl flex items-center justify-center">
+                    <Pill className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">
+                      {(loggedInStudent.supplements?.length || 0) + (loggedInStudent.vitamins?.length || 0)}
+                    </div>
+                    <div className="text-sm text-gray-600">مکمل‌ها</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
+                    <Trophy className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">۸۵%</div>
+                    <div className="text-sm text-gray-600">موفقیت</div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-            <div className="space-y-2">
-              <p><span className="font-medium">نام:</span> {loggedInStudent.name}</p>
-              <p><span className="font-medium">موبایل:</span> {loggedInStudent.phone}</p>
-              <p><span className="font-medium">قد:</span> {loggedInStudent.height} سانتی‌متر</p>
-              <p><span className="font-medium">وزن:</span> {loggedInStudent.weight} کیلوگرم</p>
-              {loggedInStudent.age && <p><span className="font-medium">سن:</span> {loggedInStudent.age} سال</p>}
-            </div>
+          </motion.div>
+
+          {/* Main Cards */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Personal Info Card */}
+            <motion.div variants={cardVariants} className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <User className="h-6 w-6 text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">اطلاعات شخصی</h2>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                  <span className="text-gray-600">نام:</span>
+                  <span className="font-medium text-gray-800">{loggedInStudent.name}</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                  <span className="text-gray-600">موبایل:</span>
+                  <span className="font-medium text-gray-800" dir="ltr">{loggedInStudent.phone}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">قد:</span>
+                    <span className="font-medium text-gray-800">{loggedInStudent.height} سم</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">وزن:</span>
+                    <span className="font-medium text-gray-800">{loggedInStudent.weight} کیلو</span>
+                  </div>
+                </div>
+                {loggedInStudent.age && (
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">سن:</span>
+                    <span className="font-medium text-gray-800">{loggedInStudent.age} سال</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Weekly Program Card */}
+            <motion.div variants={cardVariants} className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">برنامه هفتگی</h2>
+              </div>
+              
+              <div className="space-y-3">
+                {[
+                  { day: "شنبه", exercises: loggedInStudent.exercisesDay1?.length || 0, color: "from-red-400 to-orange-500" },
+                  { day: "یکشنبه", exercises: loggedInStudent.exercisesDay2?.length || 0, color: "from-orange-400 to-yellow-500" },
+                  { day: "دوشنبه", exercises: loggedInStudent.exercisesDay3?.length || 0, color: "from-green-400 to-emerald-500" },
+                  { day: "سه‌شنبه", exercises: loggedInStudent.exercisesDay4?.length || 0, color: "from-blue-400 to-indigo-500" },
+                  { day: "چهارشنبه", exercises: loggedInStudent.exercisesDay5?.length || 0, color: "from-purple-400 to-violet-500" },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50/50 rounded-xl hover:bg-gray-100/50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${item.color}`}></div>
+                      <span className="font-medium text-gray-700">{item.day}</span>
+                    </div>
+                    <span className="text-sm text-gray-600">{item.exercises} تمرین</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
 
-          {/* Exercise Program Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <div className="flex items-center gap-3 mb-4">
-              <Dumbbell className="h-6 w-6 text-green-500" />
-              <h2 className="text-lg font-semibold">برنامه تمرینی</h2>
+          {/* Quick Actions */}
+          <motion.div variants={itemVariants} className="mb-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">دسترسی سریع</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { title: "برنامه تمرینی", icon: Dumbbell, color: "from-orange-400 to-red-500", href: "/panel/exercises" },
+                { title: "رژیم غذایی", icon: Apple, color: "from-green-400 to-emerald-500", href: "/panel/diet" },
+                { title: "پیشرفت", icon: TrendingUp, color: "from-blue-400 to-indigo-500", href: "/panel/progress" },
+                { title: "اهداف", icon: Target, color: "from-purple-400 to-violet-500", href: "/panel/goals" },
+              ].map((item, index) => (
+                <motion.button
+                  key={index}
+                  variants={cardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-200"
+                >
+                  <div className={`w-12 h-12 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center mx-auto mb-3`}>
+                    <item.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="text-sm font-medium text-gray-700">{item.title}</div>
+                </motion.button>
+              ))}
             </div>
-            <div className="space-y-2">
-              <p>روز ۱: {loggedInStudent.exercisesDay1?.length || 0} تمرین</p>
-              <p>روز ۲: {loggedInStudent.exercisesDay2?.length || 0} تمرین</p>
-              <p>روز ۳: {loggedInStudent.exercisesDay3?.length || 0} تمرین</p>
-              <p>روز ۴: {loggedInStudent.exercisesDay4?.length || 0} تمرین</p>
-            </div>
-          </div>
-
-          {/* Diet Plan Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <div className="flex items-center gap-3 mb-4">
-              <Apple className="h-6 w-6 text-orange-500" />
-              <h2 className="text-lg font-semibold">برنامه غذایی</h2>
-            </div>
-            <p>{loggedInStudent.meals?.length || 0} وعده غذایی تعیین شده</p>
-          </div>
-
-          {/* Supplements Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <div className="flex items-center gap-3 mb-4">
-              <Pill className="h-6 w-6 text-purple-500" />
-              <h2 className="text-lg font-semibold">مکمل‌ها و ویتامین‌ها</h2>
-            </div>
-            <div className="space-y-2">
-              <p>مکمل‌ها: {loggedInStudent.supplements?.length || 0}</p>
-              <p>ویتامین‌ها: {loggedInStudent.vitamins?.length || 0}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </PageContainer>
+          </motion.div>
+        </motion.div>
+      </PageContainer>
+    </StudentLayout>
   );
 };
 
