@@ -42,9 +42,22 @@ function App() {
     useCallback: !!useCallback
   });
 
-  // اطمینان از دسترسی به React hooks
+  // تضمین دسترسی به React hooks
   useLayoutEffect(() => {
     console.log('App useLayoutEffect executed successfully');
+    
+    // تضمین دسترسی global به React
+    if (!globalThis.React) {
+      globalThis.React = React;
+      globalThis.useLayoutEffect = React.useLayoutEffect;
+      globalThis.useEffect = React.useEffect;
+      globalThis.useState = React.useState;
+      globalThis.useCallback = React.useCallback;
+      globalThis.useMemo = React.useMemo;
+      globalThis.useRef = React.useRef;
+      globalThis.useContext = React.useContext;
+      globalThis.useReducer = React.useReducer;
+    }
   }, []);
 
   useEffect(() => {
@@ -64,8 +77,12 @@ function App() {
       
       // جلوگیری از خطاهای useLayoutEffect
       if (e.error && e.error.message && e.error.message.includes('useLayoutEffect')) {
-        console.error('useLayoutEffect error detected, reloading...');
-        setTimeout(() => window.location.reload(), 1000);
+        console.error('useLayoutEffect error detected, attempting to fix...');
+        // اطمینان از دسترسی به React hooks
+        if (!globalThis.useLayoutEffect) {
+          globalThis.React = React;
+          globalThis.useLayoutEffect = React.useLayoutEffect;
+        }
       }
     };
     

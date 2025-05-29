@@ -5,11 +5,21 @@ import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 
-// اطمینان از دسترسی جهانی React - فوری و قبل از هر چیز
-(globalThis as any).React = React;
-(window as any).React = React;
+// تعریف فوری React به صورت global - قبل از هر import یا component
+if (typeof window !== 'undefined') {
+  (window as any).React = React;
+  (window as any).useLayoutEffect = React.useLayoutEffect;
+  (window as any).useEffect = React.useEffect;
+  (window as any).useState = React.useState;
+  (window as any).useCallback = React.useCallback;
+  (window as any).useMemo = React.useMemo;
+  (window as any).useRef = React.useRef;
+  (window as any).useContext = React.useContext;
+  (window as any).useReducer = React.useReducer;
+}
 
-// اضافه کردن React hooks به global scope
+// تعریف در globalThis نیز
+(globalThis as any).React = React;
 (globalThis as any).useLayoutEffect = React.useLayoutEffect;
 (globalThis as any).useEffect = React.useEffect;
 (globalThis as any).useState = React.useState;

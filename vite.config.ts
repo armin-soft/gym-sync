@@ -37,7 +37,14 @@ export default defineConfig(({ mode }) => {
       ...buildOptions,
       rollupOptions: {
         output: {
-          ...rollupOutputOptions
+          ...rollupOutputOptions,
+          // تضمین دسترسی به React در همه chunks
+          intro: `
+            if (typeof globalThis !== 'undefined') {
+              globalThis.React = globalThis.React || require('react');
+              globalThis.useLayoutEffect = globalThis.useLayoutEffect || globalThis.React.useLayoutEffect;
+            }
+          `
         },
         external: [],
         // اطمینان از صحیح bundling شدن React
@@ -66,7 +73,9 @@ export default defineConfig(({ mode }) => {
       // اطمینان از دسترسی جهانی React
       global: 'globalThis',
       // اضافه کردن React به global scope
-      'process.env.NODE_ENV': JSON.stringify(mode)
+      'process.env.NODE_ENV': JSON.stringify(mode),
+      // تضمین دسترسی React در runtime
+      'globalThis.React': 'globalThis.React || React'
     },
     esbuild: {
       jsxFactory: 'React.createElement',
