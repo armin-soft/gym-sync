@@ -1,7 +1,7 @@
 
-import React from "react";
-import { AuthenticatedContent } from "./auth/AuthenticatedContent";
-import { LoginContainer } from "./auth/login/LoginContainer";
+import { useState, useEffect } from "react";
+import { AuthenticatedContent } from "./AuthenticatedContent";
+import { LoginContainer } from "./login/LoginContainer";
 import { defaultProfile } from "@/types/trainer";
 import { successToast } from "@/hooks/use-toast";
 
@@ -9,10 +9,10 @@ interface AuthWrapperProps {
   children: React.ReactNode;
 }
 
-export const AuthWrapper = React.memo<AuthWrapperProps>(({ children }) => {
-  const [authenticated, setAuthenticated] = React.useState(false);
+export const AuthWrapper = ({ children }: AuthWrapperProps) => {
+  const [authenticated, setAuthenticated] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Initialize default trainer profile if it doesn't exist
     const savedProfile = localStorage.getItem('trainerProfile');
     if (!savedProfile) {
@@ -59,7 +59,7 @@ export const AuthWrapper = React.memo<AuthWrapperProps>(({ children }) => {
     checkAuth();
   }, []);
 
-  const handleLoginSuccess = React.useCallback((rememberMe: boolean = false) => {
+  const handleLoginSuccess = (rememberMe: boolean = false) => {
     setAuthenticated(true);
     
     // If remember me is checked, set expiry for 30 days
@@ -71,7 +71,7 @@ export const AuthWrapper = React.memo<AuthWrapperProps>(({ children }) => {
       // If not checked, remove any previous remember me expiry
       localStorage.removeItem("rememberMeExpiry");
     }
-  }, []);
+  };
 
   // If not authenticated, show the login form
   if (!authenticated) {
@@ -80,6 +80,4 @@ export const AuthWrapper = React.memo<AuthWrapperProps>(({ children }) => {
 
   // If authenticated, show the main content
   return <AuthenticatedContent>{children}</AuthenticatedContent>;
-});
-
-AuthWrapper.displayName = 'AuthWrapper';
+};
