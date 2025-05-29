@@ -1,5 +1,6 @@
 
 import React from "react";
+import { motion } from "framer-motion";
 import { LoginHeader } from "./form/LoginHeader";
 import { LoginForm } from "./form/LoginForm";
 
@@ -32,12 +33,31 @@ export const LoginFormView = ({
   handleLogin,
   gymName
 }: LoginFormViewProps) => {
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+        duration: 0.8
+      }
+    }
+  };
+
   return (
     <>
       <div className="relative z-10 flex flex-col space-y-1.5 p-4 sm:p-6">
-        <div className="flex flex-col items-center space-y-2 opacity-0 translate-y-5 animate-[fade-in_0.8s_ease-out_forwards]">
+        <motion.div 
+          className="flex flex-col items-center space-y-2"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <LoginHeader gymName={gymName} />
-        </div>
+        </motion.div>
       </div>
       
       <div className="relative z-10 p-4 sm:p-6 pt-2 sm:pt-6">

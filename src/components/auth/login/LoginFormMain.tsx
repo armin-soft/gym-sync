@@ -1,8 +1,10 @@
 
 import React from "react";
+import { motion } from "framer-motion";
 import { AccountLockedView } from "./AccountLockedView";
 import { LoginFormView } from "./LoginFormView";
 import { useLoginForm } from "./hooks/useLoginForm";
+import { AnimatedBackground } from "./AnimatedBackground";
 
 interface LoginFormProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -29,7 +31,17 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   } = useLoginForm({ onLoginSuccess });
 
   return (
-    <div className="w-full max-w-md opacity-0 scale-95 animate-[fade-in_0.5s_ease-out_forwards,scale-in_0.5s_ease-out_forwards]">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.5,
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }}
+      className="w-full max-w-md"
+    >
       <div className="relative overflow-hidden border-none bg-white/90 backdrop-blur-xl shadow-2xl rounded-lg">
         {/* گرادیان پس‌زمینه */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-primary/5 to-violet-500/10 z-0 rounded-lg"></div>
@@ -58,11 +70,18 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
         )}
 
         <div className="relative z-10 pt-0 pb-6 flex items-center p-6">
-          <p className="text-xs text-center text-muted-foreground w-full opacity-0 translate-y-2 animate-[fade-in_0.5s_ease-out_0.7s_forwards]">
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+            className="text-xs text-center text-muted-foreground w-full"
+          >
             برای ورود از اطلاعات ثبت شده در بخش پروفایل مربی استفاده کنید
-          </p>
+          </motion.p>
         </div>
+
+        <AnimatedBackground />
       </div>
-    </div>
+    </motion.div>
   );
 };

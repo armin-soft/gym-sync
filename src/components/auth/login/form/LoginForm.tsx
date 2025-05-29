@@ -1,10 +1,12 @@
 
 import React from "react";
+import { motion } from "framer-motion";
 import { ErrorMessage } from "./ErrorMessage";
 import { EmailField } from "./EmailField";
 import { PasswordField } from "./PasswordField";
 import { RememberMeOption } from "./RememberMeOption";
 import { LoginButton } from "./LoginButton";
+import { containerVariants, itemVariants } from "./AnimationVariants";
 
 interface LoginFormProps {
   email: string;
@@ -34,32 +36,38 @@ export const LoginForm = ({
   handleLogin,
 }: LoginFormProps) => {
   return (
-    <form
+    <motion.form
       onSubmit={handleLogin}
       className="space-y-4 sm:space-y-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
     >
       <ErrorMessage error={error} />
       
-      <div className="opacity-0 translate-y-2 animate-[fade-in_0.5s_ease-out_0.2s_forwards]">
+      <motion.div variants={itemVariants}>
         <EmailField email={email} setEmail={setEmail} />
-      </div>
+      </motion.div>
       
-      <div className="opacity-0 translate-y-2 animate-[fade-in_0.5s_ease-out_0.3s_forwards]">
+      <motion.div variants={itemVariants}>
         <PasswordField
           password={password}
           setPassword={setPassword}
           showPassword={showPassword}
           setShowPassword={setShowPassword}
         />
-      </div>
+      </motion.div>
       
-      <div className="flex items-center justify-between mt-2 opacity-0 translate-y-2 animate-[fade-in_0.5s_ease-out_0.4s_forwards]">
+      <motion.div 
+        className="flex items-center justify-between mt-2"
+        variants={itemVariants}
+      >
         <RememberMeOption rememberMe={rememberMe} setRememberMe={setRememberMe} />
-      </div>
+      </motion.div>
       
-      <div className="opacity-0 translate-y-2 animate-[fade-in_0.5s_ease-out_0.5s_forwards]">
+      <motion.div variants={itemVariants}>
         <LoginButton loading={loading} />
-      </div>
-    </form>
+      </motion.div>
+    </motion.form>
   );
 };

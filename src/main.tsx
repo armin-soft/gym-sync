@@ -2,39 +2,62 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
+import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 import * as React from 'react';
 
-// کامپوننت اصلی برنامه
+// کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
   const [isLoading, setIsLoading] = React.useState(true);
+  const [appVersion, setAppVersion] = React.useState('');
+  
+  // دریافت نسخه از Manifest.json
+  React.useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        const version = manifest.version || 'نامشخص';
+        setAppVersion(version);
+        localStorage.setItem('app_version', version);
+        console.log(`App version loaded from Manifest.json: ${version}`);
+      } catch (error) {
+        console.error('Error loading version from Manifest.json:', error);
+        const cachedVersion = localStorage.getItem('app_version') || 'خطا در بارگذاری';
+        setAppVersion(cachedVersion);
+      }
+    };
+    
+    fetchVersion();
+  }, []);
   
   const handleLoadingComplete = React.useCallback(() => {
-    console.log('Loading completed, showing main app');
+    console.log(`Loading completed for version ${appVersion}, showing main app`);
     setIsLoading(false);
-  }, []);
+  }, [appVersion]);
   
-  // حذف صفحه لودینگ و نمایش مستقیم برنامه
-  React.useEffect(() => {
-    // نمایش فوری برنامه بدون لودینگ
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-brand-500/90 to-brand-700/90">
-        <div className="text-white text-lg">در حال بارگذاری...</div>
-      </div>
-    );
-  }
-  
+  // Fix: Use a single container with absolute positioning to avoid DOM conflicts
   return (
     <StrictMode>
-      <App />
+      <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+        {isLoading && (
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
+            <LoadingScreen onLoadingComplete={handleLoadingComplete} />
+          </div>
+        )}
+        <div style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%',
+          opacity: isLoading ? 0 : 1,
+          transition: 'opacity 0.3s ease-in-out',
+          pointerEvents: isLoading ? 'none' : 'auto'
+        }}>
+          <App />
+        </div>
+      </div>
     </StrictMode>
   );
 }
