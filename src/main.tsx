@@ -5,10 +5,25 @@ import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 
-// اطمینان از دسترسی جهانی React
-if (typeof window !== 'undefined') {
-  (window as any).React = React;
-}
+// اطمینان از دسترسی جهانی React - قبل از هر چیز
+(window as any).React = React;
+(globalThis as any).React = React;
+
+// اضافه کردن React hooks به global scope
+Object.assign(globalThis, {
+  React,
+  useLayoutEffect: React.useLayoutEffect,
+  useEffect: React.useEffect,
+  useState: React.useState,
+  useCallback: React.useCallback,
+  useMemo: React.useMemo,
+  useRef: React.useRef,
+  useContext: React.useContext,
+  useReducer: React.useReducer
+});
+
+console.log('React globally assigned:', !!globalThis.React);
+console.log('useLayoutEffect globally available:', !!globalThis.useLayoutEffect);
 
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
@@ -55,6 +70,7 @@ function startApp() {
     console.log('React available:', !!React);
     console.log('React version:', React.version);
     console.log('useLayoutEffect available:', !!React.useLayoutEffect);
+    console.log('Global React available:', !!(globalThis as any).React);
     
     const rootElement = document.getElementById('root');
     if (!rootElement) {

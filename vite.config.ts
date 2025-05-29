@@ -37,7 +37,12 @@ export default defineConfig(({ mode }) => {
       ...buildOptions,
       rollupOptions: {
         output: {
-          ...rollupOutputOptions
+          ...rollupOutputOptions,
+          // اطمینان از دسترسی به React در chunks
+          globals: {
+            'react': 'React',
+            'react-dom': 'ReactDOM'
+          }
         },
         external: [],
         // اطمینان از صحیح bundling شدن React
@@ -66,7 +71,9 @@ export default defineConfig(({ mode }) => {
       // اطمینان از دسترسی جهانی React
       global: 'globalThis',
       // اضافه کردن React به global scope
-      'process.env.NODE_ENV': JSON.stringify(mode)
+      'process.env.NODE_ENV': JSON.stringify(mode),
+      // تعریف React hooks به صورت global
+      'globalThis.React': 'React'
     },
     esbuild: {
       jsxFactory: 'React.createElement',
