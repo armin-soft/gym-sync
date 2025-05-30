@@ -25,19 +25,20 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
-      {/* Management Panel Routes - Fixed for direct access */}
+      {/* Management Panel Routes - Enhanced for direct access */}
       <Route path="/Management" element={<Management />} />
+      <Route path="/Management/*" element={<Management />} />
       <Route path="/Management/Coach-Profile" element={<Trainer />} />
       <Route path="/Management/Students" element={<Students />} />
       <Route path="/Management/Exercise-Movements" element={<Exercises />} />
       <Route path="/Management/Diet-Plan" element={<Diet />} />
       <Route path="/Management/Supplements-Vitamins" element={<Supplements />} />
       <Route path="/Management/Backup-Restore" element={<Backup />} />
+      <Route path="/Management/Student-History" element={<StudentHistory />} />
       
       {/* Legacy management routes - redirect to new structure */}
       <Route path="/students" element={<Navigate to="/Management/Students" replace />} />
-      <Route path="/student-history" element={<StudentHistory />} />
-      <Route path="/Management/Student-History" element={<StudentHistory />} />
+      <Route path="/student-history" element={<Navigate to="/Management/Student-History" replace />} />
       <Route path="/student-program/:studentId" element={<StudentProgram />} />
       <Route path="/exercises" element={<Navigate to="/Management/Exercise-Movements" replace />} />
       <Route path="/diet" element={<Navigate to="/Management/Diet-Plan" replace />} />
@@ -48,6 +49,7 @@ const AppRoutes = () => {
 
       {/* Student Panel Routes - Enhanced for program display */}
       <Route path="/Students" element={<StudentPanel />} />
+      <Route path="/Students/*" element={<StudentPanel />} />
       <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
       <Route path="/Students/profile" element={<StudentProfile />} />
       <Route path="/Students/exercises" element={<StudentExercises />} />

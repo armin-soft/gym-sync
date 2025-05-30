@@ -28,7 +28,7 @@ export function getBasePath(): string {
       return '';
     }
     
-    // اگر در پوشه‌ای هستیم، آن پوشه را به عنوان base path برگردان
+    // برای deployment های GitHub Pages یا subdirectory
     const pathSegments = pathname.split('/').filter(Boolean);
     if (pathSegments.length > 0) {
       // حذف index.html اگر در آخر مسیر باشد
@@ -36,10 +36,19 @@ export function getBasePath(): string {
         pathSegments.pop();
       }
       
-      if (pathSegments.length > 0) {
-        const basePath = '/' + pathSegments.join('/');
-        console.log("Using subdirectory base path:", basePath);
-        return basePath;
+      // بررسی اینکه آیا در subdirectory deployment هستیم
+      const potentialBasePath = '/' + pathSegments[0];
+      
+      // اگر اولین segment شامل Management یا Students است، base path خالی باشد
+      if (pathSegments[0] === 'Management' || pathSegments[0] === 'Students') {
+        console.log("Using empty base path for direct routing");
+        return '';
+      }
+      
+      // در غیر این صورت از اولین segment به عنوان base path استفاده کن
+      if (pathSegments.length > 1) {
+        console.log("Using subdirectory base path:", potentialBasePath);
+        return potentialBasePath;
       }
     }
     
@@ -66,17 +75,6 @@ export function getAssetPath(assetPath: string): string {
   // تنظیم مسیر asset برای ساختار جدید
   let cleanAssetPath = assetPath;
   
-  // تبدیل مسیرهای قدیمی به جدید
-  if (cleanAssetPath.includes('Assets/Image/')) {
-    cleanAssetPath = cleanAssetPath.replace('Assets/Image/', 'Assets/Images/');
-  }
-  if (cleanAssetPath.includes('/Image/')) {
-    cleanAssetPath = cleanAssetPath.replace('/Image/', '/Assets/Images/');
-  }
-  if (cleanAssetPath.startsWith('Image/')) {
-    cleanAssetPath = cleanAssetPath.replace('Image/', 'Assets/Images/');
-  }
-  
   // اطمینان از شروع با /
   if (!cleanAssetPath.startsWith('/')) {
     cleanAssetPath = '/' + cleanAssetPath;
@@ -91,5 +89,5 @@ export function getAssetPath(assetPath: string): string {
  * Helper function to get image paths for the new structure
  */
 export function getImagePath(imageName: string): string {
-  return getAssetPath(`Assets/Images/${imageName}`);
+  return getAssetPath(`Assets/Image/${imageName}`);
 }
