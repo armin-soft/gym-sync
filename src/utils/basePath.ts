@@ -22,37 +22,8 @@ export function getBasePath(): string {
     
     const pathname = window.location.pathname;
     
-    // اگر در ریشه دامنه هستیم یا فایل index.html
-    if (pathname === '/' || pathname === '/index.html' || pathname.endsWith('/')) {
-      console.log("Using root path for domain root");
-      return '';
-    }
-    
-    // برای deployment های GitHub Pages یا subdirectory
-    const pathSegments = pathname.split('/').filter(Boolean);
-    if (pathSegments.length > 0) {
-      // حذف index.html اگر در آخر مسیر باشد
-      if (pathSegments[pathSegments.length - 1] === 'index.html') {
-        pathSegments.pop();
-      }
-      
-      // بررسی اینکه آیا در subdirectory deployment هستیم
-      const potentialBasePath = '/' + pathSegments[0];
-      
-      // اگر اولین segment شامل Management یا Students است، base path خالی باشد
-      if (pathSegments[0] === 'Management' || pathSegments[0] === 'Students') {
-        console.log("Using empty base path for direct routing");
-        return '';
-      }
-      
-      // در غیر این صورت از اولین segment به عنوان base path استفاده کن
-      if (pathSegments.length > 1) {
-        console.log("Using subdirectory base path:", potentialBasePath);
-        return potentialBasePath;
-      }
-    }
-    
-    console.log("Using empty base path as fallback");
+    // همیشه از مسیر root استفاده کن برای جلوگیری از مشکلات routing
+    console.log("Using root path for all scenarios");
     return '';
   } catch (e) {
     console.error("Error determining base path:", e);
@@ -65,8 +36,6 @@ export function getBasePath(): string {
  * Optimized for build output structure
  */
 export function getAssetPath(assetPath: string): string {
-  const basePath = getBasePath();
-  
   // اگر مسیر به صورت مطلق است، همان‌طور که هست برگردان
   if (assetPath.startsWith('http') || assetPath.startsWith('//')) {
     return assetPath;
@@ -80,14 +49,13 @@ export function getAssetPath(assetPath: string): string {
     cleanAssetPath = '/' + cleanAssetPath;
   }
   
-  const fullPath = basePath + cleanAssetPath;
-  console.log('Asset path resolved:', { assetPath, basePath, fullPath });
-  return fullPath;
+  console.log('Asset path resolved:', { assetPath, cleanAssetPath });
+  return cleanAssetPath;
 }
 
 /**
  * Helper function to get image paths for the new structure
  */
 export function getImagePath(imageName: string): string {
-  return getAssetPath(`Assets/Image/${imageName}`);
+  return getAssetPath(`/Assets/Image/${imageName}`);
 }
