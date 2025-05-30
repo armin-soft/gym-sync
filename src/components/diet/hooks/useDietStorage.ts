@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Meal, WeekDay } from "@/types/meal";
 import { useToast } from "@/hooks/use-toast";
 
 /**
- * استاندارد کردن روزهای هفته برای جلوگیری از مشکلات تکراری - نسخه اصلاح شده
+ * استاندارد کردن روزهای هفته برای جلوگیری از مشکلات تکراری
  */
 export const normalizeDay = (day: string): string => {
   if (!day) return '';
@@ -24,7 +23,7 @@ export const normalizeDay = (day: string): string => {
     'سهشنبه': 'سه شنبه',
     'سه‌ شنبه': 'سه شنبه',
     'چهارشنبه': 'چهارشنبه',
-    'چهار‌شنبه': 'چهارشنبه',
+    'چهار‌شنبه': 'چهار شنبه',
     'چهار شنبه': 'چهارشنبه',
     'پنج‌شنبه': 'پنج شنبه',
     'پنجشنبه': 'پنج شنبه',
