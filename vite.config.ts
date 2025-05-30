@@ -50,6 +50,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
+    base: '/',  // اطمینان از استفاده از مسیر مطلق
     publicDir: 'public',
     optimizeDeps: {
       include: [

@@ -2,6 +2,10 @@
 import fs from 'fs';
 
 export const generateIndexHtml = (cssFileName: string, jsFileName: string): string => {
+  // اطمینان از اینکه مسیرها مطلق هستند
+  const absoluteCssPath = cssFileName.startsWith('/') ? cssFileName : `/${cssFileName}`;
+  const absoluteJsPath = jsFileName.startsWith('/') ? jsFileName : `/${jsFileName}`;
+  
   return `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
   <head>
@@ -10,10 +14,11 @@ export const generateIndexHtml = (cssFileName: string, jsFileName: string): stri
     <meta name="description" content="سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران" />
     <meta name="theme-color" content="#7c3aed" />
     <title>مدیریت برنامه</title>
+    <base href="/" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="./Assets/Images/Logo.png" />
-    <link rel="apple-touch-icon" href="./Assets/Images/Logo.png" />
+    <link rel="icon" type="image/png" href="/Assets/Images/Logo.png" />
+    <link rel="apple-touch-icon" href="/Assets/Images/Logo.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -32,7 +37,7 @@ export const generateIndexHtml = (cssFileName: string, jsFileName: string): stri
     />
     
     <!-- CSS -->
-    <link rel="stylesheet" href="./${cssFileName}" />
+    <link rel="stylesheet" href="${absoluteCssPath}" />
   </head>
 
   <body>
@@ -40,7 +45,7 @@ export const generateIndexHtml = (cssFileName: string, jsFileName: string): stri
 
     <!-- Scripts -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script src="./${jsFileName}" type="module"></script>
+    <script src="${absoluteJsPath}" type="module"></script>
     
     <noscript>برای استفاده از این برنامه، لطفاً جاوااسکریپت مرورگر خود را فعال کنید.</noscript>
   </body>
@@ -49,5 +54,5 @@ export const generateIndexHtml = (cssFileName: string, jsFileName: string): stri
 
 export const writeIndexHtml = (distIndexPath: string, content: string): void => {
   fs.writeFileSync(distIndexPath, content);
-  console.log('✅ index.html با مسیرهای صحیح بازنویسی شد');
+  console.log('✅ index.html با مسیرهای مطلق صحیح بازنویسی شد');
 };

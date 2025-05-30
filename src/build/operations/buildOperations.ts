@@ -38,10 +38,11 @@ export const performBuildOperations = async (): Promise<void> => {
     const mainCssFile = cssFiles.find(file => file.includes('Main-App')) || cssFiles[0];
     const mainJsFile = jsFiles.find(file => file.includes('Main-App')) || jsFiles[0];
 
-    const cssFileName = mainCssFile ? path.relative('dist', mainCssFile) : 'Assets/Styles/Main-App.css';
-    const jsFileName = mainJsFile ? path.relative('dist', mainJsFile) : 'Assets/Scripts/Main-App.js';
+    // استفاده از مسیرهای مطلق
+    const cssFileName = mainCssFile ? `/${path.relative('dist', mainCssFile)}` : '/Assets/Styles/Main-App.css';
+    const jsFileName = mainJsFile ? `/${path.relative('dist', mainJsFile)}` : '/Assets/Scripts/Main-App.js';
 
-    // بازنویسی index.html با مسیرهای صحیح
+    // بازنویسی index.html با مسیرهای مطلق
     const indexContent = generateIndexHtml(cssFileName, jsFileName);
     writeIndexHtml(SOURCE_PATHS.distIndex, indexContent);
 
@@ -63,6 +64,10 @@ export const performBuildOperations = async (): Promise<void> => {
     if (imageFiles.length > 0) {
       console.log(`      └── Images/ (${imageFiles.length} فایل تصویر)`);
     }
+
+    console.log(`🔗 فایل‌های ایجاد شده با مسیرهای مطلق:`);
+    console.log(`  📄 CSS: ${cssFileName}`);
+    console.log(`  📄 JS: ${jsFileName}`);
 
   } catch (error) {
     console.error('❌ خطا در سازماندهی فایل‌ها:', error);

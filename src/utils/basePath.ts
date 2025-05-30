@@ -20,10 +20,8 @@ export function getBasePath(): string {
     console.log('Determining base path for production...');
     console.log('Current location:', window.location);
     
-    const pathname = window.location.pathname;
-    
     // همیشه از مسیر root استفاده کن برای جلوگیری از مشکلات routing
-    console.log("Using root path for all scenarios");
+    console.log("Using absolute root path for all scenarios");
     return '';
   } catch (e) {
     console.error("Error determining base path:", e);
@@ -33,7 +31,7 @@ export function getBasePath(): string {
 
 /**
  * Gets the full URL for an asset based on the base path
- * Optimized for build output structure
+ * Optimized for build output structure - Always uses absolute paths
  */
 export function getAssetPath(assetPath: string): string {
   // اگر مسیر به صورت مطلق است، همان‌طور که هست برگردان
@@ -41,7 +39,7 @@ export function getAssetPath(assetPath: string): string {
     return assetPath;
   }
   
-  // تنظیم مسیر asset برای ساختار جدید
+  // تنظیم مسیر asset برای ساختار جدید - همیشه مطلق
   let cleanAssetPath = assetPath;
   
   // اطمینان از شروع با /
@@ -49,12 +47,12 @@ export function getAssetPath(assetPath: string): string {
     cleanAssetPath = '/' + cleanAssetPath;
   }
   
-  console.log('Asset path resolved:', { assetPath, cleanAssetPath });
+  console.log('Asset path resolved to absolute:', { assetPath, cleanAssetPath });
   return cleanAssetPath;
 }
 
 /**
- * Helper function to get image paths for the new structure
+ * Helper function to get image paths for the new structure - Always absolute
  */
 export function getImagePath(imageName: string): string {
   return getAssetPath(`/Assets/Image/${imageName}`);
