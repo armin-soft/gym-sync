@@ -1,3 +1,4 @@
+
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -63,11 +64,6 @@ const weekDays: WeekDay[] = [
 ];
 
 export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) => {
-  // دریافت روزهای دارای محتوا از وعده‌های غذایی و استاندارد کردن آن‌ها
-  const daysWithContent = Array.from(
-    new Set(meals.map(meal => normalizeDay(meal.day || '')))
-  ).filter(Boolean) as WeekDay[];
-  
   // استفاده از شنبه به عنوان روز پیش‌فرض
   const [selectedDay, setSelectedDay] = useState<WeekDay>('شنبه');
   const deviceInfo = useDeviceInfo();
@@ -82,28 +78,20 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     console.log("=== DAY MEALS COMPONENT DEBUG ===");
     console.log("Total meals received:", meals.length);
     console.log("All meals:", meals);
-    console.log("Days with content:", daysWithContent);
     console.log("Selected day:", selectedDay);
     console.log("Meal types:", mealTypes);
-    
-    // بررسی هر روز
-    weekDays.forEach(day => {
-      const dayMeals = meals.filter(meal => {
-        const normalizedMealDay = normalizeDay(meal.day || '');
-        const normalizedSelectedDay = normalizeDay(day);
-        const matches = normalizedMealDay === normalizedSelectedDay;
-        console.log(`Meal day "${meal.day}" normalized to "${normalizedMealDay}", comparing with "${normalizedSelectedDay}": ${matches}`);
-        return matches;
-      });
-      console.log(`Day ${day} has ${dayMeals.length} meals:`, dayMeals);
-    });
-    
-    console.log("=== END DAY MEALS COMPONENT DEBUG ===");
     
     return () => {
       setIsMounted(false);
     };
-  }, [meals, daysWithContent, selectedDay, mealTypes]);
+  }, [meals, selectedDay, mealTypes]);
+  
+  // دریافت روزهای دارای محتوا از وعده‌های غذایی
+  const daysWithContent = Array.from(
+    new Set(meals.map(meal => normalizeDay(meal.day || '')))
+  ).filter(Boolean) as WeekDay[];
+  
+  console.log("Days with content after normalization:", daysWithContent);
   
   // یک تابع برای تبدیل مناسب رشته به نوع WeekDay
   const handleDayChange = (value: string) => {
@@ -113,13 +101,12 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     }
   };
   
-  // نمایش تمام غذاهای مربوط به روز انتخاب شده با در نظر گرفتن استاندارد کردن نام روزها
+  // نمایش تمام غذاهای مربوط به روز انتخاب شده
   const getDayMeals = (day: WeekDay): Meal[] => {
     const normalizedSelectedDay = normalizeDay(day);
     const dayMeals = meals.filter(meal => {
       const normalizedMealDay = normalizeDay(meal.day || '');
       const isMatch = normalizedMealDay === normalizedSelectedDay;
-      console.log(`Filtering: meal day "${meal.day}" (normalized: "${normalizedMealDay}") vs selected "${day}" (normalized: "${normalizedSelectedDay}") = ${isMatch}`);
       return isMatch;
     });
     console.log(`Filtered meals for ${day}: ${dayMeals.length} items`, dayMeals);

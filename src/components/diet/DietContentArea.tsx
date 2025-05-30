@@ -25,31 +25,15 @@ export const DietContentArea = ({
   onEdit,
   onDelete,
 }: DietContentAreaProps) => {
-  // تعریف همه روزهای هفته
-  const allWeekDays: WeekDay[] = [
-    'شنبه', 
-    'یکشنبه', 
-    'دوشنبه', 
-    'سه شنبه', 
-    'چهارشنبه', 
-    'پنج شنبه', 
-    'جمعه'
-  ];
-
-  // دریافت روزهای دارای محتوا
-  const daysWithContent = Array.from(new Set(meals.map(meal => meal.day))).filter(Boolean) as WeekDay[];
-  
   // اطلاعات دیباگ
   useEffect(() => {
-    console.log("DietContentArea meals:", meals);
-    console.log("Days with content:", daysWithContent);
-    
-    // بررسی دقیق تر وعده های غذایی هر روز
-    allWeekDays.forEach(day => {
-      const dayMeals = meals.filter(meal => meal.day === day);
-      console.log(`Day ${day} has ${dayMeals.length} meals`);
-    });
-  }, [meals]);
+    console.log("=== DIET CONTENT AREA DEBUG ===");
+    console.log("DietContentArea meals received:", meals);
+    console.log("Meals count:", meals.length);
+    console.log("Meal types:", mealTypes);
+    console.log("Selected day:", selectedDay);
+    console.log("=== END DIET CONTENT AREA DEBUG ===");
+  }, [meals, mealTypes, selectedDay]);
 
   return (
     <motion.div

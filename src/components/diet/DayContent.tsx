@@ -17,6 +17,11 @@ interface DayContentProps {
 }
 
 export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered = false }: DayContentProps) => {
+  console.log(`=== DAY CONTENT ${day} DEBUG ===`);
+  console.log("Meals received:", meals);
+  console.log("Meal types:", mealTypes);
+  console.log("Day:", day);
+  
   // مرتب‌سازی انواع وعده‌های غذایی بر اساس ترتیب تعریف شده
   const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
   
@@ -39,6 +44,38 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
       transition: { type: "spring", stiffness: 300, damping: 24 }
     }
   };
+  
+  // اگر هیچ وعده‌ای وجود ندارد، پیام مناسب نمایش دهیم
+  if (meals.length === 0) {
+    return (
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className={cn(
+          "space-y-4 sm:space-y-6",
+          centered ? "text-center" : "text-right"
+        )}
+      >
+        <motion.div 
+          variants={itemVariants}
+          className="text-muted-foreground text-lg py-16 px-6 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 backdrop-blur-sm border border-border/30 shadow-sm flex items-center justify-center"
+        >
+          <div className="flex flex-col items-center justify-center gap-4">
+            <div className="w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-60">
+                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7.5L12.5 7L9 7.5L3 7V9L9 8.5C10.5 8.5 12 8.5 12 8.5S13.5 8.5 15 8.5L21 9ZM15 10.5V19C15 20.1 14.1 21 13 21S11 20.1 11 19V15H9V19C9 20.1 8.1 21 7 21S5 20.1 5 19V10.5L9 10C10.5 10 12 10 12 10S13.5 10 15 10.5Z" stroke="currentColor" strokeWidth="1.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">هیچ وعده غذایی برای روز {day} ثبت نشده است</h3>
+              <p className="text-sm text-muted-foreground">برای افزودن وعده غذایی، از دکمه "افزودن وعده غذایی" استفاده کنید</p>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
+  }
   
   return (
     <motion.div 
@@ -68,23 +105,6 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
           </motion.div>
         );
       })}
-      
-      {/* نمایش پیام خالی بودن اگر هیچ وعده‌ای برای روز وجود نداشت */}
-      {meals.length === 0 && (
-        <motion.div 
-          variants={itemVariants}
-          className="text-muted-foreground text-lg py-10 px-4 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 backdrop-blur-sm border border-border/30 shadow-sm flex items-center justify-center"
-        >
-          <div className="flex flex-col items-center justify-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-60">
-                <path d="M3 10H21M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.07989 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <p>برای روز {day} برنامه غذایی ثبت نشده است</p>
-          </div>
-        </motion.div>
-      )}
     </motion.div>
   );
 };
