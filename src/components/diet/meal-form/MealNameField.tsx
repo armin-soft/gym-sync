@@ -15,11 +15,13 @@ export const MealNameField = ({ control }: MealNameFieldProps) => {
       name="name"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-right">نام وعده غذایی *</FormLabel>
+          <FormLabel className="text-right text-sm font-semibold text-gray-700 dark:text-gray-300">
+            نام وعده غذایی *
+          </FormLabel>
           <FormControl>
             <Input
               placeholder="مثال: املت با نان سبوس‌دار"
-              className="text-right"
+              className="text-right h-11 border-gray-300 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-400 transition-colors"
               {...field}
               autoComplete="off"
               aria-label="نام وعده غذایی"

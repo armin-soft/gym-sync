@@ -17,10 +17,12 @@ export const MealTypeField = ({ control, mealTypes }: MealTypeFieldProps) => {
       name="type"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-right">نوع وعده غذایی *</FormLabel>
+          <FormLabel className="text-right text-sm font-semibold text-gray-700 dark:text-gray-300">
+            نوع وعده غذایی *
+          </FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
-              <SelectTrigger className="text-right">
+              <SelectTrigger className="text-right h-11 border-gray-300 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-400 transition-colors">
                 <SelectValue placeholder="انتخاب کنید" />
               </SelectTrigger>
             </FormControl>

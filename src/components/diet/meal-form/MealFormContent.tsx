@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
 import { Form } from "@/components/ui/form";
 import { MealNameField } from "./MealNameField";
 import { MealTypeField } from "./MealTypeField";
 import { WeekDayField } from "./WeekDayField";
-import { MealFormFooter } from "./MealFormFooter";
+import { MealFormActions } from "./MealFormActions";
 import { mealFormSchema, type MealFormData } from "./MealFormSchema";
 import type { Meal, MealType, WeekDay } from "@/types/meal";
 
@@ -16,6 +17,7 @@ interface MealFormContentProps {
   weekDays: WeekDay[];
   onSave: (data: Omit<Meal, "id">, mealId?: number) => boolean;
   onCancel: () => void;
+  itemVariants: any;
 }
 
 export const MealFormContent = ({
@@ -24,6 +26,7 @@ export const MealFormContent = ({
   weekDays,
   onSave,
   onCancel,
+  itemVariants,
 }: MealFormContentProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -72,15 +75,18 @@ export const MealFormContent = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <WeekDayField control={form.control} weekDays={weekDays} />
-        <MealTypeField control={form.control} mealTypes={mealTypes} />
-        <MealNameField control={form.control} />
-
-        <MealFormFooter
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <motion.div variants={itemVariants} className="p-6 space-y-6">
+          <WeekDayField control={form.control} weekDays={weekDays} />
+          <MealTypeField control={form.control} mealTypes={mealTypes} />
+          <MealNameField control={form.control} />
+        </motion.div>
+        
+        <MealFormActions
           isSubmitting={isSubmitting}
           onCancel={onCancel}
           isEdit={!!meal}
+          itemVariants={itemVariants}
         />
       </form>
     </Form>
