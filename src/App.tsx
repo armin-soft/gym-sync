@@ -30,17 +30,18 @@ function AppContent() {
   useEffect(() => {
     // Check if user has already selected a type and is not on Panel route
     const hasSelectedType = localStorage.getItem("hasSelectedUserType");
-    const isOnPanelRoute = location.pathname.startsWith("/Panel") || location.pathname.startsWith("/panel");
+    const isOnStudentRoute = location.pathname.startsWith("/Students");
+    const isOnManagementRoute = location.pathname.startsWith("/Management") || location.pathname === "/";
     
-    // If not on panel route and hasn't selected type, show selection
-    if (!hasSelectedType && !isOnPanelRoute) {
+    // If not on student route and hasn't selected type, show selection
+    if (!hasSelectedType && !isOnStudentRoute && !isOnManagementRoute) {
       setShowUserTypeSelection(true);
     } else {
       setShowUserTypeSelection(false);
     }
   }, [location.pathname]);
 
-  // Show user type selection for non-panel routes when no type is selected
+  // Show user type selection for routes when no type is selected
   if (showUserTypeSelection) {
     return <UserTypeSelection />;
   }

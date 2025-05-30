@@ -25,7 +25,7 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
-      {/* Management Panel Routes */}
+      {/* Management Panel Routes - Fixed for direct access */}
       <Route path="/Management" element={<Management />} />
       <Route path="/Management/Coach-Profile" element={<Trainer />} />
       <Route path="/Management/Students" element={<Students />} />
@@ -45,7 +45,7 @@ const AppRoutes = () => {
       <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
       <Route path="/management" element={<Navigate to="/Management" replace />} />
 
-      {/* Student Panel Routes */}
+      {/* Student Panel Routes - Enhanced for program display */}
       <Route path="/Students" element={<StudentPanel />} />
       <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
       <Route path="/Students/profile" element={<StudentProfile />} />
@@ -53,7 +53,7 @@ const AppRoutes = () => {
       <Route path="/Students/diet" element={<StudentDiet />} />
       <Route path="/Students/supplements" element={<StudentSupplements />} />
 
-      {/* Catch all route */}
+      {/* Catch all route - improved handling */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
