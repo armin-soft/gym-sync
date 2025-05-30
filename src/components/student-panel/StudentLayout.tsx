@@ -45,7 +45,7 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-violet-950 dark:via-gray-900 dark:to-indigo-950 persian-numbers flex flex-col" dir="rtl">
+    <div className="min-h-screen w-full bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-violet-950 dark:via-gray-900 dark:to-indigo-950 persian-numbers flex flex-col overflow-x-hidden" dir="rtl">
       {/* Student Sidebar */}
       {sidebarOpen && (
         <StudentSidebar 
@@ -111,7 +111,7 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
       </header>
       
       {/* Main Content - Student Only */}
-      <main className="flex-1 overflow-hidden w-full max-w-full">
+      <main className="flex-1 w-full overflow-y-auto overflow-x-hidden">
         {children}
       </main>
     </div>

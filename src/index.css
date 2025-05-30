@@ -1,3 +1,4 @@
+
 @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
 @tailwind base;
 @tailwind components;
@@ -16,12 +17,15 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   direction: rtl;
+  overflow-y: auto; /* اجازه اسکرول عمودی */
+  overflow-x: hidden; /* جلوگیری از اسکرول افقی */
 }
 
 #root {
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow-y: auto; /* اجازه اسکرول در root */
+  overflow-x: hidden;
 }
 
 code {
@@ -53,6 +57,7 @@ code {
   }
 }
 
+/* تنظیمات اسکرول */
 .scrollbar-thin {
   scrollbar-width: thin;
 }
@@ -63,4 +68,21 @@ code {
 
 .dark .scrollbar-thumb-slate-700 {
   scrollbar-color: #334155 transparent;
+}
+
+/* کلاس‌های کمکی برای اسکرول */
+.scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.full-height {
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.auto-height {
+  height: auto;
+  min-height: 100%;
 }

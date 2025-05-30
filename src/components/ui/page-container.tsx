@@ -49,8 +49,8 @@ export const PageContainer = React.memo(({
   // ثابت کردن کلاس‌های استایل برای جلوگیری از رندرهای مجدد
   const containerClasses = React.useMemo(() => {
     return cn(
-      "w-full flex flex-col overflow-hidden",
-      fullHeight || fullScreen ? "h-full min-h-screen" : "h-full",
+      "w-full flex flex-col",
+      fullHeight || fullScreen ? "min-h-screen" : "min-h-full",
       fullScreen && "fixed inset-0 z-50",
       withBackground && "relative",
       fullWidth ? "max-w-none" : "max-w-full mx-auto",
@@ -60,7 +60,7 @@ export const PageContainer = React.memo(({
   
   const contentClasses = React.useMemo(() => {
     return cn(
-      "w-full h-full flex-1 overflow-auto",
+      "w-full flex-1 overflow-y-auto overflow-x-hidden",
       getPadding
     );
   }, [getPadding]);
