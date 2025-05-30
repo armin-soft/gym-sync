@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Coffee, Utensils, Sunrise, Sun, Sunset, Moon } from "lucide-react";
+import { Check, Coffee, Utensils } from "lucide-react";
 import { MealType } from "@/types/meal";
 import { cn } from "@/lib/utils";
 
@@ -33,19 +33,19 @@ export const getMealTypeColor = (type: MealType) => {
 export const getMealTypeIcon = (type: MealType) => {
   switch (type) {
     case "صبحانه":
-      return <Sunrise className="h-4 w-4 mr-1.5" />;
+      return <Coffee className="h-4 w-4 mr-1.5" />;
     case "میان وعده صبح":
       return <Coffee className="h-4 w-4 mr-1.5" />;
     case "ناهار":
-      return <Sun className="h-4 w-4 mr-1.5" />;
+      return <Utensils className="h-4 w-4 mr-1.5" />;
     case "میان وعده عصر":
       return <Coffee className="h-4 w-4 mr-1.5" />;
     case "شام":
-      return <Sunset className="h-4 w-4 mr-1.5" />;
-    case "میان وعده شام":
-      return <Moon className="h-4 w-4 mr-1.5" />;
-    default:
       return <Utensils className="h-4 w-4 mr-1.5" />;
+    case "میان وعده شام":
+      return <Coffee className="h-4 w-4 mr-1.5" />;
+    default:
+      return <Coffee className="h-4 w-4 mr-1.5" />;
   }
 };
 
