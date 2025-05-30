@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -60,11 +61,11 @@ export const StudentDietDialog = ({
   onMealsChange
 }: StudentDietDialogProps) => {
   const { toast } = useToast();
-  const [selectedDay, setSelectedDay] = useState<WeekDay>('شنبه');
+  const [selectedDay, setSelectedDay] = useState<WeekDay | 'all'>('all');
   const [selectedMealType, setSelectedMealType] = useState<MealType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleDayChange = (day: WeekDay) => {
+  const handleDayChange = (day: WeekDay | 'all') => {
     setSelectedDay(day);
   };
 
