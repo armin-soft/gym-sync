@@ -122,7 +122,7 @@ const StudentsPage = () => {
             lastRefreshTime={lastRefresh}
           />
           
-          <Link to="/student-history">
+          <Link to="/Management/Student-History">
             <Button variant="outline" className="flex items-center gap-2">
               <History className="h-4 w-4" />
               <span>تاریخچه</span>
@@ -177,4 +177,3 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
-

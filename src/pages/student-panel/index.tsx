@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { StudentLogin } from "@/components/student-panel/StudentLogin";
@@ -21,7 +20,7 @@ import {
   Heart,
   Zap
 } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { toPersianNumbers, formatPersianDate } from "@/lib/utils/numbers";
 import { formatMeasurement, calculateBMI, getBMICategory, getStudentProgress } from "@/utils/studentUtils";
 
 const StudentPanel = () => {
@@ -43,7 +42,7 @@ const StudentPanel = () => {
         setIsLoggedIn(true);
         
         if (studentId && studentId !== student.id.toString()) {
-          navigate(`/panel/dashboard/${student.id}`);
+          navigate(`/Students/dashboard/${student.id}`);
         }
       } else {
         handleLogout();
@@ -56,7 +55,7 @@ const StudentPanel = () => {
     localStorage.removeItem("loggedInStudentId");
     setIsLoggedIn(false);
     setLoggedInStudent(null);
-    navigate("/panel");
+    navigate("/Students");
     toast({
       title: "خروج موفق",
       description: "با موفقیت از حساب کاربری خارج شدید",
@@ -154,6 +153,15 @@ const StudentPanel = () => {
                       <Heart className="h-4 w-4 text-red-400" />
                       <span className="text-sm text-white/70">وضعیت: فعال</span>
                     </div>
+                    {/* نمایش تاریخ عضویت */}
+                    {loggedInStudent.createdAt && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <Calendar className="h-4 w-4 text-blue-300" />
+                        <span className="text-sm text-white/70">
+                          عضویت از: {formatPersianDate(loggedInStudent.createdAt)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -228,7 +236,7 @@ const StudentPanel = () => {
 
           {/* Main Cards */}
           <div className="grid lg:grid-cols-2 gap-6 mb-8">
-            {/* Personal Info Card */}
+            {/* Personal Info Card با تاریخ عضویت */}
             <motion.div variants={cardVariants} className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -246,6 +254,12 @@ const StudentPanel = () => {
                   <span className="text-gray-600">موبایل:</span>
                   <span className="font-medium text-gray-800" dir="ltr">{loggedInStudent.phone}</span>
                 </div>
+                {loggedInStudent.createdAt && (
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">تاریخ عضویت:</span>
+                    <span className="font-medium text-gray-800">{formatPersianDate(loggedInStudent.createdAt)}</span>
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
                     <span className="text-gray-600">قد:</span>

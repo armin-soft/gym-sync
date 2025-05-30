@@ -37,6 +37,7 @@ const AppRoutes = () => {
       {/* Legacy management routes - redirect to new structure */}
       <Route path="/students" element={<Navigate to="/Management/Students" replace />} />
       <Route path="/student-history" element={<StudentHistory />} />
+      <Route path="/Management/Student-History" element={<StudentHistory />} />
       <Route path="/student-program/:studentId" element={<StudentProgram />} />
       <Route path="/exercises" element={<Navigate to="/Management/Exercise-Movements" replace />} />
       <Route path="/diet" element={<Navigate to="/Management/Diet-Plan" replace />} />

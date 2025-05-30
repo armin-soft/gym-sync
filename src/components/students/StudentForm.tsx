@@ -42,7 +42,7 @@ export const StudentForm = ({
       weight: student?.weight || "",
       image: student?.image || "/Assets/Image/Place-Holder.svg",
       payment: student?.payment || "",
-      password: student?.password || "",
+      password: student?.password || "", // حفظ گذرواژه
       age: student?.age || "",
       grade: student?.grade || "",
       group: student?.group || "",
@@ -59,32 +59,23 @@ export const StudentForm = ({
         weight: student.weight || "",
         image: student.image || "/Assets/Image/Place-Holder.svg",
         payment: student.payment || "",
-        password: student.password || "",
+        password: student.password || "", // حفظ گذرواژه در ویرایش
         age: student.age || "",
         grade: student.grade || "",
         group: student.group || "",
       });
       setPreviewImage(student.image || "/Assets/Image/Place-Holder.svg");
-    } else {
-      form.reset({
-        name: "",
-        phone: "",
-        height: "",
-        weight: "",
-        image: "/Assets/Image/Place-Holder.svg",
-        payment: "",
-        password: "",
-        age: "",
-        grade: "",
-        group: "",
-      });
-      setPreviewImage("/Assets/Image/Place-Holder.svg");
     }
   }, [student, form]);
 
   const onSubmit = (data: StudentFormValues) => {
     try {
-      onSave(data);
+      // اطمینان از حفظ گذرواژه
+      const submitData = {
+        ...data,
+        password: data.password || student?.password || ""
+      };
+      onSave(submitData);
     } catch (error) {
       console.error("Error saving student:", error);
       toast({
