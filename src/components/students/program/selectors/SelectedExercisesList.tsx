@@ -35,12 +35,17 @@ const SelectedExercisesList: React.FC<SelectedExercisesListProps> = ({
           </div>
         ) : (
           <div className="space-y-3">
-            {selectedExercises.map(exercise => {
+            {selectedExercises.map((exercise, index) => {
               const exerciseInfo = exercises.find(e => e.id === exercise.id);
               return (
                 <div key={exercise.id} className="border rounded-md p-3" dir="rtl">
                   <div className="flex justify-between items-center mb-2">
-                    <div className="font-medium text-right">{exerciseInfo?.name || `تمرین ${toPersianNumbers(exercise.id)}`}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">
+                        {toPersianNumbers(index + 1)}.
+                      </span>
+                      <div className="font-medium text-right">{exerciseInfo?.name || `تمرین ${toPersianNumbers(exercise.id)}`}</div>
+                    </div>
                     <Button 
                       variant="ghost" 
                       size="sm" 
