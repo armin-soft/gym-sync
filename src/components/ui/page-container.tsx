@@ -49,19 +49,18 @@ export const PageContainer = React.memo(({
   // ثابت کردن کلاس‌های استایل برای جلوگیری از رندرهای مجدد
   const containerClasses = React.useMemo(() => {
     return cn(
-      "w-full flex flex-col",
-      fullHeight || fullScreen ? "h-screen min-h-screen" : "min-h-screen",
+      "w-full flex flex-col overflow-hidden",
+      fullHeight || fullScreen ? "h-full min-h-screen" : "h-full",
       fullScreen && "fixed inset-0 z-50",
       withBackground && "relative",
       fullWidth ? "max-w-none" : "max-w-full mx-auto",
-      "overflow-hidden", // جلوگیری از اسکرول خارجی
       className
     );
   }, [fullHeight, fullScreen, withBackground, fullWidth, className]);
   
   const contentClasses = React.useMemo(() => {
     return cn(
-      "w-full flex-1 overflow-y-auto overflow-x-hidden", // اسکرول فقط عمودی
+      "w-full h-full flex-1 overflow-auto",
       getPadding
     );
   }, [getPadding]);

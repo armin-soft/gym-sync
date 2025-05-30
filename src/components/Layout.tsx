@@ -60,7 +60,7 @@ export const Layout = ({ children }: LayoutProps) => {
   }, []);
 
   return (
-    <div className="h-screen w-full bg-background persian-numbers flex flex-col overflow-hidden" dir="rtl">
+    <div className="h-screen w-full overflow-hidden bg-background persian-numbers flex flex-col" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />}
       
       <header 
@@ -95,7 +95,7 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
       </header>
       
-      <main className="flex-1 overflow-hidden w-full">
+      <main className="flex-1 overflow-hidden w-full max-w-full">
         {children}
       </main>
     </div>

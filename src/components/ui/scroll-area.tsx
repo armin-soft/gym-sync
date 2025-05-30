@@ -12,7 +12,7 @@ const ScrollArea = React.forwardRef<
 >(({ className, children, orientation = "vertical", ...props }, ref) => (
   <ScrollAreaPrimitive.Root
     ref={ref}
-    className={cn("relative overflow-hidden h-full w-full", className)}
+    className={cn("relative overflow-hidden", className)}
     {...props}
   >
     <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
@@ -46,7 +46,7 @@ const ScrollBar = React.forwardRef<
     {...props}
   >
     <ScrollAreaPrimitive.ScrollAreaThumb 
-      className="relative flex-1 rounded-full bg-border hover:bg-border/80 transition-colors" 
+      className="relative flex-1 rounded-full bg-border" 
     />
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
 ))
