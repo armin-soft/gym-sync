@@ -46,7 +46,7 @@ const ManagementPage = () => {
   }, []);
 
   return (
-    <PageContainer withBackground fullHeight enableScroll className="w-full">
+    <PageContainer withBackground fullHeight className="w-full">
       <DashboardContent 
         stats={stats}
         currentTime={currentTime}
