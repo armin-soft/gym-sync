@@ -29,6 +29,18 @@ export const UserTypeSelection = () => {
     }, 800);
   };
 
+  const handleHover = (id: string | null) => {
+    if (id === null || id === 'management' || id === 'student') {
+      setHoveredType(id as 'management' | 'student' | null);
+    }
+  };
+
+  const handleSelect = (id: string) => {
+    if (id === 'management' || id === 'student') {
+      handleUserTypeSelection(id);
+    }
+  };
+
   return (
     <PageContainer fullScreen fullHeight withBackground>
       <BackgroundDecorations />
@@ -50,8 +62,8 @@ export const UserTypeSelection = () => {
                   type={type}
                   isHovered={hoveredType === type.id}
                   isSelected={selectedType === type.id}
-                  onHover={setHoveredType}
-                  onSelect={handleUserTypeSelection}
+                  onHover={handleHover}
+                  onSelect={handleSelect}
                 />
               ))}
             </motion.div>
