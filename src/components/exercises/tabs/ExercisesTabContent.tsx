@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Activity, 
   Plus, 
@@ -13,8 +12,7 @@ import {
   LayoutGrid, 
   ListOrdered,
   Dumbbell,
-  FolderTree,
-  Trash2
+  FolderTree 
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { 
@@ -29,7 +27,6 @@ import ExerciseTableMain from "@/components/exercises/table/ExerciseTableMain";
 import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExercisesTabContentProps {
   filteredCategories: ExerciseCategory[];
@@ -90,7 +87,6 @@ export const ExercisesTabContent = ({
 }: ExercisesTabContentProps) => {
   const { toast } = useToast();
   const hasCategories = filteredCategories.length > 0;
-  const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
 
   const handleAddExercise = () => {
     if (filteredCategories.length === 0) {
@@ -102,38 +98,6 @@ export const ExercisesTabContent = ({
       return;
     }
     onAddExercise();
-  };
-
-  const handleSelectAll = () => {
-    if (selectedExercises.length === filteredExercises.length) {
-      setSelectedExercises([]);
-    } else {
-      setSelectedExercises(filteredExercises.map(ex => ex.id));
-    }
-  };
-
-  const handleSelectExercise = (exerciseId: number) => {
-    setSelectedExercises(prev => 
-      prev.includes(exerciseId) 
-        ? prev.filter(id => id !== exerciseId)
-        : [...prev, exerciseId]
-    );
-  };
-
-  const handleDeleteSelected = () => {
-    if (selectedExercises.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "هیچ حرکتی انتخاب نشده است"
-      });
-      return;
-    }
-
-    const success = onDeleteExercises(selectedExercises);
-    if (success) {
-      setSelectedExercises([]);
-    }
   };
 
   if (!hasCategories) {
@@ -157,18 +121,6 @@ export const ExercisesTabContent = ({
         </h3>
         
         <div className="flex items-center gap-2">
-          {selectedExercises.length > 0 && (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleDeleteSelected}
-              className="gap-1"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              حذف {toPersianNumbers(selectedExercises.length)} حرکت
-            </Button>
-          )}
-          
           <Button 
             variant="ghost" 
             size="icon" 
@@ -274,25 +226,6 @@ export const ExercisesTabContent = ({
         </div>
       )}
 
-      {/* انتخاب همه */}
-      {filteredExercises.length > 0 && viewMode === "grid" && (
-        <div className="flex items-center gap-2 mb-4">
-          <Checkbox
-            checked={selectedExercises.length === filteredExercises.length}
-            onCheckedChange={handleSelectAll}
-            id="select-all"
-          />
-          <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
-            انتخاب همه حرکات ({toPersianNumbers(filteredExercises.length)})
-          </label>
-          {selectedExercises.length > 0 && (
-            <span className="text-xs text-muted-foreground">
-              {toPersianNumbers(selectedExercises.length)} انتخاب شده
-            </span>
-          )}
-        </div>
-      )}
-
       <motion.div 
         className="flex-1 min-h-0 overflow-auto"
         initial={{ opacity: 0 }}
@@ -318,18 +251,11 @@ export const ExercisesTabContent = ({
           >
             {filteredExercises.length > 0 ? (
               filteredExercises.map((exercise) => (
-                <motion.div key={exercise.id} variants={itemVariants} className="relative">
-                  <div className="absolute top-2 left-2 z-10">
-                    <Checkbox
-                      checked={selectedExercises.includes(exercise.id)}
-                      onCheckedChange={() => handleSelectExercise(exercise.id)}
-                      className="bg-white/90 border-2"
-                    />
-                  </div>
+                <motion.div key={exercise.id} variants={itemVariants}>
                   <ExerciseCard 
                     exercise={exercise}
                     category={categories.find(cat => cat.id === exercise.categoryId)}
-                    isSelected={selectedExercises.includes(exercise.id)}
+                    isSelected={false}
                     viewMode="grid"
                     onClick={() => onEditExercise(exercise)}
                   />
