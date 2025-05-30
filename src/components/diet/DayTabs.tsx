@@ -20,7 +20,7 @@ export const DayTabs = ({ weekDays, selectedDay, onDayChange, daysWithContent = 
     'یکشنبه': 1,
     'دوشنبه': 2,
     'سه شنبه': 3,
-    'چهارشنبه': 4,
+    'چهار شنبه': 4,
     'پنج شنبه': 5,
     'جمعه': 6
   };

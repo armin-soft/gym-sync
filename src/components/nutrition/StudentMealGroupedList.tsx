@@ -46,7 +46,7 @@ const StudentMealGroupedList: React.FC<StudentMealGroupedListProps> = ({
     "یکشنبه": [],
     "دوشنبه": [],
     "سه شنبه": [],
-    "چهارشنبه": [],
+    "چهار شنبه": [],
     "پنج شنبه": [],
     "جمعه": []
   };

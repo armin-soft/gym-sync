@@ -1,252 +1,319 @@
-
 import React, { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { Search, Save } from "lucide-react";
-import { DayTabs } from "@/components/diet/DayTabs";
-import { WeekDay } from "@/types/meal";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CalendarDays, Clock, Utensils, X, Plus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Meal, MealType, WeekDay } from "@/types/meal";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentDietDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  studentId: string;
   studentName: string;
-  onSave: (mealIds: number[], dayNumber?: number) => boolean;
-  meals: any[];
-  initialMeals?: number[];
-  initialMealsDay1?: number[];
-  initialMealsDay2?: number[];
-  initialMealsDay3?: number[];
-  initialMealsDay4?: number[];
-  initialMealsDay5?: number[];
-  initialMealsDay6?: number[];
-  initialMealsDay7?: number[];
+  availableMeals: Meal[];
+  selectedMeals: number[];
+  onMealsChange: (mealIds: number[]) => void;
 }
 
-const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
+const weekDays: WeekDay[] = [
+  'شنبه',
+  'یکشنبه', 
+  'دوشنبه',
+  'سه شنبه',
+  'چهار شنبه',
+  'پنج شنبه',
+  'جمعه'
+];
+
+const mealTypes: MealType[] = [
+  "صبحانه",
+  "میان وعده صبح", 
+  "ناهار",
+  "میان وعده عصر",
+  "شام",
+  "میان وعده"
+];
+
+const dayOrder: Record<WeekDay, number> = {
+  'شنبه': 0,
+  'یکشنبه': 1,
+  'دوشنبه': 2,
+  'سه شنبه': 3,
+  'چهار شنبه': 4,
+  'پنج شنبه': 5,
+  'جمعه': 6
+};
+
+export const StudentDietDialog = ({
   open,
   onOpenChange,
+  studentId,
   studentName,
-  onSave,
-  meals,
-  initialMeals = [],
-  initialMealsDay1 = [],
-  initialMealsDay2 = [],
-  initialMealsDay3 = [],
-  initialMealsDay4 = [],
-  initialMealsDay5 = [],
-  initialMealsDay6 = [],
-  initialMealsDay7 = [],
-}) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTab, setSelectedTab] = useState<string>("general");
-  const [selectedMeals, setSelectedMeals] = useState<number[]>([]);
-  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
-  const [isSaving, setIsSaving] = useState(false);
-  
-  const weekDays: WeekDay[] = [
-    'شنبه', 
-    'یکشنبه', 
-    'دوشنبه', 
-    'سه شنبه', 
-    'چهارشنبه', 
-    'پنج شنبه', 
-    'جمعه'
-  ];
+  availableMeals,
+  selectedMeals,
+  onMealsChange
+}: StudentDietDialogProps) => {
+  const { toast } = useToast();
+  const [selectedDay, setSelectedDay] = useState<WeekDay>('شنبه');
+  const [selectedMealType, setSelectedMealType] = useState<MealType | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // بارگذاری وعده‌های غذایی اولیه بر اساس تب انتخاب شده
-  useEffect(() => {
-    if (selectedTab === "general") {
-      setSelectedMeals(initialMeals);
-    } else {
-      const dayNumber = parseInt(selectedTab.replace("day", ""));
-      switch(dayNumber) {
-        case 1:
-          setSelectedMeals(initialMealsDay1);
-          break;
-        case 2:
-          setSelectedMeals(initialMealsDay2);
-          break;
-        case 3:
-          setSelectedMeals(initialMealsDay3);
-          break;
-        case 4:
-          setSelectedMeals(initialMealsDay4);
-          break;
-        case 5:
-          setSelectedMeals(initialMealsDay5);
-          break;
-        case 6:
-          setSelectedMeals(initialMealsDay6);
-          break;
-        case 7:
-          setSelectedMeals(initialMealsDay7);
-          break;
-        default:
-          setSelectedMeals([]);
-      }
-    }
-  }, [
-    selectedTab,
-    initialMeals,
-    initialMealsDay1,
-    initialMealsDay2,
-    initialMealsDay3,
-    initialMealsDay4,
-    initialMealsDay5,
-    initialMealsDay6,
-    initialMealsDay7
-  ]);
+  const handleDayChange = (day: WeekDay) => {
+    setSelectedDay(day);
+  };
 
-  // فیلتر وعده‌های غذایی بر اساس جستجو
-  const filteredMeals = meals.filter(meal => {
-    const matchesSearch = 
-      !searchQuery || 
-      meal.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      (meal.description && meal.description.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-    return matchesSearch;
-  });
+  const handleMealTypeChange = (mealType: MealType | 'all') => {
+    setSelectedMealType(mealType);
+  };
 
-  // تغییر وضعیت انتخاب یک وعده غذایی
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
   const toggleMealSelection = (mealId: number) => {
-    setSelectedMeals(prevSelected => {
-      if (prevSelected.includes(mealId)) {
-        return prevSelected.filter(id => id !== mealId);
-      } else {
-        return [...prevSelected, mealId];
+    if (selectedMeals.includes(mealId)) {
+      onMealsChange(selectedMeals.filter(id => id !== mealId));
+    } else {
+      onMealsChange([...selectedMeals, mealId]);
+    }
+  };
+
+  const filteredMeals = React.useMemo(() => {
+    let result = availableMeals;
+
+    if (selectedDay !== 'all') {
+      result = result.filter(meal => meal.day === selectedDay);
+    }
+
+    if (selectedMealType !== 'all') {
+      result = result.filter(meal => meal.type === selectedMealType);
+    }
+
+    if (searchQuery) {
+      const lowerSearchQuery = searchQuery.toLowerCase();
+      result = result.filter(meal =>
+        meal.name.toLowerCase().includes(lowerSearchQuery) ||
+        (meal.description && meal.description.toLowerCase().includes(lowerSearchQuery))
+      );
+    }
+
+    return result;
+  }, [availableMeals, selectedDay, selectedMealType, searchQuery]);
+
+  const groupedMeals = React.useMemo(() => {
+    const grouped: Record<WeekDay, Record<MealType, Meal[]>> = {
+      'شنبه': {
+        "صبحانه": [],
+        "میان وعده صبح": [],
+        "ناهار": [],
+        "میان وعده عصر": [],
+        "شام": [],
+        "میان وعده": []
+      },
+      'یکشنبه': {
+        "صبحانه": [],
+        "میان وعده صبح": [],
+        "ناهار": [],
+        "میان وعده عصر": [],
+        "شام": [],
+        "میان وعده": []
+      },
+      'دوشنبه': {
+        "صبحانه": [],
+        "میان وعده صبح": [],
+        "ناهار": [],
+        "میان وعده عصر": [],
+        "شام": [],
+        "میان وعده": []
+      },
+      'سه شنبه': {
+        "صبحانه": [],
+        "میان وعده صبح": [],
+        "ناهار": [],
+        "میان وعده عصر": [],
+        "شام": [],
+        "میان وعده": []
+      },
+      'چهار شنبه': {
+        "صبحانه": [],
+        "میان وعده صبح": [],
+        "ناهار": [],
+        "میان وعده عصر": [],
+        "شام": [],
+        "میان وعده": []
+      },
+      'پنج شنبه': {
+        "صبحانه": [],
+        "میان وعده صبح": [],
+        "ناهار": [],
+        "میان وعده عصر": [],
+        "شام": [],
+        "میان وعده": []
+      },
+      'جمعه': {
+        "صبحانه": [],
+        "میان وعده صبح": [],
+        "ناهار": [],
+        "میان وعده عصر": [],
+        "شام": [],
+        "میان وعده": []
+      }
+    };
+
+    filteredMeals.forEach(meal => {
+      if (meal.day && meal.type) {
+        grouped[meal.day][meal.type].push(meal);
       }
     });
-  };
 
-  // ذخیره برنامه غذایی
-  const handleSave = () => {
-    setIsSaving(true);
-    
-    try {
-      let dayNumber: number | undefined;
-      if (selectedTab !== "general") {
-        dayNumber = parseInt(selectedTab.replace("day", ""));
-      }
-      
-      const success = onSave(selectedMeals, dayNumber);
-      
-      if (success) {
-        onOpenChange(false);
-      }
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    return grouped;
+  }, [filteredMeals]);
+
+  const totalSelectedMeals = selectedMeals.length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] p-0" dir="rtl">
-        <DialogHeader className="p-6 border-b">
-          <DialogTitle className="text-xl">
-            برنامه غذایی - {studentName}
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>
+            برنامه غذایی {studentName}
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="p-6">
-          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <TabsList className="grid grid-cols-8 mb-4">
-              <TabsTrigger value="general">کلی</TabsTrigger>
-              <TabsTrigger value="day1">روز ۱</TabsTrigger>
-              <TabsTrigger value="day2">روز ۲</TabsTrigger>
-              <TabsTrigger value="day3">روز ۳</TabsTrigger>
-              <TabsTrigger value="day4">روز ۴</TabsTrigger>
-              <TabsTrigger value="day5">روز ۵</TabsTrigger>
-              <TabsTrigger value="day6">روز ۶</TabsTrigger>
-              <TabsTrigger value="day7">روز ۷</TabsTrigger>
-            </TabsList>
-            
-            <div className="space-y-4">
-              <div className="relative">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="جستجو در وعده‌های غذایی..."
-                  className="pr-10"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Filters */}
+          <div className="md:col-span-1 space-y-4">
+            <Card className="p-4">
+              <h4 className="mb-2 font-semibold text-gray-700">
+                روز
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                <Badge
+                  variant={selectedDay === 'all' ? 'secondary' : 'outline'}
+                  onClick={() => handleDayChange('all')}
+                  className="cursor-pointer"
+                >
+                  همه
+                </Badge>
+                {weekDays.map(day => (
+                  <Badge
+                    key={day}
+                    variant={selectedDay === day ? 'secondary' : 'outline'}
+                    onClick={() => handleDayChange(day)}
+                    className="cursor-pointer"
+                  >
+                    {day}
+                  </Badge>
+                ))}
               </div>
-              
-              <ScrollArea className="h-[400px] border rounded-md p-4">
+            </Card>
+
+            <Card className="p-4">
+              <h4 className="mb-2 font-semibold text-gray-700">
+                وعده غذایی
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                <Badge
+                  variant={selectedMealType === 'all' ? 'secondary' : 'outline'}
+                  onClick={() => handleMealTypeChange('all')}
+                  className="cursor-pointer"
+                >
+                  همه
+                </Badge>
+                {mealTypes.map(type => (
+                  <Badge
+                    key={type}
+                    variant={selectedMealType === type ? 'secondary' : 'outline'}
+                    onClick={() => handleMealTypeChange(type)}
+                    className="cursor-pointer"
+                  >
+                    {type}
+                  </Badge>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="p-4">
+              <h4 className="mb-2 font-semibold text-gray-700">
+                جستجو
+              </h4>
+              <input
+                type="text"
+                placeholder="جستجو در نام و توضیحات"
+                className="w-full px-3 py-2 border rounded-md"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </Card>
+          </div>
+
+          {/* Meal List */}
+          <div className="md:col-span-3">
+            <Card className="h-[60vh] flex flex-col">
+              <div className="p-4 flex items-center justify-between">
+                <h4 className="font-semibold text-gray-700">
+                  وعده های غذایی ({toPersianNumbers(filteredMeals.length)})
+                </h4>
+                <span className="text-sm text-gray-500">
+                  {toPersianNumbers(totalSelectedMeals)} وعده انتخاب شده
+                </span>
+              </div>
+              <ScrollArea className="flex-1 p-4">
                 {filteredMeals.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    هیچ وعده غذایی یافت نشد
+                  <div className="text-center text-gray-500">
+                    هیچ وعده غذایی یافت نشد.
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredMeals.map((meal) => (
-                      <div
-                        key={meal.id}
-                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                          selectedMeals.includes(meal.id)
-                            ? "border-primary bg-primary/5"
-                            : "hover:border-primary/50"
-                        }`}
-                        onClick={() => toggleMealSelection(meal.id)}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-medium">{meal.name}</h3>
-                            <div className="text-sm text-muted-foreground mt-1">
-                              {meal.type} - {meal.day || "همه روزها"}
-                            </div>
+                  <div className="space-y-3">
+                    {Object.entries(groupedMeals).sort((a, b) => dayOrder[a[0] as WeekDay] - dayOrder[b[0] as WeekDay]).map(([day, mealTypeGroups]) => (
+                      <div key={day}>
+                        <h5 className="font-semibold text-gray-700 mb-2">
+                          {day}
+                        </h5>
+                        {Object.entries(mealTypeGroups).map(([mealType, meals]) => (
+                          <div key={mealType} className="space-y-1">
+                            {meals.map(meal => (
+                              <motion.div
+                                key={meal.id}
+                                className="flex items-center justify-between p-3 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                                onClick={() => toggleMealSelection(meal.id)}
+                                whileHover={{ scale: 1.02 }}
+                              >
+                                <div>
+                                  <h6 className="font-medium text-gray-800">{meal.name}</h6>
+                                  <p className="text-sm text-gray-500">{meal.description}</p>
+                                </div>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedMeals.includes(meal.id)}
+                                  onChange={() => { }}
+                                  className="h-5 w-5 rounded text-blue-500 focus:ring-blue-500"
+                                />
+                              </motion.div>
+                            ))}
                           </div>
-                          <div
-                            className={`w-5 h-5 rounded-full border-2 ${
-                              selectedMeals.includes(meal.id)
-                                ? "bg-primary border-primary"
-                                : "border-muted-foreground"
-                            }`}
-                          />
-                        </div>
+                        ))}
                       </div>
                     ))}
                   </div>
                 )}
               </ScrollArea>
-            </div>
-          </Tabs>
-        </div>
-        
-        <DialogFooter className="px-6 py-4 border-t">
-          <div className="w-full flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              {selectedMeals.length} وعده غذایی انتخاب شده
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline" 
-                onClick={() => onOpenChange(false)}
-              >
-                انصراف
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={isSaving}
-                className="gap-2"
-              >
-                <Save className="h-4 w-4" />
-                ذخیره برنامه غذایی
-              </Button>
-            </div>
+            </Card>
           </div>
-        </DialogFooter>
+        </div>
+
+        <div className="flex justify-end mt-4">
+          <Button onClick={() => onOpenChange(false)}>
+            بستن
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
 };
-
-export default StudentDietDialog;

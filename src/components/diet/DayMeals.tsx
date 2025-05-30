@@ -22,7 +22,6 @@ const normalizeDay = (day: string): string => {
   // حذف تمام فضاهای خالی و تبدیل به حروف کوچک
   const cleanDay = day.trim().replace(/\s+/g, '').toLowerCase();
   
-  // نگاشت برای استاندارد کردن نوشتار روزها
   const dayMap: Record<string, WeekDay> = {
     'شنبه': 'شنبه',
     'یکشنبه': 'یکشنبه',
@@ -52,7 +51,7 @@ const normalizeDay = (day: string): string => {
   return day;
 };
 
-// تعریف روزهای هفته با ترتیب صحیح و نام‌های استاندارد
+// تعریف روزهای هفته با ترتیب صحیح
 const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
