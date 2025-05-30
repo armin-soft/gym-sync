@@ -93,8 +93,8 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
               >
                 <SupplementCard
                   supplement={supplement}
-                  onEdit={onEditSupplement}
-                  onDelete={onDeleteSupplement}
+                  onEdit={() => onEditSupplement(supplement)}
+                  onDelete={() => onDeleteSupplement(supplement.id)}
                 />
               </motion.div>
             ))}

@@ -52,6 +52,13 @@ const SupplementsPage = () => {
     setCategoryDialogOpen(true);
   };
 
+  const handleDeleteCategory = (categoryId: number) => {
+    const categoryToDelete = relevantCategories.find(c => c.id === categoryId);
+    if (categoryToDelete) {
+      deleteCategory(categoryToDelete);
+    }
+  };
+
   // Supplement dialog handlers
   const handleAddSupplement = () => {
     if (relevantCategories.length === 0) {
@@ -128,7 +135,7 @@ const SupplementsPage = () => {
             categories={relevantCategories}
             onAddCategory={handleAddCategory}
             onEditCategory={handleEditCategory}
-            onDeleteCategory={deleteCategory}
+            onDeleteCategory={handleDeleteCategory}
             supplements={filteredSupplements}
             onAddSupplement={handleAddSupplement}
             onEditSupplement={handleEditSupplement}

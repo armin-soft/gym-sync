@@ -87,10 +87,11 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
                 <div className="p-1">
                   <CategoryTable
                     categories={categories}
-                    onAddCategory={onAddCategory}
-                    onEditCategory={onEditCategory}
-                    onDeleteCategory={onDeleteCategory}
-                    type={type}
+                    onAdd={onAddCategory}
+                    onEdit={onEditCategory}
+                    onDelete={(category) => onDeleteCategory(category.id)}
+                    selectedCategory={selectedCategory || ''}
+                    onSelectCategory={setSelectedCategory}
                   />
                 </div>
               </ScrollArea>
