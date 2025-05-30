@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface PageContainerProps {
   noPadding?: boolean;
   fullHeight?: boolean;
   fullScreen?: boolean;
+  enableScroll?: boolean;
 }
 
 export const PageContainer = React.memo(({ 
@@ -20,7 +22,8 @@ export const PageContainer = React.memo(({
   fullWidth = false,
   noPadding = false,
   fullHeight = false,
-  fullScreen = false
+  fullScreen = false,
+  enableScroll = true
 }: PageContainerProps) => {
   const deviceInfo = useDeviceInfo();
   
@@ -49,28 +52,42 @@ export const PageContainer = React.memo(({
   // ثابت کردن کلاس‌های استایل برای جلوگیری از رندرهای مجدد
   const containerClasses = React.useMemo(() => {
     return cn(
-      "w-full flex flex-col overflow-hidden",
+      "w-full flex flex-col",
       fullHeight || fullScreen ? "h-full min-h-screen" : "h-full",
       fullScreen && "fixed inset-0 z-50",
       withBackground && "relative",
       fullWidth ? "max-w-none" : "max-w-full mx-auto",
+      !enableScroll && "overflow-hidden",
       className
     );
-  }, [fullHeight, fullScreen, withBackground, fullWidth, className]);
+  }, [fullHeight, fullScreen, withBackground, fullWidth, enableScroll, className]);
   
   const contentClasses = React.useMemo(() => {
     return cn(
-      "w-full h-full flex-1 overflow-auto",
+      "w-full flex-1",
       getPadding
     );
   }, [getPadding]);
   
+  if (!enableScroll) {
+    return (
+      <div className={containerClasses}>
+        {backgroundElements}
+        <div className={contentClasses}>
+          {children}
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className={containerClasses}>
       {backgroundElements}
-      <div className={contentClasses}>
-        {children}
-      </div>
+      <ScrollArea className="flex-1 h-full">
+        <div className={contentClasses}>
+          {children}
+        </div>
+      </ScrollArea>
     </div>
   );
 });
