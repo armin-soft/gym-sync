@@ -9,13 +9,13 @@ import { DietContentArea } from "@/components/diet/DietContentArea";
 import { useDietState } from "@/components/diet/hooks";
 import { MealType, WeekDay } from "@/types/meal";
 
-// تعریف ثابت‌ها با روزهای استاندارد
+// تعریف ثابت‌ها با اصلاح فضای خالی
 const weekDays: WeekDay[] = [
   'شنبه', 
   'یکشنبه', 
   'دوشنبه', 
   'سه شنبه', 
-  'چهار شنبه', 
+  'چهارشنبه', 
   'پنج شنبه', 
   'جمعه'
 ] as WeekDay[];

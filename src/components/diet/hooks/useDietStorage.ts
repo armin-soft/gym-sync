@@ -3,12 +3,16 @@ import { useState, useEffect } from "react";
 import { Meal, WeekDay } from "@/types/meal";
 import { useToast } from "@/hooks/use-toast";
 
+/**
+ * استاندارد کردن روزهای هفته برای جلوگیری از مشکلات تکراری - نسخه اصلاح شده
+ */
 export const normalizeDay = (day: string): string => {
   if (!day) return '';
   
   // حذف تمام فضاهای خالی و تبدیل به حروف کوچک
   const cleanDay = day.trim().replace(/\s+/g, '').toLowerCase();
   
+  // نگاشت برای استاندارد کردن نوشتار روزها
   const dayMap: Record<string, WeekDay> = {
     'شنبه': 'شنبه',
     'یکشنبه': 'یکشنبه',
@@ -19,9 +23,9 @@ export const normalizeDay = (day: string): string => {
     'سه‌شنبه': 'سه شنبه',
     'سهشنبه': 'سه شنبه',
     'سه‌ شنبه': 'سه شنبه',
-    'چهارشنبه': 'چهار شنبه',
-    'چهار‌شنبه': 'چهار شنبه',
-    'چهار شنبه': 'چهار شنبه',
+    'چهارشنبه': 'چهارشنبه',
+    'چهار‌شنبه': 'چهارشنبه',
+    'چهار شنبه': 'چهارشنبه',
     'پنج‌شنبه': 'پنج شنبه',
     'پنجشنبه': 'پنج شنبه',
     'جمعه': 'جمعه'
