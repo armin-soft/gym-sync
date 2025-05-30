@@ -8,7 +8,7 @@ export const mealTypeOrder: Record<MealType, number> = {
   "ناهار": 3,
   "میان وعده عصر": 4,
   "شام": 5,
-  "میان وعده": 6
+  "میان وعده شام": 6
 };
 
 export const dayOrder: Record<WeekDay, number> = {

@@ -23,7 +23,7 @@ export const getMealTypeColor = (type: MealType) => {
       return "bg-purple-100 border-purple-200 text-purple-700 dark:bg-purple-950/40 dark:border-purple-800 dark:text-purple-400";
     case "شام":
       return "bg-indigo-100 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-400";
-    case "میان وعده":
+    case "میان وعده شام":
       return "bg-green-100 border-green-200 text-green-700 dark:bg-green-950/40 dark:border-green-800 dark:text-green-400";
     default:
       return "bg-gray-100 border-gray-200 text-gray-700 dark:bg-gray-800/40 dark:border-gray-700 dark:text-gray-400";
@@ -42,7 +42,7 @@ export const getMealTypeIcon = (type: MealType) => {
       return <Coffee className="h-4 w-4 mr-1.5" />;
     case "شام":
       return <Utensils className="h-4 w-4 mr-1.5" />;
-    case "میان وعده":
+    case "میان وعده شام":
       return <Coffee className="h-4 w-4 mr-1.5" />;
     default:
       return <Coffee className="h-4 w-4 mr-1.5" />;
@@ -53,7 +53,7 @@ export const StudentMealFilters: React.FC<StudentMealFiltersProps> = ({
   selectedType,
   onSelectType,
 }) => {
-  const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام", "میان وعده"];
+  const mealTypes: MealType[] = ["صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام", "میان وعده شام"];
 
   return (
     <div className="flex flex-wrap gap-1.5 pb-3">
