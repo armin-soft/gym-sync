@@ -3,16 +3,15 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  LayoutDashboard,
-  User2,
   Users,
   Dumbbell,
-  UtensilsCrossed,
+  Apple,
   Pill,
-  Database,
-  Menu
+  Save,
+  LayoutDashboard,
+  UserRound
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { SidebarProfile } from "./sidebar/SidebarProfile";
 import { SidebarMenuList } from "./sidebar/SidebarMenuList";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
@@ -26,88 +25,55 @@ interface SidebarProps {
 const sidebarItems = [
   {
     title: "داشبورد",
-    description: "نمای کلی باشگاه و آمار",
-    href: "/",
+    description: "نمای کلی و آمار",
+    href: "/Management",
     icon: LayoutDashboard,
   },
   {
     title: "پروفایل مربی",
     description: "مدیریت اطلاعات شخصی",
-    href: "/Coach-Profile",
-    icon: User2,
+    href: "/Management/Coach-Profile",
+    icon: UserRound,
   },
   {
     title: "شاگردان",
-    description: "مدیریت ورزشکاران",
-    href: "/Students",
+    description: "مدیریت شاگردان",
+    href: "/Management/Students",
     icon: Users,
   },
   {
     title: "حرکات تمرینی",
-    description: "مدیریت حرکات و تمرینات",
-    href: "/Exercise-Movements",
+    description: "مدیریت تمرینات",
+    href: "/Management/Exercise-Movements",
     icon: Dumbbell,
   },
   {
-    title: "برنامه های غذایی",
+    title: "برنامه‌های غذایی",
     description: "مدیریت رژیم غذایی",
-    href: "/Diet-Plan",
-    icon: UtensilsCrossed,
+    href: "/Management/Diet-Plan",
+    icon: Apple,
   },
   {
     title: "مکمل و ویتامین",
-    description: "مدیریت مکمل‌های ورزشی",
-    href: "/Supplements-Vitamins",
+    description: "مدیریت مکمل‌ها",
+    href: "/Management/Supplements-Vitamins",
     icon: Pill,
   },
   {
     title: "پشتیبان‌گیری و بازیابی",
     description: "مدیریت داده‌ها",
-    href: "/Backup-Restore",
-    icon: Database,
+    href: "/Management/Backup-Restore",
+    icon: Save,
   },
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const [gymName, setGymName] = useState("");
-  const [trainerProfile, setTrainerProfile] = useState({
-    name: "مربی",
-    image: "",
-    email: ""
-  });
   const deviceInfo = useDeviceInfo();
-  
-  const loadProfile = () => {
-    const savedProfile = localStorage.getItem('trainerProfile');
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        setTrainerProfile({
-          name: profile.name || "مربی",
-          image: profile.image || "",
-          email: profile.email || ""
-        });
-        if (profile.gymName) {
-          setGymName(profile.gymName);
-        }
-      } catch (error) {
-        console.error('Error loading profile from localStorage:', error);
-      }
-    }
-  };
+  const [gymName, setGymName] = useState("");
   
   useEffect(() => {
-    loadProfile();
-    
-    const handleStorageChange = () => {
-      loadProfile();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    const savedGymName = localStorage.getItem("gym_name") || "";
+    setGymName(savedGymName);
   }, []);
   
   // تنظیم عرض منو بر اساس نوع دستگاه
@@ -124,27 +90,27 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         side="right" 
         className={cn(
           getSidebarWidth(),
-          "p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
+          "p-0 border-l shadow-2xl bg-gradient-to-b from-background/95 to-background/98 backdrop-blur-xl"
         )}
         dir="rtl"
       >
         <div className="flex h-full flex-col overflow-hidden" dir="rtl">
           <div dir="rtl">
-            <SidebarProfile 
-              name={trainerProfile.name}
-              email={trainerProfile.email}
-              image={trainerProfile.image}
+            <SidebarProfile
+              name="مدیر سیستم"
+              email="admin@gym.com"
+              image="/Assets/Image/Place-Holder.svg"
               onClose={onClose}
             />
           </div>
           
           <div className="px-4 py-3 border-b bg-muted/30" dir="rtl">
             <h4 className={cn(
-              "text-sm font-medium text-center text-muted-foreground",
+              "text-sm font-medium text-center",
               deviceInfo.isMobile ? "text-xs" : 
               deviceInfo.isTablet ? "text-sm" : "text-base"
             )}>
-              {gymName || "برنامه مدیریت"}
+              پنل مدیریت مربی
             </h4>
           </div>
           
