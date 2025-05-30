@@ -1,26 +1,27 @@
 
 import React from "react";
-import { Tabs } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Pill, Heart } from "lucide-react";
 import { motion } from "framer-motion";
+import { SupplementTabContent } from "./SupplementTabContent";
+import { Supplement } from "@/types/supplement";
 import { SupplementCategory } from "@/types/supplement";
-import { TabsHeader } from "./TabsHeader";
-import { TabContent } from "./TabContent";
-import { SupplementsLoading } from "./SupplementsLoading";
 
 interface SupplementTabsProps {
-  activeTab: 'supplement' | 'vitamin';
+  activeTab: "supplement" | "vitamin";
   onTabChange: (value: string) => void;
   isLoading: boolean;
   categories: SupplementCategory[];
   onAddCategory: () => void;
   onEditCategory: (category: SupplementCategory) => void;
-  onDeleteCategory: (category: SupplementCategory) => void;
-  supplements: any[];
+  onDeleteCategory: (id: number) => void;
+  supplements: Supplement[];
   onAddSupplement: () => void;
-  onEditSupplement: (supplement: any) => void;
+  onEditSupplement: (supplement: Supplement) => void;
   onDeleteSupplement: (id: number) => void;
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
+  selectedCategory: string | null;
+  setSelectedCategory: (category: string | null) => void;
 }
 
 export const SupplementTabs: React.FC<SupplementTabsProps> = ({
@@ -38,39 +39,81 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
   selectedCategory,
   setSelectedCategory,
 }) => {
-  if (isLoading) {
-    return (
-      <div className="w-full h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] md:h-[calc(100vh-6rem)] lg:h-[calc(100vh-7rem)] xl:h-[calc(100vh-8rem)] flex flex-col overflow-hidden rounded-md sm:rounded-lg md:rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-sm sm:shadow-md md:shadow-lg backdrop-blur-sm">
-        <SupplementsLoading type={activeTab} />
-      </div>
-    );
-  }
-  
   return (
-    <div className="w-full h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] md:h-[calc(100vh-6rem)] lg:h-[calc(100vh-7rem)] xl:h-[calc(100vh-8rem)] flex flex-col overflow-hidden rounded-md sm:rounded-lg md:rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 bg-white/50 dark:bg-gray-950/50 shadow-sm sm:shadow-md md:shadow-lg backdrop-blur-sm">
+    <div className="h-full flex flex-col" dir="rtl">
       <Tabs 
         value={activeTab} 
         onValueChange={onTabChange} 
-        className="flex flex-col h-full w-full"
+        className="h-full flex flex-col"
+        dir="rtl"
       >
-        {/* Header */}
-        <TabsHeader activeTab={activeTab} />
-        
-        {/* Content for each tab */}
-        <div className="flex-1 overflow-hidden min-h-0">
-          <TabContent
-            activeTab={activeTab}
-            categories={categories.filter(c => c.type === activeTab)}
-            onAddCategory={onAddCategory}
-            onEditCategory={onEditCategory}
-            onDeleteCategory={onDeleteCategory}
-            supplements={supplements.filter(s => s.type === activeTab)}
-            onAddSupplement={onAddSupplement}
-            onEditSupplement={onEditSupplement}
-            onDeleteSupplement={onDeleteSupplement}
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-          />
+        {/* Tabs Header */}
+        <div className="flex-shrink-0 mb-4">
+          <TabsList className="grid w-full grid-cols-2 h-12 bg-white/80 backdrop-blur-sm border shadow-sm">
+            <TabsTrigger 
+              value="supplement" 
+              className="h-10 flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-500 data-[state=active]:text-white"
+            >
+              <Pill className="h-4 w-4" />
+              <span className="font-medium">مکمل‌ها</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="vitamin" 
+              className="h-10 flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white"
+            >
+              <Heart className="h-4 w-4" />
+              <span className="font-medium">ویتامین‌ها</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        {/* Tabs Content */}
+        <div className="flex-1 min-h-0">
+          <TabsContent value="supplement" className="h-full m-0">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="h-full"
+            >
+              <SupplementTabContent
+                type="supplement"
+                isLoading={isLoading}
+                categories={categories}
+                onAddCategory={onAddCategory}
+                onEditCategory={onEditCategory}
+                onDeleteCategory={onDeleteCategory}
+                supplements={supplements}
+                onAddSupplement={onAddSupplement}
+                onEditSupplement={onEditSupplement}
+                onDeleteSupplement={onDeleteSupplement}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            </motion.div>
+          </TabsContent>
+
+          <TabsContent value="vitamin" className="h-full m-0">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="h-full"
+            >
+              <SupplementTabContent
+                type="vitamin"
+                isLoading={isLoading}
+                categories={categories}
+                onAddCategory={onAddCategory}
+                onEditCategory={onEditCategory}
+                onDeleteCategory={onDeleteCategory}
+                supplements={supplements}
+                onAddSupplement={onAddSupplement}
+                onEditSupplement={onEditSupplement}
+                onDeleteSupplement={onDeleteSupplement}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            </motion.div>
+          </TabsContent>
         </div>
       </Tabs>
     </div>

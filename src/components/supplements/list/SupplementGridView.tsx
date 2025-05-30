@@ -1,13 +1,12 @@
 
 import React from 'react';
+import { Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Supplement } from '@/types/supplement';
-import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
-import { useDeviceInfo } from '@/hooks/use-mobile';
 import { SupplementCard } from './SupplementCard';
-import { Search, Plus, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SupplementGridViewProps {
   supplements: Supplement[];
@@ -26,78 +25,81 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
   searchQuery,
   setSearchQuery,
   onAddSupplement,
-  activeTab
+  activeTab,
 }) => {
-  const deviceInfo = useDeviceInfo();
-  
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    }
+  };
+
   return (
-    <div className="h-full flex flex-col" dir="rtl">
-      {/* Search */}
-      <div className="mb-1 sm:mb-2 md:mb-3 lg:mb-4 relative text-right" dir="rtl">
-        <Search className="absolute right-1.5 sm:right-2 md:right-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400" />
-        <Input
-          type="search"
-          placeholder={`جستجو در ${activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}...`}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pr-6 sm:pr-8 md:pr-10 pl-6 sm:pl-8 md:pl-10 text-right bg-white/80 dark:bg-gray-900/80 text-2xs sm:text-xs md:text-sm h-8 sm:h-9 md:h-10"
-          dir="rtl"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            className="absolute left-1.5 sm:left-2 md:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400 hover:text-gray-600"
-          >
-            <X className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" />
-          </button>
-        )}
-      </div>
-      
-      {/* Add button */}
-      <div className="mb-1 sm:mb-2 md:mb-3 lg:mb-4 flex justify-end">
+    <div className="space-y-4 h-full flex flex-col" dir="rtl">
+      {/* Header Controls */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between flex-shrink-0">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={`جستجو در ${activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'}...`}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pr-10 text-right"
+            dir="rtl"
+          />
+        </div>
         <Button 
           onClick={onAddSupplement}
-          className={cn(
-            "gap-1 sm:gap-1.5 text-white shadow-lg text-2xs sm:text-xs md:text-sm px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 h-7 sm:h-8 md:h-9 lg:h-10",
-            activeTab === 'supplement' 
-              ? "bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800" 
-              : "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800"
-          )}
-          size={deviceInfo.isMobile ? "sm" : "default"}
+          className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
         >
-          <Plus className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 lg:h-4 lg:w-4" />
-          <span className="hidden sm:inline">افزودن {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}</span>
-          <span className="sm:hidden">{activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}</span>
+          <Plus className="h-4 w-4" />
+          افزودن {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}
         </Button>
       </div>
 
-      {/* List of supplements */}
-      <div className="flex-1 overflow-auto">
-        {supplements.length === 0 ? (
-          <div className="text-center py-2 sm:py-4 md:py-6 lg:py-8">
-            <p className="text-gray-600 dark:text-gray-400 text-2xs sm:text-xs md:text-sm">هیچ موردی یافت نشد</p>
-            <Button variant="link" onClick={() => setSearchQuery("")} className="mt-1 sm:mt-2 text-2xs sm:text-xs md:text-sm h-auto p-1">
-              پاک کردن جستجو
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-1 sm:gap-2 md:gap-3 lg:gap-4">
-            {supplements.map((supplement, index) => (
+      {/* Grid Content */}
+      <div className="flex-1 min-h-0">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className={cn(
+            "grid gap-4 h-full",
+            "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          )}
+        >
+          <AnimatePresence>
+            {supplements.map((supplement) => (
               <motion.div
                 key={supplement.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                variants={itemVariants}
+                layout
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="h-fit"
               >
-                <SupplementCard 
+                <SupplementCard
                   supplement={supplement}
-                  onEdit={() => onEditSupplement(supplement)}
-                  onDelete={() => onDeleteSupplement(supplement.id)}
+                  onEdit={onEditSupplement}
+                  onDelete={onDeleteSupplement}
                 />
               </motion.div>
             ))}
-          </div>
-        )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );

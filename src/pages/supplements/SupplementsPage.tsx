@@ -108,62 +108,56 @@ const SupplementsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-950 dark:to-purple-950">
-      <PageContainer 
-        className="mx-auto py-0 px-0 space-y-0 max-w-none h-screen"
-        fullWidth={true}
-        fullHeight={true}
-        withBackground={false}
-        noPadding={true}
-      >
-        <div className="h-full flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-hidden">
-            <div className="h-full flex flex-col">
-              <SupplementsHeader />
-              
-              <div className="flex-1 overflow-hidden px-0.5 sm:px-1 md:px-2 lg:px-3 xl:px-4 pb-0.5 sm:pb-1 md:pb-2 lg:pb-3 xl:pb-4">
-                <SupplementTabs 
-                  activeTab={activeTab}
-                  onTabChange={(value) => {
-                    setActiveTab(value as 'supplement' | 'vitamin');
-                  }}
-                  isLoading={isLoading}
-                  categories={relevantCategories}
-                  onAddCategory={handleAddCategory}
-                  onEditCategory={handleEditCategory}
-                  onDeleteCategory={deleteCategory}
-                  supplements={filteredSupplements}
-                  onAddSupplement={handleAddSupplement}
-                  onEditSupplement={handleEditSupplement}
-                  onDeleteSupplement={deleteSupplement}
-                  selectedCategory={selectedCategory}
-                  setSelectedCategory={setSelectedCategory}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Dialogs */}
-          <SupplementDialog
-            open={supplementDialogOpen}
-            onOpenChange={setSupplementDialogOpen}
-            onSubmit={handleSubmitSupplement}
-            defaultValues={editingSupplement || undefined}
-            mode={editingSupplement ? "edit" : "add"}
-            categories={categories.filter(c => c.type === activeTab)}
-            type={activeTab}
-          />
-
-          <CategoryDialog
-            open={categoryDialogOpen}
-            onOpenChange={setCategoryDialogOpen}
-            onSubmit={handleSubmitCategory}
-            defaultValue={editingCategory?.name}
-            mode={editingCategory ? "edit" : "add"}
+    <PageContainer 
+      fullHeight 
+      fullWidth
+      noPadding
+      scrollable
+      className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-950 dark:to-purple-950"
+    >
+      <div className="h-full flex flex-col">
+        <SupplementsHeader />
+        
+        <div className="flex-1 min-h-0 overflow-hidden px-2 sm:px-3 md:px-4 lg:px-6 pb-2 sm:pb-3 md:pb-4 lg:pb-6">
+          <SupplementTabs 
+            activeTab={activeTab}
+            onTabChange={(value) => {
+              setActiveTab(value as 'supplement' | 'vitamin');
+            }}
+            isLoading={isLoading}
+            categories={relevantCategories}
+            onAddCategory={handleAddCategory}
+            onEditCategory={handleEditCategory}
+            onDeleteCategory={deleteCategory}
+            supplements={filteredSupplements}
+            onAddSupplement={handleAddSupplement}
+            onEditSupplement={handleEditSupplement}
+            onDeleteSupplement={deleteSupplement}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
           />
         </div>
-      </PageContainer>
-    </div>
+
+        {/* Dialogs */}
+        <SupplementDialog
+          open={supplementDialogOpen}
+          onOpenChange={setSupplementDialogOpen}
+          onSubmit={handleSubmitSupplement}
+          defaultValues={editingSupplement || undefined}
+          mode={editingSupplement ? "edit" : "add"}
+          categories={categories.filter(c => c.type === activeTab)}
+          type={activeTab}
+        />
+
+        <CategoryDialog
+          open={categoryDialogOpen}
+          onOpenChange={setCategoryDialogOpen}
+          onSubmit={handleSubmitCategory}
+          defaultValue={editingCategory?.name}
+          mode={editingCategory ? "edit" : "add"}
+        />
+      </div>
+    </PageContainer>
   );
 };
 
