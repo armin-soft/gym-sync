@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Student } from "../StudentTypes";
-import StudentDietDialog from "../diet/StudentDietDialog";
+import { default as StudentDietDialog } from "../diet/StudentDietDialog";
 
 interface DietDialogProps {
   open: boolean;

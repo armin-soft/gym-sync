@@ -57,7 +57,7 @@ const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
     'یکشنبه', 
     'دوشنبه', 
     'سه شنبه', 
-    'چهارشنبه', 
+    'چهار شنبه', 
     'پنج شنبه', 
     'جمعه'
   ];
