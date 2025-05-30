@@ -67,12 +67,6 @@ export const UserTypeSelection = () => {
                 />
               ))}
             </motion.div>
-
-            <motion.div variants={itemVariants} className="text-center">
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                می‌توانید در هر زمان بین پنل‌ها جابجا شوید. تجربه کاربری بهینه‌ای را انتظار داشته باشید.
-              </p>
-            </motion.div>
           </motion.div>
         </div>
       </div>
