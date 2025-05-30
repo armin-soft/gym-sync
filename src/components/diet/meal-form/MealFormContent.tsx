@@ -39,7 +39,6 @@ export const MealFormContent = ({
     },
   });
 
-  // Reset form when meal changes
   useEffect(() => {
     if (meal) {
       form.reset({
@@ -54,7 +53,6 @@ export const MealFormContent = ({
     setIsSubmitting(true);
     
     try {
-      // Ensure required fields are present
       const mealData: Omit<Meal, "id"> = {
         name: data.name!,
         type: data.type! as MealType,
@@ -74,21 +72,23 @@ export const MealFormContent = ({
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        <motion.div variants={itemVariants} className="p-6 space-y-6">
-          <WeekDayField control={form.control} weekDays={weekDays} />
-          <MealTypeField control={form.control} mealTypes={mealTypes} />
-          <MealNameField control={form.control} />
-        </motion.div>
-        
-        <MealFormActions
-          isSubmitting={isSubmitting}
-          onCancel={onCancel}
-          isEdit={!!meal}
-          itemVariants={itemVariants}
-        />
-      </form>
-    </Form>
+    <div className="text-right" dir="rtl">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 text-right">
+          <motion.div variants={itemVariants} className="p-6 space-y-6 text-right">
+            <WeekDayField control={form.control} weekDays={weekDays} />
+            <MealTypeField control={form.control} mealTypes={mealTypes} />
+            <MealNameField control={form.control} />
+          </motion.div>
+          
+          <MealFormActions
+            isSubmitting={isSubmitting}
+            onCancel={onCancel}
+            isEdit={!!meal}
+            itemVariants={itemVariants}
+          />
+        </form>
+      </Form>
+    </div>
   );
 };

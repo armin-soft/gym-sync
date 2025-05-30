@@ -11,23 +11,23 @@ interface MealFormHeaderProps {
 
 export const MealFormHeader: React.FC<MealFormHeaderProps> = ({ isEdit, itemVariants }) => {
   return (
-    <motion.div variants={itemVariants} className="p-6 pb-0">
-      <DialogHeader>
+    <motion.div variants={itemVariants} className="p-6 pb-0 text-right" dir="rtl">
+      <DialogHeader className="text-right">
         <motion.div 
           variants={itemVariants}
-          className="flex items-center gap-3"
+          className="flex items-center justify-end gap-3 text-right"
         >
+          <DialogTitle className="text-2xl font-bold text-foreground text-right">
+            {isEdit ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
+          </DialogTitle>
           {isEdit ? (
             <ChefHat className="h-7 w-7 text-green-500" />
           ) : (
             <Plus className="h-7 w-7 text-green-500" />
           )}
-          <DialogTitle className="text-2xl font-bold text-foreground">
-            {isEdit ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
-          </DialogTitle>
         </motion.div>
-        <motion.div variants={itemVariants}>
-          <DialogDescription id="meal-dialog-description" className="mt-2 text-muted-foreground text-sm">
+        <motion.div variants={itemVariants} className="text-right">
+          <DialogDescription id="meal-dialog-description" className="mt-2 text-muted-foreground text-sm text-right">
             {isEdit 
               ? "اطلاعات وعده غذایی را ویرایش کنید" 
               : "برای افزودن وعده غذایی جدید، فرم زیر را تکمیل کنید"

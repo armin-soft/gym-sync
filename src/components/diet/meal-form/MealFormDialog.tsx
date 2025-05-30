@@ -48,7 +48,6 @@ export const MealFormDialog = ({
 }: MealFormDialogProps) => {
   const isEdit = !!meal;
 
-  // بستن دیالوگ هنگام فشردن کلید ESC
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && open) {
@@ -68,15 +67,16 @@ export const MealFormDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="p-0 border-none bg-transparent shadow-none max-w-2xl" 
+        className="p-0 border-none bg-transparent shadow-none max-w-2xl text-right" 
         dir="rtl"
         aria-describedby="meal-dialog-description"
       >
         <motion.div
-          className="relative flex flex-col rounded-3xl shadow-2xl overflow-hidden w-full max-w-2xl mx-auto bg-white dark:bg-slate-900"
+          className="relative flex flex-col rounded-3xl shadow-2xl overflow-hidden w-full max-w-2xl mx-auto bg-white dark:bg-slate-900 text-right"
           initial="hidden"
           animate="visible"
           variants={dialogVariants}
+          dir="rtl"
         >
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-green-600 to-emerald-600 -z-10" />
           
