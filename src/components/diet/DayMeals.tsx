@@ -109,7 +109,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
       >
         <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full h-full flex flex-col" dir="rtl">
           {/* Header with tabs - fixed at top */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 mb-4">
             <DayTabs 
               weekDays={weekDays} 
               selectedDay={selectedDay} 
@@ -118,10 +118,10 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
             />
           </div>
           
-          {/* Scrollable content area */}
-          <div className="flex-1 overflow-hidden">
+          {/* Scrollable content area with proper height */}
+          <div className="flex-1 min-h-0">
             <ScrollArea className="h-full w-full">
-              <div className="p-4" dir="rtl">
+              <div className="p-1" dir="rtl">
                 {weekDays.map((day) => {
                   const dayMeals = getDayMeals(day);
                   console.log(`*** PASSING TO DayContent for ${day} from localStorage:`, dayMeals.length, 'meals');
