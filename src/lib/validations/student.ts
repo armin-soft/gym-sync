@@ -1,4 +1,5 @@
 
+
 import * as z from "zod";
 
 // Convert Persian numbers to English for validation
@@ -36,11 +37,9 @@ export const studentFormSchema = z.object({
       message: "مبلغ باید عدد باشد" 
     }),
   password: z.string()
-    .optional()
-    .refine(val => !val || val.length >= 8, {
-      message: "گذرواژه باید حداقل ۸ کاراکتر باشد"
-    })
-    .refine(val => !val || /^(?=.*[a-zA-Z])(?=.*\d)/.test(val), {
+    .min(1, { message: "گذرواژه الزامی است" })
+    .min(8, { message: "گذرواژه باید حداقل ۸ کاراکتر باشد" })
+    .refine(val => /^(?=.*[a-zA-Z])(?=.*\d)/.test(val), {
       message: "گذرواژه باید شامل حروف و اعداد باشد"
     }),
   grade: z.string().optional(),
@@ -54,3 +53,4 @@ export const studentFormSchema = z.object({
 });
 
 export type StudentFormValues = z.infer<typeof studentFormSchema>;
+
