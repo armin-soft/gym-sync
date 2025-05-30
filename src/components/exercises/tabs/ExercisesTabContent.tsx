@@ -12,7 +12,8 @@ import {
   LayoutGrid, 
   ListOrdered,
   Dumbbell,
-  FolderTree 
+  FolderTree,
+  Trash2 
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { 
@@ -23,10 +24,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import ExerciseTableMain from "@/components/exercises/table/ExerciseTableMain";
 import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ExercisesTabContentProps {
   filteredCategories: ExerciseCategory[];
@@ -86,6 +89,7 @@ export const ExercisesTabContent = ({
   onSort
 }: ExercisesTabContentProps) => {
   const { toast } = useToast();
+  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const hasCategories = filteredCategories.length > 0;
 
   const handleAddExercise = () => {
@@ -98,6 +102,32 @@ export const ExercisesTabContent = ({
       return;
     }
     onAddExercise();
+  };
+
+  const handleDeleteAll = () => {
+    if (filteredExercises.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "هیچ حرکتی برای حذف وجود ندارد"
+      });
+      return;
+    }
+    setIsDeleteAllDialogOpen(true);
+  };
+
+  const confirmDeleteAll = () => {
+    const allExerciseIds = filteredExercises.map(ex => ex.id);
+    const success = onDeleteExercises(allExerciseIds);
+    
+    if (success) {
+      toast({
+        title: "موفقیت",
+        description: `${toPersianNumbers(filteredExercises.length)} حرکت با موفقیت حذف شد`
+      });
+    }
+    
+    setIsDeleteAllDialogOpen(false);
   };
 
   if (!hasCategories) {
@@ -174,6 +204,18 @@ export const ExercisesTabContent = ({
               <LayoutGrid className="h-4 w-4" />
             )}
           </Button>
+
+          {filteredExercises.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteAll}
+              className="transition-all duration-300 hover:scale-105"
+            >
+              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
+              حذف همه ({toPersianNumbers(filteredExercises.length)})
+            </Button>
+          )}
 
           <Button
             onClick={handleAddExercise}
@@ -282,6 +324,18 @@ export const ExercisesTabContent = ({
           </motion.div>
         )}
       </motion.div>
+
+      {/* Delete All Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={isDeleteAllDialogOpen}
+        onClose={() => setIsDeleteAllDialogOpen(false)}
+        onConfirm={confirmDeleteAll}
+        title="حذف همه حرکات"
+        description={`آیا از حذف همه ${toPersianNumbers(filteredExercises.length)} حرکت نمایش داده شده اطمینان دارید؟ این عملیات قابل بازگشت نیست.`}
+        confirmText="حذف همه"
+        cancelText="انصراف"
+        variant="destructive"
+      />
     </>
   );
 };
