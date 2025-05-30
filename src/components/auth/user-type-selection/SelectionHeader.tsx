@@ -1,44 +1,30 @@
 
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { star } from "lucide-react";
 
 const itemVariants = {
-  hidden: { y: 30, opacity: 0 },
+  hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 24,
+      duration: 0.5,
     },
   },
 };
 
 export const SelectionHeader = () => {
   return (
-    <motion.div variants={itemVariants} className="space-y-6">
-      <div className="relative">
-        <motion.div
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ duration: 0.8, type: "spring", stiffness: 200 }}
-          className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-2xl mb-6"
-        >
-          <Sparkles className="w-10 h-10 text-white" />
-        </motion.div>
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 w-20 h-20 border-2 border-dashed border-purple-300 rounded-2xl"
-        />
+    <motion.div variants={itemVariants} className="space-y-4">
+      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg mb-4">
+        <star className="w-8 h-8 text-white" />
       </div>
       
-      <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+      <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
         انتخاب نوع ورود
       </h1>
-      <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-        لطفا نوع کاربری خود را انتخاب کنید تا به بهترین تجربه دسترسی پیدا کنید
+      <p className="text-lg text-muted-foreground max-w-lg mx-auto">
+        لطفا نوع کاربری خود را انتخاب کنید
       </p>
     </motion.div>
   );
