@@ -1,22 +1,30 @@
 
 export interface TrainerProfile {
+  name: string;
+  fullName: string;
+  bio: string;
+  phone: string;
+  email: string;
+  password: string;
   image: string;
-  name?: string;
-  phone?: string;
-  email?: string;
-  specialty?: string;
-  experience?: string;
-  certificate?: string;
-  bio?: string;
-  gymName?: string;
-  gymAddress?: string;
-  gymPhone?: string;
-  gymEmail?: string;
-  workingHours?: string;
-  facilities?: string;
-  instagram?: string;
-  telegram?: string;
-  whatsapp?: string;
-  youtube?: string;
-  website?: string;
+  gymName: string;
+  gymDescription: string;
+  gymAddress: string;
+  instagram: string;
+  website: string;
 }
+
+export const defaultProfile: TrainerProfile = {
+  name: "",
+  fullName: "",
+  bio: "",
+  phone: "",
+  email: "MohammadAbbasiFix@gmail.com",
+  password: "Mohammad@1404",
+  image: "/Assets/Image/Place-Holder.svg",
+  gymName: "",
+  gymDescription: "",
+  gymAddress: "",
+  instagram: "",
+  website: ""
+};

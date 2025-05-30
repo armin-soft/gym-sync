@@ -1,137 +1,160 @@
 
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { DashboardLayout } from "@/components/dashboard/layout/DashboardLayout";
-import { ProfileSidebar } from "@/components/trainer/ProfileSidebar";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import type { TrainerProfile } from "@/types/trainer";
+import { defaultProfile } from "@/types/trainer";
 import { ProfileForm } from "@/components/trainer/ProfileForm";
 import { PageContainer } from "@/components/ui/page-container";
-import { motion } from "framer-motion";
+import { ProfileHeader } from "@/components/trainer/ProfileHeader";
+import { ProfileSidebar } from "@/components/trainer/ProfileSidebar";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
-import { TrainerProfile } from "@/types/trainer";
-import { useState, useEffect } from "react";
+import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const TrainerProfilePage = () => {
-  const navigate = useNavigate();
+const TrainerProfile = () => {
   const { toast } = useToast();
-  const [activeSection, setActiveSection] = useState("personal");
-  const [isSaving, setIsSaving] = useState(false);
+  const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
-  
-  const [profile, setProfile] = useState<TrainerProfile>({
-    image: localStorage.getItem('trainer_image') || '',
-    name: localStorage.getItem('trainer_name') || '',
-    phone: localStorage.getItem('trainer_phone') || '',
-    email: localStorage.getItem('trainer_email') || '',
-    specialty: localStorage.getItem('trainer_specialty') || '',
-    experience: localStorage.getItem('trainer_experience') || '',
-    certificate: localStorage.getItem('trainer_certificate') || '',
-    bio: localStorage.getItem('trainer_bio') || '',
-    gymName: localStorage.getItem('gym_name') || '',
-    gymAddress: localStorage.getItem('gym_address') || '',
-    gymPhone: localStorage.getItem('gym_phone') || '',
-    gymEmail: localStorage.getItem('gym_email') || '',
-    workingHours: localStorage.getItem('gym_working_hours') || '',
-    facilities: localStorage.getItem('gym_facilities') || '',
-    instagram: localStorage.getItem('trainer_instagram') || '',
-    telegram: localStorage.getItem('trainer_telegram') || '',
-    whatsapp: localStorage.getItem('trainer_whatsapp') || '',
-    youtube: localStorage.getItem('trainer_youtube') || '',
-    website: localStorage.getItem('trainer_website') || '',
-  });
+  const [activeSection, setActiveSection] = useState<string>("personal");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const deviceInfo = useDeviceInfo();
+
+  // Load saved profile from localStorage
+  useEffect(() => {
+    try {
+      const savedProfile = localStorage.getItem('trainerProfile');
+      if (savedProfile) {
+        const parsed = JSON.parse(savedProfile);
+        setProfile(parsed);
+      }
+    } catch (error) {
+      console.error('Error loading profile from localStorage:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا در بارگذاری اطلاعات",
+        description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
+      });
+    }
+  }, []);
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
     setProfile(prev => ({ ...prev, [key]: value }));
-    localStorage.setItem(`trainer_${key}`, value);
-    if (key.startsWith('gym')) {
-      localStorage.setItem(key, value);
+    // Clear error when user starts typing
+    if (errors[key]) {
+      setErrors(prev => ({ ...prev, [key]: '' }));
     }
-  };
-
-  const handleImageChange = (image: string) => {
-    setProfile(prev => ({ ...prev, image }));
-    localStorage.setItem('trainer_image', image);
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     
     try {
-      // Save all profile data to localStorage
-      Object.entries(profile).forEach(([key, value]) => {
-        if (key.startsWith('gym')) {
-          localStorage.setItem(key, value);
-        } else {
-          localStorage.setItem(`trainer_${key}`, value);
-        }
-      });
-
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      localStorage.setItem('trainerProfile', JSON.stringify(profile));
+      // Force update of any components that depend on the gym name
+      window.dispatchEvent(new Event('storage'));
+      
       toast({
-        title: "موفقیت",
-        description: "پروفایل با موفقیت ذخیره شد",
+        title: "ذخیره موفق",
+        description: "اطلاعات پروفایل با موفقیت ذخیره شد"
       });
     } catch (error) {
+      console.error('Error saving profile to localStorage:', error);
       toast({
         variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره اطلاعات",
+        title: "خطا در ذخیره اطلاعات",
+        description: "مشکلی در ذخیره اطلاعات پیش آمده است"
       });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
-  };
+  // Decorative elements for the background
+  const BackgroundElements = () => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Gradient blobs */}
+      <div className="absolute -top-40 -right-20 w-80 h-80 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full" />
+      <div className="absolute top-1/4 -left-40 w-80 h-80 bg-gradient-to-br from-sky-500/10 to-blue-500/5 blur-3xl rounded-full" />
+      <div className="absolute -bottom-20 right-20 w-60 h-60 bg-gradient-to-tr from-pink-500/10 to-rose-500/5 blur-3xl rounded-full" />
+      
+      {/* Animated sparkles */}
+      {Array.from({ length: 8 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{ 
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            opacity: 0.1,
+            scale: 0.5
+          }}
+          animate={{
+            opacity: [0.2, 0.5, 0.2],
+            scale: [0.6, 1, 0.6]
+          }}
+          transition={{
+            duration: Math.random() * 4 + 3,
+            repeat: Infinity,
+            delay: Math.random() * 5
+          }}
+        >
+          <Sparkles className={cn(
+            "text-indigo-400/30",
+            i % 3 === 0 ? "w-4 h-4" : i % 3 === 1 ? "w-5 h-5" : "w-3 h-3"
+          )} />
+        </motion.div>
+      ))}
+    </div>
+  );
 
   return (
-    <DashboardLayout>
-      <PageContainer withBackground fullHeight>
-        <motion.div 
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-          className="min-h-full p-4 lg:p-6 overflow-auto"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <ProfileSidebar
-                profile={profile}
-                onImageChange={handleImageChange}
-                activeSection={activeSection}
-                onTabChange={setActiveSection}
-              />
-            </div>
+    <PageContainer withBackground fullWidth fullHeight className="w-full overflow-auto">
+      <BackgroundElements />
+      
+      <motion.div 
+        className="w-full h-full flex flex-col space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Profile Header */}
+        <ProfileHeader />
 
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              <ProfileForm
-                profile={profile}
-                onUpdate={handleUpdate}
-                onSave={handleSave}
-                errors={errors}
-                setErrors={setErrors}
-                validFields={validFields}
-                setValidFields={setValidFields}
-                activeSection={activeSection}
-                isSaving={isSaving}
-              />
-            </div>
-          </div>
-        </motion.div>
-      </PageContainer>
-    </DashboardLayout>
+        {/* Main Content */}
+        <div className={
+          deviceInfo.isMobile 
+            ? "flex flex-col space-y-6" 
+            : "grid lg:grid-cols-[320px_1fr] xl:grid-cols-[380px_1fr] gap-6 md:gap-8"
+        }>
+          {/* Sidebar */}
+          <ProfileSidebar
+            profile={profile}
+            onImageChange={(image) => handleUpdate('image', image)} 
+            activeSection={activeSection}
+            onTabChange={setActiveSection}
+          />
+
+          {/* Form */}
+          <ProfileForm
+            profile={profile}
+            onUpdate={handleUpdate}
+            onSave={handleSave}
+            errors={errors}
+            setErrors={setErrors}
+            validFields={validFields}
+            setValidFields={setValidFields}
+            activeSection={activeSection}
+            isSaving={isSaving}
+          />
+        </div>
+      </motion.div>
+    </PageContainer>
   );
 };
 
-export default TrainerProfilePage;
+export default TrainerProfile;
