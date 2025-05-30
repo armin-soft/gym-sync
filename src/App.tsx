@@ -24,24 +24,25 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  const [showUserTypeSelection, setShowUserTypeSelection] = useState(false);
+  const [showUserTypeSelection, setShowUserTypeSelection] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
-    // Check if user has already selected a type and is not on Panel route
+    // Check if user has already selected a type
     const hasSelectedType = localStorage.getItem("hasSelectedUserType");
     const isOnStudentRoute = location.pathname.startsWith("/Students");
-    const isOnManagementRoute = location.pathname.startsWith("/Management") || location.pathname === "/";
+    const isOnManagementRoute = location.pathname.startsWith("/Management");
     
-    // If not on student route and hasn't selected type, show selection
-    if (!hasSelectedType && !isOnStudentRoute && !isOnManagementRoute) {
+    // Always show selection if no type is selected, regardless of route
+    if (!hasSelectedType) {
       setShowUserTypeSelection(true);
     } else {
+      // If type is selected, hide selection and show appropriate content
       setShowUserTypeSelection(false);
     }
   }, [location.pathname]);
 
-  // Show user type selection for routes when no type is selected
+  // Show user type selection when no type is selected
   if (showUserTypeSelection) {
     return <UserTypeSelection />;
   }
