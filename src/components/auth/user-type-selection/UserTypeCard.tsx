@@ -1,8 +1,7 @@
-
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { circle } from "lucide-react";
+import { Circle } from "lucide-react";
 
 interface UserType {
   id: string;
@@ -68,7 +67,7 @@ export const UserTypeCard = ({
                 key={feature}
                 className="flex items-center justify-center text-xs text-gray-600 dark:text-gray-300"
               >
-                <circle className="w-2 h-2 ml-2 text-green-500 fill-current" />
+                <Circle className="w-2 h-2 ml-2 text-green-500 fill-current" />
                 {feature}
               </div>
             ))}
