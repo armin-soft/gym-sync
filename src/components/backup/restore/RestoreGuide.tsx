@@ -38,7 +38,7 @@ export function RestoreGuide() {
         راهنمای بازیابی
       </h4>
       
-      <div className="space-y-4 mb-6">
+      <div className="space-y-4 mb-6 max-h-96 overflow-y-auto pr-2">
         {steps.map((step, index) => (
           <motion.div
             key={index}
