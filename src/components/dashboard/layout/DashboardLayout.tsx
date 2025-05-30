@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { BackgroundDecorations } from "../background/BackgroundDecorations";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -36,20 +37,22 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const deviceInfo = useDeviceInfo();
 
   return (
-    <motion.div 
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      className="w-full h-full overflow-auto p-2 xs:p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6 relative"
-    >
+    <div className="w-full h-full relative overflow-hidden">
       {/* Background decorations */}
       <BackgroundDecorations />
       
-      {/* Content */}
-      <div className="relative z-10">
-        {children}
-      </div>
-    </motion.div>
+      <ScrollArea className="h-full w-full">
+        <motion.div 
+          variants={pageVariants}
+          initial="initial"
+          animate="animate"
+          className="w-full p-2 xs:p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6 relative z-10"
+        >
+          {/* Content */}
+          {children}
+        </motion.div>
+      </ScrollArea>
+    </div>
   );
 };
 

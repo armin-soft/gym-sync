@@ -1,3 +1,4 @@
+
 @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
 @tailwind base;
 @tailwind components;
@@ -16,6 +17,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   direction: rtl;
+  overflow: hidden; /* جلوگیری از اسکرول body */
 }
 
 #root {
@@ -53,6 +55,7 @@ code {
   }
 }
 
+/* تنظیمات اسکرول برای تمام پروژه */
 .scrollbar-thin {
   scrollbar-width: thin;
 }
@@ -63,4 +66,30 @@ code {
 
 .dark .scrollbar-thumb-slate-700 {
   scrollbar-color: #334155 transparent;
+}
+
+/* حذف اسکرول‌بار پیش‌فرض در webkit */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
