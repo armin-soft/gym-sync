@@ -7,6 +7,7 @@ import { HistoryTabs } from "./components/HistoryTabs";
 import { HistoryHeader } from "./components/HistoryHeader";
 import { HistoryFilters } from "./components/HistoryFilters";
 import { ClearHistoryDialog } from "./components/ClearHistoryDialog";
+import { motion } from "framer-motion";
 
 interface StudentHistoryProps {
   students: Student[];
@@ -92,39 +93,73 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({
   };
 
   return (
-    <Card className="w-full h-full backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 rounded-3xl overflow-hidden">
-      <div className="p-4 md:p-6 flex flex-col h-full">
-        <HistoryHeader 
-          entriesCount={filteredEntries.length} 
-          isHistoryEmpty={historyEntries.length === 0}
-          onClearHistory={() => setIsAlertOpen(true)}
-        />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="w-full h-full"
+    >
+      <Card className="w-full h-full relative overflow-hidden border-0 shadow-2xl shadow-primary/5">
+        {/* Modern Glass Background with Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/90 to-white/85 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-900/85 backdrop-blur-xl" />
         
-        <HistoryFilters 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          timeRange={timeRange}
-          setTimeRange={setTimeRange}
-          selectedStudent={selectedStudent}
-          setSelectedStudent={setSelectedStudent}
-          students={students}
-        />
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -translate-y-48 translate-x-48" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-secondary/10 to-transparent rounded-full blur-3xl translate-y-32 -translate-x-32" />
         
-        <HistoryTabs 
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          filteredEntries={filteredEntries}
-          historyEntries={historyEntries}
-          students={students}
-          handleClearFilters={handleClearFilters}
-        />
-      </div>
+        {/* Content Container */}
+        <div className="relative z-10 p-6 md:p-8 flex flex-col h-full">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <HistoryHeader 
+              entriesCount={filteredEntries.length} 
+              isHistoryEmpty={historyEntries.length === 0}
+              onClearHistory={() => setIsAlertOpen(true)}
+            />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <HistoryFilters 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              timeRange={timeRange}
+              setTimeRange={setTimeRange}
+              selectedStudent={selectedStudent}
+              setSelectedStudent={setSelectedStudent}
+              students={students}
+            />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex-1"
+          >
+            <HistoryTabs 
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              filteredEntries={filteredEntries}
+              historyEntries={historyEntries}
+              students={students}
+              handleClearFilters={handleClearFilters}
+            />
+          </motion.div>
+        </div>
+      </Card>
 
       <ClearHistoryDialog 
         isOpen={isAlertOpen} 
         onOpenChange={setIsAlertOpen}
         onClearHistory={handleClearHistory}
       />
-    </Card>
+    </motion.div>
   );
 };
