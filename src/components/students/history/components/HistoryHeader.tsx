@@ -49,7 +49,7 @@ export const HistoryHeader: React.FC<HistoryHeaderProps> = ({
           >
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full border border-primary/20">
               <Activity className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">
+              <span className="text-sm font-medium text-primary" style={{ direction: 'rtl' }}>
                 {toPersianNumbers(entriesCount)} فعالیت
               </span>
             </div>

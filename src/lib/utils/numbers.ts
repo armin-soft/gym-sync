@@ -25,7 +25,7 @@ export function formatPrice(price: number | string): string {
   return `${formattedPrice} تومان`;
 }
 
-// Format date to Persian
+// Format date to Persian with RTL alignment
 export function formatPersianDate(date: Date | string | number): string {
   try {
     const dateObj = new Date(date);

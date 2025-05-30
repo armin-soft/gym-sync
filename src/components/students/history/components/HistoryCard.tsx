@@ -101,7 +101,7 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
               >
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-slate-100/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-700/80 rounded-full border border-slate-200/50 dark:border-slate-600/50">
                   <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-xs font-medium text-muted-foreground">
+                  <span className="text-xs font-medium text-muted-foreground" style={{ direction: 'rtl' }}>
                     {formatDate(entry.timestamp)}
                   </span>
                 </div>
@@ -122,7 +122,7 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
               transition={{ delay: 0.3 }}
               className="bg-gradient-to-r from-slate-50/80 to-slate-100/40 dark:from-slate-800/40 dark:to-slate-700/20 rounded-xl p-4 border border-slate-200/30 dark:border-slate-600/20"
             >
-              <p className="text-sm text-foreground/80 leading-relaxed font-medium">
+              <p className="text-sm text-foreground/80 leading-relaxed font-medium" style={{ direction: 'rtl', textAlign: 'right' }}>
                 {entry.description}
               </p>
             </motion.div>

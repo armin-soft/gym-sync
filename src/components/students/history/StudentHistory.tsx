@@ -7,6 +7,7 @@ import { HistoryTabs } from "./components/HistoryTabs";
 import { HistoryHeader } from "./components/HistoryHeader";
 import { HistoryFilters } from "./components/HistoryFilters";
 import { ClearHistoryDialog } from "./components/ClearHistoryDialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 
 interface StudentHistoryProps {
@@ -97,9 +98,9 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="w-full h-full"
+      className="w-full min-h-full flex flex-col"
     >
-      <Card className="w-full h-full relative overflow-hidden border-0 shadow-2xl shadow-primary/5">
+      <Card className="w-full flex-1 relative overflow-hidden border-0 shadow-2xl shadow-primary/5">
         {/* Modern Glass Background with Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/90 to-white/85 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-900/85 backdrop-blur-xl" />
         
@@ -108,50 +109,58 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-secondary/10 to-transparent rounded-full blur-3xl translate-y-32 -translate-x-32" />
         
         {/* Content Container */}
-        <div className="relative z-10 p-6 md:p-8 flex flex-col h-full">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <HistoryHeader 
-              entriesCount={filteredEntries.length} 
-              isHistoryEmpty={historyEntries.length === 0}
-              onClearHistory={() => setIsAlertOpen(true)}
-            />
-          </motion.div>
+        <div className="relative z-10 flex flex-col h-full">
+          <div className="p-6 md:p-8 flex-shrink-0">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <HistoryHeader 
+                entriesCount={filteredEntries.length} 
+                isHistoryEmpty={historyEntries.length === 0}
+                onClearHistory={() => setIsAlertOpen(true)}
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <HistoryFilters 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                timeRange={timeRange}
+                setTimeRange={setTimeRange}
+                selectedStudent={selectedStudent}
+                setSelectedStudent={setSelectedStudent}
+                students={students}
+              />
+            </motion.div>
+          </div>
           
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <HistoryFilters 
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              timeRange={timeRange}
-              setTimeRange={setTimeRange}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
-              students={students}
-            />
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex-1"
-          >
-            <HistoryTabs 
-              activeTab={activeTab}
-              onTabChange={handleTabChange}
-              filteredEntries={filteredEntries}
-              historyEntries={historyEntries}
-              students={students}
-              handleClearFilters={handleClearFilters}
-            />
-          </motion.div>
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="px-6 md:px-8 pb-6 md:pb-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="h-full"
+                >
+                  <HistoryTabs 
+                    activeTab={activeTab}
+                    onTabChange={handleTabChange}
+                    filteredEntries={filteredEntries}
+                    historyEntries={historyEntries}
+                    students={students}
+                    handleClearFilters={handleClearFilters}
+                  />
+                </motion.div>
+              </div>
+            </ScrollArea>
+          </div>
         </div>
       </Card>
 
