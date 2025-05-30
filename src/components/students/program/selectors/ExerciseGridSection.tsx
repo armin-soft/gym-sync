@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dumbbell, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ExerciseWithSets } from "@/types/exercise";
 import SelectedExercisesList from "./SelectedExercisesList";
 import ExerciseListDisplay from "./ExerciseListDisplay";
@@ -57,7 +58,7 @@ const ExerciseGridSection: React.FC<ExerciseGridSectionProps> = ({
                   تمرین‌های انتخاب شده
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  برای {dayLabel} • {selectedExercises.length} تمرین
+                  برای {dayLabel} • {toPersianNumbers(selectedExercises.length)} تمرین
                 </p>
               </div>
             </div>
@@ -103,7 +104,7 @@ const ExerciseGridSection: React.FC<ExerciseGridSectionProps> = ({
                   لیست تمرین‌ها
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {filteredExercises.length} تمرین موجود
+                  {toPersianNumbers(filteredExercises.length)} تمرین موجود
                 </p>
               </div>
             </div>
