@@ -1,11 +1,10 @@
-
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { StudentLayout } from "@/components/student-panel/StudentLayout";
 import { useStudents } from "@/hooks/students";
 import { PageContainer } from "@/components/ui/page-container";
 import { motion } from "framer-motion";
-import { Pill, Capsule } from "lucide-react";
+import { Pill, PillBottle } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
@@ -190,7 +189,7 @@ const StudentSupplements = () => {
                     {vitamins.length === 0 ? (
                       <div className="text-center py-12">
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Capsule className="h-8 w-8 text-gray-400" />
+                          <PillBottle className="h-8 w-8 text-gray-400" />
                         </div>
                         <h4 className="text-lg font-medium text-gray-600 mb-2">هیچ ویتامینی تعریف نشده</h4>
                         <p className="text-gray-500">برای شما ویتامینی تعیین نشده است</p>
