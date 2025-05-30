@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
@@ -46,7 +47,6 @@ const AppRoutes = () => {
 
       {/* Student Panel Routes - Enhanced for program display */}
       <Route path="/Students" element={<StudentPanel />} />
-      <Route path="/Students/dashboard" element={<StudentPanel />} />
       <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
       <Route path="/Students/profile" element={<StudentProfile />} />
       <Route path="/Students/exercises" element={<StudentExercises />} />

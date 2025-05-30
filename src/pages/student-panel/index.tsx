@@ -1,253 +1,334 @@
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { PageContainer } from '@/components/ui/page-container';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { StudentLogin } from "@/components/student-panel/StudentLogin";
+import { useStudents } from "@/hooks/students";
+import { Student } from "@/components/students/StudentTypes";
+import { PageContainer } from "@/components/ui/page-container";
+import { StudentLayout } from "@/components/student-panel/StudentLayout";
+import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 import { 
   User, 
   Dumbbell, 
-  UtensilsCrossed, 
+  Apple, 
   Pill, 
   Calendar,
+  Trophy,
   Target,
   TrendingUp,
-  Phone,
-  Weight,
-  Ruler
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useStudentPrograms } from '@/hooks/useStudentPrograms';
-import { useStudentAuth } from '@/hooks/useStudentAuth';
-import { toPersianNumbers } from '@/lib/utils/numbers';
+  Clock,
+  Heart,
+  Zap
+} from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+import { formatMeasurement, calculateBMI, getBMICategory, getStudentProgress } from "@/utils/studentUtils";
 
-const StudentPanelIndex = () => {
-  const { studentId } = useParams();
+const StudentPanel = () => {
+  const { studentId } = useParams<{ studentId?: string }>();
   const navigate = useNavigate();
-  const { authData } = useStudentAuth();
-  const { currentStudentProgram } = useStudentPrograms(Number(studentId));
-  const [student, setStudent] = useState<any>(null);
+  const { toast } = useToast();
+  const { students } = useStudents();
+  const [loggedInStudent, setLoggedInStudent] = useState<Student | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Load student data
-    try {
-      const studentsData = localStorage.getItem('students');
-      if (studentsData) {
-        const students = JSON.parse(studentsData);
-        const foundStudent = students.find((s: any) => s.id === Number(studentId));
-        if (foundStudent) {
-          setStudent(foundStudent);
+    const studentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
+    const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+    
+    if (studentLoggedIn && loggedInStudentId) {
+      const student = students.find(s => s.id.toString() === loggedInStudentId);
+      if (student) {
+        setLoggedInStudent(student);
+        setIsLoggedIn(true);
+        
+        if (studentId && studentId !== student.id.toString()) {
+          navigate(`/panel/dashboard/${student.id}`);
         }
+      } else {
+        handleLogout();
       }
-    } catch (error) {
-      console.error('Error loading student data:', error);
     }
-  }, [studentId]);
+  }, [students, studentId, navigate]);
 
-  if (!student) {
-    return (
-      <PageContainer fullHeight className="flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-            اطلاعات شاگرد یافت نشد
-          </h2>
-        </div>
-      </PageContainer>
-    );
+  const handleLogout = () => {
+    localStorage.removeItem("studentLoggedIn");
+    localStorage.removeItem("loggedInStudentId");
+    setIsLoggedIn(false);
+    setLoggedInStudent(null);
+    navigate("/panel");
+    toast({
+      title: "خروج موفق",
+      description: "با موفقیت از حساب کاربری خارج شدید",
+    });
+  };
+
+  if (!isLoggedIn || !loggedInStudent) {
+    return <StudentLogin />;
   }
 
-  const totalExercises = currentStudentProgram?.exercises?.length || 0;
-  const totalMeals = currentStudentProgram?.diet?.length || 0;
-  const totalSupplements = (currentStudentProgram?.supplements?.length || 0) + (currentStudentProgram?.vitamins?.length || 0);
+  // Calculate real data
+  const totalExercises = (loggedInStudent.exercisesDay1?.length || 0) + 
+                        (loggedInStudent.exercisesDay2?.length || 0) + 
+                        (loggedInStudent.exercisesDay3?.length || 0) + 
+                        (loggedInStudent.exercisesDay4?.length || 0) + 
+                        (loggedInStudent.exercisesDay5?.length || 0);
+  
+  const totalMeals = loggedInStudent.meals?.length || 0;
+  const totalSupplements = (loggedInStudent.supplements?.length || 0) + (loggedInStudent.vitamins?.length || 0);
+  const studentProgress = getStudentProgress(loggedInStudent);
+  const bmi = calculateBMI(loggedInStudent.weight, loggedInStudent.height);
+  const bmiCategory = bmi ? getBMICategory(bmi) : '';
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { scale: 0.95, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
 
   return (
-    <PageContainer fullHeight className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-blue-950 dark:via-gray-900 dark:to-indigo-950">
-      <div className="container mx-auto p-4 h-full" dir="rtl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
+    <StudentLayout student={loggedInStudent} onLogout={handleLogout}>
+      <PageContainer withBackground fullHeight>
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="min-h-full p-4 lg:p-6 overflow-auto"
         >
-          {/* Welcome Header */}
-          <div className="text-center">
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="mb-4"
-            >
-              <Avatar className="w-24 h-24 mx-auto border-4 border-blue-200 dark:border-blue-800">
-                <AvatarImage src={student.image} alt={student.name} />
-                <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-                  {student.name?.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-            </motion.div>
-            <h1 className="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-2">
-              خوش آمدید {student.name}
-            </h1>
-            <p className="text-blue-600 dark:text-blue-400">
-              داشبورد شخصی شما
-            </p>
-          </div>
-
-          {/* Student Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Weight className="h-5 w-5 text-green-600" />
-                  <span className="font-medium text-green-800 dark:text-green-200">وزن</span>
+          {/* Hero Section */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 p-6 md:p-8 text-white shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-transparent"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-32 -translate-y-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl transform -translate-x-24 translate-y-24"></div>
+              
+              <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between">
+                <div className="flex items-center gap-4 mb-4 md:mb-0">
+                  <div className="relative">
+                    <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg ring-4 ring-white/20">
+                      <img 
+                        src={loggedInStudent.image || "/Assets/Image/Place-Holder.svg"} 
+                        alt={loggedInStudent.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-1">سلام، {loggedInStudent.name}! 👋</h1>
+                    <p className="text-white/80 text-lg">آماده برای تمرین امروز هستید؟</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Heart className="h-4 w-4 text-red-400" />
+                      <span className="text-sm text-white/70">وضعیت: فعال</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-2xl font-bold text-green-600">
-                  {toPersianNumbers(student.weight)} کیلو
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Ruler className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-blue-800 dark:text-blue-200">قد</span>
+                
+                <div className="flex flex-col gap-2">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold">{toPersianNumbers(studentProgress)}%</div>
+                    <div className="text-sm text-white/70">پیشرفت کلی</div>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div 
+                      className="bg-white rounded-full h-2 transition-all duration-500"
+                      style={{ width: `${studentProgress}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <p className="text-2xl font-bold text-blue-600">
-                  {toPersianNumbers(student.height)} سانتی
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+          </motion.div>
 
-            <Card className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border-purple-200 dark:border-purple-800">
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Phone className="h-5 w-5 text-purple-600" />
-                  <span className="font-medium text-purple-800 dark:text-purple-200">تلفن</span>
-                </div>
-                <p className="text-lg font-bold text-purple-600">
-                  {toPersianNumbers(student.phone)}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Program Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border-violet-200 dark:border-violet-800 hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => navigate('/Students/exercises')}>
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl">
+          {/* Quick Stats */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
                     <Dumbbell className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-violet-800 dark:text-violet-200">
-                      برنامه تمرینی
-                    </h3>
-                    <Badge variant="secondary">
-                      {toPersianNumbers(totalExercises)} تمرین
-                    </Badge>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(totalExercises)}</div>
+                    <div className="text-sm text-gray-600">تمرینات</div>
                   </div>
                 </div>
-                <Button variant="outline" className="w-full">
-                  مشاهده برنامه تمرینی
-                </Button>
-              </CardContent>
-            </Card>
+              </motion.div>
 
-            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800 hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => navigate('/Students/diet')}>
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
-                    <UtensilsCrossed className="h-6 w-6 text-white" />
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
+                    <Apple className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-green-800 dark:text-green-200">
-                      برنامه غذایی
-                    </h3>
-                    <Badge variant="secondary">
-                      {toPersianNumbers(totalMeals)} وعده
-                    </Badge>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(totalMeals)}</div>
+                    <div className="text-sm text-gray-600">وعده غذایی</div>
                   </div>
                 </div>
-                <Button variant="outline" className="w-full">
-                  مشاهده برنامه غذایی
-                </Button>
-              </CardContent>
-            </Card>
+              </motion.div>
 
-            <Card className="bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 border-pink-200 dark:border-pink-800 hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => navigate('/Students/supplements')}>
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl">
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-violet-500 rounded-xl flex items-center justify-center">
                     <Pill className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-pink-800 dark:text-pink-200">
-                      مکمل و ویتامین
-                    </h3>
-                    <Badge variant="secondary">
-                      {toPersianNumbers(totalSupplements)} آیتم
-                    </Badge>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(totalSupplements)}</div>
+                    <div className="text-sm text-gray-600">مکمل‌ها</div>
                   </div>
                 </div>
-                <Button variant="outline" className="w-full">
-                  مشاهده مکمل‌ها
-                </Button>
-              </CardContent>
-            </Card>
+              </motion.div>
+
+              <motion.div variants={cardVariants} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
+                    <Trophy className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(studentProgress)}%</div>
+                    <div className="text-sm text-gray-600">تکمیل پروفایل</div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Main Cards */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Personal Info Card */}
+            <motion.div variants={cardVariants} className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <User className="h-6 w-6 text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">اطلاعات شخصی</h2>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                  <span className="text-gray-600">نام:</span>
+                  <span className="font-medium text-gray-800">{loggedInStudent.name}</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                  <span className="text-gray-600">موبایل:</span>
+                  <span className="font-medium text-gray-800" dir="ltr">{loggedInStudent.phone}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">قد:</span>
+                    <span className="font-medium text-gray-800">{formatMeasurement(loggedInStudent.height, 'سم')}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">وزن:</span>
+                    <span className="font-medium text-gray-800">{formatMeasurement(loggedInStudent.weight, 'کیلو')}</span>
+                  </div>
+                </div>
+                {loggedInStudent.age && (
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">سن:</span>
+                    <span className="font-medium text-gray-800">{formatMeasurement(loggedInStudent.age, 'سال')}</span>
+                  </div>
+                )}
+                {bmi && (
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">BMI:</span>
+                    <span className="font-medium text-gray-800">{toPersianNumbers(bmi.toFixed(1))} - {bmiCategory}</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Weekly Program Card */}
+            <motion.div variants={cardVariants} className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">برنامه هفتگی</h2>
+              </div>
+              
+              <div className="space-y-3">
+                {[
+                  { day: "شنبه", exercises: loggedInStudent.exercisesDay1?.length || 0, color: "from-red-400 to-orange-500" },
+                  { day: "یکشنبه", exercises: loggedInStudent.exercisesDay2?.length || 0, color: "from-orange-400 to-yellow-500" },
+                  { day: "دوشنبه", exercises: loggedInStudent.exercisesDay3?.length || 0, color: "from-green-400 to-emerald-500" },
+                  { day: "سه‌شنبه", exercises: loggedInStudent.exercisesDay4?.length || 0, color: "from-blue-400 to-indigo-500" },
+                  { day: "چهارشنبه", exercises: loggedInStudent.exercisesDay5?.length || 0, color: "from-purple-400 to-violet-500" },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50/50 rounded-xl hover:bg-gray-100/50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${item.color}`}></div>
+                      <span className="font-medium text-gray-700">{item.day}</span>
+                    </div>
+                    <span className="text-sm text-gray-600">{toPersianNumbers(item.exercises)} تمرین</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
 
-          {/* Quick Stats */}
-          <Card className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
-                <Target className="h-5 w-5" />
-                آمار کلی برنامه
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg">
-                  <Calendar className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-sm text-blue-600 dark:text-blue-400">تاریخ عضویت</p>
-                  <p className="font-bold text-blue-800 dark:text-blue-200">
-                    {student.createdAt ? new Date(student.createdAt).toLocaleDateString('fa-IR') : 'نامشخص'}
-                  </p>
-                </div>
-                
-                <div className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg">
-                  <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-sm text-green-600 dark:text-green-400">وضعیت پرداخت</p>
-                  <Badge variant={student.payment === 'پرداخت شده' ? 'default' : 'destructive'}>
-                    {student.payment || 'نامشخص'}
-                  </Badge>
-                </div>
-
-                <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-lg">
-                  <Dumbbell className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                  <p className="text-sm text-purple-600 dark:text-purple-400">کل تمرینات</p>
-                  <p className="font-bold text-purple-800 dark:text-purple-200">
-                    {toPersianNumbers(totalExercises)}
-                  </p>
-                </div>
-
-                <div className="text-center p-4 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-lg">
-                  <UtensilsCrossed className="h-8 w-8 text-pink-600 mx-auto mb-2" />
-                  <p className="text-sm text-pink-600 dark:text-pink-400">کل وعده‌ها</p>
-                  <p className="font-bold text-pink-800 dark:text-pink-200">
-                    {toPersianNumbers(totalMeals)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Quick Actions */}
+          <motion.div variants={itemVariants} className="mb-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">دسترسی سریع</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { title: "برنامه تمرینی", icon: Dumbbell, color: "from-orange-400 to-red-500", href: "/panel/exercises" },
+                { title: "رژیم غذایی", icon: Apple, color: "from-green-400 to-emerald-500", href: "/panel/diet" },
+                { title: "پیشرفت", icon: TrendingUp, color: "from-blue-400 to-indigo-500", href: "/panel/progress" },
+                { title: "اهداف", icon: Target, color: "from-purple-400 to-violet-500", href: "/panel/goals" },
+              ].map((item, index) => (
+                <motion.button
+                  key={index}
+                  variants={cardVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-200"
+                >
+                  <div className={`w-12 h-12 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center mx-auto mb-3`}>
+                    <item.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="text-sm font-medium text-gray-700">{item.title}</div>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
-      </div>
-    </PageContainer>
+      </PageContainer>
+    </StudentLayout>
   );
 };
 
-export default StudentPanelIndex;
+export default StudentPanel;
