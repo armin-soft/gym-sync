@@ -13,10 +13,12 @@ import {
   Edit,
   Apple,
   Pill,
+  ExternalLink,
 } from "lucide-react";
 import { ContextMenuHeader } from "./context-menu/ContextMenuHeader";
 import { ContextMenuItemWithAnimation } from "./context-menu/ContextMenuItem";
 import { ContextMenuSection } from "./context-menu/ContextMenuSection";
+import { useNavigate } from "react-router-dom";
 
 interface StudentContextMenuProps {
   student: Student;
@@ -39,6 +41,8 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
   onAddSupplement,
   isProfileComplete
 }) => {
+  const navigate = useNavigate();
+
   const handleProgramClick = () => {
     console.log("Context Menu: Add Exercise clicked for student:", student.name);
     if (onAddExercise) onAddExercise();
@@ -60,6 +64,10 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
     if (onAddSupplement) onAddSupplement();
   };
 
+  const handleViewStudentPanel = () => {
+    navigate(`/Students/dashboard/${student.id}`);
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger className="w-full h-full">
@@ -70,6 +78,18 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
         <ContextMenuContent className="w-64 p-1.5 rounded-xl border-slate-200 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-xl dark:shadow-black/20 border dark:border-slate-800/60">
           <ContextMenuHeader student={student} />
           
+          {/* Quick Access Section */}
+          <ContextMenuSection title="دسترسی سریع">
+            <ContextMenuItemWithAnimation
+              icon={<ExternalLink className="h-4 w-4" />}
+              title="نمایش پنل شاگرد"
+              subtitle="دسترسی مستقیم به حساب شاگرد"
+              onClick={handleViewStudentPanel}
+              index={0}
+              variant="green"
+            />
+          </ContextMenuSection>
+          
           {/* Program Management Section */}
           <ContextMenuSection title="مدیریت برنامه">
             <ContextMenuItemWithAnimation
@@ -77,7 +97,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
               title="تخصیص برنامه"
               subtitle="برنامه‌های تمرینی و رژیم"
               onClick={handleProgramClick}
-              index={0}
+              index={1}
               variant="purple"
             />
             
@@ -87,7 +107,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="افزودن رژیم غذایی"
                 subtitle="مدیریت برنامه غذایی"
                 onClick={handleDietClick}
-                index={1}
+                index={2}
                 variant="green"
               />
             )}
@@ -98,7 +118,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="افزودن مکمل"
                 subtitle="مدیریت مکمل‌های ورزشی"
                 onClick={handleSupplementClick}
-                index={2}
+                index={3}
                 variant="orange"
               />
             )}
@@ -112,7 +132,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="ویرایش شاگرد"
                 subtitle="تغییر اطلاعات شاگرد"
                 onClick={handleEditClick}
-                index={3}
+                index={4}
                 variant="blue"
               />
             )}
@@ -123,7 +143,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
                 title="حذف شاگرد"
                 subtitle="حذف کامل اطلاعات"
                 onClick={handleDeleteClick}
-                index={4}
+                index={5}
                 variant="red"
               />
             )}

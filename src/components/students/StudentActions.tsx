@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MoreHorizontal, Sparkles } from "lucide-react";
+import { CalendarDays, MoreHorizontal, Sparkles, ExternalLink } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +42,12 @@ export const StudentActions = ({
     }
   };
 
+  // نمایش پنل شاگرد
+  const handleViewStudentPanel = () => {
+    console.log("StudentActions: View Student Panel clicked for student:", student.name);
+    navigate(`/Students/dashboard/${student.id}`);
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -72,13 +78,23 @@ export const StudentActions = ({
           </div>
           
           <div className="space-y-1">
+            {/* نمایش پنل شاگرد */}
+            <ModernMenuItemWithAnimation
+              icon={<ExternalLink className="h-4 w-4 text-green-600 dark:text-green-400" />}
+              onClick={handleViewStudentPanel}
+              label="نمایش پنل شاگرد"
+              description="دسترسی مستقیم به حساب شاگرد"
+              index={0}
+              bgHoverClass="hover:bg-gradient-to-l hover:from-green-50 hover:to-green-100 dark:hover:from-green-900/20 dark:hover:to-green-800/20"
+            />
+
             {/* تخصیص برنامه */}
             <ModernMenuItemWithAnimation
               icon={<CalendarDays className="h-4 w-4 text-purple-600 dark:text-purple-400" />}
               onClick={handleProgramClick}
               label="تخصیص برنامه"
               description="ایجاد برنامه جدید"
-              index={0}
+              index={1}
               bgHoverClass="hover:bg-gradient-to-l hover:from-purple-50 hover:to-purple-100 dark:hover:from-purple-900/20 dark:hover:to-purple-800/20"
             />
           </div>

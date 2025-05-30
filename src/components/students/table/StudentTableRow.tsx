@@ -4,10 +4,11 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu } from "lucide-react";
+import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
+import { useNavigate } from "react-router-dom";
 
 interface StudentTableRowProps {
   student: Student;
@@ -30,6 +31,12 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
   isProfileComplete,
   index,
 }) => {
+  const navigate = useNavigate();
+
+  const handleViewStudentPanel = () => {
+    navigate(`/Students/dashboard/${student.id}`);
+  };
+
   return (
     <>
       <TableCell className="p-2">
@@ -90,6 +97,10 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40 bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg border border-slate-200/70 dark:border-slate-700/70">
+              <DropdownMenuItem onClick={handleViewStudentPanel} className="cursor-pointer">
+                <ExternalLink className="h-3.5 w-3.5 mr-2" />
+                پنل شاگرد
+              </DropdownMenuItem>
               {onEdit && (
                 <DropdownMenuItem onClick={() => onEdit(student)} className="cursor-pointer">
                   <Edit className="h-3.5 w-3.5 mr-2" />
@@ -109,6 +120,16 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
           
           {/* Desktop view: inline buttons */}
           <div className="hidden md:flex md:items-center md:gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/20 dark:hover:text-green-400 transition-colors"
+              onClick={handleViewStudentPanel}
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              <span>پنل</span>
+            </Button>
+
             <Button
               variant="ghost"
               size="sm"
