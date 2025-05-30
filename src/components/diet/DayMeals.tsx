@@ -79,13 +79,13 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
   // نمایش پیام مناسب اگر داده‌ای وجود ندارد
   if (meals.length === 0) {
     return (
-      <div dir="rtl" className="relative text-right">
+      <div dir="rtl" className="relative text-right h-full">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full"
+          className="w-full h-full"
         >
-          <div className="text-center py-12" dir="rtl">
+          <div className="text-center py-12 h-full flex items-center justify-center" dir="rtl">
             <div className="bg-muted/50 rounded-lg p-8 text-right">
               <h3 className="text-lg font-semibold text-muted-foreground mb-2">
                 هیچ وعده غذایی در دیتابیس محلی یافت نشد
@@ -101,24 +101,27 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
   }
   
   return (
-    <div dir="rtl" className="relative text-right">
+    <div dir="rtl" className="relative text-right h-full flex flex-col">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full"
+        className="w-full h-full flex flex-col"
       >
-        <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full" dir="rtl">
-          <ScrollArea 
-            className="w-full overflow-hidden" 
-            orientation="horizontal"
-          >
-            <div className="min-h-[600px] pb-4" dir="rtl">
-              <DayTabs 
-                weekDays={weekDays} 
-                selectedDay={selectedDay} 
-                onDayChange={setSelectedDay}
-                daysWithContent={daysWithContent}
-              >
+        <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full h-full flex flex-col" dir="rtl">
+          {/* Header with tabs - fixed at top */}
+          <div className="flex-shrink-0">
+            <DayTabs 
+              weekDays={weekDays} 
+              selectedDay={selectedDay} 
+              onDayChange={setSelectedDay}
+              daysWithContent={daysWithContent}
+            />
+          </div>
+          
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full w-full">
+              <div className="p-4" dir="rtl">
                 {weekDays.map((day) => {
                   const dayMeals = getDayMeals(day);
                   console.log(`*** PASSING TO DayContent for ${day} from localStorage:`, dayMeals.length, 'meals');
@@ -127,7 +130,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                     <TabsContent 
                       key={day} 
                       value={day} 
-                      className="mt-6 relative text-right"
+                      className="mt-0 relative text-right data-[state=active]:block data-[state=inactive]:hidden"
                       dir="rtl"
                     >
                       <DayContent
@@ -141,9 +144,9 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                     </TabsContent>
                   );
                 })}
-              </DayTabs>
-            </div>
-          </ScrollArea>
+              </div>
+            </ScrollArea>
+          </div>
         </Tabs>
       </motion.div>
     </div>

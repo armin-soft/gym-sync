@@ -22,7 +22,7 @@ export const DietContentArea = ({
 }: DietContentAreaProps) => {
   return (
     <div dir="rtl" className="w-full h-full">
-      <Card className="h-full p-6 overflow-auto text-right">
+      <Card className="h-full p-6 text-right flex flex-col overflow-hidden">
         <DayMeals
           meals={meals}
           mealTypes={mealTypes}
