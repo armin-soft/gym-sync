@@ -118,9 +118,9 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
             />
           </div>
           
-          {/* Scrollable content area with proper height */}
-          <div className="flex-1 min-h-0">
-            <ScrollArea className="h-full w-full">
+          {/* Scrollable content area with fixed height to enable scrolling */}
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-[calc(100vh-280px)] w-full">
               <div className="p-1" dir="rtl">
                 {weekDays.map((day) => {
                   const dayMeals = getDayMeals(day);
