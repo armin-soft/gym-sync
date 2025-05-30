@@ -1,11 +1,13 @@
-
 /**
  * Logic for Rollup's manualChunks option.
  */
 export function getManualChunk(id: string): string | undefined {
+  // React Core - Keep React and React-DOM together
   if (
-    id.includes('node_modules/react') ||
-    id.includes('node_modules/react-dom')
+    id.includes('node_modules/react/') ||
+    id.includes('node_modules/react-dom/') ||
+    id.includes('node_modules/scheduler/') ||
+    id.includes('react/jsx-runtime')
   ) {
     return 'React-Core';
   }
@@ -55,8 +57,8 @@ export function getManualChunk(id: string): string | undefined {
   // Vendor libs
   if (
     id.includes('node_modules/') &&
-    !id.includes('node_modules/react') &&
-    !id.includes('node_modules/react-dom') &&
+    !id.includes('node_modules/react/') &&
+    !id.includes('node_modules/react-dom/') &&
     !id.includes('node_modules/@radix-ui') &&
     !id.includes('node_modules/react-router') &&
     !id.includes('node_modules/@tanstack/react-query') &&

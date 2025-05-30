@@ -2,17 +2,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-
-// Import React explicitly to ensure it's available globally
-import React from 'react'
-
-// Make React available globally for components that might need it
-if (typeof window !== 'undefined') {
-  (window as any).React = React;
-}
-
 import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
+import React from 'react'
 
 // کامپوننت اصلی برنامه با نمایش صفحه لودینگ
 function MainApp() {
