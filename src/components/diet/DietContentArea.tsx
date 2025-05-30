@@ -21,13 +21,15 @@ export const DietContentArea = ({
   onDelete,
 }: DietContentAreaProps) => {
   return (
-    <Card className="h-full p-6 overflow-auto">
-      <DayMeals
-        meals={meals}
-        mealTypes={mealTypes}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
-    </Card>
+    <div dir="rtl" className="w-full h-full">
+      <Card className="h-full p-6 overflow-auto text-right">
+        <DayMeals
+          meals={meals}
+          mealTypes={mealTypes}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      </Card>
+    </div>
   );
 };

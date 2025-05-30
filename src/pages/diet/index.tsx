@@ -31,39 +31,43 @@ const Index = () => {
   } = useDietState();
 
   return (
-    <PageContainer 
-      fullWidth 
-      fullHeight 
-      className="bg-background"
-    >
-      <div className="h-full flex flex-col space-y-6 p-6">
-        {/* Header */}
-        <DietPageHeader onAddMeal={handleOpen} />
-        
-        {/* Main Content */}
-        <div className="flex-1 overflow-hidden">
-          <DietContentArea 
-            meals={filteredMeals}
+    <div dir="rtl" className="min-h-screen bg-background">
+      <PageContainer 
+        fullWidth 
+        fullHeight 
+        className="bg-background"
+      >
+        <div className="h-full flex flex-col space-y-6 p-6">
+          {/* Header */}
+          <div className="text-right">
+            <DietPageHeader onAddMeal={handleOpen} />
+          </div>
+          
+          {/* Main Content */}
+          <div className="flex-1 overflow-hidden">
+            <DietContentArea 
+              meals={filteredMeals}
+              mealTypes={mealTypes}
+              selectedDay={selectedDay}
+              sortOrder="asc"
+              onDayChange={setSelectedDay}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </div>
+          
+          {/* Dialog */}
+          <MealDialog
+            open={open}
+            onOpenChange={setOpen}
+            onSave={handleSave}
+            meal={selectedMeal}
             mealTypes={mealTypes}
-            selectedDay={selectedDay}
-            sortOrder="asc"
-            onDayChange={setSelectedDay}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+            weekDays={weekDays}
           />
         </div>
-        
-        {/* Dialog */}
-        <MealDialog
-          open={open}
-          onOpenChange={setOpen}
-          onSave={handleSave}
-          meal={selectedMeal}
-          mealTypes={mealTypes}
-          weekDays={weekDays}
-        />
-      </div>
-    </PageContainer>
+      </PageContainer>
+    </div>
   );
 };
 

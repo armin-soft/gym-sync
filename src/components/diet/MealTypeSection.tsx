@@ -18,12 +18,14 @@ export const MealTypeSection = ({ type, meals, day, onEdit, onDelete }: MealType
   const styles = getMealTypeStyle(type);
   
   return (
-    <div className={`rounded-lg border p-4 ${styles?.border || 'border-border'}`}>
-      <MealTypeHeader type={type} count={meals.length} />
+    <div dir="rtl" className={`rounded-lg border p-4 text-right ${styles?.border || 'border-border'}`}>
+      <div className="text-right">
+        <MealTypeHeader type={type} count={meals.length} />
+      </div>
 
-      <div className="mt-4">
+      <div className="mt-4 text-right">
         {meals.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" dir="rtl">
             {meals.map((meal, index) => (
               <MealCard 
                 key={`${meal.id}-${index}`}
@@ -35,7 +37,7 @@ export const MealTypeSection = ({ type, meals, day, onEdit, onDelete }: MealType
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 text-muted-foreground">
+          <div className="text-center py-6 text-muted-foreground" dir="rtl">
             هیچ موردی برای {type} در روز {day} یافت نشد
           </div>
         )}

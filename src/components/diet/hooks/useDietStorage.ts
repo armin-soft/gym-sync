@@ -46,26 +46,26 @@ export const useDietStorage = () => {
   const { toast } = useToast();
   const [meals, setMeals] = useState<Meal[]>([]);
   
-  // بارگذاری برنامه‌های غذایی از localStorage
+  // بارگذاری برنامه‌های غذایی از localStorage - بدون هیچ داده نمونه
   useEffect(() => {
     try {
-      console.log("=== DIET STORAGE DEBUG ===");
+      console.log("=== DIET STORAGE DEBUG - LOADING FROM DATABASE ===");
       const savedMeals = localStorage.getItem('meals');
       console.log("Raw saved meals from localStorage:", savedMeals);
       
       if (savedMeals) {
         const parsedMeals = JSON.parse(savedMeals);
-        console.log("Parsed meals:", parsedMeals);
+        console.log("Parsed meals from database:", parsedMeals);
         console.log("Is array:", Array.isArray(parsedMeals));
-        console.log("Meals count:", parsedMeals?.length || 0);
+        console.log("Meals count in database:", parsedMeals?.length || 0);
         
         const mealsArray = Array.isArray(parsedMeals) ? parsedMeals : [];
         setMeals(mealsArray);
         
-        console.log("Set meals in state:", mealsArray);
+        console.log("Loaded meals from database to state:", mealsArray);
       } else {
-        console.log("No saved meals found in localStorage");
-        setMeals([]);
+        console.log("No saved meals found in localStorage - database is empty");
+        setMeals([]); // هیچ داده نمونه‌ای نمی‌گذاریم
       }
       console.log("=== END DIET STORAGE DEBUG ===");
     } catch (error) {
@@ -73,26 +73,26 @@ export const useDietStorage = () => {
       toast({
         variant: "destructive",
         title: "خطا در بارگذاری",
-        description: "مشکلی در بارگذاری برنامه‌های غذایی رخ داده است."
+        description: "مشکلی در بارگذاری برنامه‌های غذایی از دیتابیس محلی رخ داده است."
       });
-      setMeals([]);
+      setMeals([]); // در صورت خطا، آرایه خالی برمی‌گردانیم
     }
   }, [toast]);
   
   // ذخیره برنامه‌های غذایی در localStorage
   const saveMeals = (updatedMeals: Meal[]): boolean => {
     try {
-      console.log("Saving meals to localStorage:", updatedMeals);
+      console.log("Saving meals to localStorage database:", updatedMeals);
       localStorage.setItem('meals', JSON.stringify(updatedMeals));
       setMeals(updatedMeals);
-      console.log("Meals saved successfully");
+      console.log("Meals saved successfully to database");
       return true;
     } catch (error) {
       console.error('خطا در ذخیره‌سازی برنامه‌های غذایی در localStorage:', error);
       toast({
         variant: "destructive",
         title: "خطا در ذخیره‌سازی",
-        description: "مشکلی در ذخیره‌سازی برنامه‌های غذایی رخ داده است."
+        description: "مشکلی در ذخیره‌سازی برنامه‌های غذایی در دیتابیس محلی رخ داده است."
       });
       return false;
     }

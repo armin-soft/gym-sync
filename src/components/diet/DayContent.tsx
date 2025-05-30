@@ -37,49 +37,53 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete }: DayConte
   };
   
   return (
-    <motion.div 
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="space-y-6"
-    >
-      {meals.length === 0 ? (
-        <motion.div 
-          variants={itemVariants}
-          className="text-center py-16 text-muted-foreground"
-        >
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="opacity-60">
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z" fill="currentColor"/>
-              </svg>
+    <div dir="rtl" className="w-full text-right">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="space-y-6"
+        dir="rtl"
+      >
+        {meals.length === 0 ? (
+          <motion.div 
+            variants={itemVariants}
+            className="text-center py-16 text-muted-foreground"
+            dir="rtl"
+          >
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="opacity-60">
+                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div className="text-right">
+                <h3 className="text-lg font-medium mb-2">هیچ وعده غذایی برای روز {day} ثبت نشده است</h3>
+                <p className="text-sm">برای افزودن وعده غذایی، از دکمه "افزودن وعده غذایی" استفاده کنید</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-medium mb-2">هیچ وعده غذایی برای روز {day} ثبت نشده است</h3>
-              <p className="text-sm">برای افزودن وعده غذایی، از دکمه "افزودن وعده غذایی" استفاده کنید</p>
-            </div>
-          </div>
-        </motion.div>
-      ) : (
-        sortedMealTypes.map((type, typeIndex) => {
-          const typeMeals = meals.filter(meal => meal.type === type);
-          
-          if (typeMeals.length === 0) return null;
-          
-          return (
-            <motion.div key={`${day}-${type}`} variants={itemVariants}>
-              <MealTypeSection
-                type={type}
-                meals={typeMeals}
-                day={day}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                typeIndex={typeIndex}
-              />
-            </motion.div>
-          );
-        })
-      )}
-    </motion.div>
+          </motion.div>
+        ) : (
+          sortedMealTypes.map((type, typeIndex) => {
+            const typeMeals = meals.filter(meal => meal.type === type);
+            
+            if (typeMeals.length === 0) return null;
+            
+            return (
+              <motion.div key={`${day}-${type}`} variants={itemVariants}>
+                <MealTypeSection
+                  type={type}
+                  meals={typeMeals}
+                  day={day}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  typeIndex={typeIndex}
+                />
+              </motion.div>
+            );
+          })
+        )}
+      </motion.div>
+    </div>
   );
 };

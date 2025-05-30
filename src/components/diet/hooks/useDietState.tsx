@@ -8,7 +8,7 @@ import { DietStateHook } from "./useDietTypes";
 
 export const useDietState = (): DietStateHook => {
   const { toast } = useToast();
-  const { meals, saveMeals } = useDietStorage();
+  const { meals, saveMeals } = useDietStorage(); // فقط از localStorage می‌خوانیم
   const { validateMeal } = useMealValidation(meals);
   
   // حالت دیالوگ
@@ -20,11 +20,12 @@ export const useDietState = (): DietStateHook => {
   const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  // دیباگ برای بررسی وضعیت
+  // دیباگ برای بررسی وضعیت - فقط داده‌های database
   useEffect(() => {
-    console.log("=== useDietState DEBUG ===");
-    console.log("Meals from useDietStorage:", meals);
-    console.log("Meals count:", meals.length);
+    console.log("=== useDietState DEBUG - ONLY DATABASE DATA ===");
+    console.log("Meals from localStorage database:", meals);
+    console.log("Meals count from database:", meals.length);
+    console.log("No sample data is being used");
     console.log("=== END useDietState DEBUG ===");
   }, [meals]);
   
@@ -35,16 +36,16 @@ export const useDietState = (): DietStateHook => {
   
   // مدیریت باز کردن دیالوگ
   const handleOpen = () => {
-    console.log("Opening dialog for new meal");
+    console.log("Opening dialog for new meal - will save to database");
     setSelectedMeal(undefined);
     setOpen(true);
   };
   
   // مدیریت ویرایش وعده غذایی
   const handleEdit = (meal: Meal) => {
-    console.log("====== EDIT MEAL ======");
+    console.log("====== EDIT MEAL FROM DATABASE ======");
     console.log("Editing meal with ID:", meal.id);
-    console.log("Meal details:", meal);
+    console.log("Meal details from database:", meal);
     setSelectedMeal(meal);
     setOpen(true);
     console.log("====== END EDIT MEAL ======");
@@ -52,17 +53,18 @@ export const useDietState = (): DietStateHook => {
   
   // مدیریت حذف وعده غذایی
   const handleDelete = (id: number) => {
+    console.log("Deleting meal from database with ID:", id);
     const updatedMeals = meals.filter(meal => meal.id !== id);
     saveMeals(updatedMeals);
     toast({
       title: "حذف موفق",
-      description: "وعده غذایی با موفقیت حذف شد",
+      description: "وعده غذایی از دیتابیس محلی با موفقیت حذف شد",
     });
   };
   
   // مدیریت ذخیره وعده غذایی
   const handleSave = (data: Omit<Meal, "id">, mealId?: number): boolean => {
-    console.log("====== SAVE MEAL ======");
+    console.log("====== SAVE MEAL TO DATABASE ======");
     console.log("Save called with mealId:", mealId);
     console.log("Current selectedMeal:", selectedMeal?.id);
     
@@ -76,12 +78,12 @@ export const useDietState = (): DietStateHook => {
       day: data.day ? normalizeDay(data.day) as WeekDay : data.day
     };
     
-    console.log("Clean data for saving:", cleanData);
+    console.log("Clean data for saving to database:", cleanData);
     
     // بررسی تکراری بودن وعده غذایی در همان روز و همان نوع وعده
     // استفاده از mealId برای مشخص کردن غذای در حال ویرایش
     if (!validateMeal(cleanData, mealId)) {
-      console.log("Validation failed - duplicate meal detected");
+      console.log("Validation failed - duplicate meal detected in database");
       console.log("====== END SAVE MEAL (FAILED) ======");
       return false;
     }
@@ -89,8 +91,8 @@ export const useDietState = (): DietStateHook => {
     let newMeals: Meal[];
     
     if (mealId !== undefined) {
-      // ویرایش وعده غذایی موجود
-      console.log(`Updating meal with ID: ${mealId}`);
+      // ویرایش وعده غذایی موجود در database
+      console.log(`Updating meal in database with ID: ${mealId}`);
       newMeals = meals.map(m => 
         m.id === mealId 
           ? { ...cleanData, id: m.id }
@@ -99,32 +101,32 @@ export const useDietState = (): DietStateHook => {
       
       toast({
         title: "ویرایش موفق",
-        description: "وعده غذایی با موفقیت ویرایش شد",
+        description: "وعده غذایی در دیتابیس محلی با موفقیت ویرایش شد",
       });
     } else {
-      // ایجاد وعده غذایی جدید
+      // ایجاد وعده غذایی جدید در database
       const newMeal = {
         ...cleanData,
         id: Math.max(0, ...meals.map(m => m.id)) + 1
       };
       
-      console.log(`Creating new meal with ID: ${newMeal.id}`);
+      console.log(`Creating new meal in database with ID: ${newMeal.id}`);
       newMeals = [...meals, newMeal];
       
       toast({
         title: "افزودن موفق",
-        description: "وعده غذایی جدید با موفقیت اضافه شد",
+        description: "وعده غذایی جدید در دیتابیس محلی با موفقیت اضافه شد",
       });
     }
     
     const saveResult = saveMeals(newMeals);
-    console.log("Save completed successfully");
+    console.log("Save to database completed successfully");
     console.log("====== END SAVE MEAL (SUCCESS) ======");
     setOpen(false);
     return saveResult;
   };
   
-  // فیلتر وعده‌های غذایی بر اساس جستجو
+  // فیلتر وعده‌های غذایی بر اساس جستجو - فقط از داده‌های database
   const filteredMeals = meals.filter(meal => {
     const matchesSearch = 
       !searchQuery || 
@@ -134,8 +136,10 @@ export const useDietState = (): DietStateHook => {
     return matchesSearch;
   });
   
+  console.log("Filtered meals from database:", filteredMeals.length);
+  
   return {
-    meals,
+    meals, // فقط از localStorage
     setMeals: saveMeals,
     open,
     setOpen,
@@ -148,7 +152,7 @@ export const useDietState = (): DietStateHook => {
     sortOrder,
     setSortOrder,
     toggleSortOrder,
-    filteredMeals,
+    filteredMeals, // فیلتر شده از همان داده‌های database
     handleOpen,
     handleEdit,
     handleDelete,

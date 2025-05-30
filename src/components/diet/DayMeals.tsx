@@ -40,7 +40,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     // اطلاعات دیباگ
     console.log("=== DAY MEALS COMPONENT DEBUG ===");
     console.log("Total meals received:", meals.length);
-    console.log("All meals:", meals);
+    console.log("All meals from localStorage:", meals);
     console.log("Selected day:", selectedDay);
     console.log("Meal types:", mealTypes);
     
@@ -54,7 +54,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
     new Set(meals.map(meal => meal.day).filter(Boolean))
   ) as WeekDay[];
   
-  console.log("Days with content:", daysWithContent);
+  console.log("Days with content from localStorage:", daysWithContent);
   
   // یک تابع برای تبدیل مناسب رشته به نوع WeekDay
   const handleDayChange = (value: string) => {
@@ -72,23 +72,23 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
       console.log(`Checking meal ${meal.name}: meal.day="${meal.day}", selected day="${day}", match=${isMatch}`);
       return isMatch;
     });
-    console.log(`*** FILTERED MEALS FOR ${day}: ${dayMeals.length} items ***`, dayMeals);
+    console.log(`*** FILTERED MEALS FOR ${day} FROM LOCALSTORAGE: ${dayMeals.length} items ***`, dayMeals);
     return dayMeals;
   };
   
   // نمایش پیام مناسب اگر داده‌ای وجود ندارد
   if (meals.length === 0) {
     return (
-      <div dir="rtl" className="relative">
+      <div dir="rtl" className="relative text-right">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full"
         >
-          <div className="text-center py-12">
-            <div className="bg-muted/50 rounded-lg p-8">
+          <div className="text-center py-12" dir="rtl">
+            <div className="bg-muted/50 rounded-lg p-8 text-right">
               <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                هیچ وعده غذایی یافت نشد
+                هیچ وعده غذایی در دیتابیس محلی یافت نشد
               </h3>
               <p className="text-muted-foreground mb-4">
                 برای شروع، وعده غذایی جدید اضافه کنید
@@ -101,18 +101,18 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
   }
   
   return (
-    <div dir="rtl" className="relative">
+    <div dir="rtl" className="relative text-right">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full"
       >
-        <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full">
+        <Tabs value={selectedDay} onValueChange={handleDayChange} className="w-full" dir="rtl">
           <ScrollArea 
             className="w-full overflow-hidden" 
             orientation="horizontal"
           >
-            <div className="min-h-[600px] pb-4">
+            <div className="min-h-[600px] pb-4" dir="rtl">
               <DayTabs 
                 weekDays={weekDays} 
                 selectedDay={selectedDay} 
@@ -121,13 +121,14 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               >
                 {weekDays.map((day) => {
                   const dayMeals = getDayMeals(day);
-                  console.log(`*** PASSING TO DayContent for ${day}:`, dayMeals.length, 'meals');
+                  console.log(`*** PASSING TO DayContent for ${day} from localStorage:`, dayMeals.length, 'meals');
                   
                   return (
                     <TabsContent 
                       key={day} 
                       value={day} 
-                      className="mt-6 relative"
+                      className="mt-6 relative text-right"
+                      dir="rtl"
                     >
                       <DayContent
                         key={`day-content-${day}-${dayMeals.length}`}
