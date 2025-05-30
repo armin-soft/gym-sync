@@ -42,7 +42,7 @@ export const StudentForm = ({
       weight: student?.weight || "",
       image: student?.image || "/Assets/Image/Place-Holder.svg",
       payment: student?.payment || "",
-      password: student?.password || "", // حفظ گذرواژه
+      password: student?.password || "",
       age: student?.age || "",
       grade: student?.grade || "",
       group: student?.group || "",
@@ -52,6 +52,7 @@ export const StudentForm = ({
   // Update form when student data changes
   useEffect(() => {
     if (student) {
+      console.log("Updating form with student data:", student);
       form.reset({
         name: student.name || "",
         phone: student.phone || "",
@@ -59,7 +60,7 @@ export const StudentForm = ({
         weight: student.weight || "",
         image: student.image || "/Assets/Image/Place-Holder.svg",
         payment: student.payment || "",
-        password: student.password || "", // حفظ گذرواژه در ویرایش
+        password: student.password || "",
         age: student.age || "",
         grade: student.grade || "",
         group: student.group || "",
@@ -70,11 +71,15 @@ export const StudentForm = ({
 
   const onSubmit = (data: StudentFormValues) => {
     try {
-      // اطمینان از حفظ گذرواژه
+      console.log("Form submission data:", data);
+      
+      // در صورت ویرایش و عدم تغییر گذرواژه، گذرواژه قبلی را حفظ کن
       const submitData = {
         ...data,
         password: data.password || student?.password || ""
       };
+      
+      console.log("Final submit data with preserved password:", submitData);
       onSave(submitData);
     } catch (error) {
       console.error("Error saving student:", error);
