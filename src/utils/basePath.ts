@@ -66,9 +66,15 @@ export function getAssetPath(assetPath: string): string {
   // تنظیم مسیر asset برای ساختار جدید
   let cleanAssetPath = assetPath;
   
-  // اگر مسیر قدیمی Assets/Image استفاده شده، به مسیر جدید تبدیل کن
+  // تبدیل مسیرهای قدیمی به جدید
   if (cleanAssetPath.includes('Assets/Image/')) {
-    cleanAssetPath = cleanAssetPath.replace('Assets/Image/', 'assets/images/');
+    cleanAssetPath = cleanAssetPath.replace('Assets/Image/', 'Assets/Images/');
+  }
+  if (cleanAssetPath.includes('/Image/')) {
+    cleanAssetPath = cleanAssetPath.replace('/Image/', '/Assets/Images/');
+  }
+  if (cleanAssetPath.startsWith('Image/')) {
+    cleanAssetPath = cleanAssetPath.replace('Image/', 'Assets/Images/');
   }
   
   // اطمینان از شروع با /
@@ -85,5 +91,5 @@ export function getAssetPath(assetPath: string): string {
  * Helper function to get image paths for the new structure
  */
 export function getImagePath(imageName: string): string {
-  return getAssetPath(`assets/images/${imageName}`);
+  return getAssetPath(`Assets/Images/${imageName}`);
 }

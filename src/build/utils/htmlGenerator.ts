@@ -12,8 +12,8 @@ export const generateIndexHtml = (cssFileName: string, jsFileName: string): stri
     <title>مدیریت برنامه</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="./Images/Logo.png" />
-    <link rel="apple-touch-icon" href="./Images/Logo.png" />
+    <link rel="icon" type="image/png" href="./Assets/Images/Logo.png" />
+    <link rel="apple-touch-icon" href="./Assets/Images/Logo.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -49,5 +49,5 @@ export const generateIndexHtml = (cssFileName: string, jsFileName: string): stri
 
 export const writeIndexHtml = (distIndexPath: string, content: string): void => {
   fs.writeFileSync(distIndexPath, content);
-  console.log('index.html با مسیرهای بدون hash بازنویسی شد');
+  console.log('✅ index.html با مسیرهای صحیح بازنویسی شد');
 };

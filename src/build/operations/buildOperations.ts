@@ -10,16 +10,25 @@ export const performBuildOperations = async (): Promise<void> => {
     const appVersion = readVersion(SOURCE_PATHS.manifest);
     console.log(`شروع کپی فایل‌ها و بهینه‌سازی برای نسخه ${appVersion}...`);
 
-    // ایجاد پوشه اصلی Assets
-    createDirectoriesConditionally(['dist/Assets']);
+    // ایجاد پوشه اصلی Assets و زیرپوشه‌ها
+    createDirectoriesConditionally([
+      'dist/Assets',
+      'dist/Assets/Images', 
+      'dist/Assets/Styles',
+      'dist/Assets/Scripts'
+    ]);
 
-    // حذف پوشه Image اگر وجود دارد (تکراری است)
+    // حذف پوشه‌های تکراری اگر وجود دارند
     if (fs.existsSync('dist/Image')) {
       fs.rmSync('dist/Image', { recursive: true, force: true });
       console.log('🗑️ پوشه تکراری Image حذف شد');
     }
+    if (fs.existsSync('dist/Images')) {
+      fs.rmSync('dist/Images', { recursive: true, force: true });
+      console.log('🗑️ پوشه تکراری Images حذف شد');
+    }
 
-    // کپی تصاویر به Assets/Images فقط در صورت وجود
+    // کپی تصاویر به Assets/Images
     copyImages(SOURCE_PATHS.publicImages, 'dist/Assets/Images');
 
     // پیدا کردن فایل‌های CSS و JS
@@ -32,7 +41,7 @@ export const performBuildOperations = async (): Promise<void> => {
     const cssFileName = mainCssFile ? path.relative('dist', mainCssFile) : 'Assets/Styles/Main-App.css';
     const jsFileName = mainJsFile ? path.relative('dist', mainJsFile) : 'Assets/Scripts/Main-App.js';
 
-    // بازنویسی index.html
+    // بازنویسی index.html با مسیرهای صحیح
     const indexContent = generateIndexHtml(cssFileName, jsFileName);
     writeIndexHtml(SOURCE_PATHS.distIndex, indexContent);
 
@@ -40,7 +49,6 @@ export const performBuildOperations = async (): Promise<void> => {
     console.log(`📁 ساختار نهایی:`);
     console.log(`  └── Assets/`);
     
-    // نمایش فقط پوشه‌هایی که واقعاً ایجاد شده‌اند
     if (jsFiles.length > 0) {
       console.log(`      ├── Scripts/ (${jsFiles.length} فایل JS)`);
     }
@@ -48,7 +56,6 @@ export const performBuildOperations = async (): Promise<void> => {
       console.log(`      ├── Styles/ (${cssFiles.length} فایل CSS)`);
     }
     
-    // نمایش پوشه Images فقط اگر تصاویر کپی شده باشند
     const imageFiles = getFilesWithExtension('dist/Assets/Images', '.png') 
       .concat(getFilesWithExtension('dist/Assets/Images', '.jpg'))
       .concat(getFilesWithExtension('dist/Assets/Images', '.svg'));

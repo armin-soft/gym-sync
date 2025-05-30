@@ -7,16 +7,16 @@
   "display": "standalone",
   "background_color": "#7c3aed",
   "theme_color": "#7c3aed",
-  "version": "4.4.8",
+  "version": "4.4.9",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "./Assets/Image/Logo.png",
+      "src": "./Assets/Images/Logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./Assets/Image/Logo.png",
+      "src": "./Assets/Images/Logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
