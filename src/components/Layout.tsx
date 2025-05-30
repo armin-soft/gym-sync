@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-// برای جلوگیری از بارگذاری مجدد صفحه هنگام تغییر مسیرها
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -18,7 +17,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const [scrolled, setScrolled] = useState(false);
   const deviceInfo = useDeviceInfo();
   
-  // بارگذاری اطلاعات با محدودیت دفعات اجرا
+  // بارگذاری اطلاعات
   useEffect(() => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
@@ -31,25 +30,24 @@ export const Layout = ({ children }: LayoutProps) => {
     }
   }, []);
 
-  // استفاده از useCallback برای ذخیره وضعیت اسکرول برای کارایی بهتر
+  // مدیریت اسکرول
   const scrollHandler = useCallback(() => {
     const offset = window.scrollY;
     setScrolled(offset > 10);
   }, []);
   
-  // جداسازی کد اسکرول برای کاهش رندرهای اضافی
   useEffect(() => {
     window.addEventListener('scroll', scrollHandler, { passive: true });
     return () => window.removeEventListener('scroll', scrollHandler);
   }, [scrollHandler]);
   
-  // محاسبه استایل ها یکبار
-  const headerHeight = deviceInfo.isMobile ? "h-10" : deviceInfo.isTablet ? "h-12" : "h-14";
-  const headerPadding = deviceInfo.isMobile ? "px-1 xs:px-2" : deviceInfo.isTablet ? "px-2 sm:px-3" : "px-3 md:px-4 lg:px-6";
-  const buttonSize = deviceInfo.isMobile ? "p-1" : deviceInfo.isTablet ? "p-1.5" : "p-2";
-  const iconSize = deviceInfo.isMobile ? "h-3.5 w-3.5" : deviceInfo.isTablet ? "h-4 w-4" : "h-5 w-5";
-  const logoGap = deviceInfo.isMobile ? "gap-1" : "gap-1.5";
-  const titleSize = deviceInfo.isMobile ? "text-xs" : deviceInfo.isTablet ? "text-sm" : "text-base";
+  // محاسبه استایل‌های فول ریسپانسیو
+  const headerHeight = deviceInfo.isMobile ? "h-12" : deviceInfo.isTablet ? "h-14" : deviceInfo.isSmallLaptop ? "h-16" : "h-18";
+  const headerPadding = deviceInfo.isMobile ? "px-2 py-1" : deviceInfo.isTablet ? "px-3 py-1.5" : deviceInfo.isSmallLaptop ? "px-4 py-2" : "px-6 py-2";
+  const buttonSize = deviceInfo.isMobile ? "p-1.5" : deviceInfo.isTablet ? "p-2" : "p-2.5";
+  const iconSize = deviceInfo.isMobile ? "h-4 w-4" : deviceInfo.isTablet ? "h-5 w-5" : "h-6 w-6";
+  const logoGap = deviceInfo.isMobile ? "gap-1.5" : deviceInfo.isTablet ? "gap-2" : "gap-3";
+  const titleSize = deviceInfo.isMobile ? "text-sm" : deviceInfo.isTablet ? "text-base" : deviceInfo.isSmallLaptop ? "text-lg" : "text-xl";
 
   const handleSidebarClose = useCallback(() => {
     setSidebarOpen(false);
@@ -60,36 +58,36 @@ export const Layout = ({ children }: LayoutProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-background persian-numbers flex flex-col overflow-x-hidden" dir="rtl">
+    <div className="full-screen bg-background persian-numbers flex flex-col overflow-hidden" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />}
       
       <header 
         className={cn(
           "sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0",
-          scrolled ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" : "bg-background"
+          scrolled ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" : "bg-background",
+          headerHeight,
+          headerPadding
         )}
       >
-        <div className={cn("w-full", headerPadding)}>
-          <div className={cn("w-full flex items-center justify-between", headerHeight)}>
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSidebarOpen}
-                className={cn("mr-1 rounded-md hover:bg-accent", buttonSize)}
-                aria-label="Open menu"
-              >
-                <Menu className={iconSize} />
-              </Button>
-              <div className={cn("flex items-center", logoGap)}>
-                <AppIcon size="sm" animated />
-                <h1 className={cn(
-                  "font-semibold hidden xs:block",
-                  titleSize
-                )}>
-                  {gymName ? gymName : 'برنامه مدیریت'}
-                </h1>
-              </div>
+        <div className="w-full h-full flex items-center justify-between">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSidebarOpen}
+              className={cn("rounded-md hover:bg-accent", buttonSize)}
+              aria-label="Open menu"
+            >
+              <Menu className={iconSize} />
+            </Button>
+            <div className={cn("flex items-center", logoGap)}>
+              <AppIcon size="sm" animated />
+              <h1 className={cn(
+                "font-semibold hidden xs:block",
+                titleSize
+              )}>
+                {gymName ? gymName : 'برنامه مدیریت'}
+              </h1>
             </div>
           </div>
         </div>

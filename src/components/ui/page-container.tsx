@@ -11,31 +11,35 @@ interface PageContainerProps {
   noPadding?: boolean;
   fullHeight?: boolean;
   fullScreen?: boolean;
+  maxWidth?: string;
+  scrollable?: boolean;
 }
 
 export const PageContainer = React.memo(({ 
   children, 
   className = "",
   withBackground = false,
-  fullWidth = false,
+  fullWidth = true,
   noPadding = false,
-  fullHeight = false,
-  fullScreen = false
+  fullHeight = true,
+  fullScreen = false,
+  maxWidth = "none",
+  scrollable = true
 }: PageContainerProps) => {
   const deviceInfo = useDeviceInfo();
   
-  // بهینه‌سازی پدینگ ریسپانسیو براساس نوع دستگاه با مقادیر ثابت
+  // بهینه‌سازی پدینگ ریسپانسیو با مقادیر فول اسکرین
   const getPadding = React.useMemo(() => {
     if (noPadding) return "p-0";
     
     if (deviceInfo.isMobile) {
-      return "px-2 py-1";
+      return "px-1 py-1 xs:px-2 xs:py-2";
     } else if (deviceInfo.isTablet) {
-      return "px-3 py-2";
+      return "px-2 py-2 sm:px-3 sm:py-3";
     } else if (deviceInfo.isSmallLaptop) {
-      return "px-4 py-3";
+      return "px-3 py-3 md:px-4 md:py-4";
     } else {
-      return "px-5 py-4";
+      return "px-4 py-4 lg:px-6 lg:py-6 xl:px-8 xl:py-8";
     }
   }, [noPadding, deviceInfo.isMobile, deviceInfo.isTablet, deviceInfo.isSmallLaptop]);
   
@@ -46,24 +50,27 @@ export const PageContainer = React.memo(({
     </>
   ) : null;
   
-  // ثابت کردن کلاس‌های استایل برای جلوگیری از رندرهای مجدد
+  // کلاس‌های کانتینر اصلی فول اسکرین
   const containerClasses = React.useMemo(() => {
     return cn(
-      "w-full flex flex-col",
-      fullHeight || fullScreen ? "min-h-screen" : "min-h-full",
+      "w-full flex flex-col relative",
+      fullHeight || fullScreen ? "h-screen min-h-screen" : "h-full min-h-full",
       fullScreen && "fixed inset-0 z-50",
       withBackground && "relative",
-      fullWidth ? "max-w-none" : "max-w-full mx-auto",
+      fullWidth ? "max-w-none" : maxWidth !== "none" ? maxWidth : "max-w-full mx-auto",
+      scrollable ? "overflow-hidden" : "overflow-visible",
       className
     );
-  }, [fullHeight, fullScreen, withBackground, fullWidth, className]);
+  }, [fullHeight, fullScreen, withBackground, fullWidth, maxWidth, scrollable, className]);
   
+  // کلاس‌های محتوای فول ریسپانسیو
   const contentClasses = React.useMemo(() => {
     return cn(
-      "w-full flex-1 overflow-y-auto overflow-x-hidden",
+      "w-full flex-1",
+      scrollable ? "overflow-y-auto overflow-x-hidden" : "overflow-visible",
       getPadding
     );
-  }, [getPadding]);
+  }, [getPadding, scrollable]);
   
   return (
     <div className={containerClasses}>

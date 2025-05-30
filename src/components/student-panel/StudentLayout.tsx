@@ -29,12 +29,16 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
     return () => window.removeEventListener('scroll', scrollHandler);
   }, [scrollHandler]);
   
-  const headerHeight = deviceInfo.isMobile ? "h-16" : deviceInfo.isTablet ? "h-18" : "h-20";
-  const headerPadding = deviceInfo.isMobile ? "px-4" : deviceInfo.isTablet ? "px-6" : "px-8";
+  // محاسبه استایل‌های فول ریسپانسیو
+  const headerHeight = deviceInfo.isMobile ? "h-14" : deviceInfo.isTablet ? "h-16" : deviceInfo.isSmallLaptop ? "h-18" : "h-20";
+  const headerPadding = deviceInfo.isMobile ? "px-3 py-2" : deviceInfo.isTablet ? "px-4 py-2" : deviceInfo.isSmallLaptop ? "px-6 py-3" : "px-8 py-3";
   const buttonSize = deviceInfo.isMobile ? "p-2" : deviceInfo.isTablet ? "p-2.5" : "p-3";
   const iconSize = deviceInfo.isMobile ? "h-5 w-5" : deviceInfo.isTablet ? "h-6 w-6" : "h-7 w-7";
-  const logoGap = deviceInfo.isMobile ? "gap-2" : "gap-3";
-  const titleSize = deviceInfo.isMobile ? "text-sm" : deviceInfo.isTablet ? "text-base" : "text-lg";
+  const logoGap = deviceInfo.isMobile ? "gap-2" : deviceInfo.isTablet ? "gap-3" : "gap-4";
+  const titleSize = deviceInfo.isMobile ? "text-sm" : deviceInfo.isTablet ? "text-base" : deviceInfo.isSmallLaptop ? "text-lg" : "text-xl";
+  const avatarSize = deviceInfo.isMobile ? "w-8 h-8" : deviceInfo.isTablet ? "w-10 h-10" : "w-12 h-12";
+  const welcomeTextSize = deviceInfo.isMobile ? "text-xs" : deviceInfo.isTablet ? "text-sm" : "text-base";
+  const nameTextSize = deviceInfo.isMobile ? "text-sm" : deviceInfo.isTablet ? "text-base" : "text-lg";
 
   const handleSidebarClose = useCallback(() => {
     setSidebarOpen(false);
@@ -45,7 +49,7 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-violet-950 dark:via-gray-900 dark:to-indigo-950 persian-numbers flex flex-col overflow-x-hidden" dir="rtl">
+    <div className="full-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-violet-950 dark:via-gray-900 dark:to-indigo-950 persian-numbers flex flex-col overflow-hidden" dir="rtl">
       {/* Student Sidebar */}
       {sidebarOpen && (
         <StudentSidebar 
@@ -56,61 +60,61 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
         />
       )}
       
-      {/* Student Header - Only for Students */}
+      {/* Student Header */}
       <header 
         className={cn(
           "sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0",
           scrolled 
             ? "bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm border-violet-200/50" 
-            : "bg-white/70 backdrop-blur-sm border-violet-100"
+            : "bg-white/70 backdrop-blur-sm border-violet-100",
+          headerHeight,
+          headerPadding
         )}
       >
-        <div className={cn("w-full", headerPadding)}>
-          <div className={cn("w-full flex items-center justify-between", headerHeight)}>
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSidebarOpen}
-                className={cn("mr-2 rounded-lg hover:bg-violet-100 dark:hover:bg-violet-800", buttonSize)}
-                aria-label="باز کردن منو"
-              >
-                <Menu className={cn(iconSize, "text-violet-600 dark:text-violet-400")} />
-              </Button>
-              <div className={cn("flex items-center", logoGap)}>
-                <AppIcon size="sm" animated />
-                <h1 className={cn(
-                  "font-bold text-violet-700 dark:text-violet-300",
-                  titleSize
-                )}>
-                  پنل شخصی شاگرد
-                </h1>
-              </div>
+        <div className="w-full h-full flex items-center justify-between">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSidebarOpen}
+              className={cn("rounded-lg hover:bg-violet-100 dark:hover:bg-violet-800", buttonSize)}
+              aria-label="باز کردن منو"
+            >
+              <Menu className={cn(iconSize, "text-violet-600 dark:text-violet-400")} />
+            </Button>
+            <div className={cn("flex items-center", logoGap)}>
+              <AppIcon size="sm" animated />
+              <h1 className={cn(
+                "font-bold text-violet-700 dark:text-violet-300",
+                titleSize
+              )}>
+                پنل شخصی شاگرد
+              </h1>
             </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-xs text-violet-600 dark:text-violet-400">خوش آمدید</p>
-                <p className={cn(
-                  "font-medium text-violet-800 dark:text-violet-200", 
-                  deviceInfo.isMobile ? "text-sm" : "text-base"
-                )}>
-                  {student.name}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-violet-200">
-                <img 
-                  src={student.image || "/Assets/Image/Place-Holder.svg"} 
-                  alt={student.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          </div>
+          
+          <div className={cn("flex items-center", logoGap)}>
+            <div className="text-right">
+              <p className={cn("text-violet-600 dark:text-violet-400", welcomeTextSize)}>خوش آمدید</p>
+              <p className={cn(
+                "font-medium text-violet-800 dark:text-violet-200", 
+                nameTextSize
+              )}>
+                {student.name}
+              </p>
+            </div>
+            <div className={cn(avatarSize, "rounded-full overflow-hidden border-2 border-violet-200")}>
+              <img 
+                src={student.image || "/Assets/Image/Place-Holder.svg"} 
+                alt={student.name}
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
       </header>
       
-      {/* Main Content - Student Only */}
+      {/* Main Content */}
       <main className="flex-1 w-full overflow-y-auto overflow-x-hidden">
         {children}
       </main>
