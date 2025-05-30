@@ -1,4 +1,5 @@
 
+
 export interface Student {
   id: number;
   name: string;
@@ -12,35 +13,35 @@ export interface Student {
   grade?: string;
   group?: string;
   createdAt?: string | Date;
-  progress?: number; // اضافه کردن progress
+  progress?: number;
   
-  // General exercise fields
-  exercises?: ExerciseWithSets[];
+  // General exercise fields - using number[] for exercise IDs
+  exercises?: number[];
   exerciseSets?: Record<number, number>;
   exerciseReps?: Record<number, string>;
   
-  // Day-specific exercise fields
-  exercisesDay1?: ExerciseWithSets[];
+  // Day-specific exercise fields - using number[] for exercise IDs
+  exercisesDay1?: number[];
   exerciseSetsDay1?: Record<number, number>;
   exerciseRepsDay1?: Record<number, string>;
   
-  exercisesDay2?: ExerciseWithSets[];
+  exercisesDay2?: number[];
   exerciseSetsDay2?: Record<number, number>;
   exerciseRepsDay2?: Record<number, string>;
   
-  exercisesDay3?: ExerciseWithSets[];
+  exercisesDay3?: number[];
   exerciseSetsDay3?: Record<number, number>;
   exerciseRepsDay3?: Record<number, string>;
   
-  exercisesDay4?: ExerciseWithSets[];
+  exercisesDay4?: number[];
   exerciseSetsDay4?: Record<number, number>;
   exerciseRepsDay4?: Record<number, string>;
   
-  exercisesDay5?: ExerciseWithSets[];
+  exercisesDay5?: number[];
   exerciseSetsDay5?: Record<number, number>;
   exerciseRepsDay5?: Record<number, string>;
   
-  exercisesDay6?: ExerciseWithSets[];
+  exercisesDay6?: number[];
   exerciseSetsDay6?: Record<number, number>;
   exerciseRepsDay6?: Record<number, string>;
   
@@ -63,10 +64,5 @@ export interface Student {
   vitaminsDay1?: number[];
 }
 
-export interface ExerciseWithSets {
-  id: number;
-  sets: string;
-  reps?: string;
-  name?: string;
-  day?: string;
-}
+// Remove the duplicate ExerciseWithSets definition and use the one from types/exercise.ts
+

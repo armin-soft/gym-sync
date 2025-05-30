@@ -19,8 +19,8 @@ export const ExerciseDialog: React.FC<ExerciseDialogProps> = ({
 }) => {
   if (!selectedStudent || !onSaveExercises) return null;
 
-  // Convert ExerciseWithSets[] to number[] for main exercises
-  const initialExercises = selectedStudent.exercises?.map(ex => ex.id) || [];
+  // Use the exercises array directly as number[]
+  const initialExercises = selectedStudent.exercises || [];
 
   return (
     <StudentExerciseDialog

@@ -20,13 +20,13 @@ export const useStudentExercises = (
           // Extract exercise IDs and sets
           const exerciseIds = exercisesWithSets.map(ex => ex.id);
           const exerciseSets = exercisesWithSets.reduce((acc, ex) => {
-            acc[ex.id] = ex.sets;
+            acc[ex.id] = Number(ex.sets);
             return acc;
           }, {} as Record<number, number>);
           
           // Extract reps information as strings
           const exerciseReps = exercisesWithSets.reduce((acc, ex) => {
-            if (ex.reps !== undefined) acc[ex.id] = ex.reps;
+            if (ex.reps !== undefined) acc[ex.id] = String(ex.reps);
             return acc;
           }, {} as Record<number, string>);
           
@@ -102,8 +102,8 @@ export const useStudentExercises = (
                 break;
             }
           } else {
-            // Otherwise update the general exercises - convert to ExerciseWithSets format
-            updatedStudent.exercises = exercisesWithSets;
+            // Otherwise update the general exercises as number[]
+            updatedStudent.exercises = exerciseIds;
             updatedStudent.exerciseSets = exerciseSets;
             updatedStudent.exerciseReps = exerciseReps;
           }

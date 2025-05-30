@@ -30,7 +30,7 @@ export const useStudentHistoryEntry = (
         timestamp,
         studentId: id,
         studentName: student?.name || "نامشخص",
-        studentImage: student?.picture || student?.image,
+        studentImage: student?.image,
         action,
         type,
         description,
@@ -52,10 +52,10 @@ export const useStudentHistoryEntry = (
       const actionType = selectedStudent ? 'edit' : 'add';
       const studentName = selectedStudent ? selectedStudent.name : data.name;
       
-      // تصویر شاگرد می‌تواند در picture یا image باشد
+      // Use image property instead of picture
       const studentImage = selectedStudent ? 
-        (selectedStudent.picture || selectedStudent.image) : 
-        (data.picture || data.image);
+        selectedStudent.image : 
+        data.image;
       
       const description = selectedStudent 
         ? `اطلاعات ${studentName} ویرایش شد` 
