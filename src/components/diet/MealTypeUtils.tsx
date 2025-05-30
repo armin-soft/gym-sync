@@ -1,6 +1,6 @@
 
 import { MealType } from "@/types/meal";
-import { CoffeeIcon, Cookie, SoupIcon, Pizza, Utensils } from "lucide-react";
+import { CoffeeIcon, Cookie, SoupIcon, Pizza, Utensils, Moon } from "lucide-react";
 
 // Define the order of meal types for consistent display
 export const mealTypeOrder: Record<MealType, number> = {
@@ -9,7 +9,7 @@ export const mealTypeOrder: Record<MealType, number> = {
   "ناهار": 2,
   "میان وعده عصر": 3, 
   "شام": 4,
-  "میان وعده": 5
+  "میان وعده شام": 5
 };
 
 // Get the appropriate icon for each meal type
@@ -19,12 +19,13 @@ export const getMealTypeIcon = (type: MealType) => {
       return <CoffeeIcon className="h-5 w-5" />;
     case "میان وعده صبح":
     case "میان وعده عصر":
-    case "میان وعده":
       return <Cookie className="h-5 w-5" />;
     case "ناهار":
       return <SoupIcon className="h-5 w-5" />;
     case "شام":
       return <Pizza className="h-5 w-5" />;
+    case "میان وعده شام":
+      return <Moon className="h-5 w-5" />;
     default:
       return <Utensils className="h-5 w-5" />;
   }
@@ -43,7 +44,6 @@ export const getMealTypeStyle = (type: MealType) => {
         accent: "bg-orange-500"
       };
     case "میان وعده صبح":
-    case "میان وعده":
       return {
         bg: "bg-yellow-500/10",
         icon: "text-yellow-500",
@@ -78,6 +78,15 @@ export const getMealTypeStyle = (type: MealType) => {
         border: "border-blue-500/20",
         hover: "hover:border-blue-500/40",
         accent: "bg-blue-500"
+      };
+    case "میان وعده شام":
+      return {
+        bg: "bg-purple-500/10",
+        icon: "text-purple-500",
+        iconBg: "bg-purple-500/10",
+        border: "border-purple-500/20",
+        hover: "hover:border-purple-500/40",
+        accent: "bg-purple-500"
       };
     default:
       return {
