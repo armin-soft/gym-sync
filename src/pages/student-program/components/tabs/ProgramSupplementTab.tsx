@@ -4,7 +4,7 @@ import { Student } from "@/components/students/StudentTypes";
 import { Supplement } from "@/types/supplement";
 import { useSupplementTabState } from "./supplement/useSupplementTabState";
 import { Button } from "@/components/ui/button";
-import { FileText, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import SupplementSelector from "./supplement/SupplementSelector";
 import VitaminSelector from "./supplement/VitaminSelector";
 
@@ -12,14 +12,12 @@ interface ProgramSupplementTabProps {
   student: Student;
   supplements: Supplement[];
   onSaveSupplements: (data: {supplements: number[], vitamins: number[]}) => boolean;
-  onShowPdfPreview?: () => void;
 }
 
 export const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
   student,
   supplements,
-  onSaveSupplements,
-  onShowPdfPreview
+  onSaveSupplements
 }) => {
   const {
     selectedSupplements,
@@ -36,17 +34,6 @@ export const ProgramSupplementTab: React.FC<ProgramSupplementTabProps> = ({
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">مکمل‌ها و ویتامین‌ها</h3>
         <div className="flex gap-2">
-          {onShowPdfPreview && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onShowPdfPreview}
-              className="flex items-center gap-1"
-            >
-              <FileText className="h-4 w-4" />
-              <span>پیش‌نمایش PDF</span>
-            </Button>
-          )}
           <Button
             onClick={handleSave}
             disabled={isLoading}

@@ -28,32 +28,27 @@
   "shortcuts": [
     {
       "name": "پروفایل مربی",
-      "url": "./Coach-Profile",
+      "url": "./Management/Coach-Profile",
       "icons": []
     },
     {
       "name": "شاگردان",
-      "url": "./Students",
+      "url": "./Management/Students",
       "icons": []
     },
     {
       "name": "تمرینات",
-      "url": "./Exercise-Movements",
+      "url": "./Management/Exercise-Movements",
       "icons": []
     },
     {
       "name": "برنامه غذایی",
-      "url": "./Diet-Plan",
+      "url": "./Management/Diet-Plan",
       "icons": []
     },
     {
       "name": "مکمل‌ها",
-      "url": "./Supplements-Vitamins",
-      "icons": []
-    },
-    {
-      "name": "پشتیبان‌گیری",
-      "url": "./Backup-Restore",
+      "url": "./Management/Supplements-Vitamins",
       "icons": []
     }
   ]
