@@ -14,7 +14,6 @@ export const UserTypeSelection = () => {
   const handleUserTypeSelection = (type: 'management' | 'student') => {
     setSelectedType(type);
     
-    // Add a slight delay for better UX
     setTimeout(() => {
       localStorage.setItem("hasSelectedUserType", "true");
       localStorage.setItem("selectedUserType", type);
@@ -114,7 +113,6 @@ export const UserTypeSelection = () => {
 
   return (
     <PageContainer fullScreen fullHeight withBackground>
-      {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -129,7 +127,6 @@ export const UserTypeSelection = () => {
             variants={containerVariants}
             className="text-center space-y-12"
           >
-            {/* Header Section */}
             <motion.div variants={itemVariants} className="space-y-6">
               <div className="relative">
                 <motion.div
@@ -155,7 +152,6 @@ export const UserTypeSelection = () => {
               </p>
             </motion.div>
 
-            {/* Selection Cards */}
             <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {userTypes.map((type) => {
                 const Icon = type.icon;
@@ -173,19 +169,15 @@ export const UserTypeSelection = () => {
                     className="relative group cursor-pointer"
                     onClick={() => handleUserTypeSelection(type.id as 'management' | 'student')}
                   >
-                    {/* Glow Effect */}
                     <motion.div
                       variants={glowVariants}
                       className={`absolute inset-0 bg-gradient-to-r ${type.gradient} opacity-20 blur-xl rounded-3xl`}
                     />
                     
-                    {/* Main Card */}
                     <div className={`relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-800/20 rounded-3xl p-8 overflow-hidden transition-all duration-500`}>
-                      {/* Background Pattern */}
                       <div className={`absolute inset-0 bg-gradient-to-br ${type.bgGradient} dark:${type.darkBgGradient} opacity-50`} />
-                      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Cpath d="m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
+                      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%239C92AC\" fill-opacity=\"0.05\"%3E%3Cpath d=\"m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
                       
-                      {/* Badge */}
                       <div className="absolute top-6 left-6">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${type.gradient} text-white shadow-lg`}>
                           <Shield className="w-3 h-3 ml-1" />
@@ -193,9 +185,7 @@ export const UserTypeSelection = () => {
                         </span>
                       </div>
 
-                      {/* Content */}
                       <div className="relative z-10 text-center space-y-6">
-                        {/* Icon */}
                         <motion.div
                           animate={isHovered ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
                           transition={{ type: "spring", stiffness: 300 }}
@@ -204,7 +194,6 @@ export const UserTypeSelection = () => {
                           <Icon className="w-12 h-12 text-white" />
                         </motion.div>
 
-                        {/* Title */}
                         <div>
                           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                             {type.title}
@@ -217,7 +206,6 @@ export const UserTypeSelection = () => {
                           </p>
                         </div>
 
-                        {/* Features */}
                         <div className="space-y-3">
                           {type.features.map((feature, index) => (
                             <motion.div
@@ -233,7 +221,6 @@ export const UserTypeSelection = () => {
                           ))}
                         </div>
 
-                        {/* Action Button */}
                         <motion.div
                           animate={isHovered ? { y: -5 } : { y: 0 }}
                           transition={{ type: "spring", stiffness: 300 }}
@@ -261,7 +248,6 @@ export const UserTypeSelection = () => {
                         </motion.div>
                       </div>
 
-                      {/* Loading Overlay */}
                       <AnimatePresence>
                         {isSelected && (
                           <motion.div
@@ -289,7 +275,6 @@ export const UserTypeSelection = () => {
               })}
             </motion.div>
 
-            {/* Footer Info */}
             <motion.div variants={itemVariants} className="text-center">
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
                 می‌توانید در هر زمان بین پنل‌ها جابجا شوید. تجربه کاربری بهینه‌ای را انتظار داشته باشید.
