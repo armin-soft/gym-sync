@@ -1,10 +1,14 @@
 
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { PageContainer } from "@/components/ui/page-container";
+import { DashboardContent } from "@/components/dashboard/DashboardContent";
 
 const ManagementPage = () => {
-  // Redirect to the main dashboard since this is the management panel
-  return <Navigate to="/" replace />;
+  return (
+    <PageContainer withBackground fullHeight className="w-full">
+      <DashboardContent />
+    </PageContainer>
+  );
 };
 
 export default ManagementPage;

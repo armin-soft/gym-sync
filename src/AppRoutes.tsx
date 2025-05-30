@@ -52,17 +52,6 @@ const AppRoutes = () => {
       <Route path="/Students/exercises" element={<StudentExercises />} />
       <Route path="/Students/diet" element={<StudentDiet />} />
       <Route path="/Students/supplements" element={<StudentSupplements />} />
-      
-      {/* Legacy student panel routes - redirect to new structure */}
-      <Route path="/panel" element={<Navigate to="/Students" replace />} />
-      <Route path="/panel/dashboard/:studentId" element={<Navigate to="/Students" replace />} />
-      <Route path="/panel/profile" element={<Navigate to="/Students/profile" replace />} />
-      <Route path="/panel/exercises" element={<Navigate to="/Students/exercises" replace />} />
-      <Route path="/panel/diet" element={<Navigate to="/Students/diet" replace />} />
-      <Route path="/panel/supplements" element={<Navigate to="/Students/supplements" replace />} />
-      <Route path="/panel/calendar" element={<Navigate to="/Students/exercises" replace />} />
-      <Route path="/panel/progress" element={<Navigate to="/Students/profile" replace />} />
-      <Route path="/panel/goals" element={<Navigate to="/Students/profile" replace />} />
 
       {/* Catch all route */}
       <Route path="*" element={<Navigate to="/" replace />} />

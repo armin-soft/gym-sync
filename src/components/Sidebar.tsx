@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -27,43 +26,43 @@ const sidebarItems = [
   {
     title: "داشبورد",
     description: "نمای کلی باشگاه و آمار",
-    href: "/",
+    href: "/Management",
     icon: LayoutDashboard,
   },
   {
     title: "پروفایل مربی",
     description: "مدیریت اطلاعات شخصی",
-    href: "/Coach-Profile",
+    href: "/Management/Coach-Profile",
     icon: User2,
   },
   {
     title: "شاگردان",
     description: "مدیریت ورزشکاران",
-    href: "/Students",
+    href: "/Management/Students",
     icon: Users,
   },
   {
     title: "حرکات تمرینی",
     description: "مدیریت حرکات و تمرینات",
-    href: "/Exercise-Movements",
+    href: "/Management/Exercise-Movements",
     icon: Dumbbell,
   },
   {
     title: "برنامه های غذایی",
     description: "مدیریت رژیم غذایی",
-    href: "/Diet-Plan",
+    href: "/Management/Diet-Plan",
     icon: UtensilsCrossed,
   },
   {
     title: "مکمل و ویتامین",
     description: "مدیریت مکمل‌های ورزشی",
-    href: "/Supplements-Vitamins",
+    href: "/Management/Supplements-Vitamins",
     icon: Pill,
   },
   {
     title: "پشتیبان‌گیری و بازیابی",
     description: "مدیریت داده‌ها",
-    href: "/Backup-Restore",
+    href: "/Management/Backup-Restore",
     icon: Database,
   },
 ];
