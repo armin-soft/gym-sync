@@ -1,35 +1,15 @@
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Activity, 
-  Plus, 
-  Search, 
-  ArrowUpDown, 
-  Filter, 
-  LayoutGrid, 
-  ListOrdered,
-  Dumbbell,
-  FolderTree,
-  Trash2 
-} from "lucide-react";
 import { motion } from "framer-motion";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+import { Dumbbell, FolderTree } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import ExerciseTableMain from "@/components/exercises/table/ExerciseTableMain";
 import { ExerciseCard } from "@/components/exercises/ExerciseCard";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
-import { useToast } from "@/hooks/use-toast";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { ExercisesTabHeader } from "./ExercisesTabHeader";
+import { ExercisesTabFilters } from "./ExercisesTabFilters";
+import { useExercisesTabLogic } from "./hooks/useExercisesTabLogic";
 
 interface ExercisesTabContentProps {
   filteredCategories: ExerciseCategory[];
@@ -88,47 +68,20 @@ export const ExercisesTabContent = ({
   isAscending,
   onSort
 }: ExercisesTabContentProps) => {
-  const { toast } = useToast();
-  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
+  const {
+    isDeleteAllDialogOpen,
+    setIsDeleteAllDialogOpen,
+    handleAddExercise,
+    handleDeleteAll,
+    confirmDeleteAll
+  } = useExercisesTabLogic({
+    filteredCategories,
+    filteredExercises,
+    onAddExercise,
+    onDeleteExercises
+  });
+
   const hasCategories = filteredCategories.length > 0;
-
-  const handleAddExercise = () => {
-    if (filteredCategories.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "ابتدا باید یک دسته بندی ایجاد کنید"
-      });
-      return;
-    }
-    onAddExercise();
-  };
-
-  const handleDeleteAll = () => {
-    if (filteredExercises.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "هیچ حرکتی برای حذف وجود ندارد"
-      });
-      return;
-    }
-    setIsDeleteAllDialogOpen(true);
-  };
-
-  const confirmDeleteAll = () => {
-    const allExerciseIds = filteredExercises.map(ex => ex.id);
-    const success = onDeleteExercises(allExerciseIds);
-    
-    if (success) {
-      toast({
-        title: "موفقیت",
-        description: `${toPersianNumbers(filteredExercises.length)} حرکت با موفقیت حذف شد`
-      });
-    }
-    
-    setIsDeleteAllDialogOpen(false);
-  };
 
   if (!hasCategories) {
     return (
@@ -144,129 +97,24 @@ export const ExercisesTabContent = ({
 
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Activity className="w-5 h-5 text-pink-500" />
-          حرکات تمرینی
-        </h3>
-        
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleSortOrder}
-            className="hover:bg-indigo-50 text-indigo-600 transition-all duration-300"
-          >
-            <ArrowUpDown className={`h-4 w-4 transition-transform duration-300 ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`} />
-          </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="icon"
-                className="hover:bg-indigo-50 text-indigo-600 transition-all duration-300"
-              >
-                <Filter className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>فیلتر دسته‌بندی</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={() => setSelectedCategoryId(null)}
-                className={!selectedCategoryId ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
-              >
-                همه دسته‌بندی‌ها
-              </DropdownMenuItem>
-              
-              {filteredCategories.map((category) => (
-                <DropdownMenuItem 
-                  key={category.id}
-                  onClick={() => setSelectedCategoryId(category.id)}
-                  className={selectedCategoryId === category.id ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
-                >
-                  {category.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            className="hover:bg-indigo-50 text-indigo-600 transition-all duration-300"
-          >
-            {viewMode === "grid" ? (
-              <ListOrdered className="h-4 w-4" />
-            ) : (
-              <LayoutGrid className="h-4 w-4" />
-            )}
-          </Button>
+      <ExercisesTabHeader
+        filteredCategories={filteredCategories}
+        categories={categories}
+        selectedCategoryId={selectedCategoryId}
+        setSelectedCategoryId={setSelectedCategoryId}
+        sortOrder={sortOrder}
+        toggleSortOrder={toggleSortOrder}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        filteredExercisesCount={filteredExercises.length}
+        onAddExercise={handleAddExercise}
+        onDeleteAll={handleDeleteAll}
+      />
 
-          {filteredExercises.length > 0 && (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleDeleteAll}
-              className="transition-all duration-300 hover:scale-105"
-            >
-              <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
-              حذف همه ({toPersianNumbers(filteredExercises.length)})
-            </Button>
-          )}
-
-          <Button
-            onClick={handleAddExercise}
-            className="bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-700 hover:to-indigo-500 text-white shadow-indigo-200 shadow-lg transition-all duration-300 hover:scale-105"
-            size="sm"
-          >
-            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
-            افزودن حرکت
-          </Button>
-        </div>
-      </div>
-
-      {/* جستجو و فیلتر */}
-      <div className="flex flex-col xs:flex-row gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="جستجوی حرکت..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-3 pr-10"
-          />
-        </div>
-        
-        {searchQuery && (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setSearchQuery("")}
-            className="text-xs"
-          >
-            پاک کردن
-          </Button>
-        )}
-      </div>
-
-      {selectedCategoryId && (
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="bg-indigo-50 text-indigo-700">
-            {categories.find(c => c.id === selectedCategoryId)?.name}
-          </Badge>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setSelectedCategoryId(null)}
-            className="h-6 text-xs"
-          >
-            حذف فیلتر
-          </Button>
-        </div>
-      )}
+      <ExercisesTabFilters
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       <motion.div 
         className="flex-1 min-h-0 overflow-auto"
@@ -325,7 +173,6 @@ export const ExercisesTabContent = ({
         )}
       </motion.div>
 
-      {/* Delete All Confirmation Dialog */}
       <ConfirmationDialog
         isOpen={isDeleteAllDialogOpen}
         onClose={() => setIsDeleteAllDialogOpen(false)}
