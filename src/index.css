@@ -57,6 +57,28 @@ code {
   }
 }
 
+@layer utilities {
+  /* Custom height classes for consistent sizing */
+  .h-18 {
+    height: 4.5rem; /* 72px */
+  }
+  .xs\:h-18 {
+    height: 4.5rem;
+  }
+  .sm\:h-18 {
+    height: 4.5rem;
+  }
+  .md\:h-18 {
+    height: 4.5rem;
+  }
+  .lg\:h-18 {
+    height: 4.5rem;
+  }
+  .xl\:h-18 {
+    height: 4.5rem;
+  }
+}
+
 /* کلاس‌های کلی فول اسکرین */
 .full-screen {
   height: 100vh;

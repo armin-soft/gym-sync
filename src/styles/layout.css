@@ -168,7 +168,7 @@
   }
 
   .responsive-m-lg {
-    @apply m-2 xs:m-3 sm:m-4 md:m-6 lg:m-8;
+    @apply m-2 xs:m-3 sm:p-4 md:m-6 lg:m-8;
   }
 
   .responsive-m-xl {
@@ -248,7 +248,7 @@
 
   /* فوتر فول ریسپانسیو */
   .footer-height {
-    @apply h-16 xs:h-18 sm:h-20 md:h-22 lg:h-24;
+    @apply h-16 md:h-20 lg:h-24;
   }
 }
 
@@ -358,6 +358,41 @@
     
     .desktop-grid {
       @apply grid-cols-3 gap-6;
+    }
+  }
+
+  /* Custom height classes for h-18 */
+  .h-18 {
+    height: 4.5rem;
+  }
+  
+  @screen xs {
+    .xs\:h-18 {
+      height: 4.5rem;
+    }
+  }
+  
+  @screen sm {
+    .sm\:h-18 {
+      height: 4.5rem;
+    }
+  }
+  
+  @screen md {
+    .md\:h-18 {
+      height: 4.5rem;
+    }
+  }
+  
+  @screen lg {
+    .lg\:h-18 {
+      height: 4.5rem;
+    }
+  }
+  
+  @screen xl {
+    .xl\:h-18 {
+      height: 4.5rem;
     }
   }
 }
