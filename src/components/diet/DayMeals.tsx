@@ -109,7 +109,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
       const isMatch = normalizedMealDay === normalizedSelectedDay;
       return isMatch;
     });
-    console.log(`Filtered meals for ${day}: ${dayMeals.length} items`, dayMeals);
+    console.log(`*** FILTERED MEALS FOR ${day}: ${dayMeals.length} items ***`, dayMeals);
     return dayMeals;
   };
   
@@ -158,6 +158,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
               >
                 {weekDays.map((day) => {
                   const dayMeals = getDayMeals(day);
+                  console.log(`*** PASSING TO DayContent for ${day}:`, dayMeals.length, 'meals');
                   
                   return (
                     <TabsContent 
@@ -166,7 +167,7 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
                       className="mt-6 relative"
                     >
                       <DayContent
-                        key={`day-content-${day}`}
+                        key={`day-content-${day}-${dayMeals.length}`}
                         day={day}
                         mealTypes={mealTypes}
                         meals={dayMeals}

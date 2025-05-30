@@ -17,8 +17,8 @@ interface DayContentProps {
 }
 
 export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered = false }: DayContentProps) => {
-  console.log(`=== DAY CONTENT ${day} DEBUG ===`);
-  console.log("Meals received:", meals);
+  console.log(`*** DAY CONTENT ${day} RECEIVED MEALS: ${meals.length} ***`);
+  console.log("Meals details:", meals);
   console.log("Meal types:", mealTypes);
   console.log("Day:", day);
   
@@ -45,8 +45,12 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
     }
   };
   
+  // بررسی دقیق‌تر برای نمایش پیام خالی
+  console.log(`*** CHECK: meals.length = ${meals.length} for day ${day} ***`);
+  
   // اگر هیچ وعده‌ای وجود ندارد، پیام مناسب نمایش دهیم
-  if (meals.length === 0) {
+  if (!meals || meals.length === 0) {
+    console.log(`*** SHOWING EMPTY STATE for ${day} ***`);
     return (
       <motion.div 
         initial="hidden"
@@ -77,6 +81,8 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
     );
   }
   
+  console.log(`*** RENDERING MEALS for ${day} ***`);
+  
   return (
     <motion.div 
       initial="hidden"
@@ -89,6 +95,7 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
     >
       {sortedMealTypes.map((type, typeIndex) => {
         const typeMeals = meals.filter(meal => meal.type === type);
+        console.log(`*** ${type} meals for ${day}:`, typeMeals.length);
         
         // نمایش همه انواع وعده غذایی، حتی اگر وعده‌ای نداشته باشند
         return (
