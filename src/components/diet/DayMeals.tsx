@@ -15,43 +15,6 @@ interface DayMealsProps {
   onDelete: (id: number) => void;
 }
 
-// تابع کمکی برای استاندارد کردن نام روزها - اصلاح شده
-const normalizeDay = (day: string): string => {
-  if (!day) return '';
-  
-  // حذف تمام فضاهای خالی و تبدیل به حروف کوچک
-  const cleanDay = day.trim().replace(/\s+/g, '').toLowerCase();
-  
-  // نگاشت برای استاندارد کردن نوشتار روزها
-  const dayMap: Record<string, WeekDay> = {
-    'شنبه': 'شنبه',
-    'یکشنبه': 'یکشنبه',
-    'يکشنبه': 'یکشنبه', // یای عربی
-    'یک‌شنبه': 'یکشنبه',
-    'دوشنبه': 'دوشنبه',
-    'دو‌شنبه': 'دوشنبه',
-    'سه‌شنبه': 'سه شنبه',
-    'سهشنبه': 'سه شنبه',
-    'سه‌ شنبه': 'سه شنبه',
-    'چهارشنبه': 'چهارشنبه',
-    'چهار‌شنبه': 'چهارشنبه',
-    'چهار شنبه': 'چهارشنبه',
-    'پنج‌شنبه': 'پنج شنبه',
-    'پنجشنبه': 'پنج شنبه',
-    'جمعه': 'جمعه'
-  };
-  
-  // جستجو در نگاشت
-  for (const [variant, standard] of Object.entries(dayMap)) {
-    if (variant.replace(/\s+/g, '').toLowerCase() === cleanDay) {
-      return standard;
-    }
-  }
-  
-  // اگر پیدا نشد، همان مقدار اصلی را برگردان
-  return day;
-};
-
 // تعریف روزهای هفته با ترتیب صحیح از شنبه تا جمعه
 const weekDays: WeekDay[] = [
   'شنبه', 
@@ -88,10 +51,10 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
   
   // دریافت روزهای دارای محتوا از وعده‌های غذایی
   const daysWithContent = Array.from(
-    new Set(meals.map(meal => normalizeDay(meal.day || '')))
-  ).filter(Boolean) as WeekDay[];
+    new Set(meals.map(meal => meal.day).filter(Boolean))
+  ) as WeekDay[];
   
-  console.log("Days with content after normalization:", daysWithContent);
+  console.log("Days with content:", daysWithContent);
   
   // یک تابع برای تبدیل مناسب رشته به نوع WeekDay
   const handleDayChange = (value: string) => {
@@ -103,10 +66,10 @@ export const DayMeals = ({ meals, mealTypes, onEdit, onDelete }: DayMealsProps) 
   
   // نمایش تمام غذاهای مربوط به روز انتخاب شده
   const getDayMeals = (day: WeekDay): Meal[] => {
-    const normalizedSelectedDay = normalizeDay(day);
     const dayMeals = meals.filter(meal => {
-      const normalizedMealDay = normalizeDay(meal.day || '');
-      const isMatch = normalizedMealDay === normalizedSelectedDay;
+      // بررسی مستقیم بدون استفاده از normalizeDay
+      const isMatch = meal.day === day;
+      console.log(`Checking meal ${meal.name}: meal.day="${meal.day}", selected day="${day}", match=${isMatch}`);
       return isMatch;
     });
     console.log(`*** FILTERED MEALS FOR ${day}: ${dayMeals.length} items ***`, dayMeals);

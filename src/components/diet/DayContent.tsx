@@ -23,7 +23,11 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
   console.log("Day:", day);
   
   // مرتب‌سازی انواع وعده‌های غذایی بر اساس ترتیب تعریف شده
-  const sortedMealTypes = [...mealTypes].sort((a, b) => mealTypeOrder[a] - mealTypeOrder[b]);
+  const sortedMealTypes = [...mealTypes].sort((a, b) => {
+    const orderA = mealTypeOrder[a] || 99;
+    const orderB = mealTypeOrder[b] || 99;
+    return orderA - orderB;
+  });
   
   // انیمیشن برای ظهور آیتم‌ها
   const containerVariants = {
@@ -97,7 +101,9 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
         const typeMeals = meals.filter(meal => meal.type === type);
         console.log(`*** ${type} meals for ${day}:`, typeMeals.length);
         
-        // نمایش همه انواع وعده غذایی، حتی اگر وعده‌ای نداشته باشند
+        // فقط انواع وعده‌هایی که غذا دارند نمایش داده شوند
+        if (typeMeals.length === 0) return null;
+        
         return (
           <motion.div key={`${day}-${type}`} variants={itemVariants}>
             <MealTypeSection
