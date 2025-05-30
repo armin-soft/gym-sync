@@ -49,22 +49,19 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
     }
   };
   
-  // بررسی دقیق‌تر برای نمایش پیام خالی
-  console.log(`*** CHECK: meals.length = ${meals.length} for day ${day} ***`);
+  console.log(`*** RENDERING CONTENT for ${day} with ${meals.length} meals ***`);
   
-  // اگر هیچ وعده‌ای وجود ندارد، پیام مناسب نمایش دهیم
-  if (!meals || meals.length === 0) {
-    console.log(`*** SHOWING EMPTY STATE for ${day} ***`);
-    return (
-      <motion.div 
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className={cn(
-          "space-y-4 sm:space-y-6",
-          centered ? "text-center" : "text-right"
-        )}
-      >
+  return (
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className={cn(
+        "space-y-4 sm:space-y-6",
+        centered ? "text-center" : "text-right"
+      )}
+    >
+      {meals.length === 0 ? (
         <motion.div 
           variants={itemVariants}
           className="text-muted-foreground text-lg py-16 px-6 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 backdrop-blur-sm border border-border/30 shadow-sm flex items-center justify-center"
@@ -81,43 +78,29 @@ export const DayContent = ({ day, mealTypes, meals, onEdit, onDelete, centered =
             </div>
           </div>
         </motion.div>
-      </motion.div>
-    );
-  }
-  
-  console.log(`*** RENDERING MEALS for ${day} ***`);
-  
-  return (
-    <motion.div 
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className={cn(
-        "space-y-4 sm:space-y-6",
-        centered ? "text-center" : "text-right"
+      ) : (
+        sortedMealTypes.map((type, typeIndex) => {
+          const typeMeals = meals.filter(meal => meal.type === type);
+          console.log(`*** ${type} meals for ${day}:`, typeMeals.length);
+          
+          // فقط انواع وعده‌هایی که غذا دارند نمایش داده شوند
+          if (typeMeals.length === 0) return null;
+          
+          return (
+            <motion.div key={`${day}-${type}`} variants={itemVariants}>
+              <MealTypeSection
+                type={type}
+                meals={typeMeals}
+                day={day}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                typeIndex={typeIndex}
+                centered={centered}
+              />
+            </motion.div>
+          );
+        })
       )}
-    >
-      {sortedMealTypes.map((type, typeIndex) => {
-        const typeMeals = meals.filter(meal => meal.type === type);
-        console.log(`*** ${type} meals for ${day}:`, typeMeals.length);
-        
-        // فقط انواع وعده‌هایی که غذا دارند نمایش داده شوند
-        if (typeMeals.length === 0) return null;
-        
-        return (
-          <motion.div key={`${day}-${type}`} variants={itemVariants}>
-            <MealTypeSection
-              type={type}
-              meals={typeMeals}
-              day={day}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              typeIndex={typeIndex}
-              centered={centered}
-            />
-          </motion.div>
-        );
-      })}
     </motion.div>
   );
 };
