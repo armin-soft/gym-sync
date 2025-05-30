@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
@@ -23,28 +24,45 @@ const AppRoutes = () => {
     <Routes>
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
-      <Route path="/students" element={<Students />} />
+      
+      {/* Management Panel Routes */}
+      <Route path="/Management" element={<Management />} />
+      <Route path="/Management/Coach-Profile" element={<Trainer />} />
+      <Route path="/Management/Students" element={<Students />} />
+      <Route path="/Management/Exercise-Movements" element={<Exercises />} />
+      <Route path="/Management/Diet-Plan" element={<Diet />} />
+      <Route path="/Management/Supplements-Vitamins" element={<Supplements />} />
+      <Route path="/Management/Backup-Restore" element={<Backup />} />
+      
+      {/* Legacy management routes - redirect to new structure */}
+      <Route path="/students" element={<Navigate to="/Management/Students" replace />} />
       <Route path="/student-history" element={<StudentHistory />} />
       <Route path="/student-program/:studentId" element={<StudentProgram />} />
-      <Route path="/exercises" element={<Exercises />} />
-      <Route path="/diet" element={<Diet />} />
-      <Route path="/supplements" element={<Supplements />} />
-      <Route path="/trainer" element={<Trainer />} />
-      <Route path="/backup" element={<Backup />} />
-      <Route path="/management" element={<Management />} />
+      <Route path="/exercises" element={<Navigate to="/Management/Exercise-Movements" replace />} />
+      <Route path="/diet" element={<Navigate to="/Management/Diet-Plan" replace />} />
+      <Route path="/supplements" element={<Navigate to="/Management/Supplements-Vitamins" replace />} />
+      <Route path="/trainer" element={<Navigate to="/Management/Coach-Profile" replace />} />
+      <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
+      <Route path="/management" element={<Navigate to="/Management" replace />} />
 
       {/* Student Panel Routes */}
-      <Route path="/panel" element={<StudentPanel />} />
-      <Route path="/panel/dashboard/:studentId" element={<StudentPanel />} />
-      <Route path="/panel/profile" element={<StudentProfile />} />
-      <Route path="/panel/exercises" element={<StudentExercises />} />
-      <Route path="/panel/diet" element={<StudentDiet />} />
-      <Route path="/panel/supplements" element={<StudentSupplements />} />
+      <Route path="/Students" element={<StudentPanel />} />
+      <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
+      <Route path="/Students/profile" element={<StudentProfile />} />
+      <Route path="/Students/exercises" element={<StudentExercises />} />
+      <Route path="/Students/diet" element={<StudentDiet />} />
+      <Route path="/Students/supplements" element={<StudentSupplements />} />
       
-      {/* Placeholder routes for remaining student panel pages */}
-      <Route path="/panel/calendar" element={<Navigate to="/panel/exercises" replace />} />
-      <Route path="/panel/progress" element={<Navigate to="/panel/profile" replace />} />
-      <Route path="/panel/goals" element={<Navigate to="/panel/profile" replace />} />
+      {/* Legacy student panel routes - redirect to new structure */}
+      <Route path="/panel" element={<Navigate to="/Students" replace />} />
+      <Route path="/panel/dashboard/:studentId" element={<Navigate to="/Students" replace />} />
+      <Route path="/panel/profile" element={<Navigate to="/Students/profile" replace />} />
+      <Route path="/panel/exercises" element={<Navigate to="/Students/exercises" replace />} />
+      <Route path="/panel/diet" element={<Navigate to="/Students/diet" replace />} />
+      <Route path="/panel/supplements" element={<Navigate to="/Students/supplements" replace />} />
+      <Route path="/panel/calendar" element={<Navigate to="/Students/exercises" replace />} />
+      <Route path="/panel/progress" element={<Navigate to="/Students/profile" replace />} />
+      <Route path="/panel/goals" element={<Navigate to="/Students/profile" replace />} />
 
       {/* Catch all route */}
       <Route path="*" element={<Navigate to="/" replace />} />

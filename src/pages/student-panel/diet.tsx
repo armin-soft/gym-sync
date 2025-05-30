@@ -21,21 +21,21 @@ const StudentDiet = () => {
   const isLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
 
   if (!isLoggedIn || !loggedInStudentId) {
-    navigate("/panel");
+    navigate("/Students");
     return null;
   }
 
   const student = students.find(s => s.id.toString() === loggedInStudentId);
 
   if (!student) {
-    navigate("/panel");
+    navigate("/Students");
     return null;
   }
 
   const handleLogout = () => {
     localStorage.removeItem("studentLoggedIn");
     localStorage.removeItem("loggedInStudentId");
-    navigate("/panel");
+    navigate("/Students");
     toast({
       title: "خروج موفق",
       description: "با موفقیت از حساب کاربری خارج شدید",

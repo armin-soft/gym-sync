@@ -14,9 +14,9 @@ export const UserTypeSelection = () => {
     localStorage.setItem("selectedUserType", type);
     
     if (type === 'management') {
-      navigate("/");
+      navigate("/Management");
     } else {
-      navigate("/panel");
+      navigate("/Students");
     }
     // حذف reload برای جلوگیری از نمایش مجدد لودینگ
   };
