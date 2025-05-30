@@ -14,14 +14,11 @@ export const UserTypeSelection = () => {
     localStorage.setItem("selectedUserType", type);
     
     if (type === 'management') {
-      navigate("/Management");
-      // Reload to show the management interface
-      window.location.reload();
+      navigate("/");
     } else {
-      navigate("/Panel");
-      // Reload to show the student interface
-      window.location.reload();
+      navigate("/panel");
     }
+    // حذف reload برای جلوگیری از نمایش مجدد لودینگ
   };
 
   const containerVariants = {
