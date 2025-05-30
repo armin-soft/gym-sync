@@ -21,6 +21,8 @@ import {
   Heart,
   Zap
 } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+import { formatMeasurement, calculateBMI, getBMICategory, getStudentProgress } from "@/utils/studentUtils";
 
 const StudentPanel = () => {
   const { studentId } = useParams<{ studentId?: string }>();
@@ -65,6 +67,19 @@ const StudentPanel = () => {
     return <StudentLogin />;
   }
 
+  // Calculate real data
+  const totalExercises = (loggedInStudent.exercisesDay1?.length || 0) + 
+                        (loggedInStudent.exercisesDay2?.length || 0) + 
+                        (loggedInStudent.exercisesDay3?.length || 0) + 
+                        (loggedInStudent.exercisesDay4?.length || 0) + 
+                        (loggedInStudent.exercisesDay5?.length || 0);
+  
+  const totalMeals = loggedInStudent.meals?.length || 0;
+  const totalSupplements = (loggedInStudent.supplements?.length || 0) + (loggedInStudent.vitamins?.length || 0);
+  const studentProgress = getStudentProgress(loggedInStudent);
+  const bmi = calculateBMI(loggedInStudent.weight, loggedInStudent.height);
+  const bmiCategory = bmi ? getBMICategory(bmi) : '';
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -102,7 +117,6 @@ const StudentPanel = () => {
     },
   };
 
-  // Student dashboard
   return (
     <StudentLayout student={loggedInStudent} onLogout={handleLogout}>
       <PageContainer withBackground fullHeight>
@@ -124,7 +138,7 @@ const StudentPanel = () => {
                   <div className="relative">
                     <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg ring-4 ring-white/20">
                       <img 
-                        src={loggedInStudent.image} 
+                        src={loggedInStudent.image || "/Assets/Image/Place-Holder.svg"} 
                         alt={loggedInStudent.name}
                         className="w-full h-full object-cover"
                       />
@@ -145,13 +159,13 @@ const StudentPanel = () => {
                 
                 <div className="flex flex-col gap-2">
                   <div className="text-center">
-                    <div className="text-3xl font-bold">{loggedInStudent.progress || 0}%</div>
+                    <div className="text-3xl font-bold">{toPersianNumbers(studentProgress)}%</div>
                     <div className="text-sm text-white/70">پیشرفت کلی</div>
                   </div>
                   <div className="w-full bg-white/20 rounded-full h-2">
                     <div 
                       className="bg-white rounded-full h-2 transition-all duration-500"
-                      style={{ width: `${loggedInStudent.progress || 0}%` }}
+                      style={{ width: `${studentProgress}%` }}
                     ></div>
                   </div>
                 </div>
@@ -168,12 +182,7 @@ const StudentPanel = () => {
                     <Dumbbell className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">
-                      {(loggedInStudent.exercisesDay1?.length || 0) + 
-                       (loggedInStudent.exercisesDay2?.length || 0) + 
-                       (loggedInStudent.exercisesDay3?.length || 0) + 
-                       (loggedInStudent.exercisesDay4?.length || 0)}
-                    </div>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(totalExercises)}</div>
                     <div className="text-sm text-gray-600">تمرینات</div>
                   </div>
                 </div>
@@ -185,7 +194,7 @@ const StudentPanel = () => {
                     <Apple className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">{loggedInStudent.meals?.length || 0}</div>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(totalMeals)}</div>
                     <div className="text-sm text-gray-600">وعده غذایی</div>
                   </div>
                 </div>
@@ -197,9 +206,7 @@ const StudentPanel = () => {
                     <Pill className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">
-                      {(loggedInStudent.supplements?.length || 0) + (loggedInStudent.vitamins?.length || 0)}
-                    </div>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(totalSupplements)}</div>
                     <div className="text-sm text-gray-600">مکمل‌ها</div>
                   </div>
                 </div>
@@ -211,8 +218,8 @@ const StudentPanel = () => {
                     <Trophy className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-800">۸۵%</div>
-                    <div className="text-sm text-gray-600">موفقیت</div>
+                    <div className="text-2xl font-bold text-gray-800">{toPersianNumbers(studentProgress)}%</div>
+                    <div className="text-sm text-gray-600">تکمیل پروفایل</div>
                   </div>
                 </div>
               </motion.div>
@@ -242,17 +249,23 @@ const StudentPanel = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
                     <span className="text-gray-600">قد:</span>
-                    <span className="font-medium text-gray-800">{loggedInStudent.height} سم</span>
+                    <span className="font-medium text-gray-800">{formatMeasurement(loggedInStudent.height, 'سم')}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
                     <span className="text-gray-600">وزن:</span>
-                    <span className="font-medium text-gray-800">{loggedInStudent.weight} کیلو</span>
+                    <span className="font-medium text-gray-800">{formatMeasurement(loggedInStudent.weight, 'کیلو')}</span>
                   </div>
                 </div>
                 {loggedInStudent.age && (
                   <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
                     <span className="text-gray-600">سن:</span>
-                    <span className="font-medium text-gray-800">{loggedInStudent.age} سال</span>
+                    <span className="font-medium text-gray-800">{formatMeasurement(loggedInStudent.age, 'سال')}</span>
+                  </div>
+                )}
+                {bmi && (
+                  <div className="flex justify-between items-center p-3 bg-gray-50/50 rounded-xl">
+                    <span className="text-gray-600">BMI:</span>
+                    <span className="font-medium text-gray-800">{toPersianNumbers(bmi.toFixed(1))} - {bmiCategory}</span>
                   </div>
                 )}
               </div>
@@ -280,7 +293,7 @@ const StudentPanel = () => {
                       <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${item.color}`}></div>
                       <span className="font-medium text-gray-700">{item.day}</span>
                     </div>
-                    <span className="text-sm text-gray-600">{item.exercises} تمرین</span>
+                    <span className="text-sm text-gray-600">{toPersianNumbers(item.exercises)} تمرین</span>
                   </div>
                 ))}
               </div>
