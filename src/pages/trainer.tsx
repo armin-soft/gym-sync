@@ -73,10 +73,10 @@ const TrainerProfile = () => {
   const backgroundPattern = `data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%236366f1" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E`;
 
   return (
-    <PageContainer withBackground fullWidth fullHeight className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
+    <PageContainer withBackground fullWidth fullHeight className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-900 dark:via-gray-900/30 dark:to-zinc-900/40">
       {/* Background Pattern */}
       <div 
-        className="absolute inset-0 opacity-40" 
+        className="absolute inset-0 opacity-30" 
         style={{ backgroundImage: `url("${backgroundPattern}")` }}
       />
       
@@ -98,7 +98,11 @@ const TrainerProfile = () => {
         )}>
           {/* Sidebar */}
           <ProfileSidebar
-            profile={profile}
+            profile={{
+              image: profile.image,
+              name: profile.name,
+              email: profile.email
+            }}
             onImageChange={(image) => handleUpdate('image', image)} 
             activeSection={activeSection}
             onTabChange={setActiveSection}
