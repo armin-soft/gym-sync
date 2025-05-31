@@ -19,10 +19,10 @@ export function BackupStatsCards({ realStats }: BackupStatsCardsProps) {
   };
 
   const statsData = [
-    { icon: Database, label: "شاگردان", count: toPersianNumbers(realStats.students), color: "from-gold-500 to-blue-600" },
-    { icon: Archive, label: "تمرینات", count: toPersianNumbers(realStats.exercises), color: "from-blue-500 to-black-600" },
-    { icon: RefreshCw, label: "وعده‌های غذایی", count: toPersianNumbers(realStats.meals), color: "from-black-500 to-gold-600" },
-    { icon: Shield, label: "مکمل‌ها", count: toPersianNumbers(realStats.supplements), color: "from-gold-600 to-blue-500" }
+    { icon: Database, label: "شاگردان", count: toPersianNumbers(realStats.students), color: "from-emerald-500 to-teal-600" },
+    { icon: Archive, label: "تمرینات", count: toPersianNumbers(realStats.exercises), color: "from-blue-500 to-indigo-600" },
+    { icon: RefreshCw, label: "وعده‌های غذایی", count: toPersianNumbers(realStats.meals), color: "from-purple-500 to-pink-600" },
+    { icon: Shield, label: "مکمل‌ها", count: toPersianNumbers(realStats.supplements), color: "from-orange-500 to-red-600" }
   ];
 
   return (

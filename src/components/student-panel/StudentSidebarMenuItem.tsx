@@ -79,13 +79,13 @@ export function StudentSidebarMenuItem({
           "relative block mb-1 rounded-lg transition-all duration-200",
           getMenuPadding(),
           isActive 
-            ? "bg-gradient-to-r from-gold-500 to-bronze-500 text-white shadow-lg" 
+            ? "bg-gradient-to-r from-violet-500 to-indigo-500 text-white shadow-lg" 
             : "hover:bg-white/50 dark:hover:bg-gray-800/50"
         )}
         dir="rtl"
       >
         {isActive && (
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gold-600/20 to-bronze-600/20"></div>
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-violet-600/20 to-indigo-600/20"></div>
         )}
         
         <AnimatePresence>
@@ -105,7 +105,7 @@ export function StudentSidebarMenuItem({
             getIconContainer(),
             isActive 
               ? "bg-white/20 text-white" 
-              : "bg-gold-100 dark:bg-gold-800 text-gold-600 dark:text-gold-300"
+              : "bg-violet-100 dark:bg-violet-800 text-violet-600 dark:text-violet-300"
           )}>
             <Icon className={getIconSize()} />
           </div>
@@ -124,7 +124,7 @@ export function StudentSidebarMenuItem({
                 <span className={cn(
                   "px-1.5 py-0.5 rounded-full font-medium mr-2",
                   "text-[10px]",
-                  badgeColor || "bg-gold-500",
+                  badgeColor || "bg-violet-500",
                   isActive ? "text-white bg-white/20" : "text-white"
                 )}>
                   {badge}

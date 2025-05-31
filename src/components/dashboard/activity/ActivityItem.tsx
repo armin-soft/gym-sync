@@ -8,7 +8,7 @@ import {
   ArrowUpRight
 } from "lucide-react";
 
-export type ActivityItemColor = "gold" | "bronze" | "masculine";
+export type ActivityItemColor = "blue" | "purple" | "amber";
 
 export interface ActivityItemProps { 
   icon: React.ElementType;
@@ -23,26 +23,26 @@ export interface ActivityItemProps {
 
 // Color mapping
 const colorMap = {
-  gold: {
-    bg: "bg-gold-100 dark:bg-gold-900/30",
-    text: "text-gold-600 dark:text-gold-400",
-    border: "border-gold-200 dark:border-gold-800",
-    bgLight: "bg-gold-50 dark:bg-gold-950",
-    gradient: "from-gold-500 to-gold-400"
+  blue: {
+    bg: "bg-blue-100 dark:bg-blue-900/30",
+    text: "text-blue-600 dark:text-blue-400",
+    border: "border-blue-200 dark:border-blue-800",
+    bgLight: "bg-blue-50 dark:bg-blue-950",
+    gradient: "from-blue-500 to-blue-400"
   },
-  bronze: {
-    bg: "bg-bronze-100 dark:bg-bronze-900/30",
-    text: "text-bronze-600 dark:text-bronze-400",
-    border: "border-bronze-200 dark:border-bronze-800",
-    bgLight: "bg-bronze-50 dark:bg-bronze-950",
-    gradient: "from-bronze-500 to-bronze-400"
+  purple: {
+    bg: "bg-purple-100 dark:bg-purple-900/30",
+    text: "text-purple-600 dark:text-purple-400",
+    border: "border-purple-200 dark:border-purple-800",
+    bgLight: "bg-purple-50 dark:bg-purple-950",
+    gradient: "from-purple-500 to-purple-400"
   },
-  masculine: {
-    bg: "bg-masculine-100 dark:bg-masculine-900/30",
-    text: "text-masculine-600 dark:text-masculine-400",
-    border: "border-masculine-200 dark:border-masculine-800", 
-    bgLight: "bg-masculine-50 dark:bg-masculine-950",
-    gradient: "from-masculine-500 to-masculine-400"
+  amber: {
+    bg: "bg-amber-100 dark:bg-amber-900/30",
+    text: "text-amber-600 dark:text-amber-400",
+    border: "border-amber-200 dark:border-amber-800", 
+    bgLight: "bg-amber-50 dark:bg-amber-950",
+    gradient: "from-amber-500 to-amber-400"
   }
 };
 
@@ -52,7 +52,7 @@ export const ActivityItem = ({
   value, 
   unit, 
   growth = 0, 
-  color = "gold",
+  color = "blue",
   showProgress = false,
   completionRate = 0
 }: ActivityItemProps) => {  
@@ -100,7 +100,7 @@ export const ActivityItem = ({
         ) : (
           <Badge 
             variant="outline" 
-            className={`${colorMap[color].bgLight} ${colorMap[color].text} ${colorMap[color].border} flex items-center gap-1.5 group-hover/item:scale-105 transition-transform duration-300`}
+            className={`bg-${colorMap[color].bgLight} ${colorMap[color].text} border-${colorMap[color].border} flex items-center gap-1.5 group-hover/item:scale-105 transition-transform duration-300`}
           >
             <span>{toPersianNumbers(value)} {unit}</span>
             {growth !== 0 && (

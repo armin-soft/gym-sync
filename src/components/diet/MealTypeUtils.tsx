@@ -36,14 +36,41 @@ export const getMealTypeStyle = (type: MealType) => {
   switch (type) {
     case "صبحانه":
       return {
-        bg: "bg-gold-500/10",
-        icon: "text-gold-500",
-        iconBg: "bg-gold-500/10",
-        border: "border-gold-500/20",
-        hover: "hover:border-gold-500/40",
-        accent: "bg-gold-500"
+        bg: "bg-orange-500/10",
+        icon: "text-orange-500",
+        iconBg: "bg-orange-500/10",
+        border: "border-orange-500/20",
+        hover: "hover:border-orange-500/40",
+        accent: "bg-orange-500"
       };
     case "میان وعده صبح":
+      return {
+        bg: "bg-yellow-500/10",
+        icon: "text-yellow-500",
+        iconBg: "bg-yellow-500/10",
+        border: "border-yellow-500/20",
+        hover: "hover:border-yellow-500/40",
+        accent: "bg-yellow-500"
+      };
+    case "ناهار":
+      return {
+        bg: "bg-green-500/10",
+        icon: "text-green-500", 
+        iconBg: "bg-green-500/10",
+        border: "border-green-500/20",
+        hover: "hover:border-green-500/40",
+        accent: "bg-green-500"
+      };
+    case "میان وعده عصر":
+      return {
+        bg: "bg-pink-500/10",
+        icon: "text-pink-500",
+        iconBg: "bg-pink-500/10", 
+        border: "border-pink-500/20",
+        hover: "hover:border-pink-500/40",
+        accent: "bg-pink-500"
+      };
+    case "شام":
       return {
         bg: "bg-blue-500/10",
         icon: "text-blue-500",
@@ -52,41 +79,14 @@ export const getMealTypeStyle = (type: MealType) => {
         hover: "hover:border-blue-500/40",
         accent: "bg-blue-500"
       };
-    case "ناهار":
-      return {
-        bg: "bg-black-500/10",
-        icon: "text-black-500", 
-        iconBg: "bg-black-500/10",
-        border: "border-black-500/20",
-        hover: "hover:border-black-500/40",
-        accent: "bg-black-500"
-      };
-    case "میان وعده عصر":
-      return {
-        bg: "bg-gold-600/10",
-        icon: "text-gold-600",
-        iconBg: "bg-gold-600/10", 
-        border: "border-gold-600/20",
-        hover: "hover:border-gold-600/40",
-        accent: "bg-gold-600"
-      };
-    case "شام":
-      return {
-        bg: "bg-blue-600/10",
-        icon: "text-blue-600",
-        iconBg: "bg-blue-600/10",
-        border: "border-blue-600/20",
-        hover: "hover:border-blue-600/40",
-        accent: "bg-blue-600"
-      };
     case "میان وعده شام":
       return {
-        bg: "bg-black-600/10",
-        icon: "text-black-600",
-        iconBg: "bg-black-600/10",
-        border: "border-black-600/20",
-        hover: "hover:border-black-600/40",
-        accent: "bg-black-600"
+        bg: "bg-purple-500/10",
+        icon: "text-purple-500",
+        iconBg: "bg-purple-500/10",
+        border: "border-purple-500/20",
+        hover: "hover:border-purple-500/40",
+        accent: "bg-purple-500"
       };
     default:
       return {

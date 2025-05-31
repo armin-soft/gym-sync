@@ -35,7 +35,7 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
       <div className="flex items-center gap-4">
         <div className="relative">
           {/* Enhanced glow effect */}
-          <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-gold-400 to-bronze-500 opacity-70 blur-lg animate-pulse" />
+          <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 opacity-70 blur-lg animate-pulse" />
           <Avatar className="h-16 w-16 border-4 border-white/30 relative shadow-xl hover:scale-105 transition-transform duration-300">
             <AvatarImage 
               src={profileImage} 
@@ -45,13 +45,13 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
                 e.currentTarget.style.display = 'none';
               }}
             />
-            <AvatarFallback className="bg-gradient-to-br from-gold-500 to-bronze-600 text-white">
+            <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white">
               <Crown className="w-6 h-6 text-white" />
             </AvatarFallback>
           </Avatar>
           {/* Decorative elements */}
           <motion.div
-            className="absolute -top-3 -right-3 w-5 h-5 rounded-full bg-gold-500 border-2 border-white flex items-center justify-center"
+            className="absolute -top-3 -right-3 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.4, type: "spring" }}
@@ -68,7 +68,7 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 className="ml-2"
               >
-                <Hand className="w-6 h-6 text-gold-300" />
+                <Hand className="w-6 h-6 text-yellow-300" />
               </motion.div>
             </h1>
             <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm hover:bg-white/30 transition-colors self-start sm:self-auto">
@@ -81,7 +81,7 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6, type: "spring" }}
-              className="inline-flex items-center gap-1 text-xs bg-gold-500/20 text-gold-300 px-2 py-1 rounded-full"
+              className="inline-flex items-center gap-1 text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-full"
             >
               <Activity className="w-3 h-3" /> فعال
             </motion.span>

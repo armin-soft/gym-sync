@@ -11,8 +11,8 @@ export const LoginButton = ({ loading }: LoginButtonProps) => {
     rest: { scale: 1 },
     hover: { 
       scale: 1.03,
-      backgroundColor: "#d97706",
-      boxShadow: "0 10px 15px -3px rgba(217, 119, 6, 0.2), 0 4px 6px -2px rgba(217, 119, 6, 0.1)",
+      backgroundColor: "#4361ee",
+      boxShadow: "0 10px 15px -3px rgba(67, 97, 238, 0.2), 0 4px 6px -2px rgba(67, 97, 238, 0.1)",
       transition: {
         scale: {
           type: "spring",
@@ -38,7 +38,7 @@ export const LoginButton = ({ loading }: LoginButtonProps) => {
   return (
     <motion.button 
       type="submit" 
-      className="w-full h-10 sm:h-12 text-sm sm:text-base font-medium transition-all relative overflow-hidden rounded-md bg-gradient-to-r from-gold-500 to-bronze-600 text-white flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20"
+      className="w-full h-10 sm:h-12 text-sm sm:text-base font-medium transition-all relative overflow-hidden rounded-md bg-gradient-to-r from-primary to-indigo-600 text-white flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
       disabled={loading}
       variants={buttonVariants}
       initial="rest"
@@ -66,7 +66,7 @@ export const LoginButton = ({ loading }: LoginButtonProps) => {
           
           <div className="absolute inset-0 overflow-hidden">
             <motion.div 
-              className="absolute inset-0 bg-gradient-to-r from-bronze-600 via-gold-500 to-bronze-600 bg-[length:200%_100%]"
+              className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-primary to-indigo-600 bg-[length:200%_100%]"
               animate={{ 
                 backgroundPosition: ["0% center", "100% center", "0% center"],
               }}

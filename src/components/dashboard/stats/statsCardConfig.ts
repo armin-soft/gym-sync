@@ -11,7 +11,7 @@ export interface StatCardConfig {
   growth: number;
   maxValue: number;
   percentage?: number;
-  color: "black" | "gold" | "blue";
+  color: "black" | "orange" | "gold";
   description: string;
 }
 
@@ -34,7 +34,7 @@ export const generateStatsCardConfigs = (stats: DashboardStats): StatCardConfig[
       growth: stats.mealGrowth,
       maxValue: 100,
       percentage: stats.mealCompletionRate,
-      color: "blue",
+      color: "orange",
       description: `${toPersianNumbers(Math.round(stats.mealCompletionRate))}٪ شاگردان دارای برنامه غذایی`,
     },
     {

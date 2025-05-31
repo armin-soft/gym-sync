@@ -33,7 +33,7 @@ export const MealCard = ({ meal, onEdit, onDelete, index }: MealCardProps) => {
         className={`relative border overflow-hidden group ${styles?.border} ${styles?.hover} transition-all duration-300 h-full`}
       >
         {/* Background gradient effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gold-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Indicator bar */}
         <div className={`absolute top-0 right-0 w-1 h-full ${styles?.accent}`} />
@@ -44,7 +44,7 @@ export const MealCard = ({ meal, onEdit, onDelete, index }: MealCardProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-gold-500/10 hover:text-gold-500 rounded-lg"
+                className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-primary/10 hover:text-primary rounded-lg"
                 onClick={() => onEdit(meal)}
               >
                 <Edit className="h-3.5 w-3.5" />
@@ -58,29 +58,29 @@ export const MealCard = ({ meal, onEdit, onDelete, index }: MealCardProps) => {
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>
-            <h4 className="text-sm font-medium text-foreground group-hover:text-gold-600 transition-colors duration-300">
+            <h4 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300">
               {meal.name}
             </h4>
           </div>
           
           <div className="mt-auto pt-3 border-t border-dashed border-border/30 flex flex-wrap gap-1.5 justify-end">
             {meal.calories && (
-              <Badge variant="outline" className="text-xs bg-gold-50/70 text-gold-700 border-gold-200 dark:bg-gold-950/30 dark:text-gold-400 dark:border-gold-900 shadow-sm">
+              <Badge variant="outline" className="text-xs bg-amber-50/70 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900 shadow-sm">
                 {toPersianNumbers(meal.calories)} کالری
               </Badge>
             )}
             {meal.protein && (
-              <Badge variant="outline" className="text-xs bg-bronze-50/70 text-bronze-700 border-bronze-200 dark:bg-bronze-950/30 dark:text-bronze-400 dark:border-bronze-900 shadow-sm">
+              <Badge variant="outline" className="text-xs bg-green-50/70 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900 shadow-sm">
                 {toPersianNumbers(meal.protein)}g پروتئین
               </Badge>
             )}
             {meal.carbs && (
-              <Badge variant="outline" className="text-xs bg-masculine-50/70 text-masculine-700 border-masculine-200 dark:bg-masculine-950/30 dark:text-masculine-400 dark:border-masculine-800 shadow-sm">
+              <Badge variant="outline" className="text-xs bg-blue-50/70 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800 shadow-sm">
                 {toPersianNumbers(meal.carbs)}g کربوهیدرات
               </Badge>
             )}
             {meal.fat && (
-              <Badge variant="outline" className="text-xs bg-gold-50/70 text-gold-700 border-gold-200 dark:bg-gold-950/30 dark:text-gold-400 dark:border-gold-800 shadow-sm">
+              <Badge variant="outline" className="text-xs bg-red-50/70 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800 shadow-sm">
                 {toPersianNumbers(meal.fat)}g چربی
               </Badge>
             )}
