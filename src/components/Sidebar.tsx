@@ -10,8 +10,6 @@ import {
   UtensilsCrossed,
   Pill,
   Database,
-  Sparkles,
-  ChevronLeft,
   Crown
 } from "lucide-react";
 import { useEffect, useState } from "react";
