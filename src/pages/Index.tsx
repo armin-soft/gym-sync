@@ -8,28 +8,14 @@ import { DashboardLayout } from "@/components/dashboard/layout/DashboardLayout";
 import { DashboardContent } from "@/components/dashboard/DashboardContent";
 
 const Index = () => {
-  // Always call hooks at the top level
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
-  const [trainerProfile, setTrainerProfile] = useState({
-    name: "",
-    image: "/placeholder.svg"
-  });
+  
+  const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
 
   useEffect(() => {
     try {
-      // Load trainer profile
-      const savedProfile = localStorage.getItem('trainerProfile');
-      if (savedProfile) {
-        const profile = JSON.parse(savedProfile);
-        setTrainerProfile({
-          name: profile.name || "",
-          image: profile.image || "/placeholder.svg"
-        });
-      }
-
-      // Load students
       const savedStudents = localStorage.getItem('students');
       if (savedStudents) {
         const parsedStudents = JSON.parse(savedStudents);
@@ -43,12 +29,8 @@ const Index = () => {
         setStudents([]);
       }
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Error loading students:', error);
       setStudents([]);
-      setTrainerProfile({
-        name: "",
-        image: "/placeholder.svg"
-      });
     }
   }, []);
 
