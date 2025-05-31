@@ -35,7 +35,7 @@ const Index = () => {
   }, []);
 
   return (
-    <PageContainer fullScreen noPadding>
+    <PageContainer fullWidth noPadding>
       <DashboardLayout>
         <DashboardContent 
           stats={stats}
