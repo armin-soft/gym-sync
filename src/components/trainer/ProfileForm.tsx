@@ -1,5 +1,4 @@
 
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { TrainerProfile } from "@/types/trainer";
 import { cn } from "@/lib/utils";
@@ -9,6 +8,7 @@ import { SaveButton } from "./SaveButton";
 import { FormProvider } from "./form/FormContext";
 import { FormContent } from "./form/FormContent";
 import { validateField, validateAllFields } from "./form/validation";
+import { motion } from "framer-motion";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -36,7 +36,6 @@ export const ProfileForm = ({
   const { toast } = useToast();
   const deviceInfo = useDeviceInfo();
 
-  // Validate initial values
   useEffect(() => {
     Object.entries(profile).forEach(([key, value]) => {
       if (key !== 'image' && value) {
@@ -49,7 +48,6 @@ export const ProfileForm = ({
     onUpdate(key, value);
     validateField(key, value, setValidFields, setErrors);
     
-    // Clear error when user starts typing
     if (errors[key]) {
       setErrors(prev => ({ ...prev, [key]: '' }));
     }
@@ -70,21 +68,21 @@ export const ProfileForm = ({
     onSave();
   };
 
-  const getCardPadding = () => {
-    if (deviceInfo.isMobile) return "px-4 py-5";
-    if (deviceInfo.isTablet) return "px-5 py-6";
-    return "px-6 py-7";
-  };
-
   return (
-    <Card className={cn(
-      "backdrop-blur-xl bg-white/50 dark:bg-gray-900/30 border-primary/10 shadow-xl h-full",
-      "transition-all duration-300 hover:shadow-2xl hover:bg-white/60 dark:hover:bg-gray-900/40"
-    )}>
-      <div className={cn(
-        getCardPadding(),
-        "space-y-6 h-full flex flex-col"
-      )}>
+    <motion.div 
+      className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden h-fit"
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Form Header */}
+      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+        <h2 className="text-2xl font-bold">ویرایش اطلاعات</h2>
+        <p className="text-indigo-100 mt-1">اطلاعات خود را کامل کرده و به‌روزرسانی کنید</p>
+      </div>
+
+      {/* Form Content */}
+      <div className="p-6 md:p-8">
         <FormProvider
           profile={profile}
           onUpdate={handleInputChange}
@@ -98,8 +96,11 @@ export const ProfileForm = ({
           <FormContent />
         </FormProvider>
 
-        <SaveButton onSave={handleSave} isLoading={isSaving} />
+        {/* Save Button */}
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <SaveButton onSave={handleSave} isLoading={isSaving} />
+        </div>
       </div>
-    </Card>
+    </motion.div>
   );
 };

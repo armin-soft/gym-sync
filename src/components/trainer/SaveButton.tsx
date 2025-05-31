@@ -1,81 +1,59 @@
 
 import { Button } from "@/components/ui/button";
-import { Save, Check } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useDeviceInfo } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
+import { Loader2, Save, Check } from "lucide-react";
+import { motion } from "framer-motion";
+import { useState } from "react";
 
 interface SaveButtonProps {
   onSave: () => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
-export const SaveButton = ({ onSave, isLoading = false }: SaveButtonProps) => {
-  const deviceInfo = useDeviceInfo();
-  
+export const SaveButton = ({ onSave, isLoading }: SaveButtonProps) => {
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleSave = () => {
+    onSave();
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 2000);
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.3 }}
-      className="pt-6 sm:pt-8 mt-4 sm:mt-6 border-t border-gray-100 dark:border-gray-800"
+      className="flex justify-center"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <AnimatePresence mode="wait">
-        {isLoading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="w-full"
-          >
-            <Button 
-              disabled
-              className="w-full py-6 bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600"
-            >
-              <div className="flex items-center justify-center gap-3">
-                <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
-                <span className="text-base">در حال ذخیره‌سازی...</span>
-              </div>
-            </Button>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="save"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="w-full"
-          >
-            <Button 
-              onClick={onSave} 
-              className={cn(
-                "w-full py-6 relative overflow-hidden",
-                "bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600",
-                "shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30",
-                "border border-indigo-600/20",
-                "transition-all duration-300"
-              )}
-            >
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-indigo-600/40 to-sky-600/40"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 0.8 }}
-              />
-              
-              <motion.div 
-                className="relative flex items-center justify-center gap-3"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                <Save className="h-5 w-5 transition-transform group-hover:rotate-[-10deg]" />
-                <span className="text-base">ذخیره اطلاعات</span>
-              </motion.div>
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Button
+        onClick={handleSave}
+        disabled={isLoading}
+        size="lg"
+        className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+      >
+        <motion.div 
+          className="flex items-center gap-3"
+          animate={isLoading ? { scale: [1, 1.05, 1] } : {}}
+          transition={{ duration: 1, repeat: isLoading ? Infinity : 0 }}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>در حال ذخیره...</span>
+            </>
+          ) : showSuccess ? (
+            <>
+              <Check className="h-5 w-5" />
+              <span>ذخیره شد!</span>
+            </>
+          ) : (
+            <>
+              <Save className="h-5 w-5" />
+              <span>ذخیره اطلاعات</span>
+            </>
+          )}
+        </motion.div>
+      </Button>
     </motion.div>
   );
 };

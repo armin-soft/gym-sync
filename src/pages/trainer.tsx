@@ -9,7 +9,6 @@ import { ProfileHeader } from "@/components/trainer/ProfileHeader";
 import { ProfileSidebar } from "@/components/trainer/ProfileSidebar";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TrainerProfile = () => {
@@ -41,7 +40,6 @@ const TrainerProfile = () => {
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
     setProfile(prev => ({ ...prev, [key]: value }));
-    // Clear error when user starts typing
     if (errors[key]) {
       setErrors(prev => ({ ...prev, [key]: '' }));
     }
@@ -51,11 +49,9 @@ const TrainerProfile = () => {
     setIsSaving(true);
     
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
-      // Force update of any components that depend on the gym name
       window.dispatchEvent(new Event('storage'));
       
       toast({
@@ -74,63 +70,27 @@ const TrainerProfile = () => {
     }
   };
 
-  // Decorative elements for the background
-  const BackgroundElements = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Gradient blobs */}
-      <div className="absolute -top-40 -right-20 w-80 h-80 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full" />
-      <div className="absolute top-1/4 -left-40 w-80 h-80 bg-gradient-to-br from-sky-500/10 to-blue-500/5 blur-3xl rounded-full" />
-      <div className="absolute -bottom-20 right-20 w-60 h-60 bg-gradient-to-tr from-pink-500/10 to-rose-500/5 blur-3xl rounded-full" />
-      
-      {/* Animated sparkles */}
-      {Array.from({ length: 8 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          initial={{ 
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            opacity: 0.1,
-            scale: 0.5
-          }}
-          animate={{
-            opacity: [0.2, 0.5, 0.2],
-            scale: [0.6, 1, 0.6]
-          }}
-          transition={{
-            duration: Math.random() * 4 + 3,
-            repeat: Infinity,
-            delay: Math.random() * 5
-          }}
-        >
-          <Sparkles className={cn(
-            "text-indigo-400/30",
-            i % 3 === 0 ? "w-4 h-4" : i % 3 === 1 ? "w-5 h-5" : "w-3 h-3"
-          )} />
-        </motion.div>
-      ))}
-    </div>
-  );
-
   return (
-    <PageContainer withBackground fullWidth fullHeight className="w-full overflow-auto">
-      <BackgroundElements />
+    <PageContainer withBackground fullWidth fullHeight className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%236366f1" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40" />
       
       <motion.div 
-        className="w-full h-full flex flex-col space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        className="relative z-10 container mx-auto p-4 md:p-6 lg:p-8 max-w-7xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
       >
-        {/* Profile Header */}
+        {/* Header */}
         <ProfileHeader />
 
         {/* Main Content */}
-        <div className={
+        <div className={cn(
+          "mt-8 grid gap-6",
           deviceInfo.isMobile 
-            ? "flex flex-col space-y-6" 
-            : "grid lg:grid-cols-[320px_1fr] xl:grid-cols-[380px_1fr] gap-6 md:gap-8"
-        }>
+            ? "grid-cols-1" 
+            : "grid-cols-1 lg:grid-cols-[380px_1fr] xl:grid-cols-[420px_1fr]"
+        )}>
           {/* Sidebar */}
           <ProfileSidebar
             profile={profile}
