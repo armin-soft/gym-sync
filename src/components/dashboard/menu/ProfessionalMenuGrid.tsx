@@ -10,8 +10,7 @@ import {
   Pill, 
   Database,
   ArrowLeft,
-  Sparkles,
-  Crown
+  Sparkles
 } from "lucide-react";
 
 export const ProfessionalMenuGrid = () => {
@@ -23,8 +22,7 @@ export const ProfessionalMenuGrid = () => {
       gradient: "from-blue-500 via-blue-600 to-blue-700",
       shadowColor: "shadow-blue-500/25",
       bgGradient: "from-blue-50/80 via-indigo-50/60 to-blue-50/80 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-blue-900/20",
-      description: "مدیریت اطلاعات شخصی و حرفه‌ای",
-      badge: "Premium"
+      description: "مدیریت اطلاعات شخصی و حرفه‌ای"
     },
     { 
       title: "شاگردان", 
@@ -33,8 +31,7 @@ export const ProfessionalMenuGrid = () => {
       gradient: "from-emerald-500 via-emerald-600 to-emerald-700",
       shadowColor: "shadow-emerald-500/25",
       bgGradient: "from-emerald-50/80 via-teal-50/60 to-emerald-50/80 dark:from-emerald-900/20 dark:via-teal-900/15 dark:to-emerald-900/20",
-      description: "مدیریت و پیگیری شاگردان",
-      badge: "Active"
+      description: "مدیریت و پیگیری شاگردان"
     },
     { 
       title: "حرکات تمرینی", 
@@ -143,18 +140,6 @@ export const ProfessionalMenuGrid = () => {
                   <div className={`p-4 rounded-2xl bg-gradient-to-br ${item.gradient} text-white shadow-lg ring-1 ring-white/20 group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
                     <item.icon className="w-7 h-7" />
                   </div>
-                  
-                  {item.badge && (
-                    <motion.div
-                      initial={{ scale: 0, rotate: -10 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
-                      className="flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg"
-                    >
-                      <Crown className="w-3 h-3" />
-                      {item.badge}
-                    </motion.div>
-                  )}
                 </div>
                 
                 {/* Content */}
