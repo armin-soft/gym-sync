@@ -13,29 +13,53 @@ export const UserTypeSelection = () => {
   const navigate = useNavigate();
   const [hoveredType, setHoveredType] = useState<'management' | 'student' | null>(null);
   const [selectedType, setSelectedType] = useState<'management' | 'student' | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleUserTypeSelection = (type: 'management' | 'student') => {
+  const handleUserTypeSelection = async (type: 'management' | 'student') => {
+    // جلوگیری از کلیک‌های مکرر
+    if (isProcessing || selectedType) return;
+    
+    console.log('User type selected:', type);
+    setIsProcessing(true);
     setSelectedType(type);
     
-    setTimeout(() => {
+    try {
+      // ذخیره اطلاعات در localStorage
       localStorage.setItem("hasSelectedUserType", "true");
       localStorage.setItem("selectedUserType", type);
       
+      console.log('Navigating to:', type === 'management' ? '/Management' : '/Students');
+      
+      // تاخیر کوتاه برای نمایش انیمیشن
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      // هدایت به صفحه مناسب
       if (type === 'management') {
-        navigate("/Management");
+        navigate("/Management", { replace: true });
       } else {
-        navigate("/Students");
+        navigate("/Students", { replace: true });
       }
-    }, 800);
+    } catch (error) {
+      console.error('Error during navigation:', error);
+      // در صورت خطا، وضعیت را ریست کنیم
+      setIsProcessing(false);
+      setSelectedType(null);
+    }
   };
 
   const handleHover = (id: string | null) => {
+    if (isProcessing) return; // جلوگیری از hover در حالت پردازش
+    
     if (id === null || id === 'management' || id === 'student') {
       setHoveredType(id as 'management' | 'student' | null);
     }
   };
 
   const handleSelect = (id: string) => {
+    if (isProcessing) return; // جلوگیری از انتخاب‌های مکرر
+    
+    console.log('Card clicked:', id);
+    
     if (id === 'management' || id === 'student') {
       handleUserTypeSelection(id);
     }
@@ -62,11 +86,23 @@ export const UserTypeSelection = () => {
                   type={type}
                   isHovered={hoveredType === type.id}
                   isSelected={selectedType === type.id}
+                  isProcessing={isProcessing}
                   onHover={handleHover}
                   onSelect={handleSelect}
                 />
               ))}
             </motion.div>
+
+            {/* نمایش وضعیت پردازش */}
+            {isProcessing && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center text-white/80 text-sm"
+              >
+                در حال هدایت...
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </div>

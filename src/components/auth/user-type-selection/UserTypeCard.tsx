@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ interface UserTypeCardProps {
   type: UserType;
   isHovered: boolean;
   isSelected: boolean;
+  isProcessing?: boolean;
   onHover: (id: string | null) => void;
   onSelect: (id: string) => void;
 }
@@ -28,24 +30,52 @@ export const UserTypeCard = ({
   type, 
   isHovered, 
   isSelected, 
+  isProcessing = false,
   onHover, 
   onSelect 
 }: UserTypeCardProps) => {
   const Icon = type.icon;
+  const isDisabled = isProcessing || isSelected;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isDisabled) return;
+    
+    console.log('UserTypeCard clicked:', type.id);
+    onSelect(type.id);
+  };
+
+  const handleHoverStart = () => {
+    if (!isDisabled) {
+      onHover(type.id);
+    }
+  };
+
+  const handleHoverEnd = () => {
+    if (!isDisabled) {
+      onHover(null);
+    }
+  };
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      onHoverStart={() => onHover(type.id)}
-      onHoverEnd={() => onHover(null)}
-      className="relative group cursor-pointer"
-      onClick={() => onSelect(type.id)}
+      whileHover={!isDisabled ? { scale: 1.02 } : {}}
+      whileTap={!isDisabled ? { scale: 0.98 } : {}}
+      onHoverStart={handleHoverStart}
+      onHoverEnd={handleHoverEnd}
+      className={`relative group ${!isDisabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+      onClick={handleClick}
     >
-      <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg">
+      <div className={`relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6 transition-all duration-300 ${
+        !isDisabled ? 'hover:shadow-lg' : 'opacity-75'
+      } ${isSelected ? 'ring-2 ring-blue-500' : ''}`}>
         
         <div className="text-center space-y-4">
-          <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${type.gradient} rounded-xl shadow-md`}>
+          <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${type.gradient} rounded-xl shadow-md ${
+            isSelected ? 'animate-pulse' : ''
+          }`}>
             <Icon className="w-8 h-8 text-white" />
           </div>
 
@@ -75,13 +105,16 @@ export const UserTypeCard = ({
 
           <Button
             className={`w-full bg-gradient-to-r ${type.gradient} text-white font-medium rounded-lg transition-all duration-300`}
-            disabled={isSelected}
+            disabled={isDisabled}
+            onClick={handleClick}
           >
             {isSelected ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 در حال ورود...
               </div>
+            ) : isProcessing ? (
+              'لطفا صبر کنید...'
             ) : (
               'ورود به پنل'
             )}

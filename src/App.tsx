@@ -25,28 +25,49 @@ const queryClient = new QueryClient({
 
 function AppContent() {
   const [showUserTypeSelection, setShowUserTypeSelection] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
-    // Check if user has already selected a type
-    const hasSelectedType = localStorage.getItem("hasSelectedUserType");
-    const isOnStudentRoute = location.pathname.startsWith("/Students");
-    const isOnManagementRoute = location.pathname.startsWith("/Management");
+    console.log('Current location:', location.pathname);
     
-    // Always show selection if no type is selected, regardless of route
-    if (!hasSelectedType) {
+    // بررسی وجود انتخاب نوع کاربر
+    const hasSelectedType = localStorage.getItem("hasSelectedUserType");
+    const selectedUserType = localStorage.getItem("selectedUserType");
+    
+    console.log('hasSelectedType:', hasSelectedType);
+    console.log('selectedUserType:', selectedUserType);
+    
+    // اگر نوع کاربر انتخاب نشده، نمایش صفحه انتخاب
+    if (!hasSelectedType || !selectedUserType) {
+      console.log('No user type selected, showing selection page');
       setShowUserTypeSelection(true);
     } else {
-      // If type is selected, hide selection and show appropriate content
+      console.log('User type already selected, hiding selection page');
       setShowUserTypeSelection(false);
     }
+    
+    setIsLoading(false);
   }, [location.pathname]);
 
-  // Show user type selection when no type is selected
+  // نمایش loading در حین بررسی
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">در حال بارگذاری...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // نمایش صفحه انتخاب نوع کاربر
   if (showUserTypeSelection) {
     return <UserTypeSelection />;
   }
 
+  // نمایش محتوای اصلی
   return (
     <AuthWrapper>
       <Layout>
