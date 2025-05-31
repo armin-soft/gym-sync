@@ -70,10 +70,10 @@ export const UserTypeCard = ({
     >
       <div className={`relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6 transition-all duration-300 ${
         !isDisabled ? 'hover:shadow-lg' : 'opacity-75'
-      } ${isSelected ? 'ring-2 ring-blue-500' : ''}`}>
+      } ${isSelected ? 'ring-2 ring-gold-500' : ''}`}>
         
         <div className="text-center space-y-4">
-          <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${type.gradient} rounded-xl shadow-md ${
+          <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gold-600 to-bronze-400 rounded-xl shadow-md ${
             isSelected ? 'animate-pulse' : ''
           }`}>
             <Icon className="w-8 h-8 text-white" />
@@ -97,14 +97,14 @@ export const UserTypeCard = ({
                 key={feature}
                 className="flex items-center justify-center text-xs text-gray-600 dark:text-gray-300"
               >
-                <Circle className="w-2 h-2 ml-2 text-green-500 fill-current" />
+                <Circle className="w-2 h-2 ml-2 text-gold-500 fill-current" />
                 {feature}
               </div>
             ))}
           </div>
 
           <Button
-            className={`w-full bg-gradient-to-r ${type.gradient} text-white font-medium rounded-lg transition-all duration-300`}
+            className={`w-full bg-gradient-to-r from-gold-600 to-bronze-400 text-white font-medium rounded-lg transition-all duration-300`}
             disabled={isDisabled}
             onClick={handleClick}
           >

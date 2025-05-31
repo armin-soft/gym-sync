@@ -14,17 +14,17 @@ interface StudentMealFiltersProps {
 export const getMealTypeColor = (type: MealType) => {
   switch (type) {
     case "صبحانه":
-      return "bg-blue-100 border-blue-200 text-blue-700 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-400";
+      return "bg-gold-100 border-gold-200 text-gold-700 dark:bg-gold-950/40 dark:border-gold-800 dark:text-gold-400";
     case "میان وعده صبح":
-      return "bg-teal-100 border-teal-200 text-teal-700 dark:bg-teal-950/40 dark:border-teal-800 dark:text-teal-400";
+      return "bg-bronze-100 border-bronze-200 text-bronze-700 dark:bg-bronze-950/40 dark:border-bronze-800 dark:text-bronze-400";
     case "ناهار":
-      return "bg-amber-100 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-400";
+      return "bg-masculine-100 border-masculine-200 text-masculine-700 dark:bg-masculine-950/40 dark:border-masculine-800 dark:text-masculine-400";
     case "میان وعده عصر":
-      return "bg-purple-100 border-purple-200 text-purple-700 dark:bg-purple-950/40 dark:border-purple-800 dark:text-purple-400";
+      return "bg-gold-100 border-gold-200 text-gold-700 dark:bg-gold-950/40 dark:border-gold-800 dark:text-gold-400";
     case "شام":
-      return "bg-indigo-100 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-400";
+      return "bg-bronze-100 border-bronze-200 text-bronze-700 dark:bg-bronze-950/40 dark:border-bronze-800 dark:text-bronze-400";
     case "میان وعده شام":
-      return "bg-green-100 border-green-200 text-green-700 dark:bg-green-950/40 dark:border-green-800 dark:text-green-400";
+      return "bg-masculine-100 border-masculine-200 text-masculine-700 dark:bg-masculine-950/40 dark:border-masculine-800 dark:text-masculine-400";
     default:
       return "bg-gray-100 border-gray-200 text-gray-700 dark:bg-gray-800/40 dark:border-gray-700 dark:text-gray-400";
   }

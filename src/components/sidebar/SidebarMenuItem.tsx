@@ -80,13 +80,13 @@ export function SidebarMenuItem({
           "relative block mb-1 rounded-lg transition-all duration-200",
           getMenuPadding(),
           isActive 
-            ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white" 
-            : "hover:bg-orange-50 dark:hover:bg-orange-900/20"
+            ? "bg-gradient-to-r from-gold-500 to-bronze-600 text-white" 
+            : "hover:bg-gold-50 dark:hover:bg-gold-900/20"
         )}
         dir="rtl"
       >
         {isActive && (
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gray-900 to-gray-700 opacity-90"></div>
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gold-500 to-bronze-600 opacity-90"></div>
         )}
         
         <AnimatePresence>
@@ -95,7 +95,7 @@ export function SidebarMenuItem({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 rounded-lg bg-orange-50 dark:bg-orange-900/20"
+              className="absolute inset-0 rounded-lg bg-gold-50 dark:bg-gold-900/20"
             ></motion.div>
           )}
         </AnimatePresence>
@@ -106,7 +106,7 @@ export function SidebarMenuItem({
             getIconContainer(),
             isActive 
               ? "bg-white/20 text-white" 
-              : "bg-orange-100 dark:bg-orange-800/30 text-orange-600 dark:text-orange-400"
+              : "bg-gold-100 dark:bg-gold-800/30 text-gold-600 dark:text-gold-400"
           )}>
             <Icon className={getIconSize()} />
           </div>
@@ -125,7 +125,7 @@ export function SidebarMenuItem({
                 <span className={cn(
                   "px-1.5 py-0.5 rounded-full font-medium mr-2",
                   "text-[10px]",
-                  badgeColor || "bg-orange-500",
+                  badgeColor || "bg-gold-500",
                   isActive ? "text-white bg-white/20" : "text-white"
                 )}>
                   {badge}

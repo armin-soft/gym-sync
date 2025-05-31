@@ -15,10 +15,10 @@ interface ActivitySummaryCardProps {
 export const ActivitySummaryCard = ({ stats }: ActivitySummaryCardProps) => {
   return (
     <Card className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-slate-200/50 dark:border-slate-800/50 group">
-      <CardHeader className="bg-gradient-to-r from-blue-50/70 to-slate-50/70 dark:from-blue-900/20 dark:to-slate-900/20 py-4 border-b border-slate-200/70 dark:border-slate-800/70">
+      <CardHeader className="bg-gradient-to-r from-gold-50/70 to-bronze-50/70 dark:from-gold-900/20 dark:to-bronze-900/20 py-4 border-b border-slate-200/70 dark:border-slate-800/70">
         <CardTitle className="text-lg font-bold flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-900/50 ring-1 ring-blue-500/20 shadow-sm">
-            <Activity className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div className="p-1.5 rounded-md bg-gold-100 dark:bg-gold-900/50 ring-1 ring-gold-500/20 shadow-sm">
+            <Activity className="w-5 h-5 text-gold-600 dark:text-gold-400" />
           </div>
           خلاصه فعالیت‌ها
         </CardTitle>
@@ -36,7 +36,7 @@ export const ActivitySummaryCard = ({ stats }: ActivitySummaryCardProps) => {
             value={stats.totalMeals}
             unit="برنامه"
             growth={stats.mealGrowth}
-            color="blue"
+            color="gold"
             completionRate={stats.mealCompletionRate}
           />
           
@@ -46,7 +46,7 @@ export const ActivitySummaryCard = ({ stats }: ActivitySummaryCardProps) => {
             value={stats.totalSupplements}
             unit="مورد"
             growth={stats.supplementGrowth}
-            color="purple"
+            color="bronze"
             completionRate={stats.supplementCompletionRate}
           />
           
@@ -56,7 +56,7 @@ export const ActivitySummaryCard = ({ stats }: ActivitySummaryCardProps) => {
             value={stats.studentsProgress}
             unit="%"
             showProgress
-            color="amber"
+            color="masculine"
           />
           
           <ActivityOverview stats={stats} />

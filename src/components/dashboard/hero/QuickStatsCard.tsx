@@ -59,7 +59,7 @@ export const QuickStatsCard = ({
         </div>
         <div className={`text-xs font-medium flex items-center gap-1.5 px-2.5 py-1 rounded-full ${
           safeGrowth >= 0 
-            ? 'bg-green-500/20 text-green-300' 
+            ? 'bg-gold-500/20 text-gold-300' 
             : 'bg-red-500/20 text-red-300'
         }`}>
           {safeGrowth >= 0 ? (

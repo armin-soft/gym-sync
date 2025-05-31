@@ -19,54 +19,54 @@ export const MainMenuGrid = () => {
       title: "پروفایل مربی", 
       icon: User2, 
       href: '/Management/Coach-Profile', 
-      color: "from-blue-600 to-blue-400",
-      shadowColor: "shadow-blue-500/20",
-      bgColor: "bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20",
+      color: "from-gold-600 to-gold-400",
+      shadowColor: "shadow-gold-500/20",
+      bgColor: "bg-gradient-to-br from-gold-50/80 to-bronze-50/80 dark:from-gold-900/20 dark:to-bronze-900/20",
       description: "مدیریت اطلاعات و تنظیمات پروفایل"
     },
     { 
       title: "شاگردان", 
       icon: Users, 
       href: '/Management/Students', 
-      color: "from-emerald-600 to-emerald-400",
-      shadowColor: "shadow-emerald-500/20",
-      bgColor: "bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-900/20 dark:to-teal-900/20",
+      color: "from-bronze-600 to-bronze-400",
+      shadowColor: "shadow-bronze-500/20",
+      bgColor: "bg-gradient-to-br from-bronze-50/80 to-masculine-50/80 dark:from-bronze-900/20 dark:to-masculine-900/20",
       description: "مدیریت اطلاعات و برنامه‌های شاگردان"
     },
     { 
       title: "حرکات تمرینی", 
       icon: Dumbbell, 
       href: '/Management/Exercise-Movements', 
-      color: "from-amber-600 to-amber-400",
-      shadowColor: "shadow-amber-500/20",
-      bgColor: "bg-gradient-to-br from-amber-50/80 to-yellow-50/80 dark:from-amber-900/20 dark:to-yellow-900/20",
+      color: "from-masculine-600 to-masculine-400",
+      shadowColor: "shadow-masculine-500/20",
+      bgColor: "bg-gradient-to-br from-masculine-50/80 to-gold-50/80 dark:from-masculine-900/20 dark:to-gold-900/20",
       description: "مدیریت حرکات و برنامه‌های تمرینی"
     },
     { 
       title: "برنامه های غذایی", 
       icon: UtensilsCrossed, 
       href: '/Management/Diet-Plan', 
-      color: "from-purple-600 to-purple-400",
-      shadowColor: "shadow-purple-500/20",
-      bgColor: "bg-gradient-to-br from-purple-50/80 to-violet-50/80 dark:from-purple-900/20 dark:to-violet-900/20",
+      color: "from-gold-600 to-bronze-400",
+      shadowColor: "shadow-gold-500/20",
+      bgColor: "bg-gradient-to-br from-gold-50/80 to-bronze-50/80 dark:from-gold-900/20 dark:to-bronze-900/20",
       description: "مدیریت و برنامه‌ریزی رژیم غذایی"
     },
     { 
       title: "مکمل و ویتامین", 
       icon: Pill, 
       href: '/Management/Supplements-Vitamins', 
-      color: "from-pink-600 to-pink-400",
-      shadowColor: "shadow-pink-500/20",
-      bgColor: "bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-900/20 dark:to-rose-900/20",
+      color: "from-bronze-600 to-masculine-400",
+      shadowColor: "shadow-bronze-500/20",
+      bgColor: "bg-gradient-to-br from-bronze-50/80 to-masculine-50/80 dark:from-bronze-900/20 dark:to-masculine-900/20",
       description: "مدیریت مکمل‌ها و ویتامین‌ها"
     },
     { 
       title: "پشتیبان‌گیری و بازیابی", 
       icon: Database, 
       href: '/Management/Backup-Restore', 
-      color: "from-cyan-600 to-cyan-400",
-      shadowColor: "shadow-cyan-500/20",
-      bgColor: "bg-gradient-to-br from-cyan-50/80 to-sky-50/80 dark:from-cyan-900/20 dark:to-sky-900/20",
+      color: "from-masculine-600 to-gold-400",
+      shadowColor: "shadow-masculine-500/20",
+      bgColor: "bg-gradient-to-br from-masculine-50/80 to-gold-50/80 dark:from-masculine-900/20 dark:to-gold-900/20",
       description: "پشتیبان‌گیری و بازیابی اطلاعات"
     }
   ];
@@ -174,7 +174,7 @@ export const MainMenuGrid = () => {
                     repeatType: "loop"
                   }}
                 >
-                  <Sparkles className="w-3 h-3 text-yellow-400" />
+                  <Sparkles className="w-3 h-3 text-gold-400" />
                 </motion.div>
               </div>
             </Link>

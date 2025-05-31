@@ -41,7 +41,7 @@ const BackupPage = () => {
     <PageContainer 
       withBackground 
       fullHeight 
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950"
+      className="min-h-screen bg-gradient-to-br from-masculine-50 via-gold-50 to-bronze-50 dark:from-slate-900 dark:via-masculine-950 dark:to-bronze-950"
     >
       <motion.div 
         variants={containerVariants}
@@ -51,8 +51,8 @@ const BackupPage = () => {
         dir="rtl"
       >
         {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gold-500/5 rounded-full blur-3xl -mr-40 -mt-40 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-bronze-500/5 rounded-full blur-3xl -ml-48 -mb-48 animate-pulse" />
         
         <BackupPageHeader />
         <BackupStatsCards realStats={realStats} />

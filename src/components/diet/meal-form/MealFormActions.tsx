@@ -25,7 +25,7 @@ export const MealFormActions = ({
     >
       <Button
         type="submit"
-        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 gap-2"
+        className="bg-gradient-to-r from-gold-600 to-bronze-600 hover:from-gold-700 hover:to-bronze-700 gap-2"
         disabled={isSubmitting}
       >
         <Save className="h-4 w-4" />

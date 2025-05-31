@@ -14,19 +14,19 @@ const colorMap = {
     progressBg: "bg-gray-100 dark:bg-gray-800/30",
     iconColor: "text-gray-700 dark:text-gray-300"
   },
-  orange: {
-    bg: "from-orange-600 to-orange-400",
-    bgLight: "bg-orange-100/50 dark:bg-orange-900/20",
-    text: "text-orange-600 dark:text-orange-400",
-    progressBg: "bg-orange-100 dark:bg-orange-800/30",
-    iconColor: "text-orange-500"
-  },
   gold: {
-    bg: "from-yellow-600 to-yellow-400",
-    bgLight: "bg-yellow-100/50 dark:bg-yellow-900/20",
-    text: "text-yellow-600 dark:text-yellow-400",
-    progressBg: "bg-yellow-100 dark:bg-yellow-800/30",
-    iconColor: "text-yellow-500"
+    bg: "from-gold-600 to-gold-400",
+    bgLight: "bg-gold-100/50 dark:bg-gold-900/20",
+    text: "text-gold-600 dark:text-gold-400",
+    progressBg: "bg-gold-100 dark:bg-gold-800/30",
+    iconColor: "text-gold-500"
+  },
+  bronze: {
+    bg: "from-bronze-600 to-bronze-400",
+    bgLight: "bg-bronze-100/50 dark:bg-bronze-900/20",
+    text: "text-bronze-600 dark:text-bronze-400",
+    progressBg: "bg-bronze-100 dark:bg-bronze-800/30",
+    iconColor: "text-bronze-500"
   }
 };
 
@@ -34,7 +34,7 @@ const colorMap = {
 export const GrowthBadge = ({ growth }: { growth: number }) => (
   <Badge 
     variant="secondary" 
-    className={`rounded-lg ${growth >= 0 ? 'text-green-600 bg-green-100/70 dark:bg-green-900/30 dark:text-green-400' : 'text-red-600 bg-red-100/70 dark:bg-red-900/30 dark:text-red-400'} flex items-center gap-1`}
+    className={`rounded-lg ${growth >= 0 ? 'text-gold-600 bg-gold-100/70 dark:bg-gold-900/30 dark:text-gold-400' : 'text-red-600 bg-red-100/70 dark:bg-red-900/30 dark:text-red-400'} flex items-center gap-1`}
   >
     {growth >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
     {toPersianNumbers(Math.abs(growth))}٪
@@ -49,7 +49,7 @@ export interface StatCardProps {
   growth: number;
   maxValue: number;
   percentage?: number;
-  color: "black" | "orange" | "gold";
+  color: "black" | "gold" | "bronze";
   description: string;
   variants?: any;
 }
@@ -113,7 +113,7 @@ export const StatCard = ({
                     repeatDelay: 4
                   }}
                 >
-                  <Stars className="w-4 h-4 text-yellow-400" fill="#fbbf24" />
+                  <Stars className="w-4 h-4 text-gold-400" fill="#f59e0b" />
                 </motion.div>
               )}
             </div>

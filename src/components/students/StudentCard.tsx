@@ -58,21 +58,21 @@ export const StudentCard: React.FC<StudentCardProps> = ({
           "h-full relative overflow-hidden shadow-lg backdrop-blur-md",
           "bg-gradient-to-br from-white/90 to-white/70 dark:from-slate-900/90 dark:to-slate-800/70",
           "border border-slate-200/80 dark:border-slate-700/80",
-          "hover:shadow-xl hover:shadow-indigo-200/10 dark:hover:shadow-indigo-900/20",
+          "hover:shadow-xl hover:shadow-gold-200/10 dark:hover:shadow-gold-900/20",
           "transition-all duration-300 ease-in-out group",
           className
         )}>
           {/* Animated gradient background on hover */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/5 via-purple-400/5 to-pink-400/5 
+          <div className="absolute inset-0 bg-gradient-to-br from-gold-400/5 via-bronze-400/5 to-masculine-400/5 
                         opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
           
           {/* Top right decorative shape */}
-          <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/10 to-indigo-500/10 
-                        blur-xl dark:from-blue-500/20 dark:to-indigo-500/20"></div>
+          <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-gradient-to-br from-gold-500/10 to-bronze-500/10 
+                        blur-xl dark:from-gold-500/20 dark:to-bronze-500/20"></div>
           
           {/* Bottom left decorative shape */}
-          <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 
-                        blur-xl dark:from-purple-500/20 dark:to-pink-500/20"></div>
+          <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-gradient-to-br from-bronze-500/10 to-masculine-500/10 
+                        blur-xl dark:from-bronze-500/20 dark:to-masculine-500/20"></div>
           
           <CardHeader className="p-4 pb-0">
             <StudentCardHeader
@@ -106,4 +106,3 @@ export const StudentCard: React.FC<StudentCardProps> = ({
     </StudentContextMenu>
   );
 };
-

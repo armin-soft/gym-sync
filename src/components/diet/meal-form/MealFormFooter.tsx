@@ -23,7 +23,7 @@ export const MealFormFooter = ({ onCancel, isEdit, isSubmitting }: MealFormFoote
       </Button>
       <Button 
         type="submit"
-        className="gap-2 bg-gradient-to-l from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300"
+        className="gap-2 bg-gradient-to-l from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 transition-all duration-300"
         disabled={isSubmitting}
       >
         <Save className="w-4 h-4" />
