@@ -1,10 +1,11 @@
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -19,10 +20,10 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Beaker } from "lucide-react";
+import { Folder, Save, X } from "lucide-react";
 
 const categoryFormSchema = z.object({
-  name: z.string().min(2, "نام دسته بندی باید حداقل ۲ کاراکتر باشد"),
+  name: z.string().min(2, "نام دسته‌بندی باید حداقل ۲ کاراکتر باشد"),
 });
 
 interface CategoryDialogProps {
@@ -33,13 +34,13 @@ interface CategoryDialogProps {
   mode: "add" | "edit";
 }
 
-export const CategoryDialog = ({
+export const CategoryDialog: React.FC<CategoryDialogProps> = ({
   open,
   onOpenChange,
   onSubmit,
   defaultValue,
   mode,
-}: CategoryDialogProps) => {
+}) => {
   const form = useForm<z.infer<typeof categoryFormSchema>>({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
@@ -48,58 +49,73 @@ export const CategoryDialog = ({
   });
 
   useEffect(() => {
-    if (defaultValue) {
-      form.reset({ name: defaultValue });
+    if (open) {
+      form.reset({
+        name: defaultValue || "",
+      });
     }
-  }, [defaultValue, form]);
+  }, [defaultValue, form, open]);
 
-  const handleSubmit = (data: z.infer<typeof categoryFormSchema>) => {
-    onSubmit(data.name);
+  const handleSubmit = (values: z.infer<typeof categoryFormSchema>) => {
+    onSubmit(values.name);
     form.reset();
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Beaker className="h-5 w-5 text-purple-500" />
-            {mode === "edit" ? "ویرایش دسته بندی" : "افزودن دسته بندی جدید"}
+      <DialogContent className="sm:max-w-md" dir="rtl">
+        <DialogHeader className="text-right">
+          <DialogTitle className="flex items-center justify-end gap-2 text-xl font-bold">
+            {mode === "edit" ? "ویرایش دسته‌بندی" : "افزودن دسته‌بندی جدید"}
+            <Folder className="h-6 w-6 text-indigo-500" />
           </DialogTitle>
+          <DialogDescription className="text-right text-gray-600">
+            {mode === "edit" 
+              ? "نام دسته‌بندی را ویرایش کنید" 
+              : "نام دسته‌بندی جدید را وارد کنید"
+            }
+          </DialogDescription>
         </DialogHeader>
+        
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>نام دسته بندی</FormLabel>
+                  <FormLabel className="flex items-center justify-end gap-2 text-right">
+                    نام دسته‌بندی
+                    <Folder className="h-4 w-4 text-indigo-500" />
+                  </FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="نام دسته بندی را وارد کنید"
-                      className="border-purple-200 focus-visible:ring-purple-500"
+                      placeholder="نام دسته‌بندی را وارد کنید..."
+                      className="border-indigo-200 focus-visible:ring-indigo-500 text-right"
+                      dir="rtl"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-right" />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-3 pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                className="hover:border-purple-200 hover:bg-purple-50"
+                className="gap-2 hover:border-indigo-200 hover:bg-indigo-50"
               >
+                <X className="h-4 w-4" />
                 انصراف
               </Button>
               <Button 
                 type="submit"
-                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+                className="gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
               >
+                <Save className="h-4 w-4" />
                 {mode === "edit" ? "ویرایش" : "افزودن"}
               </Button>
             </div>

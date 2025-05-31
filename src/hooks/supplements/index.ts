@@ -1,68 +1,127 @@
 
-import { useLocalStorage } from "./useLocalStorage";
-import { useCategoryManagement } from "./useCategoryManagement";
-import { useSupplementManagement } from "./useSupplementManagement";
-import { useFilteredData } from "./useFilteredData";
-import type { UseSupplementsManagerReturn, SupplementType } from "./types";
+import { useState, useEffect, useMemo } from 'react';
+import type { Supplement, SupplementCategory } from '@/types/supplement';
 
-export const useSupplementsManager = (initialTab: SupplementType = 'supplement'): UseSupplementsManagerReturn => {
-  // Load data from localStorage and manage state
-  const {
-    supplements,
-    setSupplements,
-    categories,
-    setCategories,
-    activeTab,
-    selectedCategory,
-    isLoading,
-    setActiveTab,
-    setSelectedCategory,
-  } = useLocalStorage(initialTab);
+export const useSupplementsManager = () => {
+  const [supplements, setSupplements] = useState<Supplement[]>([]);
+  const [categories, setCategories] = useState<SupplementCategory[]>([]);
+  const [activeTab, setActiveTab] = useState<'supplement' | 'vitamin'>('supplement');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Filter data for display
-  const { filteredSupplements, relevantCategories } = useFilteredData(
-    supplements,
-    categories,
-    activeTab,
-    selectedCategory
-  );
+  // Load data from localStorage
+  useEffect(() => {
+    try {
+      const savedSupplements = localStorage.getItem('supplements');
+      const savedCategories = localStorage.getItem('supplementCategories');
+      
+      if (savedSupplements) {
+        setSupplements(JSON.parse(savedSupplements));
+      }
+      
+      if (savedCategories) {
+        setCategories(JSON.parse(savedCategories));
+      }
+    } catch (error) {
+      console.error('Error loading supplements data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  // Category management operations
-  const categoryActions = useCategoryManagement(
-    supplements,
-    setSupplements,
-    categories,
-    setCategories,
-    activeTab
-  );
+  // Save supplements to localStorage
+  const saveSupplements = (newSupplements: Supplement[]) => {
+    setSupplements(newSupplements);
+    localStorage.setItem('supplements', JSON.stringify(newSupplements));
+  };
 
-  // Supplement management operations
-  const supplementActions = useSupplementManagement(
-    supplements,
-    setSupplements,
-    activeTab
-  );
+  // Save categories to localStorage
+  const saveCategories = (newCategories: SupplementCategory[]) => {
+    setCategories(newCategories);
+    localStorage.setItem('supplementCategories', JSON.stringify(newCategories));
+  };
+
+  // Category management
+  const addCategory = (name: string) => {
+    const newCategory: SupplementCategory = {
+      id: Date.now(),
+      name,
+      type: activeTab,
+    };
+    saveCategories([...categories, newCategory]);
+  };
+
+  const updateCategory = (id: number, name: string) => {
+    const updatedCategories = categories.map(cat =>
+      cat.id === id ? { ...cat, name } : cat
+    );
+    saveCategories(updatedCategories);
+  };
+
+  const deleteCategory = (categoryToDelete: SupplementCategory) => {
+    const updatedCategories = categories.filter(cat => cat.id !== categoryToDelete.id);
+    saveCategories(updatedCategories);
+    
+    // Reset selected category if it was the deleted one
+    if (selectedCategory === categoryToDelete.name) {
+      setSelectedCategory(null);
+    }
+  };
+
+  // Supplement management
+  const addSupplement = (data: Omit<Supplement, 'id'>) => {
+    const newSupplement: Supplement = {
+      ...data,
+      id: Date.now(),
+      type: activeTab,
+    };
+    saveSupplements([...supplements, newSupplement]);
+  };
+
+  const updateSupplement = (id: number, data: Omit<Supplement, 'id'>) => {
+    const updatedSupplements = supplements.map(supp =>
+      supp.id === id ? { ...data, id, type: activeTab } : supp
+    );
+    saveSupplements(updatedSupplements);
+  };
+
+  const deleteSupplement = (id: number) => {
+    const updatedSupplements = supplements.filter(supp => supp.id !== id);
+    saveSupplements(updatedSupplements);
+  };
+
+  // Computed values
+  const filteredSupplements = useMemo(() => {
+    return supplements.filter(supplement => {
+      const matchesType = supplement.type === activeTab;
+      const matchesCategory = !selectedCategory || supplement.category === selectedCategory;
+      return matchesType && matchesCategory;
+    });
+  }, [supplements, activeTab, selectedCategory]);
+
+  const relevantCategories = useMemo(() => {
+    return categories.filter(category => category.type === activeTab);
+  }, [categories, activeTab]);
 
   return {
-    // State
     supplements,
     categories,
+    filteredSupplements,
+    relevantCategories,
     activeTab,
     selectedCategory,
     isLoading,
-    filteredSupplements,
-    relevantCategories,
     
-    // Tab actions
+    // Actions
     setActiveTab,
     setSelectedCategory,
-    
-    // Category actions
-    ...categoryActions,
-    
-    // Supplement actions
-    ...supplementActions
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    addSupplement,
+    updateSupplement,
+    deleteSupplement,
   };
 };
 
-export * from "./types";
+export * from './types';
