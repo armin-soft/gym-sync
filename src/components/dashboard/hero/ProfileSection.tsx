@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Settings, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { DashboardStats } from "@/types/dashboard";
 
 interface ProfileSectionProps {
   trainerProfile: {
     name: string;
     image?: string;
   };
+  stats?: DashboardStats;
 }
 
 export const ProfileSection: React.FC<ProfileSectionProps> = ({ trainerProfile }) => {

@@ -12,15 +12,21 @@ interface SidebarMenuItemProps {
   badge?: string;
   isActive?: boolean;
   onClick?: () => void;
+  title?: string;
+  description?: string;
+  badgeColor?: string;
+  onClose?: () => void;
 }
 
 export function SidebarMenuItem({
   icon: Icon,
   label,
+  title,
   href,
   badge,
   isActive: propIsActive,
-  onClick
+  onClick,
+  onClose
 }: SidebarMenuItemProps) {
   const location = useLocation();
   const deviceInfo = useDeviceInfo();
@@ -56,7 +62,7 @@ export function SidebarMenuItem({
     <>
       <Icon className={cn(getIconSize(), isActive ? "text-white" : "brand-text-primary")} />
       <span className={cn("transition-colors", isActive ? "text-white" : "brand-text-dark dark:text-slate-200")}>
-        {label}
+        {label || title}
       </span>
       {badge && (
         <span className={cn(
@@ -71,16 +77,21 @@ export function SidebarMenuItem({
     </>
   );
 
+  const handleClick = () => {
+    if (onClick) onClick();
+    if (onClose) onClose();
+  };
+
   if (onClick) {
     return (
-      <button onClick={onClick} className={itemClasses}>
+      <button onClick={handleClick} className={itemClasses}>
         {content}
       </button>
     );
   }
 
   return (
-    <Link to={href} className={itemClasses}>
+    <Link to={href} className={itemClasses} onClick={onClose}>
       {content}
     </Link>
   );

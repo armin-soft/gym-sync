@@ -14,6 +14,7 @@ interface StatCardProps {
   };
   className?: string;
   delay?: number;
+  variants?: any;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -23,12 +24,14 @@ export const StatCard: React.FC<StatCardProps> = ({
   trend,
   className = "",
   delay = 0,
+  variants,
 }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
+      variants={variants}
       className={`responsive-card-brand hover:shadow-brand-orange transition-all duration-300 
                  bg-gradient-to-br from-white to-orange-50/30 
                  dark:from-slate-900 dark:to-orange-950/20 
