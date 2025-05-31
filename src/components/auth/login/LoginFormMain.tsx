@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { AccountLockedView } from "./AccountLockedView";
 import { LoginFormView } from "./LoginFormView";
 import { useLoginForm } from "./hooks/useLoginForm";
-import { AnimatedBackground } from "./AnimatedBackground";
+import { ModernLoginBackground } from "./ModernLoginBackground";
 
 interface LoginFormProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -31,57 +31,70 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   } = useLoginForm({ onLoginSuccess });
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{
-        duration: 0.5,
-        type: "spring",
-        stiffness: 300,
-        damping: 30
-      }}
-      className="w-full max-w-md"
-    >
-      <div className="relative overflow-hidden border-none bg-white/90 backdrop-blur-xl shadow-2xl rounded-lg">
-        {/* گرادیان پس‌زمینه */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-primary/5 to-violet-500/10 z-0 rounded-lg"></div>
-        
-        {locked ? (
-          <AccountLockedView 
-            timeLeft={timeLeft} 
-            setTimeLeft={setTimeLeft} 
-            lockExpiry={lockExpiry} 
-          />
-        ) : (
-          <LoginFormView 
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-            rememberMe={rememberMe}
-            setRememberMe={setRememberMe}
-            loading={loading}
-            error={error}
-            handleLogin={handleLogin}
-            gymName={gymName}
-          />
-        )}
+    <div className="relative min-h-screen w-full overflow-hidden">
+      <ModernLoginBackground />
+      
+      {/* Main Login Container */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            duration: 0.6,
+            type: "spring",
+            stiffness: 300,
+            damping: 30
+          }}
+          className="w-full max-w-md"
+        >
+          {/* Glassmorphic Login Card */}
+          <div className="relative overflow-hidden">
+            {/* Card Background with Glassmorphism */}
+            <div className="absolute inset-0 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl"></div>
+            
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent rounded-3xl"></div>
+            
+            {/* Content */}
+            <div className="relative z-10">
+              {locked ? (
+                <AccountLockedView 
+                  timeLeft={timeLeft} 
+                  setTimeLeft={setTimeLeft} 
+                  lockExpiry={lockExpiry} 
+                />
+              ) : (
+                <LoginFormView 
+                  email={email}
+                  setEmail={setEmail}
+                  password={password}
+                  setPassword={setPassword}
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                  rememberMe={rememberMe}
+                  setRememberMe={setRememberMe}
+                  loading={loading}
+                  error={error}
+                  handleLogin={handleLogin}
+                  gymName={gymName}
+                />
+              )}
+            </div>
 
-        <div className="relative z-10 pt-0 pb-6 flex items-center p-6">
-          <motion.p 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-            className="text-xs text-center text-muted-foreground w-full"
-          >
-            برای ورود از اطلاعات ثبت شده در بخش پروفایل مربی استفاده کنید
-          </motion.p>
-        </div>
-
-        <AnimatedBackground />
+            {/* Bottom Info */}
+            <div className="relative z-10 px-6 pb-6">
+              <motion.p 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                className="text-xs text-center text-white/70"
+              >
+                برای ورود از اطلاعات ثبت شده در بخش پروفایل مربی استفاده کنید
+              </motion.p>
+            </div>
+          </div>
+        </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
