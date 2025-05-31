@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 import ExerciseDialogMain from "./dialog/ExerciseDialogMain";
 
 interface ExerciseDialogProps {
@@ -26,19 +27,22 @@ const ResponsiveExerciseDialog = ({
   isEditing
 }: ExerciseDialogProps) => {
   const deviceInfo = useDeviceInfo();
+  const { getGradientClass } = useBrandTheme();
   
   return (
-    <ExerciseDialogMain 
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      selectedExercise={selectedExercise}
-      categories={categories}
-      formData={formData}
-      onFormDataChange={onFormChange}
-      onSave={onSave}
-      deviceInfo={deviceInfo} 
-      fullScreen={true} // Always use fullscreen mode
-    />
+    <div className={`${getGradientClass('accent')} bg-opacity-5`}>
+      <ExerciseDialogMain 
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        selectedExercise={selectedExercise}
+        categories={categories}
+        formData={formData}
+        onFormDataChange={onFormChange}
+        onSave={onSave}
+        deviceInfo={deviceInfo} 
+        fullScreen={true} // Always use fullscreen mode
+      />
+    </div>
   );
 };
 

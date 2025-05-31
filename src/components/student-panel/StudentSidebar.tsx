@@ -17,6 +17,7 @@ import { StudentSidebarProfile } from "./StudentSidebarProfile";
 import { StudentSidebarMenuList } from "./StudentSidebarMenuList";
 import { StudentSidebarFooter } from "./StudentSidebarFooter";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 import { Student } from "@/components/students/StudentTypes";
 
 interface StudentSidebarProps {
@@ -73,6 +74,7 @@ const studentSidebarItems = [
 
 export function StudentSidebar({ isOpen, onClose, student, onLogout }: StudentSidebarProps) {
   const deviceInfo = useDeviceInfo();
+  const { getGradientClass } = useBrandTheme();
   
   // تنظیم عرض منو بر اساس نوع دستگاه
   const getSidebarWidth = () => {
@@ -88,7 +90,8 @@ export function StudentSidebar({ isOpen, onClose, student, onLogout }: StudentSi
         side="right" 
         className={cn(
           getSidebarWidth(),
-          "p-0 border-l shadow-2xl bg-gradient-to-b from-violet-50 to-indigo-50 dark:from-violet-950/50 dark:to-indigo-950/50 backdrop-blur-lg"
+          "p-0 border-l shadow-2xl backdrop-blur-lg",
+          `${getGradientClass('primary')} bg-opacity-95`
         )}
         dir="rtl"
       >
@@ -100,9 +103,9 @@ export function StudentSidebar({ isOpen, onClose, student, onLogout }: StudentSi
             />
           </div>
           
-          <div className="px-4 py-3 border-b bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" dir="rtl">
+          <div className="px-4 py-3 border-b bg-white/10 backdrop-blur-sm" dir="rtl">
             <h4 className={cn(
-              "text-sm font-medium text-center text-violet-700 dark:text-violet-300",
+              "text-sm font-medium text-center text-white/90",
               deviceInfo.isMobile ? "text-xs" : 
               deviceInfo.isTablet ? "text-sm" : "text-base"
             )}>
@@ -116,10 +119,10 @@ export function StudentSidebar({ isOpen, onClose, student, onLogout }: StudentSi
             </div>
           </ScrollArea>
           
-          <div dir="rtl" className="border-t bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm">
+          <div dir="rtl" className="border-t bg-white/10 backdrop-blur-sm">
             <button
               onClick={onLogout}
-              className="w-full p-4 flex items-center gap-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+              className="w-full p-4 flex items-center gap-3 text-red-300 hover:bg-red-500/20 transition-colors"
             >
               <LogOut className="h-5 w-5" />
               <span className="font-medium">خروج از حساب</span>

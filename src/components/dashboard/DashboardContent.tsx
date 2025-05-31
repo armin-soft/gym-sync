@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 import { HeroSection } from "./HeroSection";
 import { MainMenuGrid } from "./MainMenuGrid";
 import { RecentStudentsCard } from "./RecentStudentsCard";
@@ -39,9 +40,10 @@ export const DashboardContent = ({
 }: DashboardContentProps) => {
   const deviceInfo = useDeviceInfo();
   const gridLayout = getGridLayout();
+  const { getGradientClass } = useBrandTheme();
   
   return (
-    <>
+    <div className={`min-h-screen ${getGradientClass('accent')} bg-opacity-5`}>
       {/* Hero Section */}
       <motion.div variants={itemVariants}>
         <HeroSection 
@@ -111,7 +113,7 @@ export const DashboardContent = ({
           </motion.div>
         )}
       </motion.div>
-    </>
+    </div>
   );
 };
 
