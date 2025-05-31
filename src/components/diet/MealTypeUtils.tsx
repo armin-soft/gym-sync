@@ -45,21 +45,21 @@ export const getMealTypeStyle = (type: MealType) => {
       };
     case "میان وعده صبح":
       return {
-        bg: "bg-bronze-500/10",
-        icon: "text-bronze-500",
-        iconBg: "bg-bronze-500/10",
-        border: "border-bronze-500/20",
-        hover: "hover:border-bronze-500/40",
-        accent: "bg-bronze-500"
+        bg: "bg-blue-500/10",
+        icon: "text-blue-500",
+        iconBg: "bg-blue-500/10",
+        border: "border-blue-500/20",
+        hover: "hover:border-blue-500/40",
+        accent: "bg-blue-500"
       };
     case "ناهار":
       return {
-        bg: "bg-masculine-500/10",
-        icon: "text-masculine-500", 
-        iconBg: "bg-masculine-500/10",
-        border: "border-masculine-500/20",
-        hover: "hover:border-masculine-500/40",
-        accent: "bg-masculine-500"
+        bg: "bg-black-500/10",
+        icon: "text-black-500", 
+        iconBg: "bg-black-500/10",
+        border: "border-black-500/20",
+        hover: "hover:border-black-500/40",
+        accent: "bg-black-500"
       };
     case "میان وعده عصر":
       return {
@@ -72,21 +72,21 @@ export const getMealTypeStyle = (type: MealType) => {
       };
     case "شام":
       return {
-        bg: "bg-bronze-600/10",
-        icon: "text-bronze-600",
-        iconBg: "bg-bronze-600/10",
-        border: "border-bronze-600/20",
-        hover: "hover:border-bronze-600/40",
-        accent: "bg-bronze-600"
+        bg: "bg-blue-600/10",
+        icon: "text-blue-600",
+        iconBg: "bg-blue-600/10",
+        border: "border-blue-600/20",
+        hover: "hover:border-blue-600/40",
+        accent: "bg-blue-600"
       };
     case "میان وعده شام":
       return {
-        bg: "bg-masculine-600/10",
-        icon: "text-masculine-600",
-        iconBg: "bg-masculine-600/10",
-        border: "border-masculine-600/20",
-        hover: "hover:border-masculine-600/40",
-        accent: "bg-masculine-600"
+        bg: "bg-black-600/10",
+        icon: "text-black-600",
+        iconBg: "bg-black-600/10",
+        border: "border-black-600/20",
+        hover: "hover:border-black-600/40",
+        accent: "bg-black-600"
       };
     default:
       return {
