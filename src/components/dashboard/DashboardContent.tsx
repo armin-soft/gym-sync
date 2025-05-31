@@ -3,33 +3,33 @@ import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { ModernHeroSection } from "./ModernHeroSection";
-import { ModernMainMenuGrid } from "./ModernMainMenuGrid";
-import { ModernRecentStudentsCard } from "./ModernRecentStudentsCard";
-import { ModernStatsCards } from "./stats/ModernStatsCards";
-import { ModernProgressCard } from "./ModernProgressCard";
-import { ModernActivitySummaryCard } from "./activity/ModernActivitySummaryCard";
+import { EliteHeroSection } from "./EliteHeroSection";
+import { EliteMenuGrid } from "./EliteMenuGrid";
+import { EliteStudentsCard } from "./EliteStudentsCard";
+import { EliteStatsCards } from "./stats/EliteStatsCards";
+import { EliteProgressCard } from "./EliteProgressCard";
+import { EliteActivityCard } from "./activity/EliteActivityCard";
 
-// Animation variants for child elements
+// Animation variants
 const containerVariants = {
   initial: { opacity: 0 },
   animate: { 
     opacity: 1,
     transition: { 
-      duration: 0.8,
-      staggerChildren: 0.15,
+      duration: 0.6,
+      staggerChildren: 0.1,
       ease: "easeOut"
     }
   }
 };
 
 const itemVariants = {
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 20 },
   animate: { 
     opacity: 1, 
     y: 0,
     transition: { 
-      duration: 0.6,
+      duration: 0.5,
       ease: "easeOut"
     }
   }
@@ -51,10 +51,8 @@ export const DashboardContent = ({
   students, 
   trainerProfile 
 }: DashboardContentProps) => {
-  // Always call hooks at the top level - never conditionally
   const deviceInfo = useDeviceInfo();
   
-  // Ensure we have valid data before rendering
   const safeStats = stats || {
     totalStudents: 0,
     totalMeals: 0,
@@ -80,32 +78,32 @@ export const DashboardContent = ({
       variants={containerVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-yellow-50/20 dark:from-slate-900 dark:via-blue-950/30 dark:to-yellow-950/20"
+      className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950"
       dir="rtl"
     >
-      {/* خطوط تزیینی پس‌زمینه */}
+      {/* Modern geometric background patterns */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-l from-blue-500/5 via-transparent to-transparent rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-500/5 via-transparent to-transparent rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-slate-500/3 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-violet-200/20 via-purple-200/10 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-indigo-200/20 via-blue-200/10 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-1/3 left-1/3 w-[300px] h-[300px] bg-gradient-to-br from-emerald-200/10 via-teal-200/5 to-transparent rounded-full blur-2xl" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Hero Section */}
         <motion.div variants={itemVariants}>
-          <ModernHeroSection 
+          <EliteHeroSection 
             stats={safeStats} 
             currentTime={safeCurrentTime} 
             trainerProfile={safeTrainerProfile} 
           />
         </motion.div>
 
-        {/* Main Menu Grid */}
+        {/* Main Menu */}
         <motion.div variants={itemVariants}>
-          <ModernMainMenuGrid />
+          <EliteMenuGrid />
         </motion.div>
 
-        {/* Stats and Content Grid */}
+        {/* Content Grid */}
         <motion.div
           variants={itemVariants}
           className={`grid gap-8 ${
@@ -116,29 +114,25 @@ export const DashboardContent = ({
                 : "grid-cols-1 lg:grid-cols-3"
           }`}
         >
-          {/* Main Content Column */}
+          {/* Main Content */}
           <div className={`${deviceInfo.isMobile ? "col-span-1" : "lg:col-span-2"} space-y-8`}>
-            {/* Students Card */}
             <motion.div variants={itemVariants}>
-              <ModernRecentStudentsCard students={safeStudents} />
+              <EliteStudentsCard students={safeStudents} />
             </motion.div>
             
-            {/* Stats Cards */}
             <motion.div variants={itemVariants}>
-              <ModernStatsCards stats={safeStats} />
+              <EliteStatsCards stats={safeStats} />
             </motion.div>
           </div>
           
-          {/* Sidebar Content */}
+          {/* Sidebar */}
           <div className="space-y-8">
-            {/* Progress Card */}
             <motion.div variants={itemVariants}>
-              <ModernProgressCard stats={safeStats} />
+              <EliteProgressCard stats={safeStats} />
             </motion.div>
 
-            {/* Activity Summary Card */}
             <motion.div variants={itemVariants}>
-              <ModernActivitySummaryCard stats={safeStats} />
+              <EliteActivityCard stats={safeStats} />
             </motion.div>
           </div>
         </motion.div>
