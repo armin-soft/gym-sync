@@ -1,149 +1,87 @@
 
-import { cn } from "@/lib/utils";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import React, { useState } from "react";
+import { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
-interface SidebarItemProps {
-  title: string;
+interface SidebarMenuItemProps {
+  icon: LucideIcon;
+  label: string;
   href: string;
-  icon: React.ElementType;
-  description?: string;
   badge?: string;
-  badgeColor?: string;
-  onClose: () => void;
+  isActive?: boolean;
+  onClick?: () => void;
 }
 
-export function SidebarMenuItem({ 
-  title, 
-  href, 
-  icon: Icon, 
-  description, 
-  badge, 
-  badgeColor, 
-  onClose 
-}: SidebarItemProps) {
+export function SidebarMenuItem({
+  icon: Icon,
+  label,
+  href,
+  badge,
+  isActive: propIsActive,
+  onClick
+}: SidebarMenuItemProps) {
   const location = useLocation();
-  const isActive = location.pathname === href;
-  const [isHovered, setIsHovered] = useState(false);
   const deviceInfo = useDeviceInfo();
+  const isActive = propIsActive ?? location.pathname === href;
   
-  const itemVariants = {
-    open: { opacity: 1, x: 0 },
-    closed: { opacity: 0, x: 20 }
-  };
-  
-  // تنظیم اندازه منو بر اساس دستگاه
-  const getMenuPadding = () => {
-    if (deviceInfo.isMobile) return "py-2 px-3";
-    if (deviceInfo.isTablet) return "py-2.5 px-3.5";
-    return "py-3 px-4";
+  // تنظیمات ریسپانسیو
+  const getItemClasses = () => {
+    const baseClasses = "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200";
+    
+    if (deviceInfo.isMobile) {
+      return `${baseClasses} text-xs px-2 py-2`;
+    }
+    if (deviceInfo.isTablet) {
+      return `${baseClasses} text-sm px-2.5 py-2`;
+    }
+    return baseClasses;
   };
   
   const getIconSize = () => {
-    if (deviceInfo.isMobile) return "w-4 h-4";
-    if (deviceInfo.isTablet) return "w-4.5 h-4.5";
-    return "w-5 h-5";
+    if (deviceInfo.isMobile) return "h-4 w-4";
+    if (deviceInfo.isTablet) return "h-4 w-4";
+    return "h-5 w-5";
   };
-  
-  const getIconContainer = () => {
-    if (deviceInfo.isMobile) return "w-8 h-8";
-    if (deviceInfo.isTablet) return "w-8.5 h-8.5";
-    return "w-9 h-9";
-  };
-  
-  const getFontSize = () => {
-    if (deviceInfo.isMobile) return "text-xs";
-    if (deviceInfo.isTablet) return "text-sm";
-    return "text-base";
-  };
-  
-  const getDescriptionSize = () => {
-    if (deviceInfo.isMobile) return "text-[10px]";
-    if (deviceInfo.isTablet) return "text-xs";
-    return "text-xs";
-  };
-  
-  return (
-    <motion.div 
-      variants={itemVariants}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      dir="rtl"
-    >
-      <Link
-        to={href}
-        onClick={onClose}
-        className={cn(
-          "relative block mb-1 rounded-lg transition-all duration-200",
-          getMenuPadding(),
+
+  const itemClasses = cn(
+    getItemClasses(),
+    isActive
+      ? "brand-bg-primary text-white shadow-brand-orange border border-orange-400/20"
+      : "text-muted-foreground hover-brand-orange hover:shadow-sm border border-transparent"
+  );
+
+  const content = (
+    <>
+      <Icon className={cn(getIconSize(), isActive ? "text-white" : "brand-text-primary")} />
+      <span className={cn("transition-colors", isActive ? "text-white" : "brand-text-dark dark:text-slate-200")}>
+        {label}
+      </span>
+      {badge && (
+        <span className={cn(
+          "mr-auto rounded-full px-2 py-0.5 text-xs font-medium",
           isActive 
-            ? "bg-primary text-primary-foreground" 
-            : "hover:bg-muted"
-        )}
-        dir="rtl"
-      >
-        {isActive && (
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 opacity-90"></div>
-        )}
-        
-        <AnimatePresence>
-          {isHovered && !isActive && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 rounded-lg bg-muted"
-            ></motion.div>
-          )}
-        </AnimatePresence>
-        
-        <div className="relative flex items-center" dir="rtl">
-          <div className={cn(
-            "flex-shrink-0 rounded-md flex items-center justify-center ml-3",
-            getIconContainer(),
-            isActive 
-              ? "bg-white/20 text-white" 
-              : "bg-muted-foreground/10 text-muted-foreground"
-          )}>
-            <Icon className={getIconSize()} />
-          </div>
-          
-          <div className="flex-1" dir="rtl">
-            <div className="flex items-center justify-between" dir="rtl">
-              <span className={cn(
-                "font-medium text-right",
-                getFontSize(),
-                isActive ? "text-white" : ""
-              )}>
-                {title}
-              </span>
-              
-              {badge && (
-                <span className={cn(
-                  "px-1.5 py-0.5 rounded-full font-medium mr-2",
-                  "text-[10px]",
-                  badgeColor || "bg-primary",
-                  isActive ? "text-white bg-white/20" : "text-white"
-                )}>
-                  {badge}
-                </span>
-              )}
-            </div>
-            
-            {description && (
-              <p className={cn(
-                "mt-0.5 text-right",
-                getDescriptionSize(),
-                isActive ? "text-white/70" : "text-muted-foreground"
-              )}>
-                {description}
-              </p>
-            )}
-          </div>
-        </div>
-      </Link>
-    </motion.div>
+            ? "bg-white/20 text-white" 
+            : "brand-bg-secondary brand-text-dark"
+        )}>
+          {badge}
+        </span>
+      )}
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button onClick={onClick} className={itemClasses}>
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link to={href} className={itemClasses}>
+      {content}
+    </Link>
   );
 }
