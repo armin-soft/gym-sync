@@ -54,6 +54,15 @@ export const DashboardContent = ({
 }: DashboardContentProps) => {
   const deviceInfo = useDeviceInfo();
   
+  // Define grid layout class once to avoid conditional rendering issues
+  const gridLayoutClass = deviceInfo.isMobile 
+    ? "grid-cols-1" 
+    : "grid-cols-1 lg:grid-cols-3";
+  
+  const mainContentClass = deviceInfo.isMobile 
+    ? "" 
+    : "lg:col-span-2 space-y-6";
+  
   return (
     <motion.div
       variants={containerVariants}
@@ -84,16 +93,12 @@ export const DashboardContent = ({
       {/* Stats and Analytics Section */}
       <motion.div
         variants={itemVariants}
-        className={`grid gap-6 ${
-          deviceInfo.isMobile 
-            ? "grid-cols-1" 
-            : "grid-cols-1 lg:grid-cols-3"
-        }`}
+        className={`grid gap-6 ${gridLayoutClass}`}
       >
         {/* Main Content - Students and Stats */}
         <motion.div 
           variants={itemVariants}
-          className={deviceInfo.isMobile ? "" : "lg:col-span-2 space-y-6"}
+          className={mainContentClass}
         >
           {/* Students Section */}
           <ModernCard 
