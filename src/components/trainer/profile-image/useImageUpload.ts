@@ -12,6 +12,7 @@ export const useImageUpload = ({ onImageChange }: UseImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [showCameraCapture, setShowCameraCapture] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -82,14 +83,36 @@ export const useImageUpload = ({ onImageChange }: UseImageUploadProps) => {
     reader.readAsDataURL(file);
   };
 
+  const handleFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleCameraCapture = () => {
+    setShowCameraCapture(true);
+  };
+
+  const handleCameraCaptureComplete = (imageData: string) => {
+    onImageChange(imageData);
+    setShowCameraCapture(false);
+    toast({
+      title: "عکس گرفته شد",
+      description: "تصویر پروفایل با موفقیت بروزرسانی شد",
+    });
+  };
+
   return {
     fileInputRef,
     isUploading,
     dragActive,
     isHovering,
     setIsHovering,
+    showCameraCapture,
+    setShowCameraCapture,
     handleImageUpload,
     handleDrag,
-    handleDrop
+    handleDrop,
+    handleFileUpload,
+    handleCameraCapture,
+    handleCameraCaptureComplete
   };
 };

@@ -6,6 +6,8 @@ import { ImagePlaceholder } from "./profile-image/ImagePlaceholder";
 import { HoverOverlay } from "./profile-image/HoverOverlay";
 import { UploadProgress } from "./profile-image/UploadProgress";
 import { ProfileBadge } from "./profile-image/ProfileBadge";
+import { ImageUploadOptions } from "./profile-image/ImageUploadOptions";
+import { CameraCapture } from "./profile-image/CameraCapture";
 import { useImageUpload } from "./profile-image/useImageUpload";
 
 interface ProfileImageProps {
@@ -21,9 +23,14 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
     dragActive,
     isHovering,
     setIsHovering,
+    showCameraCapture,
+    setShowCameraCapture,
     handleImageUpload,
     handleDrag,
-    handleDrop
+    handleDrop,
+    handleFileUpload,
+    handleCameraCapture,
+    handleCameraCaptureComplete
   } = useImageUpload({ onImageChange });
 
   // Responsive image dimensions based on device type
@@ -52,7 +59,6 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
       >
         {/* Background glow effect */}
         <motion.div 
@@ -110,10 +116,24 @@ export const ProfileImage = ({ image, onImageChange }: ProfileImageProps) => {
             <UploadProgress isUploading={isUploading} />
           </AnimatePresence>
         </motion.div>
+
+        {/* Upload Options Button */}
+        <ImageUploadOptions
+          onFileUpload={handleFileUpload}
+          onCameraCapture={handleCameraCapture}
+          className="absolute -bottom-2 left-1/2 transform -translate-x-1/2"
+        />
       </motion.div>
       
       {/* Profile badge */}
       <ProfileBadge />
+
+      {/* Camera Capture Dialog */}
+      <CameraCapture
+        isOpen={showCameraCapture}
+        onClose={() => setShowCameraCapture(false)}
+        onCapture={handleCameraCaptureComplete}
+      />
     </div>
   );
 };
