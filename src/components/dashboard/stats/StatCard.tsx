@@ -4,29 +4,30 @@ import { TrendingUp, TrendingDown, Stars, LucideIcon } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 
-// Color configurations for different card types
+// Color configurations for different card types using brand colors
 const colorMap = {
-  black: {
-    bg: "from-gray-900 to-gray-700",
-    bgLight: "bg-gray-100/50 dark:bg-gray-900/20",
-    text: "text-gray-900 dark:text-gray-100",
-    progressBg: "bg-gray-100 dark:bg-gray-800/30",
-    iconColor: "text-gray-700 dark:text-gray-300"
+  dark: {
+    bg: "from-brand-dark to-slate-700",
+    bgLight: "bg-brand-dark/10 dark:bg-brand-dark/20",
+    text: "text-brand-dark dark:text-slate-100",
+    progressBg: "bg-slate-100 dark:bg-slate-800/30",
+    iconColor: "text-brand-dark dark:text-slate-300"
   },
-  orange: {
-    bg: "from-orange-600 to-orange-400",
-    bgLight: "bg-orange-100/50 dark:bg-orange-900/20",
-    text: "text-orange-600 dark:text-orange-400",
+  primary: {
+    bg: "from-brand-primary to-orange-400",
+    bgLight: "bg-brand-primary/10 dark:bg-brand-primary/20",
+    text: "text-brand-primary dark:text-brand-primary",
     progressBg: "bg-orange-100 dark:bg-orange-800/30",
-    iconColor: "text-orange-500"
+    iconColor: "text-brand-primary"
   },
-  gold: {
-    bg: "from-yellow-600 to-yellow-400",
-    bgLight: "bg-yellow-100/50 dark:bg-yellow-900/20",
-    text: "text-yellow-600 dark:text-yellow-400",
+  secondary: {
+    bg: "from-brand-secondary to-yellow-400",
+    bgLight: "bg-brand-secondary/10 dark:bg-brand-secondary/20",
+    text: "text-brand-secondary dark:text-brand-secondary",
     progressBg: "bg-yellow-100 dark:bg-yellow-800/30",
-    iconColor: "text-yellow-500"
+    iconColor: "text-brand-secondary"
   }
 };
 
@@ -49,7 +50,7 @@ export interface StatCardProps {
   growth: number;
   maxValue: number;
   percentage?: number;
-  color: "black" | "orange" | "gold";
+  color: "dark" | "primary" | "secondary";
   description: string;
   variants?: any;
 }
@@ -66,6 +67,8 @@ export const StatCard = ({
   description,
   variants
 }: StatCardProps) => {
+  const { colors } = useBrandTheme();
+  
   // Calculate the progress percentage
   const progressPercentage = percentage !== undefined 
     ? percentage 
@@ -91,7 +94,7 @@ export const StatCard = ({
         
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          <div className={`p-1.5 rounded-md ${colorMap[color].bgLight} ring-1 ring-${color}-500/20`}>
+          <div className={`p-1.5 rounded-md ${colorMap[color].bgLight} ring-1 ring-${color === 'primary' ? 'brand-primary' : color === 'secondary' ? 'brand-secondary' : 'brand-dark'}/20`}>
             <Icon className={`w-4 h-4 ${colorMap[color].iconColor}`} />
           </div>
         </CardHeader>
@@ -124,7 +127,7 @@ export const StatCard = ({
             {description}
           </div>
           
-          <div className="mt-4 h-2 w-full overflow-hidden rounded-full relative" style={{background: `var(--${color}-100)`}}>
+          <div className="mt-4 h-2 w-full overflow-hidden rounded-full relative" style={{background: `var(--${color === 'primary' ? 'brand-primary' : color === 'secondary' ? 'brand-secondary' : 'brand-dark'}-100)`}}>
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${progressPercentage}%` }}
