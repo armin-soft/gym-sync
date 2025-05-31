@@ -3,21 +3,35 @@ import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { HeroSection } from "./HeroSection";
-import { MainMenuGrid } from "./MainMenuGrid";
-import { RecentStudentsCard } from "./RecentStudentsCard";
-import { StatsCards } from "./stats/StatsCards";
-import { ProgressCard } from "./ProgressCard";
-import { ActivitySummaryCard } from "./activity/ActivitySummaryCard";
-import { getGridLayout } from "./layout/DashboardLayout";
+import { ModernHeroSection } from "./ModernHeroSection";
+import { ModernMainMenuGrid } from "./ModernMainMenuGrid";
+import { ModernRecentStudentsCard } from "./ModernRecentStudentsCard";
+import { ModernStatsCards } from "./stats/ModernStatsCards";
+import { ModernProgressCard } from "./ModernProgressCard";
+import { ModernActivitySummaryCard } from "./activity/ModernActivitySummaryCard";
 
 // Animation variants for child elements
+const containerVariants = {
+  initial: { opacity: 0 },
+  animate: { 
+    opacity: 1,
+    transition: { 
+      duration: 0.8,
+      staggerChildren: 0.15,
+      ease: "easeOut"
+    }
+  }
+};
+
 const itemVariants = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 30 },
   animate: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.5 }
+    transition: { 
+      duration: 0.6,
+      ease: "easeOut"
+    }
   }
 };
 
@@ -38,80 +52,76 @@ export const DashboardContent = ({
   trainerProfile 
 }: DashboardContentProps) => {
   const deviceInfo = useDeviceInfo();
-  const gridLayout = getGridLayout();
   
   return (
-    <>
-      {/* Hero Section */}
-      <motion.div variants={itemVariants}>
-        <HeroSection 
-          stats={stats} 
-          currentTime={currentTime} 
-          trainerProfile={trainerProfile} 
-        />
-      </motion.div>
+    <motion.div
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-yellow-50/20 dark:from-slate-900 dark:via-blue-950/30 dark:to-yellow-950/20"
+      dir="rtl"
+    >
+      {/* خطوط تزیینی پس‌زمینه */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-l from-blue-500/5 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-500/5 via-transparent to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-slate-500/3 via-transparent to-transparent rounded-full blur-3xl" />
+      </div>
 
-      {/* Main Menu Grid */}
-      <motion.div 
-        variants={itemVariants}
-        className="mt-4 sm:mt-5 md:mt-6"
-      >
-        <MainMenuGrid />
-      </motion.div>
-
-      {/* Stats and Recent Students */}
-      <motion.div
-        variants={itemVariants}
-        className={`mt-4 sm:mt-5 md:mt-6 grid ${gridLayout}`}
-      >
-        {/* First column on larger screens */}
-        <motion.div 
-          variants={itemVariants}
-          className={deviceInfo.isMobile ? "" : "md:col-span-2 space-y-4 sm:space-y-5 md:space-y-6"}
-        >
-          {/* Students Card */}
-          <motion.div variants={itemVariants}>
-            <RecentStudentsCard students={students} />
-          </motion.div>
-          
-          {deviceInfo.isMobile && (
-            <>
-              {/* Progress Card - Show here on mobile */}
-              <motion.div variants={itemVariants}>
-                <ProgressCard stats={stats} />
-              </motion.div>
-              
-              {/* Activity Summary Card - Show here on mobile */}
-              <motion.div variants={itemVariants}>
-                <ActivitySummaryCard stats={stats} />
-              </motion.div>
-            </>
-          )}
-          
-          {/* Stats Cards */}
-          <motion.div variants={itemVariants}>
-            <StatsCards stats={stats} />
-          </motion.div>
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+        {/* Hero Section */}
+        <motion.div variants={itemVariants}>
+          <ModernHeroSection 
+            stats={stats} 
+            currentTime={currentTime} 
+            trainerProfile={trainerProfile} 
+          />
         </motion.div>
-        
-        {!deviceInfo.isMobile && (
-          <motion.div 
-            variants={itemVariants}
-            className="space-y-4 sm:space-y-5 md:space-y-6"
-          >
+
+        {/* Main Menu Grid */}
+        <motion.div variants={itemVariants}>
+          <ModernMainMenuGrid />
+        </motion.div>
+
+        {/* Stats and Content Grid */}
+        <motion.div
+          variants={itemVariants}
+          className={`grid gap-8 ${
+            deviceInfo.isMobile 
+              ? "grid-cols-1" 
+              : deviceInfo.isTablet 
+                ? "grid-cols-1 lg:grid-cols-3" 
+                : "grid-cols-1 lg:grid-cols-3"
+          }`}
+        >
+          {/* Main Content Column */}
+          <div className={`${deviceInfo.isMobile ? "col-span-1" : "lg:col-span-2"} space-y-8`}>
+            {/* Students Card */}
+            <motion.div variants={itemVariants}>
+              <ModernRecentStudentsCard students={students} />
+            </motion.div>
+            
+            {/* Stats Cards */}
+            <motion.div variants={itemVariants}>
+              <ModernStatsCards stats={stats} />
+            </motion.div>
+          </div>
+          
+          {/* Sidebar Content */}
+          <div className="space-y-8">
             {/* Progress Card */}
             <motion.div variants={itemVariants}>
-              <ProgressCard stats={stats} />
+              <ModernProgressCard stats={stats} />
             </motion.div>
 
             {/* Activity Summary Card */}
             <motion.div variants={itemVariants}>
-              <ActivitySummaryCard stats={stats} />
+              <ModernActivitySummaryCard stats={stats} />
             </motion.div>
-          </motion.div>
-        )}
-      </motion.div>
-    </>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
   );
 };
 
