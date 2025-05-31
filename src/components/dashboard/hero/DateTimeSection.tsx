@@ -1,7 +1,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, SunMoon, Sun, Moon, Sunrise, Sunset, CloudSnow, Flower2, Sun as SunIcon, Leaf } from "lucide-react";
+import { Clock, Calendar, SunMoon, Sun, Moon, Sunrise, Sunset, CloudSnow, Flower2, Sun as SunIcon, Leaf, CloudMoon, Snowflake } from "lucide-react";
 import { useShamsiDate } from "@/hooks/useShamsiDate";
 import { useState, useEffect } from "react";
 
@@ -19,18 +19,32 @@ const getSeasonIcon = (season: string) => {
     case 'پاییز':
       return Leaf;
     case 'زمستان':
-      return CloudSnow;
+      return Snowflake;
     default:
       return SunMoon;
   }
 };
 
 // Helper function to get time-based icon
-const getTimeIcon = (timeBasedEmoji: string) => {
-  if (timeBasedEmoji?.includes('🌅') || timeBasedEmoji?.includes('sunrise')) return Sunrise;
-  if (timeBasedEmoji?.includes('☀️') || timeBasedEmoji?.includes('sun')) return Sun;
-  if (timeBasedEmoji?.includes('🌇') || timeBasedEmoji?.includes('sunset')) return Sunset;
-  if (timeBasedEmoji?.includes('🌙') || timeBasedEmoji?.includes('moon')) return Moon;
+const getTimeIcon = (timeBasedText: string) => {
+  if (!timeBasedText) return Clock;
+  
+  const time = timeBasedText?.toLowerCase();
+  
+  if (time.includes('نیمه شب')) return Moon;
+  if (time.includes('پیش سحر')) return CloudMoon;
+  if (time.includes('سحر')) return Sunrise;
+  if (time.includes('طلوع آفتاب')) return Sunrise;
+  if (time.includes('صبح')) return Sun;
+  if (time.includes('پیش از ظهر')) return Sun;
+  if (time.includes('ظهر')) return Sun;
+  if (time.includes('بعد از ظهر')) return Sun;
+  if (time.includes('عصر')) return Sunset;
+  if (time.includes('غروب')) return Sunset;
+  if (time.includes('اوایل شب')) return Moon;
+  if (time.includes('شب')) return CloudMoon;
+  if (time.includes('انتهای شب')) return Moon;
+  
   return Clock;
 };
 
@@ -54,7 +68,7 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
   };
 
   const SeasonIconComponent = dateInfo?.Season ? getSeasonIcon(dateInfo.Season) : SunMoon;
-  const TimeIconComponent = dateInfo?.Time_Based_Emoji ? getTimeIcon(dateInfo.Time_Based_Emoji) : Clock;
+  const TimeIconComponent = dateInfo?.Time_Based ? getTimeIcon(dateInfo.Time_Based) : Clock;
 
   return (
     <motion.div 
