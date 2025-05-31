@@ -1,6 +1,5 @@
 
 import { ModernSidebarMenuItem } from "./ModernSidebarMenuItem";
-import { MobileSidebarMenuItem } from "./MobileSidebarMenuItem";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -29,7 +28,7 @@ export function ModernSidebarMenuList({ items, onClose }: ModernSidebarMenuListP
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: deviceInfo.isMobile ? 0.02 : 0.08,
+        staggerChildren: 0.05,
         delayChildren: 0.03
       }
     }
@@ -47,31 +46,17 @@ export function ModernSidebarMenuList({ items, onClose }: ModernSidebarMenuListP
     >
       {items.map((item, index) => (
         <div key={item.href} dir="rtl">
-          {deviceInfo.isMobile ? (
-            <MobileSidebarMenuItem
-              title={item.title}
-              href={item.href}
-              icon={item.icon}
-              description={item.description}
-              gradient={item.gradient}
-              badge={item.badge}
-              badgeColor={item.badgeColor}
-              onClose={onClose}
-              index={index}
-            />
-          ) : (
-            <ModernSidebarMenuItem
-              title={item.title}
-              href={item.href}
-              icon={item.icon}
-              description={item.description}
-              gradient={item.gradient}
-              badge={item.badge}
-              badgeColor={item.badgeColor}
-              onClose={onClose}
-              index={index}
-            />
-          )}
+          <ModernSidebarMenuItem
+            title={item.title}
+            href={item.href}
+            icon={item.icon}
+            description={item.description}
+            gradient={item.gradient}
+            badge={item.badge}
+            badgeColor={item.badgeColor}
+            onClose={onClose}
+            index={index}
+          />
         </div>
       ))}
     </motion.div>
