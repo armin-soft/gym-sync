@@ -6,9 +6,10 @@ import App from './App'
 import { LoadingScreen } from './components/LoadingScreen'
 import React from 'react'
 
-// کامپوننت اصلی برنامه با نمایش صفحه لودینگ در هر رفرش
+// کامپوننت اصلی برنامه با نمایش صفحه لودینگ فقط در ابتدا
 function MainApp() {
   const [isInitialLoading, setIsInitialLoading] = React.useState(true);
+  const [hasShownInitialLoading, setHasShownInitialLoading] = React.useState(false);
   const [appVersion, setAppVersion] = React.useState('');
   
   // دریافت نسخه از Manifest.json
@@ -30,11 +31,28 @@ function MainApp() {
     
     fetchVersion();
   }, []);
+
+  // بررسی اینکه آیا لودینگ اولیه قبلاً نمایش داده شده است
+  React.useEffect(() => {
+    const hasShownBefore = localStorage.getItem('hasShownInitialLoading') === 'true';
+    if (hasShownBefore) {
+      setIsInitialLoading(false);
+      setHasShownInitialLoading(true);
+    }
+  }, []);
   
   const handleLoadingComplete = React.useCallback(() => {
-    console.log(`Loading completed for version ${appVersion}, showing main app`);
+    console.log(`Initial loading completed for version ${appVersion}, showing main app`);
     setIsInitialLoading(false);
+    setHasShownInitialLoading(true);
+    // ذخیره وضعیت نمایش لودینگ اولیه
+    localStorage.setItem('hasShownInitialLoading', 'true');
   }, [appVersion]);
+  
+  // اگر لودینگ اولیه قبلاً نمایش داده شده، مستقیماً اپ را نمایش بده
+  if (hasShownInitialLoading && !isInitialLoading) {
+    return <App />;
+  }
   
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
