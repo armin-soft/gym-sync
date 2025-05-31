@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { DashboardLayout } from "@/components/dashboard/layout/DashboardLayout";
@@ -12,7 +11,6 @@ const Index = () => {
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
-  const { getGradientClass } = useBrandTheme();
   
   const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
 
@@ -38,16 +36,14 @@ const Index = () => {
 
   return (
     <PageContainer fullWidth noPadding>
-      <div className={`min-h-screen ${getGradientClass('accent')} bg-opacity-5`}>
-        <DashboardLayout>
-          <DashboardContent 
-            stats={stats}
-            currentTime={currentTime}
-            students={students}
-            trainerProfile={trainerProfile}
-          />
-        </DashboardLayout>
-      </div>
+      <DashboardLayout>
+        <DashboardContent 
+          stats={stats}
+          currentTime={currentTime}
+          students={students}
+          trainerProfile={trainerProfile}
+        />
+      </DashboardLayout>
     </PageContainer>
   );
 };

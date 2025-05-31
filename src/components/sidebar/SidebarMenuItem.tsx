@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 import { LucideIcon } from "lucide-react";
 
 interface SidebarItemProps {
@@ -30,7 +29,6 @@ export function SidebarMenuItem({
   const isActive = location.pathname === href;
   const [isHovered, setIsHovered] = useState(false);
   const deviceInfo = useDeviceInfo();
-  const { getThemeClass, getGradientClass, colors } = useBrandTheme();
   
   const itemVariants = {
     open: { opacity: 1, x: 0 },
@@ -82,13 +80,13 @@ export function SidebarMenuItem({
           "relative block mb-1 rounded-lg transition-all duration-200",
           getMenuPadding(),
           isActive 
-            ? "bg-brand-dark text-white shadow-lg" 
-            : "hover:bg-brand-primary/10 dark:hover:bg-brand-primary/20"
+            ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white" 
+            : "hover:bg-orange-50 dark:hover:bg-orange-900/20"
         )}
         dir="rtl"
       >
         {isActive && (
-          <div className={cn("absolute inset-0 rounded-lg opacity-90", getGradientClass('dark'))}></div>
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gray-900 to-gray-700 opacity-90"></div>
         )}
         
         <AnimatePresence>
@@ -97,7 +95,7 @@ export function SidebarMenuItem({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 rounded-lg bg-brand-primary/10 dark:bg-brand-primary/20"
+              className="absolute inset-0 rounded-lg bg-orange-50 dark:bg-orange-900/20"
             ></motion.div>
           )}
         </AnimatePresence>
@@ -108,7 +106,7 @@ export function SidebarMenuItem({
             getIconContainer(),
             isActive 
               ? "bg-white/20 text-white" 
-              : "bg-brand-primary/20 text-brand-primary"
+              : "bg-orange-100 dark:bg-orange-800/30 text-orange-600 dark:text-orange-400"
           )}>
             <Icon className={getIconSize()} />
           </div>
@@ -118,16 +116,17 @@ export function SidebarMenuItem({
               <span className={cn(
                 "font-medium text-right",
                 getFontSize(),
-                isActive ? "text-white" : "text-brand-dark dark:text-gray-200"
+                isActive ? "text-white" : "text-gray-800 dark:text-gray-200"
               )}>
                 {title}
               </span>
               
               {badge && (
                 <span className={cn(
-                  "px-1.5 py-0.5 rounded-full font-medium mr-2 text-[10px]",
-                  badgeColor || "bg-brand-secondary text-white",
-                  isActive ? "text-white bg-white/20" : ""
+                  "px-1.5 py-0.5 rounded-full font-medium mr-2",
+                  "text-[10px]",
+                  badgeColor || "bg-orange-500",
+                  isActive ? "text-white bg-white/20" : "text-white"
                 )}>
                   {badge}
                 </span>
@@ -138,7 +137,7 @@ export function SidebarMenuItem({
               <p className={cn(
                 "mt-0.5 text-right",
                 getDescriptionSize(),
-                isActive ? "text-white/70" : "text-brand-dark/60 dark:text-gray-400"
+                isActive ? "text-white/70" : "text-gray-600 dark:text-gray-400"
               )}>
                 {description}
               </p>

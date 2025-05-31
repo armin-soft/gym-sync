@@ -5,7 +5,6 @@ import { MealDialog } from "@/components/diet/MealDialog";
 import { DietPageHeader } from "@/components/diet/DietPageHeader";
 import { DietContentArea } from "@/components/diet/DietContentArea";
 import { useDietState } from "@/components/diet/hooks";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 import { MealType, WeekDay } from "@/types/meal";
 
 const weekDays: WeekDay[] = [
@@ -17,8 +16,6 @@ const mealTypes: MealType[] = [
 ];
 
 const Index = () => {
-  const { getGradientClass } = useBrandTheme();
-  
   const {
     meals,
     open,
@@ -34,7 +31,7 @@ const Index = () => {
   } = useDietState();
 
   return (
-    <div dir="rtl" className={`min-h-screen ${getGradientClass('accent')} bg-opacity-5`}>
+    <div dir="rtl" className="min-h-screen bg-background">
       <PageContainer 
         fullWidth 
         fullHeight 

@@ -3,7 +3,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Save, X } from "lucide-react";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface FormActionsProps {
   isEdit: boolean;
@@ -16,8 +15,6 @@ export const FormActions: React.FC<FormActionsProps> = ({
   onCancel,
   className 
 }) => {
-  const { getGradientClass } = useBrandTheme();
-  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -37,8 +34,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
       
       <Button
         type="submit"
-        variant="gradient"
-        className="gap-1"
+        className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 gap-1"
       >
         <Save className="h-4 w-4" />
         <span>{isEdit ? "ذخیره تغییرات" : "افزودن شاگرد"}</span>

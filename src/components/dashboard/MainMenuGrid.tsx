@@ -12,64 +12,61 @@ import {
   ArrowRight,
   Sparkles
 } from "lucide-react";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 export const MainMenuGrid = () => {
-  const { getGradientClass, colors } = useBrandTheme();
-  
   const dashboardItems = [
     { 
       title: "پروفایل مربی", 
       icon: User2, 
       href: '/Management/Coach-Profile', 
-      color: "from-brand-500 to-brand-600",
-      shadowColor: "shadow-brand-500/20",
-      bgColor: `bg-gradient-to-br from-brand-50/80 to-brand-100/80 dark:from-brand-900/20 dark:to-brand-800/20`,
+      color: "from-blue-600 to-blue-400",
+      shadowColor: "shadow-blue-500/20",
+      bgColor: "bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20",
       description: "مدیریت اطلاعات و تنظیمات پروفایل"
     },
     { 
       title: "شاگردان", 
       icon: Users, 
       href: '/Management/Students', 
-      color: "from-gold-500 to-gold-600",
-      shadowColor: "shadow-gold-500/20",
-      bgColor: `bg-gradient-to-br from-gold-50/80 to-gold-100/80 dark:from-gold-900/20 dark:to-gold-800/20`,
+      color: "from-emerald-600 to-emerald-400",
+      shadowColor: "shadow-emerald-500/20",
+      bgColor: "bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-900/20 dark:to-teal-900/20",
       description: "مدیریت اطلاعات و برنامه‌های شاگردان"
     },
     { 
       title: "حرکات تمرینی", 
       icon: Dumbbell, 
       href: '/Management/Exercise-Movements', 
-      color: "from-dark-700 to-dark-800",
-      shadowColor: "shadow-dark-500/20",
-      bgColor: `bg-gradient-to-br from-dark-50/80 to-dark-100/80 dark:from-dark-900/20 dark:to-dark-800/20`,
+      color: "from-amber-600 to-amber-400",
+      shadowColor: "shadow-amber-500/20",
+      bgColor: "bg-gradient-to-br from-amber-50/80 to-yellow-50/80 dark:from-amber-900/20 dark:to-yellow-900/20",
       description: "مدیریت حرکات و برنامه‌های تمرینی"
     },
     { 
       title: "برنامه های غذایی", 
       icon: UtensilsCrossed, 
       href: '/Management/Diet-Plan', 
-      color: "from-brand-600 to-gold-500",
-      shadowColor: "shadow-brand-500/20",
-      bgColor: `bg-gradient-to-br from-brand-50/80 to-gold-50/80 dark:from-brand-900/20 dark:to-gold-900/20`,
+      color: "from-purple-600 to-purple-400",
+      shadowColor: "shadow-purple-500/20",
+      bgColor: "bg-gradient-to-br from-purple-50/80 to-violet-50/80 dark:from-purple-900/20 dark:to-violet-900/20",
       description: "مدیریت و برنامه‌ریزی رژیم غذایی"
     },
     { 
       title: "مکمل و ویتامین", 
       icon: Pill, 
       href: '/Management/Supplements-Vitamins', 
-      color: "from-gold-600 to-brand-500",
-      shadowColor: "shadow-gold-500/20",
-      bgColor: `bg-gradient-to-br from-gold-50/80 to-brand-50/80 dark:from-gold-900/20 dark:to-brand-900/20`,
+      color: "from-pink-600 to-pink-400",
+      shadowColor: "shadow-pink-500/20",
+      bgColor: "bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-900/20 dark:to-rose-900/20",
       description: "مدیریت مکمل‌ها و ویتامین‌ها"
     },
     { 
       title: "پشتیبان‌گیری و بازیابی", 
       icon: Database, 
       href: '/Management/Backup-Restore', 
-      color: "from-dark-600 to-dark-700",
-      shadowColor: "shadow-dark-500/20",
-      bgColor: `bg-gradient-to-br from-dark-50/80 to-dark-100/80 dark:from-dark-900/20 dark:to-dark-800/20`,
+      color: "from-cyan-600 to-cyan-400",
+      shadowColor: "shadow-cyan-500/20",
+      bgColor: "bg-gradient-to-br from-cyan-50/80 to-sky-50/80 dark:from-cyan-900/20 dark:to-sky-900/20",
       description: "پشتیبان‌گیری و بازیابی اطلاعات"
     }
   ];
@@ -140,7 +137,7 @@ export const MainMenuGrid = () => {
                 <div className={`p-3 rounded-lg bg-gradient-to-br ${dashItem.color} text-white shadow-md ring-1 ring-white/10 group-hover:shadow-lg transition-all duration-300 group-hover:scale-110`}>
                   <dashItem.icon className="w-5 h-5" />
                 </div>
-                <span className="font-medium text-xs sm:text-sm md:text-base text-brand-dark dark:text-white">
+                <span className="font-medium text-xs sm:text-sm md:text-base text-gray-800 dark:text-white">
                   {dashItem.title}
                 </span>
                 
@@ -149,7 +146,7 @@ export const MainMenuGrid = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 0, height: 0 }}
                   whileHover={{ opacity: 1, height: "auto" }}
-                  className="text-xs text-brand-dark/60 dark:text-gray-300 mt-1 line-clamp-2"
+                  className="text-xs text-gray-500 dark:text-gray-300 mt-1 line-clamp-2"
                 >
                   {dashItem.description}
                 </motion.p>
@@ -160,7 +157,7 @@ export const MainMenuGrid = () => {
                   whileHover={{ scale: 1.2 }}
                 >
                   <div className="p-1.5 rounded-full bg-white/20 backdrop-blur-sm">
-                    <ArrowRight className="w-3 h-3 text-brand-dark dark:text-white" />
+                    <ArrowRight className="w-3 h-3 text-gray-700 dark:text-white" />
                   </div>
                 </motion.div>
                 
@@ -177,7 +174,7 @@ export const MainMenuGrid = () => {
                     repeatType: "loop"
                   }}
                 >
-                  <Sparkles className="w-3 h-3 text-gold-400" />
+                  <Sparkles className="w-3 h-3 text-yellow-400" />
                 </motion.div>
               </div>
             </Link>

@@ -6,7 +6,6 @@ import { Student } from "@/components/students/StudentTypes";
 import { dialogVariants, itemVariants } from "./FormContainer";
 import { StudentDialogHeader } from "./StudentDialogHeader";
 import { StudentForm } from "./StudentForm";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface StudentDialogContentProps {
   student?: Student;
@@ -20,10 +19,11 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
   onCancel,
 }) => {
   const { toast } = useToast();
-  const { getGradientClass } = useBrandTheme();
   
   const handleSave = (formData: any) => {
     try {
+      // Always preserve the existing image if the image in formData is a placeholder
+      // or not provided
       const preservedImage = 
         (formData.image === "/Assets/Image/Place-Holder.svg" && student?.image) 
           ? student.image 
@@ -50,7 +50,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
       animate="visible"
       variants={dialogVariants}
     >
-      <div className={`absolute top-0 left-0 right-0 h-32 ${getGradientClass('primary')} -z-10`} />
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-indigo-600 to-violet-600 -z-10" />
       
       <StudentDialogHeader isEdit={Boolean(student)} itemVariants={itemVariants} />
       

@@ -16,7 +16,6 @@ import { SidebarProfile } from "./sidebar/SidebarProfile";
 import { SidebarMenuList } from "./sidebar/SidebarMenuList";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -76,7 +75,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     email: ""
   });
   const deviceInfo = useDeviceInfo();
-  const { getGradientClass } = useBrandTheme();
   
   const loadProfile = () => {
     const savedProfile = localStorage.getItem('trainerProfile');
@@ -125,8 +123,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         side="right" 
         className={cn(
           getSidebarWidth(),
-          "p-0 border-l shadow-2xl backdrop-blur-lg",
-          `${getGradientClass('primary')} bg-opacity-95`
+          "p-0 border-l shadow-2xl bg-white dark:bg-card/90 backdrop-blur-lg"
         )}
         dir="rtl"
       >
@@ -140,9 +137,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             />
           </div>
           
-          <div className="px-4 py-3 border-b bg-white/10 backdrop-blur-sm" dir="rtl">
+          <div className="px-4 py-3 border-b bg-muted/30" dir="rtl">
             <h4 className={cn(
-              "text-sm font-medium text-center text-white/90",
+              "text-sm font-medium text-center text-muted-foreground",
               deviceInfo.isMobile ? "text-xs" : 
               deviceInfo.isTablet ? "text-sm" : "text-base"
             )}>

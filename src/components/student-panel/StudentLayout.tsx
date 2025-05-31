@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Student } from "@/components/students/StudentTypes";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface StudentLayoutProps {
   children: React.ReactNode;
@@ -19,7 +18,6 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const deviceInfo = useDeviceInfo();
-  const { colors, getGradientClass } = useBrandTheme();
   
   const scrollHandler = useCallback(() => {
     const offset = window.scrollY;
@@ -51,7 +49,7 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
   }, []);
 
   return (
-    <div className={`full-screen ${getGradientClass('accent')} persian-numbers flex flex-col overflow-hidden`} dir="rtl">
+    <div className="full-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-violet-950 dark:via-gray-900 dark:to-indigo-950 persian-numbers flex flex-col overflow-hidden" dir="rtl">
       {/* Student Sidebar */}
       {sidebarOpen && (
         <StudentSidebar 
@@ -67,8 +65,8 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
         className={cn(
           "sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0",
           scrolled 
-            ? "bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm border-brand-primary/20" 
-            : "bg-white/70 backdrop-blur-sm border-brand-primary/10",
+            ? "bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm border-violet-200/50" 
+            : "bg-white/70 backdrop-blur-sm border-violet-100",
           headerHeight,
           headerPadding
         )}
@@ -79,15 +77,15 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
               variant="ghost"
               size="sm"
               onClick={handleSidebarOpen}
-              className={cn("rounded-lg hover:bg-brand-primary/10", buttonSize)}
+              className={cn("rounded-lg hover:bg-violet-100 dark:hover:bg-violet-800", buttonSize)}
               aria-label="باز کردن منو"
             >
-              <Menu className={cn(iconSize, "text-brand-primary")} />
+              <Menu className={cn(iconSize, "text-violet-600 dark:text-violet-400")} />
             </Button>
             <div className={cn("flex items-center", logoGap)}>
               <AppIcon size="sm" animated />
               <h1 className={cn(
-                "font-bold text-brand-primary",
+                "font-bold text-violet-700 dark:text-violet-300",
                 titleSize
               )}>
                 پنل شخصی شاگرد
@@ -97,15 +95,15 @@ export const StudentLayout = ({ children, student, onLogout }: StudentLayoutProp
           
           <div className={cn("flex items-center", logoGap)}>
             <div className="text-right">
-              <p className={cn("text-brand-secondary", welcomeTextSize)}>خوش آمدید</p>
+              <p className={cn("text-violet-600 dark:text-violet-400", welcomeTextSize)}>خوش آمدید</p>
               <p className={cn(
-                "font-medium text-brand-dark", 
+                "font-medium text-violet-800 dark:text-violet-200", 
                 nameTextSize
               )}>
                 {student.name}
               </p>
             </div>
-            <div className={cn(avatarSize, "rounded-full overflow-hidden border-2 border-brand-primary/30")}>
+            <div className={cn(avatarSize, "rounded-full overflow-hidden border-2 border-violet-200")}>
               <img 
                 src={student.image || "/Assets/Image/Place-Holder.svg"} 
                 alt={student.name}

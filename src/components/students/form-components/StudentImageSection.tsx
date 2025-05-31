@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { UseFormReturn } from "react-hook-form";
 import { StudentFormValues } from "@/lib/validations/student";
 import { StudentImageUpload } from "./StudentImageUpload";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface StudentImageSectionProps {
   initialImage: string | undefined;
@@ -19,7 +18,6 @@ export const StudentImageSection: React.FC<StudentImageSectionProps> = ({
 }) => {
   const [imageData, setImageData] = useState<string | null>(initialImage || null);
   const [imageError, setImageError] = useState<string | null>(null);
-  const { colors } = useBrandTheme();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,6 +33,7 @@ export const StudentImageSection: React.FC<StudentImageSectionProps> = ({
     reader.onload = (event) => {
       const result = event.target?.result as string;
       setImageData(result);
+      // Update the form value for image
       form.setValue("image", result);
     };
     reader.readAsDataURL(file);

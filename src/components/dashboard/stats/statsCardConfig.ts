@@ -11,7 +11,7 @@ export interface StatCardConfig {
   growth: number;
   maxValue: number;
   percentage?: number;
-  color: "dark" | "primary" | "secondary";
+  color: "black" | "orange" | "gold";
   description: string;
 }
 
@@ -24,7 +24,7 @@ export const generateStatsCardConfigs = (stats: DashboardStats): StatCardConfig[
       value: stats.totalStudents,
       growth: stats.studentGrowth,
       maxValue: stats.maxCapacity,
-      color: "dark",
+      color: "black",
       description: "شاگرد فعال در سیستم",
     },
     {
@@ -34,7 +34,7 @@ export const generateStatsCardConfigs = (stats: DashboardStats): StatCardConfig[
       growth: stats.mealGrowth,
       maxValue: 100,
       percentage: stats.mealCompletionRate,
-      color: "primary",
+      color: "orange",
       description: `${toPersianNumbers(Math.round(stats.mealCompletionRate))}٪ شاگردان دارای برنامه غذایی`,
     },
     {
@@ -44,7 +44,7 @@ export const generateStatsCardConfigs = (stats: DashboardStats): StatCardConfig[
       growth: stats.supplementGrowth,
       maxValue: 100,
       percentage: stats.supplementCompletionRate,
-      color: "secondary",
+      color: "gold",
       description: `${toPersianNumbers(Math.round(stats.supplementCompletionRate))}٪ شاگردان دارای مکمل و ویتامین`,
     }
   ];

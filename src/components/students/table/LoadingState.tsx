@@ -2,11 +2,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 export const LoadingState = () => {
-  const { colors } = useBrandTheme();
-  
   const loadingVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.3 } },
@@ -26,7 +23,7 @@ export const LoadingState = () => {
         <div className="relative flex items-center justify-center">
           <LoadingSpinner 
             size="lg"
-            className="text-brand-500"
+            className="text-purple-500"
             text="در حال بارگذاری اطلاعات..."
           />
         </div>

@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Circle } from "lucide-react";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface UserType {
   id: string;
@@ -37,7 +36,6 @@ export const UserTypeCard = ({
 }: UserTypeCardProps) => {
   const Icon = type.icon;
   const isDisabled = isProcessing || isSelected;
-  const { getGradientClass, colors } = useBrandTheme();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -72,23 +70,23 @@ export const UserTypeCard = ({
     >
       <div className={`relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6 transition-all duration-300 ${
         !isDisabled ? 'hover:shadow-lg' : 'opacity-75'
-      } ${isSelected ? 'ring-2 ring-brand-primary' : ''}`}>
+      } ${isSelected ? 'ring-2 ring-blue-500' : ''}`}>
         
         <div className="text-center space-y-4">
-          <div className={`inline-flex items-center justify-center w-16 h-16 ${getGradientClass('primary')} rounded-xl shadow-md ${
+          <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${type.gradient} rounded-xl shadow-md ${
             isSelected ? 'animate-pulse' : ''
           }`}>
             <Icon className="w-8 h-8 text-white" />
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-brand-dark dark:text-white mb-1">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
               {type.title}
             </h2>
-            <p className="text-sm text-brand-dark/60 dark:text-gray-300 mb-3">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
               {type.subtitle}
             </p>
-            <p className="text-xs text-brand-dark/40 dark:text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {type.description}
             </p>
           </div>
@@ -97,16 +95,16 @@ export const UserTypeCard = ({
             {type.features.slice(0, 3).map((feature, index) => (
               <div
                 key={feature}
-                className="flex items-center justify-center text-xs text-brand-dark/70 dark:text-gray-300"
+                className="flex items-center justify-center text-xs text-gray-600 dark:text-gray-300"
               >
-                <Circle className="w-2 h-2 ml-2 text-brand-secondary fill-current" />
+                <Circle className="w-2 h-2 ml-2 text-green-500 fill-current" />
                 {feature}
               </div>
             ))}
           </div>
 
           <Button
-            className={`w-full ${getGradientClass('primary')} text-white font-medium rounded-lg transition-all duration-300`}
+            className={`w-full bg-gradient-to-r ${type.gradient} text-white font-medium rounded-lg transition-all duration-300`}
             disabled={isDisabled}
             onClick={handleClick}
           >

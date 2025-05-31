@@ -5,7 +5,6 @@ import { DashboardContent } from "@/components/dashboard/DashboardContent";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Student } from "@/components/students/StudentTypes";
-import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 const ManagementPage = () => {
   const stats = useDashboardStats();
@@ -15,7 +14,6 @@ const ManagementPage = () => {
     name: "مربی",
     image: ""
   });
-  const { getGradientClass } = useBrandTheme();
 
   // Load students data
   useEffect(() => {
