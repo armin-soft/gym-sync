@@ -9,7 +9,7 @@ import { FormProvider } from "./form/FormContext";
 import { FormContent } from "./form/FormContent";
 import { validateField, validateAllFields } from "./form/validation";
 import { motion } from "framer-motion";
-import { Edit3, Save } from "lucide-react";
+import { Edit3, Save, Sparkles, CheckCircle2 } from "lucide-react";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -95,6 +95,19 @@ export const ProfileForm = ({
     }
   };
 
+  const getSectionIcon = () => {
+    switch (activeSection) {
+      case 'personal':
+        return 'from-violet-500 to-purple-600';
+      case 'gym':
+        return 'from-blue-500 to-cyan-600';
+      case 'social':
+        return 'from-emerald-500 to-teal-600';
+      default:
+        return 'from-gray-500 to-gray-600';
+    }
+  };
+
   return (
     <motion.div 
       className="bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-slate-900 dark:via-gray-900 dark:to-zinc-900 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden h-fit"
@@ -106,14 +119,41 @@ export const ProfileForm = ({
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-blue-500/5 pointer-events-none" />
       
       {/* Form Header */}
-      <div className="relative z-10 bg-gradient-to-r from-violet-500 to-purple-600 p-6 text-white border-b border-violet-200/30">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-white/20 backdrop-blur-sm">
-            <Edit3 className="h-5 w-5" />
+      <div className={`relative z-10 bg-gradient-to-r ${getSectionIcon()} p-6 text-white border-b border-white/20`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
+              <Edit3 className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                {getSectionTitle()}
+                <Sparkles className="h-5 w-5 text-yellow-300" />
+              </h2>
+              <p className="text-white/80 mt-1">{getSectionDescription()}</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold">{getSectionTitle()}</h2>
-            <p className="text-indigo-100 mt-1">{getSectionDescription()}</p>
+          
+          {/* Status Badge */}
+          <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+            <CheckCircle2 className="h-4 w-4 text-green-300" />
+            <span className="text-sm font-medium">فعال</span>
+          </div>
+        </div>
+        
+        {/* Progress Indicator */}
+        <div className="mt-4">
+          <div className="flex items-center justify-between text-sm text-white/70 mb-2">
+            <span>پیشرفت تکمیل پروفایل</span>
+            <span>۸۵%</span>
+          </div>
+          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: "85%" }}
+              transition={{ duration: 1, delay: 0.3 }}
+            />
           </div>
         </div>
       </div>
