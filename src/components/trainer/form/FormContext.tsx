@@ -1,6 +1,6 @@
 
-import { TrainerProfile } from "@/types/trainer";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from 'react';
+import { TrainerProfile } from '@/types/trainer';
 
 interface FormContextType {
   profile: TrainerProfile;
@@ -27,30 +27,28 @@ interface FormProviderProps {
   isSaving: boolean;
 }
 
-export const FormProvider = ({
-  children,
-  profile,
-  onUpdate,
-  errors,
-  setErrors,
-  validFields,
-  setValidFields,
-  activeSection,
-  isSaving,
+export const FormProvider = ({ 
+  children, 
+  profile, 
+  onUpdate, 
+  errors, 
+  setErrors, 
+  validFields, 
+  setValidFields, 
+  activeSection, 
+  isSaving 
 }: FormProviderProps) => {
   return (
-    <FormContext.Provider
-      value={{
-        profile,
-        onUpdate,
-        errors,
-        setErrors,
-        validFields,
-        setValidFields,
-        activeSection,
-        isSaving,
-      }}
-    >
+    <FormContext.Provider value={{
+      profile,
+      onUpdate,
+      errors,
+      setErrors,
+      validFields,
+      setValidFields,
+      activeSection,
+      isSaving
+    }}>
       {children}
     </FormContext.Provider>
   );
@@ -58,10 +56,8 @@ export const FormProvider = ({
 
 export const useFormContext = () => {
   const context = useContext(FormContext);
-  
   if (context === undefined) {
-    throw new Error("useFormContext must be used within a FormProvider");
+    throw new Error('useFormContext must be used within a FormProvider');
   }
-  
   return context;
 };

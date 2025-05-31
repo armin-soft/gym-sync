@@ -1,6 +1,5 @@
 
 import { TrainerProfile } from "@/types/trainer";
-import { isValidEmail, isValidIranianMobile, isValidPassword, isValidPersianName } from "@/utils/validation";
 
 export const validateField = (
   key: keyof TrainerProfile,
@@ -8,79 +7,110 @@ export const validateField = (
   setValidFields: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, boolean>>>>,
   setErrors: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, string>>>>
 ) => {
-  let isValid = false;
+  let isValid = true;
   let error = '';
 
   switch (key) {
     case 'name':
-      isValid = isValidPersianName(value);
-      error = !value ? "نام و نام خانوادگی اجباری است" : 
-              !isValid ? "لطفاً نام را به فارسی وارد کنید" : '';
+      if (!value.trim()) {
+        isValid = false;
+        error = 'نام و نام خانوادگی الزامی است';
+      } else if (value.trim().length < 2) {
+        isValid = false;
+        error = 'نام باید حداقل ۲ کاراکتر باشد';
+      }
       break;
-    case 'bio':
-      isValid = !!value;
-      error = !isValid ? "بیوگرافی اجباری است" : '';
-      break;
+      
     case 'phone':
-      isValid = isValidIranianMobile(value);
-      error = !value ? "شماره موبایل اجباری است" :
-              !isValid ? "شماره موبایل معتبر نیست" : '';
+      const phoneRegex = /^(09|۰۹)[0-9۰-۹]{9}$/;
+      if (!value.trim()) {
+        isValid = false;
+        error = 'شماره موبایل الزامی است';
+      } else if (!phoneRegex.test(value)) {
+        isValid = false;
+        error = 'شماره موبایل معتبر نیست';
+      }
       break;
+      
     case 'email':
-      isValid = isValidEmail(value);
-      error = !value ? "ایمیل اجباری است" :
-              !isValid ? "ایمیل معتبر نیست" : '';
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!value.trim()) {
+        isValid = false;
+        error = 'ایمیل الزامی است';
+      } else if (!emailRegex.test(value)) {
+        isValid = false;
+        error = 'ایمیل معتبر نیست';
+      }
       break;
+      
     case 'password':
-      isValid = isValidPassword(value);
-      error = !value ? "گذرواژه اجباری است" :
-              !isValid ? "گذرواژه باید شامل حروف انگلیسی و اعداد باشد (حداقل ۸ کاراکتر)" : '';
+      if (!value.trim()) {
+        isValid = false;
+        error = 'گذرواژه الزامی است';
+      } else if (value.length < 8) {
+        isValid = false;
+        error = 'گذرواژه باید حداقل ۸ کاراکتر باشد';
+      }
       break;
+      
     case 'gymName':
-      isValid = !!value;
-      error = !isValid ? "نام باشگاه اجباری است" : '';
+      if (!value.trim()) {
+        isValid = false;
+        error = 'نام باشگاه الزامی است';
+      }
       break;
-    case 'gymDescription':
-      isValid = !!value;
-      error = !isValid ? "توضیحات باشگاه اجباری است" : '';
-      break;
+      
     case 'gymAddress':
-      isValid = !!value;
-      error = !isValid ? "آدرس باشگاه اجباری است" : '';
+      if (!value.trim()) {
+        isValid = false;
+        error = 'آدرس باشگاه الزامی است';
+      }
       break;
+      
     case 'instagram':
-      // اینستاگرام اختیاری است
-      isValid = true;
+      if (value && !value.match(/^[a-zA-Z0-9._]+$/)) {
+        isValid = false;
+        error = 'نام کاربری اینستاگرام معتبر نیست';
+      }
       break;
+      
     case 'website':
-      // وب‌سایت اختیاری است
-      isValid = true;
+      if (value && !value.match(/^https?:\/\/.+/)) {
+        isValid = false;
+        error = 'آدرس وب‌سایت باید با http:// یا https:// شروع شود';
+      }
       break;
-    default:
-      isValid = true;
   }
 
-  setValidFields((prev) => ({ ...prev, [key]: isValid }));
-  setErrors((prev) => ({ ...prev, [key]: error }));
+  setValidFields(prev => ({ ...prev, [key]: isValid }));
+  setErrors(prev => ({ ...prev, [key]: error }));
   
-  return { isValid, error };
+  return isValid;
 };
 
 export const validateAllFields = (
   profile: TrainerProfile,
   setValidFields: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, boolean>>>>,
   setErrors: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, string>>>>
-) => {
+): boolean => {
+  const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'email', 'password', 'gymName', 'gymAddress'];
   let hasErrors = false;
-  
-  Object.entries(profile).forEach(([key, value]) => {
-    if (key !== 'image') {
-      const { isValid, error } = validateField(key as keyof TrainerProfile, value, setValidFields, setErrors);
-      if (!value || error) {
-        hasErrors = true;
-      }
-    }
+
+  requiredFields.forEach(field => {
+    const isValid = validateField(field, profile[field], setValidFields, setErrors);
+    if (!isValid) hasErrors = true;
   });
+
+  // Validate optional fields if they have values
+  if (profile.instagram) {
+    const isValid = validateField('instagram', profile.instagram, setValidFields, setErrors);
+    if (!isValid) hasErrors = true;
+  }
   
+  if (profile.website) {
+    const isValid = validateField('website', profile.website, setValidFields, setErrors);
+    if (!isValid) hasErrors = true;
+  }
+
   return hasErrors;
 };
