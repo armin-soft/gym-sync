@@ -3,35 +3,33 @@ import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { ProfessionalHeroSection } from "./hero/ProfessionalHeroSection";
-import { ProfessionalMenuGrid } from "./menu/ProfessionalMenuGrid";
-import { RecentStudentsCard } from "./RecentStudentsCard";
-import { StatsCards } from "./stats/StatsCards";
-import { ProgressCard } from "./ProgressCard";
-import { ActivitySummaryCard } from "./activity/ActivitySummaryCard";
-import { ModernCard } from "./cards/ModernCard";
-import { Users, TrendingUp, Activity } from "lucide-react";
-
-// Animation variants for child elements
-const itemVariants = {
-  initial: { opacity: 0, y: 30 },
-  animate: { 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      duration: 0.6,
-      ease: "easeOut"
-    }
-  }
-};
+import { UltraModernHero } from "./hero/UltraModernHero";
+import { SmartStatsGrid } from "./stats/SmartStatsGrid";
+import { IntelligentQuickActions } from "./actions/IntelligentQuickActions";
+import { AdvancedStudentsOverview } from "./students/AdvancedStudentsOverview";
+import { ProfessionalInsightsPanel } from "./insights/ProfessionalInsightsPanel";
+import { ModernActivityFeed } from "./activity/ModernActivityFeed";
 
 const containerVariants = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 40, scale: 0.95 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: { 
+      duration: 0.8,
+      ease: [0.165, 0.84, 0.44, 1]
     }
   }
 };
@@ -54,95 +52,62 @@ export const DashboardContent = ({
 }: DashboardContentProps) => {
   const deviceInfo = useDeviceInfo();
   
-  // Define grid layout class once to avoid conditional rendering issues
-  const gridLayoutClass = deviceInfo.isMobile 
-    ? "grid-cols-1" 
-    : "grid-cols-1 lg:grid-cols-3";
-  
-  const mainContentClass = deviceInfo.isMobile 
-    ? "" 
-    : "lg:col-span-2 space-y-6";
-  
   return (
     <motion.div
       variants={containerVariants}
       initial="initial"
       animate="animate"
-      className="space-y-8"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900"
     >
-      {/* Hero Section */}
-      <motion.div variants={itemVariants}>
-        <ProfessionalHeroSection 
-          stats={stats} 
-          currentTime={currentTime} 
-          trainerProfile={trainerProfile} 
-        />
-      </motion.div>
+      {/* Background Effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-violet-400/20 to-purple-600/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-cyan-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-indigo-400/5 to-purple-600/5 rounded-full blur-3xl" />
+      </div>
 
-      {/* Professional Menu Grid */}
-      <motion.div variants={itemVariants}>
-        <ModernCard 
-          title="منوی مدیریت" 
-          icon={Users}
-          className="bg-gradient-to-br from-white via-gray-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-800/50 dark:to-slate-900"
-        >
-          <ProfessionalMenuGrid />
-        </ModernCard>
-      </motion.div>
+      <div className="relative z-10 space-y-8 p-4 lg:p-8">
+        {/* Ultra Modern Hero Section */}
+        <motion.div variants={itemVariants}>
+          <UltraModernHero 
+            stats={stats} 
+            currentTime={currentTime} 
+            trainerProfile={trainerProfile} 
+          />
+        </motion.div>
 
-      {/* Stats and Analytics Section */}
-      <motion.div
-        variants={itemVariants}
-        className={`grid gap-6 ${gridLayoutClass}`}
-      >
-        {/* Main Content - Students and Stats */}
-        <motion.div 
-          variants={itemVariants}
-          className={mainContentClass}
-        >
-          {/* Students Section */}
-          <ModernCard 
-            title="شاگردان اخیر" 
-            icon={Users}
-            className="bg-gradient-to-br from-emerald-50/80 via-teal-50/60 to-emerald-50/80 dark:from-emerald-900/20 dark:via-teal-900/15 dark:to-emerald-900/20"
+        {/* Smart Stats Grid */}
+        <motion.div variants={itemVariants}>
+          <SmartStatsGrid stats={stats} />
+        </motion.div>
+
+        {/* Main Content Grid */}
+        <div className={`grid gap-8 ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
+          {/* Left Column - Primary Content */}
+          <motion.div 
+            variants={itemVariants}
+            className={deviceInfo.isMobile ? '' : 'xl:col-span-2 space-y-8'}
           >
-            <RecentStudentsCard students={students} />
-          </ModernCard>
+            {/* Intelligent Quick Actions */}
+            <IntelligentQuickActions />
+            
+            {/* Advanced Students Overview */}
+            <AdvancedStudentsOverview students={students} />
+          </motion.div>
           
-          {/* Stats Cards */}
-          <ModernCard 
-            title="آمار عملکرد" 
-            icon={TrendingUp}
-            className="bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-blue-50/80 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-blue-900/20"
+          {/* Right Column - Insights & Activity */}
+          <motion.div 
+            variants={itemVariants}
+            className="space-y-8"
           >
-            <StatsCards stats={stats} />
-          </ModernCard>
-        </motion.div>
-        
-        {/* Sidebar Content */}
-        <motion.div 
-          variants={itemVariants}
-          className="space-y-6"
-        >
-          {/* Progress Card */}
-          <ModernCard 
-            title="پیشرفت کلی" 
-            icon={TrendingUp}
-            className="bg-gradient-to-br from-violet-50/80 via-purple-50/60 to-violet-50/80 dark:from-violet-900/20 dark:via-purple-900/15 dark:to-violet-900/20"
-          >
-            <ProgressCard stats={stats} />
-          </ModernCard>
-
-          {/* Activity Summary */}
-          <ModernCard 
-            title="خلاصه فعالیت‌ها" 
-            icon={Activity}
-            className="bg-gradient-to-br from-amber-50/80 via-orange-50/60 to-amber-50/80 dark:from-amber-900/20 dark:via-orange-900/15 dark:to-amber-900/20"
-          >
-            <ActivitySummaryCard stats={stats} />
-          </ModernCard>
-        </motion.div>
-      </motion.div>
+            {/* Professional Insights Panel */}
+            <ProfessionalInsightsPanel stats={stats} />
+            
+            {/* Modern Activity Feed */}
+            <ModernActivityFeed stats={stats} />
+          </motion.div>
+        </div>
+      </div>
     </motion.div>
   );
 };
