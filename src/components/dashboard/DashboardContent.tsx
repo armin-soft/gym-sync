@@ -3,35 +3,34 @@ import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
 import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { ProfessionalHeroSection } from "./hero/ProfessionalHeroSection";
+import { HeroSectionModern } from "./sections/HeroSectionModern";
 import { ProfessionalMenuGrid } from "./menu/ProfessionalMenuGrid";
 import { RecentStudentsCard } from "./RecentStudentsCard";
 import { StatsCards } from "./stats/StatsCards";
 import { ProgressCard } from "./ProgressCard";
 import { ActivitySummaryCard } from "./activity/ActivitySummaryCard";
 import { ModernCard } from "./cards/ModernCard";
-import { Users, TrendingUp, Activity } from "lucide-react";
-
-// Animation variants for child elements
-const itemVariants = {
-  initial: { opacity: 0, y: 30 },
-  animate: { 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      duration: 0.6,
-      ease: "easeOut"
-    }
-  }
-};
+import { Users, TrendingUp, Activity, Settings } from "lucide-react";
 
 const containerVariants = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.5,
+      ease: "easeOut"
     }
   }
 };
@@ -54,15 +53,6 @@ export const DashboardContent = ({
 }: DashboardContentProps) => {
   const deviceInfo = useDeviceInfo();
   
-  // Define grid layout class once to avoid conditional rendering issues
-  const gridLayoutClass = deviceInfo.isMobile 
-    ? "grid-cols-1" 
-    : "grid-cols-1 lg:grid-cols-3";
-  
-  const mainContentClass = deviceInfo.isMobile 
-    ? "" 
-    : "lg:col-span-2 space-y-6";
-  
   return (
     <motion.div
       variants={containerVariants}
@@ -72,35 +62,35 @@ export const DashboardContent = ({
     >
       {/* Hero Section */}
       <motion.div variants={itemVariants}>
-        <ProfessionalHeroSection 
+        <HeroSectionModern 
           stats={stats} 
           currentTime={currentTime} 
           trainerProfile={trainerProfile} 
         />
       </motion.div>
 
-      {/* Professional Menu Grid */}
+      {/* Management Menu */}
       <motion.div variants={itemVariants}>
         <ModernCard 
           title="منوی مدیریت" 
-          icon={Users}
+          icon={Settings}
           className="bg-gradient-to-br from-white via-gray-50/50 to-slate-50 dark:from-gray-900 dark:via-gray-800/50 dark:to-slate-900"
         >
           <ProfessionalMenuGrid />
         </ModernCard>
       </motion.div>
 
-      {/* Stats and Analytics Section */}
+      {/* Main Content Grid */}
       <motion.div
         variants={itemVariants}
-        className={`grid gap-6 ${gridLayoutClass}`}
+        className={`grid gap-8 ${deviceInfo.isMobile ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3"}`}
       >
-        {/* Main Content - Students and Stats */}
+        {/* Left Column - Main Content */}
         <motion.div 
           variants={itemVariants}
-          className={mainContentClass}
+          className={deviceInfo.isMobile ? "" : "lg:col-span-2 space-y-8"}
         >
-          {/* Students Section */}
+          {/* Recent Students */}
           <ModernCard 
             title="شاگردان اخیر" 
             icon={Users}
@@ -109,9 +99,9 @@ export const DashboardContent = ({
             <RecentStudentsCard students={students} />
           </ModernCard>
           
-          {/* Stats Cards */}
+          {/* Performance Stats */}
           <ModernCard 
-            title="آمار عملکرد" 
+            title="آمار عملکرد تفصیلی" 
             icon={TrendingUp}
             className="bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-blue-50/80 dark:from-blue-900/20 dark:via-indigo-900/15 dark:to-blue-900/20"
           >
@@ -119,12 +109,12 @@ export const DashboardContent = ({
           </ModernCard>
         </motion.div>
         
-        {/* Sidebar Content */}
+        {/* Right Column - Sidebar */}
         <motion.div 
           variants={itemVariants}
-          className="space-y-6"
+          className="space-y-8"
         >
-          {/* Progress Card */}
+          {/* Progress Overview */}
           <ModernCard 
             title="پیشرفت کلی" 
             icon={TrendingUp}
