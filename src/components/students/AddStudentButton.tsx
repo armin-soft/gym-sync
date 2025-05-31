@@ -3,20 +3,23 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface AddStudentButtonProps {
-  variant?: "default" | "secondary" | "ghost" | "outline";
+  variant?: "default" | "secondary" | "ghost" | "outline" | "gradient";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   onClick?: () => void;
 }
 
 export const AddStudentButton = ({
-  variant = "default",
+  variant = "gradient",
   size = "default",
   className = "",
   onClick
 }: AddStudentButtonProps) => {
+  const { getGradientClass } = useBrandTheme();
+  
   // If onClick is provided, use a regular button; otherwise, use Link
   if (onClick) {
     return (

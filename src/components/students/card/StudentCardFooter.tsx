@@ -3,12 +3,15 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface StudentCardFooterProps {
   onEdit: () => void;
 }
 
 export const StudentCardFooter: React.FC<StudentCardFooterProps> = ({ onEdit }) => {
+  const { colors } = useBrandTheme();
+  
   return (
     <div className="w-full">
       <motion.div 
@@ -18,13 +21,13 @@ export const StudentCardFooter: React.FC<StudentCardFooterProps> = ({ onEdit }) 
         <Button
           onClick={onEdit}
           variant="ghost"
-          className="w-full rounded-lg justify-between bg-gradient-to-r from-slate-50 to-slate-100 
-                   hover:from-indigo-50 hover:to-indigo-100 border border-slate-200 
-                   dark:from-slate-800/50 dark:to-slate-900/50 dark:hover:from-indigo-900/20 dark:hover:to-indigo-800/20 
-                   dark:border-slate-700/50 dark:hover:border-indigo-800/40 text-sm"
+          className="w-full rounded-lg justify-between bg-gradient-to-r from-brand-primary/5 to-brand-secondary/5 
+                   hover:from-brand-primary/10 hover:to-brand-secondary/10 border border-brand-primary/20 
+                   dark:from-brand-primary/10 dark:to-brand-secondary/10 dark:hover:from-brand-primary/20 dark:hover:to-brand-secondary/20 
+                   dark:border-brand-primary/30 dark:hover:border-brand-primary/40 text-sm"
         >
-          <span>مشاهده جزئیات</span>
-          <ArrowUpRight className="h-4 w-4" />
+          <span className="text-brand-dark">مشاهده جزئیات</span>
+          <ArrowUpRight className="h-4 w-4 text-brand-primary" />
         </Button>
       </motion.div>
     </div>

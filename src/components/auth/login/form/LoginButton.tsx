@@ -1,18 +1,21 @@
 
 import { motion } from "framer-motion";
 import { LogIn } from "lucide-react";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface LoginButtonProps {
   loading: boolean;
 }
 
 export const LoginButton = ({ loading }: LoginButtonProps) => {
+  const { getGradientClass, colors } = useBrandTheme();
+  
   const buttonVariants = {
     rest: { scale: 1 },
     hover: { 
       scale: 1.03,
-      backgroundColor: "#4361ee",
-      boxShadow: "0 10px 15px -3px rgba(67, 97, 238, 0.2), 0 4px 6px -2px rgba(67, 97, 238, 0.1)",
+      backgroundColor: colors.primary,
+      boxShadow: `0 10px 15px -3px ${colors.primary}33, 0 4px 6px -2px ${colors.primary}20`,
       transition: {
         scale: {
           type: "spring",
@@ -38,7 +41,7 @@ export const LoginButton = ({ loading }: LoginButtonProps) => {
   return (
     <motion.button 
       type="submit" 
-      className="w-full h-10 sm:h-12 text-sm sm:text-base font-medium transition-all relative overflow-hidden rounded-md bg-gradient-to-r from-primary to-indigo-600 text-white flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+      className={`w-full h-10 sm:h-12 text-sm sm:text-base font-medium transition-all relative overflow-hidden rounded-md ${getGradientClass('primary')} text-white flex items-center justify-center gap-2 shadow-lg shadow-brand-primary/20`}
       disabled={loading}
       variants={buttonVariants}
       initial="rest"
@@ -66,7 +69,7 @@ export const LoginButton = ({ loading }: LoginButtonProps) => {
           
           <div className="absolute inset-0 overflow-hidden">
             <motion.div 
-              className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-primary to-indigo-600 bg-[length:200%_100%]"
+              className={`absolute inset-0 ${getGradientClass('accent')} bg-[length:200%_100%]`}
               animate={{ 
                 backgroundPosition: ["0% center", "100% center", "0% center"],
               }}

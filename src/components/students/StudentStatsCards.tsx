@@ -1,10 +1,10 @@
-
 import React, { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Student } from '@/components/students/StudentTypes';
 import { UserRound, Dumbbell, Apple, Pill, LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toPersianNumbers } from '@/lib/utils/numbers';
+import { useBrandTheme } from '@/hooks/use-brand-theme';
 
 interface StatCardProps {
   title: string;
@@ -14,25 +14,31 @@ interface StatCardProps {
   valueClassName?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, className = '', valueClassName = '' }) => (
-  <Card className={`p-4 backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border border-gray-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all duration-300 ${className}`}>
-    <div className="flex items-center">
-      <div className="p-2 rounded-full bg-gray-100/80 dark:bg-gray-800/80">
-        {icon}
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, className = '', valueClassName = '' }) => {
+  const { colors } = useBrandTheme();
+  
+  return (
+    <Card className={`p-4 backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border border-gray-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all duration-300 ${className}`}>
+      <div className="flex items-center">
+        <div className="p-2 rounded-full bg-brand-primary/10 dark:bg-brand-primary/20">
+          {icon}
+        </div>
+        <div className="ml-4">
+          <p className="text-sm text-brand-dark/60 dark:text-gray-400">{title}</p>
+          <p className={`text-2xl font-semibold ${valueClassName}`}>{value}</p>
+        </div>
       </div>
-      <div className="ml-4">
-        <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
-        <p className={`text-2xl font-semibold ${valueClassName}`}>{value}</p>
-      </div>
-    </div>
-  </Card>
-);
+    </Card>
+  );
+};
 
 interface StudentStatsCardsProps {
   students: Student[];
 }
 
 export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }) => {
+  const { colors } = useBrandTheme();
+  
   const stats = useMemo(() => {
     const totalStudents = students.length;
     
@@ -87,8 +93,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="تعداد شاگردان"
           value={toPersianNumbers(stats.totalStudents)}
-          icon={<UserRound className="h-5 w-5 text-gray-900 dark:text-gray-100" />}
-          valueClassName="text-gray-900 dark:text-gray-100"
+          icon={<UserRound className="h-5 w-5 text-brand-dark" />}
+          valueClassName="text-brand-dark"
         />
       </motion.div>
       
@@ -96,8 +102,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="برنامه تمرینی"
           value={toPersianNumbers(stats.withExercises)}
-          icon={<Dumbbell className="h-5 w-5 text-orange-600 dark:text-orange-400" />}
-          valueClassName="text-orange-600 dark:text-orange-400"
+          icon={<Dumbbell className="h-5 w-5 text-brand-primary" />}
+          valueClassName="text-brand-primary"
         />
       </motion.div>
       
@@ -105,8 +111,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="برنامه غذایی"
           value={toPersianNumbers(stats.withDiet)}
-          icon={<Apple className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />}
-          valueClassName="text-yellow-600 dark:text-yellow-400"
+          icon={<Apple className="h-5 w-5 text-brand-secondary" />}
+          valueClassName="text-brand-secondary"
         />
       </motion.div>
       
@@ -114,8 +120,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="مکمل و ویتامین"
           value={toPersianNumbers(stats.withSupplements)}
-          icon={<Pill className="h-5 w-5 text-gray-700 dark:text-gray-300" />}
-          valueClassName="text-gray-700 dark:text-gray-300"
+          icon={<Pill className="h-5 w-5 text-brand-dark" />}
+          valueClassName="text-brand-dark"
         />
       </motion.div>
     </motion.div>

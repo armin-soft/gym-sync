@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface StudentSidebarItemProps {
   title: string;
@@ -28,6 +29,7 @@ export function StudentSidebarMenuItem({
   const isActive = location.pathname === href;
   const [isHovered, setIsHovered] = useState(false);
   const deviceInfo = useDeviceInfo();
+  const { getThemeClass, getGradientClass, colors } = useBrandTheme();
   
   const itemVariants = {
     open: { opacity: 1, x: 0 },
@@ -79,13 +81,13 @@ export function StudentSidebarMenuItem({
           "relative block mb-1 rounded-lg transition-all duration-200",
           getMenuPadding(),
           isActive 
-            ? "bg-gradient-to-r from-violet-500 to-indigo-500 text-white shadow-lg" 
-            : "hover:bg-white/50 dark:hover:bg-gray-800/50"
+            ? getGradientClass('primary') + " text-white shadow-lg" 
+            : "hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
         )}
         dir="rtl"
       >
         {isActive && (
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-violet-600/20 to-indigo-600/20"></div>
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-brand-secondary/20 to-brand-primary/20"></div>
         )}
         
         <AnimatePresence>
@@ -94,7 +96,7 @@ export function StudentSidebarMenuItem({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 rounded-lg bg-white/30 dark:bg-gray-700/30"
+              className="absolute inset-0 rounded-lg bg-brand-secondary/10 dark:bg-brand-secondary/20"
             ></motion.div>
           )}
         </AnimatePresence>
@@ -105,7 +107,7 @@ export function StudentSidebarMenuItem({
             getIconContainer(),
             isActive 
               ? "bg-white/20 text-white" 
-              : "bg-violet-100 dark:bg-violet-800 text-violet-600 dark:text-violet-300"
+              : "bg-brand-secondary/20 text-brand-secondary"
           )}>
             <Icon className={getIconSize()} />
           </div>
@@ -115,17 +117,16 @@ export function StudentSidebarMenuItem({
               <span className={cn(
                 "font-medium text-right",
                 getFontSize(),
-                isActive ? "text-white" : "text-gray-800 dark:text-gray-200"
+                isActive ? "text-white" : "text-brand-dark dark:text-gray-200"
               )}>
                 {title}
               </span>
               
               {badge && (
                 <span className={cn(
-                  "px-1.5 py-0.5 rounded-full font-medium mr-2",
-                  "text-[10px]",
-                  badgeColor || "bg-violet-500",
-                  isActive ? "text-white bg-white/20" : "text-white"
+                  "px-1.5 py-0.5 rounded-full font-medium mr-2 text-[10px]",
+                  badgeColor || "bg-brand-primary text-white",
+                  isActive ? "text-white bg-white/20" : ""
                 )}>
                   {badge}
                 </span>
@@ -136,7 +137,7 @@ export function StudentSidebarMenuItem({
               <p className={cn(
                 "mt-0.5 text-right",
                 getDescriptionSize(),
-                isActive ? "text-white/70" : "text-gray-600 dark:text-gray-400"
+                isActive ? "text-white/70" : "text-brand-dark/60 dark:text-gray-400"
               )}>
                 {description}
               </p>

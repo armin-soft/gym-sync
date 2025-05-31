@@ -3,6 +3,7 @@ import React from "react";
 import { Plus, RotateCw, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useBrandTheme } from "@/hooks/use-brand-theme";
 
 interface StudentsHeaderProps {
   onAddStudent: () => void;
@@ -16,6 +17,8 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
   onRefresh,
   onDownload
 }) => {
+  const { getGradientClass, colors } = useBrandTheme();
+  
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-3">
       <div className="flex flex-col items-center sm:items-start">
@@ -23,7 +26,7 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="text-2xl font-bold text-primary bg-gradient-to-br from-indigo-600 to-indigo-800 dark:from-indigo-400 dark:to-indigo-200 bg-clip-text text-transparent"
+          className="text-2xl font-bold bg-gradient-to-br from-brand-primary to-brand-secondary bg-clip-text text-transparent"
         >
           شاگردان
         </motion.h1>
@@ -36,9 +39,9 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
               size="sm"
               variant="outline"
               onClick={onDownload}
-              className="flex items-center gap-1.5 border-blue-200/80 dark:border-blue-700/80 shadow-sm transition-all duration-300 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600/60"
+              className="flex items-center gap-1.5 border-brand-primary/20 hover:border-brand-primary/40 hover:bg-brand-primary/10 shadow-sm transition-all duration-300"
             >
-              <Download className="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" />
+              <Download className="h-4 w-4 mr-1 text-brand-primary" />
               <span>خروجی برنامه</span>
             </Button>
           )}
@@ -48,17 +51,18 @@ export const StudentsHeader: React.FC<StudentsHeaderProps> = ({
               size="sm"
               variant="outline"
               onClick={onRefresh}
-              className="flex items-center gap-1.5 border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-all duration-300 hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800/60"
+              className="flex items-center gap-1.5 border-brand-dark/20 hover:border-brand-dark/40 hover:bg-brand-dark/10 shadow-sm transition-all duration-300"
             >
-              <RotateCw className="h-4 w-4 mr-1 text-indigo-500 dark:text-indigo-400" />
+              <RotateCw className="h-4 w-4 mr-1 text-brand-dark" />
               <span>بروزرسانی</span>
             </Button>
           )}
           
           <Button
             size="sm"
+            variant="gradient"
             onClick={onAddStudent}
-            className="flex items-center gap-1.5 bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-600/30 transition-all duration-300"
+            className="flex items-center gap-1.5 shadow-md shadow-brand-primary/20 hover:shadow-lg hover:shadow-brand-primary/30 transition-all duration-300"
           >
             <Plus className="h-4 w-4 mr-1" />
             <span>افزودن شاگرد</span>
