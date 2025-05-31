@@ -121,8 +121,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   }, []);
   
   const getSidebarWidth = () => {
-    if (deviceInfo.isMobile) return "w-[320px]";
-    if (deviceInfo.isTablet) return "w-[360px]";
+    if (deviceInfo.isMobile) return "w-[300px]";
+    if (deviceInfo.isTablet) return "w-[340px]";
     if (deviceInfo.isSmallLaptop) return "w-[380px]";
     return "w-[400px]";
   };
@@ -148,7 +148,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-blue-500/5 pointer-events-none" />
           
           {/* Header Section */}
-          <div className="relative z-10" dir="rtl">
+          <div className="relative z-10 flex-shrink-0" dir="rtl">
             <ModernSidebarProfile 
               name={trainerProfile.name}
               email={trainerProfile.email}
@@ -159,15 +159,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           
           {/* Gym Name Section */}
           <motion.div 
-            className="px-6 py-4 border-b border-gradient-to-r from-violet-200/30 via-blue-200/30 to-purple-200/30 dark:from-violet-700/30 dark:via-blue-700/30 dark:to-purple-700/30 bg-gradient-to-r from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-700/50 backdrop-blur-sm" 
+            className={cn(
+              "border-b border-gradient-to-r from-violet-200/30 via-blue-200/30 to-purple-200/30 dark:from-violet-700/30 dark:via-blue-700/30 dark:to-purple-700/30 bg-gradient-to-r from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-700/50 backdrop-blur-sm flex-shrink-0",
+              deviceInfo.isMobile ? "px-4 py-2" : "px-6 py-4"
+            )}
             dir="rtl"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="flex items-center justify-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg">
-                <Crown className="h-5 w-5 text-white" />
+            <div className="flex items-center justify-center gap-2">
+              <div className={cn(
+                "rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg",
+                deviceInfo.isMobile ? "p-1.5" : "p-2"
+              )}>
+                <Crown className={cn(deviceInfo.isMobile ? "h-4 w-4" : "h-5 w-5", "text-white")} />
               </div>
               <h4 className={cn(
                 "font-bold text-center bg-gradient-to-r from-violet-600 via-blue-600 to-purple-600 bg-clip-text text-transparent",
@@ -181,13 +187,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           
           {/* Menu Section */}
           <ScrollArea className="flex-1 relative z-10" dir="rtl">
-            <div dir="rtl" className="p-2">
+            <div dir="rtl">
               <ModernSidebarMenuList items={sidebarItems} onClose={onClose} />
             </div>
           </ScrollArea>
           
           {/* Footer Section */}
-          <div dir="rtl" className="relative z-10">
+          <div dir="rtl" className="relative z-10 flex-shrink-0">
             <ModernSidebarFooter gymName={gymName} />
           </div>
           

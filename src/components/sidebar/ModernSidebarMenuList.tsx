@@ -1,7 +1,9 @@
-
 import { ModernSidebarMenuItem } from "./ModernSidebarMenuItem";
+import { MobileSidebarMenuItem } from "./MobileSidebarMenuItem";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
+import { useDeviceInfo } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface ModernSidebarItem {
   title: string;
@@ -19,13 +21,15 @@ interface ModernSidebarMenuListProps {
 }
 
 export function ModernSidebarMenuList({ items, onClose }: ModernSidebarMenuListProps) {
+  const deviceInfo = useDeviceInfo();
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.1
+        staggerChildren: deviceInfo.isMobile ? 0.04 : 0.08,
+        delayChildren: 0.05
       }
     }
   };
@@ -35,22 +39,39 @@ export function ModernSidebarMenuList({ items, onClose }: ModernSidebarMenuListP
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="py-3 px-3 space-y-1"
+      className={cn(
+        "space-y-1",
+        deviceInfo.isMobile ? "py-1 px-2" : "py-3 px-3"
+      )}
       dir="rtl"
     >
       {items.map((item, index) => (
         <div key={item.href} dir="rtl">
-          <ModernSidebarMenuItem
-            title={item.title}
-            href={item.href}
-            icon={item.icon}
-            description={item.description}
-            gradient={item.gradient}
-            badge={item.badge}
-            badgeColor={item.badgeColor}
-            onClose={onClose}
-            index={index}
-          />
+          {deviceInfo.isMobile ? (
+            <MobileSidebarMenuItem
+              title={item.title}
+              href={item.href}
+              icon={item.icon}
+              description={item.description}
+              gradient={item.gradient}
+              badge={item.badge}
+              badgeColor={item.badgeColor}
+              onClose={onClose}
+              index={index}
+            />
+          ) : (
+            <ModernSidebarMenuItem
+              title={item.title}
+              href={item.href}
+              icon={item.icon}
+              description={item.description}
+              gradient={item.gradient}
+              badge={item.badge}
+              badgeColor={item.badgeColor}
+              onClose={onClose}
+              index={index}
+            />
+          )}
         </div>
       ))}
     </motion.div>
