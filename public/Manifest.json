@@ -5,8 +5,8 @@
   "description": "سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#7c3aed",
-  "theme_color": "#7c3aed",
+  "background_color": "#f59e0b",
+  "theme_color": "#f59e0b",
   "version": "4.4.4",
   "orientation": "portrait-primary",
   "icons": [

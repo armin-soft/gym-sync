@@ -10,13 +10,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-brand-500 text-white hover:bg-brand-600 shadow-sm border border-brand-500/20 hover:shadow-md",
+        default: "bg-gold-500 text-white hover:bg-gold-600 shadow-sm border border-gold-500/20 hover:shadow-md",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm border border-destructive/20 hover:shadow-md",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm border border-secondary/20 hover:shadow-md",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-brand-500 underline-offset-4 hover:underline",
-        gradient: "bg-gradient-to-r from-brand-500 to-brand-700 hover:from-brand-600 hover:to-brand-800 text-white shadow-sm hover:shadow-md border border-brand-500/10",
+        link: "text-gold-500 underline-offset-4 hover:underline",
+        gradient: "bg-gradient-to-r from-gold-500 to-gold-700 hover:from-gold-600 hover:to-gold-800 text-white shadow-sm hover:shadow-md border border-gold-500/10",
         success: "bg-success-500 text-white hover:bg-success-600 shadow-sm border border-success-500/20 hover:shadow-md",
         warning: "bg-warning-500 text-white hover:bg-warning-600 shadow-sm border border-warning-500/20 hover:shadow-md",
         info: "bg-info-500 text-white hover:bg-info-600 shadow-sm border border-info-500/20 hover:shadow-md",

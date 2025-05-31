@@ -1,26 +1,26 @@
 
-/* متغیرهای CSS اصلی */
+/* متغیرهای CSS اصلی - تم طلایی مردانه */
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --foreground: 30 15% 15%;
+    --card: 45 20% 98%;
+    --card-foreground: 30 15% 15%;
+    --popover: 45 20% 98%;
+    --popover-foreground: 30 15% 15%;
+    --primary: 45 100% 50%; /* طلایی اصلی */
+    --primary-foreground: 30 15% 10%;
+    --secondary: 30 10% 90%;
+    --secondary-foreground: 30 15% 20%;
+    --muted: 30 8% 92%;
+    --muted-foreground: 30 10% 45%;
+    --accent: 30 8% 92%;
+    --accent-foreground: 30 15% 20%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 262.1 83.3% 57.8%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 15% 85%;
+    --input: 30 15% 85%;
+    --ring: 45 100% 50%;
     --radius: 0.5rem;
   }
 }
