@@ -2,21 +2,29 @@
 import { useQuery } from "@tanstack/react-query";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
-import { safeJSONParse } from "@/utils/database";
+import { getLocalStorageItem } from "@/utils/localStorage";
+import { useDataRefresh } from "@/hooks/useDataRefresh";
 
 /**
- * Hook to fetch exercises data from localStorage with improved performance
+ * Hook to fetch exercises data from localStorage with automatic refresh
  */
 export const useExerciseData = () => {
   const { toast } = useToast();
 
+  // Setup automatic refresh for exercise-related data
+  useDataRefresh({
+    keys: ['exercises', 'exerciseCategories', 'exerciseTypes'],
+    interval: 10000, // Refresh every 10 seconds
+    onStorageChange: true
+  });
+
   // Get exercises data
-  const { data: exercises = [], isLoading: exercisesLoading } = useQuery({
+  const { data: exercises = [], isLoading: exercisesLoading, error: exercisesError } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
       try {
         console.log("Loading exercises from localStorage");
-        return safeJSONParse<Exercise[]>("exercises", []);
+        return getLocalStorageItem<Exercise[]>("exercises", []);
       } catch (error) {
         console.error("Error loading exercises:", error);
         toast({
@@ -27,6 +35,9 @@ export const useExerciseData = () => {
         return [];
       }
     },
+    staleTime: 5000, // Consider data stale after 5 seconds
+    refetchOnWindowFocus: true,
+    refetchOnMount: true
   });
 
   // Get categories data
@@ -35,7 +46,7 @@ export const useExerciseData = () => {
     queryFn: () => {
       try {
         console.log("Loading categories from localStorage");
-        return safeJSONParse<ExerciseCategory[]>("exerciseCategories", []);
+        return getLocalStorageItem<ExerciseCategory[]>("exerciseCategories", []);
       } catch (error) {
         console.error("Error loading categories:", error);
         toast({
@@ -46,6 +57,9 @@ export const useExerciseData = () => {
         return [];
       }
     },
+    staleTime: 5000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true
   });
 
   // Get exercise types data
@@ -54,7 +68,7 @@ export const useExerciseData = () => {
     queryFn: () => {
       try {
         console.log("Loading exercise types from localStorage");
-        return safeJSONParse<any[]>("exerciseTypes", []);
+        return getLocalStorageItem<any[]>("exerciseTypes", []);
       } catch (error) {
         console.error("Error loading exercise types:", error);
         toast({
@@ -65,6 +79,9 @@ export const useExerciseData = () => {
         return [];
       }
     },
+    staleTime: 5000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true
   });
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;
@@ -73,6 +90,7 @@ export const useExerciseData = () => {
     exercises,
     categories,
     exerciseTypes,
-    isLoading
+    isLoading,
+    exercisesError
   };
 };

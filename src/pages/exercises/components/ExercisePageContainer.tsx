@@ -10,11 +10,19 @@ import { ExerciseDialogMain } from "@/components/exercises/dialog/ExerciseDialog
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { useExercisePageState } from "../hooks/useExercisePageState";
 import { useExercisePageHandlers } from "../hooks/useExercisePageHandlers";
+import { useDataRefresh } from "@/hooks/useDataRefresh";
 
 export const ExercisePageContainer = () => {
   const deviceInfo = useDeviceInfo();
   const state = useExercisePageState();
   const handlers = useExercisePageHandlers(state);
+
+  // Auto-refresh exercise data
+  useDataRefresh({
+    keys: ['exercises', 'exerciseCategories', 'exerciseTypes'],
+    interval: 8000, // Refresh every 8 seconds
+    onStorageChange: true
+  });
 
   // تنظیم کلاس‌های شرطی برای پاسخگویی بهتر
   const getResponsiveSpacing = () => {

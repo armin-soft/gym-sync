@@ -1,9 +1,8 @@
 
-import { useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Exercise } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { safeJSONSave, notifyDataChange } from "@/utils/database";
+import { setLocalStorageItem, getLocalStorageItem } from "@/utils/localStorage";
 
 interface UseExerciseCRUDProps {
   exercises: Exercise[];
@@ -13,107 +12,105 @@ export const useExerciseCRUD = ({ exercises }: UseExerciseCRUDProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // افزودن یا ویرایش حرکت با مدیریت خطای بهتر
-  const handleExerciseSave = useCallback(async (
-    formData: { name: string; categoryId: number }, 
-    selectedExercise?: Exercise
-  ) => {
-    try {
-      // بررسی تکراری بودن نام حرکت
-      const exerciseExists = exercises.some(ex => 
-        ex.name.toLowerCase() === formData.name.toLowerCase() && 
-        (selectedExercise ? ex.id !== selectedExercise.id : true)
-      );
-      
-      if (exerciseExists) {
-        toast({
-          variant: "destructive",
-          title: "خطا",
-          description: "این حرکت قبلاً اضافه شده است"
-        });
-        return Promise.reject("نام تکراری");
-      }
-
-      let updatedExercises;
+  // Add/Update exercise mutation
+  const saveExerciseMutation = useMutation({
+    mutationFn: async ({ formData, selectedExercise }: { 
+      formData: { name: string; categoryId: number },
+      selectedExercise: Exercise | null 
+    }) => {
+      const currentExercises = getLocalStorageItem<Exercise[]>("exercises", []);
       
       if (selectedExercise) {
-        // ویرایش حرکت موجود
-        updatedExercises = exercises.map(ex =>
-          ex.id === selectedExercise.id ? { ...ex, ...formData } : ex
+        // Update existing exercise
+        const updatedExercises = currentExercises.map(ex => 
+          ex.id === selectedExercise.id 
+            ? { ...ex, ...formData }
+            : ex
         );
-        
-        toast({
-          title: "موفقیت",
-          description: "حرکت با موفقیت ویرایش شد"
-        });
+        setLocalStorageItem("exercises", updatedExercises);
+        return updatedExercises;
       } else {
-        // افزودن حرکت جدید
-        const timestamp = Date.now();
+        // Add new exercise
         const newExercise: Exercise = {
-          id: timestamp,
-          ...formData
+          id: Date.now(),
+          name: formData.name,
+          categoryId: formData.categoryId,
         };
-        updatedExercises = [...exercises, newExercise];
-        
-        toast({
-          title: "موفقیت",
-          description: "حرکت جدید با موفقیت اضافه شد"
-        });
+        const updatedExercises = [...currentExercises, newExercise];
+        setLocalStorageItem("exercises", updatedExercises);
+        return updatedExercises;
       }
-      
-      // ذخیره در localStorage و به‌روزرسانی کش react-query
-      safeJSONSave("exercises", updatedExercises);
-      notifyDataChange("exercises");
-      queryClient.setQueryData(["exercises"], updatedExercises);
-      
-      return Promise.resolve();
-    } catch (error) {
-      console.error('Error saving exercise:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره سازی حرکت"
-      });
-      return Promise.reject(error);
-    }
-  }, [exercises, queryClient, toast]);
-
-  // حذف حرکات با مدیریت خطای بهتر
-  const handleDeleteExercises = useCallback((selectedIds: number[]) => {
-    try {
-      const updatedExercises = exercises.filter(ex => !selectedIds.includes(ex.id));
-      
-      safeJSONSave("exercises", updatedExercises);
-      notifyDataChange("exercises");
+    },
+    onSuccess: (updatedExercises, { selectedExercise }) => {
+      // Update query cache
       queryClient.setQueryData(["exercises"], updatedExercises);
       
       toast({
-        title: "موفقیت",
-        description: selectedIds.length > 1 
-          ? "حرکت های انتخاب شده با موفقیت حذف شدند" 
-          : "حرکت با موفقیت حذف شد"
+        title: selectedExercise ? "تمرین به‌روزرسانی شد" : "تمرین جدید اضافه شد",
+        description: selectedExercise 
+          ? "تغییرات با موفقیت ذخیره شد"
+          : "تمرین جدید به لیست اضافه شد"
       });
-      return true;
-    } catch (error) {
-      console.error('Error deleting exercises:', error);
+    },
+    onError: (error) => {
+      console.error("Error saving exercise:", error);
       toast({
         variant: "destructive",
-        title: "خطا",
-        description: "خطا در حذف حرکت‌ها"
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی تمرین پیش آمد"
       });
-      return false;
     }
-  }, [exercises, queryClient, toast]);
+  });
 
-  const updateExercises = useCallback((newExercises: Exercise[]) => {
-    safeJSONSave("exercises", newExercises);
-    notifyDataChange("exercises");
+  // Delete exercises mutation
+  const deleteExercisesMutation = useMutation({
+    mutationFn: async (exerciseIds: number[]) => {
+      const currentExercises = getLocalStorageItem<Exercise[]>("exercises", []);
+      const updatedExercises = currentExercises.filter(ex => !exerciseIds.includes(ex.id));
+      setLocalStorageItem("exercises", updatedExercises);
+      return updatedExercises;
+    },
+    onSuccess: (updatedExercises, exerciseIds) => {
+      // Update query cache
+      queryClient.setQueryData(["exercises"], updatedExercises);
+      
+      toast({
+        title: "تمرین‌ها حذف شدند",
+        description: `${exerciseIds.length} تمرین با موفقیت حذف شد`
+      });
+    },
+    onError: (error) => {
+      console.error("Error deleting exercises:", error);
+      toast({
+        variant: "destructive",
+        title: "خطا در حذف",
+        description: "مشکلی در حذف تمرین‌ها پیش آمد"
+      });
+    }
+  });
+
+  const handleExerciseSave = (
+    formData: { name: string; categoryId: number },
+    selectedExercise: Exercise | null = null
+  ) => {
+    saveExerciseMutation.mutate({ formData, selectedExercise });
+    return !saveExerciseMutation.isError;
+  };
+
+  const handleDeleteExercises = (exerciseIds: number[]) => {
+    deleteExercisesMutation.mutate(exerciseIds);
+    return !deleteExercisesMutation.isError;
+  };
+
+  const updateExercises = (newExercises: Exercise[]) => {
     queryClient.setQueryData(["exercises"], newExercises);
-  }, [queryClient]);
+    setLocalStorageItem("exercises", newExercises);
+  };
 
   return {
     handleExerciseSave,
     handleDeleteExercises,
-    updateExercises
+    updateExercises,
+    isLoading: saveExerciseMutation.isPending || deleteExercisesMutation.isPending
   };
 };

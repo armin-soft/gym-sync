@@ -1,25 +1,18 @@
 
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, Stars } from "lucide-react";
+import { TrendingUp, TrendingDown, Stars, LucideIcon } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 // Color configurations for different card types
 const colorMap = {
-  blue: {
-    bg: "from-blue-600 to-blue-400",
-    bgLight: "bg-blue-100/50 dark:bg-blue-900/20",
-    text: "text-blue-600 dark:text-blue-400",
-    progressBg: "bg-blue-100 dark:bg-blue-800/30",
-    iconColor: "text-blue-500"
-  },
-  green: {
-    bg: "from-green-600 to-green-400",
-    bgLight: "bg-green-100/50 dark:bg-green-900/20",
-    text: "text-green-600 dark:text-green-400",
-    progressBg: "bg-green-100 dark:bg-green-800/30",
-    iconColor: "text-green-500"
+  black: {
+    bg: "from-gray-900 to-gray-700",
+    bgLight: "bg-gray-100/50 dark:bg-gray-900/20",
+    text: "text-gray-900 dark:text-gray-100",
+    progressBg: "bg-gray-100 dark:bg-gray-800/30",
+    iconColor: "text-gray-700 dark:text-gray-300"
   },
   orange: {
     bg: "from-orange-600 to-orange-400",
@@ -27,6 +20,13 @@ const colorMap = {
     text: "text-orange-600 dark:text-orange-400",
     progressBg: "bg-orange-100 dark:bg-orange-800/30",
     iconColor: "text-orange-500"
+  },
+  gold: {
+    bg: "from-yellow-600 to-yellow-400",
+    bgLight: "bg-yellow-100/50 dark:bg-yellow-900/20",
+    text: "text-yellow-600 dark:text-yellow-400",
+    progressBg: "bg-yellow-100 dark:bg-yellow-800/30",
+    iconColor: "text-yellow-500"
   }
 };
 
@@ -44,14 +44,14 @@ export const GrowthBadge = ({ growth }: { growth: number }) => (
 // Interface for StatCard props
 export interface StatCardProps {
   title: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   value: number;
   growth: number;
   maxValue: number;
   percentage?: number;
-  color: "blue" | "green" | "orange";
+  color: "black" | "orange" | "gold";
   description: string;
-  variants: any;
+  variants?: any;
 }
 
 // Main StatCard component

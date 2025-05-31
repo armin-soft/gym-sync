@@ -6,6 +6,7 @@ import ExercisesList from "./ExercisesList";
 import QuickSpeechAdd from "./QuickSpeechAdd";
 import ExerciseDialogs from "./ExerciseDialogs";
 import BackNavigation from "./BackNavigation";
+import { useDataRefresh } from "@/hooks/useDataRefresh";
 
 interface ExercisesStageProps {
   categoryId: string;
@@ -20,6 +21,13 @@ const ExercisesStage = React.memo(({
   onBackToCategories, 
   onBackToTypes 
 }: ExercisesStageProps) => {
+  // Auto-refresh data for exercises
+  useDataRefresh({
+    keys: ['exercises', 'exerciseCategories'],
+    interval: 5000, // Refresh every 5 seconds
+    onStorageChange: true
+  });
+
   const {
     isLoading,
     filteredExercises,
