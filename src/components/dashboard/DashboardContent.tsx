@@ -8,7 +8,6 @@ import { SmartStatsGrid } from "./stats/SmartStatsGrid";
 import { IntelligentQuickActions } from "./actions/IntelligentQuickActions";
 import { AdvancedStudentsOverview } from "./students/AdvancedStudentsOverview";
 import { ProfessionalInsightsPanel } from "./insights/ProfessionalInsightsPanel";
-import { ModernActivityFeed } from "./activity/ModernActivityFeed";
 
 const containerVariants = {
   initial: { opacity: 0 },
@@ -95,16 +94,13 @@ export const DashboardContent = ({
             <AdvancedStudentsOverview students={students} />
           </motion.div>
           
-          {/* Right Column - Insights & Activity */}
+          {/* Right Column - Insights Only */}
           <motion.div 
             variants={itemVariants}
             className="space-y-8"
           >
             {/* Professional Insights Panel */}
             <ProfessionalInsightsPanel stats={stats} />
-            
-            {/* Modern Activity Feed */}
-            <ModernActivityFeed stats={stats} />
           </motion.div>
         </div>
       </div>
