@@ -1,8 +1,7 @@
 
-import React from "react";
-import { Users, Dumbbell, UtensilsCrossed, Pill } from "lucide-react";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
+import { Database, Archive, RefreshCw, Shield } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface BackupStatsCardsProps {
   realStats: {
@@ -11,70 +10,40 @@ interface BackupStatsCardsProps {
     meals: number;
     supplements: number;
   };
-  isRefreshing?: boolean;
 }
 
-export const BackupStatsCards: React.FC<BackupStatsCardsProps> = ({ 
-  realStats,
-  isRefreshing = false 
-}) => {
+export function BackupStatsCards({ realStats }: BackupStatsCardsProps) {
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   const statsData = [
-    {
-      title: "شاگردان",
-      value: realStats.students,
-      icon: Users,
-      color: "from-blue-500 to-indigo-600",
-      bgColor: "from-blue-50 to-indigo-50"
-    },
-    {
-      title: "تمرینات",
-      value: realStats.exercises,
-      icon: Dumbbell,
-      color: "from-green-500 to-emerald-600",
-      bgColor: "from-green-50 to-emerald-50"
-    },
-    {
-      title: "وعده‌های غذایی",
-      value: realStats.meals,
-      icon: UtensilsCrossed,
-      color: "from-orange-500 to-red-600",
-      bgColor: "from-orange-50 to-red-50"
-    },
-    {
-      title: "مکمل‌ها",
-      value: realStats.supplements,
-      icon: Pill,
-      color: "from-purple-500 to-pink-600",
-      bgColor: "from-purple-50 to-pink-50"
-    }
+    { icon: Database, label: "شاگردان", count: toPersianNumbers(realStats.students), color: "from-emerald-500 to-teal-600" },
+    { icon: Archive, label: "تمرینات", count: toPersianNumbers(realStats.exercises), color: "from-blue-500 to-indigo-600" },
+    { icon: RefreshCw, label: "وعده‌های غذایی", count: toPersianNumbers(realStats.meals), color: "from-purple-500 to-pink-600" },
+    { icon: Shield, label: "مکمل‌ها", count: toPersianNumbers(realStats.supplements), color: "from-orange-500 to-red-600" }
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12 relative z-10">
+    <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 lg:mb-12">
       {statsData.map((stat, index) => (
         <motion.div
-          key={stat.title}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1, duration: 0.5 }}
+          key={index}
+          variants={itemVariants}
+          className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-lg border border-white/20 dark:border-slate-700/20"
         >
-          <Card className={`p-4 sm:p-6 bg-gradient-to-br ${stat.bgColor} border-0 shadow-lg hover:shadow-xl transition-all duration-300 ${isRefreshing ? 'animate-pulse' : ''}`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm sm:text-base font-medium text-slate-600 mb-1">
-                  {stat.title}
-                </p>
-                <p className={`text-2xl sm:text-3xl font-bold bg-gradient-to-br ${stat.color} bg-clip-text text-transparent transition-all duration-300`}>
-                  {stat.value.toLocaleString('fa-IR')}
-                </p>
-              </div>
-              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
-                <stat.icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
-              </div>
-            </div>
-          </Card>
+          <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${stat.color} mb-2 sm:mb-3`}>
+            <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          </div>
+          <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-slate-800 dark:text-white mb-1 text-right">
+            {stat.count}
+          </div>
+          <div className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 text-right">
+            {stat.label}
+          </div>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
-};
+}
