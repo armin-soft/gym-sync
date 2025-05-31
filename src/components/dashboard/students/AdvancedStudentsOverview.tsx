@@ -116,7 +116,7 @@ export const AdvancedStudentsOverview = ({ students }: AdvancedStudentsOverviewP
                       className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center overflow-hidden shadow-lg"
                       whileHover={{ rotate: 5, scale: 1.1 }}
                     >
-                      {student.image ? (
+                      {student.image && student.image !== '/Assets/Image/Place-Holder.svg' ? (
                         <img 
                           src={student.image} 
                           alt={student.name}
@@ -136,8 +136,8 @@ export const AdvancedStudentsOverview = ({ students }: AdvancedStudentsOverviewP
                       </h4>
                       
                       <div className="flex items-center space-x-4 space-x-reverse text-sm text-gray-600 dark:text-gray-400">
-                        <span>وزن: {student.weight} کیلو</span>
-                        <span>قد: {student.height} سانتی‌متر</span>
+                        {student.weight && <span>وزن: {student.weight} کیلو</span>}
+                        {student.height && <span>قد: {student.height} سانتی‌متر</span>}
                       </div>
                     </div>
                   </div>
@@ -155,34 +155,14 @@ export const AdvancedStudentsOverview = ({ students }: AdvancedStudentsOverviewP
                       </div>
                     </div>
 
-                    {/* Join Date */}
+                    {/* Phone */}
                     <div className="text-center">
                       <div className="flex items-center space-x-1 space-x-reverse text-sm text-gray-600 dark:text-gray-400 mb-1">
                         <Clock className="w-3 h-3" />
-                        <span>عضویت</span>
+                        <span>تماس</span>
                       </div>
                       <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {student.joinDate || 'نامشخص'}
-                      </div>
-                    </div>
-
-                    {/* Rating */}
-                    <div className="text-center">
-                      <div className="flex items-center space-x-1 space-x-reverse text-sm text-gray-600 dark:text-gray-400 mb-1">
-                        <Star className="w-3 h-3" />
-                        <span>امتیاز</span>
-                      </div>
-                      <div className="flex items-center justify-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`w-3 h-3 ${
-                              i < (student.rating || 5) 
-                                ? 'text-yellow-500 fill-current' 
-                                : 'text-gray-300'
-                            }`} 
-                          />
-                        ))}
+                        {student.phone || 'ثبت نشده'}
                       </div>
                     </div>
                   </div>

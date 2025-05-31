@@ -6,9 +6,7 @@ import {
   UtensilsCrossed, 
   Pill, 
   Users, 
-  Calendar,
-  FileText,
-  Settings
+  FileText
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -56,28 +54,12 @@ const quickActions = [
     href: "/Management/Students"
   },
   {
-    title: "برنامه هفتگی",
-    description: "مدیریت برنامه‌های هفتگی",
-    icon: Calendar,
-    gradient: "from-violet-500 to-purple-500",
-    bgGradient: "from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30",
-    href: "/Management"
-  },
-  {
     title: "گزارشات",
     description: "مشاهده گزارشات و آمار",
     icon: FileText,
     gradient: "from-slate-500 to-gray-500",
     bgGradient: "from-slate-50 to-gray-50 dark:from-slate-950/30 dark:to-gray-950/30",
     href: "/Management"
-  },
-  {
-    title: "تنظیمات",
-    description: "پیکربندی سیستم",
-    icon: Settings,
-    gradient: "from-amber-500 to-yellow-500",
-    bgGradient: "from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30",
-    href: "/Management/Coach-Profile"
   }
 ];
 
@@ -137,7 +119,7 @@ export const IntelligentQuickActions = () => {
             ? 'grid-cols-1' 
             : deviceInfo.isTablet 
             ? 'grid-cols-2' 
-            : 'grid-cols-4'
+            : 'grid-cols-3'
         }`}
         variants={containerVariants}
       >
