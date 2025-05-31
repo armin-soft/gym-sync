@@ -4,29 +4,24 @@ import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
-import { DashboardLayout } from "@/components/dashboard/layout/DashboardLayout";
-import { DashboardContent } from "@/components/dashboard/DashboardContent";
+import { ModernDashboardLayout } from "@/components/dashboard/layout/ModernDashboardLayout";
+import { NewDashboardContent } from "@/components/dashboard/NewDashboardContent";
 
 const Index = () => {
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
-  
-  const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
+  const [trainerProfile, setTrainerProfile] = useState({
+    name: "مربی",
+    image: ""
+  });
 
   useEffect(() => {
     try {
       const savedStudents = localStorage.getItem('students');
       if (savedStudents) {
         const parsedStudents = JSON.parse(savedStudents);
-        if (Array.isArray(parsedStudents)) {
-          setStudents(parsedStudents);
-        } else {
-          console.error('Parsed students is not an array:', parsedStudents);
-          setStudents([]);
-        }
-      } else {
-        setStudents([]);
+        setStudents(Array.isArray(parsedStudents) ? parsedStudents : []);
       }
     } catch (error) {
       console.error('Error loading students:', error);
@@ -34,16 +29,31 @@ const Index = () => {
     }
   }, []);
 
+  useEffect(() => {
+    try {
+      const savedProfile = localStorage.getItem('trainerProfile');
+      if (savedProfile) {
+        const profile = JSON.parse(savedProfile);
+        setTrainerProfile({
+          name: profile.name || "مربی",
+          image: profile.image || ""
+        });
+      }
+    } catch (error) {
+      console.error('Error loading trainer profile:', error);
+    }
+  }, []);
+
   return (
     <PageContainer fullWidth noPadding>
-      <DashboardLayout>
-        <DashboardContent 
+      <ModernDashboardLayout>
+        <NewDashboardContent 
           stats={stats}
           currentTime={currentTime}
           students={students}
           trainerProfile={trainerProfile}
         />
-      </DashboardLayout>
+      </ModernDashboardLayout>
     </PageContainer>
   );
 };
