@@ -1,5 +1,5 @@
 
-/* کامپوننت‌های UI */
+/* کامپوننت‌های UI با سیستم رنگی یکپارچه */
 @layer components {
   /* کامپوننت‌های شیشه‌ای */
   .glass {
@@ -10,13 +10,13 @@
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
 
-  /* گرادیان‌های برند */
+  /* گرادیان‌های برند با سیستم جدید */
   .bg-brand-gradient {
-    @apply bg-gradient-to-br from-brand-500 to-brand-700;
+    background: var(--gradient-primary);
   }
   
   .bg-brand-gradient-light {
-    @apply bg-gradient-to-br from-brand-400/90 to-brand-600/90;
+    background: linear-gradient(135deg, hsl(var(--brand-primary) / 0.9) 0%, hsl(var(--brand-secondary) / 0.9) 100%);
   }
   
   .bg-success-gradient {
@@ -31,7 +31,7 @@
     @apply bg-gradient-to-br from-warning-400 to-warning-600;
   }
 
-  /* دکمه‌های پاسخگو */
+  /* دکمه‌های پاسخگو با سیستم رنگی جدید */
   .btn {
     @apply inline-flex items-center justify-center px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md
            transition-colors duration-200 ease-in-out
@@ -39,11 +39,33 @@
   }
 
   .btn-primary {
-    @apply btn bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply btn;
+    background-color: hsl(var(--brand-primary));
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: hsl(var(--brand-primary) / 0.9);
   }
 
   .btn-secondary {
-    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    @apply btn;
+    background-color: hsl(var(--brand-secondary));
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background-color: hsl(var(--brand-secondary) / 0.9);
+  }
+
+  .btn-dark {
+    @apply btn;
+    background-color: hsl(var(--brand-dark));
+    color: white;
+  }
+  
+  .btn-dark:hover {
+    background-color: hsl(var(--brand-dark) / 0.9);
   }
 
   /* کارت‌های پاسخگو */
@@ -54,5 +76,29 @@
   /* تنظیمات انیمیشن‌ها */
   .transition-default {
     @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* استایل‌های آیکون با رنگ‌های برند */
+  .icon-brand-primary {
+    color: hsl(var(--brand-primary));
+  }
+
+  .icon-brand-secondary {
+    color: hsl(var(--brand-secondary));
+  }
+
+  .icon-brand-dark {
+    color: hsl(var(--brand-dark));
+  }
+
+  /* کارت‌های ویژه با گرادیان */
+  .card-brand {
+    background: var(--gradient-primary);
+    @apply text-white rounded-lg shadow-lg;
+  }
+
+  .card-dark {
+    background: var(--gradient-dark);
+    @apply text-white rounded-lg shadow-lg;
   }
 }
