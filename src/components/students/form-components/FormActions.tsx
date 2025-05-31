@@ -20,7 +20,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
-      className={`flex justify-end items-center gap-3 p-4 border-t bg-slate-50/80 dark:bg-slate-900/50 ${className || ''}`}
+      className={`flex justify-end items-center gap-3 p-4 border-t bg-black-50/80 dark:bg-black-900/50 ${className || ''}`}
     >
       <Button
         type="button"
@@ -34,7 +34,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
       
       <Button
         type="submit"
-        className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 gap-1"
+        className="bg-gradient-to-r from-orange-500 to-gold-500 hover:from-orange-600 hover:to-gold-600 text-black gap-1"
       >
         <Save className="h-4 w-4" />
         <span>{isEdit ? "ذخیره تغییرات" : "افزودن شاگرد"}</span>

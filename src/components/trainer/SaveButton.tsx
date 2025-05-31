@@ -31,10 +31,10 @@ export const SaveButton = ({ onSave, isLoading = false }: SaveButtonProps) => {
           >
             <Button 
               disabled
-              className="w-full py-6 bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600"
+              className="w-full py-6 bg-gradient-to-r from-orange-500 to-gold-500 hover:from-orange-600 hover:to-gold-600 text-black"
             >
               <div className="flex items-center justify-center gap-3">
-                <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+                <div className="animate-spin w-5 h-5 border-2 border-black border-t-transparent rounded-full" />
                 <span className="text-base">در حال ذخیره‌سازی...</span>
               </div>
             </Button>
@@ -51,14 +51,14 @@ export const SaveButton = ({ onSave, isLoading = false }: SaveButtonProps) => {
               onClick={onSave} 
               className={cn(
                 "w-full py-6 relative overflow-hidden",
-                "bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600",
-                "shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30",
-                "border border-indigo-600/20",
+                "bg-gradient-to-r from-orange-500 to-gold-500 hover:from-orange-600 hover:to-gold-600 text-black",
+                "shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30",
+                "border border-orange-600/20",
                 "transition-all duration-300"
               )}
             >
               <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-indigo-600/40 to-sky-600/40"
+                className="absolute inset-0 bg-gradient-to-r from-orange-600/40 to-gold-600/40"
                 initial={{ x: "-100%" }}
                 whileHover={{ x: "100%" }}
                 transition={{ duration: 0.8 }}
