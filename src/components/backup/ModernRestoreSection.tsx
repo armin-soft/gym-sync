@@ -200,7 +200,7 @@ export function ModernRestoreSection({ dataKeys }: ModernRestoreSectionProps) {
               <Alert className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 border-amber-200 dark:border-amber-700 rounded-xl">
                 <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 <AlertTitle className="text-amber-800 dark:text-amber-200 font-semibold">
-                  ⚠️ هشدار مهم
+                  هشدار مهم
                 </AlertTitle>
                 <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
                   با بازیابی اطلاعات، تمام داده‌های فعلی شما حذف و با اطلاعات فایل پشتیبان جایگزین خواهند شد.
@@ -318,7 +318,7 @@ export function ModernRestoreSection({ dataKeys }: ModernRestoreSectionProps) {
                           ? "text-green-800 dark:text-green-200" 
                           : "text-red-800 dark:text-red-200"
                       }`}>
-                        {restoreSuccess ? "✅ بازیابی موفق" : "❌ خطا در بازیابی"}
+                        {restoreSuccess ? "بازیابی موفق" : "خطا در بازیابی"}
                       </h5>
                       <p className={`text-sm ${
                         restoreSuccess 

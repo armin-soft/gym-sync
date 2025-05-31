@@ -67,7 +67,7 @@ export function ModernBackupSection({ dataKeys }: ModernBackupSectionProps) {
       setIsLoading(false);
       
       toast({
-        title: "✅ پشتیبان‌گیری موفق",
+        title: "پشتیبان‌گیری موفق",
         description: "فایل پشتیبان با موفقیت ایجاد و دانلود شد",
         className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-none"
       });
@@ -76,7 +76,7 @@ export function ModernBackupSection({ dataKeys }: ModernBackupSectionProps) {
       setIsLoading(false);
       toast({
         variant: "destructive",
-        title: "❌ خطا در پشتیبان‌گیری",
+        title: "خطا در پشتیبان‌گیری",
         description: "مشکلی در فرآیند پشتیبان‌گیری رخ داده است",
       });
     }
