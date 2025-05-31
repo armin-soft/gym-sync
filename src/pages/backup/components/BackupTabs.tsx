@@ -2,8 +2,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Download, Upload, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { BackupSection } from "@/components/backup/BackupSection";
-import { RestoreSection } from "@/components/backup/RestoreSection";
+import { ModernBackupSection } from "@/components/backup/ModernBackupSection";
+import { ModernRestoreSection } from "@/components/backup/ModernRestoreSection";
 
 interface BackupTabsProps {
   activeTab: string;
@@ -102,7 +102,7 @@ export function BackupTabs({ activeTab, setActiveTab, dataKeys }: BackupTabsProp
             exit={{ opacity: 0, x: 30 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <BackupSection dataKeys={dataKeys} />
+            <ModernBackupSection dataKeys={dataKeys} />
           </motion.div>
         </TabsContent>
 
@@ -113,7 +113,7 @@ export function BackupTabs({ activeTab, setActiveTab, dataKeys }: BackupTabsProp
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <RestoreSection dataKeys={dataKeys} />
+            <ModernRestoreSection dataKeys={dataKeys} />
           </motion.div>
         </TabsContent>
       </Tabs>
