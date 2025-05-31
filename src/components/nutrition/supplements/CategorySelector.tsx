@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, VisuallyHidden } from "@/components/ui/dialog";
 import { Search, Plus, Check, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
@@ -56,11 +56,14 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
       </Button>
       
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-md max-h-[80vh]">
+        <DialogContent className="sm:max-w-md max-h-[80vh]" aria-describedby="category-selector-description">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               انتخاب دسته‌بندی {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}
             </DialogTitle>
+            <DialogDescription id="category-selector-description">
+              از لیست زیر دسته‌بندی مورد نظر خود را انتخاب کنید
+            </DialogDescription>
           </DialogHeader>
           
           <div className="relative mb-4">

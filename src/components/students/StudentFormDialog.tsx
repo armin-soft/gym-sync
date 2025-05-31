@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, VisuallyHidden } from "@/components/ui/dialog";
 import { Student } from "./StudentTypes";
 import { StudentDialogContent } from "./form-components/StudentDialogContent";
 
@@ -21,7 +21,18 @@ const StudentFormDialog: React.FC<StudentFormDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 border-none bg-transparent shadow-none max-w-3xl">
+      <DialogContent className="p-0 border-none bg-transparent shadow-none max-w-3xl" aria-describedby="student-form-description">
+        <VisuallyHidden>
+          <DialogTitle>
+            {student && isEditing ? "ویرایش شاگرد" : "افزودن شاگرد جدید"}
+          </DialogTitle>
+          <DialogDescription id="student-form-description">
+            {student && isEditing 
+              ? `ویرایش اطلاعات شاگرد ${student.name}`
+              : "فرم افزودن شاگرد جدید به سیستم"
+            }
+          </DialogDescription>
+        </VisuallyHidden>
         <StudentDialogContent
           student={student || undefined}
           onSave={(data) => {

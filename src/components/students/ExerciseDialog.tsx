@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription, VisuallyHidden } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Student } from '@/components/students/StudentTypes';
 import { ExerciseWithSets } from '@/types/exercise';
@@ -31,9 +31,9 @@ export const ExerciseDialog: React.FC<ExerciseDialogProps> = ({
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent className="sm:max-w-[800px]" aria-describedby="exercise-dialog-description">
         <DialogTitle>برنامه تمرینی - {student.name}</DialogTitle>
-        <DialogDescription>
+        <DialogDescription id="exercise-dialog-description">
           برنامه تمرینی برای {student.name} را تنظیم کنید.
         </DialogDescription>
         

@@ -54,9 +54,9 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px]">
+      <DialogContent className="sm:max-w-[700px]" aria-describedby="supplement-dialog-description">
         <DialogTitle>مکمل و ویتامین - {student.name}</DialogTitle>
-        <DialogDescription>
+        <DialogDescription id="supplement-dialog-description">
           برنامه مکمل و ویتامین برای {student.name} را تنظیم کنید.
         </DialogDescription>
         
