@@ -35,16 +35,16 @@ export function MobileSidebarMenuItem({
   const deviceInfo = useDeviceInfo();
   
   const itemVariants = {
-    hidden: { opacity: 0, x: 20, y: 10 },
+    hidden: { opacity: 0, x: 15, y: 5 },
     visible: { 
       opacity: 1, 
       x: 0, 
       y: 0,
       transition: {
         type: "spring",
-        stiffness: 120,
-        damping: 10,
-        delay: index * 0.05
+        stiffness: 150,
+        damping: 12,
+        delay: index * 0.03
       }
     }
   };
@@ -61,49 +61,36 @@ export function MobileSidebarMenuItem({
         to={href}
         onClick={onClose}
         className={cn(
-          "relative block rounded-xl transition-all duration-200 overflow-hidden group",
-          "py-2.5 px-3",
+          "relative block rounded-lg transition-all duration-200 overflow-hidden group",
+          "py-1.5 px-2.5",
           isActive 
-            ? "bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 text-white shadow-lg transform scale-[1.01]" 
-            : "hover:bg-gradient-to-br hover:from-white/60 hover:via-gray-50/40 hover:to-violet-50/30 dark:hover:from-gray-700/40 dark:hover:via-gray-600/30 dark:hover:to-violet-800/15 hover:shadow-md hover:scale-[1.005]"
+            ? "bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 text-white shadow-md transform scale-[1.005]" 
+            : "hover:bg-gradient-to-br hover:from-white/50 hover:via-gray-50/30 hover:to-violet-50/20 dark:hover:from-gray-700/30 dark:hover:via-gray-600/20 dark:hover:to-violet-800/10 hover:shadow-sm"
         )}
         dir="rtl"
       >
         {/* Background Effects */}
         {isActive && (
-          <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-black/5" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/5" />
         )}
         
-        {!isActive && isHovered && (
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-br from-violet-500/8 via-blue-500/4 to-purple-500/8 rounded-xl"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.15 }}
-          />
-        )}
-        
-        <div className="relative flex items-center gap-3" dir="rtl">
+        <div className="relative flex items-center gap-2.5" dir="rtl">
           {/* Icon Container */}
           <motion.div 
             className={cn(
-              "flex-shrink-0 rounded-lg flex items-center justify-center relative overflow-hidden",
-              deviceInfo.isMobile ? "w-8 h-8" : "w-9 h-9",
+              "flex-shrink-0 rounded-md flex items-center justify-center relative overflow-hidden",
+              "w-7 h-7",
               isActive 
                 ? "bg-white/15 text-white shadow-sm" 
-                : `bg-gradient-to-br ${gradient} text-white shadow-sm group-hover:shadow-md`
+                : `bg-gradient-to-br ${gradient} text-white shadow-sm`
             )}
-            whileHover={{ rotate: isActive ? 0 : 3, scale: 1.03 }}
+            whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
             {!isActive && (
-              <div className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
             )}
-            <Icon className={cn(
-              "relative z-10",
-              deviceInfo.isMobile ? "w-4 h-4" : "w-4.5 h-4.5"
-            )} />
+            <Icon className="relative z-10 w-3.5 h-3.5" />
           </motion.div>
           
           {/* Content */}
@@ -111,9 +98,8 @@ export function MobileSidebarMenuItem({
             <div className="flex items-center justify-between" dir="rtl">
               <motion.span 
                 className={cn(
-                  "font-semibold text-right truncate",
-                  deviceInfo.isMobile ? "text-sm" : "text-base",
-                  isActive ? "text-white" : "text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white"
+                  "font-medium text-right truncate text-xs",
+                  isActive ? "text-white" : "text-slate-800 dark:text-slate-200"
                 )}
                 layoutId={`title-${href}`}
               >
@@ -123,33 +109,18 @@ export function MobileSidebarMenuItem({
               {badge && (
                 <motion.span 
                   className={cn(
-                    "px-1.5 py-0.5 rounded-full font-medium text-xs ml-1 shadow-sm",
+                    "px-1 py-0.5 rounded-full font-medium text-2xs ml-1 shadow-sm",
                     badgeColor || "bg-orange-500",
                     isActive ? "text-white bg-white/15" : "text-white"
                   )}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.15 }}
                 >
                   {badge}
                 </motion.span>
               )}
             </div>
-            
-            {description && !deviceInfo.isMobile && (
-              <motion.p 
-                className={cn(
-                  "text-right leading-tight mt-0.5",
-                  "text-xs",
-                  isActive ? "text-white/75" : "text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300"
-                )}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.15 }}
-              >
-                {description}
-              </motion.p>
-            )}
           </div>
           
           {/* Arrow Indicator */}
@@ -158,12 +129,12 @@ export function MobileSidebarMenuItem({
               "flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
               isActive && "opacity-100"
             )}
-            animate={{ x: isHovered || isActive ? -3 : 0 }}
+            animate={{ x: isHovered || isActive ? -2 : 0 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
             <ChevronLeft className={cn(
-              "w-4 h-4",
-              isActive ? "text-white" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300"
+              "w-3 h-3",
+              isActive ? "text-white" : "text-slate-400"
             )} />
           </motion.div>
         </div>

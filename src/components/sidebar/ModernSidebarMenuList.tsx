@@ -1,3 +1,4 @@
+
 import { ModernSidebarMenuItem } from "./ModernSidebarMenuItem";
 import { MobileSidebarMenuItem } from "./MobileSidebarMenuItem";
 import { motion } from "framer-motion";
@@ -28,8 +29,8 @@ export function ModernSidebarMenuList({ items, onClose }: ModernSidebarMenuListP
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: deviceInfo.isMobile ? 0.04 : 0.08,
-        delayChildren: 0.05
+        staggerChildren: deviceInfo.isMobile ? 0.02 : 0.08,
+        delayChildren: 0.03
       }
     }
   };
@@ -40,8 +41,7 @@ export function ModernSidebarMenuList({ items, onClose }: ModernSidebarMenuListP
       initial="hidden"
       animate="visible"
       className={cn(
-        "space-y-1",
-        deviceInfo.isMobile ? "py-1 px-2" : "py-3 px-3"
+        deviceInfo.isMobile ? "space-y-0.5 py-1 px-2" : "space-y-1 py-3 px-3"
       )}
       dir="rtl"
     >
