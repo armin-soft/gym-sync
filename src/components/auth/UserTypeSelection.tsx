@@ -16,7 +16,6 @@ export const UserTypeSelection = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleUserTypeSelection = async (type: 'management' | 'student') => {
-    // جلوگیری از کلیک‌های مکرر
     if (isProcessing || selectedType) return;
     
     console.log('User type selected:', type);
@@ -24,16 +23,13 @@ export const UserTypeSelection = () => {
     setSelectedType(type);
     
     try {
-      // ذخیره اطلاعات در localStorage
       localStorage.setItem("hasSelectedUserType", "true");
       localStorage.setItem("selectedUserType", type);
       
       console.log('Navigating to:', type === 'management' ? '/Management' : '/Students');
       
-      // تاخیر کوتاه برای نمایش انیمیشن
       await new Promise(resolve => setTimeout(resolve, 600));
       
-      // هدایت به صفحه مناسب
       if (type === 'management') {
         navigate("/Management", { replace: true });
       } else {
@@ -41,14 +37,13 @@ export const UserTypeSelection = () => {
       }
     } catch (error) {
       console.error('Error during navigation:', error);
-      // در صورت خطا، وضعیت را ریست کنیم
       setIsProcessing(false);
       setSelectedType(null);
     }
   };
 
   const handleHover = (id: string | null) => {
-    if (isProcessing) return; // جلوگیری از hover در حالت پردازش
+    if (isProcessing) return;
     
     if (id === null || id === 'management' || id === 'student') {
       setHoveredType(id as 'management' | 'student' | null);
@@ -56,7 +51,7 @@ export const UserTypeSelection = () => {
   };
 
   const handleSelect = (id: string) => {
-    if (isProcessing) return; // جلوگیری از انتخاب‌های مکرر
+    if (isProcessing) return;
     
     console.log('Card clicked:', id);
     
@@ -67,10 +62,49 @@ export const UserTypeSelection = () => {
 
   return (
     <PageContainer fullScreen fullHeight withBackground>
-      <BackgroundDecorations />
+      {/* Professional Modern Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-violet-900/20 via-transparent to-indigo-900/20" />
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        
+        {/* Animated Orbs */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-violet-600/10 to-purple-600/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3],
+            x: [0, 50, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-indigo-600/10 to-blue-600/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.5, 0.2],
+            x: [0, -40, 0],
+            y: [0, 40, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+      </div>
 
+      {/* Main Content */}
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-7xl">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -79,7 +113,11 @@ export const UserTypeSelection = () => {
           >
             <SelectionHeader />
 
-            <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Modern Card Grid */}
+            <motion.div 
+              variants={itemVariants} 
+              className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto"
+            >
               {userTypes.map((type) => (
                 <UserTypeCard
                   key={type.id}
@@ -93,14 +131,17 @@ export const UserTypeSelection = () => {
               ))}
             </motion.div>
 
-            {/* نمایش وضعیت پردازش */}
+            {/* Processing Status */}
             {isProcessing && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center text-white/80 text-sm"
+                className="text-center text-white/70 text-sm"
               >
-                در حال هدایت...
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+                  <span>در حال هدایت به پنل مدیریت...</span>
+                </div>
               </motion.div>
             )}
           </motion.div>
