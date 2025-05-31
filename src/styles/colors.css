@@ -1,63 +1,48 @@
 
-/* سیستم رنگ‌های یکپارچه - بر پایه مشکی، نارنجی و طلایی */
-@import './theme-colors.css';
-
+/* تنظیمات رنگ‌ها و تم */
 @layer base {
   :root {
-    /* استفاده از رنگ‌های تعریف شده در theme-colors.css */
-    --background: 0 0% 98%;
-    --foreground: 24 10% 10%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 24 10% 10%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 24 10% 10%;
-    
-    /* رنگ اصلی: نارنجی */
-    --primary: 16 100% 60%;
-    --primary-foreground: 0 0% 100%;
-    
-    /* رنگ ثانویه: طلایی */
-    --secondary: 51 100% 50%;
-    --secondary-foreground: 24 10% 10%;
-    
-    --muted: 24 6% 95%;
-    --muted-foreground: 24 5% 46%;
-    --accent: 16 100% 95%;
-    --accent-foreground: 24 10% 10%;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    
-    --border: 24 6% 83%;
-    --input: 24 6% 83%;
-    --ring: 16 100% 60%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 262 83.3% 57.8%; /* بنفش به عنوان رنگ اصلی */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 262 83.3% 57.8%;
     --radius: 0.75rem;
   }
  
   .dark {
-    --background: 24 10% 3%;
-    --foreground: 0 0% 98%;
-    --card: 24 10% 4%;
-    --card-foreground: 0 0% 98%;
-    --popover: 24 10% 4%;
-    --popover-foreground: 0 0% 98%;
-    
-    --primary: 16 100% 60%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 51 100% 45%;
-    --secondary-foreground: 0 0% 98%;
-    
-    --muted: 24 6% 15%;
-    --muted-foreground: 24 5% 65%;
-    --accent: 24 6% 15%;
-    --accent-foreground: 0 0% 98%;
-    
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 24 6% 15%;
-    --input: 24 6% 15%;
-    --ring: 16 100% 60%;
+    --background: 240 10% 3.9%;
+    --foreground: 210 40% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 262 83.3% 57.8%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262 83.3% 57.8%;
   }
 }
