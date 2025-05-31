@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Student } from '@/components/students/StudentTypes';
-import { UserRound, Dumbbell, Apple, Pill } from 'lucide-react';
+import { UserRound, Dumbbell, Apple, Pill, LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toPersianNumbers } from '@/lib/utils/numbers';
 
@@ -87,8 +87,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="تعداد شاگردان"
           value={toPersianNumbers(stats.totalStudents)}
-          icon={<UserRound className="h-5 w-5 text-blue-500" />}
-          valueClassName="text-blue-500"
+          icon={<UserRound className="h-5 w-5 text-gray-900 dark:text-gray-100" />}
+          valueClassName="text-gray-900 dark:text-gray-100"
         />
       </motion.div>
       
@@ -96,8 +96,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="برنامه تمرینی"
           value={toPersianNumbers(stats.withExercises)}
-          icon={<Dumbbell className="h-5 w-5 text-indigo-500" />}
-          valueClassName="text-indigo-500"
+          icon={<Dumbbell className="h-5 w-5 text-orange-600 dark:text-orange-400" />}
+          valueClassName="text-orange-600 dark:text-orange-400"
         />
       </motion.div>
       
@@ -105,8 +105,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="برنامه غذایی"
           value={toPersianNumbers(stats.withDiet)}
-          icon={<Apple className="h-5 w-5 text-green-500" />}
-          valueClassName="text-green-500"
+          icon={<Apple className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />}
+          valueClassName="text-yellow-600 dark:text-yellow-400"
         />
       </motion.div>
       
@@ -114,8 +114,8 @@ export const StudentStatsCards: React.FC<StudentStatsCardsProps> = ({ students }
         <StatCard
           title="مکمل و ویتامین"
           value={toPersianNumbers(stats.withSupplements)}
-          icon={<Pill className="h-5 w-5 text-amber-500" />}
-          valueClassName="text-amber-500"
+          icon={<Pill className="h-5 w-5 text-gray-700 dark:text-gray-300" />}
+          valueClassName="text-gray-700 dark:text-gray-300"
         />
       </motion.div>
     </motion.div>

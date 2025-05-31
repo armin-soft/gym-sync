@@ -1,11 +1,12 @@
 
 import { SidebarMenuItem } from "./SidebarMenuItem";
 import { motion } from "framer-motion";
+import { LucideIcon } from "lucide-react";
 
 interface SidebarItem {
   title: string;
   href: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   description?: string;
   badge?: string;
   badgeColor?: string;

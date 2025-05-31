@@ -1,17 +1,17 @@
 
-import { Users, UtensilsCrossed, Pill } from "lucide-react";
+import { Users, UtensilsCrossed, Pill, LucideIcon } from "lucide-react";
 import { type DashboardStats } from "@/types/dashboard";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 // Configuration for each stat card
 export interface StatCardConfig {
   title: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   value: number;
   growth: number;
   maxValue: number;
   percentage?: number;
-  color: "blue" | "green" | "orange";
+  color: "black" | "orange" | "gold";
   description: string;
 }
 
@@ -24,7 +24,7 @@ export const generateStatsCardConfigs = (stats: DashboardStats): StatCardConfig[
       value: stats.totalStudents,
       growth: stats.studentGrowth,
       maxValue: stats.maxCapacity,
-      color: "blue",
+      color: "black",
       description: "شاگرد فعال در سیستم",
     },
     {
@@ -34,7 +34,7 @@ export const generateStatsCardConfigs = (stats: DashboardStats): StatCardConfig[
       growth: stats.mealGrowth,
       maxValue: 100,
       percentage: stats.mealCompletionRate,
-      color: "green",
+      color: "orange",
       description: `${toPersianNumbers(Math.round(stats.mealCompletionRate))}٪ شاگردان دارای برنامه غذایی`,
     },
     {
@@ -44,7 +44,7 @@ export const generateStatsCardConfigs = (stats: DashboardStats): StatCardConfig[
       growth: stats.supplementGrowth,
       maxValue: 100,
       percentage: stats.supplementCompletionRate,
-      color: "orange",
+      color: "gold",
       description: `${toPersianNumbers(Math.round(stats.supplementCompletionRate))}٪ شاگردان دارای مکمل و ویتامین`,
     }
   ];
