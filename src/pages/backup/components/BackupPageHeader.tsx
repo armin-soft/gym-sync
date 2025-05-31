@@ -1,24 +1,52 @@
 
+import React from "react";
 import { motion } from "framer-motion";
-import { Shield } from "lucide-react";
+import { Database, Shield } from "lucide-react";
+import { useBackupStats } from "../hooks/useBackupStats";
 
-export function BackupPageHeader() {
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
+export const BackupPageHeader = () => {
+  const { lastRefresh, isRefreshing } = useBackupStats();
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('fa-IR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
   };
 
   return (
-    <motion.div variants={itemVariants} className="text-center mb-6 sm:mb-8 lg:mb-12">
-      <div className="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl sm:rounded-2xl shadow-lg mb-4 sm:mb-6">
-        <Shield className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-white" />
+    <motion.div 
+      className="text-center mb-8 sm:mb-12 relative z-10"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/40 to-indigo-500/40 blur-xl opacity-70" />
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/25 relative z-10">
+            <Database className="h-8 w-8 sm:h-10 sm:w-10" />
+          </div>
+        </div>
       </div>
-      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
-        مدیریت پشتیبان‌گیری و بازیابی
+      
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent tracking-tight">
+        پشتیبان‌گیری و بازیابی
       </h1>
-      <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed px-4">
-        سیستم پیشرفته حفاظت از اطلاعات شما با امکان پشتیبان‌گیری کامل و بازیابی آسان در هر زمان
+      
+      <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed mb-4">
+        داده‌های خود را ایمن نگه دارید و در صورت نیاز بازیابی کنید
       </p>
+
+      {/* نشانگر وضعیت بروزرسانی */}
+      <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
+        <div className={`w-2 h-2 rounded-full ${isRefreshing ? 'bg-orange-500 animate-pulse' : 'bg-green-500'}`} />
+        <span>
+          {isRefreshing ? 'در حال بروزرسانی...' : `آخرین بروزرسانی: ${formatTime(lastRefresh)}`}
+        </span>
+        <Shield className="w-4 h-4 ml-1" />
+      </div>
     </motion.div>
   );
-}
+};
