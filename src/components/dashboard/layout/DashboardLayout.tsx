@@ -7,6 +7,7 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
+// Enhanced animation variants
 const pageVariants = {
   initial: { opacity: 0 },
   animate: { 
@@ -22,6 +23,7 @@ const pageVariants = {
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const deviceInfo = useDeviceInfo();
 
+  // Professional responsive padding
   const getPadding = () => {
     if (deviceInfo.isMobile) {
       return "p-4";

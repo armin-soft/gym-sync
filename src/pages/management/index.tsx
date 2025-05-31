@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { PageContainer } from "@/components/ui/page-container";
-import { NewDashboardContent } from "@/components/dashboard/NewDashboardContent";
-import { ModernDashboardLayout } from "@/components/dashboard/layout/ModernDashboardLayout";
+import { DashboardContent } from "@/components/dashboard/DashboardContent";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Student } from "@/components/students/StudentTypes";
@@ -47,15 +46,13 @@ const ManagementPage = () => {
   }, []);
 
   return (
-    <PageContainer fullWidth noPadding>
-      <ModernDashboardLayout>
-        <NewDashboardContent 
-          stats={stats}
-          currentTime={currentTime}
-          students={students}
-          trainerProfile={trainerProfile}
-        />
-      </ModernDashboardLayout>
+    <PageContainer withBackground fullHeight className="w-full">
+      <DashboardContent 
+        stats={stats}
+        currentTime={currentTime}
+        students={students}
+        trainerProfile={trainerProfile}
+      />
     </PageContainer>
   );
 };
