@@ -1,65 +1,38 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
-import { BackgroundDecorations } from "../background/BackgroundDecorations";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
-// Animation variants
+// Enhanced animation variants
 const pageVariants = {
   initial: { opacity: 0 },
   animate: { 
     opacity: 1,
     transition: { 
-      duration: 0.5,
+      duration: 0.8,
       staggerChildren: 0.1,
+      ease: "easeOut"
     }
-  }
-};
-
-// Get optimal grid layout based on device type
-export const getGridLayout = () => {
-  const deviceInfo = useDeviceInfo();
-  if (deviceInfo.isMobile) {
-    return "grid-cols-1 gap-2 xs:gap-3";
-  } else if (deviceInfo.isTablet) {
-    return "grid-cols-2 gap-3 sm:gap-4";
-  } else if (deviceInfo.isSmallLaptop) {
-    return "grid-cols-2 md:grid-cols-3 gap-4 md:gap-5";
-  } else {
-    return "grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 lg:gap-6";
   }
 };
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const deviceInfo = useDeviceInfo();
 
-  // محاسبه پدینگ فول ریسپانسیو
+  // Professional responsive padding
   const getPadding = () => {
     if (deviceInfo.isMobile) {
-      return "p-1 xs:p-2";
+      return "p-4";
     } else if (deviceInfo.isTablet) {
-      return "p-2 sm:p-3";
+      return "p-6";
     } else if (deviceInfo.isSmallLaptop) {
-      return "p-3 md:p-4";
+      return "p-8";
     } else {
-      return "p-4 lg:p-6 xl:p-8";
-    }
-  };
-
-  // محاسبه فاصله‌گذاری فول ریسپانسیو
-  const getSpacing = () => {
-    if (deviceInfo.isMobile) {
-      return "space-y-2 xs:space-y-3";
-    } else if (deviceInfo.isTablet) {
-      return "space-y-3 sm:space-y-4";
-    } else if (deviceInfo.isSmallLaptop) {
-      return "space-y-4 md:space-y-5";
-    } else {
-      return "space-y-5 lg:space-y-6 xl:space-y-8";
+      return "p-10 xl:p-12";
     }
   };
 
@@ -68,12 +41,51 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className={`w-full h-full overflow-y-auto overflow-x-hidden ${getPadding()} ${getSpacing()} relative`}
+      className={`w-full h-full overflow-y-auto overflow-x-hidden ${getPadding()} relative`}
     >
-      {/* Background decorations */}
-      <BackgroundDecorations />
+      {/* Enhanced Professional Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-gray-50/70 to-blue-50/40 dark:from-slate-900 dark:via-gray-900/70 dark:to-zinc-900/40 -z-10" />
       
-      {/* Content */}
+      {/* Professional gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-r from-violet-500/3 via-transparent to-blue-500/3 -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/2 to-transparent -z-10" />
+      
+      {/* Subtle animated background elements */}
+      <motion.div 
+        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-20 -z-10"
+        style={{
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)'
+        }}
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.1, 0.2, 0.1],
+          rotate: [0, 180, 360]
+        }}
+        transition={{ 
+          duration: 30, 
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+      
+      <motion.div 
+        className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-15 -z-10"
+        style={{
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)'
+        }}
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.1, 0.15, 0.1],
+          rotate: [360, 180, 0]
+        }}
+        transition={{ 
+          duration: 35, 
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+      
+      {/* Content Container */}
       <div className="relative z-10 w-full h-full">
         {children}
       </div>
