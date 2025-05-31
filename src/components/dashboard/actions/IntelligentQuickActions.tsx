@@ -1,11 +1,12 @@
 
 import { motion } from "framer-motion";
 import { 
-  UserPlus, 
+  User2,
+  Users, 
   Dumbbell, 
   UtensilsCrossed, 
   Pill, 
-  Users, 
+  Database,
   FileText
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -13,16 +14,23 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 
 const quickActions = [
   {
-    title: "افزودن شاگرد جدید",
-    description: "ثبت شاگرد جدید در سیستم",
-    icon: UserPlus,
+    title: "پروفایل مربی",
+    description: "مدیریت اطلاعات شخصی و حرفه‌ای",
+    icon: User2,
     gradient: "from-blue-500 to-cyan-500",
     bgGradient: "from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30",
-    href: "/Management/Students",
-    hot: true
+    href: "/Management/Coach-Profile"
   },
   {
-    title: "مدیریت تمرینات",
+    title: "شاگردان",
+    description: "مشاهده و مدیریت تمام شاگردان",
+    icon: Users,
+    gradient: "from-emerald-500 to-teal-500",
+    bgGradient: "from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30",
+    href: "/Management/Students"
+  },
+  {
+    title: "حرکات تمرینی",
     description: "ایجاد و ویرایش حرکات تمرینی",
     icon: Dumbbell,
     gradient: "from-orange-500 to-red-500",
@@ -33,33 +41,25 @@ const quickActions = [
     title: "برنامه‌های غذایی",
     description: "تنظیم رژیم غذایی شاگردان",
     icon: UtensilsCrossed,
-    gradient: "from-emerald-500 to-teal-500",
-    bgGradient: "from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30",
+    gradient: "from-purple-500 to-indigo-500",
+    bgGradient: "from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30",
     href: "/Management/Diet-Plan"
   },
   {
     title: "مکمل‌ها و ویتامین‌ها",
     description: "مدیریت مکمل‌های ورزشی",
     icon: Pill,
-    gradient: "from-purple-500 to-indigo-500",
-    bgGradient: "from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30",
+    gradient: "from-pink-500 to-rose-500",
+    bgGradient: "from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/30",
     href: "/Management/Supplements-Vitamins"
   },
   {
-    title: "لیست شاگردان",
-    description: "مشاهده و مدیریت تمام شاگردان",
-    icon: Users,
-    gradient: "from-pink-500 to-rose-500",
-    bgGradient: "from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/30",
-    href: "/Management/Students"
-  },
-  {
-    title: "گزارشات",
-    description: "مشاهده گزارشات و آمار",
-    icon: FileText,
+    title: "پشتیبان‌گیری و بازیابی",
+    description: "پشتیبان‌گیری و بازیابی اطلاعات",
+    icon: Database,
     gradient: "from-slate-500 to-gray-500",
     bgGradient: "from-slate-50 to-gray-50 dark:from-slate-950/30 dark:to-gray-950/30",
-    href: "/Management"
+    href: "/Management/Backup-Restore"
   }
 ];
 
@@ -139,19 +139,6 @@ export const IntelligentQuickActions = () => {
               onClick={() => navigate(action.href)}
               className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${action.bgGradient} border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl cursor-pointer group`}
             >
-              {/* Hot Badge */}
-              {action.hot && (
-                <motion.div 
-                  className="absolute top-3 left-3 z-20"
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg">
-                    HOT
-                  </span>
-                </motion.div>
-              )}
-
               {/* Background Effects */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent dark:from-gray-800/30" />
               
