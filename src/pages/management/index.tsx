@@ -7,6 +7,7 @@ import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Student } from "@/components/students/StudentTypes";
 
 const ManagementPage = () => {
+  // Always call hooks at the top level
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);

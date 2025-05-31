@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { DashboardStats } from "@/types/dashboard";
 
 // Initial empty stats to prevent repeated object creation
@@ -17,6 +17,7 @@ const initialStats: DashboardStats = {
 };
 
 export const useDashboardStats = () => {
+  // Always call hooks at the top level
   const [stats, setStats] = useState<DashboardStats>(initialStats);
 
   // Memoize calculation function to prevent recreating on each render
@@ -70,7 +71,7 @@ export const useDashboardStats = () => {
         return previous > 0 ? Math.round(((current - previous) / previous) * 100) : 0;
       };
 
-      setStats({
+      const newStats = {
         totalStudents: studentsLength,
         totalMeals: Array.isArray(meals) ? meals.length : 0,
         totalSupplements: Array.isArray(supplements) ? supplements.length : 0,
@@ -87,7 +88,9 @@ export const useDashboardStats = () => {
         maxCapacity: 50, // ثابت
         mealCompletionRate,
         supplementCompletionRate
-      });
+      };
+
+      setStats(newStats);
     } catch (error) {
       console.error('Error calculating stats:', error);
       // در صورت خطا، آمار خالی برگرداند
@@ -119,5 +122,6 @@ export const useDashboardStats = () => {
     };
   }, [calculateStats]);
 
+  // Always return stats - never return conditionally
   return stats;
 };

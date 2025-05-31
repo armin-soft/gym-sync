@@ -51,7 +51,29 @@ export const DashboardContent = ({
   students, 
   trainerProfile 
 }: DashboardContentProps) => {
+  // Always call hooks at the top level - never conditionally
   const deviceInfo = useDeviceInfo();
+  
+  // Ensure we have valid data before rendering
+  const safeStats = stats || {
+    totalStudents: 0,
+    totalMeals: 0,
+    totalSupplements: 0,
+    studentGrowth: 0,
+    mealGrowth: 0,
+    supplementGrowth: 0,
+    studentsProgress: 0,
+    maxCapacity: 50,
+    mealCompletionRate: 0,
+    supplementCompletionRate: 0
+  };
+
+  const safeStudents = Array.isArray(students) ? students : [];
+  const safeCurrentTime = currentTime || new Date();
+  const safeTrainerProfile = trainerProfile || {
+    name: "مربی حرفه‌ای",
+    image: "/placeholder.svg"
+  };
   
   return (
     <motion.div
@@ -72,9 +94,9 @@ export const DashboardContent = ({
         {/* Hero Section */}
         <motion.div variants={itemVariants}>
           <ModernHeroSection 
-            stats={stats} 
-            currentTime={currentTime} 
-            trainerProfile={trainerProfile} 
+            stats={safeStats} 
+            currentTime={safeCurrentTime} 
+            trainerProfile={safeTrainerProfile} 
           />
         </motion.div>
 
@@ -98,12 +120,12 @@ export const DashboardContent = ({
           <div className={`${deviceInfo.isMobile ? "col-span-1" : "lg:col-span-2"} space-y-8`}>
             {/* Students Card */}
             <motion.div variants={itemVariants}>
-              <ModernRecentStudentsCard students={students} />
+              <ModernRecentStudentsCard students={safeStudents} />
             </motion.div>
             
             {/* Stats Cards */}
             <motion.div variants={itemVariants}>
-              <ModernStatsCards stats={stats} />
+              <ModernStatsCards stats={safeStats} />
             </motion.div>
           </div>
           
@@ -111,12 +133,12 @@ export const DashboardContent = ({
           <div className="space-y-8">
             {/* Progress Card */}
             <motion.div variants={itemVariants}>
-              <ModernProgressCard stats={stats} />
+              <ModernProgressCard stats={safeStats} />
             </motion.div>
 
             {/* Activity Summary Card */}
             <motion.div variants={itemVariants}>
-              <ModernActivitySummaryCard stats={stats} />
+              <ModernActivitySummaryCard stats={safeStats} />
             </motion.div>
           </div>
         </motion.div>
