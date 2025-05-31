@@ -1,51 +1,79 @@
 
 import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
-import { Activity, Clock, User, Utensils, Dumbbell, Pill } from "lucide-react";
+import { Activity, Clock, User, Utensils, Dumbbell, Pill, Edit, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useStudentHistory, HistoryEntry } from "@/hooks/useStudentHistory";
 
 interface ModernActivityFeedProps {
   stats: DashboardStats;
 }
 
 export const ModernActivityFeed = ({ stats }: ModernActivityFeedProps) => {
-  const activities = [
-    {
-      type: "student",
-      icon: User,
-      title: "شاگرد جدید اضافه شد",
-      description: "احمد رضایی به سیستم اضافه شد",
-      time: "5 دقیقه پیش",
-      color: "text-blue-600",
-      bgColor: "from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30"
-    },
-    {
-      type: "meal",
-      icon: Utensils,
-      title: "برنامه غذایی به‌روزرسانی شد",
-      description: "برنامه غذایی سارا احمدی تغییر کرد",
-      time: "15 دقیقه پیش",
-      color: "text-green-600",
-      bgColor: "from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30"
-    },
-    {
-      type: "exercise",
-      icon: Dumbbell,
-      title: "برنامه تمرینی جدید",
-      description: "تمرینات امروز علی موسوی تنظیم شد",
-      time: "30 دقیقه پیش",
-      color: "text-orange-600",
-      bgColor: "from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30"
-    },
-    {
-      type: "supplement",
-      icon: Pill,
-      title: "مکمل جدید اضافه شد",
-      description: "ویتامین D به لیست مکمل‌ها افزوده شد",
-      time: "1 ساعت پیش",
-      color: "text-purple-600",
-      bgColor: "from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30"
+  const { historyEntries } = useStudentHistory();
+  const [recentActivities, setRecentActivities] = useState<HistoryEntry[]>([]);
+
+  useEffect(() => {
+    // دریافت 4 فعالیت اخیر از تاریخچه
+    const sortedActivities = historyEntries
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 4);
+    
+    setRecentActivities(sortedActivities);
+  }, [historyEntries]);
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'exercise': return Dumbbell;
+      case 'diet': return Utensils;
+      case 'supplement': return Pill;
+      case 'edit': return Edit;
+      case 'delete': return Trash2;
+      default: return User;
     }
-  ];
+  };
+
+  const getActivityColor = (type: string) => {
+    switch (type) {
+      case 'exercise': return {
+        color: "text-orange-600",
+        bgColor: "from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30"
+      };
+      case 'diet': return {
+        color: "text-green-600",
+        bgColor: "from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30"
+      };
+      case 'supplement': return {
+        color: "text-purple-600",
+        bgColor: "from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30"
+      };
+      case 'edit': return {
+        color: "text-blue-600",
+        bgColor: "from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30"
+      };
+      case 'delete': return {
+        color: "text-red-600",
+        bgColor: "from-red-50 to-rose-50 dark:from-red-950/30 dark:to-rose-950/30"
+      };
+      default: return {
+        color: "text-gray-600",
+        bgColor: "from-gray-50 to-slate-50 dark:from-gray-950/30 dark:to-slate-950/30"
+      };
+    }
+  };
+
+  const formatRelativeTime = (timestamp: number) => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (minutes < 1) return "همین الان";
+    if (minutes < 60) return `${minutes} دقیقه پیش`;
+    if (hours < 24) return `${hours} ساعت پیش`;
+    return `${days} روز پیش`;
+  };
 
   const containerVariants = {
     initial: { opacity: 0, y: 30 },
@@ -107,78 +135,112 @@ export const ModernActivityFeed = ({ stats }: ModernActivityFeedProps) => {
         </motion.div>
 
         {/* Activities */}
-        <motion.div className="space-y-4" variants={containerVariants}>
-          {activities.map((activity, index) => {
-            const Icon = activity.icon;
-            
-            return (
-              <motion.div
-                key={activity.title}
-                variants={itemVariants}
-                whileHover={{ 
-                  x: 8, 
-                  scale: 1.02,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${activity.bgColor} border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm p-6 cursor-pointer group`}
-              >
-                {/* Hover Effect */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  initial={false}
-                />
-
-                <div className="relative z-10 flex items-start space-x-4 space-x-reverse">
-                  {/* Icon */}
+        {recentActivities.length > 0 ? (
+          <motion.div className="space-y-4" variants={containerVariants}>
+            {recentActivities.map((activity, index) => {
+              const Icon = getActivityIcon(activity.type);
+              const activityStyle = getActivityColor(activity.type);
+              
+              return (
+                <motion.div
+                  key={`${activity.id}-${activity.timestamp}`}
+                  variants={itemVariants}
+                  whileHover={{ 
+                    x: 8, 
+                    scale: 1.02,
+                    transition: { type: "spring", stiffness: 300 }
+                  }}
+                  className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${activityStyle.bgColor} border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm p-6 cursor-pointer group`}
+                >
+                  {/* Hover Effect */}
                   <motion.div 
-                    className={`w-10 h-10 rounded-xl ${activity.color} bg-white dark:bg-gray-800 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow`}
-                    whileHover={{ rotate: 12, scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </motion.div>
-
-                  {/* Content */}
-                  <div className="flex-1">
-                    <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-slate-600 dark:group-hover:from-white dark:group-hover:to-slate-400 group-hover:bg-clip-text transition-all duration-300">
-                      {activity.title}
-                    </h4>
-                    
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
-                      {activity.description}
-                    </p>
-
-                    <div className="flex items-center space-x-2 space-x-reverse text-sm text-gray-500 dark:text-gray-500">
-                      <Clock className="w-3 h-3" />
-                      <span>{activity.time}</span>
-                    </div>
-                  </div>
-
-                  {/* Status Dot */}
-                  <motion.div 
-                    className="w-3 h-3 rounded-full bg-green-500"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
+                    className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    initial={false}
                   />
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
 
-        {/* View All Button */}
-        <motion.div 
-          className="mt-8 text-center"
-          variants={itemVariants}
-        >
-          <motion.button
-            className="bg-gradient-to-r from-gray-500 to-slate-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
+                  <div className="relative z-10 flex items-start space-x-4 space-x-reverse">
+                    {/* Icon */}
+                    <motion.div 
+                      className={`w-10 h-10 rounded-xl ${activityStyle.color} bg-white dark:bg-gray-800 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow`}
+                      whileHover={{ rotate: 12, scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </motion.div>
+
+                    {/* Content */}
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-slate-600 dark:group-hover:from-white dark:group-hover:to-slate-400 group-hover:bg-clip-text transition-all duration-300">
+                        {activity.action}
+                      </h4>
+                      
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
+                        شاگرد: {activity.studentName}
+                      </p>
+
+                      <p className="text-sm text-gray-500 dark:text-gray-500 mb-2">
+                        {activity.description}
+                      </p>
+
+                      <div className="flex items-center space-x-2 space-x-reverse text-sm text-gray-500 dark:text-gray-500">
+                        <Clock className="w-3 h-3" />
+                        <span>{formatRelativeTime(activity.timestamp)}</span>
+                      </div>
+                    </div>
+
+                    {/* Status Dot */}
+                    <motion.div 
+                      className="w-3 h-3 rounded-full bg-green-500"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
+                    />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        ) : (
+          <motion.div 
+            className="text-center py-12"
+            variants={itemVariants}
           >
-            مشاهده تمام فعالیت‌ها
-          </motion.button>
-        </motion.div>
+            <motion.div 
+              className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center mb-6 mx-auto"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Activity className="w-10 h-10 text-gray-500 dark:text-gray-400" />
+            </motion.div>
+            
+            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              هیچ فعالیتی ثبت نشده
+            </h4>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              شروع به کار با شاگردان و برنامه‌ها برای مشاهده فعالیت‌ها
+            </p>
+          </motion.div>
+        )}
+
+        {/* View All Button - فقط در صورت وجود فعالیت نمایش داده شود */}
+        {recentActivities.length > 0 && (
+          <motion.div 
+            className="mt-8 text-center"
+            variants={itemVariants}
+          >
+            <motion.button
+              className="bg-gradient-to-r from-gray-500 to-slate-600 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                // ناوبری به صفحه تاریخچه
+                window.location.href = '/Management/Students/History';
+              }}
+            >
+              مشاهده تمام فعالیت‌ها
+            </motion.button>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
