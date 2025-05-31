@@ -12,8 +12,8 @@ const DayTabIcon: React.FC<DayTabIconProps> = ({ active }) => {
     <div className={cn(
       "w-4 h-4 rounded-full flex items-center justify-center",
       active 
-        ? "bg-gradient-to-br from-orange-500 to-gold-500 text-black" 
-        : "bg-black-200 dark:bg-black-700 text-black-500 dark:text-black-400"
+        ? "bg-gradient-to-br from-indigo-500 to-violet-600 text-white" 
+        : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
     )}>
       <Dumbbell className="w-2.5 h-2.5" />
     </div>

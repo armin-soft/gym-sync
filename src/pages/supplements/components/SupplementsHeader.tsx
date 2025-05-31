@@ -6,7 +6,7 @@ import { toPersianNumbers } from "@/lib/utils/numbers";
 
 export const SupplementsHeader: React.FC = () => {
   return (
-    <div className="bg-gradient-to-l from-orange-600 via-orange-500 to-gold-500 dark:from-orange-800 dark:via-orange-700 dark:to-gold-600" dir="rtl">
+    <div className="bg-gradient-to-l from-purple-600 via-blue-600 to-indigo-700 dark:from-purple-800 dark:via-blue-800 dark:to-indigo-900" dir="rtl">
       <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -28,9 +28,9 @@ export const SupplementsHeader: React.FC = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-gold-400 to-gold-500 rounded-full flex items-center justify-center"
+                className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center"
               >
-                <Sparkles className="w-3 h-3 text-black" />
+                <Sparkles className="w-3 h-3 text-white" />
               </motion.div>
             </motion.div>
             
@@ -46,9 +46,9 @@ export const SupplementsHeader: React.FC = () => {
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-1 -left-1 w-6 h-6 bg-gradient-to-r from-gold-400 to-orange-500 rounded-full flex items-center justify-center"
+                className="absolute -top-1 -left-1 w-6 h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center"
               >
-                <Sparkles className="w-3 h-3 text-black" />
+                <Sparkles className="w-3 h-3 text-white" />
               </motion.div>
             </motion.div>
           </div>

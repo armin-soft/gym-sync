@@ -26,12 +26,12 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         className={cn(
           "animate-spin",
           sizeClasses[size],
-          size === "sm" ? "text-black-600" : "text-orange-500",
+          size === "sm" ? "text-slate-600" : "text-primary",
           className
         )}
       />
       {(text || size === "lg") && (
-        <p className="mt-4 text-black-600 dark:text-gold-400">
+        <p className="mt-4 text-slate-500 dark:text-slate-400">
           {text || "در حال بارگذاری..."}
         </p>
       )}

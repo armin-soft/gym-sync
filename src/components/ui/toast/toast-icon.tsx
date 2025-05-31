@@ -11,10 +11,10 @@ export function ToastIcon({ variant }: ToastIconProps) {
     case "destructive":
       return <AlertCircle className="h-5 w-5 text-red-500" />
     case "success":
-      return <CheckCircle className="h-5 w-5 text-orange-500" />
+      return <CheckCircle className="h-5 w-5 text-emerald-500" />
     case "warning":
-      return <AlertTriangle className="h-5 w-5 text-gold-500" />
+      return <AlertTriangle className="h-5 w-5 text-amber-500" />
     default:
-      return <Info className="h-5 w-5 text-orange-500" />
+      return <Info className="h-5 w-5 text-blue-500" />
   }
 }

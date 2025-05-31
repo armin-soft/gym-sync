@@ -13,13 +13,13 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
       <div className="space-y-3">
         <Progress 
           value={progress} 
-          className="h-3 sm:h-4 bg-black-900/20 overflow-hidden" 
-          indicatorClassName="bg-gradient-to-r from-black-500 to-gold-500"
+          className="h-3 sm:h-4 bg-white/10 overflow-hidden" 
+          indicatorClassName="bg-white"
           showAnimation={progress < 100}
         />
         <div className="flex justify-between items-center text-sm">
           <span className="text-white/70">{loadingText}</span>
-          <div className="bg-gradient-to-r from-black-500/20 to-gold-500/20 px-3 py-1 rounded-full text-white font-bold border border-gold-500/30">
+          <div className="bg-white/10 px-3 py-1 rounded-full text-white font-bold">
             {toPersianNumbers(progress)}٪
           </div>
         </div>

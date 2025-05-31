@@ -11,7 +11,7 @@ export const LoadingIcon = () => {
         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
         className="text-white/80"
       >
-        <Loader2 className="h-16 w-16 text-gold-500" strokeWidth={1.5} />
+        <Loader2 className="h-16 w-16" strokeWidth={1.5} />
       </motion.div>
       <div className="absolute inset-0 flex items-center justify-center">
         <AppIcon size="lg" />
