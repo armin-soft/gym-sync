@@ -1,13 +1,38 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, SunMoon } from "lucide-react";
+import { Clock, Calendar, SunMoon, Sun, Moon, Sunrise, Sunset, CloudSnow, Flower2, Sun as SunIcon, Leaf } from "lucide-react";
 import { useShamsiDate } from "@/hooks/useShamsiDate";
 import { useState, useEffect } from "react";
 
 interface DateTimeSectionProps {
   currentTime: Date;
 }
+
+// Helper function to get season icon
+const getSeasonIcon = (season: string) => {
+  switch (season?.toLowerCase()) {
+    case 'بهار':
+      return Flower2;
+    case 'تابستان':
+      return SunIcon;
+    case 'پاییز':
+      return Leaf;
+    case 'زمستان':
+      return CloudSnow;
+    default:
+      return SunMoon;
+  }
+};
+
+// Helper function to get time-based icon
+const getTimeIcon = (timeBasedEmoji: string) => {
+  if (timeBasedEmoji?.includes('🌅') || timeBasedEmoji?.includes('sunrise')) return Sunrise;
+  if (timeBasedEmoji?.includes('☀️') || timeBasedEmoji?.includes('sun')) return Sun;
+  if (timeBasedEmoji?.includes('🌇') || timeBasedEmoji?.includes('sunset')) return Sunset;
+  if (timeBasedEmoji?.includes('🌙') || timeBasedEmoji?.includes('moon')) return Moon;
+  return Clock;
+};
 
 export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
   const { dateInfo, isLoading } = useShamsiDate();
@@ -27,6 +52,9 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
     hidden: { opacity: 0, y: -20, scale: 0.8 },
     visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 20 } }
   };
+
+  const SeasonIconComponent = dateInfo?.Season ? getSeasonIcon(dateInfo.Season) : SunMoon;
+  const TimeIconComponent = dateInfo?.Time_Based_Emoji ? getTimeIcon(dateInfo.Time_Based_Emoji) : Clock;
 
   return (
     <motion.div 
@@ -64,9 +92,12 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
                 variant="outline" 
                 className="border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 hover:bg-white/20 transition-colors group"
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform">
-                  {dateInfo.Season_Emoji || "🌟"}
-                </span>
+                <motion.div
+                  className="group-hover:scale-110 transition-transform"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <SeasonIconComponent className="w-5 h-5 text-yellow-300" />
+                </motion.div>
                 <Calendar className="w-3.5 h-3.5 mr-1 text-yellow-300 opacity-80" />
                 <span>{dateInfo.Shamsi_Date || "تاریخ نامشخص"}</span>
                 <span className="text-white/60 text-xs px-1.5 py-0.5 bg-white/10 rounded-full">
@@ -80,9 +111,12 @@ export const DateTimeSection = ({ currentTime }: DateTimeSectionProps) => {
                 variant="outline" 
                 className="border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 hover:bg-white/20 transition-colors group"
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform">
-                  {dateInfo.Time_Based_Emoji || "⏰"}
-                </span>
+                <motion.div
+                  className="group-hover:scale-110 transition-transform"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <TimeIconComponent className="w-5 h-5 text-blue-300" />
+                </motion.div>
                 <Clock className="w-3.5 h-3.5 ml-1.5 text-blue-300 opacity-80" />
                 <motion.span 
                   key={time.getTime()} 

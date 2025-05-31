@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Users, Activity, Sparkles } from "lucide-react";
+import { Crown, Users, Activity, Sparkles, Hand } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProfileSectionProps {
@@ -62,7 +62,14 @@ export const ProfileSection = ({ trainerProfile, stats }: ProfileSectionProps) =
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center text-white">
-              خوش آمدید <span className="inline-block animate-bounce ml-1">👋</span>
+              خوش آمدید 
+              <motion.div
+                animate={{ rotate: [0, 15, -15, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="ml-2"
+              >
+                <Hand className="w-6 h-6 text-yellow-300" />
+              </motion.div>
             </h1>
             <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm hover:bg-white/30 transition-colors self-start sm:self-auto">
               {profileName}

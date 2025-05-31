@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { GraduationCap, Dumbbell, Trophy } from "lucide-react";
+import { GraduationCap, Dumbbell, Trophy, TrendingUp } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentLoginStatsProps {
@@ -11,7 +11,7 @@ export const StudentLoginStats = ({ variants }: StudentLoginStatsProps) => {
   const stats = [
     { label: "شاگردان فعال", value: toPersianNumbers("1250"), icon: GraduationCap },
     { label: "تمرینات موثر", value: toPersianNumbers("850"), icon: Dumbbell },
-    { label: "موفقیت", value: toPersianNumbers("95") + "%", icon: Trophy },
+    { label: "نرخ موفقیت", value: toPersianNumbers("95") + "%", icon: TrendingUp },
   ];
 
   return (
