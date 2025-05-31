@@ -1,7 +1,8 @@
 
 import { motion } from "framer-motion";
-import { LucideIcon, ArrowLeft } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Circle } from "lucide-react";
 
 interface UserType {
   id: string;
@@ -18,87 +19,105 @@ interface UserType {
 
 interface UserTypeCardProps {
   type: UserType;
+  isHovered: boolean;
   isSelected: boolean;
   isProcessing?: boolean;
-  onSelect: () => void;
+  onHover: (id: string | null) => void;
+  onSelect: (id: string) => void;
 }
 
 export const UserTypeCard = ({ 
   type, 
+  isHovered, 
   isSelected, 
   isProcessing = false,
+  onHover, 
   onSelect 
 }: UserTypeCardProps) => {
   const Icon = type.icon;
-  const isDisabled = isProcessing;
+  const isDisabled = isProcessing || isSelected;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isDisabled) return;
+    
+    console.log('UserTypeCard clicked:', type.id);
+    onSelect(type.id);
+  };
+
+  const handleHoverStart = () => {
+    if (!isDisabled) {
+      onHover(type.id);
+    }
+  };
+
+  const handleHoverEnd = () => {
+    if (!isDisabled) {
+      onHover(null);
+    }
+  };
 
   return (
     <motion.div
-      whileHover={!isDisabled ? { scale: 1.02, y: -4 } : {}}
+      whileHover={!isDisabled ? { scale: 1.02 } : {}}
       whileTap={!isDisabled ? { scale: 0.98 } : {}}
+      onHoverStart={handleHoverStart}
+      onHoverEnd={handleHoverEnd}
       className={`relative group ${!isDisabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-      onClick={!isDisabled ? onSelect : undefined}
+      onClick={handleClick}
     >
-      {/* Simple Card */}
-      <div className={`relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 transition-all duration-300 ${
-        !isDisabled ? 'hover:border-violet-300 hover:shadow-lg' : 'opacity-75'
-      } ${isSelected ? 'ring-2 ring-violet-500 shadow-lg' : ''}`}>
+      <div className={`relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6 transition-all duration-300 ${
+        !isDisabled ? 'hover:shadow-lg' : 'opacity-75'
+      } ${isSelected ? 'ring-2 ring-blue-500' : ''}`}>
         
-        {/* Content */}
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className={`p-3 rounded-xl bg-gradient-to-br ${type.gradient} text-white shadow-md`}>
-              <Icon className="w-6 h-6" />
-            </div>
-            
-            <div className="bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded-full px-3 py-1 text-sm font-medium">
-              {type.badge}
-            </div>
+        <div className="text-center space-y-4">
+          <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${type.gradient} rounded-xl shadow-md ${
+            isSelected ? 'animate-pulse' : ''
+          }`}>
+            <Icon className="w-8 h-8 text-white" />
           </div>
 
-          {/* Title */}
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
               {type.title}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
               {type.subtitle}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {type.description}
             </p>
           </div>
 
-          {/* Features */}
           <div className="space-y-2">
             {type.features.slice(0, 3).map((feature, index) => (
-              <div key={feature} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <div className="w-1.5 h-1.5 bg-violet-500 rounded-full" />
-                <span>{feature}</span>
+              <div
+                key={feature}
+                className="flex items-center justify-center text-xs text-gray-600 dark:text-gray-300"
+              >
+                <Circle className="w-2 h-2 ml-2 text-green-500 fill-current" />
+                {feature}
               </div>
             ))}
           </div>
 
-          {/* Action Button */}
           <Button
-            className={`w-full h-12 bg-gradient-to-r ${type.gradient} hover:brightness-110 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-300`}
+            className={`w-full bg-gradient-to-r ${type.gradient} text-white font-medium rounded-lg transition-all duration-300`}
             disabled={isDisabled}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!isDisabled) onSelect();
-            }}
+            onClick={handleClick}
           >
-            <div className="flex items-center justify-center gap-2">
-              {isSelected ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>در حال ورود...</span>
-                </>
-              ) : (
-                <>
-                  <span>ورود به پنل</span>
-                  <ArrowLeft className="h-4 w-4" />
-                </>
-              )}
-            </div>
+            {isSelected ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                در حال ورود...
+              </div>
+            ) : isProcessing ? (
+              'لطفا صبر کنید...'
+            ) : (
+              'ورود به پنل'
+            )}
           </Button>
         </div>
       </div>
