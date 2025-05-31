@@ -1,0 +1,34 @@
+
+/* اسکرول‌بار سفارشی */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* انیمیشن‌های ریسپانسیو */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-responsive {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .hover-scale-responsive {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .hover-scale-responsive:hover {
+    transform: scale(1.02) translateZ(0);
+  }
+}
