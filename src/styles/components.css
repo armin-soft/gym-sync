@@ -1,37 +1,45 @@
 
-/* کامپوننت‌های UI */
+/* کامپوننت‌های UI با رنگ‌های برند */
 @layer components {
-  /* کامپوننت‌های شیشه‌ای */
+  /* کامپوننت‌های شیشه‌ای با رنگ‌های برند */
   .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+    @apply bg-white/10 backdrop-blur-lg border border-orange-500/20;
+  }
+  
+  .glass-dark {
+    @apply bg-black-900/10 backdrop-blur-lg border border-gold-500/20;
   }
   
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
 
+  .card-hover-brand {
+    @apply transition-all duration-300 hover:shadow-brand-orange hover:-translate-y-1;
+  }
+
   /* گرادیان‌های برند */
   .bg-brand-gradient {
-    @apply bg-gradient-to-br from-brand-500 to-brand-700;
+    background: linear-gradient(135deg, var(--color-brand-orange), var(--color-brand-gold));
   }
   
   .bg-brand-gradient-light {
-    @apply bg-gradient-to-br from-brand-400/90 to-brand-600/90;
+    background: linear-gradient(135deg, var(--color-orange-400), var(--color-gold-400));
   }
   
-  .bg-success-gradient {
-    @apply bg-gradient-to-br from-success-400 to-success-600;
+  .bg-brand-gradient-dark {
+    background: linear-gradient(135deg, var(--color-brand-black), var(--color-brand-orange));
   }
   
-  .bg-info-gradient {
-    @apply bg-gradient-to-br from-info-400 to-info-600;
-  }
-  
-  .bg-warning-gradient {
-    @apply bg-gradient-to-br from-warning-400 to-warning-600;
+  .bg-brand-gradient-warm {
+    background: linear-gradient(135deg, var(--color-gold-400), var(--color-orange-500));
   }
 
-  /* دکمه‌های پاسخگو */
+  .bg-brand-gradient-radial {
+    background: radial-gradient(circle, var(--color-brand-gold), var(--color-brand-orange), var(--color-brand-black));
+  }
+
+  /* دکمه‌های پاسخگو با رنگ‌های برند */
   .btn {
     @apply inline-flex items-center justify-center px-2 py-1 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md
            transition-colors duration-200 ease-in-out
@@ -39,20 +47,138 @@
   }
 
   .btn-primary {
-    @apply btn bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply btn text-white shadow-brand-orange hover:bg-orange-600;
+    background-color: var(--color-brand-orange);
   }
 
   .btn-secondary {
-    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    @apply btn text-black shadow-brand-gold hover:bg-gold-600;
+    background-color: var(--color-brand-gold);
   }
 
-  /* کارت‌های پاسخگو */
+  .btn-dark {
+    @apply btn text-white shadow-brand-black hover:bg-black-800;
+    background-color: var(--color-brand-black);
+  }
+
+  .btn-gradient {
+    @apply btn bg-brand-gradient text-white shadow-lg hover:shadow-xl;
+  }
+
+  /* کارت‌های پاسخگو با رنگ‌های برند */
   .responsive-card {
     @apply p-3 sm:p-4 md:p-6 lg:p-8 rounded-lg border bg-card text-card-foreground shadow-sm;
+  }
+
+  .responsive-card-brand {
+    @apply responsive-card border-orange-200 hover:border-orange-300 transition-colors;
+  }
+
+  .responsive-card-accent {
+    @apply responsive-card bg-gradient-to-br from-orange-50 to-gold-50 border-orange-200;
+  }
+
+  /* هدرهای برند */
+  .brand-header {
+    @apply bg-brand-gradient text-white shadow-lg;
+  }
+
+  .brand-header-light {
+    @apply bg-gradient-to-r from-orange-100 to-gold-100 text-black-900 border-b-2 border-orange-300;
+  }
+
+  /* نوار کناری برند */
+  .brand-sidebar {
+    @apply bg-gradient-to-b from-black-900 via-black-800 to-orange-900 text-white;
+  }
+
+  .brand-sidebar-light {
+    @apply bg-gradient-to-b from-orange-50 via-white to-gold-50 text-black-900 border-r-2 border-orange-200;
+  }
+
+  /* متن‌های برند */
+  .brand-text-gradient {
+    background: linear-gradient(135deg, var(--color-brand-orange), var(--color-brand-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .brand-text-dark-gradient {
+    background: linear-gradient(135deg, var(--color-brand-black), var(--color-brand-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* نشانگرهای برند */
+  .brand-badge {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+    background-color: var(--color-brand-orange);
+    color: white;
+  }
+
+  .brand-badge-gold {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+    background-color: var(--color-brand-gold);
+    color: var(--color-brand-black);
+  }
+
+  .brand-badge-dark {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+    background-color: var(--color-brand-black);
+    color: white;
+  }
+
+  /* فرم‌های برند */
+  .brand-input {
+    @apply w-full px-3 py-2 border rounded-md transition-colors
+           border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200;
+  }
+
+  .brand-input-dark {
+    @apply brand-input bg-black-50 border-black-300 focus:border-black-500 focus:ring-black-200;
   }
 
   /* تنظیمات انیمیشن‌ها */
   .transition-default {
     @apply transition-all duration-200 ease-in-out;
+  }
+
+  .transition-brand {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* هاور افکت‌های برند */
+  .hover-brand-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(255, 107, 53, 0.3);
+  }
+
+  .hover-brand-glow:hover {
+    box-shadow: 0 0 30px var(--color-brand-orange), 0 0 60px var(--color-brand-gold);
+  }
+
+  /* لودینگ اسپینر برند */
+  .brand-spinner {
+    border: 3px solid var(--color-orange-200);
+    border-top: 3px solid var(--color-brand-orange);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* پراگرس بار برند */
+  .brand-progress {
+    background: linear-gradient(90deg, var(--color-brand-orange), var(--color-brand-gold));
+    transition: width 0.3s ease;
+  }
+
+  .brand-progress-track {
+    background-color: var(--color-orange-100);
   }
 }

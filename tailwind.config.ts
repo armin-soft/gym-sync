@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -87,27 +88,62 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // افزودن رنگ های جدید برای استفاده در سراسر برنامه
+        // رنگ‌های اصلی برند: مشکی، نارنجی و طلایی
         brand: {
-          50: "#f3f1ff",
-          100: "#ebe5ff",
-          200: "#d9d0ff",
-          300: "#bfaeff",
-          400: "#9f80ff",
-          500: "#7c3aed", // رنگ اصلی برند
-          600: "#6d28d9",
-          700: "#5b21b6",
-          800: "#4c1d95",
-          900: "#3e1c79",
-          950: "#2e1065",
+          black: "var(--color-brand-black)",
+          orange: "var(--color-brand-orange)",
+          gold: "var(--color-brand-gold)",
         },
+        // طیف کامل رنگ‌های مشکی
+        black: {
+          50: "var(--color-black-50)",
+          100: "var(--color-black-100)",
+          200: "var(--color-black-200)",
+          300: "var(--color-black-300)",
+          400: "var(--color-black-400)",
+          500: "var(--color-black-500)",
+          600: "var(--color-black-600)",
+          700: "var(--color-black-700)",
+          800: "var(--color-black-800)",
+          900: "var(--color-black-900)",
+          950: "var(--color-black-950)",
+        },
+        // طیف کامل رنگ‌های نارنجی
+        orange: {
+          50: "var(--color-orange-50)",
+          100: "var(--color-orange-100)",
+          200: "var(--color-orange-200)",
+          300: "var(--color-orange-300)",
+          400: "var(--color-orange-400)",
+          500: "var(--color-orange-500)",
+          600: "var(--color-orange-600)",
+          700: "var(--color-orange-700)",
+          800: "var(--color-orange-800)",
+          900: "var(--color-orange-900)",
+          950: "var(--color-orange-950)",
+        },
+        // طیف کامل رنگ‌های طلایی
+        gold: {
+          50: "var(--color-gold-50)",
+          100: "var(--color-gold-100)",
+          200: "var(--color-gold-200)",
+          300: "var(--color-gold-300)",
+          400: "var(--color-gold-400)",
+          500: "var(--color-gold-500)",
+          600: "var(--color-gold-600)",
+          700: "var(--color-gold-700)",
+          800: "var(--color-gold-800)",
+          900: "var(--color-gold-900)",
+          950: "var(--color-gold-950)",
+        },
+        // رنگ‌های وضعیت
         success: {
           50: "#eefbf3",
           100: "#d6f5e1",
           200: "#b1eac8",
           300: "#7cd8a4",
           400: "#47bf7a",
-          500: "#36b366", // رنگ موفقیت
+          500: "#36b366",
           600: "#198346",
           700: "#176839",
           800: "#155230",
@@ -115,17 +151,17 @@ export default {
           950: "#09271a",
         },
         warning: {
-          50: "#fff9ec",
-          100: "#fff0d3",
-          200: "#fedea5",
-          300: "#fdc46c",
-          400: "#fba636",
-          500: "#f97316", // رنگ هشدار
-          600: "#ea580c",
-          700: "#c2410c",
-          800: "#9a3412",
-          900: "#7c2d12",
-          950: "#431407",
+          50: "var(--color-gold-50)",
+          100: "var(--color-gold-100)",
+          200: "var(--color-gold-200)",
+          300: "var(--color-gold-300)",
+          400: "var(--color-gold-400)",
+          500: "var(--color-gold-500)",
+          600: "var(--color-gold-600)",
+          700: "var(--color-gold-700)",
+          800: "var(--color-gold-800)",
+          900: "var(--color-gold-900)",
+          950: "var(--color-gold-950)",
         },
         info: {
           50: "#f0f7ff",
@@ -133,7 +169,7 @@ export default {
           200: "#cae0fd",
           300: "#a6cbfc",
           400: "#7aadfd",
-          500: "#3b82f6", // رنگ اطلاعات
+          500: "#3b82f6",
           600: "#2662ea",
           700: "#1d4ed8",
           800: "#1e40af",
@@ -171,12 +207,29 @@ export default {
           from: { transform: "translateX(-100%)" },
           to: { transform: "translateX(0)" },
         },
+        // انیمیشن‌های جدید با رنگ‌های برند
+        brandGlow: {
+          "0%, 100%": { 
+            boxShadow: "0 0 20px var(--color-brand-orange)" 
+          },
+          "50%": { 
+            boxShadow: "0 0 30px var(--color-brand-gold), 0 0 40px var(--color-brand-orange)" 
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         fadeIn: "fadeIn 0.5s ease-out",
         slideIn: "slideIn 0.5s ease-out",
+        brandGlow: "brandGlow 2s ease-in-out infinite",
+      },
+      // گرادیان‌های از پیش تعریف شده
+      backgroundImage: {
+        'brand-gradient': 'linear-gradient(135deg, var(--color-brand-orange), var(--color-brand-gold))',
+        'brand-gradient-dark': 'linear-gradient(135deg, var(--color-brand-black), var(--color-brand-orange))',
+        'brand-gradient-warm': 'linear-gradient(135deg, var(--color-gold-400), var(--color-orange-500))',
+        'brand-gradient-radial': 'radial-gradient(circle, var(--color-brand-gold), var(--color-brand-orange), var(--color-brand-black))',
       },
     },
   },
