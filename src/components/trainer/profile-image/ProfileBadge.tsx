@@ -10,7 +10,7 @@ export const ProfileBadge = () => {
       transition={{ delay: 0.4 }}
       className="absolute -bottom-2 -right-1"
     >
-      <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 border-none text-white px-2 py-0.5 text-xs">
+      <Badge className="bg-gradient-to-r from-orange-500 to-gold-500 border-none text-black px-2 py-0.5 text-xs">
         مربی
       </Badge>
     </motion.div>
