@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -10,16 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-orange-500 text-black hover:bg-orange-600 shadow-sm border border-orange-500/20 hover:shadow-md",
+        default: "bg-gold-500 text-black hover:bg-gold-600 shadow-sm border border-gold-500/20 hover:shadow-md",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm border border-destructive/20 hover:shadow-md",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-gold-500 text-black hover:bg-gold-600 shadow-sm border border-gold-500/20 hover:shadow-md",
+        secondary: "bg-black-500 text-gold-400 hover:bg-black-600 shadow-sm border border-black-500/20 hover:shadow-md",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-orange-500 underline-offset-4 hover:underline",
-        gradient: "bg-gradient-to-r from-orange-500 to-gold-500 hover:from-orange-600 hover:to-gold-600 text-black shadow-sm hover:shadow-md border border-orange-500/10",
-        success: "bg-orange-500 text-black hover:bg-orange-600 shadow-sm border border-orange-500/20 hover:shadow-md",
+        link: "text-gold-500 underline-offset-4 hover:underline",
+        gradient: "bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-black shadow-sm hover:shadow-md border border-gold-500/10",
+        success: "bg-gold-500 text-black hover:bg-gold-600 shadow-sm border border-gold-500/20 hover:shadow-md",
         warning: "bg-gold-500 text-black hover:bg-gold-600 shadow-sm border border-gold-500/20 hover:shadow-md",
-        info: "bg-orange-500 text-black hover:bg-orange-600 shadow-sm border border-orange-500/20 hover:shadow-md",
+        info: "bg-gold-500 text-black hover:bg-gold-600 shadow-sm border border-gold-500/20 hover:shadow-md",
       },
       size: {
         default: "h-10 px-4 py-2",

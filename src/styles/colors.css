@@ -1,5 +1,5 @@
 
-/* تنظیمات رنگ‌ها و تم - طرح مشکی، نارنجی، طلایی */
+/* تنظیمات رنگ‌ها و تم - طرح مشکی و طلایی */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -8,10 +8,10 @@
     --card-foreground: 30 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 30 10% 3.9%;
-    --primary: 25 95% 53%; /* نارنجی به عنوان رنگ اصلی */
+    --primary: 45 100% 51%; /* طلایی به عنوان رنگ اصلی */
     --primary-foreground: 0 0% 0%;
-    --secondary: 45 100% 51%; /* طلایی */
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 0 0% 15%; /* مشکی */
+    --secondary-foreground: 45 100% 85%;
     --muted: 30 4.8% 95.9%;
     --muted-foreground: 30 3.8% 46.1%;
     --accent: 45 100% 51%; /* طلایی */
@@ -20,7 +20,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 30 5.9% 90%;
     --input: 30 5.9% 90%;
-    --ring: 25 95% 53%;
+    --ring: 45 100% 51%;
     --radius: 0.75rem;
   }
  
@@ -31,10 +31,10 @@
     --card-foreground: 45 100% 85%;
     --popover: 0 0% 8%;
     --popover-foreground: 45 100% 85%;
-    --primary: 25 95% 53%; /* نارنجی */
+    --primary: 45 100% 51%; /* طلایی */
     --primary-foreground: 0 0% 0%;
-    --secondary: 45 100% 51%; /* طلایی */
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 0 0% 15%; /* مشکی */
+    --secondary-foreground: 45 100% 85%;
     --muted: 0 0% 15%;
     --muted-foreground: 30 5% 64.9%;
     --accent: 45 100% 51%; /* طلایی */
@@ -43,6 +43,6 @@
     --destructive-foreground: 210 40% 98%;
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 25 95% 53%;
+    --ring: 45 100% 51%;
   }
 }
