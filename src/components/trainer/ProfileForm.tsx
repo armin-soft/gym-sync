@@ -9,6 +9,8 @@ import { SaveButton } from "./SaveButton";
 import { FormProvider } from "./form/FormContext";
 import { FormContent } from "./form/FormContent";
 import { validateField, validateAllFields } from "./form/validation";
+import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -71,35 +73,96 @@ export const ProfileForm = ({
   };
 
   const getCardPadding = () => {
-    if (deviceInfo.isMobile) return "px-4 py-5";
-    if (deviceInfo.isTablet) return "px-5 py-6";
-    return "px-6 py-7";
+    if (deviceInfo.isMobile) return "p-6";
+    if (deviceInfo.isTablet) return "p-7";
+    return "p-8";
   };
 
   return (
-    <Card className={cn(
-      "backdrop-blur-xl bg-white/50 dark:bg-gray-900/30 border-primary/10 shadow-xl h-full",
-      "transition-all duration-300 hover:shadow-2xl hover:bg-white/60 dark:hover:bg-gray-900/40"
-    )}>
-      <div className={cn(
-        getCardPadding(),
-        "space-y-6 h-full flex flex-col"
+    <motion.div
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="relative h-full"
+    >
+      {/* Enhanced background decoration */}
+      <div className="absolute -inset-1 bg-gradient-to-br from-indigo-500/15 via-purple-500/10 to-violet-500/5 rounded-3xl blur-xl opacity-70" />
+      
+      <Card className={cn(
+        "relative backdrop-blur-2xl border-0 shadow-2xl h-full overflow-hidden",
+        "bg-gradient-to-br from-white/70 via-white/60 to-indigo-50/30 dark:from-gray-800/70 dark:via-gray-700/60 dark:to-indigo-900/20",
+        "hover:shadow-3xl hover:from-white/80 hover:via-white/70 hover:to-indigo-50/40",
+        "transition-all duration-500"
       )}>
-        <FormProvider
-          profile={profile}
-          onUpdate={handleInputChange}
-          errors={errors}
-          setErrors={setErrors}
-          validFields={validFields}
-          setValidFields={setValidFields}
-          activeSection={activeSection}
-          isSaving={isSaving}
-        >
-          <FormContent />
-        </FormProvider>
+        {/* Subtle pattern overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-indigo-500/5 to-transparent opacity-40" />
+        
+        {/* Dynamic corner decorations */}
+        <motion.div 
+          className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-violet-400/20 to-transparent rounded-full blur-2xl"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3]
+          }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-indigo-400/15 to-transparent rounded-full blur-xl"
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.5, 0.2]
+          }}
+          transition={{ duration: 5, repeat: Infinity }}
+        />
 
-        <SaveButton onSave={handleSave} isLoading={isSaving} />
-      </div>
-    </Card>
+        <div className={cn(
+          getCardPadding(),
+          "space-y-8 h-full flex flex-col relative z-10"
+        )}>
+          <FormProvider
+            profile={profile}
+            onUpdate={handleInputChange}
+            errors={errors}
+            setErrors={setErrors}
+            validFields={validFields}
+            setValidFields={setValidFields}
+            activeSection={activeSection}
+            isSaving={isSaving}
+          >
+            <motion.div 
+              className="flex-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            >
+              <FormContent />
+            </motion.div>
+          </FormProvider>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <SaveButton onSave={handleSave} isLoading={isSaving} />
+          </motion.div>
+        </div>
+
+        {/* Floating sparkle decoration */}
+        <motion.div 
+          className="absolute top-6 left-6 opacity-40"
+          animate={{ 
+            rotate: 360,
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ 
+            rotate: { duration: 6, repeat: Infinity, ease: "linear" },
+            scale: { duration: 3, repeat: Infinity }
+          }}
+        >
+          <Sparkles className="w-5 h-5 text-indigo-500" />
+        </motion.div>
+      </Card>
+    </motion.div>
   );
 };

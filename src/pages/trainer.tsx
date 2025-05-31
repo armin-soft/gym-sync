@@ -9,7 +9,7 @@ import { ProfileHeader } from "@/components/trainer/ProfileHeader";
 import { ProfileSidebar } from "@/components/trainer/ProfileSidebar";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Star, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TrainerProfile = () => {
@@ -77,80 +77,146 @@ const TrainerProfile = () => {
   // Decorative elements for the background
   const BackgroundElements = () => (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Gradient blobs */}
-      <div className="absolute -top-40 -right-20 w-80 h-80 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-3xl rounded-full" />
-      <div className="absolute top-1/4 -left-40 w-80 h-80 bg-gradient-to-br from-sky-500/10 to-blue-500/5 blur-3xl rounded-full" />
-      <div className="absolute -bottom-20 right-20 w-60 h-60 bg-gradient-to-tr from-pink-500/10 to-rose-500/5 blur-3xl rounded-full" />
+      {/* Enhanced gradient mesh */}
+      <div className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-violet-500/20 via-purple-500/15 to-indigo-500/10 blur-3xl rounded-full animate-pulse" />
+      <div className="absolute top-1/3 -left-48 w-80 h-80 bg-gradient-to-br from-cyan-500/15 via-blue-500/10 to-violet-500/5 blur-3xl rounded-full" />
+      <div className="absolute -bottom-32 right-1/4 w-72 h-72 bg-gradient-to-tr from-emerald-500/15 via-teal-500/10 to-cyan-500/5 blur-3xl rounded-full" />
+      
+      {/* Floating geometric shapes */}
+      <motion.div
+        className="absolute top-20 right-20 w-4 h-4 bg-violet-400/30 rounded-full"
+        animate={{
+          y: [-10, 10, -10],
+          opacity: [0.3, 0.7, 0.3]
+        }}
+        transition={{ duration: 4, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute top-40 left-1/4 w-3 h-3 bg-cyan-400/40 rounded-full"
+        animate={{
+          y: [10, -15, 10],
+          opacity: [0.4, 0.8, 0.4]
+        }}
+        transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+      />
       
       {/* Animated sparkles */}
-      {Array.from({ length: 8 }).map((_, i) => (
+      {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={i}
           className="absolute"
           initial={{ 
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            opacity: 0.1,
+            opacity: 0,
             scale: 0.5
           }}
           animate={{
-            opacity: [0.2, 0.5, 0.2],
-            scale: [0.6, 1, 0.6]
+            opacity: [0.1, 0.6, 0.1],
+            scale: [0.5, 1.2, 0.5],
+            rotate: [0, 180, 360]
           }}
           transition={{
-            duration: Math.random() * 4 + 3,
+            duration: Math.random() * 6 + 4,
             repeat: Infinity,
-            delay: Math.random() * 5
+            delay: Math.random() * 8,
+            ease: "easeInOut"
           }}
         >
-          <Sparkles className={cn(
-            "text-indigo-400/30",
-            i % 3 === 0 ? "w-4 h-4" : i % 3 === 1 ? "w-5 h-5" : "w-3 h-3"
-          )} />
+          {i % 4 === 0 ? (
+            <Sparkles className={cn(
+              "text-violet-400/40",
+              i % 3 === 0 ? "w-4 h-4" : "w-3 h-3"
+            )} />
+          ) : i % 4 === 1 ? (
+            <Star className={cn(
+              "text-cyan-400/30",
+              i % 3 === 0 ? "w-3 h-3" : "w-2 h-2"
+            )} />
+          ) : (
+            <Crown className={cn(
+              "text-emerald-400/35",
+              i % 3 === 0 ? "w-4 h-4" : "w-3 h-3"
+            )} />
+          )}
         </motion.div>
       ))}
+      
+      {/* Dynamic grid overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-violet-500/5 to-transparent" 
+           style={{
+             backgroundImage: `
+               linear-gradient(45deg, transparent 24%, rgba(139, 92, 246, 0.03) 25%, rgba(139, 92, 246, 0.03) 26%, transparent 27%, transparent 74%, rgba(139, 92, 246, 0.03) 75%, rgba(139, 92, 246, 0.03) 76%, transparent 77%),
+               linear-gradient(-45deg, transparent 24%, rgba(14, 165, 233, 0.02) 25%, rgba(14, 165, 233, 0.02) 26%, transparent 27%, transparent 74%, rgba(14, 165, 233, 0.02) 75%, rgba(14, 165, 233, 0.02) 76%, transparent 77%)
+             `,
+             backgroundSize: '60px 60px'
+           }} 
+      />
     </div>
   );
 
   return (
-    <PageContainer withBackground fullWidth fullHeight className="w-full overflow-auto">
+    <PageContainer withBackground fullWidth fullHeight className="relative overflow-hidden">
       <BackgroundElements />
       
       <motion.div 
-        className="w-full h-full flex flex-col space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8"
+        className="relative z-10 w-full h-full flex flex-col space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        {/* Profile Header */}
-        <ProfileHeader />
+        {/* Enhanced Profile Header */}
+        <motion.div
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
+          <ProfileHeader />
+        </motion.div>
 
-        {/* Main Content */}
-        <div className={
-          deviceInfo.isMobile 
-            ? "flex flex-col space-y-6" 
-            : "grid lg:grid-cols-[320px_1fr] xl:grid-cols-[380px_1fr] gap-6 md:gap-8"
-        }>
-          {/* Sidebar */}
-          <ProfileSidebar
-            profile={profile}
-            onImageChange={(image) => handleUpdate('image', image)} 
-            activeSection={activeSection}
-            onTabChange={setActiveSection}
-          />
+        {/* Main Content with enhanced animations */}
+        <motion.div 
+          className={
+            deviceInfo.isMobile 
+              ? "flex flex-col space-y-6" 
+              : "grid lg:grid-cols-[340px_1fr] xl:grid-cols-[400px_1fr] gap-6 md:gap-8"
+          }
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          {/* Enhanced Sidebar */}
+          <motion.div
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <ProfileSidebar
+              profile={profile}
+              onImageChange={(image) => handleUpdate('image', image)} 
+              activeSection={activeSection}
+              onTabChange={setActiveSection}
+            />
+          </motion.div>
 
-          {/* Form */}
-          <ProfileForm
-            profile={profile}
-            onUpdate={handleUpdate}
-            onSave={handleSave}
-            errors={errors}
-            setErrors={setErrors}
-            validFields={validFields}
-            setValidFields={setValidFields}
-            activeSection={activeSection}
-            isSaving={isSaving}
-          />
+          {/* Enhanced Form */}
+          <motion.div
+            initial={{ x: 30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <ProfileForm
+              profile={profile}
+              onUpdate={handleUpdate}
+              onSave={handleSave}
+              errors={errors}
+              setErrors={setErrors}
+              validFields={validFields}
+              setValidFields={setValidFields}
+              activeSection={activeSection}
+              isSaving={isSaving}
+            />
+          </motion.div>
         </div>
       </motion.div>
     </PageContainer>
