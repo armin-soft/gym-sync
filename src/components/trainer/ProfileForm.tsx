@@ -9,7 +9,7 @@ import { FormProvider } from "./form/FormContext";
 import { FormContent } from "./form/FormContent";
 import { validateField, validateAllFields } from "./form/validation";
 import { motion } from "framer-motion";
-import { Edit3, Save, Sparkles, CheckCircle2 } from "lucide-react";
+import { Edit3, Sparkles, CheckCircle2 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProfileFormProps {
@@ -104,43 +104,26 @@ export const ProfileForm = ({
     onSave();
   };
 
-  const getSectionTitle = () => {
-    switch (activeSection) {
-      case 'personal':
-        return 'اطلاعات شخصی';
-      case 'gym':
-        return 'اطلاعات باشگاه';
-      case 'social':
-        return 'شبکه‌های اجتماعی';
-      default:
-        return 'ویرایش اطلاعات';
-    }
-  };
-
-  const getSectionDescription = () => {
-    switch (activeSection) {
-      case 'personal':
-        return 'اطلاعات شخصی خود را کامل کنید';
-      case 'gym':
-        return 'اطلاعات باشگاه خود را وارد کنید';
-      case 'social':
-        return 'حضور آنلاین خود را مدیریت کنید';
-      default:
-        return 'اطلاعات خود را به‌روزرسانی کنید';
-    }
-  };
-
-  const getSectionIcon = () => {
-    switch (activeSection) {
-      case 'personal':
-        return 'from-violet-500 to-purple-600';
-      case 'gym':
-        return 'from-blue-500 to-cyan-600';
-      case 'social':
-        return 'from-emerald-500 to-teal-600';
-      default:
-        return 'from-gray-500 to-gray-600';
-    }
+  const getSectionConfig = () => {
+    const configs = {
+      personal: {
+        title: 'اطلاعات شخصی',
+        description: 'اطلاعات شخصی خود را کامل کنید',
+        gradient: 'from-violet-500 to-purple-600'
+      },
+      gym: {
+        title: 'اطلاعات باشگاه',
+        description: 'اطلاعات باشگاه خود را وارد کنید',
+        gradient: 'from-blue-500 to-cyan-600'
+      },
+      social: {
+        title: 'شبکه‌های اجتماعی',
+        description: 'حضور آنلاین خود را مدیریت کنید',
+        gradient: 'from-emerald-500 to-teal-600'
+      }
+    };
+    
+    return configs[activeSection as keyof typeof configs] || configs.personal;
   };
 
   const getProgressColor = () => {
@@ -148,6 +131,8 @@ export const ProfileForm = ({
     if (completionPercentage >= 70) return 'from-yellow-400 to-orange-500';
     return 'from-red-400 to-pink-500';
   };
+
+  const sectionConfig = getSectionConfig();
 
   return (
     <motion.div 
@@ -160,7 +145,7 @@ export const ProfileForm = ({
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-blue-500/5 pointer-events-none" />
       
       {/* Form Header */}
-      <div className={`relative z-10 bg-gradient-to-r ${getSectionIcon()} p-6 text-white border-b border-white/20`}>
+      <div className={cn("relative z-10 bg-gradient-to-r", sectionConfig.gradient, "p-6 text-white border-b border-white/20")}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
@@ -168,10 +153,10 @@ export const ProfileForm = ({
             </div>
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2">
-                {getSectionTitle()}
+                {sectionConfig.title}
                 <Sparkles className="h-5 w-5 text-yellow-300" />
               </h2>
-              <p className="text-white/80 mt-1">{getSectionDescription()}</p>
+              <p className="text-white/80 mt-1">{sectionConfig.description}</p>
             </div>
           </div>
           
@@ -190,7 +175,7 @@ export const ProfileForm = ({
           </div>
           <div className="h-2 bg-white/20 rounded-full overflow-hidden">
             <motion.div 
-              className={`h-full bg-gradient-to-r ${getProgressColor()} rounded-full`}
+              className={cn("h-full bg-gradient-to-r", getProgressColor(), "rounded-full")}
               initial={{ width: 0 }}
               animate={{ width: `${completionPercentage}%` }}
               transition={{ duration: 1, delay: 0.3 }}
