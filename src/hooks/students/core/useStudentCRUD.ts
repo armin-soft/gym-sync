@@ -38,21 +38,18 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
       console.log("Existing student:", existingStudent);
       
       if (existingStudent) {
-        // ویرایش شاگرد موجود - حفظ گذرواژه قبلی اگر جدید ارائه نشده
-        const passwordToSave = studentData.password || existingStudent.password;
-        
+        // ویرایش شاگرد موجود
         const updatedStudents = students.map(student =>
           student.id === existingStudent.id
             ? { 
                 ...student, 
                 ...studentData,
-                password: passwordToSave, // حفظ گذرواژه
                 createdAt: student.createdAt // حفظ تاریخ ایجاد اصلی
               }
             : student
         );
         
-        console.log("Updated student with preserved password:", updatedStudents.find(s => s.id === existingStudent.id));
+        console.log("Updated student:", updatedStudents.find(s => s.id === existingStudent.id));
         setStudents(updatedStudents);
         
         toast({
