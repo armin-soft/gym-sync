@@ -50,24 +50,24 @@ export const PageContainer = React.memo(({
     </>
   ) : null;
   
-  // کلاس‌های کانتینر اصلی فول اسکرین
+  // کلاس‌های کانتینر اصلی فول اسکرین - حل مشکل اسکرول
   const containerClasses = React.useMemo(() => {
     return cn(
       "w-full flex flex-col relative",
-      fullHeight || fullScreen ? "h-screen min-h-screen" : "h-full min-h-full",
+      fullHeight || fullScreen ? "h-screen min-h-screen max-h-screen" : "h-full min-h-full",
       fullScreen && "fixed inset-0 z-50",
       withBackground && "relative",
       fullWidth ? "max-w-none" : maxWidth !== "none" ? maxWidth : "max-w-full mx-auto",
-      scrollable ? "overflow-hidden" : "overflow-visible",
+      scrollable ? "overflow-auto" : "overflow-visible",
       className
     );
   }, [fullHeight, fullScreen, withBackground, fullWidth, maxWidth, scrollable, className]);
   
-  // کلاس‌های محتوای فول ریسپانسیو
+  // کلاس‌های محتوای فول ریسپانسیو - حل مشکل اسکرول
   const contentClasses = React.useMemo(() => {
     return cn(
-      "w-full flex-1",
-      scrollable ? "overflow-y-auto overflow-x-hidden" : "overflow-visible",
+      "w-full h-full flex-1",
+      scrollable ? "overflow-auto" : "overflow-visible",
       getPadding
     );
   }, [getPadding, scrollable]);

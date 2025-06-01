@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Sparkles, Crown } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useState, useEffect } from "react";
 
 const itemVariants = {
   hidden: { y: 30, opacity: 0 },
@@ -16,6 +17,44 @@ const itemVariants = {
 };
 
 export const SelectionHeader = () => {
+  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
+  
+  // دریافت نسخه از فایل Manifest.json
+  useEffect(() => {
+    const fetchVersionFromManifest = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        
+        if (manifest && manifest.version) {
+          setAppVersion(manifest.version);
+          localStorage.setItem('app_version', manifest.version);
+          console.log('Version loaded from Manifest.json:', manifest.version);
+        } else {
+          // بررسی نسخه ذخیره شده در localStorage
+          const cachedVersion = localStorage.getItem('app_version');
+          if (cachedVersion) {
+            setAppVersion(cachedVersion);
+          } else {
+            setAppVersion("نامشخص");
+          }
+        }
+      } catch (error) {
+        console.error('Error loading version from Manifest.json:', error);
+        
+        // استفاده از نسخه ذخیره شده در localStorage در صورت خطا
+        const cachedVersion = localStorage.getItem('app_version');
+        if (cachedVersion) {
+          setAppVersion(cachedVersion);
+        } else {
+          setAppVersion("خطا در بارگذاری");
+        }
+      }
+    };
+    
+    fetchVersionFromManifest();
+  }, []);
+
   return (
     <motion.div variants={itemVariants} className="space-y-6" dir="rtl">
       {/* Logo and Icon Section */}
@@ -81,7 +120,7 @@ export const SelectionHeader = () => {
           </div>
           <div className="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
           <div className="flex items-center gap-2">
-            <span>نسخه {toPersianNumbers("1.5.6")}</span>
+            <span>نسخه {toPersianNumbers(appVersion)}</span>
           </div>
           <div className="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
           <div className="flex items-center gap-2">

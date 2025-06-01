@@ -66,11 +66,11 @@ export const UserTypeSelection = () => {
   };
 
   return (
-    <PageContainer fullScreen fullHeight withBackground>
+    <PageContainer fullScreen fullHeight withBackground scrollable>
       <BackgroundDecorations />
 
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-7xl">
+      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 min-h-screen overflow-y-auto">
+        <div className="w-full max-w-7xl py-8">
           <motion.div
             initial="hidden"
             animate="visible"
