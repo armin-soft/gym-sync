@@ -32,27 +32,6 @@ export const validateField = (
       }
       break;
       
-    case 'email':
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!value.trim()) {
-        isValid = false;
-        error = 'ایمیل الزامی است';
-      } else if (!emailRegex.test(value)) {
-        isValid = false;
-        error = 'ایمیل معتبر نیست';
-      }
-      break;
-      
-    case 'password':
-      if (!value.trim()) {
-        isValid = false;
-        error = 'گذرواژه الزامی است';
-      } else if (value.length < 8) {
-        isValid = false;
-        error = 'گذرواژه باید حداقل ۸ کاراکتر باشد';
-      }
-      break;
-      
     case 'gymName':
       if (!value.trim()) {
         isValid = false;
@@ -93,7 +72,7 @@ export const validateAllFields = (
   setValidFields: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, boolean>>>>,
   setErrors: React.Dispatch<React.SetStateAction<Partial<Record<keyof TrainerProfile, string>>>>
 ): boolean => {
-  const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'email', 'password', 'gymName', 'gymAddress'];
+  const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'gymName', 'gymAddress'];
   let hasErrors = false;
 
   requiredFields.forEach(field => {

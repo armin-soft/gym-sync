@@ -9,27 +9,19 @@ interface UseLoginFormProps {
 }
 
 export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [step, setStep] = useState<"phone" | "code">("phone");
   const [attempts, setAttempts] = useState(0);
   const [locked, setLocked] = useState(false);
   const [lockExpiry, setLockExpiry] = useState<Date | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [gymName, setGymName] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
-  // Load profile data, lock status and remembered email on component mount
+  // Load profile data and lock status on component mount
   useEffect(() => {
-    // Load remembered email if exists
-    const rememberedEmail = localStorage.getItem("rememberedEmail");
-    if (rememberedEmail) {
-      setEmail(rememberedEmail);
-      setRememberMe(true);
-    }
-    
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
       try {
@@ -62,7 +54,25 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handlePhoneSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!phone.trim()) {
+      setError("لطفاً شماره موبایل خود را وارد کنید");
+      setLoading(false);
+      return;
+    }
+
+    // Simulate sending SMS
+    setTimeout(() => {
+      setStep("code");
+      setLoading(false);
+    }, 1000);
+  };
+
+  const handleCodeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -73,64 +83,45 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
       return;
     }
 
-    if (!email.trim()) {
-      setError("لطفاً ایمیل خود را وارد کنید");
-      setLoading(false);
-      return;
-    }
-
-    if (!password.trim()) {
-      setError("لطفاً رمز عبور خود را وارد کنید");
+    if (code !== "012345") {
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      localStorage.setItem("loginAttempts", newAttempts.toString());
+      
+      if (newAttempts >= 3) {
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 1);
+        setLocked(true);
+        setLockExpiry(expiryDate);
+        localStorage.setItem("loginLockExpiry", expiryDate.toString());
+        
+        setError("حساب کاربری شما به دلیل ورود ناموفق بیش از حد مجاز، به مدت یک روز قفل شده است.");
+      } else {
+        setError(`کد وارد شده اشتباه است. (${toPersianNumbers(3 - newAttempts)} تلاش باقی مانده)`);
+      }
       setLoading(false);
       return;
     }
 
     setTimeout(() => {
       try {
-        const savedProfile = localStorage.getItem('trainerProfile');
-        if (!savedProfile) {
-          setError("اطلاعات ورود یافت نشد. لطفاً ابتدا پروفایل مربی را تکمیل کنید.");
-          setLoading(false);
-          return;
-        }
-
-        const profile: TrainerProfile = JSON.parse(savedProfile);
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.removeItem("loginAttempts");
+        setAttempts(0);
         
-        if (email === profile.email && password === profile.password) {
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.removeItem("loginAttempts");
-          setAttempts(0);
-          
-          // Save email if remember me is checked
-          if (rememberMe) {
-            localStorage.setItem("rememberedEmail", email);
-          } else {
-            localStorage.removeItem("rememberedEmail");
-          }
-          
-          successToast(
-            "ورود موفقیت‌آمیز",
-            `${profile.name || 'کاربر'} عزیز، خوش آمدید`
-          );
-          
-          onLoginSuccess(rememberMe);
-        } else {
-          const newAttempts = attempts + 1;
-          setAttempts(newAttempts);
-          localStorage.setItem("loginAttempts", newAttempts.toString());
-          
-          if (newAttempts >= 3) {
-            const expiryDate = new Date();
-            expiryDate.setDate(expiryDate.getDate() + 1);
-            setLocked(true);
-            setLockExpiry(expiryDate);
-            localStorage.setItem("loginLockExpiry", expiryDate.toString());
-            
-            setError("حساب کاربری شما به دلیل ورود ناموفق بیش از حد مجاز، به مدت یک روز قفل شده است.");
-          } else {
-            setError(`نام کاربری یا رمز عبور اشتباه است. (${toPersianNumbers(3 - newAttempts)} تلاش باقی مانده)`);
-          }
+        const savedProfile = localStorage.getItem('trainerProfile');
+        let trainerName = 'کاربر';
+        if (savedProfile) {
+          const profile: TrainerProfile = JSON.parse(savedProfile);
+          trainerName = profile.name || 'کاربر';
         }
+        
+        successToast(
+          "ورود موفقیت‌آمیز",
+          `${trainerName} عزیز، خوش آمدید`
+        );
+        
+        onLoginSuccess(false);
       } catch (error) {
         setError("خطا در ورود. لطفاً دوباره تلاش کنید.");
       }
@@ -140,21 +131,20 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
   };
 
   return {
-    email,
-    setEmail,
-    password,
-    setPassword,
+    phone,
+    setPhone,
+    code,
+    setCode,
     loading,
     error,
+    step,
+    setStep,
     locked,
     lockExpiry,
     timeLeft,
     setTimeLeft,
     gymName,
-    rememberMe,
-    setRememberMe,
-    showPassword,
-    setShowPassword,
-    handleLogin
+    handlePhoneSubmit,
+    handleCodeSubmit
   };
 };

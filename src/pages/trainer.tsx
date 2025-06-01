@@ -139,7 +139,7 @@ const TrainerProfile = () => {
             profile={{
               image: profile.image,
               name: profile.name,
-              email: profile.email
+              phone: profile.phone
             }}
             onImageChange={(image) => handleUpdate('image', image)} 
             activeSection={activeSection}
