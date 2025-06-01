@@ -50,19 +50,20 @@ export const CodeVerificationStep = ({
           کد تأیید
         </Label>
         
-        <div className="flex justify-center mb-4" dir="rtl">
+        <div className="flex justify-center mb-4" dir="ltr">
           <InputOTP
             maxLength={6}
             value={code}
             onChange={(value) => setCode(value)}
-            dir="rtl"
+            dir="ltr"
           >
-            <InputOTPGroup className="gap-2">
+            <InputOTPGroup className="gap-2" dir="ltr">
               {[...Array(6)].map((_, index) => (
                 <InputOTPSlot 
                   key={index}
                   index={index}
-                  className="w-12 h-12 text-lg font-bold bg-white/10 border-white/20 text-white focus:border-white/40 focus:ring-white/20 rounded-xl backdrop-blur-sm persian-numbers"
+                  className="w-12 h-12 text-lg font-bold bg-white/10 border-white/20 text-white focus:border-white/40 focus:ring-white/20 rounded-xl backdrop-blur-sm"
+                  style={{ direction: 'ltr', textAlign: 'center' }}
                 />
               ))}
             </InputOTPGroup>
