@@ -10,6 +10,7 @@ import { FormContent } from "./form/FormContent";
 import { validateField, validateAllFields } from "./form/validation";
 import { motion } from "framer-motion";
 import { Edit3, Save, Sparkles, CheckCircle2 } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -36,6 +37,40 @@ export const ProfileForm = ({
 }: ProfileFormProps) => {
   const { toast } = useToast();
   const deviceInfo = useDeviceInfo();
+
+  // Calculate profile completion percentage
+  const calculateCompletionPercentage = () => {
+    const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'gymName', 'gymAddress'];
+    const optionalFields: (keyof TrainerProfile)[] = ['fullName', 'bio', 'gymDescription', 'instagram', 'website'];
+    
+    let completedRequired = 0;
+    let completedOptional = 0;
+    
+    // Check required fields (70% weight)
+    requiredFields.forEach(field => {
+      if (profile[field] && profile[field].trim()) {
+        completedRequired++;
+      }
+    });
+    
+    // Check optional fields (30% weight)
+    optionalFields.forEach(field => {
+      if (profile[field] && profile[field].trim()) {
+        completedOptional++;
+      }
+    });
+    
+    // Check profile image (10% bonus)
+    const hasProfileImage = profile.image && profile.image !== "/Assets/Image/Place-Holder.svg";
+    
+    const requiredPercentage = (completedRequired / requiredFields.length) * 70;
+    const optionalPercentage = (completedOptional / optionalFields.length) * 30;
+    const imageBonus = hasProfileImage ? 10 : 0;
+    
+    return Math.min(100, Math.round(requiredPercentage + optionalPercentage + imageBonus));
+  };
+
+  const completionPercentage = calculateCompletionPercentage();
 
   useEffect(() => {
     Object.entries(profile).forEach(([key, value]) => {
@@ -108,6 +143,12 @@ export const ProfileForm = ({
     }
   };
 
+  const getProgressColor = () => {
+    if (completionPercentage >= 90) return 'from-green-400 to-emerald-500';
+    if (completionPercentage >= 70) return 'from-yellow-400 to-orange-500';
+    return 'from-red-400 to-pink-500';
+  };
+
   return (
     <motion.div 
       className="bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-slate-900 dark:via-gray-900 dark:to-zinc-900 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden h-fit"
@@ -145,13 +186,13 @@ export const ProfileForm = ({
         <div className="mt-4">
           <div className="flex items-center justify-between text-sm text-white/70 mb-2">
             <span>پیشرفت تکمیل پروفایل</span>
-            <span>۸۵%</span>
+            <span>{toPersianNumbers(completionPercentage.toString())}%</span>
           </div>
           <div className="h-2 bg-white/20 rounded-full overflow-hidden">
             <motion.div 
-              className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
+              className={`h-full bg-gradient-to-r ${getProgressColor()} rounded-full`}
               initial={{ width: 0 }}
-              animate={{ width: "85%" }}
+              animate={{ width: `${completionPercentage}%` }}
               transition={{ duration: 1, delay: 0.3 }}
             />
           </div>
