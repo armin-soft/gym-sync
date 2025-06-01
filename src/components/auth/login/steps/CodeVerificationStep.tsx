@@ -50,8 +50,8 @@ export const CodeVerificationStep = ({
           کد تأیید
         </Label>
         
-        {/* OTP Input with enhanced styling */}
-        <div className="flex justify-center mb-6" dir="ltr">
+        {/* OTP Input with enhanced styling and RTL support */}
+        <div className="flex justify-center mb-6" dir="rtl">
           <div className="relative group">
             {/* Background glow */}
             <div className="absolute -inset-2 bg-gradient-to-r from-violet-500 to-purple-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
@@ -60,17 +60,25 @@ export const CodeVerificationStep = ({
               maxLength={6}
               value={code}
               onChange={(value) => setCode(value)}
-              dir="ltr"
+              dir="rtl"
             >
-              <InputOTPGroup className="gap-3" dir="ltr">
-                {[...Array(6)].map((_, index) => (
-                  <InputOTPSlot 
-                    key={index}
-                    index={index}
-                    className="w-14 h-14 text-xl font-bold bg-white/10 border-2 border-white/20 text-white focus:border-violet-400 focus:ring-violet-400/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-white/40"
-                    style={{ direction: 'ltr', textAlign: 'center' }}
-                  />
-                ))}
+              <InputOTPGroup className="gap-3 flex-row-reverse" dir="rtl">
+                {[...Array(6)].map((_, index) => {
+                  // Get the character for this slot from right to left
+                  const charIndex = 5 - index;
+                  const displayChar = code[charIndex] ? toPersianNumbers(code[charIndex]) : '';
+                  
+                  return (
+                    <InputOTPSlot 
+                      key={index}
+                      index={charIndex}
+                      className="w-14 h-14 text-xl font-bold bg-white/10 border-2 border-white/20 text-white focus:border-violet-400 focus:ring-violet-400/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-white/40 flex items-center justify-center"
+                      style={{ direction: 'rtl', textAlign: 'center' }}
+                    >
+                      {displayChar}
+                    </InputOTPSlot>
+                  );
+                })}
               </InputOTPGroup>
             </InputOTP>
           </div>
