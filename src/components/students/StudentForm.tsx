@@ -43,7 +43,6 @@ export const StudentForm = ({
       weight: student?.weight || "",
       image: student?.image || "/Assets/Image/Place-Holder.svg",
       payment: student?.payment || "",
-      password: student?.password || "",
       age: student?.age || "",
       grade: student?.grade || "",
       group: student?.group || "",
@@ -62,7 +61,6 @@ export const StudentForm = ({
         weight: student.weight || "",
         image: student.image || "/Assets/Image/Place-Holder.svg",
         payment: student.payment || "",
-        password: student.password || "",
         age: student.age || "",
         grade: student.grade || "",
         group: student.group || "",
@@ -75,15 +73,7 @@ export const StudentForm = ({
   const onSubmit = (data: StudentFormValues) => {
     try {
       console.log("Form submission data:", data);
-      
-      // در صورت ویرایش و عدم تغییر گذرواژه، گذرواژه قبلی را حفظ کن
-      const submitData = {
-        ...data,
-        password: data.password || student?.password || ""
-      };
-      
-      console.log("Final submit data with preserved password:", submitData);
-      onSave(submitData);
+      onSave(data);
     } catch (error) {
       console.error("Error saving student:", error);
       toast({

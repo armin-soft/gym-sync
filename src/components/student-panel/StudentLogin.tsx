@@ -16,12 +16,12 @@ export const StudentLogin = () => {
   const navigate = useNavigate();
   const { students } = useStudents();
 
-  const handleLogin = async (phone: string, password: string) => {
+  const handleLogin = async (phone: string) => {
     setLoading(true);
 
     try {
-      // Find student by phone and password
-      const student = students.find(s => s.phone === phone && s.password === password);
+      // Find student by phone only
+      const student = students.find(s => s.phone === phone);
       
       if (student) {
         // Store student login info
@@ -38,7 +38,7 @@ export const StudentLogin = () => {
       } else {
         toast({
           title: "خطا در ورود",
-          description: "شماره موبایل یا رمز عبور اشتباه است",
+          description: "شماره موبایل یافت نشد",
           variant: "destructive",
         });
       }

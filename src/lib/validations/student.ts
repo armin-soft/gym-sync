@@ -36,12 +36,6 @@ export const studentFormSchema = z.object({
       message: "مبلغ باید عدد باشد" 
     })
     .optional(),
-  password: z.string()
-    .min(1, { message: "گذرواژه الزامی است" })
-    .min(8, { message: "گذرواژه باید حداقل ۸ کاراکتر باشد" })
-    .refine(val => /^(?=.*[a-zA-Z])(?=.*\d)/.test(val), {
-      message: "گذرواژه باید شامل حروف و اعداد باشد"
-    }),
   grade: z.string().optional(),
   group: z.string().optional(),
   age: z.string()

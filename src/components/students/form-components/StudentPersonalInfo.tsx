@@ -123,13 +123,14 @@ export const StudentPersonalInfo: React.FC<StudentPersonalInfoProps> = ({ form }
             <FormLabel className="flex items-center gap-2">
               <Coins className="h-4 w-4 text-indigo-500" />
               مبلغ برنامه (تومان)
+              <span className="text-xs text-muted-foreground">(اختیاری)</span>
             </FormLabel>
             <FormControl>
               <Input 
                 dir="ltr" 
                 className="text-left bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
                 placeholder="۵۰۰,۰۰۰" 
-                value={toPersianNumbers(field.value)}
+                value={toPersianNumbers(field.value || '')}
                 onChange={(e) => {
                   const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
                   field.onChange(value);
@@ -137,7 +138,7 @@ export const StudentPersonalInfo: React.FC<StudentPersonalInfoProps> = ({ form }
               />
             </FormControl>
             <FormMessage />
-            <p className="text-xs text-muted-foreground mt-1">مبلغ دریافتی بابت صدور برنامه</p>
+            <p className="text-xs text-muted-foreground mt-1">مبلغ دریافتی بابت صدور برنامه (اختیاری)</p>
           </FormItem>
         )}
       />

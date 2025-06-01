@@ -7,7 +7,6 @@ export interface Student {
   weight: string;
   image: string;
   payment?: string;
-  password: string;
   age?: string;
   grade?: string;
   group?: string;
@@ -30,9 +29,24 @@ export interface Student {
   exercisesDay5?: number[];
   exerciseSetsDay5?: Record<number, number>;
   exerciseRepsDay5?: Record<number, string>;
+  exercisesDay6?: number[];
+  exerciseSetsDay6?: Record<number, number>;
+  exerciseRepsDay6?: Record<number, string>;
+  exercisesDay7?: number[];
+  exerciseSetsDay7?: Record<number, number>;
+  exerciseRepsDay7?: Record<number, string>;
   meals?: number[];
+  mealsDay1?: number[];
+  mealsDay2?: number[];
+  mealsDay3?: number[];
+  mealsDay4?: number[];
+  mealsDay5?: number[];
+  mealsDay6?: number[];
+  mealsDay7?: number[];
   supplements?: number[];
+  supplementsDay1?: number[];
   vitamins?: number[];
+  vitaminsDay1?: number[];
   createdAt?: string;
   progress?: number;
 }
