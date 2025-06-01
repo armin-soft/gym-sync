@@ -3,7 +3,7 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { User, Phone, Ruler, Weight, Coins, Calendar, GraduationCap, Users } from "lucide-react";
+import { User, Phone, Ruler, Weight, Coins } from "lucide-react";
 import { StudentFormValues } from "@/lib/validations/student";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -107,79 +107,6 @@ export const StudentPersonalInfo: React.FC<StudentPersonalInfoProps> = ({ form }
                     const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
                     field.onChange(value);
                   }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-
-      <div className="flex gap-4">
-        <FormField
-          control={form.control}
-          name="age"
-          render={({ field }) => (
-            <FormItem className="w-1/3">
-              <FormLabel className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-indigo-500" />
-                سن
-                <span className="text-xs text-muted-foreground">(اختیاری)</span>
-              </FormLabel>
-              <FormControl>
-                <Input 
-                  dir="ltr" 
-                  className="text-left bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
-                  placeholder="۲۵" 
-                  value={toPersianNumbers(field.value || '')}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    field.onChange(value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="grade"
-          render={({ field }) => (
-            <FormItem className="w-1/3">
-              <FormLabel className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4 text-indigo-500" />
-                پایه
-                <span className="text-xs text-muted-foreground">(اختیاری)</span>
-              </FormLabel>
-              <FormControl>
-                <Input 
-                  className="bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
-                  placeholder="مبتدی، متوسط، پیشرفته" 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="group"
-          render={({ field }) => (
-            <FormItem className="w-1/3">
-              <FormLabel className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-indigo-500" />
-                گروه
-                <span className="text-xs text-muted-foreground">(اختیاری)</span>
-              </FormLabel>
-              <FormControl>
-                <Input 
-                  className="bg-slate-50 dark:bg-slate-800/70 focus-visible:ring-indigo-500" 
-                  placeholder="گروه A، گروه B" 
-                  {...field} 
                 />
               </FormControl>
               <FormMessage />
