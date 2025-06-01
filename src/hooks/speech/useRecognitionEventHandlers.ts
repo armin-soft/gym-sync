@@ -73,13 +73,15 @@ export const useRecognitionEventHandlers = ({
       let finalTranscript = state.transcript || '';
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
+        const result = event.results[i];
+        let transcriptText = result[0].transcript;
+
+        if (result.isFinal) {
+          finalTranscript += transcriptText;
           // Call callback with recognized text
-          if (onTextRecognized) onTextRecognized(transcript);
+          if (onTextRecognized) onTextRecognized(transcriptText);
         } else {
-          interimTranscript += transcript;
+          interimTranscript += transcriptText;
         }
       }
 
