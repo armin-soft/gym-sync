@@ -31,6 +31,7 @@ export const AccountLockedView = ({
         localStorage.removeItem("loginLockExpiry");
         localStorage.removeItem("loginAttempts");
         clearInterval(interval);
+        window.location.reload();
         return;
       }
 
@@ -39,22 +40,31 @@ export const AccountLockedView = ({
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      setTimeLeft(`${toPersianNumbers(days)} روز ${toPersianNumbers(hours)} ساعت ${toPersianNumbers(minutes)} دقیقه ${toPersianNumbers(seconds)} ثانیه`);
+      let timeString = "";
+      if (days > 0) {
+        timeString += `${toPersianNumbers(days)} روز `;
+      }
+      if (hours > 0) {
+        timeString += `${toPersianNumbers(hours)} ساعت `;
+      }
+      timeString += `${toPersianNumbers(minutes)} دقیقه ${toPersianNumbers(seconds)} ثانیه`;
+
+      setTimeLeft(timeString);
     }, 1000);
 
     return () => clearInterval(interval);
   }, [lockExpiry, setTimeLeft]);
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         type: "spring",
-        stiffness: 400,
-        damping: 30,
-        staggerChildren: 0.1
+        stiffness: 300,
+        damping: 25,
+        staggerChildren: 0.15
       }
     }
   };
@@ -66,8 +76,8 @@ export const AccountLockedView = ({
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 300,
-        damping: 24
+        stiffness: 400,
+        damping: 30
       }
     }
   };
@@ -78,8 +88,9 @@ export const AccountLockedView = ({
       initial="hidden"
       animate="visible"
       className="p-8"
+      dir="rtl"
     >
-      {/* Lock Icon with modern styling */}
+      {/* Lock Icon with enhanced styling */}
       <motion.div 
         variants={itemVariants}
         className="text-center mb-8"
@@ -88,20 +99,20 @@ export const AccountLockedView = ({
         <LockHeader />
       </motion.div>
 
-      {/* Alert Message */}
-      <motion.div variants={itemVariants} className="mb-6">
+      {/* Enhanced Alert Message */}
+      <motion.div variants={itemVariants} className="mb-8">
         <SecurityAlert />
       </motion.div>
 
-      {/* Countdown Timer */}
-      <motion.div variants={itemVariants}>
+      {/* Enhanced Countdown Timer */}
+      <motion.div variants={itemVariants} className="mb-8">
         <CountdownDisplay timeLeft={timeLeft} />
       </motion.div>
 
-      {/* Security Message */}
+      {/* Enhanced Security Message */}
       <motion.div 
         variants={itemVariants}
-        className="mt-6 space-y-6"
+        className="space-y-6"
       >
         <SecurityFooter />
       </motion.div>

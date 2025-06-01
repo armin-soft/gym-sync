@@ -78,7 +78,7 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           return prev - 1;
         });
       }, 1000);
-    }, 1000);
+    }, 1200);
   };
 
   const handleCodeSubmit = (e: React.FormEvent) => {
@@ -125,7 +125,7 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
       localStorage.setItem("isLoggedIn", "true");
       onLoginSuccess(false);
       setLoading(false);
-    }, 800);
+    }, 1000);
   };
 
   const handleResendCode = () => {
@@ -146,6 +146,8 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
 
   const handleChangePhone = () => {
     setStep("phone");
+    setCode("");
+    setError("");
   };
 
   return (
