@@ -14,20 +14,20 @@ const containerVariants = {
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
+      staggerChildren: 0.15,
+      delayChildren: 0.1
     }
   }
 };
 
 const itemVariants = {
-  initial: { opacity: 0, y: 40, scale: 0.95 },
+  initial: { opacity: 0, y: 50, scale: 0.95 },
   animate: { 
     opacity: 1, 
     y: 0,
     scale: 1,
     transition: { 
-      duration: 0.8,
+      duration: 0.7,
       ease: [0.165, 0.84, 0.44, 1]
     }
   }
@@ -56,17 +56,39 @@ export const DashboardContent = ({
       variants={containerVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"
     >
-      {/* Background Effects */}
+      {/* افکت‌های پس‌زمینه */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-violet-400/20 to-purple-600/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-cyan-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-indigo-400/5 to-purple-600/5 rounded-full blur-3xl" />
+        <motion.div 
+          className="absolute -top-1/2 -right-1/2 w-[1000px] h-[1000px] bg-gradient-to-br from-violet-500/5 to-purple-600/5 rounded-full blur-3xl"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360]
+          }}
+          transition={{ 
+            duration: 40, 
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+        <motion.div 
+          className="absolute -bottom-1/2 -left-1/2 w-[1200px] h-[1200px] bg-gradient-to-br from-indigo-500/5 to-blue-600/5 rounded-full blur-3xl"
+          animate={{ 
+            scale: [1, 1.3, 1],
+            rotate: [360, 180, 0]
+          }}
+          transition={{ 
+            duration: 50, 
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-emerald-500/3 to-teal-600/3 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 space-y-8 p-4 lg:p-8">
-        {/* Ultra Modern Hero Section */}
+      <div className="relative z-10 space-y-10 p-6 lg:p-10">
+        {/* Hero Section */}
         <motion.div variants={itemVariants}>
           <UltraModernHero 
             stats={stats} 
@@ -75,31 +97,31 @@ export const DashboardContent = ({
           />
         </motion.div>
 
-        {/* Smart Stats Grid */}
+        {/* Stats Grid */}
         <motion.div variants={itemVariants}>
           <SmartStatsGrid stats={stats} />
         </motion.div>
 
         {/* Main Content Grid */}
-        <div className={`grid gap-8 ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
-          {/* Left Column - Primary Content */}
+        <div className={`grid gap-10 ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
+          {/* ستون اصلی - محتوای اولیه */}
           <motion.div 
             variants={itemVariants}
-            className={deviceInfo.isMobile ? '' : 'xl:col-span-2 space-y-8'}
+            className={deviceInfo.isMobile ? '' : 'xl:col-span-2 space-y-10'}
           >
-            {/* Intelligent Quick Actions */}
+            {/* اقدامات سریع هوشمند */}
             <IntelligentQuickActions />
             
-            {/* Advanced Students Overview */}
+            {/* نمای کلی شاگردان پیشرفته */}
             <AdvancedStudentsOverview students={students} />
           </motion.div>
           
-          {/* Right Column - Insights Only */}
+          {/* ستون کناری - پنل بینش‌ها */}
           <motion.div 
             variants={itemVariants}
-            className="space-y-8"
+            className="space-y-10"
           >
-            {/* Professional Insights Panel */}
+            {/* پنل بینش‌های حرفه‌ای */}
             <ProfessionalInsightsPanel stats={stats} />
           </motion.div>
         </div>
