@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export const CodeVerificationStep = ({
           کد تأیید
         </Label>
         
-        {/* OTP Input with LTR direction and Persian numbers display */}
+        {/* OTP Input با جهت چپ به راست و نمایش اعداد فارسی */}
         <div className="flex justify-center mb-6" dir="ltr">
           <div className="relative group">
             {/* Background glow */}
@@ -63,15 +64,15 @@ export const CodeVerificationStep = ({
             >
               <InputOTPGroup className="gap-3" dir="ltr">
                 {[...Array(6)].map((_, index) => {
-                  // Display characters from left to right with Persian numbers
-                  const displayChar = code[index] ? toPersianNumbers(code[index]) : '';
+                  // نمایش کاراکترها از چپ به راست با اعداد فارسی
+                  const currentChar = code[index] || '';
+                  const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
                   
                   return (
                     <InputOTPSlot 
                       key={index}
                       index={index}
                       className="w-14 h-14 text-xl font-bold bg-white/10 border-2 border-white/20 text-white focus:border-violet-400 focus:ring-violet-400/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-white/40 flex items-center justify-center"
-                      style={{ direction: 'ltr', textAlign: 'center' }}
                     >
                       {displayChar}
                     </InputOTPSlot>
