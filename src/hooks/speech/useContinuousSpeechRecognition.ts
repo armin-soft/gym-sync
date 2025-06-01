@@ -33,11 +33,14 @@ export const useContinuousSpeechRecognition = ({
     setIsSupported(!!SpeechRecognition);
   }, []);
 
-  // Function to clean text and remove unwanted periods
+  // Function to clean text and remove ALL periods
   const cleanTranscriptText = useCallback((text: string) => {
     return text
       .trim()
-      .replace(/\.$/, '') // Remove period at the end
+      .replace(/\.+/g, '') // Remove all periods (single or multiple)
+      .replace(/\u06D4/g, '') // Remove Arabic-Indic period
+      .replace(/\u2E3C/g, '') // Remove stenographic period
+      .replace(/\u002E/g, '') // Remove ASCII period
       .replace(/\s+/g, ' ') // Replace multiple spaces with single space
       .trim();
   }, []);
@@ -73,7 +76,7 @@ export const useContinuousSpeechRecognition = ({
         let transcriptText = result[0].transcript;
 
         if (result.isFinal) {
-          // Clean the transcript text and remove unwanted periods
+          // Clean the transcript text and remove ALL periods
           transcriptText = cleanTranscriptText(transcriptText);
           // اضافه کردن متن نهایی بدون محدودیت
           finalText += (finalText ? ' ' : '') + transcriptText;

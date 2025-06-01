@@ -40,11 +40,14 @@ export const useSimpleSpeechRecognition = ({
     setIsSupported(!!SpeechRecognition);
   }, []);
 
-  // Function to clean text and remove unwanted periods
+  // Function to clean text and remove ALL periods
   const cleanTranscriptText = useCallback((text: string) => {
     let cleanedText = text
       .trim()
-      .replace(/\.$/, '') // Remove period at the end
+      .replace(/\.+/g, '') // Remove all periods (single or multiple)
+      .replace(/\u06D4/g, '') // Remove Arabic-Indic period
+      .replace(/\u2E3C/g, '') // Remove stenographic period
+      .replace(/\u002E/g, '') // Remove ASCII period
       .replace(/\s+/g, ' ') // Replace multiple spaces with single space
       .trim();
     
@@ -174,7 +177,7 @@ export const useSimpleSpeechRecognition = ({
         }
         
         if (event.results[i].isFinal) {
-          // Clean the transcript text and remove unwanted periods
+          // Clean the transcript text and remove ALL periods
           const processedText = cleanTranscriptText(bestTranscript);
           
           // Add to existing text without limit
