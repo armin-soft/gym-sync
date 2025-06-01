@@ -47,7 +47,7 @@ const ManagementPage = () => {
   }, []);
 
   return (
-    <PageContainer withBackground fullHeight className="w-full">
+    <PageContainer fullScreen noPadding>
       <DashboardLayout>
         <DashboardContent 
           stats={stats}

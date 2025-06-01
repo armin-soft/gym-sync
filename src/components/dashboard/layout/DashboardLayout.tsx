@@ -23,25 +23,12 @@ const pageVariants = {
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const deviceInfo = useDeviceInfo();
 
-  // Professional responsive padding
-  const getPadding = () => {
-    if (deviceInfo.isMobile) {
-      return "p-4";
-    } else if (deviceInfo.isTablet) {
-      return "p-6";
-    } else if (deviceInfo.isSmallLaptop) {
-      return "p-8";
-    } else {
-      return "p-10 xl:p-12";
-    }
-  };
-
   return (
     <motion.div 
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className={`w-full h-full overflow-y-auto overflow-x-hidden ${getPadding()} relative`}
+      className="w-full h-full min-h-screen overflow-y-auto overflow-x-hidden relative"
     >
       {/* Enhanced Professional Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-gray-50/70 to-blue-50/40 dark:from-slate-900 dark:via-gray-900/70 dark:to-zinc-900/40 -z-10" />
