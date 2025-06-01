@@ -35,10 +35,9 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     // Simulate sending SMS
     setTimeout(() => {
       setStep("code");
-      setCountdown(120); // 2 minutes countdown
+      setCountdown(120);
       setLoading(false);
       
-      // Start countdown
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -58,11 +57,37 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     setLoading(true);
     setError("");
 
+    // Get current failed attempts
+    const attempts = parseInt(localStorage.getItem("loginAttempts") || "0");
+
     if (code !== "012345") {
-      setError("کد وارد شده اشتباه است");
+      const newAttempts = attempts + 1;
+      localStorage.setItem("loginAttempts", newAttempts.toString());
+
+      // Lock account after 3 failed attempts
+      if (newAttempts >= 3) {
+        const lockExpiry = new Date();
+        lockExpiry.setHours(lockExpiry.getHours() + 24); // Lock for 24 hours
+        localStorage.setItem("loginLockExpiry", lockExpiry.toString());
+        
+        setError("حساب شما به دلیل تلاش‌های ناموفق قفل شد");
+        setLoading(false);
+        
+        // Refresh page to show lock screen
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+        return;
+      }
+
+      setError(`کد وارد شده اشتباه است. ${3 - newAttempts} تلاش باقی‌مانده`);
       setLoading(false);
       return;
     }
+
+    // Reset failed attempts on successful login
+    localStorage.removeItem("loginAttempts");
+    localStorage.removeItem("loginLockExpiry");
 
     setTimeout(() => {
       localStorage.setItem("isLoggedIn", "true");
@@ -76,7 +101,6 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     setCode("");
     setError("");
     
-    // Start countdown again
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -191,7 +215,6 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           کد تأیید
         </Label>
         
-        {/* Modern OTP Input with RTL direction and Persian digits */}
         <div className="flex justify-center mb-4" dir="rtl">
           <InputOTP
             maxLength={6}
@@ -211,7 +234,6 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           </InputOTP>
         </div>
         
-        {/* Phone number and countdown */}
         <div className="text-center space-y-2">
           <p className="text-white/60 text-sm">
             کد تأیید به شماره {toPersianNumbers(phone)} ارسال شد
