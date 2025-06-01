@@ -1,11 +1,9 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, Grid, List } from "lucide-react";
+import { Search, Grid, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Supplement } from "@/types/supplement";
 import SupplementCard from "./SupplementCard";
@@ -35,7 +33,6 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
 
-  // Filter supplements based on active tab, search query, and category
   useEffect(() => {
     let filtered = supplements.filter(item => 
       item.type === (activeTab === 'supplement' ? 'supplement' : 'vitamin')
@@ -84,7 +81,6 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
 
   return (
     <div className="space-y-4 h-full flex flex-col text-right" dir="rtl">
-      {/* Search and Filter Controls */}
       <div className="flex flex-col gap-3">
         <div className="relative">
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -97,7 +93,6 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
           />
         </div>
 
-        {/* Category Filter */}
         {getUniqueCategories().length > 0 && (
           <div className="flex flex-wrap gap-2">
             <Button
@@ -122,7 +117,6 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
           </div>
         )}
 
-        {/* View Mode Toggle */}
         <div className="flex justify-between items-center">
           <div className="flex gap-1">
             <Button
@@ -143,7 +137,6 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
         </div>
       </div>
 
-      {/* Items Display */}
       <div className="flex-1 overflow-auto">
         {filteredItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center">
