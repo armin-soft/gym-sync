@@ -91,8 +91,8 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     // Get current failed attempts
     const attempts = parseInt(localStorage.getItem("loginAttempts") || "0");
 
-    // Check for reversed activation code: 543210 instead of 012345
-    if (code !== "543210") {
+    // Check for correct activation code: 012345
+    if (code !== "012345") {
       const newAttempts = attempts + 1;
       localStorage.setItem("loginAttempts", newAttempts.toString());
 

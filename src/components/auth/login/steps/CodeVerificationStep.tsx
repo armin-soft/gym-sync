@@ -34,6 +34,16 @@ export const CodeVerificationStep = ({
   containerVariants,
   itemVariants
 }: CodeVerificationStepProps) => {
+  // Function to handle input change and reverse it
+  const handleCodeChange = (value: string) => {
+    // Reverse the input and set it
+    const reversedCode = value.split('').reverse().join('');
+    setCode(reversedCode);
+  };
+
+  // Display the reversed version of the current code
+  const displayCode = code.split('').reverse().join('');
+
   return (
     <motion.form
       onSubmit={onSubmit}
@@ -53,8 +63,8 @@ export const CodeVerificationStep = ({
         <div className="flex justify-center mb-4" dir="rtl">
           <InputOTP
             maxLength={6}
-            value={code}
-            onChange={(value) => setCode(value)}
+            value={displayCode}
+            onChange={handleCodeChange}
             dir="rtl"
           >
             <InputOTPGroup className="gap-2" dir="rtl">
