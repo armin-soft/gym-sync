@@ -2,7 +2,7 @@
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { Mic, MicOff, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useContinuousSpeechRecognition } from "@/hooks/speech/useContinuousSpeechRecognition";
@@ -78,7 +78,7 @@ export const SimpleSpeechInput: React.FC<SimpleSpeechInputProps> = ({
           onChange={handleManualChange}
           placeholder={placeholder}
           className={cn(
-            "min-h-[120px] max-h-[300px] resize-y text-right pr-3 pl-20",
+            "min-h-[120px] max-h-[300px] resize-y text-right pr-3 pl-24",
             isListening && "border-red-300 ring-2 ring-red-100"
           )}
           dir="rtl"
@@ -95,6 +95,7 @@ export const SimpleSpeechInput: React.FC<SimpleSpeechInputProps> = ({
                 "h-8 w-8 p-0",
                 isListening && "animate-pulse bg-red-500 hover:bg-red-600"
               )}
+              title={isListening ? "توقف ضبط" : "شروع ضبط"}
             >
               <AnimatePresence mode="wait">
                 {isListening ? (
@@ -127,8 +128,9 @@ export const SimpleSpeechInput: React.FC<SimpleSpeechInputProps> = ({
               onClick={handleClear}
               variant="ghost"
               className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+              title="پاک کردن متن"
             >
-              <VolumeX className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" />
             </Button>
           )}
         </div>

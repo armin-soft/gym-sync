@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, RefreshCw } from "lucide-react";
+import { Mic, MicOff, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -72,9 +72,9 @@ export const ControlButtons = ({
         onClick={onClearTranscript}
         disabled={!hasContent}
         aria-label="پاک کردن متن"
-        className="hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
       >
-        <RefreshCw className="h-4 w-4" />
+        <Trash2 className="h-4 w-4" />
       </Button>
     </div>
   );

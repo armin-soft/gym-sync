@@ -1,7 +1,7 @@
 
 import React, { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Mic, MicOff } from "lucide-react";
+import { Plus, Mic, MicOff, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
 import { useContinuousSpeechRecognition } from "@/hooks/speech/useContinuousSpeechRecognition";
@@ -44,6 +44,11 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
     } else {
       startListening();
     }
+  };
+
+  const handleClearText = () => {
+    resetTranscript();
+    setQuickSpeechText("");
   };
 
   const displayText = transcript || interimTranscript || quickSpeechText;
@@ -98,6 +103,19 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
                     )}
                   </AnimatePresence>
                   {isListening ? "توقف ضبط" : "شروع ضبط"}
+                </Button>
+              )}
+
+              {displayText.trim() && (
+                <Button
+                  size="sm"
+                  onClick={handleClearText}
+                  variant="ghost"
+                  className="hover:bg-red-50 hover:text-red-600"
+                  title="پاک کردن متن"
+                >
+                  <Trash2 className="h-4 w-4 ml-1" />
+                  پاک کردن
                 </Button>
               )}
             </div>
