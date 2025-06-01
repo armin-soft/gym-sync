@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { PageContainer } from "@/components/ui/page-container";
+import { DashboardLayout } from "@/components/dashboard/layout/DashboardLayout";
 import { DashboardContent } from "@/components/dashboard/DashboardContent";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
@@ -15,7 +16,7 @@ const ManagementPage = () => {
     image: ""
   });
 
-  // Load students data
+  // Load students data efficiently
   useEffect(() => {
     try {
       const savedStudents = localStorage.getItem('students');
@@ -29,7 +30,7 @@ const ManagementPage = () => {
     }
   }, []);
 
-  // Load trainer profile
+  // Load trainer profile efficiently
   useEffect(() => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
@@ -47,12 +48,14 @@ const ManagementPage = () => {
 
   return (
     <PageContainer withBackground fullHeight className="w-full">
-      <DashboardContent 
-        stats={stats}
-        currentTime={currentTime}
-        students={students}
-        trainerProfile={trainerProfile}
-      />
+      <DashboardLayout>
+        <DashboardContent 
+          stats={stats}
+          currentTime={currentTime}
+          students={students}
+          trainerProfile={trainerProfile}
+        />
+      </DashboardLayout>
     </PageContainer>
   );
 };
