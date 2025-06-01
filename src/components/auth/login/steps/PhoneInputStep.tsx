@@ -47,28 +47,12 @@ export const PhoneInputStep = ({
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder={allowedPhones && allowedPhones.length > 0 ? toPersianNumbers(allowedPhones[0]) : toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
+            placeholder={toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
             className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 rounded-xl pr-4"
-            dir="ltr"
+            dir="rtl"
             required
           />
         </div>
-        {allowedPhones && allowedPhones.length > 0 && (
-          <div className="text-white/60 text-sm mt-2">
-            {allowedPhones.length === 1 ? (
-              <p>فقط شماره {toPersianNumbers(allowedPhones[0])} مجاز است</p>
-            ) : (
-              <div>
-                <p>شماره‌های مجاز:</p>
-                <ul className="list-disc list-inside mt-1">
-                  {allowedPhones.map((phoneNumber, index) => (
-                    <li key={index}>{toPersianNumbers(phoneNumber)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
       </motion.div>
       
       <motion.div variants={itemVariants}>
