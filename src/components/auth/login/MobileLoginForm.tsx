@@ -101,9 +101,9 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
             <Input
               id="phone"
               type="tel"
-              value={phone}
+              value={toPersianNumbers(phone)}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder={toPersianNumbers("09123456789")}
+              placeholder={toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
               className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 rounded-xl pr-4"
               dir="ltr"
               required
@@ -155,9 +155,9 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           <Input
             id="code"
             type="text"
-            value={code}
+            value={toPersianNumbers(code)}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="012345"
+            placeholder={toPersianNumbers("۰۱۲۳۴۵")}
             className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 rounded-xl pr-4 text-center text-lg tracking-widest"
             dir="ltr"
             maxLength={6}
