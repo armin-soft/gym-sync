@@ -17,12 +17,6 @@ interface PhoneInputStepProps {
   allowedPhones?: string[];
 }
 
-// Convert Persian numbers to English for processing
-const convertPersianToEnglish = (value: string): string => {
-  if (!value) return '';
-  return value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-};
-
 export const PhoneInputStep = ({
   phone,
   setPhone,
@@ -35,11 +29,8 @@ export const PhoneInputStep = ({
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     
-    // Convert Persian numbers to English for storage
-    const englishValue = convertPersianToEnglish(value);
-    
-    // Only allow numbers and ensure it starts with 09
-    let numbersOnly = englishValue.replace(/[^0-9]/g, '');
+    // Only allow English numbers (0-9)
+    let numbersOnly = value.replace(/[^0-9]/g, '');
     
     // Ensure phone starts with 09
     if (numbersOnly && !numbersOnly.startsWith('09')) {
@@ -75,7 +66,7 @@ export const PhoneInputStep = ({
             type="tel"
             value={toPersianNumbers(phone)}
             onChange={handlePhoneChange}
-            placeholder={toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
+            placeholder={toPersianNumbers("09123456789")}
             className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 rounded-xl pr-4"
             dir="rtl"
             required
