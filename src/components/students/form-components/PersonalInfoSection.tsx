@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { User, Phone, Lock } from "lucide-react";
+import { User, Phone } from "lucide-react";
 import { StudentFormField } from "./StudentFormField";
 
 interface PersonalInfoSectionProps {
@@ -31,18 +31,6 @@ export const PersonalInfoSection = ({ control, itemVariants }: PersonalInfoSecti
           icon={Phone}
           direction="ltr"
           numberOnly
-        />
-      </motion.div>
-
-      <motion.div variants={itemVariants}>
-        <StudentFormField
-          control={control}
-          name="password"
-          label="گذرواژه"
-          placeholder="حداقل ۸ کاراکتر شامل حروف و اعداد"
-          icon={Lock}
-          direction="ltr"
-          description="گذرواژه برای ورود شاگرد به پنل شخصی"
         />
       </motion.div>
     </>

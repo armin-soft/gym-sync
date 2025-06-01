@@ -2,7 +2,7 @@
 import { TrainerProfile } from "@/types/trainer";
 import { FormField } from "./FormField";
 import { FormTextArea } from "./FormTextArea";
-import { UserRound, Phone, Mail, Lock, Info } from "lucide-react";
+import { UserRound, Phone, Info } from "lucide-react";
 import { motion } from "framer-motion";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -79,34 +79,6 @@ export const PersonalInfoForm = ({
           error={errors.phone}
           isValid={validFields.phone}
           dir="ltr"
-        />
-      </motion.div>
-
-      <motion.div variants={item}>
-        <FormField
-          id="email"
-          label="ایمیل"
-          value={profile.email}
-          onChange={(value) => onChange('email', value)}
-          placeholder="example@domain.com"
-          icon={<Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-600/70" />}
-          error={errors.email}
-          isValid={validFields.email}
-          dir="ltr"
-        />
-      </motion.div>
-
-      <motion.div variants={item}>
-        <FormField
-          id="password"
-          label="گذرواژه"
-          value={profile.password}
-          onChange={(value) => onChange('password', value)}
-          placeholder="حداقل ۸ کاراکتر شامل حروف انگلیسی و اعداد"
-          icon={<Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-600/70" />}
-          error={errors.password}
-          isValid={validFields.password}
-          type="password"
         />
       </motion.div>
     </motion.div>

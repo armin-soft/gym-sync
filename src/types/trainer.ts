@@ -4,8 +4,6 @@ export interface TrainerProfile {
   fullName: string;
   bio: string;
   phone: string;
-  email: string;
-  password: string;
   image: string;
   gymName: string;
   gymDescription: string;
@@ -19,8 +17,6 @@ export const defaultProfile: TrainerProfile = {
   fullName: "",
   bio: "",
   phone: "",
-  email: "MohammadAbbasiFix@gmail.com",
-  password: "Mohammad@1404",
   image: "/Assets/Image/Place-Holder.svg",
   gymName: "",
   gymDescription: "",

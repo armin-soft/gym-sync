@@ -1,9 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { AccountLockedView } from "./AccountLockedView";
-import { LoginFormView } from "./LoginFormView";
-import { useLoginForm } from "./hooks/useLoginForm";
+import { MobileLoginForm } from "./MobileLoginForm";
 import { ModernLoginBackground } from "./ModernLoginBackground";
 
 interface LoginFormProps {
@@ -11,25 +9,6 @@ interface LoginFormProps {
 }
 
 export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
-  const {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    loading,
-    error,
-    locked,
-    lockExpiry,
-    timeLeft,
-    setTimeLeft,
-    gymName,
-    rememberMe,
-    setRememberMe,
-    showPassword,
-    setShowPassword,
-    handleLogin
-  } = useLoginForm({ onLoginSuccess });
-
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <ModernLoginBackground />
@@ -56,29 +35,19 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent rounded-3xl"></div>
             
             {/* Content */}
-            <div className="relative z-10">
-              {locked ? (
-                <AccountLockedView 
-                  timeLeft={timeLeft} 
-                  setTimeLeft={setTimeLeft} 
-                  lockExpiry={lockExpiry} 
-                />
-              ) : (
-                <LoginFormView 
-                  email={email}
-                  setEmail={setEmail}
-                  password={password}
-                  setPassword={setPassword}
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                  rememberMe={rememberMe}
-                  setRememberMe={setRememberMe}
-                  loading={loading}
-                  error={error}
-                  handleLogin={handleLogin}
-                  gymName={gymName}
-                />
-              )}
+            <div className="relative z-10 p-8">
+              {/* Header */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="text-center mb-8"
+              >
+                <h1 className="text-3xl font-bold text-white mb-2">ورود به پنل مدیریت</h1>
+                <p className="text-white/70">لطفاً شماره موبایل خود را وارد کنید</p>
+              </motion.div>
+
+              <MobileLoginForm onLoginSuccess={onLoginSuccess} />
             </div>
 
             {/* Bottom Info */}
@@ -89,7 +58,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
                 transition={{ delay: 0.8, duration: 0.5 }}
                 className="text-xs text-center text-white/70"
               >
-                برای ورود از اطلاعات ثبت شده در بخش پروفایل مربی استفاده کنید
+                کد پیش‌فرض: ۰۱۲۳۴۵
               </motion.p>
             </div>
           </div>
