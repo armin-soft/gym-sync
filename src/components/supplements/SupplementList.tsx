@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Supplement } from '@/types/supplement';
-import { SupplementEmptyState } from './list/SupplementEmptyState';
 import { SupplementGridView } from './list/SupplementGridView';
+import { EmptyState } from '@/components/ui/empty-state';
 
 interface SupplementListProps {
   supplements: Supplement[];
@@ -26,10 +26,17 @@ export const SupplementList: React.FC<SupplementListProps> = ({
   // If there are no supplements, show the empty state
   if (supplements.length === 0) {
     return (
-      <SupplementEmptyState 
-        activeTab={activeTab}
-        onAddSupplement={onAddSupplement}
-      />
+      <div className="py-20 flex items-center justify-center">
+        <EmptyState
+          icon="FlaskConical"
+          title={`هیچ ${activeTab === 'supplement' ? 'مکملی' : 'ویتامینی'} وجود ندارد`}
+          description="لطفاً ابتدا یک مکمل اضافه کنید"
+          action={{
+            label: `افزودن ${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}`,
+            onClick: onAddSupplement
+          }}
+        />
+      </div>
     );
   }
 
