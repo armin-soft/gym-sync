@@ -49,18 +49,6 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
 
               <MobileLoginForm onLoginSuccess={onLoginSuccess} />
             </div>
-
-            {/* Bottom Info */}
-            <div className="relative z-10 px-6 pb-6">
-              <motion.p 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-                className="text-xs text-center text-white/70"
-              >
-                کد پیش‌فرض: ۰۱۲۳۴۵
-              </motion.p>
-            </div>
           </div>
         </motion.div>
       </div>
