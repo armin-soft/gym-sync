@@ -9,7 +9,7 @@ interface ProfileSidebarProps {
   profile: {
     image: string;
     name?: string;
-    email?: string;
+    phone?: string;
   };
   onImageChange: (image: string) => void;
   activeSection: string;
@@ -67,8 +67,8 @@ export const ProfileSidebar = ({
               <h3 className="text-xl font-bold bg-gradient-to-r from-violet-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {profile.name || "نام مربی"}
               </h3>
-              {profile.email && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{profile.email}</p>
+              {profile.phone && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1" dir="ltr">{profile.phone}</p>
               )}
               <div className="flex items-center justify-center gap-2 mt-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />
@@ -165,8 +165,8 @@ export const ProfileSidebar = ({
                 {profile.name || "نام مربی"}
               </h3>
             </div>
-            {profile.email && (
-              <p className="text-gray-600 dark:text-gray-400 mb-2">{profile.email}</p>
+            {profile.phone && (
+              <p className="text-gray-600 dark:text-gray-400 mb-2" dir="ltr">{profile.phone}</p>
             )}
             <div className="flex items-center justify-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-500" />
