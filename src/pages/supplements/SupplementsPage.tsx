@@ -3,8 +3,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/supplements";
 import { PageContainer } from "@/components/ui/page-container";
-import { SupplementsHeader } from "./components/SupplementsHeader";
-import { SupplementTabs } from "./components/supplement-tabs";
+import { SupplementsPageHeader } from "./components/SupplementsPageHeader";
+import { SupplementsMainContent } from "./components/SupplementsMainContent";
 import { SupplementDialog } from "@/components/supplements/SupplementDialog";
 import { CategoryDialog } from "@/components/supplements/CategoryDialog";
 import { useToast } from "@/hooks/use-toast";
@@ -126,47 +126,39 @@ const SupplementsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950" dir="rtl">
-      <PageContainer 
-        fullHeight 
-        fullWidth
-        noPadding
-        scrollable
-        className="min-h-screen"
-      >
-        <div className="flex flex-col min-h-screen">
-          <div className="flex-shrink-0">
-            <SupplementsHeader />
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-100 dark:from-gray-900 dark:via-indigo-950 dark:to-purple-950" dir="rtl">
+      <PageContainer fullHeight fullWidth noPadding scrollable className="min-h-screen">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen flex flex-col"
+        >
+          {/* Header */}
+          <SupplementsPageHeader />
           
-          <div className="flex-1 p-4 sm:p-6 lg:p-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="w-full"
-            >
-              <SupplementTabs 
-                activeTab={activeTab}
-                onTabChange={(value) => {
-                  setActiveTab(value as 'supplement' | 'vitamin');
-                  setSelectedCategory(null);
-                }}
-                isLoading={isLoading}
-                categories={relevantCategories}
-                onAddCategory={handleAddCategory}
-                onEditCategory={handleEditCategory}
-                onDeleteCategory={handleDeleteCategory}
-                supplements={filteredSupplements}
-                onAddSupplement={handleAddSupplement}
-                onEditSupplement={handleEditSupplement}
-                onDeleteSupplement={handleDeleteSupplement}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
-            </motion.div>
+          {/* Main Content */}
+          <div className="flex-1 p-6">
+            <SupplementsMainContent
+              activeTab={activeTab}
+              onTabChange={(value) => {
+                setActiveTab(value as 'supplement' | 'vitamin');
+                setSelectedCategory(null);
+              }}
+              isLoading={isLoading}
+              categories={relevantCategories}
+              onAddCategory={handleAddCategory}
+              onEditCategory={handleEditCategory}
+              onDeleteCategory={handleDeleteCategory}
+              supplements={filteredSupplements}
+              onAddSupplement={handleAddSupplement}
+              onEditSupplement={handleEditSupplement}
+              onDeleteSupplement={handleDeleteSupplement}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
           </div>
 
+          {/* Dialogs */}
           <SupplementDialog
             open={supplementDialogOpen}
             onOpenChange={setSupplementDialogOpen}
@@ -184,7 +176,7 @@ const SupplementsPage = () => {
             defaultValue={editingCategory?.name}
             mode={editingCategory ? "edit" : "add"}
           />
-        </div>
+        </motion.div>
       </PageContainer>
     </div>
   );
