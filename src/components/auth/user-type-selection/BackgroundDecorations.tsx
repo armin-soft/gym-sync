@@ -14,12 +14,9 @@ const floatingElements = [
 export const BackgroundDecorations = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Main gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 dark:from-violet-950/50 dark:via-purple-950/50 dark:to-indigo-950/50"></div>
-      
-      {/* Animated blob shapes */}
+      {/* Animated blob shapes - اندازه ریسپانسیو */}
       <motion.div
-        className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-violet-400/10 to-purple-500/10 rounded-full blur-3xl"
+        className="absolute top-0 left-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-gradient-to-r from-violet-400/10 to-purple-500/10 rounded-full blur-3xl"
         animate={{
           x: [0, 100, 0],
           y: [0, -50, 0],
@@ -33,7 +30,7 @@ export const BackgroundDecorations = () => {
       />
       
       <motion.div
-        className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-r from-indigo-400/10 to-blue-500/10 rounded-full blur-3xl"
+        className="absolute bottom-0 right-0 w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 bg-gradient-to-r from-indigo-400/10 to-blue-500/10 rounded-full blur-3xl"
         animate={{
           x: [0, -80, 0],
           y: [0, 40, 0],
@@ -48,7 +45,7 @@ export const BackgroundDecorations = () => {
       />
       
       <motion.div
-        className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-r from-purple-400/5 to-pink-500/5 rounded-full blur-2xl"
+        className="absolute top-1/2 left-1/2 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 bg-gradient-to-r from-purple-400/5 to-pink-500/5 rounded-full blur-2xl"
         animate={{
           x: [-50, 50, -50],
           y: [-30, 30, -30],
@@ -62,11 +59,11 @@ export const BackgroundDecorations = () => {
         }}
       />
       
-      {/* Floating geometric elements */}
+      {/* Floating geometric elements - اندازه ریسپانسیو */}
       {floatingElements.map((item, index) => (
         <motion.div
           key={index}
-          className="absolute"
+          className="absolute hidden sm:block"
           style={{ left: item.x, top: item.y }}
           initial={{ opacity: 0, scale: 0, rotate: 0 }}
           animate={{
@@ -82,14 +79,14 @@ export const BackgroundDecorations = () => {
             ease: "easeInOut",
           }}
         >
-          <div className={`w-16 h-16 bg-gradient-to-br ${item.color} rounded-3xl backdrop-blur-sm shadow-xl flex items-center justify-center border border-white/20`}>
-            <item.icon className="h-8 w-8 text-white/80" />
+          <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br ${item.color} rounded-2xl sm:rounded-3xl backdrop-blur-sm shadow-xl flex items-center justify-center border border-white/20`}>
+            <item.icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white/80" />
           </div>
         </motion.div>
       ))}
       
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3cpattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse'%3e%3cpath d='M 60 0 L 0 0 0 60' fill='none' stroke='%23e0e7ff' stroke-width='1' opacity='0.1'/%3e%3c/pattern%3e%3c/defs%3e%3crect width='100%25' height='100%25' fill='url(%23grid)'/%3e%3c/svg%3e')] opacity-30 dark:opacity-10"></div>
+      {/* Grid pattern overlay - مخفی در موبایل */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3cpattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse'%3e%3cpath d='M 60 0 L 0 0 0 60' fill='none' stroke='%23e0e7ff' stroke-width='1' opacity='0.1'/%3e%3c/pattern%3e%3c/defs%3e%3crect width='100%25' height='100%25' fill='url(%23grid)'/%3e%3c/svg%3e')] opacity-30 dark:opacity-10 hidden md:block"></div>
       
       {/* Radial gradient overlay for depth */}
       <div className="absolute inset-0 bg-radial-gradient from-transparent via-white/5 to-white/10 dark:from-transparent dark:via-black/5 dark:to-black/10"></div>
