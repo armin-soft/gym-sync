@@ -31,7 +31,7 @@ export const UserTypeSelection = () => {
       console.log('Navigating to:', type === 'management' ? '/Management' : '/Students');
       
       // تاخیر کوتاه برای نمایش انیمیشن
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       // هدایت به صفحه مناسب
       if (type === 'management') {
@@ -70,16 +70,19 @@ export const UserTypeSelection = () => {
       <BackgroundDecorations />
 
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-7xl">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={containerVariants}
-            className="text-center space-y-12"
+            className="text-center space-y-16"
           >
             <SelectionHeader />
 
-            <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <motion.div 
+              variants={itemVariants} 
+              className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto"
+            >
               {userTypes.map((type) => (
                 <UserTypeCard
                   key={type.id}
@@ -93,14 +96,23 @@ export const UserTypeSelection = () => {
               ))}
             </motion.div>
 
-            {/* نمایش وضعیت پردازش */}
+            {/* Processing status */}
             {isProcessing && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center text-white/80 text-sm"
+                className="text-center"
               >
-                در حال هدایت...
+                <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50">
+                  <motion.div
+                    className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <span className="text-gray-700 dark:text-gray-200 font-medium">
+                    در حال هدایت به پنل انتخابی...
+                  </span>
+                </div>
               </motion.div>
             )}
           </motion.div>

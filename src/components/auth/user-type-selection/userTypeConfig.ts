@@ -1,29 +1,43 @@
 
-import { Users, UserCog } from "lucide-react";
+import { Users, Shield } from "lucide-react";
 
 export const userTypes = [
   {
     id: 'management',
-    title: 'پنل مدیریت مربی',
-    subtitle: 'مدیریت شاگردان و برنامه‌ها',
-    description: 'دسترسی کامل به ابزارهای مدیریتی، ایجاد برنامه تمرینی، مدیریت شاگردان و تحلیل پیشرفت',
-    icon: UserCog,
-    gradient: 'from-indigo-500 via-purple-500 to-pink-500',
-    bgGradient: 'from-indigo-50 via-purple-50 to-pink-50',
-    darkBgGradient: 'from-indigo-950 via-purple-950 to-pink-950',
-    features: ['مدیریت شاگردان', 'ایجاد برنامه تمرین', 'تحلیل پیشرفت', 'مدیریت رژیم غذایی'],
-    badge: 'حرفه‌ای'
+    title: 'پنل مدیریت',
+    subtitle: 'مربی و مدیر باشگاه',
+    description: 'دسترسی کامل به تمامی امکانات سیستم و مدیریت شاگردان',
+    icon: Shield,
+    gradient: 'from-violet-600 to-purple-600',
+    bgGradient: 'from-violet-50 to-purple-50',
+    darkBgGradient: 'from-violet-950 to-purple-950',
+    features: [
+      'مدیریت کامل شاگردان',
+      'طراحی برنامه تمرینی',
+      'برنامه‌ریزی تغذیه',
+      'گزارشات پیشرفته',
+      'مدیریت مکمل‌ها',
+      'پشتیبان‌گیری اطلاعات'
+    ],
+    badge: 'مدیر'
   },
   {
     id: 'student',
-    title: 'پنل شاگردان',
-    subtitle: 'مشاهده برنامه شخصی',
-    description: 'دسترسی به برنامه تمرینی شخصی، رژیم غذایی، پیگیری پیشرفت و ارتباط با مربی',
+    title: 'پنل شاگرد',
+    subtitle: 'دسترسی شخصی',
+    description: 'مشاهده برنامه شخصی، پیشرفت و اطلاعات تمرینی',
     icon: Users,
-    gradient: 'from-violet-500 via-blue-500 to-cyan-500',
-    bgGradient: 'from-violet-50 via-blue-50 to-cyan-50',
-    darkBgGradient: 'from-violet-950 via-blue-950 to-cyan-950',
-    features: ['برنامه تمرینی', 'رژیم غذایی', 'پیگیری پیشرفت', 'ارتباط با مربی'],
-    badge: 'شخصی'
+    gradient: 'from-indigo-600 to-blue-600',
+    bgGradient: 'from-indigo-50 to-blue-50',
+    darkBgGradient: 'from-indigo-950 to-blue-950',
+    features: [
+      'مشاهده برنامه تمرین',
+      'برنامه تغذیه شخصی',
+      'پیگیری پیشرفت',
+      'لیست مکمل‌ها',
+      'اطلاعات شخصی',
+      'تاریخچه فعالیت‌ها'
+    ],
+    badge: 'شاگرد'
   }
 ];
