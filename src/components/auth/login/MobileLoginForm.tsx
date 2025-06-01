@@ -96,6 +96,9 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
       const newAttempts = attempts + 1;
       localStorage.setItem("loginAttempts", newAttempts.toString());
 
+      // Reset the code input field when incorrect
+      setCode("");
+
       // Lock account after 3 failed attempts
       if (newAttempts >= 3) {
         const lockExpiry = new Date();
