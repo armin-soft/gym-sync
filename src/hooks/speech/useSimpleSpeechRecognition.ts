@@ -40,6 +40,20 @@ export const useSimpleSpeechRecognition = ({
     setIsSupported(!!SpeechRecognition);
   }, []);
 
+  // Function to clean text and remove unwanted periods
+  const cleanTranscriptText = useCallback((text: string) => {
+    let cleanedText = text
+      .trim()
+      .replace(/\.$/, '') // Remove period at the end
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim();
+    
+    // Apply Persian word correction
+    cleanedText = correctPersianWords(cleanedText);
+    
+    return cleanedText;
+  }, []);
+
   const initializeRecognition = useCallback(() => {
     if (!isSupported) return null;
 
@@ -160,16 +174,11 @@ export const useSimpleSpeechRecognition = ({
         }
         
         if (event.results[i].isFinal) {
-          const processedText = bestTranscript.trim();
+          // Clean the transcript text and remove unwanted periods
+          const processedText = cleanTranscriptText(bestTranscript);
           
           // Add to existing text without limit
           final += (final ? " " : "") + processedText;
-          
-          // Persian word correction
-          final = correctPersianWords(final);
-          
-          // Clean up whitespace but preserve content
-          final = final.replace(/\s+/g, " ").trim();
           
           // Handle multi-line formatting
           if (!multiLine) {
@@ -178,7 +187,7 @@ export const useSimpleSpeechRecognition = ({
           
           finalTranscriptRef.current = final;
         } else {
-          interim = bestTranscript;
+          interim = cleanTranscriptText(bestTranscript);
         }
       }
 
@@ -189,7 +198,7 @@ export const useSimpleSpeechRecognition = ({
     };
 
     return recognition;
-  }, [isSupported, lang, interimResults, maxAlternatives, continuous, multiLine, onTranscriptChange, isListening]);
+  }, [isSupported, lang, interimResults, maxAlternatives, continuous, multiLine, onTranscriptChange, isListening, cleanTranscriptText]);
 
   const startListening = useCallback(async () => {
     if (!isSupported || isListening) return;

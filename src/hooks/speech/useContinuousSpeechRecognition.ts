@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface UseContinuousSpeechRecognitionOptions {
@@ -34,6 +33,15 @@ export const useContinuousSpeechRecognition = ({
     setIsSupported(!!SpeechRecognition);
   }, []);
 
+  // Function to clean text and remove unwanted periods
+  const cleanTranscriptText = useCallback((text: string) => {
+    return text
+      .trim()
+      .replace(/\.$/, '') // Remove period at the end
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim();
+  }, []);
+
   const initializeRecognition = useCallback(() => {
     if (!isSupported) return null;
 
@@ -62,21 +70,24 @@ export const useContinuousSpeechRecognition = ({
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
-        const transcriptText = result[0].transcript;
+        let transcriptText = result[0].transcript;
 
         if (result.isFinal) {
+          // Clean the transcript text and remove unwanted periods
+          transcriptText = cleanTranscriptText(transcriptText);
           // اضافه کردن متن نهایی بدون محدودیت
-          finalText += transcriptText;
+          finalText += (finalText ? ' ' : '') + transcriptText;
           finalTranscriptRef.current = finalText;
         } else {
-          interimText += transcriptText;
+          // Clean interim text as well
+          interimText += cleanTranscriptText(transcriptText);
         }
       }
 
       setTranscript(finalText);
       setInterimTranscript(interimText);
       // ارسال کل متن بدون محدودیت کاراکتر
-      onTranscriptChange(finalText + interimText);
+      onTranscriptChange(finalText + (interimText ? ' ' + interimText : ''));
     };
 
     recognition.onerror = (event: any) => {
@@ -123,7 +134,7 @@ export const useContinuousSpeechRecognition = ({
     };
 
     return recognition;
-  }, [isSupported, continuous, interimResults, lang, maxAlternatives, onTranscriptChange, isListening]);
+  }, [isSupported, continuous, interimResults, lang, maxAlternatives, onTranscriptChange, isListening, cleanTranscriptText]);
 
   const startListening = useCallback(async () => {
     if (!isSupported || isListening) return;
