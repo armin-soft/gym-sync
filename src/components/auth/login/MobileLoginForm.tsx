@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -190,20 +191,20 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           کد تأیید
         </Label>
         
-        {/* Modern OTP Input */}
-        <div className="flex justify-center mb-4">
+        {/* Modern OTP Input with RTL direction and Persian digits */}
+        <div className="flex justify-center mb-4" dir="rtl">
           <InputOTP
             maxLength={6}
             value={code}
             onChange={(value) => setCode(value)}
-            dir="ltr"
+            dir="rtl"
           >
             <InputOTPGroup className="gap-2">
               {[...Array(6)].map((_, index) => (
                 <InputOTPSlot 
                   key={index}
                   index={index}
-                  className="w-12 h-12 text-lg font-bold bg-white/10 border-white/20 text-white focus:border-white/40 focus:ring-white/20 rounded-xl backdrop-blur-sm"
+                  className="w-12 h-12 text-lg font-bold bg-white/10 border-white/20 text-white focus:border-white/40 focus:ring-white/20 rounded-xl backdrop-blur-sm persian-numbers"
                 />
               ))}
             </InputOTPGroup>
