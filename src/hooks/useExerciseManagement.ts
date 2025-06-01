@@ -1,7 +1,6 @@
 
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 import { useExerciseCRUD } from "@/hooks/exercises/useExerciseCRUD";
-import { useExerciseSort } from "@/hooks/exercises/useExerciseSort";
 import { useExerciseState } from "@/hooks/exercises/useExerciseState";
 
 export const useExerciseManagement = () => {
@@ -24,9 +23,6 @@ export const useExerciseManagement = () => {
     handleDeleteExercises,
     updateExercises
   } = useExerciseCRUD({ exercises });
-  
-  // Sorting functionality
-  const { isAscending, handleSort } = useExerciseSort();
 
   // Wrapper for save function to match existing API
   const handleExerciseSave = (formData: { name: string; categoryId: number }) => {
@@ -42,8 +38,6 @@ export const useExerciseManagement = () => {
     setExerciseFormData,
     isExerciseDialogOpen,
     setIsExerciseDialogOpen,
-    isAscending,
-    handleSort,
     handleExerciseSave,
     handleDeleteExercises,
     isLoading
