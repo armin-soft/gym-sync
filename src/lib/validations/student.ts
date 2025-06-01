@@ -1,5 +1,4 @@
 
-
 import * as z from "zod";
 
 // Convert Persian numbers to English for validation
@@ -33,9 +32,10 @@ export const studentFormSchema = z.object({
   image: z.string().default("/Assets/Image/Place-Holder.svg"),
   payment: z.string()
     .transform(numberPreprocessor)
-    .refine(val => /^\d+$/.test(val), { 
+    .refine(val => !val || /^\d+$/.test(val), { 
       message: "مبلغ باید عدد باشد" 
-    }),
+    })
+    .optional(),
   password: z.string()
     .min(1, { message: "گذرواژه الزامی است" })
     .min(8, { message: "گذرواژه باید حداقل ۸ کاراکتر باشد" })
@@ -50,7 +50,10 @@ export const studentFormSchema = z.object({
       message: "سن باید عدد باشد" 
     })
     .optional(),
+  gender: z.enum(["male", "female"], {
+    required_error: "انتخاب جنسیت الزامی است",
+    invalid_type_error: "جنسیت انتخاب شده معتبر نیست"
+  }),
 });
 
 export type StudentFormValues = z.infer<typeof studentFormSchema>;
-

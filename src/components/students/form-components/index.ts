@@ -11,3 +11,4 @@ export * from "./StudentImageUpload";
 export * from "./StudentForm";
 export * from "./StudentImageSection";
 export * from "./StudentPersonalInfo";
+export * from "./GenderField";

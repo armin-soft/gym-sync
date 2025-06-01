@@ -36,6 +36,7 @@ export const PaymentField = ({
               <Label className="flex items-center gap-2 mb-2">
                 <Coins className="h-4 w-4 text-indigo-500" />
                 <span>مبلغ (تومان)</span>
+                <span className="text-xs text-muted-foreground">(اختیاری)</span>
               </Label>
               <Input
                 dir="ltr"
@@ -48,7 +49,7 @@ export const PaymentField = ({
                 placeholder="۵۰۰,۰۰۰"
               />
               <FormMessage />
-              <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان</p>
+              <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان (اختیاری)</p>
             </FormItem>
           )}
         />
@@ -63,6 +64,7 @@ export const PaymentField = ({
         <Label className="flex items-center gap-2 mb-2" htmlFor="payment">
           <Coins className="h-4 w-4 text-indigo-500" />
           <span>مبلغ (تومان)</span>
+          <span className="text-xs text-muted-foreground">(اختیاری)</span>
         </Label>
         <Input
           id="payment"
@@ -75,7 +77,7 @@ export const PaymentField = ({
           placeholder="۵۰۰,۰۰۰"
         />
         {error && <p className="text-sm font-medium text-destructive">{error}</p>}
-        <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان</p>
+        <p className="text-xs text-muted-foreground mt-1">مبلغ صدور برنامه‌ها به تومان (اختیاری)</p>
       </div>
     </motion.div>
   );

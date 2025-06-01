@@ -4,7 +4,7 @@ import { Student } from "@/components/students/StudentTypes";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, UserRound } from "lucide-react";
+import { CheckCircle, UserRound, User, UserCheck } from "lucide-react";
 import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
 
 export const useTableColumns = () => {
@@ -44,6 +44,22 @@ export const useTableColumns = () => {
       },
     },
     {
+      accessorKey: "gender",
+      header: () => "جنسیت",
+      cell: ({ row }) => {
+        const value = row.original.gender;
+        const isMale = value === "male";
+        return (
+          <div className="text-center">
+            <Badge variant="outline" className={`gap-2 ${isMale ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-400' : 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:border-pink-700/30 dark:text-pink-400'}`}>
+              {isMale ? <User className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
+              {isMale ? "مرد" : "زن"}
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "height",
       header: () => "قد",
       cell: ({ row }) => {
@@ -64,7 +80,7 @@ export const useTableColumns = () => {
       header: () => "مبلغ",
       cell: ({ row }) => {
         const value = row.original.payment;
-        return <div className="text-center">{formatPrice(value) || ""}</div>;
+        return <div className="text-center">{value ? formatPrice(value) : "-"}</div>;
       },
     },
     {

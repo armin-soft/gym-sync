@@ -15,6 +15,7 @@ import { PersonalInfoSection } from "./form-components/PersonalInfoSection";
 import { MeasurementsSection } from "./form-components/MeasurementsSection";
 import { PaymentField } from "./form-components/PaymentField";
 import { FormActions } from "./form-components/FormActions";
+import { GenderField } from "./form-components/GenderField";
 
 interface StudentFormProps {
   student?: Student;
@@ -46,6 +47,7 @@ export const StudentForm = ({
       age: student?.age || "",
       grade: student?.grade || "",
       group: student?.group || "",
+      gender: student?.gender || "male",
     },
   });
 
@@ -64,6 +66,7 @@ export const StudentForm = ({
         age: student.age || "",
         grade: student.grade || "",
         group: student.group || "",
+        gender: student.gender || "male",
       });
       setPreviewImage(student.image || "/Assets/Image/Place-Holder.svg");
     }
@@ -151,6 +154,12 @@ export const StudentForm = ({
               <PersonalInfoSection 
                 control={form.control} 
                 itemVariants={itemVariants} 
+              />
+              
+              {/* Gender Field */}
+              <GenderField 
+                control={form.control}
+                itemVariants={itemVariants}
               />
             </div>
             
