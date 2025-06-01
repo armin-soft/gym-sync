@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,8 +76,9 @@ export const SimpleSpeechInput: React.FC<SimpleSpeechInputProps> = ({
           value={displayText}
           onChange={handleManualChange}
           placeholder={placeholder}
+          autoResize={true}
           className={cn(
-            "min-h-[120px] max-h-[300px] resize-y text-right pr-3 pl-24",
+            "min-h-[120px] max-h-[400px] text-right pr-3 pl-24",
             isListening && "border-red-300 ring-2 ring-red-100"
           )}
           dir="rtl"

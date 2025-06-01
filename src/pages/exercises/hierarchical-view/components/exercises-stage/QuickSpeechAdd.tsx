@@ -1,4 +1,3 @@
-
 import React, { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Mic, MicOff, Trash2 } from "lucide-react";
@@ -139,7 +138,8 @@ const QuickSpeechAdd: React.FC<QuickSpeechAddProps> = ({
             value={displayText}
             onChange={(e) => setQuickSpeechText(e.target.value)}
             placeholder="نام حرکت را وارد کنید یا روی دکمه ضبط کلیک کنید..."
-            className="min-h-[80px] focus-visible:ring-purple-400 text-right"
+            autoResize={true}
+            className="min-h-[80px] max-h-[200px] focus-visible:ring-purple-400 text-right"
             dir="rtl"
             onKeyDown={handleKeyDown}
           />
