@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Supplement, SupplementCategory } from "@/types/supplement";
 import { SupplementGridView } from "@/components/supplements/list/SupplementGridView";
-import { CategoryManagement } from "@/components/supplements/categories/CategoryManagement";
+import { ModernCategoryManagement } from "../ModernCategoryManagement";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Card } from "@/components/ui/card";
 
@@ -66,7 +66,7 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
       {/* Categories Management */}
       <Card className="bg-gradient-to-l from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg">
         <div className="p-6">
-          <CategoryManagement
+          <ModernCategoryManagement
             categories={categories}
             onAddCategory={onAddCategory}
             onEditCategory={onEditCategory}

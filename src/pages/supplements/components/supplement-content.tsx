@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Supplement } from '@/types/supplement';
-import { SupplementList } from '@/components/supplements/SupplementList';
+import { SupplementGridView } from '@/components/supplements/list/SupplementGridView';
 
 interface SupplementContentProps {
   supplements: Supplement[];
@@ -15,7 +15,7 @@ export const SupplementContent: React.FC<SupplementContentProps> = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
   
   return (
-    <SupplementList 
+    <SupplementGridView 
       {...props}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
