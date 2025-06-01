@@ -1,5 +1,8 @@
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { correctPersianWords } from "@/utils/persian-word-correction";
+import { useBrowserSupport } from './useBrowserSupport';
+import { useTextProcessing } from './useTextProcessing';
 
 interface UseSimpleSpeechRecognitionOptions {
   onTranscriptChange: (transcript: string) => void;
@@ -23,39 +26,22 @@ export const useSimpleSpeechRecognition = ({
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState(initialValue);
   const [interimTranscript, setInterimTranscript] = useState('');
-  const [isSupported, setIsSupported] = useState(false);
   
   const recognitionRef = useRef<any>(null);
   const restartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const finalTranscriptRef = useRef(initialValue);
   const isRestartingRef = useRef(false);
 
-  // Check browser support
-  useEffect(() => {
-    const SpeechRecognition = 
-      window.SpeechRecognition || 
-      (window as any).webkitSpeechRecognition ||
-      (window as any).mozSpeechRecognition ||
-      (window as any).msSpeechRecognition;
-    setIsSupported(!!SpeechRecognition);
-  }, []);
+  // Use refactored hooks
+  const { isSupported } = useBrowserSupport();
+  const { cleanTranscriptText } = useTextProcessing();
 
-  // Function to clean text and remove ALL periods
-  const cleanTranscriptText = useCallback((text: string) => {
-    let cleanedText = text
-      .trim()
-      .replace(/\.+/g, '') // Remove all periods (single or multiple)
-      .replace(/\u06D4/g, '') // Remove Arabic-Indic period
-      .replace(/\u2E3C/g, '') // Remove stenographic period
-      .replace(/\u002E/g, '') // Remove ASCII period
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .trim();
-    
-    // Apply Persian word correction
+  // Enhanced text processing with Persian word correction
+  const processTranscriptText = useCallback((text: string) => {
+    let cleanedText = cleanTranscriptText(text);
     cleanedText = correctPersianWords(cleanedText);
-    
     return cleanedText;
-  }, []);
+  }, [cleanTranscriptText]);
 
   const initializeRecognition = useCallback(() => {
     if (!isSupported) return null;
@@ -85,7 +71,7 @@ export const useSimpleSpeechRecognition = ({
     
     // Platform-specific optimizations for unlimited recording
     if (isEdge || isFirefox) {
-      recognition.continuous = true; // Enable continuous for unlimited text
+      recognition.continuous = true;
     }
     
     if (isSafari && !isIOS) {
@@ -95,7 +81,7 @@ export const useSimpleSpeechRecognition = ({
     
     if (isIOS) {
       recognition.interimResults = true;
-      recognition.continuous = false; // iOS limitation, but we'll restart automatically
+      recognition.continuous = false;
     }
     
     if (isAndroid) {
@@ -112,7 +98,6 @@ export const useSimpleSpeechRecognition = ({
     recognition.onend = () => {
       console.log('Speech recognition ended');
       
-      // Auto-restart for unlimited recording if still listening
       if (isListening && !isRestartingRef.current) {
         isRestartingRef.current = true;
         restartTimeoutRef.current = setTimeout(() => {
@@ -134,7 +119,6 @@ export const useSimpleSpeechRecognition = ({
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       
-      // Handle errors and continue unlimited recording
       if (event.error === 'no-speech' || event.error === 'audio-capture' || event.error === 'network') {
         if (isListening && !isRestartingRef.current) {
           isRestartingRef.current = true;
@@ -161,7 +145,6 @@ export const useSimpleSpeechRecognition = ({
         let bestConfidence = 0;
         let bestTranscript = "";
         
-        // Find the best recognition result
         if (isIOS) {
           bestTranscript = event.results[i][0].transcript;
         } else {
@@ -177,54 +160,45 @@ export const useSimpleSpeechRecognition = ({
         }
         
         if (event.results[i].isFinal) {
-          // Clean the transcript text and remove ALL periods
-          const processedText = cleanTranscriptText(bestTranscript);
-          
-          // Add to existing text without limit
+          const processedText = processTranscriptText(bestTranscript);
           final += (final ? " " : "") + processedText;
           
-          // Handle multi-line formatting
           if (!multiLine) {
             final = final.replace(/\n/g, " ");
           }
           
           finalTranscriptRef.current = final;
         } else {
-          interim = cleanTranscriptText(bestTranscript);
+          interim = processTranscriptText(bestTranscript);
         }
       }
 
-      // Update transcripts without character limits
       setTranscript(final);
       onTranscriptChange(final + (interim ? " " + interim : ""));
       setInterimTranscript(interim);
     };
 
     return recognition;
-  }, [isSupported, lang, interimResults, maxAlternatives, continuous, multiLine, onTranscriptChange, isListening, cleanTranscriptText]);
+  }, [isSupported, lang, interimResults, maxAlternatives, continuous, multiLine, onTranscriptChange, isListening, processTranscriptText]);
 
   const startListening = useCallback(async () => {
     if (!isSupported || isListening) return;
 
     try {
-      // Clear any existing timeouts
       if (restartTimeoutRef.current) {
         clearTimeout(restartTimeoutRef.current);
         restartTimeoutRef.current = null;
       }
 
-      // Stop any existing recognition
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
 
-      // Initialize new recognition
       const recognition = initializeRecognition();
       if (!recognition) throw new Error('Speech recognition not supported');
 
       recognitionRef.current = recognition;
       
-      // Reset interim but keep existing transcript for unlimited mode
       setInterimTranscript('');
       finalTranscriptRef.current = transcript;
       isRestartingRef.current = false;
@@ -243,7 +217,6 @@ export const useSimpleSpeechRecognition = ({
     setIsListening(false);
     isRestartingRef.current = false;
     
-    // Clear restart timeout
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
       restartTimeoutRef.current = null;
@@ -253,7 +226,6 @@ export const useSimpleSpeechRecognition = ({
       recognitionRef.current.stop();
     }
 
-    // Clear interim transcript
     setInterimTranscript('');
   }, [isListening]);
 

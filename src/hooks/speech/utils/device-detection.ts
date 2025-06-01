@@ -1,83 +1,23 @@
 
-/**
- * Utility functions for device and microphone detection
- */
-
-/**
- * Checks if the browser supports the Permissions API
- */
-export function canUsePermissionsAPI(): boolean {
-  return typeof navigator !== 'undefined' && 
-         'permissions' in navigator &&
-         'query' in navigator.permissions;
-}
-
-/**
- * Checks if a microphone is available on the device
- */
-export async function checkMicrophoneAvailability(): Promise<boolean | null> {
-  if (typeof navigator === 'undefined') {
-    return false;
-  }
-
-  // First, check if mediaDevices exists
-  if (!navigator.mediaDevices) {
-    return false;
-  }
-
-  try {
-    // بررسی دسترسی به لیست دستگاه‌های رسانه‌ای
-    if ('enumerateDevices' in navigator.mediaDevices) {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const hasAudioInput = devices.some(device => device.kind === 'audioinput');
-      
-      if (!hasAudioInput) {
-        console.log("هیچ دستگاه ورودی صوتی یافت نشد");
-        return false;
-      }
-      
-      return true;
-    } else {
-      // تلاش برای دسترسی مستقیم به میکروفون در مرورگرهایی که از enumerateDevices پشتیبانی نمی‌کنند
-      try {
-        // Cast mediaDevices to any to avoid TypeScript issues with getUserMedia
-        const mediaDevices = navigator.mediaDevices as any;
-        if (mediaDevices && typeof mediaDevices.getUserMedia === 'function') {
-          const stream = await mediaDevices.getUserMedia({ audio: true });
-          stream.getTracks().forEach(track => track.stop());
-          return true;
-        } else {
-          console.error("getUserMedia is not available on this browser");
-          return false;
-        }
-      } catch (directAccessError) {
-        console.error("خطا در دسترسی مستقیم به میکروفون:", directAccessError);
-        // اگر خطای دسترسی نباشد، میکروفون احتمالاً وجود ندارد
-        if ((directAccessError as Error).name === 'NotFoundError' || 
-            (directAccessError as Error).name === 'DevicesNotFoundError') {
-          return false;
-        }
-        // در صورت خطای دسترسی، نمیتوان از اینجا تشخیص داد
-        return null;
-      }
-    }
-  } catch (error) {
-    console.error("خطا در بررسی وجود میکروفون:", error);
-    return null;
-  }
-}
-
-/**
- * Gets microphone access from browser permissions API
- */
-export async function getMicrophonePermissionStatus(): Promise<PermissionState | null> {
-  if (!canUsePermissionsAPI()) return null;
+export const detectDevice = () => {
+  const userAgent = navigator.userAgent;
   
-  try {
-    const result = await navigator.permissions.query({ name: 'microphone' as PermissionName });
-    return result.state;
-  } catch (error) {
-    console.error("Error checking microphone permission:", error);
-    return null;
-  }
-}
+  return {
+    isIOS: /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream,
+    isAndroid: /android/i.test(userAgent),
+    isEdge: /Edge/.test(userAgent),
+    isSafari: /^((?!chrome|android).)*safari/i.test(userAgent),
+    isFirefox: /firefox/i.test(userAgent),
+    isChrome: /chrome/i.test(userAgent) && !/edge/i.test(userAgent)
+  };
+};
+
+export const getOptimalRecognitionSettings = () => {
+  const device = detectDevice();
+  
+  return {
+    continuous: device.isIOS ? false : true,
+    interimResults: true,
+    maxAlternatives: device.isAndroid ? 5 : 3
+  };
+};
