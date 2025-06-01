@@ -12,18 +12,21 @@ const Index = () => {
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
   
-  const [trainerProfile, setTrainerProfile] = useState({
-    name: "مربی",
-    image: ""
-  });
+  const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
 
-  // Load students data efficiently
   useEffect(() => {
     try {
       const savedStudents = localStorage.getItem('students');
       if (savedStudents) {
         const parsedStudents = JSON.parse(savedStudents);
-        setStudents(Array.isArray(parsedStudents) ? parsedStudents : []);
+        if (Array.isArray(parsedStudents)) {
+          setStudents(parsedStudents);
+        } else {
+          console.error('Parsed students is not an array:', parsedStudents);
+          setStudents([]);
+        }
+      } else {
+        setStudents([]);
       }
     } catch (error) {
       console.error('Error loading students:', error);
@@ -31,24 +34,8 @@ const Index = () => {
     }
   }, []);
 
-  // Load trainer profile efficiently
-  useEffect(() => {
-    try {
-      const savedProfile = localStorage.getItem('trainerProfile');
-      if (savedProfile) {
-        const profile = JSON.parse(savedProfile);
-        setTrainerProfile({
-          name: profile.name || "مربی",
-          image: profile.image || ""
-        });
-      }
-    } catch (error) {
-      console.error('Error loading trainer profile:', error);
-    }
-  }, []);
-
   return (
-    <PageContainer fullScreen noPadding>
+    <PageContainer fullWidth noPadding>
       <DashboardLayout>
         <DashboardContent 
           stats={stats}
