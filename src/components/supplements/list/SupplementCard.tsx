@@ -11,7 +11,6 @@ import {
   Trash2, 
   Clock, 
   Beaker,
-  FileText,
   Tag
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -112,21 +111,6 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
                 زمان مصرف:
               </span>
               <Clock className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-            </div>
-          )}
-
-          {/* توضیحات */}
-          {supplement.description && (
-            <div className="p-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200/50 dark:border-gray-700/50">
-              <div className="flex items-start justify-end gap-2 mb-1">
-                <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
-                  توضیحات:
-                </span>
-                <FileText className="w-3 h-3 text-gray-500 dark:text-gray-400 mt-0.5" />
-              </div>
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed text-right">
-                {supplement.description}
-              </p>
             </div>
           )}
         </div>
