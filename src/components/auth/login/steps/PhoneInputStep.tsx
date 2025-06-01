@@ -14,7 +14,7 @@ interface PhoneInputStepProps {
   onSubmit: (e: React.FormEvent) => void;
   containerVariants: any;
   itemVariants: any;
-  allowedPhone?: string;
+  allowedPhones?: string[];
 }
 
 export const PhoneInputStep = ({
@@ -24,7 +24,7 @@ export const PhoneInputStep = ({
   onSubmit,
   containerVariants,
   itemVariants,
-  allowedPhone
+  allowedPhones
 }: PhoneInputStepProps) => {
   return (
     <motion.form
@@ -47,16 +47,27 @@ export const PhoneInputStep = ({
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder={allowedPhone ? toPersianNumbers(allowedPhone) : toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
+            placeholder={allowedPhones && allowedPhones.length > 0 ? toPersianNumbers(allowedPhones[0]) : toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
             className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 rounded-xl pr-4"
             dir="ltr"
             required
           />
         </div>
-        {allowedPhone && (
-          <p className="text-white/60 text-sm mt-2">
-            فقط شماره {toPersianNumbers(allowedPhone)} مجاز است
-          </p>
+        {allowedPhones && allowedPhones.length > 0 && (
+          <div className="text-white/60 text-sm mt-2">
+            {allowedPhones.length === 1 ? (
+              <p>فقط شماره {toPersianNumbers(allowedPhones[0])} مجاز است</p>
+            ) : (
+              <div>
+                <p>شماره‌های مجاز:</p>
+                <ul className="list-disc list-inside mt-1">
+                  {allowedPhones.map((phoneNumber, index) => (
+                    <li key={index}>{toPersianNumbers(phoneNumber)}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         )}
       </motion.div>
       

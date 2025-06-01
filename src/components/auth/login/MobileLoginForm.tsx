@@ -1,9 +1,10 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ModernErrorMessage } from "./ModernErrorMessage";
 import { PhoneInputStep } from "./steps/PhoneInputStep";
 import { CodeVerificationStep } from "./steps/CodeVerificationStep";
 import { containerVariants, itemVariants } from "./utils/animationVariants";
+import type { TrainerProfile } from "@/types/trainer";
 
 interface MobileLoginFormProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -16,9 +17,32 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [countdown, setCountdown] = useState(0);
+  const [trainerProfile, setTrainerProfile] = useState<TrainerProfile | null>(null);
 
-  // Only allowed phone number
-  const ALLOWED_PHONE = "09123823886";
+  // Base allowed phone number
+  const BASE_ALLOWED_PHONE = "09123823886";
+
+  // Load trainer profile on component mount
+  useEffect(() => {
+    try {
+      const savedProfile = localStorage.getItem('trainerProfile');
+      if (savedProfile) {
+        const profile = JSON.parse(savedProfile);
+        setTrainerProfile(profile);
+      }
+    } catch (error) {
+      console.error('Error loading trainer profile:', error);
+    }
+  }, []);
+
+  // Get all allowed phone numbers
+  const getAllowedPhones = () => {
+    const allowedPhones = [BASE_ALLOWED_PHONE];
+    if (trainerProfile?.phone && trainerProfile.phone !== BASE_ALLOWED_PHONE) {
+      allowedPhones.push(trainerProfile.phone);
+    }
+    return allowedPhones;
+  };
 
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +55,9 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
       return;
     }
 
-    // Check if the phone number is the allowed one
-    if (phone !== ALLOWED_PHONE) {
+    // Check if the phone number is in the allowed list
+    const allowedPhones = getAllowedPhones();
+    if (!allowedPhones.includes(phone)) {
       setError("شماره موبایل وارد شده مجاز نیست");
       setLoading(false);
       return;
@@ -134,7 +159,7 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           onSubmit={handlePhoneSubmit}
           containerVariants={containerVariants}
           itemVariants={itemVariants}
-          allowedPhone={ALLOWED_PHONE}
+          allowedPhones={getAllowedPhones()}
         />
       ) : (
         <CodeVerificationStep
