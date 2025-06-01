@@ -4,7 +4,6 @@ import { DashboardStats } from "@/types/dashboard";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
-// Import our new components
 import { HeroBackground } from "./components/HeroBackground";
 import { ProfileAvatar } from "./components/ProfileAvatar";
 import { WelcomeSection } from "./components/WelcomeSection";
@@ -26,7 +25,6 @@ export const UltraModernHero = ({
 }: UltraModernHeroProps) => {
   const deviceInfo = useDeviceInfo();
 
-  // Utility functions
   const formatTime = (date: Date) => {
     return toPersianNumbers(date.toLocaleTimeString('fa-IR', { 
       hour: '2-digit', 
@@ -59,7 +57,6 @@ export const UltraModernHero = ({
       .toUpperCase();
   };
 
-  // Data preparation
   const profileName = trainerProfile?.name || "مربی حرفه‌ای";
   const profileImage = trainerProfile?.image || "/placeholder.svg";
   const totalStudents = stats?.totalStudents || 0;
@@ -67,24 +64,17 @@ export const UltraModernHero = ({
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: -30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: [0.165, 0.84, 0.44, 1] }}
-      className="relative overflow-hidden rounded-[32px] min-h-[450px] bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.25)]"
+      transition={{ duration: 0.5 }}
+      className="relative overflow-hidden rounded-3xl min-h-[400px] bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 shadow-xl"
     >
       <HeroBackground />
 
-      {/* Main content */}
-      <div className="relative z-10 p-8 text-white h-full">
-        <div className={`flex ${deviceInfo.isMobile ? 'flex-col space-y-8' : 'flex-row items-start justify-between'} h-full`}>
+      <div className="relative z-10 p-6 text-white h-full">
+        <div className={`flex ${deviceInfo.isMobile ? 'flex-col space-y-6' : 'flex-row items-start justify-between'} h-full`}>
           
-          {/* Profile section */}
-          <motion.div 
-            className="flex items-center space-x-8 space-x-reverse"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-          >
+          <div className="flex items-center space-x-6 space-x-reverse">
             <ProfileAvatar 
               profileImage={profileImage}
               profileName={profileName}
@@ -97,12 +87,10 @@ export const UltraModernHero = ({
               totalStudents={totalStudents}
               studentsProgress={studentsProgress}
             />
-          </motion.div>
+          </div>
 
-          {/* Time and date section */}
           <TimeSection 
             currentTime={currentTime}
-            stats={stats}
             formatTime={formatTime}
             formatDate={formatDate}
           />
