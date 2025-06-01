@@ -1,12 +1,12 @@
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/supplements";
 import { PageContainer } from "@/components/ui/page-container";
-import { SupplementsPageHeader } from "./components/SupplementsPageHeader";
-import { SupplementsMainContent } from "./components/SupplementsMainContent";
-import { SupplementDialog } from "@/components/supplements/SupplementDialog";
-import { CategoryDialog } from "@/components/supplements/CategoryDialog";
+import { ModernSupplementsHeader } from "./components/modern/ModernSupplementsHeader";
+import { ModernTabSystem } from "./components/modern/ModernTabSystem";
+import { ModernSupplementDialog } from "./components/modern/ModernSupplementDialog";
+import { ModernCategoryDialog } from "./components/modern/ModernCategoryDialog";
 import { useToast } from "@/hooks/use-toast";
 
 const SupplementsPage = () => {
@@ -126,19 +126,19 @@ const SupplementsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-100 dark:from-gray-900 dark:via-indigo-950 dark:to-purple-950" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950" dir="rtl">
       <PageContainer fullHeight fullWidth noPadding scrollable className="min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="min-h-screen flex flex-col"
         >
-          {/* Header */}
-          <SupplementsPageHeader />
+          {/* Modern Header */}
+          <ModernSupplementsHeader />
           
           {/* Main Content */}
-          <div className="flex-1 p-6">
-            <SupplementsMainContent
+          <div className="flex-1 p-8">
+            <ModernTabSystem
               activeTab={activeTab}
               onTabChange={(value) => {
                 setActiveTab(value as 'supplement' | 'vitamin');
@@ -158,8 +158,8 @@ const SupplementsPage = () => {
             />
           </div>
 
-          {/* Dialogs */}
-          <SupplementDialog
+          {/* Modern Dialogs */}
+          <ModernSupplementDialog
             open={supplementDialogOpen}
             onOpenChange={setSupplementDialogOpen}
             onSubmit={handleSubmitSupplement}
@@ -169,7 +169,7 @@ const SupplementsPage = () => {
             type={activeTab}
           />
 
-          <CategoryDialog
+          <ModernCategoryDialog
             open={categoryDialogOpen}
             onOpenChange={setCategoryDialogOpen}
             onSubmit={handleSubmitCategory}
