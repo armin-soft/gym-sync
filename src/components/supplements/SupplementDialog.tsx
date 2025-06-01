@@ -16,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -36,8 +35,7 @@ import {
   Save,
   X,
   Clock,
-  Beaker,
-  FileText
+  Beaker
 } from "lucide-react";
 
 const supplementFormSchema = z.object({
@@ -45,7 +43,6 @@ const supplementFormSchema = z.object({
   category: z.string().min(1, "انتخاب دسته بندی الزامی است"),
   dosage: z.string().optional(),
   timing: z.string().optional(),
-  description: z.string().optional(),
 });
 
 interface SupplementDialogProps {
@@ -74,7 +71,6 @@ export const SupplementDialog = ({
       category: "",
       dosage: "",
       timing: "",
-      description: "",
     },
   });
 
@@ -86,7 +82,6 @@ export const SupplementDialog = ({
           category: categories[0].name,
           dosage: "",
           timing: "",
-          description: "",
         });
       } else {
         form.reset({
@@ -94,7 +89,6 @@ export const SupplementDialog = ({
           category: "",
           dosage: "",
           timing: "",
-          description: "",
         });
       }
     } else if (defaultValues) {
@@ -107,13 +101,11 @@ export const SupplementDialog = ({
       name: "نام مکمل را وارد کنید (مثال: کراتین مونوهیدرات)",
       dosage: "دوز مصرف (مثال: ۵ گرم)",
       timing: "زمان مصرف (مثال: قبل از تمرین)",
-      description: "توضیحات اضافی در مورد مکمل...",
     },
     vitamin: {
       name: "نام ویتامین را وارد کنید (مثال: ویتامین D3)",
       dosage: "دوز مصرف (مثال: ۱۰۰۰ واحد بین‌المللی)",
       timing: "زمان مصرف (مثال: بعد از صبحانه)",
-      description: "توضیحات اضافی در مورد ویتامین...",
     }
   };
 
@@ -121,7 +113,7 @@ export const SupplementDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto" dir="rtl">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto" dir="rtl">
         <DialogHeader className="text-right">
           <DialogTitle className="flex items-center justify-end gap-2 text-xl font-bold">
             {mode === "edit" ? 
@@ -140,13 +132,13 @@ export const SupplementDialog = ({
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" dir="rtl">
             {/* نام مکمل/ویتامین */}
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="text-right">
                   <FormLabel className="flex items-center justify-end gap-2 text-right">
                     نام {type === 'supplement' ? 'مکمل' : 'ویتامین'}
                     {type === 'supplement' ? 
@@ -172,7 +164,7 @@ export const SupplementDialog = ({
               control={form.control}
               name="category"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="text-right">
                   <FormLabel className="flex items-center justify-end gap-2 text-right">
                     دسته بندی
                     <ListTodo className="h-4 w-4 text-purple-500" />
@@ -209,7 +201,7 @@ export const SupplementDialog = ({
               control={form.control}
               name="dosage"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="text-right">
                   <FormLabel className="flex items-center justify-end gap-2 text-right">
                     دوز مصرف
                     <Beaker className="h-4 w-4 text-green-500" />
@@ -232,7 +224,7 @@ export const SupplementDialog = ({
               control={form.control}
               name="timing"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="text-right">
                   <FormLabel className="flex items-center justify-end gap-2 text-right">
                     زمان مصرف
                     <Clock className="h-4 w-4 text-orange-500" />
@@ -250,30 +242,7 @@ export const SupplementDialog = ({
               )}
             />
 
-            {/* توضیحات */}
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center justify-end gap-2 text-right">
-                    توضیحات
-                    <FileText className="h-4 w-4 text-gray-500" />
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder={currentPlaceholders.description}
-                      className="border-gray-200 focus-visible:ring-gray-500 text-right min-h-[80px]"
-                      dir="rtl"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-right" />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end gap-3 pt-4">
+            <div className="flex justify-end gap-3 pt-4" dir="rtl">
               <Button
                 type="button"
                 variant="outline"

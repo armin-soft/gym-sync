@@ -12,6 +12,5 @@ export interface Supplement {
   type: 'supplement' | 'vitamin';
   dosage?: string;          // دوز مصرف
   timing?: string;          // زمان مصرف  
-  description?: string;     // توضیحات
   supplementType?: string;  // نوع مکمل (برای سازگاری با کد قبلی)
 }
