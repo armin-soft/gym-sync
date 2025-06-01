@@ -1,4 +1,6 @@
 
+export type SupplementType = 'supplement' | 'vitamin';
+
 export interface UseSupplementsManagerReturn {
   supplements: any[];
   categories: any[];
