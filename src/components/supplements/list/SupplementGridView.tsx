@@ -52,7 +52,7 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
 
   if (supplements.length === 0 && !searchQuery) {
     return (
-      <div className="h-full flex items-center justify-center" dir="rtl">
+      <div className="py-20 flex items-center justify-center" dir="rtl">
         <EmptyState
           icon={activeTab === 'supplement' ? "Pill" : "Heart"}
           title={`هیچ ${activeTab === 'supplement' ? 'مکملی' : 'ویتامینی'} وجود ندارد`}
@@ -67,7 +67,7 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
   }
 
   return (
-    <div className="space-y-6 h-full flex flex-col" dir="rtl">
+    <div className="space-y-6 w-full" dir="rtl">
       {/* Header Controls */}
       <div className="flex flex-col gap-4">
         {/* Search and Add Button */}
@@ -139,9 +139,9 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-h-0">
+      <div className="w-full">
         {supplements.length === 0 ? (
-          <div className="h-full flex items-center justify-center">
+          <div className="py-20 flex items-center justify-center">
             <EmptyState
               icon="Search"
               title="نتیجه‌ای یافت نشد"
@@ -158,9 +158,9 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
             initial="hidden"
             animate="visible"
             className={cn(
-              "gap-4 h-full",
+              "gap-4 w-full",
               viewMode === 'grid' 
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 content-start" 
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" 
                 : "flex flex-col space-y-4"
             )}
           >
@@ -173,7 +173,7 @@ export const SupplementGridView: React.FC<SupplementGridViewProps> = ({
                   initial="hidden"
                   animate="visible"
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="h-fit"
+                  className="w-full"
                 >
                   <SupplementCard
                     supplement={supplement}

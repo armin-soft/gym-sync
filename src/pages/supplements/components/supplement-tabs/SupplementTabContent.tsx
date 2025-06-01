@@ -1,7 +1,6 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Supplement, SupplementCategory } from "@/types/supplement";
 import { SupplementGridView } from "@/components/supplements/list/SupplementGridView";
 import { CategoryManagement } from "@/components/supplements/categories/CategoryManagement";
@@ -52,7 +51,7 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center" dir="rtl">
+      <div className="flex items-center justify-center py-20" dir="rtl">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -63,7 +62,7 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
   }
 
   return (
-    <div className="h-full flex flex-col gap-6" dir="rtl">
+    <div className="space-y-6 w-full" dir="rtl">
       {/* Categories Management */}
       <Card className="bg-gradient-to-l from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg">
         <div className="p-6">
@@ -80,10 +79,10 @@ export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
       </Card>
 
       {/* Supplements Grid */}
-      <Card className="flex-1 bg-gradient-to-l from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg overflow-hidden">
-        <div className="p-6 h-full">
+      <Card className="bg-gradient-to-l from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg">
+        <div className="p-6">
           {categories.length === 0 ? (
-            <div className="h-full flex items-center justify-center">
+            <div className="py-20 flex items-center justify-center">
               <EmptyState
                 icon="Folder"
                 title={`هیچ دسته‌بندی برای ${type === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'} وجود ندارد`}

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/useSupplementsManager";
@@ -144,18 +143,20 @@ const SupplementsPage = () => {
         scrollable
         className="min-h-screen"
       >
-        <div className="h-full flex flex-col">
+        <div className="flex flex-col min-h-screen">
           {/* Header */}
-          <SupplementsHeader />
+          <div className="flex-shrink-0">
+            <SupplementsHeader />
+          </div>
           
           {/* Main Content */}
-          <div className="flex-1 min-h-0 overflow-hidden">
-            <div className="h-full p-4 sm:p-6 lg:p-8">
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-4 sm:p-6 lg:p-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="h-full"
+                className="w-full"
               >
                 <SupplementTabs 
                   activeTab={activeTab}

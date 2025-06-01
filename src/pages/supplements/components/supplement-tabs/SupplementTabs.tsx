@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Pill, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { SupplementTabContent } from "./SupplementTabContent";
@@ -40,15 +39,15 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
   setSelectedCategory,
 }) => {
   return (
-    <div className="h-full flex flex-col" dir="rtl">
+    <div className="w-full" dir="rtl">
       <Tabs 
         value={activeTab} 
         onValueChange={onTabChange} 
-        className="h-full flex flex-col"
+        className="w-full"
         dir="rtl"
       >
         {/* Tabs Header */}
-        <div className="flex-shrink-0 mb-4">
+        <div className="mb-6">
           <TabsList className="grid w-full grid-cols-2 h-12 bg-white/80 backdrop-blur-sm border shadow-sm">
             <TabsTrigger 
               value="supplement" 
@@ -68,12 +67,12 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
         </div>
 
         {/* Tabs Content */}
-        <div className="flex-1 min-h-0">
-          <TabsContent value="supplement" className="h-full m-0">
+        <div className="w-full">
+          <TabsContent value="supplement" className="w-full m-0">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="h-full"
+              className="w-full"
             >
               <SupplementTabContent
                 type="supplement"
@@ -92,11 +91,11 @@ export const SupplementTabs: React.FC<SupplementTabsProps> = ({
             </motion.div>
           </TabsContent>
 
-          <TabsContent value="vitamin" className="h-full m-0">
+          <TabsContent value="vitamin" className="w-full m-0">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="h-full"
+              className="w-full"
             >
               <SupplementTabContent
                 type="vitamin"
