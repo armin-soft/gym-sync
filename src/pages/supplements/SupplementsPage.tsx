@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useSupplementsManager } from "@/hooks/useSupplementsManager";
+import { useSupplementsManager } from "@/hooks/supplements";
 import { PageContainer } from "@/components/ui/page-container";
 import { SupplementsHeader } from "./components/SupplementsHeader";
 import { SupplementTabs } from "./components/supplement-tabs";
@@ -15,7 +16,6 @@ const SupplementsPage = () => {
   const [editingSupplement, setEditingSupplement] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
 
-  // Use the custom hook for supplements management
   const {
     supplements,
     categories,
@@ -25,22 +25,16 @@ const SupplementsPage = () => {
     selectedCategory,
     isLoading,
     
-    // Tab actions
     setActiveTab,
     setSelectedCategory,
-    
-    // Category actions
     addCategory,
     updateCategory,
     deleteCategory,
-    
-    // Supplement actions
     addSupplement,
     updateSupplement,
     deleteSupplement
   } = useSupplementsManager();
 
-  // Category dialog handlers
   const handleAddCategory = () => {
     setEditingCategory(null);
     setCategoryDialogOpen(true);
@@ -63,7 +57,6 @@ const SupplementsPage = () => {
     }
   };
 
-  // Supplement dialog handlers
   const handleAddSupplement = () => {
     if (relevantCategories.length === 0) {
       toast({
@@ -82,7 +75,6 @@ const SupplementsPage = () => {
     setSupplementDialogOpen(true);
   };
 
-  // Process category form
   const handleSubmitCategory = (name) => {
     if (editingCategory) {
       updateCategory(editingCategory.id, name);
@@ -102,7 +94,6 @@ const SupplementsPage = () => {
     setCategoryDialogOpen(false);
   };
 
-  // Process supplement form
   const handleSubmitSupplement = (data) => {
     if (editingSupplement) {
       updateSupplement(editingSupplement.id, data);
@@ -144,43 +135,38 @@ const SupplementsPage = () => {
         className="min-h-screen"
       >
         <div className="flex flex-col min-h-screen">
-          {/* Header */}
           <div className="flex-shrink-0">
             <SupplementsHeader />
           </div>
           
-          {/* Main Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-4 sm:p-6 lg:p-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="w-full"
-              >
-                <SupplementTabs 
-                  activeTab={activeTab}
-                  onTabChange={(value) => {
-                    setActiveTab(value as 'supplement' | 'vitamin');
-                    setSelectedCategory(null); // Reset category filter when switching tabs
-                  }}
-                  isLoading={isLoading}
-                  categories={relevantCategories}
-                  onAddCategory={handleAddCategory}
-                  onEditCategory={handleEditCategory}
-                  onDeleteCategory={handleDeleteCategory}
-                  supplements={filteredSupplements}
-                  onAddSupplement={handleAddSupplement}
-                  onEditSupplement={handleEditSupplement}
-                  onDeleteSupplement={handleDeleteSupplement}
-                  selectedCategory={selectedCategory}
-                  setSelectedCategory={setSelectedCategory}
-                />
-              </motion.div>
-            </div>
+          <div className="flex-1 p-4 sm:p-6 lg:p-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="w-full"
+            >
+              <SupplementTabs 
+                activeTab={activeTab}
+                onTabChange={(value) => {
+                  setActiveTab(value as 'supplement' | 'vitamin');
+                  setSelectedCategory(null);
+                }}
+                isLoading={isLoading}
+                categories={relevantCategories}
+                onAddCategory={handleAddCategory}
+                onEditCategory={handleEditCategory}
+                onDeleteCategory={handleDeleteCategory}
+                supplements={filteredSupplements}
+                onAddSupplement={handleAddSupplement}
+                onEditSupplement={handleEditSupplement}
+                onDeleteSupplement={handleDeleteSupplement}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            </motion.div>
           </div>
 
-          {/* Dialogs */}
           <SupplementDialog
             open={supplementDialogOpen}
             onOpenChange={setSupplementDialogOpen}

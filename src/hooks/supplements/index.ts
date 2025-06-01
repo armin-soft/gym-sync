@@ -9,7 +9,6 @@ export const useSupplementsManager = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load data from localStorage
   useEffect(() => {
     try {
       const savedSupplements = localStorage.getItem('supplements');
@@ -29,19 +28,16 @@ export const useSupplementsManager = () => {
     }
   }, []);
 
-  // Save supplements to localStorage
   const saveSupplements = (newSupplements: Supplement[]) => {
     setSupplements(newSupplements);
     localStorage.setItem('supplements', JSON.stringify(newSupplements));
   };
 
-  // Save categories to localStorage
   const saveCategories = (newCategories: SupplementCategory[]) => {
     setCategories(newCategories);
     localStorage.setItem('supplementCategories', JSON.stringify(newCategories));
   };
 
-  // Category management
   const addCategory = (name: string) => {
     const newCategory: SupplementCategory = {
       id: Date.now(),
@@ -62,13 +58,11 @@ export const useSupplementsManager = () => {
     const updatedCategories = categories.filter(cat => cat.id !== categoryToDelete.id);
     saveCategories(updatedCategories);
     
-    // Reset selected category if it was the deleted one
     if (selectedCategory === categoryToDelete.name) {
       setSelectedCategory(null);
     }
   };
 
-  // Supplement management
   const addSupplement = (data: Omit<Supplement, 'id'>) => {
     const newSupplement: Supplement = {
       ...data,
@@ -90,7 +84,6 @@ export const useSupplementsManager = () => {
     saveSupplements(updatedSupplements);
   };
 
-  // Computed values
   const filteredSupplements = useMemo(() => {
     return supplements.filter(supplement => {
       const matchesType = supplement.type === activeTab;
@@ -112,7 +105,6 @@ export const useSupplementsManager = () => {
     selectedCategory,
     isLoading,
     
-    // Actions
     setActiveTab,
     setSelectedCategory,
     addCategory,
