@@ -9,6 +9,7 @@ import { Student } from "@/components/students/StudentTypes";
 import { StudentImageSection } from "./StudentImageSection";
 import { StudentPersonalInfo } from "./StudentPersonalInfo";
 import { FormActions } from "./FormActions";
+import { GenderField } from "./GenderField";
 import { itemVariants } from "./FormContainer";
 
 interface StudentFormProps {
@@ -33,13 +34,13 @@ export const StudentForm: React.FC<StudentFormProps> = ({
       age: student?.age?.toString() || "",
       grade: student?.grade || "",
       group: student?.group || "",
+      gender: student?.gender || "male",
       image: student?.image || "/Assets/Image/Place-Holder.svg"
     }
   });
 
   const onSubmit = (data: StudentFormValues) => {
     try {
-      // Ensure image is preserved from the student object if not changed in the form
       onSave(data);
     } catch (error) {
       console.error("Error saving student:", error);
@@ -56,7 +57,10 @@ export const StudentForm: React.FC<StudentFormProps> = ({
             itemVariants={itemVariants} 
           />
           
-          <StudentPersonalInfo form={form} />
+          <div className="w-full sm:w-2/3 flex flex-col gap-4">
+            <StudentPersonalInfo form={form} />
+            <GenderField control={form.control} itemVariants={itemVariants} />
+          </div>
         </motion.div>
         
         <FormActions isEdit={Boolean(student)} onCancel={onCancel} />

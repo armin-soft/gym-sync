@@ -11,6 +11,7 @@ import { PageContainer } from "@/components/ui/page-container";
 import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { History } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Import from the correct paths
 import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
@@ -24,6 +25,7 @@ import { useStudentHistory } from "@/hooks/useStudentHistory";
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
+  const [activeGenderTab, setActiveGenderTab] = useState<string>("all");
   const deviceInfo = useDeviceInfo();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   
@@ -84,6 +86,19 @@ const StudentsPage = () => {
     handleClearSearch
   } = useStudentFiltering(students);
 
+  // Filter students by gender
+  const filteredStudentsByGender = React.useMemo(() => {
+    let filtered = sortedAndFilteredStudents;
+    
+    if (activeGenderTab === "male") {
+      filtered = filtered.filter(student => student.gender === "male");
+    } else if (activeGenderTab === "female") {
+      filtered = filtered.filter(student => student.gender === "female");
+    }
+    
+    return filtered;
+  }, [sortedAndFilteredStudents, activeGenderTab]);
+
   // Handler for opening the program manager
   const handleOpenProgramManager = (student: Student) => {
     setSelectedStudentForProgram(student);
@@ -95,6 +110,10 @@ const StudentsPage = () => {
     if (deviceInfo.isTablet) return "px-4";
     return "px-4 sm:px-6 lg:px-8";
   };
+
+  // Count students by gender
+  const maleStudentsCount = students.filter(s => s.gender === "male").length;
+  const femaleStudentsCount = students.filter(s => s.gender === "female").length;
 
   // If a student is selected for program management, show the program manager
   if (selectedStudentForProgram) {
@@ -141,24 +160,77 @@ const StudentsPage = () => {
             />
           </div>
           
-          <StudentTableView 
-            students={students}
-            sortedAndFilteredStudents={sortedAndFilteredStudents}
-            searchQuery={searchQuery}
-            refreshTrigger={refreshTrigger}
-            onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
-            onDelete={handleDeleteWithHistory}
-            onAddExercise={handleOpenProgramManager}
-            onAddDiet={handleOpenProgramManager}
-            onAddSupplement={handleOpenProgramManager}
-            onAddStudent={() => dialogManagerRef.current?.handleAdd()}
-            onClearSearch={handleClearSearch}
-            viewMode="table"
-            isProfileComplete={isProfileComplete}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            onSortChange={toggleSort}
-          />
+          {/* Gender Tabs */}
+          <Tabs value={activeGenderTab} onValueChange={setActiveGenderTab} className="w-full mb-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">همه ({students.length})</TabsTrigger>
+              <TabsTrigger value="male">آقایان ({maleStudentsCount})</TabsTrigger>
+              <TabsTrigger value="female">بانوان ({femaleStudentsCount})</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="all" className="mt-4">
+              <StudentTableView 
+                students={students}
+                sortedAndFilteredStudents={sortedAndFilteredStudents}
+                searchQuery={searchQuery}
+                refreshTrigger={refreshTrigger}
+                onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+                onDelete={handleDeleteWithHistory}
+                onAddExercise={handleOpenProgramManager}
+                onAddDiet={handleOpenProgramManager}
+                onAddSupplement={handleOpenProgramManager}
+                onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+                onClearSearch={handleClearSearch}
+                viewMode="table"
+                isProfileComplete={isProfileComplete}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={toggleSort}
+              />
+            </TabsContent>
+            
+            <TabsContent value="male" className="mt-4">
+              <StudentTableView 
+                students={students}
+                sortedAndFilteredStudents={filteredStudentsByGender}
+                searchQuery={searchQuery}
+                refreshTrigger={refreshTrigger}
+                onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+                onDelete={handleDeleteWithHistory}
+                onAddExercise={handleOpenProgramManager}
+                onAddDiet={handleOpenProgramManager}
+                onAddSupplement={handleOpenProgramManager}
+                onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+                onClearSearch={handleClearSearch}
+                viewMode="table"
+                isProfileComplete={isProfileComplete}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={toggleSort}
+              />
+            </TabsContent>
+            
+            <TabsContent value="female" className="mt-4">
+              <StudentTableView 
+                students={students}
+                sortedAndFilteredStudents={filteredStudentsByGender}
+                searchQuery={searchQuery}
+                refreshTrigger={refreshTrigger}
+                onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+                onDelete={handleDeleteWithHistory}
+                onAddExercise={handleOpenProgramManager}
+                onAddDiet={handleOpenProgramManager}
+                onAddSupplement={handleOpenProgramManager}
+                onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+                onClearSearch={handleClearSearch}
+                viewMode="table"
+                isProfileComplete={isProfileComplete}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={toggleSort}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
 
         <StudentDialogManager

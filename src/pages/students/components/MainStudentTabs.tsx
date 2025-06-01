@@ -49,64 +49,87 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   onAddStudent,
   isProfileComplete
 }) => {
-  // Filter students based on active tab - using safe property access
-  const activeStudents = students.filter(student => !(student as any).archived)
-    .filter(student =>
-      (student.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ((student as any).family || '').toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      const sortByValue = sortBy === 'name' ? 'name' : 'family';
-      const aValue = sortByValue === 'name' 
-        ? (a.name || '').toString().toLowerCase()
-        : ((a as any).family || '').toString().toLowerCase();
-      const bValue = sortByValue === 'name' 
-        ? (b.name || '').toString().toLowerCase()
-        : ((b as any).family || '').toString().toLowerCase();
+  // Filter students by gender and search
+  const getFilteredStudents = (genderFilter?: "male" | "female") => {
+    return students
+      .filter(student => !genderFilter || student.gender === genderFilter)
+      .filter(student =>
+        (student.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (student.phone || '').toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => {
+        const sortByValue = sortBy === 'name' ? 'name' : 'name';
+        const aValue = (a.name || '').toString().toLowerCase();
+        const bValue = (b.name || '').toString().toLowerCase();
 
-      if (aValue < bValue) {
-        return sortOrder === 'asc' ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortOrder === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
+        if (aValue < bValue) {
+          return sortOrder === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortOrder === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+  };
 
-  const archivedStudents = students.filter(student => (student as any).archived)
-    .filter(student =>
-      (student.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ((student as any).family || '').toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      const sortByValue = sortBy === 'name' ? 'name' : 'family';
-      const aValue = sortByValue === 'name' 
-        ? (a.name || '').toString().toLowerCase()
-        : ((a as any).family || '').toString().toLowerCase();
-      const bValue = sortByValue === 'name' 
-        ? (b.name || '').toString().toLowerCase()
-        : ((b as any).family || '').toString().toLowerCase();
-
-      if (aValue < bValue) {
-        return sortOrder === 'asc' ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortOrder === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
+  const allStudents = getFilteredStudents();
+  const maleStudents = getFilteredStudents("male");
+  const femaleStudents = getFilteredStudents("female");
 
   const handleClearSearch = () => {
     // Clear search functionality
+  };
+
+  const renderStudentView = (studentList: Student[]) => {
+    if (viewMode === "grid") {
+      return (
+        <StudentGridView
+          students={studentList}
+          searchQuery={searchQuery}
+          onEdit={onEditStudent}
+          onDelete={(id: number) => {
+            const student = studentList.find(s => s.id === id);
+            if (student) onDeleteStudent(student);
+          }}
+          onAddExercise={onManageStudentProgram}
+          onAddDiet={onManageStudentProgram}
+          onAddSupplement={onManageStudentProgram}
+          onAddStudent={onAddStudent}
+          onClearSearch={handleClearSearch}
+          isProfileComplete={isProfileComplete}
+        />
+      );
+    } else {
+      return (
+        <StudentTableView
+          students={studentList}
+          sortedAndFilteredStudents={studentList}
+          searchQuery={searchQuery}
+          isProfileComplete={isProfileComplete}
+          onEdit={onEditStudent}
+          onDelete={(id: number) => {
+            const student = studentList.find(s => s.id === id);
+            if (student) onDeleteStudent(student);
+          }}
+          onAddExercise={onManageStudentProgram}
+          onAddDiet={onManageStudentProgram}
+          onAddSupplement={onManageStudentProgram}
+          onAddStudent={onAddStudent}
+          onClearSearch={handleClearSearch}
+          viewMode="table"
+        />
+      );
+    }
   };
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="active">شاگردان فعال</TabsTrigger>
-            <TabsTrigger value="archived">شاگردان آرشیو شده</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="all">همه ({allStudents.length})</TabsTrigger>
+            <TabsTrigger value="male">آقایان ({maleStudents.length})</TabsTrigger>
+            <TabsTrigger value="female">بانوان ({femaleStudents.length})</TabsTrigger>
           </TabsList>
         </Tabs>
         
@@ -119,80 +142,16 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
       </div>
 
       <Tabs value={activeTab} onValueChange={onTabChange} className="flex-1 flex flex-col">
-        <TabsContent value="active" className="flex-1 mt-0">
-          {viewMode === "grid" ? (
-            <StudentGridView
-              students={activeStudents}
-              searchQuery={searchQuery}
-              onEdit={onEditStudent}
-              onDelete={(id: number) => {
-                const student = activeStudents.find(s => s.id === id);
-                if (student) onDeleteStudent(student);
-              }}
-              onAddExercise={onManageStudentProgram}
-              onAddDiet={onManageStudentProgram}
-              onAddSupplement={onManageStudentProgram}
-              onAddStudent={onAddStudent}
-              onClearSearch={handleClearSearch}
-              isProfileComplete={isProfileComplete}
-            />
-          ) : (
-            <StudentTableView
-              students={activeStudents}
-              sortedAndFilteredStudents={activeStudents}
-              searchQuery={searchQuery}
-              isProfileComplete={isProfileComplete}
-              onEdit={onEditStudent}
-              onDelete={(id: number) => {
-                const student = activeStudents.find(s => s.id === id);
-                if (student) onDeleteStudent(student);
-              }}
-              onAddExercise={onManageStudentProgram}
-              onAddDiet={onManageStudentProgram}
-              onAddSupplement={onManageStudentProgram}
-              onAddStudent={onAddStudent}
-              onClearSearch={handleClearSearch}
-              viewMode="table"
-            />
-          )}
+        <TabsContent value="all" className="flex-1 mt-0">
+          {renderStudentView(allStudents)}
         </TabsContent>
         
-        <TabsContent value="archived" className="flex-1 mt-0">
-          {viewMode === "grid" ? (
-            <StudentGridView
-              students={archivedStudents}
-              searchQuery={searchQuery}
-              onEdit={onEditStudent}
-              onDelete={(id: number) => {
-                const student = archivedStudents.find(s => s.id === id);
-                if (student) onDeleteStudent(student);
-              }}
-              onAddExercise={onManageStudentProgram}
-              onAddDiet={onManageStudentProgram}
-              onAddSupplement={onManageStudentProgram}
-              onAddStudent={onAddStudent}
-              onClearSearch={handleClearSearch}
-              isProfileComplete={isProfileComplete}
-            />
-          ) : (
-            <StudentTableView
-              students={archivedStudents}
-              sortedAndFilteredStudents={archivedStudents}
-              searchQuery={searchQuery}
-              isProfileComplete={isProfileComplete}
-              onEdit={onEditStudent}
-              onDelete={(id: number) => {
-                const student = archivedStudents.find(s => s.id === id);
-                if (student) onDeleteStudent(student);
-              }}
-              onAddExercise={onManageStudentProgram}
-              onAddDiet={onManageStudentProgram}
-              onAddSupplement={onManageStudentProgram}
-              onAddStudent={onAddStudent}
-              onClearSearch={handleClearSearch}
-              viewMode="table"
-            />
-          )}
+        <TabsContent value="male" className="flex-1 mt-0">
+          {renderStudentView(maleStudents)}
+        </TabsContent>
+        
+        <TabsContent value="female" className="flex-1 mt-0">
+          {renderStudentView(femaleStudents)}
         </TabsContent>
       </Tabs>
     </div>
