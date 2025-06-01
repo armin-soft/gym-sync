@@ -3,14 +3,15 @@ import { useToast } from "@/hooks/use-toast";
 import { TrainerProfile } from "@/types/trainer";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 import { SaveButton } from "./SaveButton";
 import { FormProvider } from "./form/FormContext";
 import { FormContent } from "./form/FormContent";
 import { validateField, validateAllFields } from "./form/validation";
+import { FormHeader } from "./form/FormHeader";
+import { DecorativeElements } from "./form/DecorativeElements";
+import { calculateCompletionPercentage, getProgressColor } from "./form/progressUtils";
+import { getSectionConfig } from "./form/sectionConfig";
 import { motion } from "framer-motion";
-import { Edit3, Sparkles, CheckCircle2 } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProfileFormProps {
   profile: TrainerProfile;
@@ -36,41 +37,10 @@ export const ProfileForm = ({
   isSaving
 }: ProfileFormProps) => {
   const { toast } = useToast();
-  const deviceInfo = useDeviceInfo();
 
-  // Calculate profile completion percentage
-  const calculateCompletionPercentage = () => {
-    const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'gymName', 'gymAddress'];
-    const optionalFields: (keyof TrainerProfile)[] = ['fullName', 'bio', 'gymDescription', 'instagram', 'website'];
-    
-    let completedRequired = 0;
-    let completedOptional = 0;
-    
-    // Check required fields (70% weight)
-    requiredFields.forEach(field => {
-      if (profile[field] && profile[field].trim()) {
-        completedRequired++;
-      }
-    });
-    
-    // Check optional fields (30% weight)
-    optionalFields.forEach(field => {
-      if (profile[field] && profile[field].trim()) {
-        completedOptional++;
-      }
-    });
-    
-    // Check profile image (10% bonus)
-    const hasProfileImage = profile.image && profile.image !== "/Assets/Image/Place-Holder.svg";
-    
-    const requiredPercentage = (completedRequired / requiredFields.length) * 70;
-    const optionalPercentage = (completedOptional / optionalFields.length) * 30;
-    const imageBonus = hasProfileImage ? 10 : 0;
-    
-    return Math.min(100, Math.round(requiredPercentage + optionalPercentage + imageBonus));
-  };
-
-  const completionPercentage = calculateCompletionPercentage();
+  const completionPercentage = calculateCompletionPercentage(profile);
+  const progressColor = getProgressColor(completionPercentage);
+  const sectionConfig = getSectionConfig(activeSection);
 
   useEffect(() => {
     Object.entries(profile).forEach(([key, value]) => {
@@ -104,36 +74,6 @@ export const ProfileForm = ({
     onSave();
   };
 
-  const getSectionConfig = () => {
-    const configs = {
-      personal: {
-        title: 'اطلاعات شخصی',
-        description: 'اطلاعات شخصی خود را کامل کنید',
-        gradient: 'from-violet-500 to-purple-600'
-      },
-      gym: {
-        title: 'اطلاعات باشگاه',
-        description: 'اطلاعات باشگاه خود را وارد کنید',
-        gradient: 'from-blue-500 to-cyan-600'
-      },
-      social: {
-        title: 'شبکه‌های اجتماعی',
-        description: 'حضور آنلاین خود را مدیریت کنید',
-        gradient: 'from-emerald-500 to-teal-600'
-      }
-    };
-    
-    return configs[activeSection as keyof typeof configs] || configs.personal;
-  };
-
-  const getProgressColor = () => {
-    if (completionPercentage >= 90) return 'from-green-400 to-emerald-500';
-    if (completionPercentage >= 70) return 'from-yellow-400 to-orange-500';
-    return 'from-red-400 to-pink-500';
-  };
-
-  const sectionConfig = getSectionConfig();
-
   return (
     <motion.div 
       className="bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-slate-900 dark:via-gray-900 dark:to-zinc-900 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden h-fit"
@@ -141,48 +81,14 @@ export const ProfileForm = ({
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Background Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+      <DecorativeElements />
       
       {/* Form Header */}
-      <div className={cn("relative z-10 bg-gradient-to-r", sectionConfig.gradient, "p-6 text-white border-b border-white/20")}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
-              <Edit3 className="h-6 w-6" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                {sectionConfig.title}
-                <Sparkles className="h-5 w-5 text-yellow-300" />
-              </h2>
-              <p className="text-white/80 mt-1">{sectionConfig.description}</p>
-            </div>
-          </div>
-          
-          {/* Status Badge */}
-          <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-            <CheckCircle2 className="h-4 w-4 text-green-300" />
-            <span className="text-sm font-medium">فعال</span>
-          </div>
-        </div>
-        
-        {/* Progress Indicator */}
-        <div className="mt-4">
-          <div className="flex items-center justify-between text-sm text-white/70 mb-2">
-            <span>پیشرفت تکمیل پروفایل</span>
-            <span>{toPersianNumbers(completionPercentage.toString())}%</span>
-          </div>
-          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-            <motion.div 
-              className={cn("h-full bg-gradient-to-r", getProgressColor(), "rounded-full")}
-              initial={{ width: 0 }}
-              animate={{ width: `${completionPercentage}%` }}
-              transition={{ duration: 1, delay: 0.3 }}
-            />
-          </div>
-        </div>
-      </div>
+      <FormHeader 
+        sectionConfig={sectionConfig}
+        completionPercentage={completionPercentage}
+        progressColor={progressColor}
+      />
 
       {/* Form Content */}
       <div className="relative z-10 p-6 md:p-8">
@@ -204,10 +110,6 @@ export const ProfileForm = ({
           <SaveButton onSave={handleSave} isLoading={isSaving} />
         </div>
       </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute top-20 right-4 w-32 h-32 bg-gradient-to-br from-violet-400/10 to-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 left-4 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
     </motion.div>
   );
 };
