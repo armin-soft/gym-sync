@@ -1,4 +1,8 @@
+
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRecognitionManager } from './useRecognitionManager';
+import { useRecognitionHandlers } from './useRecognitionHandlers';
+import { useTextProcessing } from './useTextProcessing';
 
 interface UseContinuousSpeechRecognitionOptions {
   onTranscriptChange: (transcript: string) => void;
@@ -20,124 +24,45 @@ export const useContinuousSpeechRecognition = ({
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState(initialValue);
   const [interimTranscript, setInterimTranscript] = useState('');
-  const [isSupported, setIsSupported] = useState(false);
   
-  const recognitionRef = useRef<any>(null);
   const restartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const finalTranscriptRef = useRef(initialValue);
   const isRestartingRef = useRef(false);
 
-  // Check browser support
-  useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    setIsSupported(!!SpeechRecognition);
-  }, []);
+  // Use custom hooks
+  const { isSupported, recognitionRef, createRecognition } = useRecognitionManager({
+    lang,
+    continuous,
+    interimResults,
+    maxAlternatives
+  });
 
-  // Function to clean text and remove ALL periods
-  const cleanTranscriptText = useCallback((text: string) => {
-    return text
-      .trim()
-      .replace(/\.+/g, '') // Remove all periods (single or multiple)
-      .replace(/\u06D4/g, '') // Remove Arabic-Indic period
-      .replace(/\u2E3C/g, '') // Remove stenographic period
-      .replace(/\u002E/g, '') // Remove ASCII period
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .trim();
-  }, []);
+  const { cleanTranscriptText } = useTextProcessing();
+
+  const { handleStart, handleResult, handleError, handleEnd } = useRecognitionHandlers({
+    onTranscriptChange,
+    isListening,
+    setIsListening,
+    setTranscript,
+    setInterimTranscript,
+    finalTranscriptRef,
+    isRestartingRef,
+    restartTimeoutRef,
+    cleanTranscriptText,
+    recognitionRef
+  });
 
   const initializeRecognition = useCallback(() => {
-    if (!isSupported) return null;
+    const recognition = createRecognition();
+    if (!recognition) return null;
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-
-    recognition.continuous = continuous;
-    recognition.interimResults = interimResults;
-    recognition.lang = lang;
-    recognition.maxAlternatives = maxAlternatives;
-
-    // تنظیم برای حداکثر زمان ضبط
-    if ('webkitSpeechRecognition' in window) {
-      recognition.serviceURI = 'wss://www.google.com/speech-api/full-duplex/v1/up';
-    }
-
-    recognition.onstart = () => {
-      console.log('Speech recognition started');
-      setIsListening(true);
-      isRestartingRef.current = false;
-    };
-
-    recognition.onresult = (event: any) => {
-      let interimText = '';
-      let finalText = finalTranscriptRef.current;
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        let transcriptText = result[0].transcript;
-
-        if (result.isFinal) {
-          // Clean the transcript text and remove ALL periods
-          transcriptText = cleanTranscriptText(transcriptText);
-          // اضافه کردن متن نهایی بدون محدودیت
-          finalText += (finalText ? ' ' : '') + transcriptText;
-          finalTranscriptRef.current = finalText;
-        } else {
-          // Clean interim text as well
-          interimText += cleanTranscriptText(transcriptText);
-        }
-      }
-
-      setTranscript(finalText);
-      setInterimTranscript(interimText);
-      // ارسال کل متن بدون محدودیت کاراکتر
-      onTranscriptChange(finalText + (interimText ? ' ' + interimText : ''));
-    };
-
-    recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
-      
-      // در صورت خطا، تلاش برای شروع مجدد اگر کاربر هنوز گوش می‌دهد
-      if (event.error === 'no-speech' || event.error === 'audio-capture' || event.error === 'network') {
-        if (isListening && !isRestartingRef.current) {
-          isRestartingRef.current = true;
-          restartTimeoutRef.current = setTimeout(() => {
-            if (recognitionRef.current && isListening && !isRestartingRef.current) {
-              try {
-                recognitionRef.current.start();
-              } catch (e) {
-                console.log('Failed to restart recognition:', e);
-                isRestartingRef.current = false;
-              }
-            }
-          }, 1000);
-        }
-      }
-    };
-
-    recognition.onend = () => {
-      console.log('Speech recognition ended');
-      
-      // اگر کاربر هنوز در حالت گوش دادن است و restart نمی‌شود، دوباره شروع کن
-      if (isListening && !isRestartingRef.current) {
-        isRestartingRef.current = true;
-        restartTimeoutRef.current = setTimeout(() => {
-          if (recognitionRef.current && isListening) {
-            try {
-              recognitionRef.current.start();
-              isRestartingRef.current = false;
-            } catch (e) {
-              console.log('Recognition already started or not available');
-              isRestartingRef.current = false;
-            }
-          }
-        }, 100);
-      } else if (!isListening) {
-        setIsListening(false);
-      }
-    };
+    recognition.onstart = handleStart;
+    recognition.onresult = handleResult;
+    recognition.onerror = handleError;
+    recognition.onend = handleEnd;
 
     return recognition;
-  }, [isSupported, continuous, interimResults, lang, maxAlternatives, onTranscriptChange, isListening, cleanTranscriptText]);
+  }, [createRecognition, handleStart, handleResult, handleError, handleEnd]);
 
   const startListening = useCallback(async () => {
     if (!isSupported || isListening) return;
