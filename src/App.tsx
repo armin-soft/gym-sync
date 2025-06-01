@@ -30,13 +30,11 @@ function AppContent() {
     console.log('App render successful');
   }, [location.pathname]);
 
-  // نمایش محتوای اصلی - صفحه انتخاب نوع کاربری حذف شد
+  // نمایش محتوای اصلی بدون احراز هویت
   return (
-    <AuthWrapper>
-      <Layout>
-        <AppRoutes />
-      </Layout>
-    </AuthWrapper>
+    <Layout>
+      <AppRoutes />
+    </Layout>
   );
 }
 
@@ -72,7 +70,9 @@ function App() {
       <ThemeProvider>
         <TooltipProvider>
           <BrowserRouter>
-            <AppContent />
+            <AuthWrapper>
+              <AppContent />
+            </AuthWrapper>
             <Toaster />
           </BrowserRouter>
         </TooltipProvider>
