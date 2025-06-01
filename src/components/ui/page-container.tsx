@@ -52,10 +52,17 @@ export const PageContainer = React.memo(({
   
   // کلاس‌های کانتینر اصلی فول اسکرین - حل مشکل اسکرول
   const containerClasses = React.useMemo(() => {
+    if (fullScreen) {
+      return cn(
+        "fixed inset-0 w-full h-full overflow-auto",
+        withBackground && "relative",
+        className
+      );
+    }
+
     return cn(
       "w-full flex flex-col relative",
-      fullHeight || fullScreen ? "h-screen min-h-screen max-h-screen" : "h-full min-h-full",
-      fullScreen && "fixed inset-0 z-50",
+      fullHeight ? "min-h-screen" : "h-full min-h-full",
       withBackground && "relative",
       fullWidth ? "max-w-none" : maxWidth !== "none" ? maxWidth : "max-w-full mx-auto",
       scrollable ? "overflow-auto" : "overflow-visible",
@@ -65,12 +72,19 @@ export const PageContainer = React.memo(({
   
   // کلاس‌های محتوای فول ریسپانسیو - حل مشکل اسکرول
   const contentClasses = React.useMemo(() => {
+    if (fullScreen || noPadding) {
+      return cn(
+        "w-full h-full flex-1",
+        scrollable ? "overflow-auto" : "overflow-visible"
+      );
+    }
+
     return cn(
       "w-full h-full flex-1",
       scrollable ? "overflow-auto" : "overflow-visible",
       getPadding
     );
-  }, [getPadding, scrollable]);
+  }, [fullScreen, noPadding, getPadding, scrollable]);
   
   return (
     <div className={containerClasses}>

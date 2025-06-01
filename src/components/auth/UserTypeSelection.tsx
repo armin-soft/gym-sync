@@ -66,11 +66,11 @@ export const UserTypeSelection = () => {
   };
 
   return (
-    <PageContainer fullScreen fullHeight withBackground scrollable>
+    <div className="min-h-screen w-full relative overflow-auto">
       <BackgroundDecorations />
 
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 min-h-screen overflow-y-auto">
-        <div className="w-full max-w-7xl py-8">
+      <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-start px-4 py-8">
+        <div className="w-full max-w-7xl flex-1 flex flex-col justify-center">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -101,7 +101,7 @@ export const UserTypeSelection = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center"
+                className="text-center pb-8"
               >
                 <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50">
                   <motion.div
@@ -118,6 +118,6 @@ export const UserTypeSelection = () => {
           </motion.div>
         </div>
       </div>
-    </PageContainer>
+    </div>
   );
 };
