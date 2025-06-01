@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/supplements";
 import { PageContainer } from "@/components/ui/page-container";
 import { ModernSupplementsHeader } from "./components/modern/ModernSupplementsHeader";
@@ -52,7 +52,6 @@ const SupplementsPage = () => {
       toast({
         title: "دسته‌بندی حذف شد",
         description: `دسته‌بندی "${categoryToDelete.name}" با موفقیت حذف شد`,
-        className: "bg-gradient-to-r from-red-500 to-red-600 text-white border-none"
       });
     }
   };
@@ -81,14 +80,12 @@ const SupplementsPage = () => {
       toast({
         title: "دسته‌بندی ویرایش شد",
         description: `دسته‌بندی "${name}" با موفقیت ویرایش شد`,
-        className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
       });
     } else {
       addCategory(name);
       toast({
         title: "دسته‌بندی جدید افزوده شد",
         description: `دسته‌بندی "${name}" با موفقیت ایجاد شد`,
-        className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
       });
     }
     setCategoryDialogOpen(false);
@@ -100,14 +97,12 @@ const SupplementsPage = () => {
       toast({
         title: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} ویرایش شد`,
         description: `${data.name} با موفقیت ویرایش شد`,
-        className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
       });
     } else {
       addSupplement(data);
       toast({
         title: `${activeTab === 'supplement' ? 'مکمل' : 'ویتامین'} جدید افزوده شد`,
         description: `${data.name} با موفقیت اضافه شد`,
-        className: "bg-gradient-to-r from-green-500 to-green-600 text-white border-none"
       });
     }
     setSupplementDialogOpen(false);
@@ -120,24 +115,23 @@ const SupplementsPage = () => {
       toast({
         title: `${supplement.type === 'supplement' ? 'مکمل' : 'ویتامین'} حذف شد`,
         description: `${supplement.name} با موفقیت حذف شد`,
-        className: "bg-gradient-to-r from-red-500 to-red-600 text-white border-none"
       });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950" dir="rtl">
+    <div className="min-h-screen bg-gray-50" dir="rtl">
       <PageContainer fullHeight fullWidth noPadding scrollable className="min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="min-h-screen flex flex-col"
         >
-          {/* Modern Header */}
+          {/* Header */}
           <ModernSupplementsHeader />
           
           {/* Main Content */}
-          <div className="flex-1 p-8">
+          <div className="flex-1 p-6">
             <ModernTabSystem
               activeTab={activeTab}
               onTabChange={(value) => {
@@ -158,7 +152,7 @@ const SupplementsPage = () => {
             />
           </div>
 
-          {/* Modern Dialogs */}
+          {/* Dialogs */}
           <ModernSupplementDialog
             open={supplementDialogOpen}
             onOpenChange={setSupplementDialogOpen}

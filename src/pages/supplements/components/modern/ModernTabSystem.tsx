@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Pill, Heart, Plus, Sparkles } from "lucide-react";
+import { Pill, Heart, Plus, Folder } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModernCategoryGrid } from "./ModernCategoryGrid";
 import { ModernSupplementGrid } from "./ModernSupplementGrid";
@@ -44,129 +44,83 @@ export const ModernTabSystem: React.FC<ModernTabSystemProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-32" dir="rtl">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full"
-        />
+      <div className="flex items-center justify-center py-20" dir="rtl">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8" dir="rtl">
-      {/* Modern Tab Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white/80 backdrop-blur-xl rounded-3xl p-2 shadow-xl border border-white/20"
-      >
-        <div className="grid grid-cols-2 gap-2">
-          <motion.button
+    <div className="max-w-6xl mx-auto space-y-6" dir="rtl">
+      {/* Simple Tab Header */}
+      <div className="bg-white rounded-xl p-1 shadow-sm border">
+        <div className="grid grid-cols-2 gap-1">
+          <button
             onClick={() => onTabChange('supplement')}
-            className={`relative p-6 rounded-2xl transition-all duration-500 ${
+            className={`p-4 rounded-lg transition-all ${
               activeTab === 'supplement'
-                ? 'bg-gradient-to-l from-green-500 to-emerald-600 text-white shadow-lg'
+                ? 'bg-green-500 text-white shadow-sm'
                 : 'hover:bg-gray-50 text-gray-600'
             }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-center justify-center gap-4">
-              <div className={`p-3 rounded-xl ${
-                activeTab === 'supplement' ? 'bg-white/20' : 'bg-green-100'
-              }`}>
-                <Pill className={`w-6 h-6 ${
-                  activeTab === 'supplement' ? 'text-white' : 'text-green-600'
-                }`} />
-              </div>
+            <div className="flex items-center justify-center gap-3">
+              <Pill className="w-5 h-5" />
               <div className="text-right">
-                <h3 className="text-2xl font-bold">مکمل‌های غذایی</h3>
-                <p className={`text-sm ${
-                  activeTab === 'supplement' ? 'text-white/80' : 'text-gray-500'
-                }`}>
-                  {toPersianNumbers(supplementCount)} مکمل موجود
+                <h3 className="font-bold">مکمل‌های غذایی</h3>
+                <p className="text-sm opacity-80">
+                  {toPersianNumbers(supplementCount)} مکمل
                 </p>
               </div>
             </div>
-            {activeTab === 'supplement' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute inset-0 bg-gradient-to-l from-green-500 to-emerald-600 rounded-2xl -z-10"
-              />
-            )}
-          </motion.button>
+          </button>
 
-          <motion.button
+          <button
             onClick={() => onTabChange('vitamin')}
-            className={`relative p-6 rounded-2xl transition-all duration-500 ${
+            className={`p-4 rounded-lg transition-all ${
               activeTab === 'vitamin'
-                ? 'bg-gradient-to-l from-purple-500 to-pink-600 text-white shadow-lg'
+                ? 'bg-purple-500 text-white shadow-sm'
                 : 'hover:bg-gray-50 text-gray-600'
             }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-center justify-center gap-4">
-              <div className={`p-3 rounded-xl ${
-                activeTab === 'vitamin' ? 'bg-white/20' : 'bg-purple-100'
-              }`}>
-                <Heart className={`w-6 h-6 ${
-                  activeTab === 'vitamin' ? 'text-white' : 'text-purple-600'
-                }`} />
-              </div>
+            <div className="flex items-center justify-center gap-3">
+              <Heart className="w-5 h-5" />
               <div className="text-right">
-                <h3 className="text-2xl font-bold">ویتامین‌ها</h3>
-                <p className={`text-sm ${
-                  activeTab === 'vitamin' ? 'text-white/80' : 'text-gray-500'
-                }`}>
-                  {toPersianNumbers(vitaminCount)} ویتامین موجود
+                <h3 className="font-bold">ویتامین‌ها</h3>
+                <p className="text-sm opacity-80">
+                  {toPersianNumbers(vitaminCount)} ویتامین
                 </p>
               </div>
             </div>
-            {activeTab === 'vitamin' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute inset-0 bg-gradient-to-l from-purple-500 to-pink-600 rounded-2xl -z-10"
-              />
-            )}
-          </motion.button>
+          </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Content Area */}
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-6"
         >
           {/* Categories Section */}
-          <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/20">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <div className={`p-3 rounded-xl ${
-                  activeTab === 'supplement' ? 'bg-green-100' : 'bg-purple-100'
-                }`}>
-                  <Sparkles className={`w-6 h-6 ${
-                    activeTab === 'supplement' ? 'text-green-600' : 'text-purple-600'
-                  }`} />
-                </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm border">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <Folder className="w-5 h-5 text-gray-600" />
                 دسته‌بندی‌ها
               </h2>
               <Button
                 onClick={onAddCategory}
                 className={`${
                   activeTab === 'supplement'
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
-                    : 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700'
-                } text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-6 py-3`}
+                    ? 'bg-green-500 hover:bg-green-600'
+                    : 'bg-purple-500 hover:bg-purple-600'
+                } text-white rounded-lg`}
               >
-                <Plus className="w-5 h-5 ml-2" />
+                <Plus className="w-4 h-4 ml-2" />
                 افزودن دسته‌بندی
               </Button>
             </div>
@@ -182,7 +136,7 @@ export const ModernTabSystem: React.FC<ModernTabSystemProps> = ({
           </div>
 
           {/* Supplements Section */}
-          <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/20">
+          <div className="bg-white rounded-xl p-6 shadow-sm border">
             <ModernSupplementGrid
               supplements={supplements}
               onEditSupplement={onEditSupplement}

@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Edit2, Trash2, Folder, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SupplementCategory } from "@/types/supplement";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ModernCategoryGridProps {
   categories: SupplementCategory[];
@@ -25,61 +24,42 @@ export const ModernCategoryGrid: React.FC<ModernCategoryGridProps> = ({
 }) => {
   if (categories.length === 0) {
     return (
-      <div className="text-center py-16" dir="rtl">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-col items-center"
-        >
-          <div className={`w-24 h-24 rounded-3xl flex items-center justify-center mb-6 ${
-            activeTab === 'supplement' ? 'bg-green-100' : 'bg-purple-100'
-          }`}>
-            <Folder className={`w-12 h-12 ${
-              activeTab === 'supplement' ? 'text-green-500' : 'text-purple-500'
-            }`} />
-          </div>
-          <h3 className="text-2xl font-bold text-gray-700 mb-2">
-            هیچ دسته‌بندی وجود ندارد
-          </h3>
-          <p className="text-gray-500 text-lg">
-            برای شروع، یک دسته‌بندی جدید ایجاد کنید
-          </p>
-        </motion.div>
+      <div className="text-center py-12" dir="rtl">
+        <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <Folder className="w-8 h-8 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-700 mb-2">
+          هیچ دسته‌بندی وجود ندارد
+        </h3>
+        <p className="text-gray-500">
+          برای شروع، یک دسته‌بندی جدید ایجاد کنید
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-4" dir="rtl">
       {/* Filter Button */}
-      <div className="flex items-center gap-3">
-        <Button
-          variant={selectedCategory === null ? "default" : "outline"}
-          onClick={() => setSelectedCategory(null)}
-          className={`rounded-xl px-6 py-3 transition-all duration-300 ${
-            selectedCategory === null
-              ? activeTab === 'supplement'
-                ? 'bg-green-500 hover:bg-green-600 text-white'
-                : 'bg-purple-500 hover:bg-purple-600 text-white'
-              : 'hover:bg-gray-50'
-          }`}
-        >
-          <Filter className="w-4 h-4 ml-2" />
-          همه دسته‌ها
-        </Button>
-      </div>
+      <Button
+        variant={selectedCategory === null ? "default" : "outline"}
+        onClick={() => setSelectedCategory(null)}
+        className="rounded-lg"
+      >
+        <Filter className="w-4 h-4 ml-2" />
+        همه دسته‌ها
+      </Button>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <AnimatePresence>
-          {categories.map((category, index) => (
+          {categories.map((category) => (
             <motion.div
               key={category.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ delay: index * 0.05 }}
-              className={`group relative bg-white rounded-2xl p-6 shadow-lg border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className={`group bg-white rounded-lg p-4 border-2 transition-all cursor-pointer hover:shadow-md ${
                 selectedCategory === category.name
                   ? activeTab === 'supplement'
                     ? 'border-green-400 bg-green-50'
@@ -89,26 +69,21 @@ export const ModernCategoryGrid: React.FC<ModernCategoryGridProps> = ({
               onClick={() => setSelectedCategory(
                 selectedCategory === category.name ? null : category.name
               )}
-              whileHover={{ y: -4 }}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl ${
+              <div className="flex items-center justify-between mb-3">
+                <div className={`p-2 rounded-lg ${
                   selectedCategory === category.name
                     ? activeTab === 'supplement'
-                      ? 'bg-green-200'
-                      : 'bg-purple-200'
-                    : activeTab === 'supplement'
                       ? 'bg-green-100'
                       : 'bg-purple-100'
+                    : 'bg-gray-100'
                 }`}>
-                  <Folder className={`w-5 h-5 ${
+                  <Folder className={`w-4 h-4 ${
                     selectedCategory === category.name
                       ? activeTab === 'supplement'
-                        ? 'text-green-700'
-                        : 'text-purple-700'
-                      : activeTab === 'supplement'
                         ? 'text-green-600'
                         : 'text-purple-600'
+                      : 'text-gray-600'
                   }`} />
                 </div>
                 
@@ -122,7 +97,7 @@ export const ModernCategoryGrid: React.FC<ModernCategoryGridProps> = ({
                     }}
                     className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600"
                   >
-                    <Edit2 className="w-4 h-4" />
+                    <Edit2 className="w-3 h-3" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -133,24 +108,14 @@ export const ModernCategoryGrid: React.FC<ModernCategoryGridProps> = ({
                     }}
                     className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3 h-3" />
                   </Button>
                 </div>
               </div>
 
-              <h3 className="text-lg font-bold text-gray-800 text-right">
+              <h3 className="font-medium text-gray-800 text-right">
                 {category.name}
               </h3>
-              
-              {selectedCategory === category.name && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-3 text-sm text-gray-600"
-                >
-                  دسته‌بندی انتخاب شده
-                </motion.div>
-              )}
             </motion.div>
           ))}
         </AnimatePresence>

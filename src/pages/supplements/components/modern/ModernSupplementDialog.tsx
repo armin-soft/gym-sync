@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,72 +62,53 @@ export const ModernSupplementDialog: React.FC<ModernSupplementDialogProps> = ({
       ...formData,
       type,
     });
-    setFormData({
-      name: "",
-      category: "",
-      dosage: "",
-      timing: "",
-      description: "",
-    });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden" dir="rtl">
+      <DialogContent className="sm:max-w-md" dir="rtl">
         {/* Header */}
-        <div className={`px-8 py-6 ${
-          type === 'supplement' 
-            ? 'bg-gradient-to-l from-green-500 to-emerald-600' 
-            : 'bg-gradient-to-l from-purple-500 to-pink-600'
-        } text-white`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-xl">
-                {type === 'supplement' ? (
-                  <Pill className="w-6 h-6" />
-                ) : (
-                  <Heart className="w-6 h-6" />
-                )}
-              </div>
-              <div>
-                <DialogTitle className="text-2xl font-bold">
-                  {mode === 'add' ? 'افزودن' : 'ویرایش'} {type === 'supplement' ? 'مکمل' : 'ویتامین'}
-                </DialogTitle>
-                <p className="text-white/80 mt-1">
-                  اطلاعات {type === 'supplement' ? 'مکمل' : 'ویتامین'} را وارد کنید
-                </p>
-              </div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg ${
+              type === 'supplement' ? 'bg-green-100' : 'bg-purple-100'
+            }`}>
+              {type === 'supplement' ? (
+                <Pill className="w-5 h-5 text-green-600" />
+              ) : (
+                <Heart className="w-5 h-5 text-purple-600" />
+              )}
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-              className="text-white hover:bg-white/20 rounded-xl"
-            >
-              <X className="w-5 h-5" />
-            </Button>
+            <div>
+              <DialogTitle className="text-lg font-bold">
+                {mode === 'add' ? 'افزودن' : 'ویرایش'} {type === 'supplement' ? 'مکمل' : 'ویتامین'}
+              </DialogTitle>
+            </div>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+            className="h-8 w-8 p-0"
+          >
+            <X className="w-4 h-4" />
+          </Button>
         </div>
 
         {/* Form */}
-        <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          onSubmit={handleSubmit}
-          className="p-8 space-y-6"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-lg font-medium text-gray-800">
+              <Label htmlFor="name" className="text-sm font-medium">
                 نام {type === 'supplement' ? 'مکمل' : 'ویتامین'}
               </Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder={`نام ${type === 'supplement' ? 'مکمل' : 'ویتامین'} را وارد کنید`}
-                className="h-12 text-right border-gray-300 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl"
+                placeholder={`نام ${type === 'supplement' ? 'مکمل' : 'ویتامین'}`}
+                className="text-right"
                 dir="rtl"
                 required
               />
@@ -136,12 +116,12 @@ export const ModernSupplementDialog: React.FC<ModernSupplementDialogProps> = ({
 
             {/* Category */}
             <div className="space-y-2">
-              <Label htmlFor="category" className="text-lg font-medium text-gray-800">
+              <Label htmlFor="category" className="text-sm font-medium">
                 دسته‌بندی
               </Label>
               <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
-                <SelectTrigger className="h-12 text-right border-gray-300 focus:border-purple-500 rounded-xl" dir="rtl">
-                  <SelectValue placeholder="دسته‌بندی را انتخاب کنید" />
+                <SelectTrigger className="text-right" dir="rtl">
+                  <SelectValue placeholder="انتخاب دسته‌بندی" />
                 </SelectTrigger>
                 <SelectContent dir="rtl">
                   {categories.map((category) => (
@@ -155,7 +135,7 @@ export const ModernSupplementDialog: React.FC<ModernSupplementDialogProps> = ({
 
             {/* Dosage */}
             <div className="space-y-2">
-              <Label htmlFor="dosage" className="text-lg font-medium text-gray-800">
+              <Label htmlFor="dosage" className="text-sm font-medium">
                 دوز مصرف
               </Label>
               <Input
@@ -163,14 +143,14 @@ export const ModernSupplementDialog: React.FC<ModernSupplementDialogProps> = ({
                 value={formData.dosage}
                 onChange={(e) => setFormData(prev => ({ ...prev, dosage: e.target.value }))}
                 placeholder="مثال: ۲ عدد در روز"
-                className="h-12 text-right border-gray-300 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl"
+                className="text-right"
                 dir="rtl"
               />
             </div>
 
             {/* Timing */}
             <div className="space-y-2">
-              <Label htmlFor="timing" className="text-lg font-medium text-gray-800">
+              <Label htmlFor="timing" className="text-sm font-medium">
                 زمان مصرف
               </Label>
               <Input
@@ -178,7 +158,7 @@ export const ModernSupplementDialog: React.FC<ModernSupplementDialogProps> = ({
                 value={formData.timing}
                 onChange={(e) => setFormData(prev => ({ ...prev, timing: e.target.value }))}
                 placeholder="مثال: صبح ناشتا"
-                className="h-12 text-right border-gray-300 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl"
+                className="text-right"
                 dir="rtl"
               />
             </div>
@@ -186,42 +166,42 @@ export const ModernSupplementDialog: React.FC<ModernSupplementDialogProps> = ({
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-lg font-medium text-gray-800">
+            <Label htmlFor="description" className="text-sm font-medium">
               توضیحات
             </Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="توضیحات اضافی در مورد این مکمل..."
-              className="min-h-[100px] text-right border-gray-300 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl resize-none"
+              placeholder="توضیحات اضافی..."
+              className="text-right min-h-[80px] resize-none"
               dir="rtl"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex gap-4 pt-6">
+          <div className="flex gap-3 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1 h-12 rounded-xl border-gray-300 hover:bg-gray-50"
+              className="flex-1"
             >
               انصراف
             </Button>
             <Button
               type="submit"
-              className={`flex-1 h-12 ${
+              className={`flex-1 ${
                 type === 'supplement'
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
-                  : 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700'
-              } text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl`}
+                  ? 'bg-green-500 hover:bg-green-600'
+                  : 'bg-purple-500 hover:bg-purple-600'
+              } text-white`}
             >
-              <Save className="w-5 h-5 ml-2" />
+              <Save className="w-4 h-4 ml-2" />
               {mode === 'add' ? 'افزودن' : 'ویرایش'}
             </Button>
           </div>
-        </motion.form>
+        </form>
       </DialogContent>
     </Dialog>
   );
