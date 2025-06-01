@@ -17,6 +17,9 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
   const [error, setError] = useState("");
   const [countdown, setCountdown] = useState(0);
 
+  // Only allowed phone number
+  const ALLOWED_PHONE = "09123823886";
+
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -24,6 +27,13 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
 
     if (!phone.trim()) {
       setError("لطفاً شماره موبایل خود را وارد کنید");
+      setLoading(false);
+      return;
+    }
+
+    // Check if the phone number is the allowed one
+    if (phone !== ALLOWED_PHONE) {
+      setError("شماره موبایل وارد شده مجاز نیست");
       setLoading(false);
       return;
     }
@@ -124,6 +134,7 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           onSubmit={handlePhoneSubmit}
           containerVariants={containerVariants}
           itemVariants={itemVariants}
+          allowedPhone={ALLOWED_PHONE}
         />
       ) : (
         <CodeVerificationStep

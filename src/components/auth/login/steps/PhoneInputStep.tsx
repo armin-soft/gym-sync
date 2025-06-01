@@ -14,6 +14,7 @@ interface PhoneInputStepProps {
   onSubmit: (e: React.FormEvent) => void;
   containerVariants: any;
   itemVariants: any;
+  allowedPhone?: string;
 }
 
 export const PhoneInputStep = ({
@@ -22,7 +23,8 @@ export const PhoneInputStep = ({
   loading,
   onSubmit,
   containerVariants,
-  itemVariants
+  itemVariants,
+  allowedPhone
 }: PhoneInputStepProps) => {
   return (
     <motion.form
@@ -43,14 +45,19 @@ export const PhoneInputStep = ({
           <Input
             id="phone"
             type="tel"
-            value={toPersianNumbers(phone)}
+            value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder={toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
+            placeholder={allowedPhone ? toPersianNumbers(allowedPhone) : toPersianNumbers("۰۹۱۲۳۴۵۶۷۸۹")}
             className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 rounded-xl pr-4"
             dir="ltr"
             required
           />
         </div>
+        {allowedPhone && (
+          <p className="text-white/60 text-sm mt-2">
+            فقط شماره {toPersianNumbers(allowedPhone)} مجاز است
+          </p>
+        )}
       </motion.div>
       
       <motion.div variants={itemVariants}>
