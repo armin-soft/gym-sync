@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Phone, Shield, LogIn, ArrowRight } from "lucide-react";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { Phone, Shield, LogIn, ArrowRight, Timer, RefreshCw } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ModernErrorMessage } from "./ModernErrorMessage";
 
@@ -18,6 +19,7 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [countdown, setCountdown] = useState(0);
 
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,12 +35,26 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     // Simulate sending SMS
     setTimeout(() => {
       setStep("code");
+      setCountdown(120); // 2 minutes countdown
       setLoading(false);
+      
+      // Start countdown
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }, 1000);
   };
 
   const handleCodeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (code.length !== 6) return;
+    
     setLoading(true);
     setError("");
 
@@ -53,6 +69,29 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
       onLoginSuccess(false);
       setLoading(false);
     }, 800);
+  };
+
+  const handleResendCode = () => {
+    setCountdown(120);
+    setCode("");
+    setError("");
+    
+    // Start countdown again
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${toPersianNumbers(minutes.toString().padStart(2, '0'))}:${toPersianNumbers(remainingSeconds.toString().padStart(2, '0'))}`;
   };
 
   const containerVariants = {
@@ -145,35 +184,57 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
       <ModernErrorMessage error={error} />
       
       <motion.div variants={itemVariants}>
-        <Label htmlFor="code" className="text-white/90 font-medium flex items-center gap-2 mb-3">
+        <Label htmlFor="code" className="text-white/90 font-medium flex items-center gap-2 mb-4">
           <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
             <Shield className="h-4 w-4" />
           </div>
           کد تأیید
         </Label>
-        <div className="relative">
-          <Input
-            id="code"
-            type="text"
-            value={toPersianNumbers(code)}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder={toPersianNumbers("۰۱۲۳۴۵")}
-            className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20 rounded-xl pr-4 text-center text-lg tracking-widest"
-            dir="ltr"
+        
+        {/* Modern OTP Input */}
+        <div className="flex justify-center mb-4">
+          <InputOTP
             maxLength={6}
-            required
-          />
+            value={code}
+            onChange={(value) => setCode(value)}
+            dir="ltr"
+          >
+            <InputOTPGroup className="gap-2">
+              {[...Array(6)].map((_, index) => (
+                <InputOTPSlot 
+                  key={index}
+                  index={index}
+                  className="w-12 h-12 text-lg font-bold bg-white/10 border-white/20 text-white focus:border-white/40 focus:ring-white/20 rounded-xl backdrop-blur-sm"
+                />
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
         </div>
-        <p className="text-white/60 text-sm mt-2 text-center">
-          کد تأیید به شماره {toPersianNumbers(phone)} ارسال شد
-        </p>
+        
+        {/* Phone number and countdown */}
+        <div className="text-center space-y-2">
+          <p className="text-white/60 text-sm">
+            کد تأیید به شماره {toPersianNumbers(phone)} ارسال شد
+          </p>
+          
+          {countdown > 0 && (
+            <motion.div 
+              className="flex items-center justify-center gap-2 text-white/70 text-sm"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <Timer className="h-4 w-4" />
+              <span>زمان باقی‌مانده: {formatTime(countdown)}</span>
+            </motion.div>
+          )}
+        </div>
       </motion.div>
       
       <motion.div variants={itemVariants} className="space-y-3">
         <Button 
           type="submit" 
           className="w-full h-12 bg-white/20 hover:bg-white/30 text-white font-medium rounded-xl backdrop-blur-sm border border-white/20 transition-all duration-200"
-          disabled={loading}
+          disabled={loading || code.length !== 6}
         >
           {loading ? (
             <div className="flex items-center gap-2">
@@ -188,14 +249,38 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           )}
         </Button>
         
-        <Button 
-          type="button" 
-          variant="ghost"
-          onClick={() => setStep("phone")}
-          className="w-full text-white/70 hover:text-white hover:bg-white/10"
-        >
-          تغییر شماره موبایل
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            type="button" 
+            variant="ghost"
+            onClick={() => setStep("phone")}
+            className="flex-1 text-white/70 hover:text-white hover:bg-white/10"
+          >
+            تغییر شماره
+          </Button>
+          
+          {countdown === 0 ? (
+            <Button 
+              type="button" 
+              variant="ghost"
+              onClick={handleResendCode}
+              className="flex-1 text-white/70 hover:text-white hover:bg-white/10"
+            >
+              <RefreshCw className="h-4 w-4 ml-1" />
+              ارسال مجدد
+            </Button>
+          ) : (
+            <Button 
+              type="button" 
+              variant="ghost"
+              disabled
+              className="flex-1 text-white/40 cursor-not-allowed"
+            >
+              <RefreshCw className="h-4 w-4 ml-1" />
+              ارسال مجدد
+            </Button>
+          )}
+        </div>
       </motion.div>
     </motion.form>
   );
