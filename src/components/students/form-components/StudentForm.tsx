@@ -34,7 +34,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({
       age: student?.age?.toString() || "",
       grade: student?.grade || "",
       group: student?.group || "",
-      gender: student?.gender || "male",
+      gender: student?.gender || undefined, // No default value
       image: student?.image || "/Assets/Image/Place-Holder.svg"
     }
   });
