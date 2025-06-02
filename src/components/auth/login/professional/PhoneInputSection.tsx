@@ -34,16 +34,32 @@ export const PhoneInputSection = ({
     // فقط اعداد انگلیسی مجاز
     let numbersOnly = value.replace(/[^0-9]/g, '');
     
-    // اطمینان از شروع با 09
-    if (numbersOnly && !numbersOnly.startsWith('09')) {
-      if (numbersOnly.startsWith('0')) {
+    // محدود کردن به 11 رقم
+    if (numbersOnly.length > 11) {
+      numbersOnly = numbersOnly.slice(0, 11);
+      setPhone(numbersOnly);
+      return;
+    }
+    
+    // اگر شماره خالی است، اجازه ورود بده
+    if (numbersOnly.length === 0) {
+      setPhone('');
+      return;
+    }
+    
+    // اگر شماره با 0 شروع نمی‌شود، 09 اضافه کن
+    if (!numbersOnly.startsWith('0')) {
+      numbersOnly = '09' + numbersOnly;
+    }
+    
+    // اگر با 0 شروع می‌شود ولی با 09 نه، درست کن
+    if (numbersOnly.startsWith('0') && !numbersOnly.startsWith('09')) {
+      if (numbersOnly.length > 1) {
         numbersOnly = '09' + numbersOnly.slice(1);
-      } else {
-        numbersOnly = '09' + numbersOnly;
       }
     }
     
-    // محدود کردن به 11 رقم
+    // دوباره چک کن که بیش از 11 رقم نباشد
     if (numbersOnly.length > 11) {
       numbersOnly = numbersOnly.slice(0, 11);
     }
@@ -134,6 +150,14 @@ export const PhoneInputSection = ({
             <CheckCircle className="h-4 w-4" />
             <span className="text-sm font-semibold">شماره موبایل تأیید شد</span>
           </motion.div>
+        )}
+
+        {/* Debug info - remove this in production */}
+        {phone && (
+          <div className="text-xs text-gray-500 text-center">
+            شماره وارد شده: {phone} (طول: {phone.length})
+            {allowedPhone && <div>شماره مجاز: {allowedPhone}</div>}
+          </div>
         )}
       </motion.div>
       
