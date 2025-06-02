@@ -13,7 +13,7 @@ import {
   Sun,
   CloudSun,
   Sunset,
-  CloudSunRain,
+  CloudRain,
   Snowflake
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -52,7 +52,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
     if (hour >= 14 && hour < 17) return CloudSun;
     if (hour >= 17 && hour < 19) return Sunset;
     if (hour >= 19 && hour < 20) return Sunset;
-    if (hour >= 20 && hour < 22) return CloudSunRain;
+    if (hour >= 20 && hour < 22) return CloudRain;
     return CloudMoon;
   };
 
