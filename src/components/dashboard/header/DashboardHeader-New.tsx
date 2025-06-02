@@ -58,11 +58,16 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
 
   const getSeasonIcon = () => {
     const now = new Date();
-    const month = now.getMonth() + 1;
+    const month = now.getMonth() + 1; // JavaScript months are 0-based
     
+    // تبدیل ماه میلادی به فصل شمسی
+    // فروردین تا خرداد (مارس تا مه) = بهار
     if ((month >= 3 && month <= 5)) return Sun;
+    // تیر تا شهریور (ژوئن تا اوت) = تابستان  
     if ((month >= 6 && month <= 8)) return Sun;
+    // مهر تا آذر (سپتامبر تا نوامبر) = پاییز
     if ((month >= 9 && month <= 11)) return CloudSun;
+    // دی تا اسفند (دسامبر تا فوریه) = زمستان
     return Snowflake;
   };
 
@@ -91,6 +96,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
       .toUpperCase();
   };
 
+  // اینجا آیکون‌ها به عنوان کامپوننت دریافت می‌شوند
   const TimeIcon = getTimeIcon();
   const SeasonIcon = getSeasonIcon();
 
@@ -171,146 +177,68 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
           </div>
         </div>
 
-        {/* بخش زمان و تاریخ با UI/UX جدید */}
-        <div className="flex flex-col gap-6">
-          {/* کارت زمان فعلی - طراحی جدید */}
+        {/* بخش زمان و تاریخ */}
+        <div className="flex flex-col gap-4">
+          {/* زمان فعلی با ثانیه */}
           <motion.div 
-            className="relative group"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 200 }}
+            className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-white/10 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-            
-            <div className="relative bg-white/20 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-2xl">
-              <div className="flex items-center gap-4">
-                <motion.div
-                  className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm"
-                  animate={{ 
-                    rotate: 360,
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ 
-                    rotate: { duration: 60, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 2, repeat: Infinity }
-                  }}
+            <div className="flex items-center gap-3">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+              >
+                <TimeIcon className="w-5 h-5 text-white/80" />
+              </motion.div>
+              <div className="text-right">
+                <motion.div 
+                  className="text-xl font-bold"
+                  key={formatTimeWithSeconds(currentTime)}
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ fontFamily: 'Vazir, sans-serif' }}
                 >
-                  <TimeIcon className="w-8 h-8 text-white drop-shadow-lg" />
+                  {formatTimeWithSeconds(currentTime)}
                 </motion.div>
-                
-                <div className="text-right">
-                  <motion.div 
-                    className="text-3xl font-bold tracking-wider"
-                    key={formatTimeWithSeconds(currentTime)}
-                    initial={{ scale: 1.2, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    style={{ 
-                      fontFamily: 'Vazir, sans-serif',
-                      textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    {formatTimeWithSeconds(currentTime)}
-                  </motion.div>
-                  <div className="text-sm text-white/70 font-medium mt-1">
-                    زمان فعلی
-                  </div>
-                  
-                  {/* نوار پیشرفت ثانیه */}
-                  <div className="w-full bg-white/20 rounded-full h-1 mt-2 overflow-hidden">
-                    <motion.div 
-                      className="h-full bg-white/60 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(currentTime.getSeconds() / 60) * 100}%` }}
-                      transition={{ duration: 0.1 }}
-                    />
-                  </div>
+                <div className="text-xs text-white/70">
+                  زمان فعلی
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* کارت تاریخ فارسی - طراحی جدید */}
+          {/* تاریخ فارسی با آیکون فصل */}
           <motion.div 
-            className="relative group"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 200 }}
+            className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-white/10 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-            
-            <div className="relative bg-white/20 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-2xl">
-              <div className="flex items-center gap-4">
-                <motion.div
-                  className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm"
-                  animate={{ 
-                    scale: [1, 1.15, 1],
-                    rotate: [0, 8, -8, 0]
-                  }}
-                  transition={{ 
-                    duration: 5, 
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
+            <div className="flex items-center gap-3">
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <SeasonIcon className="w-5 h-5 text-white/80" />
+              </motion.div>
+              <div className="text-right">
+                <div 
+                  className="text-sm font-medium"
+                  style={{ fontFamily: 'Vazir, sans-serif' }}
                 >
-                  <SeasonIcon className="w-8 h-8 text-white drop-shadow-lg" />
-                </motion.div>
-                
-                <div className="text-right flex-1">
-                  <div 
-                    className="text-lg font-bold mb-1"
-                    style={{ 
-                      fontFamily: 'Vazir, sans-serif',
-                      textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    {persianDate}
-                  </div>
-                  <div className="text-sm text-white/70 font-medium">
-                    تاریخ امروز
-                  </div>
-                  
-                  {/* نشانگر وضعیت تقویم */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <motion.div 
-                      className="w-2 h-2 bg-emerald-400 rounded-full"
-                      animate={{ scale: [1, 1.5, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <span className="text-xs text-white/60">فعال</span>
-                  </div>
+                  {persianDate}
                 </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* کارت اضافی - آیکون تقویم */}
-          <motion.div 
-            className="relative group"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 200 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl blur-lg group-hover:blur-xl transition-all duration-300" />
-            
-            <div className="relative bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20 shadow-xl">
-              <div className="flex items-center justify-center gap-3">
-                <motion.div
-                  animate={{ 
-                    rotateY: [0, 180, 360]
-                  }}
-                  transition={{ 
-                    duration: 8, 
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <Calendar className="w-6 h-6 text-white/80" />
-                </motion.div>
-                <div className="text-right">
-                  <div className="text-sm font-medium text-white/90">
-                    تقویم شمسی
-                  </div>
-                  <div className="text-xs text-white/60">
-                    ایران
-                  </div>
+                <div className="text-xs text-white/70">
+                  تاریخ امروز
                 </div>
               </div>
             </div>
