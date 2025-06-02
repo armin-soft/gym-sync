@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { getCurrentPersianDateTime } from "@/lib/utils/persianDate";
 
 interface BackupSuccessMessageProps {
   backupStats: Record<string, number>;
@@ -29,6 +30,9 @@ export function BackupSuccessMessage({ backupStats }: BackupSuccessMessageProps)
           </h4>
           <p className="text-sm text-green-600 dark:text-green-300">
             فایل شما آماده دانلود است
+          </p>
+          <p className="text-xs text-green-500 dark:text-green-400 mt-1">
+            تاریخ ایجاد: {getCurrentPersianDateTime()}
           </p>
         </div>
       </div>
