@@ -70,7 +70,7 @@ export const UserTypeSelectionNew = () => {
   };
 
   return (
-    <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
+    <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40 dark:from-slate-900 dark:via-emerald-950/30 dark:to-sky-950/40">
       <ModernBackground />
       
       <div className="relative z-10 min-h-screen flex flex-col">

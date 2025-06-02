@@ -8,7 +8,7 @@ export const userTypesConfig = [
     subtitle: 'مربی و مدیر باشگاه',
     description: 'دسترسی کامل به سیستم مدیریت باشگاه، شاگردان و برنامه‌های تمرینی',
     icon: Shield,
-    gradient: 'from-blue-600 to-indigo-600',
+    gradient: 'from-emerald-600 to-sky-600',
     features: [
       'مدیریت کامل شاگردان و اعضا',
       'طراحی برنامه‌های تمرینی پیشرفته',
@@ -30,7 +30,7 @@ export const userTypesConfig = [
     subtitle: 'دسترسی شخصی ورزشکار',
     description: 'مشاهده برنامه‌های شخصی، پیگیری پیشرفت و دریافت راهنمایی‌های تخصصی',
     icon: GraduationCap,
-    gradient: 'from-indigo-600 to-purple-600',
+    gradient: 'from-sky-600 to-emerald-600',
     features: [
       'مشاهده برنامه تمرینی شخصی',
       'برنامه تغذیه اختصاصی',

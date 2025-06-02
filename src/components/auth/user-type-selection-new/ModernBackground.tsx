@@ -6,7 +6,7 @@ export const ModernBackground = () => {
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* گرادیان پس‌زمینه اصلی */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950" />
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40 dark:from-slate-900 dark:via-emerald-950/30 dark:to-sky-950/40" />
       
       {/* عناصر هندسی متحرک */}
       <div className="absolute inset-0">
@@ -14,7 +14,7 @@ export const ModernBackground = () => {
         <motion.div
           className="absolute -top-40 -right-40 w-96 h-96 rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 40%, transparent 70%)'
           }}
           animate={{
             scale: [1, 1.2, 1],
@@ -30,7 +30,7 @@ export const ModernBackground = () => {
         <motion.div
           className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, rgba(14, 165, 233, 0.05) 40%, transparent 70%)'
           }}
           animate={{
             scale: [1.2, 1, 1.2],
@@ -46,7 +46,7 @@ export const ModernBackground = () => {
 
         {/* خطوط هندسی */}
         <motion.div
-          className="absolute top-1/4 right-1/4 w-64 h-px bg-gradient-to-l from-blue-400/20 to-transparent"
+          className="absolute top-1/4 right-1/4 w-64 h-px bg-gradient-to-l from-emerald-400/20 to-transparent"
           animate={{
             scaleX: [0, 1, 0],
             opacity: [0, 0.6, 0],
@@ -59,7 +59,7 @@ export const ModernBackground = () => {
         />
         
         <motion.div
-          className="absolute bottom-1/3 left-1/3 w-48 h-px bg-gradient-to-r from-indigo-400/20 to-transparent"
+          className="absolute bottom-1/3 left-1/3 w-48 h-px bg-gradient-to-r from-sky-400/20 to-transparent"
           animate={{
             scaleX: [0, 1, 0],
             opacity: [0, 0.5, 0],
@@ -78,8 +78,8 @@ export const ModernBackground = () => {
         className="absolute inset-0 opacity-30 dark:opacity-10"
         style={{
           backgroundImage: `
-            radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.15) 1px, transparent 0),
-            radial-gradient(circle at 20px 20px, rgba(99, 102, 241, 0.1) 1px, transparent 0)
+            radial-gradient(circle at 1px 1px, rgba(16, 185, 129, 0.15) 1px, transparent 0),
+            radial-gradient(circle at 20px 20px, rgba(14, 165, 233, 0.1) 1px, transparent 0)
           `,
           backgroundSize: '40px 40px, 80px 80px'
         }}

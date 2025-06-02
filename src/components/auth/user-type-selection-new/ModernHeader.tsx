@@ -16,7 +16,7 @@ export const ModernHeader = () => {
       >
         <div className="relative">
           <motion.div
-            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl shadow-2xl flex items-center justify-center"
+            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-emerald-600 via-sky-600 to-emerald-700 rounded-2xl sm:rounded-3xl shadow-2xl flex items-center justify-center"
             whileHover={{ scale: 1.05, rotateY: 15 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
@@ -50,11 +50,11 @@ export const ModernHeader = () => {
         className="space-y-4 sm:space-y-6"
       >
         <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight">
-          <span className="bg-gradient-to-l from-blue-700 via-indigo-700 to-purple-700 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-l from-emerald-700 via-sky-700 to-emerald-800 bg-clip-text text-transparent">
             سیستم مدیریت
           </span>
           <br />
-          <span className="bg-gradient-to-l from-purple-700 via-indigo-700 to-blue-700 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-l from-sky-700 via-emerald-700 to-sky-800 bg-clip-text text-transparent">
             باشگاه هوشمند
           </span>
         </h1>
