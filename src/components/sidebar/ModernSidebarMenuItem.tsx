@@ -101,8 +101,8 @@ export function ModernSidebarMenuItem({
           "relative block rounded-xl transition-all duration-200 overflow-hidden group",
           getMenuPadding(),
           isActive 
-            ? "bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 text-white shadow-lg transform scale-[1.02]" 
-            : "hover:bg-gradient-to-br hover:from-white/60 hover:via-gray-50/40 hover:to-violet-50/30 dark:hover:from-gray-700/40 dark:hover:via-gray-600/30 dark:hover:to-violet-800/20 hover:shadow-md hover:scale-[1.01]"
+            ? "bg-gradient-to-br from-emerald-500 via-sky-500 to-emerald-600 text-white shadow-lg transform scale-[1.02]" 
+            : "hover:bg-gradient-to-br hover:from-emerald-50/60 hover:via-sky-50/40 hover:to-emerald-50/30 dark:hover:from-emerald-700/40 dark:hover:via-sky-600/30 dark:hover:to-emerald-800/20 hover:shadow-md hover:scale-[1.01]"
         )}
         dir="rtl"
       >
@@ -137,7 +137,7 @@ export function ModernSidebarMenuItem({
                 className={cn(
                   "font-medium text-right truncate",
                   getFontSize(),
-                  isActive ? "text-white" : "text-slate-800 dark:text-slate-200"
+                  isActive ? "text-white" : "text-emerald-800 dark:text-emerald-200"
                 )}
                 layoutId={`title-${href}`}
               >
@@ -165,7 +165,7 @@ export function ModernSidebarMenuItem({
                 className={cn(
                   "text-right leading-relaxed mt-0.5 truncate",
                   getDescriptionSize(),
-                  isActive ? "text-white/80" : "text-slate-600 dark:text-slate-400"
+                  isActive ? "text-white/80" : "text-emerald-600 dark:text-emerald-400"
                 )}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -187,7 +187,7 @@ export function ModernSidebarMenuItem({
           >
             <ChevronLeft className={cn(
               deviceInfo.isMobile ? "w-3 h-3" : "w-4 h-4",
-              isActive ? "text-white" : "text-slate-400"
+              isActive ? "text-white" : "text-emerald-400"
             )} />
           </motion.div>
         </div>
