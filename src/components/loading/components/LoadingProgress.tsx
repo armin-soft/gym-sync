@@ -19,10 +19,10 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
   const StatusIcon = getStatusIcon();
   
   return (
-    <div className="w-full max-w-xs mx-auto">
+    <div className="w-full max-w-sm sm:max-w-md mx-auto">
       {/* نوار پیشرفت اصلی */}
-      <div className="mb-3">
-        <div className="bg-white/10 backdrop-blur-lg rounded-full h-2 overflow-hidden border border-white/20">
+      <div className="mb-4 sm:mb-5">
+        <div className="bg-white/10 backdrop-blur-lg rounded-full h-3 sm:h-4 overflow-hidden border border-white/20">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
@@ -51,15 +51,15 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="flex justify-between items-center mt-2"
+          className="flex justify-between items-center mt-3 sm:mt-4"
         >
-          <div className="flex items-center gap-1">
-            <StatusIcon className={`w-3 h-3 ${progress === 100 ? 'text-emerald-300' : 'text-white/70'}`} />
-            <span className="text-xs text-white/70">وضعیت</span>
+          <div className="flex items-center gap-2">
+            <StatusIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${progress === 100 ? 'text-emerald-300' : 'text-white/70'}`} />
+            <span className="text-sm sm:text-base text-white/70">وضعیت</span>
           </div>
           
-          <div className="bg-white/15 backdrop-blur-lg px-2 py-0.5 rounded-full border border-white/20">
-            <span className="text-xs font-bold text-white">
+          <div className="bg-white/15 backdrop-blur-lg px-3 py-1 sm:px-4 sm:py-2 rounded-full border border-white/20">
+            <span className="text-sm sm:text-base font-bold text-white">
               {toPersianNumbers(progress)}٪
             </span>
           </div>
@@ -74,13 +74,13 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
         transition={{ duration: 0.4 }}
         className="text-center"
       >
-        <div className="bg-white/10 backdrop-blur-lg rounded-lg p-3 border border-white/20">
-          <p className="text-xs text-white/90 leading-relaxed">
+        <div className="bg-white/10 backdrop-blur-lg rounded-lg p-4 sm:p-5 border border-white/20">
+          <p className="text-sm sm:text-base text-white/90 leading-relaxed">
             {loadingText}
           </p>
           
           {/* نقاط انیمیشنی */}
-          <div className="flex justify-center items-center gap-1 mt-2">
+          <div className="flex justify-center items-center gap-1 sm:gap-2 mt-3 sm:mt-4">
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
@@ -94,7 +94,7 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
                   delay: i * 0.2,
                   ease: "easeInOut"
                 }}
-                className="w-1.5 h-1.5 rounded-full bg-white/50"
+                className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white/50"
               />
             ))}
           </div>
@@ -106,9 +106,9 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="mt-3 text-center"
+        className="mt-4 sm:mt-5 text-center"
       >
-        <p className="text-xs text-white/60">
+        <p className="text-sm sm:text-base text-white/60">
           لطفاً صبر کنید...
         </p>
       </motion.div>

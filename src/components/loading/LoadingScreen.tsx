@@ -43,8 +43,8 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
       >
         <LoadingBackground />
         
-        <div className="relative z-10 w-full h-full flex items-center justify-center p-2">
-          <div className="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+        <div className="relative z-10 w-full h-full flex items-center justify-center p-4 sm:p-6 md:p-8">
+          <div className="flex flex-col items-center justify-center w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto">
             <LoadingContent 
               gymName={gymName}
               systemInfo={systemInfo}
