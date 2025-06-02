@@ -17,12 +17,14 @@ export const UserTypeSelectionNew = () => {
   } = useUserTypeSelection();
 
   return (
-    <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40 dark:from-slate-900 dark:via-emerald-950/30 dark:to-sky-950/40 no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-      <style jsx>{`
+    <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40 dark:from-slate-900 dark:via-emerald-950/30 dark:to-sky-950/40" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <style>
+        {`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
         }
-      `}</style>
+        `}
+      </style>
       
       <ModernBackground />
       
