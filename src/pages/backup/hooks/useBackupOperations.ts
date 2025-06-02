@@ -17,18 +17,6 @@ export function useBackupOperations(): BackupOperations {
   const [backupSuccess, setBackupSuccess] = useState(false);
   const [backupStats, setBackupStats] = useState<Record<string, number>>({});
 
-  const getAppVersion = async (): Promise<string> => {
-    try {
-      const response = await fetch('/Manifest.json');
-      const manifest = await response.json();
-      return manifest.version || '5.0.0';
-    } catch (error) {
-      console.error('Error loading version from Manifest.json:', error);
-      const cachedVersion = localStorage.getItem('app_version') || '5.0.0';
-      return cachedVersion;
-    }
-  };
-
   const createBackup = async (dataKeys: string[]) => {
     try {
       setIsLoading(true);
@@ -52,11 +40,9 @@ export function useBackupOperations(): BackupOperations {
         }
       });
       
-      const appVersion = await getAppVersion();
-      
       backupData._metadata = {
         created: new Date().toISOString(),
-        version: appVersion,
+        version: "5.0.0",
         appName: "مدیریت باشگاه"
       };
       
@@ -79,7 +65,7 @@ export function useBackupOperations(): BackupOperations {
       toast({
         title: "پشتیبان‌گیری موفق",
         description: `فایل ${filename} با موفقیت ایجاد شد`,
-        variant: "success"
+        className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
       });
     } catch (error) {
       console.error("Error creating backup:", error);

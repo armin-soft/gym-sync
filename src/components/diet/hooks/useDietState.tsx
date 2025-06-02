@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Meal, MealType, WeekDay } from "@/types/meal";
 import { useDietStorage, normalizeDay } from "./useDietStorage";
 import { useMealValidation } from "./useMealValidation";

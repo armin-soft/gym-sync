@@ -66,7 +66,7 @@ export function useRestoreOperations(): RestoreOperations {
         toast({
           title: "بازیابی موفق",
           description: "اطلاعات با موفقیت بازیابی شدند",
-          variant: "success"
+          className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
         });
       } catch (error) {
         console.error("Restore error:", error);
