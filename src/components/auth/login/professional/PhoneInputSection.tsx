@@ -4,9 +4,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Phone, ArrowLeft, Shield, CheckCircle, Smartphone } from "lucide-react";
+import { Phone, ArrowLeft, Shield, CheckCircle } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { getOperatorInfo } from "@/lib/utils/operatorUtils";
 import { ProfessionalErrorMessage } from "./ProfessionalErrorMessage";
 
 interface PhoneInputSectionProps {
@@ -51,7 +50,6 @@ export const PhoneInputSection = ({
     setPhone(numbersOnly);
   };
 
-  const operatorInfo = phone.length >= 4 ? getOperatorInfo(phone) : null;
   const isValidPhone = phone === allowedPhone;
 
   return (
@@ -107,22 +105,6 @@ export const PhoneInputSection = ({
             </div>
           </div>
         </div>
-        
-        {/* نمایش اپراتور */}
-        {operatorInfo && phone.length >= 4 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-3"
-          >
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${operatorInfo.bgColor} border border-opacity-30`}>
-              <Smartphone className={`h-4 w-4 ${operatorInfo.color}`} />
-              <span className={`text-sm font-semibold ${operatorInfo.color}`}>
-                {operatorInfo.name}
-              </span>
-            </div>
-          </motion.div>
-        )}
         
         {/* نشانگر اعتبار شماره */}
         {isValidPhone && (

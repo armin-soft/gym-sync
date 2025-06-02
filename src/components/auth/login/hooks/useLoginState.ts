@@ -15,7 +15,7 @@ export const useLoginState = () => {
     timeLeft: "",
     countdown: 0,
     gymName: "",
-    allowedPhone: "",
+    allowedPhone: "09123823886", // شماره پیش‌فرض
     attempts: 0
   });
 
@@ -23,11 +23,19 @@ export const useLoginState = () => {
 
   useEffect(() => {
     const profile = getStoredProfile();
-    if (profile) {
+    if (profile && profile.phone) {
+      // اگر پروفایل مربی موجود است و شماره دارد، از آن استفاده کن
       setState(prev => ({
         ...prev,
         gymName: profile.gymName || "",
-        allowedPhone: profile.phone || ""
+        allowedPhone: profile.phone
+      }));
+    } else {
+      // اگر پروفایل مربی موجود نیست، از شماره پیش‌فرض استفاده کن
+      setState(prev => ({
+        ...prev,
+        gymName: "",
+        allowedPhone: "09123823886"
       }));
     }
 

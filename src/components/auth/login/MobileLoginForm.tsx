@@ -4,7 +4,6 @@ import { ModernErrorMessage } from "./ModernErrorMessage";
 import { PhoneInputStep } from "./steps/PhoneInputStep";
 import { CodeVerificationStep } from "./steps/CodeVerificationStep";
 import { containerVariants, itemVariants } from "./utils/animationVariants";
-import { getOperatorInfo } from "@/lib/utils/operatorUtils";
 import type { TrainerProfile } from "@/types/trainer";
 
 interface MobileLoginFormProps {
@@ -126,9 +125,6 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     setError("");
   };
 
-  // Get operator info for display
-  const operatorInfo = phone.length >= 4 ? getOperatorInfo(phone) : null;
-
   return (
     <>
       <ModernErrorMessage error={error} />
@@ -142,7 +138,6 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           containerVariants={containerVariants}
           itemVariants={itemVariants}
           allowedPhones={getAllowedPhones()}
-          operatorInfo={operatorInfo}
         />
       ) : (
         <CodeVerificationStep

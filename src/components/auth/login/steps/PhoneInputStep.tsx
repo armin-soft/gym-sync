@@ -4,14 +4,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Phone, ArrowLeft, Shield, Smartphone } from "lucide-react";
+import { Phone, ArrowLeft, Shield } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-
-interface OperatorInfo {
-  name: string;
-  color: string;
-  bgColor: string;
-}
 
 interface PhoneInputStepProps {
   phone: string;
@@ -21,7 +15,6 @@ interface PhoneInputStepProps {
   containerVariants: any;
   itemVariants: any;
   allowedPhones: string[];
-  operatorInfo?: OperatorInfo | null;
 }
 
 export const PhoneInputStep = ({
@@ -31,8 +24,7 @@ export const PhoneInputStep = ({
   onSubmit,
   containerVariants,
   itemVariants,
-  allowedPhones,
-  operatorInfo
+  allowedPhones
 }: PhoneInputStepProps) => {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
@@ -104,22 +96,6 @@ export const PhoneInputStep = ({
             </div>
           </div>
         </div>
-
-        {/* Operator Display */}
-        {operatorInfo && phone.length >= 4 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-3"
-          >
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl ${operatorInfo.bgColor} border border-opacity-30`}>
-              <Smartphone className={`h-4 w-4 ${operatorInfo.color}`} />
-              <span className={`text-sm font-semibold ${operatorInfo.color}`}>
-                {operatorInfo.name}
-              </span>
-            </div>
-          </motion.div>
-        )}
 
         {/* Allowed phones hint */}
         <motion.div
