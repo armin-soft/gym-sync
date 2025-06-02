@@ -54,8 +54,8 @@ export const CodeVerificationSection = ({
       
       <motion.div variants={variants} className="space-y-6">
         <Label htmlFor="code" className="text-slate-700 dark:text-slate-200 font-bold flex items-center gap-3 text-base">
-          <div className="w-10 h-10 bg-gradient-to-br from-sky-500/20 to-emerald-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-sky-500/20">
-            <Shield className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-sky-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-emerald-500/20">
+            <Shield className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </div>
           کد تأیید
         </Label>
@@ -64,7 +64,7 @@ export const CodeVerificationSection = ({
         <div className="flex justify-center mb-6" dir="ltr">
           <div className="relative group">
             {/* تأثیر درخشش پس‌زمینه */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-sky-500 to-emerald-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
+            <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
             
             <InputOTP
               maxLength={6}
@@ -78,7 +78,7 @@ export const CodeVerificationSection = ({
                     <InputOTPSlot 
                       key={index}
                       index={index}
-                      className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-sky-200/50 dark:border-sky-700/50 text-slate-800 dark:text-white focus:border-sky-500 focus:ring-sky-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-sky-400 flex items-center justify-center"
+                      className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-emerald-400 flex items-center justify-center"
                       dir="ltr"
                     />
                   );
@@ -95,7 +95,7 @@ export const CodeVerificationSection = ({
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center justify-center gap-2"
           >
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
             <p className="text-slate-700 dark:text-slate-200 text-base font-semibold">
               کد تأیید به شماره {toPersianNumbers(phone)} ارسال شد
             </p>
@@ -111,7 +111,7 @@ export const CodeVerificationSection = ({
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
               >
-                <Clock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <Clock className="h-4 w-4 text-sky-600 dark:text-sky-400" />
               </motion.div>
               
               <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">
@@ -126,7 +126,7 @@ export const CodeVerificationSection = ({
         {/* دکمه ورود اصلی */}
         <Button 
           type="submit" 
-          className="w-full h-16 bg-gradient-to-l from-sky-600 via-emerald-600 to-sky-700 hover:from-sky-700 hover:via-emerald-700 hover:to-sky-800 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-16 bg-gradient-to-l from-emerald-600 via-sky-600 to-emerald-700 hover:from-emerald-700 hover:via-sky-700 hover:to-emerald-800 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading || code.length !== 6}
         >
           {loading ? (
