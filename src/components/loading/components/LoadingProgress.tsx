@@ -30,8 +30,7 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
               duration: 0.8,
               ease: "easeOut"
             }}
-            className="h-full relative overflow-hidden"
-            style={{ background: 'linear-gradient(90deg, #10b981 0%, #0ea5e9 50%, #f97316 100%)' }}
+            className="h-full relative overflow-hidden bg-gradient-to-r from-emerald-400 to-sky-400"
           >
             {/* افکت درخشندگی */}
             <motion.div
@@ -55,7 +54,7 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
           className="flex justify-between items-center mt-3"
         >
           <div className="flex items-center gap-2">
-            <StatusIcon className={`w-4 h-4 ${progress === 100 ? 'text-green-300' : 'text-white/70'}`} />
+            <StatusIcon className={`w-4 h-4 ${progress === 100 ? 'text-emerald-300' : 'text-white/70'}`} />
             <span className="text-xs sm:text-sm text-white/70">وضعیت بارگذاری</span>
           </div>
           

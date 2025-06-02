@@ -86,7 +86,7 @@ export const LoadingContent = ({ gymName, systemInfo }: LoadingContentProps) => 
             transition={{ delay: 0.6, type: "spring" }}
             className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-lg rounded-full px-4 py-2 border border-white/20"
           >
-            <Crown className="w-4 h-4 text-yellow-300" />
+            <Crown className="w-4 h-4 text-emerald-300" />
             <span className="text-white font-medium">{gymName}</span>
           </motion.div>
         )}

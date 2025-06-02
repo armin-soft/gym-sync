@@ -5,10 +5,9 @@ import { motion } from "framer-motion";
 export const LoadingBackground = () => {
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
-      {/* گرادیان اصلی با رنگ‌های داشبورد */}
+      {/* گرادیان اصلی با رنگ‌های انتخاب نوع کاربر */}
       <div 
-        className="absolute inset-0"
-        style={{ background: 'var(--bg-gradient-primary)' }}
+        className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-sky-500 to-emerald-500"
       />
       
       {/* المان‌های انیمیشنی */}
@@ -56,7 +55,7 @@ export const LoadingBackground = () => {
             ease: "easeInOut"
           }}
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%)' }}
         />
       </div>
       
