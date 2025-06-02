@@ -65,10 +65,9 @@ export const useLoginHandlers = ({
 
     if (!isValidCode(state.code)) {
       const newAttempts = state.attempts + 1;
-      setState((prev: any) => ({ ...prev, attempts: newAttempts }));
-      setLockInfo(newAttempts);
       
       if (newAttempts >= LOGIN_CONSTANTS.MAX_ATTEMPTS) {
+        // بعد از سومین تلاش ناموفق، حساب قفل می‌شود
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + LOGIN_CONSTANTS.LOCK_DURATION_DAYS);
         
@@ -76,18 +75,23 @@ export const useLoginHandlers = ({
           ...prev,
           locked: true,
           lockExpiry: expiryDate,
-          error: "حساب کاربری شما به دلیل ورود ناموفق بیش از حد مجاز، به مدت یک روز قفل شده است."
+          attempts: newAttempts,
+          error: "حساب کاربری شما به دلیل ورود ناموفق بیش از حد مجاز، به مدت یک روز قفل شده است.",
+          loading: false
         }));
         
         setLockInfo(newAttempts, expiryDate);
       } else {
+        // نمایش پیام خطا با تعداد تلاش‌های باقی‌مانده
         setState((prev: any) => ({ 
           ...prev, 
-          error: `کد وارد شده اشتباه است. (${toPersianNumbers(LOGIN_CONSTANTS.MAX_ATTEMPTS - newAttempts)} تلاش باقی مانده)`
+          attempts: newAttempts,
+          error: `کد وارد شده اشتباه است. (${toPersianNumbers(LOGIN_CONSTANTS.MAX_ATTEMPTS - newAttempts)} تلاش باقی مانده)`,
+          loading: false
         }));
+        setLockInfo(newAttempts);
       }
       
-      setState((prev: any) => ({ ...prev, loading: false }));
       return;
     }
 
