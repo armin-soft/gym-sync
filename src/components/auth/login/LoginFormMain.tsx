@@ -26,6 +26,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
     timeLeft,
     countdown,
     gymName,
+    allowedPhone,
     handlePhoneSubmit,
     handleCodeSubmit,
     handleChangePhone,
@@ -115,6 +116,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
                       error={error}
                       onSubmit={handlePhoneSubmit}
                       variants={itemVariants}
+                      allowedPhone={allowedPhone}
                     />
                   </motion.div>
                 ) : (

@@ -20,6 +20,7 @@ export const useProfessionalLogin = ({ onLoginSuccess }: UseProfessionalLoginPro
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [countdown, setCountdown] = useState(0);
   const [gymName, setGymName] = useState("");
+  const [allowedPhone, setAllowedPhone] = useState("");
 
   // بارگذاری اطلاعات اولیه
   useEffect(() => {
@@ -30,8 +31,11 @@ export const useProfessionalLogin = ({ onLoginSuccess }: UseProfessionalLoginPro
         if (profile.gymName) {
           setGymName(profile.gymName);
         }
+        if (profile.phone) {
+          setAllowedPhone(profile.phone);
+        }
       } catch (error) {
-        console.error('خطا در بارگذاری نام باشگاه:', error);
+        console.error('خطا در بارگذاری پروفایل مربی:', error);
       }
     }
 
@@ -114,6 +118,13 @@ export const useProfessionalLogin = ({ onLoginSuccess }: UseProfessionalLoginPro
 
     if (phone.length !== 11) {
       setError("شماره موبایل باید ۱۱ رقم باشد");
+      setLoading(false);
+      return;
+    }
+
+    // بررسی اینکه شماره وارد شده با شماره مجاز مطابقت دارد
+    if (phone !== allowedPhone) {
+      setError("شماره موبایل وارد شده مجاز نیست");
       setLoading(false);
       return;
     }
@@ -219,6 +230,7 @@ export const useProfessionalLogin = ({ onLoginSuccess }: UseProfessionalLoginPro
     timeLeft,
     countdown,
     gymName,
+    allowedPhone,
     handlePhoneSubmit,
     handleCodeSubmit,
     handleChangePhone,

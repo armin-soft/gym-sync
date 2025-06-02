@@ -65,17 +65,13 @@ export const CodeVerificationSection = ({
             >
               <InputOTPGroup className="gap-3" dir="ltr">
                 {[...Array(6)].map((_, index) => {
-                  const currentChar = code[index] || '';
-                  const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
-                  
                   return (
                     <InputOTPSlot 
                       key={index}
                       index={index}
                       className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-sky-200/50 dark:border-sky-700/50 text-slate-800 dark:text-white focus:border-sky-500 focus:ring-sky-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-sky-400 flex items-center justify-center"
-                    >
-                      {displayChar}
-                    </InputOTPSlot>
+                      dir="ltr"
+                    />
                   );
                 })}
               </InputOTPGroup>
@@ -115,6 +111,20 @@ export const CodeVerificationSection = ({
             </motion.div>
           )}
         </div>
+
+        {/* یادداشت کد ثابت */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-emerald-50/50 dark:bg-emerald-900/20 border border-emerald-200/50 dark:border-emerald-700/50 rounded-xl p-4"
+        >
+          <div className="flex items-center justify-center gap-2 text-emerald-700 dark:text-emerald-300">
+            <Shield className="h-4 w-4" />
+            <span className="text-sm font-medium">
+              کد تأیید: ۰۱۲۳۴۵
+            </span>
+          </div>
+        </motion.div>
       </motion.div>
       
       <motion.div variants={variants} className="space-y-4">

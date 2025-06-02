@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Phone, ArrowLeft, Shield, CheckCircle } from "lucide-react";
+import { Phone, ArrowLeft, Shield, CheckCircle, Smartphone } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { getOperatorInfo } from "@/lib/utils/operatorUtils";
 import { ProfessionalErrorMessage } from "./ProfessionalErrorMessage";
 
 interface PhoneInputSectionProps {
@@ -15,6 +16,7 @@ interface PhoneInputSectionProps {
   error: string;
   onSubmit: (e: React.FormEvent) => void;
   variants: any;
+  allowedPhone: string;
 }
 
 export const PhoneInputSection = ({
@@ -23,7 +25,8 @@ export const PhoneInputSection = ({
   loading,
   error,
   onSubmit,
-  variants
+  variants,
+  allowedPhone
 }: PhoneInputSectionProps) => {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
@@ -47,6 +50,9 @@ export const PhoneInputSection = ({
     
     setPhone(numbersOnly);
   };
+
+  const operatorInfo = phone.length >= 4 ? getOperatorInfo(phone) : null;
+  const isValidPhone = phone === allowedPhone;
 
   return (
     <motion.form
@@ -76,7 +82,7 @@ export const PhoneInputSection = ({
               type="tel"
               value={toPersianNumbers(phone)}
               onChange={handlePhoneChange}
-              placeholder={toPersianNumbers("09123456789")}
+              placeholder={allowedPhone ? toPersianNumbers(allowedPhone) : toPersianNumbers("09123456789")}
               className="h-16 bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white text-lg font-bold placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl pl-6 pr-6 backdrop-blur-sm transition-all duration-300 text-center"
               dir="ltr"
               required
@@ -86,12 +92,12 @@ export const PhoneInputSection = ({
             <div className="absolute left-4 top-1/2 -translate-y-1/2">
               <motion.div
                 className={`w-3 h-3 rounded-full ${
-                  phone && phone.length === 11 
+                  isValidPhone 
                     ? 'bg-green-500' 
                     : 'bg-slate-300 dark:bg-slate-600'
                 }`}
                 animate={{ 
-                  scale: phone && phone.length === 11 ? [1, 1.2, 1] : 1,
+                  scale: isValidPhone ? [1, 1.2, 1] : 1,
                   opacity: phone ? [0.6, 1, 0.6] : 0.6
                 }}
                 transition={{ duration: 1.5, repeat: Infinity }}
@@ -100,15 +106,45 @@ export const PhoneInputSection = ({
           </div>
         </div>
         
-        {/* نشانگر اعتبار شماره */}
-        {phone && phone.length === 11 && (
+        {/* نمایش اپراتور */}
+        {operatorInfo && phone.length >= 4 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-green-600 dark:text-green-400"
+            className="flex items-center justify-center gap-3"
+          >
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${operatorInfo.bgColor} border border-opacity-30`}>
+              <Smartphone className={`h-4 w-4 ${operatorInfo.color}`} />
+              <span className={`text-sm font-semibold ${operatorInfo.color}`}>
+                {operatorInfo.name}
+              </span>
+            </div>
+          </motion.div>
+        )}
+        
+        {/* نشانگر اعتبار شماره */}
+        {isValidPhone && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400"
           >
             <CheckCircle className="h-4 w-4" />
-            <span className="text-sm font-semibold">شماره موبایل معتبر است</span>
+            <span className="text-sm font-semibold">شماره موبایل تأیید شد</span>
+          </motion.div>
+        )}
+
+        {/* راهنمای شماره مجاز */}
+        {allowedPhone && !isValidPhone && phone.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center gap-2 text-amber-600 dark:text-amber-400"
+          >
+            <Shield className="h-4 w-4" />
+            <span className="text-sm font-medium">
+              تنها شماره {toPersianNumbers(allowedPhone)} مجاز است
+            </span>
           </motion.div>
         )}
       </motion.div>
@@ -117,7 +153,7 @@ export const PhoneInputSection = ({
         <Button 
           type="submit" 
           className="w-full h-16 bg-gradient-to-l from-emerald-600 via-sky-600 to-emerald-700 hover:from-emerald-700 hover:via-sky-700 hover:to-emerald-800 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={loading || !phone || phone.length < 11}
+          disabled={loading || !isValidPhone}
         >
           {loading ? (
             <div className="flex items-center gap-3">
