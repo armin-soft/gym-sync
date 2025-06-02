@@ -1,21 +1,21 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LoadingBackgroundNew } from "./loading-new/LoadingBackground-New";
-import { LoadingContentNew } from "./loading-new/LoadingContent-New";
-import { LoadingProgressNew } from "./loading-new/LoadingProgress-New";
-import { useLoadingStateNew } from "@/hooks/useLoadingState-New";
+import { LoadingBackground } from "./components/LoadingBackground";
+import { LoadingContent } from "./components/LoadingContent";
+import { LoadingProgress } from "./components/LoadingProgress";
+import { useLoadingState } from "@/hooks/loading/useLoadingState";
 
-interface LoadingScreenNewProps {
+interface LoadingScreenProps {
   onLoadingComplete?: () => void;
   isVisible?: boolean;
 }
 
-export const LoadingScreenNew = React.memo<LoadingScreenNewProps>(({ 
+export const LoadingScreen = React.memo<LoadingScreenProps>(({ 
   onLoadingComplete, 
   isVisible = true 
 }) => {
-  const { progress, loadingText, gymName, systemInfo } = useLoadingStateNew();
+  const { progress, loadingText, gymName, systemInfo } = useLoadingState();
   
   React.useEffect(() => {
     if (progress === 100 && onLoadingComplete) {
@@ -34,7 +34,7 @@ export const LoadingScreenNew = React.memo<LoadingScreenNewProps>(({
   return (
     <AnimatePresence mode="wait">
       <motion.div 
-        key="loading-screen-new"
+        key="loading-screen"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -42,15 +42,15 @@ export const LoadingScreenNew = React.memo<LoadingScreenNewProps>(({
         className="fixed inset-0 w-full h-full overflow-hidden z-[9999]"
         style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }}
       >
-        <LoadingBackgroundNew />
+        <LoadingBackground />
         
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
-          <LoadingContentNew 
+          <LoadingContent 
             gymName={gymName}
             systemInfo={systemInfo}
           />
           
-          <LoadingProgressNew 
+          <LoadingProgress 
             progress={progress}
             loadingText={loadingText}
           />
@@ -60,4 +60,4 @@ export const LoadingScreenNew = React.memo<LoadingScreenNewProps>(({
   );
 });
 
-LoadingScreenNew.displayName = "LoadingScreenNew";
+LoadingScreen.displayName = "LoadingScreen";

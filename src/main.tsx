@@ -1,9 +1,8 @@
-
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
-import { LoadingScreenNew } from './components/LoadingScreen-New'
+import { LoadingScreen } from './components/loading/LoadingScreen'
 import React from 'react'
 
 // کامپوننت اصلی برنامه با صفحه لودینگ جدید
@@ -40,7 +39,7 @@ function MainApp() {
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
       {isInitialLoading && (
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
-          <LoadingScreenNew onLoadingComplete={handleLoadingComplete} />
+          <LoadingScreen onLoadingComplete={handleLoadingComplete} />
         </div>
       )}
       <div style={{ 

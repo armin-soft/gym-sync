@@ -1,11 +1,23 @@
 
 import { useState, useEffect } from 'react';
 
-export const useLoadingStateNew = () => {
+interface SystemInfo {
+  version: string;
+  totalComponents: number;
+  loadedComponents: number;
+}
+
+interface LoadingStep {
+  progress: number;
+  text: string;
+  components: number;
+}
+
+export const useLoadingState = () => {
   const [progress, setProgress] = useState(0);
   const [gymName, setGymName] = useState("");
   const [loadingText, setLoadingText] = useState("آماده‌سازی سیستم...");
-  const [systemInfo, setSystemInfo] = useState({
+  const [systemInfo, setSystemInfo] = useState<SystemInfo>({
     version: "4.1.6",
     totalComponents: 128,
     loadedComponents: 0
@@ -26,7 +38,7 @@ export const useLoadingStateNew = () => {
     }
     
     // مراحل بارگذاری با اطلاعات واقعی و به‌روز
-    const loadingSteps = [
+    const loadingSteps: LoadingStep[] = [
       { progress: 5, text: "بررسی سازگاری سیستم...", components: 8 },
       { progress: 12, text: "بارگذاری هسته اصلی برنامه...", components: 16 },
       { progress: 20, text: "راه‌اندازی سیستم احراز هویت...", components: 24 },

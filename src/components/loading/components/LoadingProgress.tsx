@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { CheckCircle, Circle, Clock } from "lucide-react";
 
-interface LoadingProgressNewProps {
+interface LoadingProgressProps {
   progress: number;
   loadingText: string;
 }
 
-export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNewProps) => {
+export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps) => {
   const getStatusIcon = () => {
     if (progress === 100) return CheckCircle;
     if (progress > 0) return Clock;

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Crown, Sparkles, Zap, Shield } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
-interface LoadingContentNewProps {
+interface LoadingContentProps {
   gymName: string;
   systemInfo: {
     version: string;
@@ -13,7 +13,7 @@ interface LoadingContentNewProps {
   };
 }
 
-export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProps) => {
+export const LoadingContent = ({ gymName, systemInfo }: LoadingContentProps) => {
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* آیکون اصلی */}

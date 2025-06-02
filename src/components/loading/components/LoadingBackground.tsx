@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-export const LoadingBackgroundNew = () => {
+export const LoadingBackground = () => {
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
       {/* گرادیان اصلی با رنگ‌های داشبورد */}
