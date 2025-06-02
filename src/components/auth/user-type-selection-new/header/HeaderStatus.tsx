@@ -3,8 +3,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Users, Shield } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useAppVersion } from "../hooks/useAppVersion";
 
 export const HeaderStatus = () => {
+  const appVersion = useAppVersion();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -24,7 +27,7 @@ export const HeaderStatus = () => {
       
       <div className="flex items-center gap-2">
         <Users className="w-4 h-4" />
-        <span>نسخه {toPersianNumbers("4.2.7")}</span>
+        <span>نسخه {toPersianNumbers(appVersion)}</span>
       </div>
       
       <div className="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600"></div>

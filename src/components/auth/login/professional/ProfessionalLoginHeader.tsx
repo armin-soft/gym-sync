@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Shield, Zap } from "lucide-react";
 import { useAppVersion } from "@/components/auth/user-type-selection-new/hooks/useAppVersion";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProfessionalLoginHeaderProps {
   gymName: string;
@@ -49,7 +50,7 @@ export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLogin
       >
         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
         <span className="text-emerald-700 dark:text-emerald-300 text-sm font-semibold">
-          نسخه {appVersion}
+          نسخه {toPersianNumbers(appVersion)}
         </span>
       </motion.div>
 

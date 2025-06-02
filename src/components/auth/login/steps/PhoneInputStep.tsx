@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -26,17 +27,15 @@ export const PhoneInputStep = ({
   allowedPhones
 }: PhoneInputStepProps) => {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
+    const value = e.target.value;
     
     // فقط اعداد انگلیسی مجاز
-    let numbersOnly = value.replace(/[^0-9]/g, '');
+    const numbersOnly = value.replace(/[^0-9]/g, '');
     
     // محدود کردن به 11 رقم
-    if (numbersOnly.length > 11) {
-      numbersOnly = numbersOnly.slice(0, 11);
+    if (numbersOnly.length <= 11) {
+      setPhone(numbersOnly);
     }
-    
-    setPhone(numbersOnly);
   };
 
   return (
