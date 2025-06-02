@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -33,6 +33,15 @@ export const CodeVerificationSection = ({
   onResendCode,
   variants
 }: CodeVerificationSectionProps) => {
+  
+  // خودکار ارسال فرم وقتی کد کامل شد
+  useEffect(() => {
+    if (code.length === 6 && !loading) {
+      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      onSubmit(fakeEvent);
+    }
+  }, [code, loading, onSubmit]);
+
   return (
     <motion.form
       onSubmit={onSubmit}
