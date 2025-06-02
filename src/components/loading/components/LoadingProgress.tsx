@@ -60,7 +60,7 @@ export const LoadingProgress = ({ progress, loadingText }: LoadingProgressProps)
           
           <div className="bg-white/15 backdrop-blur-lg px-3 py-1 rounded-full border border-white/20">
             <span className="text-sm sm:text-base font-bold text-white">
-              {toPersianNumbers(progress.toString())}٪
+              {toPersianNumbers(progress)}٪
             </span>
           </div>
         </motion.div>

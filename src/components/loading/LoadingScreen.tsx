@@ -15,19 +15,19 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
   onLoadingComplete, 
   isVisible = true 
 }) => {
-  const { progress, loadingText, gymName, systemInfo } = useLoadingState();
+  const { progress, loadingText, gymName, systemInfo, isComplete } = useLoadingState();
   
   React.useEffect(() => {
-    if (progress === 100 && onLoadingComplete) {
+    if (isComplete && progress === 100 && onLoadingComplete) {
       console.log('Loading completed, transitioning to main app...');
       const timer = setTimeout(() => {
         console.log('All systems ready, launching application...');
         onLoadingComplete();
-      }, 800);
+      }, 1200); // مدت زمان بیشتر برای نمایش تکمیل
       
       return () => clearTimeout(timer);
     }
-  }, [progress, onLoadingComplete]);
+  }, [progress, isComplete, onLoadingComplete]);
   
   if (!isVisible) return null;
   
