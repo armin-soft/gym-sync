@@ -28,11 +28,11 @@ export const UserTypeSelectionNew = () => {
       localStorage.setItem("selectedUserType", type);
       
       // مرحله ۲: آماده‌سازی محیط
-      await new Promise(resolve => setTimeout(resolve, ۸۰۰));
+      await new Promise(resolve => setTimeout(resolve, 800));
       setCurrentStep(3);
       
       // مرحله ۳: هدایت به صفحه مقصد
-      await new Promise(resolve => setTimeout(resolve, ۶۰۰));
+      await new Promise(resolve => setTimeout(resolve, 600));
       
       console.log('هدایت به:', type === 'management' ? '/Management' : '/Students');
       
