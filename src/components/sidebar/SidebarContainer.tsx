@@ -1,24 +1,23 @@
 
-import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { motion } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface SidebarContainerProps {
+  children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
-  children: React.ReactNode;
 }
 
-export const SidebarContainer = ({ isOpen, onClose, children }: SidebarContainerProps) => {
+export const SidebarContainer = ({ children, isOpen, onClose }: SidebarContainerProps) => {
   const deviceInfo = useDeviceInfo();
   
   const getSidebarWidth = () => {
     if (deviceInfo.isMobile) return "w-[300px]";
-    if (deviceInfo.isTablet) return "w-[340px]";
+    if (deviceInfo.isTablet) return "w-[350px]";
     if (deviceInfo.isSmallLaptop) return "w-[380px]";
-    return "w-[400px]";
+    return "w-[420px]";
   };
   
   return (
@@ -27,26 +26,44 @@ export const SidebarContainer = ({ isOpen, onClose, children }: SidebarContainer
         side="right" 
         className={cn(
           getSidebarWidth(),
-          "p-0 border-l-0 shadow-2xl bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-slate-900 dark:via-gray-900 dark:to-zinc-900 backdrop-blur-xl"
+          "p-0 border-l shadow-2xl bg-gradient-to-br from-emerald-50 via-sky-50 to-emerald-50/80 dark:from-emerald-950/50 dark:via-sky-950/40 dark:to-emerald-950/60 backdrop-blur-lg border-emerald-200/30 dark:border-emerald-800/30"
         )}
         dir="rtl"
       >
-        <motion.div 
-          className="flex h-full flex-col overflow-hidden relative"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          dir="rtl"
-        >
-          {/* Background Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+        <div className="flex h-full flex-col overflow-hidden relative" dir="rtl">
+          {/* Background decorative elements */}
+          <div className="absolute inset-0 overflow-hidden -z-10">
+            <motion.div 
+              className="absolute top-10 right-10 w-32 h-32 rounded-full opacity-20 bg-gradient-to-br from-emerald-400 to-sky-500"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 180, 360]
+              }}
+              transition={{ 
+                duration: 20, 
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+            
+            <motion.div 
+              className="absolute bottom-20 left-10 w-24 h-24 rounded-full opacity-15 bg-gradient-to-br from-sky-400 to-emerald-500"
+              animate={{ 
+                scale: [1, 1.3, 1],
+                rotate: [360, 180, 0]
+              }}
+              transition={{ 
+                duration: 25, 
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+          </div>
           
-          {children}
-          
-          {/* Decorative Elements */}
-          <div className="absolute top-20 left-4 w-32 h-32 bg-gradient-to-br from-violet-400/10 to-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-20 right-4 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
-        </motion.div>
+          <div className="relative z-10 flex h-full flex-col">
+            {children}
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
   );

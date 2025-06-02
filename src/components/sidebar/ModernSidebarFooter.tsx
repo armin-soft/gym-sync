@@ -1,4 +1,3 @@
-
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { Dumbbell, Zap, Shield, Star } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -78,17 +77,17 @@ export function ModernSidebarFooter({ gymName }: ModernSidebarFooterProps) {
 
   return (
     <motion.div 
-      className={cn("border-t border-gradient-to-r from-violet-200/30 via-blue-200/30 to-purple-200/30 dark:from-violet-700/30 dark:via-blue-700/30 dark:to-purple-700/30 bg-gradient-to-br from-white/60 to-gray-50/40 dark:from-gray-800/60 dark:to-gray-700/40 backdrop-blur-sm relative overflow-hidden", getFooterPadding())}
+      className={cn("border-t border-gradient-to-r from-emerald-200/40 via-sky-200/40 to-emerald-200/40 dark:from-emerald-700/40 dark:via-sky-700/40 dark:to-emerald-700/40 bg-gradient-to-br from-emerald-50/80 to-sky-50/60 dark:from-emerald-800/70 dark:to-sky-800/50 backdrop-blur-sm relative overflow-hidden", getFooterPadding())}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
     >
       {/* Background Decorations */}
-      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-violet-400/20 to-transparent rounded-full blur-xl" />
+      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-emerald-400/20 to-sky-400/10 rounded-full blur-xl" />
       
       <motion.div 
         className={cn(
-          "flex items-center gap-4 rounded-2xl bg-gradient-to-br from-white/80 via-gray-50/60 to-violet-50/40 dark:from-gray-700/80 dark:via-gray-600/60 dark:to-violet-800/40 backdrop-blur-sm border border-white/50 dark:border-gray-600/50 shadow-xl relative overflow-hidden", 
+          "flex items-center gap-4 rounded-2xl bg-gradient-to-br from-emerald-50/90 via-sky-50/70 to-emerald-50/80 dark:from-emerald-700/80 dark:via-sky-700/60 dark:to-emerald-800/70 backdrop-blur-sm border border-emerald-200/50 dark:border-emerald-600/50 shadow-xl relative overflow-hidden", 
           getContentPadding()
         )}
         whileHover={{ scale: 1.02, y: -2 }}
@@ -97,14 +96,14 @@ export function ModernSidebarFooter({ gymName }: ModernSidebarFooterProps) {
         {/* Icon Container */}
         <motion.div 
           className={cn(
-            "flex-shrink-0 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 shadow-xl relative overflow-hidden", 
+            "flex-shrink-0 rounded-2xl bg-gradient-to-br from-emerald-500 via-sky-500 to-emerald-600 shadow-xl relative overflow-hidden", 
             getIconPadding()
           )}
           animate={{ 
             boxShadow: [
-              "0 0 20px rgba(139, 92, 246, 0.3)",
-              "0 0 30px rgba(139, 92, 246, 0.6)",
-              "0 0 20px rgba(139, 92, 246, 0.3)"
+              "0 0 20px rgba(16, 185, 129, 0.3)",
+              "0 0 30px rgba(14, 165, 233, 0.6)",
+              "0 0 20px rgba(16, 185, 129, 0.3)"
             ]
           }}
           transition={{ duration: 3, repeat: Infinity }}
@@ -128,7 +127,7 @@ export function ModernSidebarFooter({ gymName }: ModernSidebarFooterProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <span className={cn("font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent", getTextSize())}>
+            <span className={cn("font-bold bg-gradient-to-r from-emerald-800 to-sky-700 dark:from-emerald-200 dark:to-sky-300 bg-clip-text text-transparent", getTextSize())}>
               {gymName || "سیستم مدیریت حرفه‌ای"}
             </span>
             <motion.div
@@ -140,7 +139,7 @@ export function ModernSidebarFooter({ gymName }: ModernSidebarFooterProps) {
           </motion.div>
           
           <motion.div 
-            className={cn("text-slate-600 dark:text-slate-400 flex items-center gap-2", getVersionSize())}
+            className={cn("text-emerald-600 dark:text-emerald-400 flex items-center gap-2", getVersionSize())}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
@@ -149,9 +148,9 @@ export function ModernSidebarFooter({ gymName }: ModernSidebarFooterProps) {
               <Zap className="h-3 w-3 text-emerald-500" />
               <span>نسخه {toPersianNumbers(appVersion)}</span>
             </div>
-            <div className="w-1 h-1 bg-slate-400 rounded-full" />
+            <div className="w-1 h-1 bg-emerald-400 rounded-full" />
             <div className="flex items-center gap-1">
-              <Shield className="h-3 w-3 text-blue-500" />
+              <Shield className="h-3 w-3 text-sky-500" />
               <span>حرفه‌ای</span>
             </div>
           </motion.div>
@@ -159,7 +158,7 @@ export function ModernSidebarFooter({ gymName }: ModernSidebarFooterProps) {
         
         {/* Decorative Gradient Line */}
         <motion.div 
-          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-blue-500 to-purple-500"
+          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-sky-500 to-emerald-500"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 0.8, duration: 1 }}

@@ -14,7 +14,7 @@ export const SidebarGymSection = ({ gymName }: SidebarGymSectionProps) => {
   return (
     <motion.div 
       className={cn(
-        "border-b border-gradient-to-r from-violet-200/30 via-blue-200/30 to-purple-200/30 dark:from-violet-700/30 dark:via-blue-700/30 dark:to-purple-700/30 bg-gradient-to-r from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-700/50 backdrop-blur-sm flex-shrink-0",
+        "border-b border-gradient-to-r from-emerald-200/40 via-sky-200/40 to-emerald-200/40 dark:from-emerald-700/40 dark:via-sky-700/40 dark:to-emerald-700/40 bg-gradient-to-r from-emerald-50/80 to-sky-50/60 dark:from-emerald-800/60 dark:to-sky-800/40 backdrop-blur-sm flex-shrink-0",
         deviceInfo.isMobile ? "px-4 py-2" : "px-6 py-4"
       )}
       dir="rtl"
@@ -24,13 +24,13 @@ export const SidebarGymSection = ({ gymName }: SidebarGymSectionProps) => {
     >
       <div className="flex items-center justify-center gap-2">
         <div className={cn(
-          "rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg",
+          "rounded-xl bg-gradient-to-br from-emerald-500 to-sky-600 shadow-lg",
           deviceInfo.isMobile ? "p-1.5" : "p-2"
         )}>
           <Crown className={cn(deviceInfo.isMobile ? "h-4 w-4" : "h-5 w-5", "text-white")} />
         </div>
         <h4 className={cn(
-          "font-bold text-center bg-gradient-to-r from-violet-600 via-blue-600 to-purple-600 bg-clip-text text-transparent",
+          "font-bold text-center bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-600 bg-clip-text text-transparent",
           deviceInfo.isMobile ? "text-sm" : 
           deviceInfo.isTablet ? "text-base" : "text-lg"
         )}>

@@ -58,13 +58,13 @@ export const Layout = ({ children }: LayoutProps) => {
   }, []);
 
   return (
-    <div className="full-screen bg-background persian-numbers flex flex-col overflow-hidden" dir="rtl">
+    <div className="full-screen bg-gradient-to-br from-emerald-50 via-sky-50/30 to-emerald-50/40 persian-numbers flex flex-col overflow-hidden" dir="rtl">
       {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />}
       
       <header 
         className={cn(
-          "sticky top-0 z-50 w-full border-b transition-all duration-200 flex-shrink-0",
-          scrolled ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm" : "bg-background",
+          "sticky top-0 z-50 w-full border-b border-emerald-200/30 transition-all duration-200 flex-shrink-0",
+          scrolled ? "bg-gradient-to-r from-emerald-50/95 to-sky-50/95 backdrop-blur-lg shadow-lg shadow-emerald-100/20" : "bg-gradient-to-r from-emerald-50/90 to-sky-50/90 backdrop-blur-sm",
           headerHeight,
           headerPadding
         )}
@@ -75,15 +75,15 @@ export const Layout = ({ children }: LayoutProps) => {
               variant="ghost"
               size="sm"
               onClick={handleSidebarOpen}
-              className={cn("rounded-md hover:bg-accent", buttonSize)}
+              className={cn("rounded-md hover:bg-emerald-100/50 dark:hover:bg-emerald-800/20", buttonSize)}
               aria-label="Open menu"
             >
-              <Menu className={iconSize} />
+              <Menu className={cn(iconSize, "text-emerald-700 dark:text-emerald-300")} />
             </Button>
             <div className={cn("flex items-center", logoGap)}>
               <AppIcon size="sm" animated />
               <h1 className={cn(
-                "font-semibold hidden xs:block",
+                "font-semibold hidden xs:block bg-gradient-to-r from-emerald-700 to-sky-700 bg-clip-text text-transparent",
                 titleSize
               )}>
                 {gymName ? gymName : 'برنامه مدیریت'}
