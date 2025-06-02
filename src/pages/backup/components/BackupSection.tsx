@@ -24,7 +24,7 @@ export function BackupSection({ dataKeys }: BackupSectionProps) {
       const backupData: Record<string, any> = {};
       const stats: Record<string, number> = {};
       
-      // Collect data
+      // Collect actual data from localStorage
       dataKeys.forEach(key => {
         const data = localStorage.getItem(key);
         if (data) {
@@ -42,8 +42,15 @@ export function BackupSection({ dataKeys }: BackupSectionProps) {
         }
       });
       
+      // Add metadata
+      backupData._metadata = {
+        created: new Date().toISOString(),
+        version: "5.0.0",
+        appName: "مدیریت باشگاه"
+      };
+      
       // Create download
-      const filename = `${formatPersianDateForFilename()}.json`;
+      const filename = `backup-${formatPersianDateForFilename()}.json`;
       const backupString = JSON.stringify(backupData, null, 2);
       
       const blob = new Blob([backupString], { type: "application/json" });
@@ -61,7 +68,7 @@ export function BackupSection({ dataKeys }: BackupSectionProps) {
       
       toast({
         title: "پشتیبان‌گیری موفق",
-        description: "فایل پشتیبان با موفقیت ایجاد شد",
+        description: `فایل ${filename} با موفقیت ایجاد شد`,
         className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
       });
     } catch (error) {
@@ -177,21 +184,26 @@ export function BackupSection({ dataKeys }: BackupSectionProps) {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {Object.entries(backupStats).map(([key, count]) => (
-                  <div key={key} className="bg-white/50 dark:bg-slate-800/50 rounded-xl p-4 text-center">
-                    <div className="font-bold text-emerald-700 dark:text-emerald-300 text-2xl">
-                      {toPersianNumbers(count)}
+              {Object.keys(backupStats).length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {Object.entries(backupStats).map(([key, count]) => (
+                    <div key={key} className="bg-white/50 dark:bg-slate-800/50 rounded-xl p-4 text-center">
+                      <div className="font-bold text-emerald-700 dark:text-emerald-300 text-2xl">
+                        {toPersianNumbers(count)}
+                      </div>
+                      <div className="text-xs text-emerald-600 dark:text-emerald-400">
+                        {key === 'students' ? 'شاگرد' : 
+                         key === 'exercises' ? 'تمرین' :
+                         key === 'meals' ? 'وعده' :
+                         key === 'supplements' ? 'مکمل' : 
+                         key === 'exerciseTypes' ? 'نوع تمرین' :
+                         key === 'exerciseCategories' ? 'دسته تمرین' :
+                         'آیتم'}
+                      </div>
                     </div>
-                    <div className="text-xs text-emerald-600 dark:text-emerald-400">
-                      {key === 'students' ? 'شاگرد' : 
-                       key === 'exercises' ? 'تمرین' :
-                       key === 'meals' ? 'وعده' :
-                       key === 'supplements' ? 'مکمل' : 'آیتم'}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
         </div>

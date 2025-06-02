@@ -9,7 +9,7 @@ import { useDataStats } from "./hooks/useDataStats";
 const BackupPage = () => {
   const { stats } = useDataStats();
 
-  // All localStorage keys for backup
+  // All actual localStorage keys used in the app
   const dataKeys = [
     'students',
     'exercises',

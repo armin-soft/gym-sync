@@ -24,6 +24,15 @@ export function RestoreSection({ dataKeys }: RestoreSectionProps) {
   } | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
+  const triggerDataRefresh = () => {
+    // Trigger custom event for same-tab updates
+    window.dispatchEvent(new CustomEvent('localStorage-updated', { 
+      detail: { key: 'all' } 
+    }));
+    // Also trigger storage event
+    window.dispatchEvent(new Event('storage'));
+  };
+
   const handleFileRestore = (file: File) => {
     const reader = new FileReader();
     
@@ -40,17 +49,23 @@ export function RestoreSection({ dataKeys }: RestoreSectionProps) {
           throw new Error("فایل پشتیبان معتبر نیست");
         }
         
-        // Restore data
+        // Remove metadata if present
+        delete backupData._metadata;
+        
+        // Restore data to localStorage
         dataKeys.forEach(key => {
           if (key in backupData && backupData[key] !== null) {
             localStorage.setItem(key, JSON.stringify(backupData[key]));
             stats[key] = Array.isArray(backupData[key]) ? backupData[key].length : 1;
           } else {
+            // Clear the key if it doesn't exist in backup
+            localStorage.removeItem(key);
             stats[key] = 0;
           }
         });
         
-        window.dispatchEvent(new Event('storage'));
+        // Trigger data refresh
+        triggerDataRefresh();
         
         setRestoreResult({
           success: true,
@@ -64,6 +79,7 @@ export function RestoreSection({ dataKeys }: RestoreSectionProps) {
           className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
         });
       } catch (error) {
+        console.error("Restore error:", error);
         setRestoreResult({
           success: false,
           message: "خطا در بازیابی اطلاعات. فایل پشتیبان معتبر نیست"
@@ -297,7 +313,10 @@ export function RestoreSection({ dataKeys }: RestoreSectionProps) {
                             {key === 'students' ? 'شاگرد' : 
                              key === 'exercises' ? 'تمرین' :
                              key === 'meals' ? 'وعده' :
-                             key === 'supplements' ? 'مکمل' : 'آیتم'}
+                             key === 'supplements' ? 'مکمل' : 
+                             key === 'exerciseTypes' ? 'نوع تمرین' :
+                             key === 'exerciseCategories' ? 'دسته تمرین' :
+                             'آیتم'}
                           </div>
                         </div>
                       ))}

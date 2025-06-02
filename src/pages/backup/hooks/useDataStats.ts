@@ -56,10 +56,23 @@ export function useDataStats() {
   useEffect(() => {
     calculateStats();
     
+    // Listen for localStorage changes
     const handleStorageChange = () => calculateStats();
     window.addEventListener('storage', handleStorageChange);
     
-    return () => window.removeEventListener('storage', handleStorageChange);
+    // Listen for custom storage events (for same-tab updates)
+    const handleCustomStorageChange = (e: CustomEvent) => {
+      if (['students', 'exercises', 'meals', 'supplements'].includes(e.detail.key)) {
+        calculateStats();
+      }
+    };
+    
+    window.addEventListener('localStorage-updated', handleCustomStorageChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('localStorage-updated', handleCustomStorageChange as EventListener);
+    };
   }, []);
 
   return { stats, refreshStats: calculateStats };
