@@ -2,13 +2,13 @@
 import { useState, useEffect } from 'react';
 
 export const useLoadingStateNew = () => {
-  const [progress, setProgress] = useState(۰);
+  const [progress, setProgress] = useState(0);
   const [gymName, setGymName] = useState("");
   const [loadingText, setLoadingText] = useState("آماده‌سازی سیستم...");
   const [systemInfo, setSystemInfo] = useState({
-    version: "۴.۱.۶",
-    totalComponents: ۱۲۸,
-    loadedComponents: ۰
+    version: "4.1.6",
+    totalComponents: 128,
+    loadedComponents: 0
   });
   
   useEffect(() => {
@@ -27,22 +27,22 @@ export const useLoadingStateNew = () => {
     
     // مراحل بارگذاری با اطلاعات واقعی و به‌روز
     const loadingSteps = [
-      { progress: ۵, text: "بررسی سازگاری سیستم...", components: ۸ },
-      { progress: ۱۲, text: "بارگذاری هسته اصلی برنامه...", components: ۱۶ },
-      { progress: ۲۰, text: "راه‌اندازی سیستم احراز هویت...", components: ۲۴ },
-      { progress: ۲۸, text: "بارگذاری رابط کاربری اصلی...", components: ۳۲ },
-      { progress: ۳۶, text: "آماده‌سازی پنل مدیریت شاگردان...", components: ۴۰ },
-      { progress: ۴۴, text: "بارگذاری سیستم تمرینات...", components: ۵۲ },
-      { progress: ۵۲, text: "راه‌اندازی مدیریت برنامه غذایی...", components: ۶۴ },
-      { progress: ۶۰, text: "بارگذاری سیستم مکمل‌ها...", components: ۷۶ },
-      { progress: ۶۸, text: "آماده‌سازی پنل مربی...", components: ۸۸ },
-      { progress: ۷۶, text: "بارگذاری سیستم پشتیبان‌گیری...", components: ۱۰۰ },
-      { progress: ۸۴, text: "راه‌اندازی داشبورد هوشمند...", components: ۱۱۲ },
-      { progress: ۹۲, text: "تکمیل رابط‌های کاربری...", components: ۱۲۰ },
-      { progress: ۱۰۰, text: "سیستم کاملاً آماده است!", components: ۱۲۸ }
+      { progress: 5, text: "بررسی سازگاری سیستم...", components: 8 },
+      { progress: 12, text: "بارگذاری هسته اصلی برنامه...", components: 16 },
+      { progress: 20, text: "راه‌اندازی سیستم احراز هویت...", components: 24 },
+      { progress: 28, text: "بارگذاری رابط کاربری اصلی...", components: 32 },
+      { progress: 36, text: "آماده‌سازی پنل مدیریت شاگردان...", components: 40 },
+      { progress: 44, text: "بارگذاری سیستم تمرینات...", components: 52 },
+      { progress: 52, text: "راه‌اندازی مدیریت برنامه غذایی...", components: 64 },
+      { progress: 60, text: "بارگذاری سیستم مکمل‌ها...", components: 76 },
+      { progress: 68, text: "آماده‌سازی پنل مربی...", components: 88 },
+      { progress: 76, text: "بارگذاری سیستم پشتیبان‌گیری...", components: 100 },
+      { progress: 84, text: "راه‌اندازی داشبورد هوشمند...", components: 112 },
+      { progress: 92, text: "تکمیل رابط‌های کاربری...", components: 120 },
+      { progress: 100, text: "سیستم کاملاً آماده است!", components: 128 }
     ];
     
-    let currentStep = ۰;
+    let currentStep = 0;
     
     const progressInterval = setInterval(() => {
       if (currentStep < loadingSteps.length) {
@@ -54,13 +54,13 @@ export const useLoadingStateNew = () => {
           loadedComponents: step.components
         }));
         
-        console.log(`Loading step ${currentStep + ۱}: ${step.text} (${step.progress}%)`);
+        console.log(`Loading step ${currentStep + 1}: ${step.text} (${step.progress}%)`);
         currentStep++;
       } else {
         clearInterval(progressInterval);
         console.log('All systems loaded successfully');
       }
-    }, ۱۱۰۰); // هر مرحله ۱.۱ ثانیه
+    }, 1100); // هر مرحله 1.1 ثانیه
     
     return () => clearInterval(progressInterval);
   }, []);

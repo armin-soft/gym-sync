@@ -16,12 +16,12 @@ export const LoadingBackgroundNew = () => {
         {/* دایره‌های شناور */}
         <motion.div
           animate={{ 
-            scale: [۱, ۱.۲, ۱],
-            rotate: [۰, ۳۶۰],
-            opacity: [۰.۱, ۰.۳, ۰.۱]
+            scale: [1, 1.2, 1],
+            rotate: [0, 360],
+            opacity: [0.1, 0.3, 0.1]
           }}
           transition={{ 
-            duration: ۸, 
+            duration: 8, 
             repeat: Infinity,
             ease: "easeInOut"
           }}
@@ -31,12 +31,12 @@ export const LoadingBackgroundNew = () => {
         
         <motion.div
           animate={{ 
-            scale: [۱.۲, ۱, ۱.۲],
-            rotate: [۳۶۰, ۰],
-            opacity: [۰.۲, ۰.۱, ۰.۲]
+            scale: [1.2, 1, 1.2],
+            rotate: [360, 0],
+            opacity: [0.2, 0.1, 0.2]
           }}
           transition={{ 
-            duration: ۱۰, 
+            duration: 10, 
             repeat: Infinity,
             ease: "easeInOut"
           }}
@@ -46,12 +46,12 @@ export const LoadingBackgroundNew = () => {
         
         <motion.div
           animate={{ 
-            scale: [۱, ۱.۵, ۱],
-            rotate: [۰, -۳۶۰],
-            opacity: [۰.۱, ۰.۲, ۰.۱]
+            scale: [1, 1.5, 1],
+            rotate: [0, -360],
+            opacity: [0.1, 0.2, 0.1]
           }}
           transition={{ 
-            duration: ۱۲, 
+            duration: 12, 
             repeat: Infinity,
             ease: "easeInOut"
           }}
@@ -71,18 +71,18 @@ export const LoadingBackgroundNew = () => {
       
       {/* خطوط شعاعی */}
       <div className="absolute inset-0">
-        {[...Array(۱۲)].map((_, i) => (
+        {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: ۰ }}
+            initial={{ opacity: 0 }}
             animate={{ 
-              opacity: [۰, ۰.۱, ۰],
-              scaleY: [۱, ۱.۲, ۱]
+              opacity: [0, 0.1, 0],
+              scaleY: [1, 1.2, 1]
             }}
             transition={{
-              duration: ۴,
+              duration: 4,
               repeat: Infinity,
-              delay: i * ۰.۳,
+              delay: i * 0.3,
               ease: "easeInOut"
             }}
             className="absolute w-px bg-white/10 origin-bottom"
@@ -90,7 +90,7 @@ export const LoadingBackgroundNew = () => {
               height: '50%',
               left: '50%',
               bottom: '50%',
-              transform: `rotate(${i * ۳۰}deg) translateX(-50%)`
+              transform: `rotate(${i * 30}deg) translateX(-50%)`
             }}
           />
         ))}

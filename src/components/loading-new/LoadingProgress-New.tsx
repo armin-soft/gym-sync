@@ -11,8 +11,8 @@ interface LoadingProgressNewProps {
 
 export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNewProps) => {
   const getStatusIcon = () => {
-    if (progress === ۱۰۰) return CheckCircle;
-    if (progress > ۰) return Clock;
+    if (progress === 100) return CheckCircle;
+    if (progress > 0) return Clock;
     return Circle;
   };
   
@@ -24,10 +24,10 @@ export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNew
       <div className="mb-6">
         <div className="bg-white/10 backdrop-blur-lg rounded-full h-3 sm:h-4 overflow-hidden border border-white/20">
           <motion.div
-            initial={{ width: ۰ }}
+            initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ 
-              duration: ۰.۸,
+              duration: 0.8,
               ease: "easeOut"
             }}
             className="h-full relative overflow-hidden"
@@ -37,7 +37,7 @@ export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNew
             <motion.div
               animate={{ x: ['-100%', '200%'] }}
               transition={{
-                duration: ۲,
+                duration: 2,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
@@ -49,13 +49,13 @@ export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNew
         {/* درصد پیشرفت */}
         <motion.div
           key={progress}
-          initial={{ scale: ۱.۱ }}
-          animate={{ scale: ۱ }}
-          transition={{ duration: ۰.۳ }}
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.3 }}
           className="flex justify-between items-center mt-3"
         >
           <div className="flex items-center gap-2">
-            <StatusIcon className={`w-4 h-4 ${progress === ۱۰۰ ? 'text-green-300' : 'text-white/70'}`} />
+            <StatusIcon className={`w-4 h-4 ${progress === 100 ? 'text-green-300' : 'text-white/70'}`} />
             <span className="text-xs sm:text-sm text-white/70">وضعیت بارگذاری</span>
           </div>
           
@@ -70,9 +70,9 @@ export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNew
       {/* متن وضعیت */}
       <motion.div
         key={loadingText}
-        initial={{ opacity: ۰, y: ۱۰ }}
-        animate={{ opacity: ۱, y: ۰ }}
-        transition={{ duration: ۰.۴ }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         className="text-center"
       >
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
@@ -82,17 +82,17 @@ export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNew
           
           {/* نقاط انیمیشنی */}
           <div className="flex justify-center items-center gap-1 mt-3">
-            {[۰, ۱, ۲].map((i) => (
+            {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
                 animate={{
-                  scale: [۱, ۱.۳, ۱],
-                  opacity: [۰.۳, ۱, ۰.۳],
+                  scale: [1, 1.3, 1],
+                  opacity: [0.3, 1, 0.3],
                 }}
                 transition={{
-                  duration: ۱.۲,
+                  duration: 1.2,
                   repeat: Infinity,
-                  delay: i * ۰.۲,
+                  delay: i * 0.2,
                   ease: "easeInOut"
                 }}
                 className="w-2 h-2 rounded-full bg-white/50"
@@ -104,9 +104,9 @@ export const LoadingProgressNew = ({ progress, loadingText }: LoadingProgressNew
       
       {/* اطلاعات تکمیلی */}
       <motion.div
-        initial={{ opacity: ۰ }}
-        animate={{ opacity: ۱ }}
-        transition={{ delay: ۱, duration: ۰.۶ }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 0.6 }}
         className="mt-6 text-center"
       >
         <p className="text-xs sm:text-sm text-white/60">

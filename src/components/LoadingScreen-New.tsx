@@ -1,10 +1,10 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LoadingBackground-New } from "./loading-new/LoadingBackground-New";
-import { LoadingContent-New } from "./loading-new/LoadingContent-New";
-import { LoadingProgress-New } from "./loading-new/LoadingProgress-New";
-import { useLoadingState-New } from "@/hooks/useLoadingState-New";
+import { LoadingBackgroundNew } from "./loading-new/LoadingBackground-New";
+import { LoadingContentNew } from "./loading-new/LoadingContent-New";
+import { LoadingProgressNew } from "./loading-new/LoadingProgress-New";
+import { useLoadingStateNew } from "@/hooks/useLoadingState-New";
 
 interface LoadingScreenNewProps {
   onLoadingComplete?: () => void;
@@ -15,15 +15,15 @@ export const LoadingScreenNew = React.memo<LoadingScreenNewProps>(({
   onLoadingComplete, 
   isVisible = true 
 }) => {
-  const { progress, loadingText, gymName, systemInfo } = useLoadingState-New();
+  const { progress, loadingText, gymName, systemInfo } = useLoadingStateNew();
   
   React.useEffect(() => {
-    if (progress === ۱۰۰ && onLoadingComplete) {
+    if (progress === 100 && onLoadingComplete) {
       console.log('Loading completed, transitioning to main app...');
       const timer = setTimeout(() => {
         console.log('All systems ready, launching application...');
         onLoadingComplete();
-      }, ۸۰۰);
+      }, 800);
       
       return () => clearTimeout(timer);
     }
@@ -35,22 +35,22 @@ export const LoadingScreenNew = React.memo<LoadingScreenNewProps>(({
     <AnimatePresence mode="wait">
       <motion.div 
         key="loading-screen-new"
-        initial={{ opacity: ۰ }}
-        animate={{ opacity: ۱ }}
-        exit={{ opacity: ۰ }}
-        transition={{ duration: ۰.۵ }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
         className="fixed inset-0 w-full h-full overflow-hidden z-[9999]"
-        style={{ position: 'fixed', top: ۰, left: ۰, width: '100%', height: '100%' }}
+        style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }}
       >
-        <LoadingBackground-New />
+        <LoadingBackgroundNew />
         
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
-          <LoadingContent-New 
+          <LoadingContentNew 
             gymName={gymName}
             systemInfo={systemInfo}
           />
           
-          <LoadingProgress-New 
+          <LoadingProgressNew 
             progress={progress}
             loadingText={loadingText}
           />

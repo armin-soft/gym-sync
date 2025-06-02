@@ -18,21 +18,21 @@ export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProp
     <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* آیکون اصلی */}
       <motion.div
-        initial={{ scale: ۰, rotate: -۳۶۰ }}
-        animate={{ scale: ۱, rotate: ۰ }}
+        initial={{ scale: 0, rotate: -360 }}
+        animate={{ scale: 1, rotate: 0 }}
         transition={{ 
-          duration: ۱.۲,
+          duration: 1.2,
           type: "spring",
-          stiffness: ۲۰۰,
-          damping: ۲۰
+          stiffness: 200,
+          damping: 20
         }}
         className="relative mb-8 sm:mb-12"
       >
         <div className="relative">
           {/* دایره اصلی */}
           <motion.div
-            animate={{ rotate: ۳۶۰ }}
-            transition={{ duration: ۲۰, repeat: Infinity, ease: "linear" }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/10 backdrop-blur-lg border-2 border-white/30 flex items-center justify-center"
           >
             <Crown className="w-12 h-12 sm:w-16 sm:h-16 text-white" fill="currentColor" />
@@ -42,9 +42,9 @@ export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProp
           {[Sparkles, Zap, Shield].map((Icon, index) => (
             <motion.div
               key={index}
-              animate={{ rotate: -۳۶۰ }}
+              animate={{ rotate: -360 }}
               transition={{ 
-                duration: ۱۵ + index * ۵, 
+                duration: 15 + index * 5, 
                 repeat: Infinity, 
                 ease: "linear"
               }}
@@ -53,8 +53,8 @@ export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProp
               <div 
                 className="absolute w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
                 style={{
-                  top: `${۲۰ + index * ۳۰}%`,
-                  right: `${-۱۰ - index * ۵}%`,
+                  top: `${20 + index * 30}%`,
+                  right: `${-10 - index * 5}%`,
                   transform: 'translate(50%, -50%)'
                 }}
               >
@@ -67,9 +67,9 @@ export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProp
       
       {/* عنوان اصلی */}
       <motion.div
-        initial={{ opacity: ۰, y: ۳۰ }}
-        animate={{ opacity: ۱, y: ۰ }}
-        transition={{ delay: ۰.۳, duration: ۰.۸ }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.8 }}
         className="mb-6 sm:mb-8"
       >
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">
@@ -81,9 +81,9 @@ export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProp
         
         {gymName && (
           <motion.div
-            initial={{ scale: ۰ }}
-            animate={{ scale: ۱ }}
-            transition={{ delay: ۰.۶, type: "spring" }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.6, type: "spring" }}
             className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-lg rounded-full px-4 py-2 border border-white/20"
           >
             <Crown className="w-4 h-4 text-yellow-300" />
@@ -94,9 +94,9 @@ export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProp
       
       {/* اطلاعات سیستم */}
       <motion.div
-        initial={{ opacity: ۰, y: ۲۰ }}
-        animate={{ opacity: ۱, y: ۰ }}
-        transition={{ delay: ۰.۸, duration: ۰.۶ }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
         className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-md sm:max-w-2xl mb-8"
       >
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-white/20 text-center">
@@ -123,9 +123,9 @@ export const LoadingContentNew = ({ gymName, systemInfo }: LoadingContentNewProp
       
       {/* پیام انگیزشی */}
       <motion.div
-        initial={{ opacity: ۰ }}
-        animate={{ opacity: ۱ }}
-        transition={{ delay: ۱.۲, duration: ۰.۶ }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
         className="text-center"
       >
         <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-lg">

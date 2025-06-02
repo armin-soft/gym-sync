@@ -39,17 +39,17 @@ function MainApp() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
       {isInitialLoading && (
-        <div style={{ position: 'absolute', top: ۰, left: ۰, width: '100%', height: '100%', zIndex: ۱۰۰۰ }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
           <LoadingScreenNew onLoadingComplete={handleLoadingComplete} />
         </div>
       )}
       <div style={{ 
         position: 'absolute', 
-        top: ۰, 
-        left: ۰, 
+        top: 0, 
+        left: 0, 
         width: '100%', 
         height: '100%',
-        opacity: isInitialLoading ? ۰ : ۱,
+        opacity: isInitialLoading ? 0 : 1,
         transition: 'opacity 0.3s ease-in-out',
         pointerEvents: isInitialLoading ? 'none' : 'auto'
       }}>
