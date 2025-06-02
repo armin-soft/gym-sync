@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ModernBackground } from "./user-type-selection-new/ModernBackground";
@@ -13,6 +13,26 @@ export const UserTypeSelectionNew = () => {
   const [selectedType, setSelectedType] = useState<'management' | 'student' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
+
+  // دریافت نسخه از Manifest.json
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        const version = manifest.version || 'نامشخص';
+        setAppVersion(version);
+        console.log(`Version loaded from Manifest.json: ${version}`);
+      } catch (error) {
+        console.error('Error loading version from Manifest.json:', error);
+        const cachedVersion = localStorage.getItem('app_version') || 'نامشخص';
+        setAppVersion(cachedVersion);
+      }
+    };
+    
+    fetchVersion();
+  }, []);
 
   const handleUserTypeSelection = async (type: 'management' | 'student') => {
     if (isProcessing || selectedType) return;
@@ -106,7 +126,7 @@ export const UserTypeSelectionNew = () => {
             transition={{ delay: 1, duration: 0.6 }}
             className="text-center text-sm text-slate-500 dark:text-slate-400"
           >
-            <p>امن، سریع و قابل اعتماد • GymSync ۴.۲.۶</p>
+            <p>امن، سریع و قابل اعتماد • GymSync {appVersion}</p>
           </motion.div>
         </div>
       </div>

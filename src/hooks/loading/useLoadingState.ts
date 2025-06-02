@@ -18,12 +18,36 @@ export const useLoadingState = () => {
   const [gymName, setGymName] = useState("");
   const [loadingText, setLoadingText] = useState("آماده‌سازی سیستم...");
   const [systemInfo, setSystemInfo] = useState<SystemInfo>({
-    version: "4.2.6",
+    version: "در حال بارگذاری...",
     totalComponents: 128,
     loadedComponents: 0
   });
   
   useEffect(() => {
+    // دریافت نسخه از Manifest.json
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        const version = manifest.version || 'نامشخص';
+        setSystemInfo(prev => ({
+          ...prev,
+          version: version
+        }));
+        localStorage.setItem('app_version', version);
+        console.log(`Version loaded from Manifest.json for loading: ${version}`);
+      } catch (error) {
+        console.error('Error loading version from Manifest.json in loading:', error);
+        const cachedVersion = localStorage.getItem('app_version') || 'نامشخص';
+        setSystemInfo(prev => ({
+          ...prev,
+          version: cachedVersion
+        }));
+      }
+    };
+    
+    fetchVersion();
+    
     // بارگذاری اطلاعات باشگاه
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
