@@ -29,12 +29,10 @@ export const PhoneInputStep = ({
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
-    // فقط اعداد انگلیسی مجاز
-    const numbersOnly = value.replace(/[^0-9]/g, '');
-    
-    // محدود کردن به 11 رقم
-    if (numbersOnly.length <= 11) {
-      setPhone(numbersOnly);
+    // فقط اعداد را نگه می‌داریم و به 11 رقم محدود می‌کنیم
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 11) {
+      setPhone(numbers);
     }
   };
 
@@ -86,7 +84,6 @@ export const PhoneInputStep = ({
           </div>
         </div>
 
-        {/* Allowed phones hint */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
