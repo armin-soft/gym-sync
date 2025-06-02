@@ -1,4 +1,3 @@
-
 import { toPersianNumbers } from './numbers';
 import { format } from 'date-fns-jalali';
 
@@ -84,44 +83,4 @@ export function getCurrentPersianDate(withTime: boolean = false): string {
   }
   
   return result;
-}
-
-// تابع جدید برای نمایش تاریخ و زمان کامل در پیام پشتیبان‌گیری
-export function getCurrentPersianDateTime(): string {
-  const now = new Date();
-  
-  // استفاده از تاریخ فارسی با ساعت کامل
-  try {
-    const persianDate = new Intl.DateTimeFormat('fa-IR', {
-      year: 'numeric',
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      calendar: 'persian'
-    }).format(now);
-    
-    return persianDate;
-  } catch (error) {
-    // Fallback برای نمایش تاریخ و زمان
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    
-    const isPreviousPersianYear = month <= 3;
-    const persianYear = year - 621 - (isPreviousPersianYear ? 1 : 0);
-    
-    let persianMonth = month + 3;
-    if (persianMonth > 12) {
-      persianMonth -= 12;
-    }
-    
-    const persianMonthName = getPersianMonth(persianMonth);
-    
-    return `${toPersianNumbers(day)} ${persianMonthName} ${toPersianNumbers(persianYear)} - ${toPersianNumbers(hours)}:${toPersianNumbers(minutes.toString().padStart(2, '0'))}:${toPersianNumbers(seconds.toString().padStart(2, '0'))}`;
-  }
 }
