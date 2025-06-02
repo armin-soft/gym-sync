@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Phone, ArrowLeft, Shield, CheckCircle } from "lucide-react";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 import { ProfessionalErrorMessage } from "./ProfessionalErrorMessage";
 
 interface PhoneInputSectionProps {
@@ -60,7 +59,6 @@ export const PhoneInputSection = ({
         </Label>
         
         <div className="relative group">
-          {/* تأثیر درخشش پس‌زمینه */}
           <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
           
           <div className="relative">
@@ -69,9 +67,9 @@ export const PhoneInputSection = ({
               type="tel"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={toPersianNumbers(phone)}
+              value={phone}
               onChange={handlePhoneChange}
-              placeholder={toPersianNumbers("09123456789")}
+              placeholder="09123456789"
               className="h-16 bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white text-lg font-bold placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl pl-6 pr-6 backdrop-blur-sm transition-all duration-300 text-center"
               dir="ltr"
               required
