@@ -33,28 +33,27 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
   const persianDate = usePersianDate();
 
   const formatTimeWithSeconds = (date: Date) => {
-    return date.toLocaleTimeString('fa-IR', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit'
-    });
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return toPersianNumbers(`${hours}:${minutes}:${seconds}`);
   };
 
   const getTimeIcon = () => {
-    const hour = new Date().getHours();
+    const hour = currentTime.getHours();
     
-    if (hour >= 0 && hour < 3) return Moon; // نیمه شب - شب دیر
-    if (hour >= 3 && hour < 5) return CloudMoon; // پیش سحر
-    if (hour >= 5 && hour < 6) return Sunrise; // سحر
-    if (hour >= 6 && hour < 8) return Sunrise; // طلوع آفتاب
-    if (hour >= 8 && hour < 11) return Sun; // صبح
-    if (hour >= 11 && hour < 12) return Sun; // پیش از ظهر
-    if (hour >= 12 && hour < 14) return Sun; // ظهر
-    if (hour >= 14 && hour < 17) return CloudSun; // بعد از ظهر
-    if (hour >= 17 && hour < 19) return Sunset; // عصر
-    if (hour >= 19 && hour < 20) return Sunset; // غروب
-    if (hour >= 20 && hour < 22) return CloudSunRain; // اوایل شب
-    return CloudMoon; // شب
+    if (hour >= 0 && hour < 3) return Moon;
+    if (hour >= 3 && hour < 5) return CloudMoon;
+    if (hour >= 5 && hour < 6) return Sunrise;
+    if (hour >= 6 && hour < 8) return Sunrise;
+    if (hour >= 8 && hour < 11) return Sun;
+    if (hour >= 11 && hour < 12) return Sun;
+    if (hour >= 12 && hour < 14) return Sun;
+    if (hour >= 14 && hour < 17) return CloudSun;
+    if (hour >= 17 && hour < 19) return Sunset;
+    if (hour >= 19 && hour < 20) return Sunset;
+    if (hour >= 20 && hour < 22) return CloudSunRain;
+    return CloudMoon;
   };
 
   const getSeasonIcon = (dateString: string) => {
@@ -66,18 +65,18 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
   };
 
   const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour >= 0 && hour < 3) return "نیمه شب";
-    if (hour >= 3 && hour < 5) return "پیش سحر";
-    if (hour >= 5 && hour < 6) return "سحر";
+    const hour = currentTime.getHours();
+    if (hour >= 0 && hour < 3) return "نیمه شب بخیر";
+    if (hour >= 3 && hour < 5) return "پیش سحر بخیر";
+    if (hour >= 5 && hour < 6) return "سحر بخیر";
     if (hour >= 6 && hour < 8) return "طلوع آفتاب";
     if (hour >= 8 && hour < 11) return "صبح بخیر";
-    if (hour >= 11 && hour < 12) return "پیش از ظهر";
+    if (hour >= 11 && hour < 12) return "پیش از ظهر بخیر";
     if (hour >= 12 && hour < 14) return "ظهر بخیر";
-    if (hour >= 14 && hour < 17) return "بعد از ظهر";
+    if (hour >= 14 && hour < 17) return "بعد از ظهر بخیر";
     if (hour >= 17 && hour < 19) return "عصر بخیر";
-    if (hour >= 19 && hour < 20) return "غروب";
-    if (hour >= 20 && hour < 22) return "اوایل شب";
+    if (hour >= 19 && hour < 20) return "غروب بخیر";
+    if (hour >= 20 && hour < 22) return "اوایل شب بخیر";
     return "شب بخیر";
   };
 
@@ -187,13 +186,14 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
               </motion.div>
               <div className="text-right">
                 <motion.div 
-                  className="text-xl font-bold font-mono"
+                  className="text-xl font-bold"
                   key={formatTimeWithSeconds(currentTime)}
                   initial={{ scale: 1.1 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: 0.2 }}
+                  style={{ fontFamily: 'Vazir, sans-serif' }}
                 >
-                  {toPersianNumbers(formatTimeWithSeconds(currentTime))}
+                  {formatTimeWithSeconds(currentTime)}
                 </motion.div>
                 <div className="text-xs text-white/70">
                   زمان فعلی
@@ -202,16 +202,31 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
             </div>
           </motion.div>
 
-          {/* تاریخ فارسی */}
+          {/* تاریخ فارسی با آیکون فصل */}
           <motion.div 
             className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <div className="flex items-center gap-3">
-              <SeasonIcon className="w-5 h-5 text-white/80" />
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <SeasonIcon className="w-5 h-5 text-white/80" />
+              </motion.div>
               <div className="text-right">
-                <div className="text-sm font-medium">
+                <div 
+                  className="text-sm font-medium"
+                  style={{ fontFamily: 'Vazir, sans-serif' }}
+                >
                   {persianDate}
                 </div>
                 <div className="text-xs text-white/70">

@@ -30,30 +30,40 @@ export const usePersianDate = () => {
   };
 
   const formatPersianDate = (date: Date): string => {
-    // Get Gregorian date components
+    // محاسبه دقیق‌تر تاریخ فارسی
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const dayOfWeek = date.getDay();
 
-    // Simple conversion to Persian date (approximate)
-    // For more accurate conversion, you might want to use a Persian calendar library
+    // تبدیل دقیق‌تر به تاریخ شمسی
     let persianYear = year - 621;
-    let persianMonth = month + 3;
+    let persianMonth = month - 3;
     let persianDay = day;
 
-    // Adjust for Persian calendar
-    if (persianMonth > 12) {
-      persianMonth -= 12;
-      persianYear += 1;
+    // تنظیم ماه فارسی
+    if (persianMonth <= 0) {
+      persianMonth += 12;
+      persianYear -= 1;
     }
 
-    // Get Persian day and month names
+    // تنظیم روز بر اساس ماه فارسی
+    if (persianMonth <= 6 && persianDay > 31) {
+      persianDay = 31;
+    } else if (persianMonth > 6 && persianDay > 30) {
+      persianDay = 30;
+    }
+
+    // در ماه اسفند (ماه 12) و سال کبیسه
+    if (persianMonth === 12 && persianDay > 29) {
+      const isLeapYear = ((persianYear % 33) * 8 + ((persianYear % 33) + 3) / 4) % 30 < 8;
+      persianDay = isLeapYear ? 30 : 29;
+    }
+
     const dayName = getPersianDayName(dayOfWeek);
     const monthName = getPersianMonthName(persianMonth - 1);
     const seasonName = getPersianSeason(persianMonth - 1);
 
-    // Format: "دوشنبه ۱۲ خرداد ۱۴۰۴ - بهار"
     return `${dayName} ${toPersianNumbers(persianDay.toString())} ${monthName} ${toPersianNumbers(persianYear.toString())} - ${seasonName}`;
   };
 
@@ -63,10 +73,7 @@ export const usePersianDate = () => {
       setPersianDate(formatPersianDate(now));
     };
 
-    // Update immediately
     updateDate();
-
-    // Update every minute (since date doesn't change every second)
     const timer = setInterval(updateDate, 60000);
 
     return () => clearInterval(timer);
