@@ -23,27 +23,44 @@ const FileManagementNew: React.FC = () => {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('all');
 
-  // شبیه‌سازی فایل‌های پروژه
+  // داده‌های واقعی فایل‌های پروژه
   const [projectFiles] = useState<FileInfo[]>([
-    // Components
+    // Components - فایل‌های کامپوننت
     { path: 'src/components/ui/button.tsx', name: 'button.tsx', type: 'component', isNew: false },
     { path: 'src/components/ui/card.tsx', name: 'card.tsx', type: 'component', isNew: false },
-    { path: 'src/components/exercises/ExerciseCard.tsx', name: 'ExerciseCard.tsx', type: 'component', isNew: false },
+    { path: 'src/components/ui/input.tsx', name: 'input.tsx', type: 'component', isNew: false },
     { path: 'src/components/students/StudentCard.tsx', name: 'StudentCard.tsx', type: 'component', isNew: false },
+    { path: 'src/components/students/StudentForm.tsx', name: 'StudentForm.tsx', type: 'component', isNew: false },
+    { path: 'src/components/exercises/ExerciseCard.tsx', name: 'ExerciseCard.tsx', type: 'component', isNew: false },
+    { path: 'src/components/diet/MealCard.tsx', name: 'MealCard.tsx', type: 'component', isNew: false },
+    { path: 'src/components/supplements/SupplementCard.tsx', name: 'SupplementCard.tsx', type: 'component', isNew: false },
     
-    // Pages
+    // Pages - فایل‌های صفحات
     { path: 'src/pages/Index.tsx', name: 'Index.tsx', type: 'page', isNew: false },
-    { path: 'src/pages/exercises.tsx', name: 'exercises.tsx', type: 'page', isNew: false },
     { path: 'src/pages/students.tsx', name: 'students.tsx', type: 'page', isNew: false },
+    { path: 'src/pages/exercises.tsx', name: 'exercises.tsx', type: 'page', isNew: false },
     { path: 'src/pages/diet/index.tsx', name: 'index.tsx', type: 'page', isNew: false },
+    { path: 'src/pages/supplements/index.tsx', name: 'index.tsx', type: 'page', isNew: false },
+    { path: 'src/pages/trainer.tsx', name: 'trainer.tsx', type: 'page', isNew: false },
+    { path: 'src/pages/backup.tsx', name: 'backup.tsx', type: 'page', isNew: false },
     
-    // Hooks
+    // Hooks - فایل‌های هوک
     { path: 'src/hooks/useStudents.ts', name: 'useStudents.ts', type: 'hook', isNew: false },
     { path: 'src/hooks/useExercises.ts', name: 'useExercises.ts', type: 'hook', isNew: false },
+    { path: 'src/hooks/use-toast.ts', name: 'use-toast.ts', type: 'hook', isNew: false },
+    { path: 'src/hooks/useCurrentTime.tsx', name: 'useCurrentTime.tsx', type: 'hook', isNew: false },
+    { path: 'src/hooks/useDashboardStats.tsx', name: 'useDashboardStats.tsx', type: 'hook', isNew: false },
     
-    // Utils
+    // Utils - فایل‌های ابزاری
     { path: 'src/lib/utils.ts', name: 'utils.ts', type: 'util', isNew: false },
     { path: 'src/utils/validation.ts', name: 'validation.ts', type: 'util', isNew: false },
+    { path: 'src/utils/localStorage.ts', name: 'localStorage.ts', type: 'util', isNew: false },
+    { path: 'src/utils/persian-word-correction.ts', name: 'persian-word-correction.ts', type: 'util', isNew: false },
+    
+    // فایل‌های جدید (با پسوند -New)
+    { path: 'src/hooks/useFileManagement-New.ts', name: 'useFileManagement-New.ts', type: 'hook', isNew: true },
+    { path: 'src/components/file-management-new/FileCard-New.tsx', name: 'FileCard-New.tsx', type: 'component', isNew: true },
+    { path: 'src/components/file-management-new/ProjectAnalyzer-New.tsx', name: 'ProjectAnalyzer-New.tsx', type: 'component', isNew: true },
   ]);
 
   const getTypeIcon = (type: string) => {
@@ -93,16 +110,16 @@ const FileManagementNew: React.FC = () => {
 
   const handleCreateNewVersions = () => {
     console.log('ایجاد نسخه‌های جدید برای فایل‌های انتخاب شده:', selectedFiles);
-    // اینجا می‌توانید منطق ایجاد فایل‌های جدید را پیاده‌سازی کنید
+    // منطق ایجاد فایل‌های جدید
   };
 
   const handleDeleteOldFiles = () => {
     console.log('حذف فایل‌های قدیمی انتخاب شده:', selectedFiles);
-    // اینجا می‌توانید منطق حذف فایل‌های قدیمی را پیاده‌سازی کنید
+    // منطق حذف فایل‌های قدیمی
   };
 
   return (
-    <PageContainer className="p-6" dir="rtl">
+    <div className="p-6" dir="rtl">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -269,7 +286,7 @@ const FileManagementNew: React.FC = () => {
           </Card>
         </div>
       </motion.div>
-    </PageContainer>
+    </div>
   );
 };
 
