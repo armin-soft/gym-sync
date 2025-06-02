@@ -96,6 +96,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
       .toUpperCase();
   };
 
+  // اینجا آیکون‌ها به عنوان کامپوننت دریافت می‌شوند
   const TimeIcon = getTimeIcon();
   const SeasonIcon = getSeasonIcon();
 
