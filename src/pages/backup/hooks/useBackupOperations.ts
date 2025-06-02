@@ -65,7 +65,7 @@ export function useBackupOperations(): BackupOperations {
       toast({
         title: "پشتیبان‌گیری موفق",
         description: `فایل ${filename} با موفقیت ایجاد شد`,
-        className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
+        variant: "success"
       });
     } catch (error) {
       console.error("Error creating backup:", error);
