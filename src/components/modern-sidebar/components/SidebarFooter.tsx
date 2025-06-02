@@ -159,18 +159,6 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
           transition={{ delay: 1.2, duration: 1 }}
         />
       </motion.div>
-
-      {/* Copyright text */}
-      <motion.div
-        className="mt-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-      >
-        <p className="text-center text-3xs text-emerald-600/60 dark:text-emerald-400/60">
-          ساخته شده با ❤️ برای مربیان حرفه‌ای
-        </p>
-      </motion.div>
     </motion.div>
   );
 };
