@@ -23,7 +23,7 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
       const timer = setTimeout(() => {
         console.log('All systems ready, launching application...');
         onLoadingComplete();
-      }, 1200); // مدت زمان بیشتر برای نمایش تکمیل
+      }, 1200);
       
       return () => clearTimeout(timer);
     }
@@ -40,11 +40,18 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
         className="fixed inset-0 w-full h-full overflow-auto z-[9999]"
-        style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }}
+        style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%',
+          minHeight: '100vh'
+        }}
       >
         <LoadingBackground />
         
-        <div className="relative z-10 w-full min-h-full flex flex-col items-center justify-center p-4">
+        <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center p-4">
           <LoadingContent 
             gymName={gymName}
             systemInfo={systemInfo}
@@ -54,6 +61,47 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
             progress={progress}
             loadingText={loadingText}
           />
+          
+          {/* اضافه کردن محتوای اضافی برای نمایش اسکرول */}
+          <div className="w-full max-w-4xl mt-16 space-y-8 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h3 className="text-white font-bold text-lg mb-2">مدیریت شاگردان</h3>
+                <p className="text-white/80 text-sm">سیستم پیشرفته مدیریت اطلاعات شاگردان</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h3 className="text-white font-bold text-lg mb-2">برنامه تمرینی</h3>
+                <p className="text-white/80 text-sm">تنظیم برنامه‌های تمرینی اختصاصی</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h3 className="text-white font-bold text-lg mb-2">تغذیه هوشمند</h3>
+                <p className="text-white/80 text-sm">راهنمایی‌های تغذیه‌ای شخصی‌سازی شده</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h3 className="text-white font-bold text-lg mb-2">مکمل‌ها و ویتامین‌ها</h3>
+                <p className="text-white/80 text-sm">مدیریت مکمل‌های ورزشی</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h3 className="text-white font-bold text-lg mb-2">گزارش‌گیری</h3>
+                <p className="text-white/80 text-sm">تحلیل پیشرفت و عملکرد</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <h3 className="text-white font-bold text-lg mb-2">پشتیبان‌گیری</h3>
+                <p className="text-white/80 text-sm">حفظ امن اطلاعات و بازیابی</p>
+              </div>
+            </div>
+            
+            <div className="mt-12 pb-8">
+              <p className="text-white/60 text-sm">
+                © 2024 GymSync Pro - سیستم جامع مدیریت باشگاه
+              </p>
+            </div>
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>
