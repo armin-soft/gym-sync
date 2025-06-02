@@ -3,10 +3,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
-import { LoadingScreen } from './components/LoadingScreen'
+import { LoadingScreenNew } from './components/LoadingScreen-New'
 import React from 'react'
 
-// کامپوننت اصلی برنامه با نمایش صفحه لودینگ در هر رفرش
+// کامپوننت اصلی برنامه با صفحه لودینگ جدید
 function MainApp() {
   const [isInitialLoading, setIsInitialLoading] = React.useState(true);
   const [appVersion, setAppVersion] = React.useState('');
@@ -39,17 +39,17 @@ function MainApp() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
       {isInitialLoading && (
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
-          <LoadingScreen onLoadingComplete={handleLoadingComplete} />
+        <div style={{ position: 'absolute', top: ۰, left: ۰, width: '100%', height: '100%', zIndex: ۱۰۰۰ }}>
+          <LoadingScreenNew onLoadingComplete={handleLoadingComplete} />
         </div>
       )}
       <div style={{ 
         position: 'absolute', 
-        top: 0, 
-        left: 0, 
+        top: ۰, 
+        left: ۰, 
         width: '100%', 
         height: '100%',
-        opacity: isInitialLoading ? 0 : 1,
+        opacity: isInitialLoading ? ۰ : ۱,
         transition: 'opacity 0.3s ease-in-out',
         pointerEvents: isInitialLoading ? 'none' : 'auto'
       }}>
