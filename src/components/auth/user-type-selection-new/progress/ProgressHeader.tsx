@@ -12,10 +12,16 @@ export const ProgressHeader: React.FC<ProgressHeaderProps> = ({ selectedType }) 
     return selectedType === 'management' ? 'پنل مدیریت' : 'پنل شاگرد';
   };
 
+  const getTypeGradient = () => {
+    return selectedType === 'management' 
+      ? 'from-emerald-600 to-sky-600' 
+      : 'from-sky-600 to-emerald-600';
+  };
+
   return (
     <div className="text-center mb-12">
       <motion.div
-        className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl"
+        className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-br ${getTypeGradient()} rounded-full flex items-center justify-center shadow-2xl`}
         animate={{ rotate: 360 }}
         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
       >

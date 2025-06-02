@@ -28,7 +28,11 @@ export const ModernProgressIndicator: React.FC<ModernProgressIndicatorProps> = (
       dir="rtl"
     >
       <ProgressHeader selectedType={selectedType} />
-      <ProgressSteps steps={steps} currentStep={currentStep} />
+      <ProgressSteps 
+        steps={steps} 
+        currentStep={currentStep}
+        selectedType={selectedType}
+      />
       <ProgressStatus 
         currentStep={currentStep}
         totalSteps={steps.length}
