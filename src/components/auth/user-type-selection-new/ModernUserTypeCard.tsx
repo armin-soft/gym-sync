@@ -1,8 +1,13 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { LucideIcon, ArrowLeft, CheckCircle, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { LucideIcon } from "lucide-react";
+import { CardBadge } from "./card/CardBadge";
+import { CardIcon } from "./card/CardIcon";
+import { CardContent } from "./card/CardContent";
+import { CardFeatures } from "./card/CardFeatures";
+import { CardButton } from "./card/CardButton";
+import { CardFooter } from "./card/CardFooter";
 
 interface UserType {
   id: 'management' | 'student';
@@ -30,7 +35,6 @@ export const ModernUserTypeCard: React.FC<ModernUserTypeCardProps> = ({
   isSelected,
   isProcessing
 }) => {
-  const Icon = userType.icon;
   const isDisabled = isProcessing;
 
   const handleClick = () => {
@@ -65,107 +69,36 @@ export const ModernUserTypeCard: React.FC<ModernUserTypeCardProps> = ({
         !isDisabled ? 'hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-2xl' : 'opacity-75'
       }`}>
         
-        {/* نشان برتر */}
-        <motion.div
-          className={`absolute -top-3 right-8 px-4 py-2 bg-gradient-to-l ${userType.gradient} text-white text-sm font-bold rounded-full shadow-lg`}
-          animate={isSelected ? { scale: [1, 1.1, 1] } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 fill-current" />
-            <span>{userType.badge}</span>
-          </div>
-        </motion.div>
+        <CardBadge 
+          badge={userType.badge} 
+          gradient={userType.gradient} 
+          isSelected={isSelected} 
+        />
         
-        {/* هدر کارت */}
         <div className="relative p-8 sm:p-10">
-          {/* آیکون اصلی */}
-          <motion.div
-            className="flex justify-center mb-6"
-            animate={isSelected ? { rotate: [0, 5, -5, 0] } : {}}
-            transition={{ duration: 0.8 }}
-          >
-            <div className={`relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br ${userType.gradient} rounded-2xl shadow-xl flex items-center justify-center`}>
-              <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
-              
-              {/* نشان انتخاب */}
-              {isSelected && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="absolute -bottom-2 -left-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
-                >
-                  <CheckCircle className="w-5 h-5 text-white" />
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-
-          {/* عنوان و توضیحات */}
-          <div className="text-center space-y-4 mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-              {userType.title}
-            </h2>
-            <p className="text-lg text-blue-600 dark:text-blue-400 font-semibold">
-              {userType.subtitle}
-            </p>
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-              {userType.description}
-            </p>
-          </div>
-
-          {/* لیست ویژگی‌ها */}
-          <div className="space-y-2 mb-8">
-            {userType.features.map((feature, index) => (
-              <motion.div
-                key={feature}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.05 * index + 0.3 }}
-                className="flex items-center justify-between p-3 bg-slate-50/50 dark:bg-slate-800/50 rounded-xl"
-              >
-                <span className="text-slate-700 dark:text-slate-200 font-medium">
-                  {feature}
-                </span>
-                <CheckCircle className="w-5 h-5 text-green-500" />
-              </motion.div>
-            ))}
-          </div>
-
-          {/* دکمه عمل */}
-          <Button
-            className={`w-full h-14 bg-gradient-to-l ${userType.gradient} text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none`}
-            disabled={isDisabled}
+          <CardIcon 
+            Icon={userType.icon} 
+            gradient={userType.gradient} 
+            isSelected={isSelected} 
+          />
+          
+          <CardContent 
+            title={userType.title}
+            subtitle={userType.subtitle}
+            description={userType.description}
+          />
+          
+          <CardFeatures features={userType.features} />
+          
+          <CardButton 
+            gradient={userType.gradient}
+            isSelected={isSelected}
+            isDisabled={isDisabled}
             onClick={handleClick}
-          >
-            {isSelected ? (
-              <div className="flex items-center gap-3">
-                <motion.div
-                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                />
-                <span>در حال پردازش...</span>
-              </div>
-            ) : isProcessing ? (
-              <span>لطفاً صبر کنید...</span>
-            ) : (
-              <div className="flex items-center gap-3">
-                <span>انتخاب و ورود</span>
-                <ArrowLeft className="w-5 h-5" />
-              </div>
-            )}
-          </Button>
+          />
         </div>
 
-        {/* فوتر کارت */}
-        <div className="px-8 pb-6">
-          <div className="pt-4 border-t border-slate-200/50 dark:border-slate-700/50 text-center">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              دسترسی امن و رمزگذاری شده ۲۵۶ بیتی
-            </p>
-          </div>
-        </div>
+        <CardFooter />
       </div>
     </motion.div>
   );

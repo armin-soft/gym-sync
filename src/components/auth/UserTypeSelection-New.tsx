@@ -1,73 +1,20 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { ModernBackground } from "./user-type-selection-new/ModernBackground";
 import { ModernHeader } from "./user-type-selection-new/ModernHeader";
 import { ModernUserTypeCard } from "./user-type-selection-new/ModernUserTypeCard";
 import { ModernProgressIndicator } from "./user-type-selection-new/ModernProgressIndicator";
 import { userTypesConfig } from "./user-type-selection-new/userTypesConfig";
+import { useUserTypeSelection } from "./user-type-selection-new/hooks/useUserTypeSelection";
 
 export const UserTypeSelectionNew = () => {
-  const navigate = useNavigate();
-  const [selectedType, setSelectedType] = useState<'management' | 'student' | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
-
-  // دریافت نسخه از Manifest.json
-  useEffect(() => {
-    const fetchVersion = async () => {
-      try {
-        const response = await fetch('/Manifest.json');
-        const manifest = await response.json();
-        const version = manifest.version || 'نامشخص';
-        setAppVersion(version);
-        console.log(`Version loaded from Manifest.json: ${version}`);
-      } catch (error) {
-        console.error('Error loading version from Manifest.json:', error);
-        const cachedVersion = localStorage.getItem('app_version') || 'نامشخص';
-        setAppVersion(cachedVersion);
-      }
-    };
-    
-    fetchVersion();
-  }, []);
-
-  const handleUserTypeSelection = async (type: 'management' | 'student') => {
-    if (isProcessing || selectedType) return;
-    
-    console.log('شروع انتخاب نوع کاربر:', type);
-    setIsProcessing(true);
-    setSelectedType(type);
-    setCurrentStep(2);
-    
-    try {
-      // مرحله ۱: ذخیره انتخاب کاربر
-      localStorage.setItem("hasSelectedUserType", "true");
-      localStorage.setItem("selectedUserType", type);
-      
-      // مرحله ۲: آماده‌سازی محیط
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setCurrentStep(3);
-      
-      // مرحله ۳: هدایت به صفحه مقصد
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      console.log('هدایت به:', type === 'management' ? '/Management' : '/Students');
-      
-      if (type === 'management') {
-        navigate("/Management", { replace: true });
-      } else {
-        navigate("/Students", { replace: true });
-      }
-    } catch (error) {
-      console.error('خطا در هنگام هدایت:', error);
-      setIsProcessing(false);
-      setSelectedType(null);
-      setCurrentStep(1);
-    }
-  };
+  const {
+    selectedType,
+    isProcessing,
+    currentStep,
+    handleUserTypeSelection
+  } = useUserTypeSelection();
 
   return (
     <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40 dark:from-slate-900 dark:via-emerald-950/30 dark:to-sky-950/40">
