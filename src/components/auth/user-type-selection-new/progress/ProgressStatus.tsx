@@ -1,6 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ProgressStatusProps {
   currentStep: number;
@@ -42,7 +43,7 @@ export const ProgressStatus: React.FC<ProgressStatusProps> = ({
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        {Math.round(progressPercentage)}% تکمیل شده
+        {toPersianNumbers(Math.round(progressPercentage))}% تکمیل شده
       </motion.p>
 
       {/* توضیحات مرحله فعلی */}

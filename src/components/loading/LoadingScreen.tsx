@@ -39,12 +39,12 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed inset-0 w-full h-full overflow-hidden z-[9999]"
+        className="fixed inset-0 w-full h-full overflow-auto z-[9999]"
         style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }}
       >
         <LoadingBackground />
         
-        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+        <div className="relative z-10 w-full min-h-full flex flex-col items-center justify-center p-4">
           <LoadingContent 
             gymName={gymName}
             systemInfo={systemInfo}

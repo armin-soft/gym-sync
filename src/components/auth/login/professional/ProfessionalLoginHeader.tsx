@@ -2,8 +2,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Shield, Zap } from "lucide-react";
-import { useAppVersion } from "@/components/auth/user-type-selection-new/hooks/useAppVersion";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useState, useEffect } from "react";
 
 interface ProfessionalLoginHeaderProps {
   gymName: string;
@@ -11,7 +11,25 @@ interface ProfessionalLoginHeaderProps {
 }
 
 export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLoginHeaderProps) => {
-  const appVersion = useAppVersion();
+  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
+
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        const version = manifest.version || 'نامشخص';
+        setAppVersion(version);
+        console.log(`Version loaded from Manifest.json: ${version}`);
+      } catch (error) {
+        console.error('Error loading version from Manifest.json:', error);
+        const cachedVersion = localStorage.getItem('app_version') || 'نامشخص';
+        setAppVersion(cachedVersion);
+      }
+    };
+    
+    fetchVersion();
+  }, []);
 
   return (
     <motion.div variants={variants} className="text-center space-y-6">

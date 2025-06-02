@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, User, Crown, Zap } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ModernSidebarProfileProps {
   name: string;
@@ -112,7 +113,7 @@ export function ModernSidebarProfile({
                 transition={{ delay: 0.3 }}
                 dir="ltr"
               >
-                {phone}
+                {toPersianNumbers(phone)}
               </motion.p>
             )}
             
