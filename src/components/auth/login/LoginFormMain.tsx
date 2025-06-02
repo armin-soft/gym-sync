@@ -1,12 +1,13 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProfessionalLoginBackground } from "./professional/ProfessionalLoginBackground";
 import { ProfessionalLoginHeader } from "./professional/ProfessionalLoginHeader";
 import { PhoneInputSection } from "./professional/PhoneInputSection";
 import { CodeVerificationSection } from "./professional/CodeVerificationSection";
 import { AccountLockedSection } from "./professional/AccountLockedSection";
-import { useProfessionalLogin } from "./professional/hooks/useProfessionalLogin";
+import { useLogin } from "./hooks/useLogin";
+import { ANIMATION_VARIANTS } from "./constants";
 
 interface LoginFormMainProps {
   onLoginSuccess: (rememberMe: boolean) => void;
@@ -31,33 +32,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
     handleCodeSubmit,
     handleChangePhone,
     handleResendCode
-  } = useProfessionalLogin({ onLoginSuccess });
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 25,
-        duration: 0.6
-      }
-    }
-  };
+  } = useLogin({ onLoginSuccess });
 
   if (locked) {
     return (
@@ -68,13 +43,13 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
           <motion.div
             initial="hidden"
             animate="visible"
-            variants={containerVariants}
+            variants={ANIMATION_VARIANTS.container}
             className="w-full max-w-md"
           >
             <AccountLockedSection 
               timeLeft={timeLeft}
               lockExpiry={lockExpiry}
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
             />
           </motion.div>
         </div>
@@ -90,14 +65,14 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={containerVariants}
+          variants={ANIMATION_VARIANTS.container}
           className="w-full max-w-md"
         >
           <motion.div 
-            variants={itemVariants}
+            variants={ANIMATION_VARIANTS.item}
             className="backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl shadow-2xl p-8 sm:p-10"
           >
-            <ProfessionalLoginHeader gymName={gymName} variants={itemVariants} />
+            <ProfessionalLoginHeader gymName={gymName} variants={ANIMATION_VARIANTS.item} />
             
             <div className="mt-8" dir="rtl">
               <AnimatePresence mode="wait">
@@ -115,7 +90,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
                       loading={loading}
                       error={error}
                       onSubmit={handlePhoneSubmit}
-                      variants={itemVariants}
+                      variants={ANIMATION_VARIANTS.item}
                       allowedPhone={allowedPhone}
                     />
                   </motion.div>
@@ -137,7 +112,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
                       onSubmit={handleCodeSubmit}
                       onChangePhone={handleChangePhone}
                       onResendCode={handleResendCode}
-                      variants={itemVariants}
+                      variants={ANIMATION_VARIANTS.item}
                     />
                   </motion.div>
                 )}
