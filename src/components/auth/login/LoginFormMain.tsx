@@ -1,48 +1,80 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { MobileLoginForm } from "./MobileLoginForm";
-import { ModernLoginBackground } from "./ModernLoginBackground";
-import { AccountLockedView } from "./AccountLockedView";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ProfessionalLoginBackground } from "./professional/ProfessionalLoginBackground";
+import { ProfessionalLoginHeader } from "./professional/ProfessionalLoginHeader";
+import { PhoneInputSection } from "./professional/PhoneInputSection";
+import { CodeVerificationSection } from "./professional/CodeVerificationSection";
+import { AccountLockedSection } from "./professional/AccountLockedSection";
+import { useProfessionalLogin } from "./professional/hooks/useProfessionalLogin";
 
-interface LoginFormProps {
+interface LoginFormMainProps {
   onLoginSuccess: (rememberMe: boolean) => void;
 }
 
-export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
-  // Check if account is locked
-  const lockExpiry = localStorage.getItem("loginLockExpiry");
-  const isLocked = lockExpiry && new Date(lockExpiry) > new Date();
-  const [timeLeft, setTimeLeft] = React.useState("");
+export const LoginForm = ({ onLoginSuccess }: LoginFormMainProps) => {
+  const {
+    step,
+    phone,
+    setPhone,
+    code,
+    setCode,
+    loading,
+    error,
+    locked,
+    lockExpiry,
+    timeLeft,
+    countdown,
+    gymName,
+    handlePhoneSubmit,
+    handleCodeSubmit,
+    handleChangePhone,
+    handleResendCode
+  } = useProfessionalLogin({ onLoginSuccess });
 
-  if (isLocked) {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+        duration: 0.6
+      }
+    }
+  };
+
+  if (locked) {
     return (
-      <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <ModernLoginBackground />
+      <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/20 to-sky-50/30 dark:from-slate-900 dark:via-emerald-950/20 dark:to-sky-950/30">
+        <ProfessionalLoginBackground variant="locked" />
         
-        <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-              duration: 0.8,
-              type: "spring",
-              stiffness: 200,
-              damping: 25
-            }}
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
             className="w-full max-w-md"
           >
-            <div className="relative overflow-hidden rounded-3xl">
-              {/* Glass morphism container */}
-              <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-orange-500/5 to-yellow-500/10 rounded-3xl"></div>
-              
-              <AccountLockedView 
-                timeLeft={timeLeft}
-                setTimeLeft={setTimeLeft}
-                lockExpiry={new Date(lockExpiry)}
-              />
-            </div>
+            <AccountLockedSection 
+              timeLeft={timeLeft}
+              lockExpiry={lockExpiry}
+              variants={itemVariants}
+            />
           </motion.div>
         </div>
       </div>
@@ -50,75 +82,66 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      <ModernLoginBackground />
+    <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/20 to-sky-50/30 dark:from-slate-900 dark:via-emerald-950/20 dark:to-sky-950/30">
+      <ProfessionalLoginBackground variant="normal" />
       
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{
-            duration: 0.8,
-            type: "spring",
-            stiffness: 200,
-            damping: 25
-          }}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
           className="w-full max-w-md"
         >
-          <div className="relative overflow-hidden rounded-3xl">
-            {/* Glass morphism container */}
-            <div className="absolute inset-0 bg-white/10 backdrop-blur-3xl border border-white/20 rounded-3xl shadow-2xl"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent rounded-3xl"></div>
+          <motion.div 
+            variants={itemVariants}
+            className="backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl shadow-2xl p-8 sm:p-10"
+          >
+            <ProfessionalLoginHeader gymName={gymName} variants={itemVariants} />
             
-            <div className="relative z-10 p-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-center mb-8"
-              >
-                <div className="relative inline-block mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                  
-                  {/* Animated ring */}
+            <div className="mt-8" dir="rtl">
+              <AnimatePresence mode="wait">
+                {step === "phone" ? (
                   <motion.div
-                    className="absolute inset-0 border-2 border-violet-400/50 rounded-2xl"
-                    animate={{ 
-                      scale: [1, 1.1, 1],
-                      opacity: [0.5, 0.8, 0.5],
-                      rotate: [0, 180, 360]
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                </div>
-
-                <h1 className="text-3xl font-bold text-white mb-3 bg-gradient-to-l from-white via-purple-100 to-white bg-clip-text text-transparent">
-                  ورود به پنل مدیریت
-                </h1>
-                <p className="text-white/70 text-lg">
-                  لطفاً شماره موبایل خود را وارد کنید
-                </p>
-                
-                {/* Decorative line */}
-                <motion.div
-                  className="mx-auto mt-4 h-px w-32 bg-gradient-to-r from-transparent via-violet-400/60 to-transparent"
-                  initial={{ width: 0 }}
-                  animate={{ width: 128 }}
-                  transition={{ delay: 0.6, duration: 1 }}
-                />
-              </motion.div>
-
-              <MobileLoginForm onLoginSuccess={onLoginSuccess} />
+                    key="phone"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <PhoneInputSection
+                      phone={phone}
+                      setPhone={setPhone}
+                      loading={loading}
+                      error={error}
+                      onSubmit={handlePhoneSubmit}
+                      variants={itemVariants}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="code"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <CodeVerificationSection
+                      code={code}
+                      setCode={setCode}
+                      phone={phone}
+                      countdown={countdown}
+                      loading={loading}
+                      error={error}
+                      onSubmit={handleCodeSubmit}
+                      onChangePhone={handleChangePhone}
+                      onResendCode={handleResendCode}
+                      variants={itemVariants}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>

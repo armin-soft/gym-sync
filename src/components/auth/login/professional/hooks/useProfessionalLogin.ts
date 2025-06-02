@@ -4,11 +4,11 @@ import { successToast } from "@/hooks/use-toast";
 import { TrainerProfile } from "@/types/trainer";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
-interface UseLoginFormProps {
+interface UseProfessionalLoginProps {
   onLoginSuccess: (rememberMe: boolean) => void;
 }
 
-export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
+export const useProfessionalLogin = ({ onLoginSuccess }: UseProfessionalLoginProps) => {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,9 +18,10 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
   const [locked, setLocked] = useState(false);
   const [lockExpiry, setLockExpiry] = useState<Date | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
+  const [countdown, setCountdown] = useState(0);
   const [gymName, setGymName] = useState("");
 
-  // Load profile data and lock status on component mount
+  // بارگذاری اطلاعات اولیه
   useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
@@ -30,7 +31,7 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
           setGymName(profile.gymName);
         }
       } catch (error) {
-        console.error('Error loading gym name:', error);
+        console.error('خطا در بارگذاری نام باشگاه:', error);
       }
     }
 
@@ -54,6 +55,52 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
     }
   }, []);
 
+  // تایمر شمارش معکوس برای قفل حساب
+  useEffect(() => {
+    if (!lockExpiry) return;
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const diff = lockExpiry.getTime() - now.getTime();
+      
+      if (diff <= 0) {
+        localStorage.removeItem("loginLockExpiry");
+        localStorage.removeItem("loginAttempts");
+        clearInterval(interval);
+        window.location.reload();
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      let timeString = "";
+      if (days > 0) {
+        timeString += `${toPersianNumbers(days)} روز `;
+      }
+      if (hours > 0) {
+        timeString += `${toPersianNumbers(hours)} ساعت `;
+      }
+      timeString += `${toPersianNumbers(minutes)} دقیقه ${toPersianNumbers(seconds)} ثانیه`;
+
+      setTimeLeft(timeString);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lockExpiry]);
+
+  // تایمر شمارش معکوس برای ارسال مجدد کد
+  useEffect(() => {
+    if (step === "code" && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [step, countdown]);
+
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -65,11 +112,19 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
       return;
     }
 
-    // Simulate sending SMS
+    if (phone.length !== 11) {
+      setError("شماره موبایل باید ۱۱ رقم باشد");
+      setLoading(false);
+      return;
+    }
+
+    // شبیه‌سازی ارسال پیامک
     setTimeout(() => {
       setStep("code");
+      setCountdown(120); // 2 دقیقه
       setLoading(false);
-    }, 1000);
+      console.log(`کد تأیید برای شماره ${phone} ارسال شد`);
+    }, 1500);
   };
 
   const handleCodeSubmit = (e: React.FormEvent) => {
@@ -127,24 +182,46 @@ export const useLoginForm = ({ onLoginSuccess }: UseLoginFormProps) => {
       }
       
       setLoading(false);
-    }, 800);
+    }, 1200);
+  };
+
+  const handleChangePhone = () => {
+    setStep("phone");
+    setCode("");
+    setError("");
+    setCountdown(0);
+  };
+
+  const handleResendCode = () => {
+    if (countdown > 0) return;
+    
+    setLoading(true);
+    setError("");
+    
+    // شبیه‌سازی ارسال مجدد کد
+    setTimeout(() => {
+      setCountdown(120); // 2 دقیقه
+      setLoading(false);
+      console.log(`کد تأیید مجدداً برای شماره ${phone} ارسال شد`);
+    }, 1000);
   };
 
   return {
+    step,
     phone,
     setPhone,
     code,
     setCode,
     loading,
     error,
-    step,
-    setStep,
     locked,
     lockExpiry,
     timeLeft,
-    setTimeLeft,
+    countdown,
     gymName,
     handlePhoneSubmit,
-    handleCodeSubmit
+    handleCodeSubmit,
+    handleChangePhone,
+    handleResendCode
   };
 };
