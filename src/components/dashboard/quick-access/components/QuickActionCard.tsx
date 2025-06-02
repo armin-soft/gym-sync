@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
+import { getColorClasses } from "../../utils/colorUtils";
 
 interface QuickActionCardProps {
   title: string;
@@ -11,48 +12,6 @@ interface QuickActionCardProps {
   onClick: () => void;
   index: number;
 }
-
-const getColorClasses = (color: string) => {
-  const colorMap: { [key: string]: { bg: string; border: string; icon: string; hover: string; } } = {
-    emerald: {
-      bg: "from-emerald-50 to-emerald-100/30",
-      border: "border-emerald-200/50",
-      icon: "from-emerald-500 to-emerald-600",
-      hover: "hover:from-emerald-100 hover:to-emerald-200/50"
-    },
-    sky: {
-      bg: "from-sky-50 to-sky-100/30",
-      border: "border-sky-200/50",
-      icon: "from-sky-500 to-sky-600",
-      hover: "hover:from-sky-100 hover:to-sky-200/50"
-    },
-    orange: {
-      bg: "from-orange-50 to-orange-100/30",
-      border: "border-orange-200/50",
-      icon: "from-orange-500 to-orange-600",
-      hover: "hover:from-orange-100 hover:to-orange-200/50"
-    },
-    purple: {
-      bg: "from-purple-50 to-purple-100/30",
-      border: "border-purple-200/50",
-      icon: "from-purple-500 to-purple-600",
-      hover: "hover:from-purple-100 hover:to-purple-200/50"
-    },
-    pink: {
-      bg: "from-pink-50 to-pink-100/30",
-      border: "border-pink-200/50",
-      icon: "from-pink-500 to-pink-600",
-      hover: "hover:from-pink-100 hover:to-pink-200/50"
-    },
-    indigo: {
-      bg: "from-indigo-50 to-indigo-100/30",
-      border: "border-indigo-200/50",
-      icon: "from-indigo-500 to-indigo-600",
-      hover: "hover:from-indigo-100 hover:to-indigo-200/50"
-    }
-  };
-  return colorMap[color];
-};
 
 const itemVariants = {
   initial: { opacity: 0, y: 15, scale: 0.95 },
@@ -76,6 +35,12 @@ export const QuickActionCard = ({
 }: QuickActionCardProps) => {
   const colors = getColorClasses(color);
 
+  // Fallback if color is not found
+  if (!colors) {
+    console.warn(`Color "${color}" not found in colorUtils`);
+    return null;
+  }
+
   return (
     <motion.div
       variants={itemVariants}
@@ -86,7 +51,7 @@ export const QuickActionCard = ({
       }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${colors.bg} ${colors.hover} border ${colors.border} backdrop-blur-xl p-6 cursor-pointer group transition-all duration-300`}
+      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${colors.bg} hover:from-emerald-100 hover:to-sky-200/50 border ${colors.border} backdrop-blur-xl p-6 cursor-pointer group transition-all duration-300`}
       style={{ boxShadow: 'var(--shadow-soft)' }}
     >
       <div className="absolute -top-8 -right-8 w-20 h-20 bg-white/20 rounded-full blur-xl group-hover:scale-110 transition-transform duration-500" />
