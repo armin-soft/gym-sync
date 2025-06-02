@@ -16,7 +16,7 @@ interface SidebarItem {
 
 interface TrainerProfile {
   name: string;
-  email: string;
+  phone: string;
   image: string;
 }
 
@@ -39,7 +39,7 @@ export const SidebarContent = ({
       <div className="relative z-10 flex-shrink-0" dir="rtl">
         <ModernSidebarProfile 
           name={trainerProfile.name}
-          email={trainerProfile.email}
+          phone={trainerProfile.phone}
           image={trainerProfile.image}
           onClose={onClose}
         />

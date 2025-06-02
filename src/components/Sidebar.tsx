@@ -74,7 +74,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [trainerProfile, setTrainerProfile] = useState({
     name: "مربی",
     image: "",
-    email: ""
+    phone: ""
   });
   
   const loadProfile = () => {
@@ -85,7 +85,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         setTrainerProfile({
           name: profile.name || "مربی",
           image: profile.image || "",
-          email: profile.email || ""
+          phone: profile.phone || ""
         });
         if (profile.gymName) {
           setGymName(profile.gymName);

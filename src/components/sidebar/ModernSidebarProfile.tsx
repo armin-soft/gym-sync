@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, User, Crown, Zap } from "lucide-react";
@@ -6,14 +7,14 @@ import { motion } from "framer-motion";
 
 interface ModernSidebarProfileProps {
   name: string;
-  email?: string;
+  phone?: string;
   image?: string;
   onClose: () => void;
 }
 
 export function ModernSidebarProfile({
   name,
-  email,
+  phone,
   image,
   onClose
 }: ModernSidebarProfileProps) {
@@ -37,7 +38,7 @@ export function ModernSidebarProfile({
     return "text-2xl";
   };
   
-  const getEmailSize = () => {
+  const getPhoneSize = () => {
     if (deviceInfo.isMobile) return "text-sm";
     if (deviceInfo.isTablet) return "text-sm";
     return "text-base";
@@ -100,17 +101,18 @@ export function ModernSidebarProfile({
               {name}
             </motion.h3>
             
-            {email && (
+            {phone && (
               <motion.p 
                 className={cn(
                   "text-emerald-600 dark:text-emerald-400 font-medium",
-                  getEmailSize()
+                  getPhoneSize()
                 )}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
+                dir="ltr"
               >
-                {email}
+                {phone}
               </motion.p>
             )}
             
