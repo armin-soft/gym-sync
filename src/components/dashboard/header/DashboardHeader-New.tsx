@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
+import { usePersianDate } from "@/hooks/usePersianDate";
 import { Calendar, Clock, User, Crown, Sparkles } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -16,20 +17,13 @@ interface DashboardHeaderNewProps {
 
 export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardHeaderNewProps) => {
   const currentTime = useCurrentTime();
+  const persianDate = usePersianDate();
 
-  const formatTime = (date: Date) => {
+  const formatTimeWithSeconds = (date: Date) => {
     return date.toLocaleTimeString('fa-IR', { 
       hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('fa-IR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+      minute: '2-digit',
+      second: '2-digit'
     });
   };
 
@@ -135,18 +129,29 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
 
         {/* بخش زمان و تاریخ */}
         <div className="flex flex-col gap-4">
-          {/* زمان فعلی */}
+          {/* زمان فعلی با ثانیه */}
           <motion.div 
             className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-white/80" />
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+              >
+                <Clock className="w-5 h-5 text-white/80" />
+              </motion.div>
               <div className="text-right">
-                <div className="text-xl font-bold">
-                  {toPersianNumbers(formatTime(currentTime))}
-                </div>
+                <motion.div 
+                  className="text-xl font-bold font-mono"
+                  key={formatTimeWithSeconds(currentTime)}
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {toPersianNumbers(formatTimeWithSeconds(currentTime))}
+                </motion.div>
                 <div className="text-xs text-white/70">
                   زمان فعلی
                 </div>
@@ -154,7 +159,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
             </div>
           </motion.div>
 
-          {/* تاریخ فعلی */}
+          {/* تاریخ فارسی */}
           <motion.div 
             className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
             whileHover={{ scale: 1.02 }}
@@ -164,7 +169,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
               <Calendar className="w-5 h-5 text-white/80" />
               <div className="text-right">
                 <div className="text-sm font-medium">
-                  {formatDate(currentTime)}
+                  {persianDate}
                 </div>
                 <div className="text-xs text-white/70">
                   تاریخ امروز
