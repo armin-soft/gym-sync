@@ -117,18 +117,6 @@ export const UserTypeSelectionNew = () => {
             </AnimatePresence>
           </div>
         </div>
-
-        {/* فوتر */}
-        <div className="flex-shrink-0 pb-8">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
-            className="text-center text-sm text-slate-500 dark:text-slate-400"
-          >
-            <p>امن، سریع و قابل اعتماد • GymSync {appVersion}</p>
-          </motion.div>
-        </div>
       </div>
     </div>
   );

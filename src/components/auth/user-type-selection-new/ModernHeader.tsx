@@ -55,7 +55,7 @@ export const ModernHeader = () => {
           </span>
           <br />
           <span className="bg-gradient-to-l from-sky-700 via-emerald-700 to-sky-800 bg-clip-text text-transparent">
-            باشگاه هوشمند
+            برنامه
           </span>
         </h1>
         
@@ -83,7 +83,7 @@ export const ModernHeader = () => {
         
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4" />
-          <span>نسخه {toPersianNumbers("4.2.6")}</span>
+          <span>نسخه {toPersianNumbers("4.2.7")}</span>
         </div>
         
         <div className="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
