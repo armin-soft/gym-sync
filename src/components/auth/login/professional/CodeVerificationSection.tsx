@@ -111,20 +111,6 @@ export const CodeVerificationSection = ({
             </motion.div>
           )}
         </div>
-
-        {/* یادداشت کد ثابت */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-emerald-50/50 dark:bg-emerald-900/20 border border-emerald-200/50 dark:border-emerald-700/50 rounded-xl p-4"
-        >
-          <div className="flex items-center justify-center gap-2 text-emerald-700 dark:text-emerald-300">
-            <Shield className="h-4 w-4" />
-            <span className="text-sm font-medium">
-              کد تأیید: ۰۱۲۳۴۵
-            </span>
-          </div>
-        </motion.div>
       </motion.div>
       
       <motion.div variants={variants} className="space-y-4">
