@@ -2,12 +2,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Supplement, SupplementCategory } from "@/types/supplement";
+import { SupplementGridView } from "@/components/supplements/list/SupplementGridView";
 import { ModernCategoryManagement } from "../ModernCategoryManagement";
-import { ModernSupplementGrid } from "../ModernSupplementGrid";
-import { EmptyStateCard } from "../EmptyStateCard";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Card } from "@/components/ui/card";
 
-interface SupplementsTabContentProps {
+interface SupplementTabContentProps {
   type: "supplement" | "vitamin";
   isLoading: boolean;
   categories: SupplementCategory[];
@@ -22,7 +22,7 @@ interface SupplementsTabContentProps {
   setSelectedCategory: (category: string | null) => void;
 }
 
-export const SupplementsTabContent: React.FC<SupplementsTabContentProps> = ({
+export const SupplementTabContent: React.FC<SupplementTabContentProps> = ({
   type,
   isLoading,
   categories,
@@ -62,56 +62,50 @@ export const SupplementsTabContent: React.FC<SupplementsTabContentProps> = ({
   }
 
   return (
-    <div className="space-y-8" dir="rtl">
+    <div className="space-y-6 w-full" dir="rtl">
       {/* Categories Management */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
-      >
-        <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg rounded-2xl overflow-hidden">
-          <div className="p-6">
-            <ModernCategoryManagement
-              categories={categories}
-              onAddCategory={onAddCategory}
-              onEditCategory={onEditCategory}
-              onDeleteCategory={onDeleteCategory}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              type={type}
-            />
-          </div>
-        </Card>
-      </motion.div>
+      <Card className="bg-gradient-to-l from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg">
+        <div className="p-6">
+          <ModernCategoryManagement
+            categories={categories}
+            onAddCategory={onAddCategory}
+            onEditCategory={onEditCategory}
+            onDeleteCategory={onDeleteCategory}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            type={type}
+          />
+        </div>
+      </Card>
 
       {/* Supplements Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-      >
-        <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg rounded-2xl overflow-hidden">
-          <div className="p-6">
-            {categories.length === 0 ? (
-              <EmptyStateCard
-                type="category"
-                supplementType={type}
-                onAction={onAddCategory}
+      <Card className="bg-gradient-to-l from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg">
+        <div className="p-6">
+          {categories.length === 0 ? (
+            <div className="py-20 flex items-center justify-center">
+              <EmptyState
+                icon="Folder"
+                title={`هیچ دسته‌بندی برای ${type === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'} وجود ندارد`}
+                description="لطفاً ابتدا یک دسته‌بندی ایجاد کنید"
+                action={{
+                  label: "افزودن دسته‌بندی",
+                  onClick: onAddCategory
+                }}
               />
-            ) : (
-              <ModernSupplementGrid
-                supplements={filteredSupplements}
-                onEditSupplement={onEditSupplement}
-                onDeleteSupplement={onDeleteSupplement}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                onAddSupplement={onAddSupplement}
-                activeTab={type}
-              />
-            )}
-          </div>
-        </Card>
-      </motion.div>
+            </div>
+          ) : (
+            <SupplementGridView
+              supplements={filteredSupplements}
+              onEditSupplement={onEditSupplement}
+              onDeleteSupplement={onDeleteSupplement}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              onAddSupplement={onAddSupplement}
+              activeTab={type}
+            />
+          )}
+        </div>
+      </Card>
     </div>
   );
 };

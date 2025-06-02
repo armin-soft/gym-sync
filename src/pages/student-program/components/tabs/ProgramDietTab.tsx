@@ -1,7 +1,8 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { DaySelector, DayContent, ProgramDietHeader } from "./diet";
+import { useDietTabState } from "./diet/useDietTabState";
 
 interface ProgramDietTabProps {
   student: Student;
@@ -14,25 +15,14 @@ export const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
   meals,
   onSaveDiet
 }) => {
-  const [currentDay, setCurrentDay] = useState<number>(1);
-  const [selectedMeals, setSelectedMeals] = useState<number[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // Initialize selected meals from student data
-  useEffect(() => {
-    if (student.meals) {
-      setSelectedMeals(student.meals);
-    } else {
-      setSelectedMeals([]);
-    }
-  }, [student]);
-
-  const handleSave = () => {
-    setIsLoading(true);
-    const success = onSaveDiet(selectedMeals);
-    setIsLoading(false);
-    return success;
-  };
+  const {
+    currentDay,
+    setCurrentDay,
+    selectedMeals,
+    setSelectedMeals,
+    handleSave,
+    isLoading
+  } = useDietTabState(student, onSaveDiet);
 
   // Define the week days
   const weekDays = [

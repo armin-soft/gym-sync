@@ -6,9 +6,9 @@ import { useDialogState } from "./hooks/useDialogState";
 import {
   FormDialog,
   ExerciseDialog,
-  DietDialog
+  DietDialog,
+  SupplementDialog
 } from "./dialogs";
-import { SupplementDialog } from "@/components/supplements/student/SupplementDialog";
 
 export interface StudentDialogManagerRef {
   handleAdd: () => void;
@@ -76,13 +76,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
       } : undefined
     }));
 
-    const handleSupplementSave = (data: {supplements: number[], vitamins: number[], day?: number}) => {
-      if (state.selectedStudent && onSaveSupplements) {
-        return onSaveSupplements(data, state.selectedStudent.id);
-      }
-      return false;
-    };
-
     return (
       <>
         <FormDialog
@@ -108,15 +101,13 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
           onSaveDiet={onSaveDiet}
         />
 
-        {state.selectedStudent && (
-          <SupplementDialog
-            open={state.supplementDialog}
-            onOpenChange={setSupplementDialogOpen}
-            studentName={state.selectedStudent.name}
-            onSave={handleSupplementSave}
-            supplements={supplements || []}
-          />
-        )}
+        <SupplementDialog
+          open={state.supplementDialog}
+          onOpenChange={setSupplementDialogOpen}
+          selectedStudent={state.selectedStudent}
+          supplements={supplements}
+          onSaveSupplements={onSaveSupplements}
+        />
       </>
     );
   }

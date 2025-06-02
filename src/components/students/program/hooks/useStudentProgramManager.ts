@@ -37,21 +37,30 @@ export function useStudentProgramManager({
   useEffect(() => {
     if (!student) return;
     
-    // Load exercises for current day
-    const dayKey = `exercisesDay${currentDay}`;
-    const setsKey = `exerciseSetsDay${currentDay}`;
-    const repsKey = `exerciseRepsDay${currentDay}`;
+    // Find all available day properties in the student object
+    const dayProperties = Object.keys(student).filter(key => key.startsWith('exercisesDay'));
     
-    if (student[dayKey]) {
-      const loadedExercises: ExerciseWithSets[] = student[dayKey].map(id => ({
-        id,
-        sets: student[setsKey]?.[id] || 3,
-        reps: student[repsKey]?.[id] || "12",
-        day: currentDay
-      }));
-      setSelectedExercises(loadedExercises);
-    } else {
+    // If there are no day properties, default to empty
+    if (dayProperties.length === 0) {
       setSelectedExercises([]);
+    } else {
+      // If current day data exists, load it
+      const dayKey = `exercisesDay${currentDay}`;
+      const setsKey = `exerciseSetsDay${currentDay}`;
+      const repsKey = `exerciseRepsDay${currentDay}`;
+      
+      if (student[dayKey]) {
+        const loadedExercises: ExerciseWithSets[] = student[dayKey].map(id => ({
+          id,
+          sets: student[setsKey]?.[id] || 3,
+          reps: student[repsKey]?.[id] || "12",
+          day: currentDay
+        }));
+        setSelectedExercises(loadedExercises);
+      } else {
+        // Current day has no exercises
+        setSelectedExercises([]);
+      }
     }
     
     // Load meals for current diet day
@@ -59,12 +68,56 @@ export function useStudentProgramManager({
     if (student[dietDayKey]) {
       setSelectedMeals(student[dietDayKey]);
     } else if (student.meals) {
+      // Fall back to general meals if no day-specific meals found
       setSelectedMeals(student.meals);
     } else {
       setSelectedMeals([]);
     }
     
     // Load supplements for current day
+    const supplementDayKey = `supplementsDay${currentSupplementDay}`;
+    const vitaminDayKey = `vitaminsDay${currentSupplementDay}`;
+    
+    if (student[supplementDayKey]) {
+      setSelectedSupplements(student[supplementDayKey]);
+    } else if (student.supplements) {
+      // Fall back to general supplements if no day-specific found
+      setSelectedSupplements(student.supplements);
+    } else {
+      setSelectedSupplements([]);
+    }
+    
+    // Load vitamins for current day
+    if (student[vitaminDayKey]) {
+      setSelectedVitamins(student[vitaminDayKey]);
+    } else if (student.vitamins) {
+      // Fall back to general vitamins if no day-specific found
+      setSelectedVitamins(student.vitamins);
+    } else {
+      setSelectedVitamins([]);
+    }
+  }, [student, currentDay, currentDietDay, currentSupplementDay]);
+
+  // Sync days between tabs - removing conditional hooks
+  useEffect(() => {
+    // This effect now runs on every render, not conditionally
+    if (activeTab === "exercise") {
+      setCurrentSupplementDay(currentDay);
+      setCurrentDietDay(currentDay);
+    } else if (activeTab === "diet") {
+      setCurrentSupplementDay(currentDietDay);
+      setCurrentDay(currentDietDay);
+    } else if (activeTab === "supplement") {
+      setCurrentDay(currentSupplementDay);
+      setCurrentDietDay(currentSupplementDay);
+    }
+  }, [activeTab, currentDay, currentDietDay, currentSupplementDay]);
+
+  // Load supplements and vitamins when current day changes
+  useEffect(() => {
+    if (!student) return;
+    
+    // Always load supplement data regardless of active tab
     const supplementDayKey = `supplementsDay${currentSupplementDay}`;
     const vitaminDayKey = `vitaminsDay${currentSupplementDay}`;
     
@@ -83,7 +136,7 @@ export function useStudentProgramManager({
     } else {
       setSelectedVitamins([]);
     }
-  }, [student, currentDay, currentDietDay, currentSupplementDay]);
+  }, [student, currentSupplementDay]);
 
   const handleSaveAll = () => {
     let success = true;
