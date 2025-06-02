@@ -7,8 +7,8 @@ import { useStudentProgramManager } from "./hooks/useStudentProgramManager";
 import StudentProgramHeader from "./components/StudentProgramHeader";
 import StudentProgramTabs from "./components/StudentProgramTabs";
 import StudentProgramExerciseContent from "./components/StudentProgramExerciseContent";
-import StudentProgramDietContent from "./components/StudentProgramDietContent";
 import StudentProgramSupplementContent from "./components/StudentProgramSupplementContent";
+import StudentDietSelector from "./StudentDietSelector";
 
 interface StudentProgramManagerProps {
   student: Student;
@@ -86,12 +86,11 @@ const StudentProgramManager: React.FC<StudentProgramManagerProps> = ({
           exercises={exercises}
         />
         
-        <StudentProgramDietContent 
+        <StudentDietSelector
           selectedMeals={selectedMeals}
           setSelectedMeals={setSelectedMeals}
           meals={meals}
-          currentDietDay={currentDietDay}
-          setCurrentDietDay={setCurrentDietDay}
+          currentDay={currentDietDay}
         />
         
         <StudentProgramSupplementContent 
