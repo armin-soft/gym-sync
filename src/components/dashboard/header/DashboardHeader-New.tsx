@@ -56,12 +56,19 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
     return CloudMoon;
   };
 
-  const getSeasonIcon = (dateString: string) => {
-    if (dateString.includes('بهار')) return Sun;
-    if (dateString.includes('تابستان')) return Sun;
-    if (dateString.includes('پاییز')) return CloudSun;
-    if (dateString.includes('زمستان')) return Snowflake;
-    return Calendar;
+  const getSeasonIcon = () => {
+    const now = new Date();
+    const month = now.getMonth() + 1; // JavaScript months are 0-based
+    
+    // تبدیل ماه میلادی به فصل شمسی
+    // فروردین تا خرداد (مارس تا مه) = بهار
+    if ((month >= 3 && month <= 5)) return Sun;
+    // تیر تا شهریور (ژوئن تا اوت) = تابستان  
+    if ((month >= 6 && month <= 8)) return Sun;
+    // مهر تا آذر (سپتامبر تا نوامبر) = پاییز
+    if ((month >= 9 && month <= 11)) return CloudSun;
+    // دی تا اسفند (دسامبر تا فوریه) = زمستان
+    return Snowflake;
   };
 
   const getGreeting = () => {
@@ -90,7 +97,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
   };
 
   const TimeIcon = getTimeIcon();
-  const SeasonIcon = getSeasonIcon(persianDate);
+  const SeasonIcon = getSeasonIcon();
 
   return (
     <motion.div 
