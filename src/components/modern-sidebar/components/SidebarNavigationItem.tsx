@@ -34,27 +34,27 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
         type: "spring",
         stiffness: 150,
         damping: 12,
-        delay: index * 0.08
+        delay: index * 0.05
       }
     }
   };
   
   const getItemPadding = () => {
-    if (deviceInfo.isMobile) return "p-4";
-    if (deviceInfo.isTablet) return "p-4";
-    return "p-5";
+    if (deviceInfo.isMobile) return "p-3";
+    if (deviceInfo.isTablet) return "p-3";
+    return "p-3";
   };
   
   const getIconSize = () => {
-    if (deviceInfo.isMobile) return "w-5 h-5";
-    if (deviceInfo.isTablet) return "w-5 h-5";
-    return "w-6 h-6";
+    if (deviceInfo.isMobile) return "w-4 h-4";
+    if (deviceInfo.isTablet) return "w-4 h-4";
+    return "w-5 h-5";
   };
   
   const getIconContainer = () => {
-    if (deviceInfo.isMobile) return "w-12 h-12";
-    if (deviceInfo.isTablet) return "w-12 h-12";
-    return "w-14 h-14";
+    if (deviceInfo.isMobile) return "w-10 h-10";
+    if (deviceInfo.isTablet) return "w-10 h-10";
+    return "w-11 h-11";
   };
 
   return (
@@ -69,11 +69,11 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
         to={item.href}
         onClick={onClose}
         className={cn(
-          "relative block rounded-2xl transition-all duration-300 overflow-hidden",
+          "relative block rounded-xl transition-all duration-300 overflow-hidden",
           getItemPadding(),
           isActive 
-            ? "bg-gradient-to-br from-emerald-500 via-sky-500 to-emerald-600 text-white shadow-xl transform scale-[1.02]" 
-            : "bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 hover:shadow-lg hover:scale-[1.01] backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30"
+            ? "bg-gradient-to-br from-emerald-500 via-sky-500 to-emerald-600 text-white shadow-lg transform scale-[1.01]" 
+            : "bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 hover:shadow-md hover:scale-[1.005] backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30"
         )}
         dir="rtl"
       >
@@ -102,17 +102,17 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
           />
         )}
         
-        <div className="relative z-10 flex items-center gap-4" dir="rtl">
+        <div className="relative z-10 flex items-center gap-3" dir="rtl">
           {/* Icon Container */}
           <motion.div 
             className={cn(
-              "flex-shrink-0 rounded-xl flex items-center justify-center relative overflow-hidden",
+              "flex-shrink-0 rounded-lg flex items-center justify-center relative overflow-hidden",
               getIconContainer(),
               isActive 
-                ? "bg-white/25 text-white shadow-lg" 
-                : `bg-gradient-to-br ${item.gradient} text-white shadow-md`
+                ? "bg-white/25 text-white shadow-md" 
+                : `bg-gradient-to-br ${item.gradient} text-white shadow-sm`
             )}
-            whileHover={{ scale: 1.05, rotate: isActive ? 0 : 5 }}
+            whileHover={{ scale: 1.05, rotate: isActive ? 0 : 3 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
             {!isActive && (
@@ -123,22 +123,22 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
             {/* Sparkle effect for new items */}
             {item.isNew && (
               <motion.div
-                className="absolute -top-1 -right-1"
+                className="absolute -top-0.5 -right-0.5"
                 animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <Sparkles className="w-3 h-3 text-yellow-400" />
+                <Sparkles className="w-2.5 h-2.5 text-yellow-400" />
               </motion.div>
             )}
           </motion.div>
           
           {/* Content */}
           <div className="flex-1 min-w-0" dir="rtl">
-            <div className="flex items-center justify-between mb-1" dir="rtl">
+            <div className="flex items-center justify-between mb-0.5" dir="rtl">
               <motion.h3 
                 className={cn(
                   "font-bold text-right",
-                  deviceInfo.isMobile ? "text-base" : "text-lg",
+                  deviceInfo.isMobile ? "text-sm" : "text-sm",
                   isActive ? "text-white" : "text-emerald-800 dark:text-emerald-200"
                 )}
                 layoutId={`title-${item.href}`}
@@ -152,7 +152,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
                   <Badge 
                     variant="secondary" 
                     className={cn(
-                      "text-2xs px-2 py-0.5 shadow-sm",
+                      "text-3xs px-1.5 py-0.5 shadow-sm",
                       item.badgeColor || "bg-amber-500",
                       isActive ? "bg-white/20 text-white" : "text-white"
                     )}
@@ -162,7 +162,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
                 )}
                 
                 {item.isNew && (
-                  <Badge variant="secondary" className="text-2xs px-2 py-0.5 bg-green-500 text-white shadow-sm">
+                  <Badge variant="secondary" className="text-3xs px-1.5 py-0.5 bg-green-500 text-white shadow-sm">
                     جدید
                   </Badge>
                 )}
@@ -172,7 +172,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
             <motion.p 
               className={cn(
                 "text-right leading-relaxed",
-                deviceInfo.isMobile ? "text-xs" : "text-sm",
+                deviceInfo.isMobile ? "text-2xs" : "text-xs",
                 isActive ? "text-white/85" : "text-emerald-600 dark:text-emerald-400"
               )}
               initial={{ opacity: 0 }}
@@ -190,13 +190,13 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
               isActive || isHovered ? "opacity-100" : "opacity-0"
             )}
             animate={{ 
-              x: isHovered || isActive ? -3 : 0,
-              scale: isActive ? 1.1 : 1
+              x: isHovered || isActive ? -2 : 0,
+              scale: isActive ? 1.05 : 1
             }}
             transition={{ type: "spring", stiffness: 400 }}
           >
             <ChevronLeft className={cn(
-              deviceInfo.isMobile ? "w-4 h-4" : "w-5 h-5",
+              deviceInfo.isMobile ? "w-3.5 h-3.5" : "w-4 h-4",
               isActive ? "text-white" : "text-emerald-500 dark:text-emerald-400"
             )} />
           </motion.div>

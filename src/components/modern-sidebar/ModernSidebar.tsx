@@ -28,10 +28,10 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
   const deviceInfo = useDeviceInfo();
   
   const getSidebarWidth = () => {
-    if (deviceInfo.isMobile) return "w-[320px]";
-    if (deviceInfo.isTablet) return "w-[380px]";
-    if (deviceInfo.isSmallLaptop) return "w-[420px]";
-    return "w-[460px]";
+    if (deviceInfo.isMobile) return "w-[280px]";
+    if (deviceInfo.isTablet) return "w-[320px]";
+    if (deviceInfo.isSmallLaptop) return "w-[350px]";
+    return "w-[380px]";
   };
 
   return (
