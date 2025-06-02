@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -31,15 +30,6 @@ export const PhoneInputStep = ({
     
     // فقط اعداد انگلیسی مجاز
     let numbersOnly = value.replace(/[^0-9]/g, '');
-    
-    // اطمینان از شروع با 09
-    if (numbersOnly && !numbersOnly.startsWith('09')) {
-      if (numbersOnly.startsWith('0')) {
-        numbersOnly = '09' + numbersOnly.slice(1);
-      } else {
-        numbersOnly = '09' + numbersOnly;
-      }
-    }
     
     // محدود کردن به 11 رقم
     if (numbersOnly.length > 11) {
