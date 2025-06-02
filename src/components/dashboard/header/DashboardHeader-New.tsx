@@ -24,8 +24,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-      className="relative overflow-hidden rounded-3xl p-8 mb-8"
-      style={{ background: 'var(--bg-gradient-primary)' }}
+      className="relative overflow-hidden rounded-3xl p-8 mb-8 bg-gradient-to-l from-emerald-600 to-sky-600"
     >
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl" />

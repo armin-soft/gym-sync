@@ -45,7 +45,7 @@ export const QuickActionsNew = () => {
         className="mb-6"
         variants={itemVariants}
       >
-        <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--primary-emerald)' }}>
+        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">
           دسترسی سریع
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
@@ -69,7 +69,7 @@ export const QuickActionsNew = () => {
             title={action.title}
             description={action.description}
             icon={action.icon}
-            color={action.color}
+            color={index % 2 === 0 ? "emerald-sky" : "sky-emerald"}
             href={action.href}
             onClick={() => navigate(action.href)}
             index={index}

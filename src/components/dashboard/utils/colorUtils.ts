@@ -11,6 +11,16 @@ export const getColorClasses = (color: string) => {
       border: "border-sky-200/50 dark:border-sky-800/50",
       icon: "from-sky-500 to-sky-600"
     },
+    "emerald-sky": {
+      bg: "from-emerald-50 to-sky-100/50 dark:from-emerald-950/30 dark:to-sky-900/20",
+      border: "border-emerald-200/50 dark:border-sky-800/50",
+      icon: "from-emerald-600 to-sky-600"
+    },
+    "sky-emerald": {
+      bg: "from-sky-50 to-emerald-100/50 dark:from-sky-950/30 dark:to-emerald-900/20",
+      border: "border-sky-200/50 dark:border-emerald-800/50",
+      icon: "from-sky-600 to-emerald-600"
+    },
     orange: {
       bg: "from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20",
       border: "border-orange-200/50 dark:border-orange-800/50",
