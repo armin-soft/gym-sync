@@ -127,10 +127,8 @@ const SupplementsPage = () => {
           animate={{ opacity: 1 }}
           className="min-h-screen flex flex-col"
         >
-          {/* Header */}
           <ModernSupplementsHeader />
           
-          {/* Main Content */}
           <div className="flex-1 p-6">
             <ModernTabSystem
               activeTab={activeTab}
@@ -152,7 +150,6 @@ const SupplementsPage = () => {
             />
           </div>
 
-          {/* Dialogs */}
           <ModernSupplementDialog
             open={supplementDialogOpen}
             onOpenChange={setSupplementDialogOpen}

@@ -1,9 +1,9 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Grid, List } from "lucide-react";
+import { Search, Grid, List, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Supplement } from "@/types/supplement";
 import SupplementCard from "./SupplementCard";
@@ -31,9 +31,9 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [filteredItems, setFilteredItems] = useState<Supplement[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
+  const filteredItems = useMemo(() => {
     let filtered = supplements.filter(item => 
       item.type === (activeTab === 'supplement' ? 'supplement' : 'vitamin')
     );
@@ -51,8 +51,15 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
       filtered = filtered.filter(item => item.category === selectedCategory);
     }
 
-    setFilteredItems(filtered);
+    return filtered;
   }, [supplements, activeTab, searchQuery, selectedCategory]);
+
+  const uniqueCategories = useMemo(() => {
+    const categories = filteredItems
+      .map(item => item.category)
+      .filter((category, index, self) => category && self.indexOf(category) === index);
+    return categories;
+  }, [filteredItems]);
 
   const handleToggleItem = (id: number) => {
     if (activeTab === 'supplement') {
@@ -72,15 +79,9 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
       : selectedVitamins.includes(id);
   };
 
-  const getUniqueCategories = () => {
-    const categories = filteredItems
-      .map(item => item.category)
-      .filter((category, index, self) => category && self.indexOf(category) === index);
-    return categories;
-  };
-
   return (
     <div className="space-y-4 h-full flex flex-col text-right" dir="rtl">
+      {/* Search and Filters */}
       <div className="flex flex-col gap-3">
         <div className="relative">
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -92,30 +93,6 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
             dir="rtl"
           />
         </div>
-
-        {getUniqueCategories().length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant={selectedCategory === null ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory(null)}
-              className="text-xs"
-            >
-              همه
-            </Button>
-            {getUniqueCategories().map(category => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-                className="text-xs"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        )}
 
         <div className="flex justify-between items-center">
           <div className="flex gap-1">
@@ -134,9 +111,50 @@ const StudentSupplementSelector: React.FC<StudentSupplementSelectorProps> = ({
               <List className="h-4 w-4" />
             </Button>
           </div>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter className="h-4 w-4 ml-1" />
+            فیلترها
+          </Button>
         </div>
+
+        <AnimatePresence>
+          {(showFilters && uniqueCategories.length > 0) && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex flex-wrap gap-2"
+            >
+              <Button
+                variant={selectedCategory === null ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(null)}
+                className="text-xs"
+              >
+                همه
+              </Button>
+              {uniqueCategories.map(category => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category)}
+                  className="text-xs"
+                >
+                  {category}
+                </Button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
+      {/* Items Grid */}
       <div className="flex-1 overflow-auto">
         {filteredItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center">
