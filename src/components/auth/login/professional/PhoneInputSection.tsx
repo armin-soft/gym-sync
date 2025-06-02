@@ -30,10 +30,12 @@ export const PhoneInputSection = ({
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
-    // فقط اعداد را نگه می‌داریم و به 11 رقم محدود می‌کنیم
-    const numbers = value.replace(/\D/g, '');
-    if (numbers.length <= 11) {
-      setPhone(numbers);
+    // فقط اعداد انگلیسی مجاز
+    const numbersOnly = value.replace(/[^0-9]/g, '');
+    
+    // محدود کردن به 11 رقم
+    if (numbersOnly.length <= 11) {
+      setPhone(numbersOnly);
     }
   };
 
@@ -58,12 +60,15 @@ export const PhoneInputSection = ({
         </Label>
         
         <div className="relative group">
+          {/* تأثیر درخشش پس‌زمینه */}
           <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
           
           <div className="relative">
             <Input
               id="phone"
               type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={toPersianNumbers(phone)}
               onChange={handlePhoneChange}
               placeholder={toPersianNumbers("09123456789")}
@@ -126,6 +131,7 @@ export const PhoneInputSection = ({
           )}
         </Button>
         
+        {/* یادداشت امنیتی */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
