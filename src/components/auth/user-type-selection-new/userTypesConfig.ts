@@ -17,12 +17,7 @@ export const userTypesConfig = [
       'مدیریت مکمل‌ها و ویتامین‌ها',
       'پشتیبان‌گیری و بازیابی اطلاعات'
     ],
-    badge: 'مدیر',
-    stats: {
-      users: '2847',
-      success: '98',
-      rating: '4.9'
-    }
+    badge: 'مدیر'
   },
   {
     id: 'student' as const,
@@ -39,11 +34,6 @@ export const userTypesConfig = [
       'مدیریت اطلاعات شخصی',
       'دسترسی به تاریخچه فعالیت‌ها'
     ],
-    badge: 'شاگرد',
-    stats: {
-      users: '15632',
-      success: '94',
-      rating: '4.8'
-    }
+    badge: 'شاگرد'
   }
 ];

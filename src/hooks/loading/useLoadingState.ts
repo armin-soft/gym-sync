@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { debouncedSave } from '@/utils/performance';
 
 interface SystemInfo {
   version: string;
@@ -24,6 +25,13 @@ export const useLoadingState = () => {
   });
   
   useEffect(() => {
+    // استفاده از نسخه کش شده برای شروع سریع
+    const cachedVersion = localStorage.getItem('app_version') || 'در حال بارگذاری...';
+    setSystemInfo(prev => ({
+      ...prev,
+      version: cachedVersion
+    }));
+    
     // دریافت نسخه از Manifest.json
     const fetchVersion = async () => {
       try {
@@ -34,21 +42,17 @@ export const useLoadingState = () => {
           ...prev,
           version: version
         }));
-        localStorage.setItem('app_version', version);
+        // ذخیره نسخه با تأخیر برای بهینه‌سازی عملکرد
+        debouncedSave('app_version', version, 100);
         console.log(`Version loaded from Manifest.json for loading: ${version}`);
       } catch (error) {
         console.error('Error loading version from Manifest.json in loading:', error);
-        const cachedVersion = localStorage.getItem('app_version') || 'نامشخص';
-        setSystemInfo(prev => ({
-          ...prev,
-          version: cachedVersion
-        }));
       }
     };
     
     fetchVersion();
     
-    // بارگذاری اطلاعات باشگاه
+    // بارگذاری اطلاعات باشگاه - با بهینه‌سازی برای استفاده کمتر از منابع
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
       if (savedProfile) {
@@ -61,25 +65,20 @@ export const useLoadingState = () => {
       console.error('Error loading gym profile:', error);
     }
     
-    // مراحل بارگذاری با اطلاعات واقعی و به‌روز
+    // بهینه‌سازی مراحل بارگذاری برای سرعت بیشتر
     const loadingSteps: LoadingStep[] = [
-      { progress: 5, text: "بررسی سازگاری سیستم...", components: 8 },
-      { progress: 12, text: "بارگذاری هسته اصلی برنامه...", components: 16 },
-      { progress: 20, text: "راه‌اندازی سیستم احراز هویت...", components: 24 },
-      { progress: 28, text: "بارگذاری رابط کاربری اصلی...", components: 32 },
-      { progress: 36, text: "آماده‌سازی پنل مدیریت شاگردان...", components: 40 },
-      { progress: 44, text: "بارگذاری سیستم تمرینات...", components: 52 },
-      { progress: 52, text: "راه‌اندازی مدیریت برنامه غذایی...", components: 64 },
-      { progress: 60, text: "بارگذاری سیستم مکمل‌ها...", components: 76 },
-      { progress: 68, text: "آماده‌سازی پنل مربی...", components: 88 },
-      { progress: 76, text: "بارگذاری سیستم پشتیبان‌گیری...", components: 100 },
-      { progress: 84, text: "راه‌اندازی داشبورد هوشمند...", components: 112 },
-      { progress: 92, text: "تکمیل رابط‌های کاربری...", components: 120 },
+      { progress: 10, text: "بررسی سازگاری سیستم...", components: 13 },
+      { progress: 20, text: "بارگذاری هسته اصلی برنامه...", components: 26 },
+      { progress: 35, text: "راه‌اندازی رابط کاربری...", components: 45 },
+      { progress: 50, text: "بارگذاری سیستم مدیریت...", components: 64 },
+      { progress: 65, text: "بارگذاری سیستم تغذیه و تمرینات...", components: 88 },
+      { progress: 80, text: "راه‌اندازی داشبورد هوشمند...", components: 112 },
       { progress: 100, text: "سیستم کاملاً آماده است!", components: 128 }
     ];
     
     let currentStep = 0;
     
+    // کاهش زمان بارگذاری
     const progressInterval = setInterval(() => {
       if (currentStep < loadingSteps.length) {
         const step = loadingSteps[currentStep];
@@ -96,7 +95,7 @@ export const useLoadingState = () => {
         clearInterval(progressInterval);
         console.log('All systems loaded successfully');
       }
-    }, 1100); // هر مرحله 1.1 ثانیه
+    }, 650); // زمان‌بندی سریع‌تر برای هر مرحله
     
     return () => clearInterval(progressInterval);
   }, []);

@@ -1,3 +1,4 @@
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -10,20 +11,31 @@ function MainApp() {
   const [isInitialLoading, setIsInitialLoading] = React.useState(true);
   const [appVersion, setAppVersion] = React.useState('');
   
-  // دریافت نسخه از Manifest.json
+  // دریافت نسخه از Manifest.json - بهینه‌سازی شده با کش
   React.useEffect(() => {
+    const cachedVersion = localStorage.getItem('app_version');
+    
+    // اگر نسخه در localStorage وجود داشت، آن را استفاده کن
+    if (cachedVersion) {
+      setAppVersion(cachedVersion);
+      console.log(`Using cached app version: ${cachedVersion}`);
+    }
+    
+    // در هر صورت، دریافت نسخه جدید از Manifest.json
     const fetchVersion = async () => {
       try {
         const response = await fetch('/Manifest.json');
         const manifest = await response.json();
         const version = manifest.version || 'نامشخص';
-        setAppVersion(version);
-        localStorage.setItem('app_version', version);
-        console.log(`App version loaded from Manifest.json: ${version}`);
+        
+        // ذخیره نسخه در localStorage برای استفاده بعدی
+        if (version !== cachedVersion) {
+          localStorage.setItem('app_version', version);
+          setAppVersion(version);
+          console.log(`Updated app version from Manifest.json: ${version}`);
+        }
       } catch (error) {
         console.error('Error loading version from Manifest.json:', error);
-        const cachedVersion = localStorage.getItem('app_version') || 'خطا در بارگذاری';
-        setAppVersion(cachedVersion);
       }
     };
     
@@ -35,25 +47,14 @@ function MainApp() {
     setIsInitialLoading(false);
   }, [appVersion]);
   
+  // بهینه‌سازی رندرینگ برای جلوگیری از overlay زیرین
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-      {isInitialLoading && (
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}>
-          <LoadingScreen onLoadingComplete={handleLoadingComplete} />
-        </div>
-      )}
-      <div style={{ 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        width: '100%', 
-        height: '100%',
-        opacity: isInitialLoading ? 0 : 1,
-        transition: 'opacity 0.3s ease-in-out',
-        pointerEvents: isInitialLoading ? 'none' : 'auto'
-      }}>
+      {isInitialLoading ? (
+        <LoadingScreen onLoadingComplete={handleLoadingComplete} />
+      ) : (
         <App />
-      </div>
+      )}
     </div>
   );
 }
@@ -61,7 +62,7 @@ function MainApp() {
 // متغیر برای نگهداری root
 let root: any = null;
 
-// تابع راه‌اندازی اصلی برنامه
+// تابع راه‌اندازی اصلی برنامه - بهینه شده
 function startApp() {
   try {
     console.log('Starting app initialization...');
@@ -100,7 +101,7 @@ function startApp() {
   }
 }
 
-// بررسی آماده بودن DOM
+// راه‌اندازی سریع برنامه
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startApp);
 } else {

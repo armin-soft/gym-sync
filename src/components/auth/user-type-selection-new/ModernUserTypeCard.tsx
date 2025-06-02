@@ -3,7 +3,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { LucideIcon, ArrowLeft, CheckCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface UserType {
   id: 'management' | 'student';
@@ -14,11 +13,6 @@ interface UserType {
   gradient: string;
   features: string[];
   badge: string;
-  stats: {
-    users: string;
-    success: string;
-    rating: string;
-  };
 }
 
 interface ModernUserTypeCardProps {
@@ -49,11 +43,11 @@ export const ModernUserTypeCard: React.FC<ModernUserTypeCardProps> = ({
       initial={{ opacity: 0, y: 50, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ 
-        delay: index * 0.2,
-        duration: 0.8,
+        delay: index * 0.1,
+        duration: 0.4,
         ease: "easeOut"
       }}
-      whileHover={!isDisabled ? { y: -8, scale: 1.02 } : {}}
+      whileHover={!isDisabled ? { y: -4, scale: 1.01 } : {}}
       className={`relative group ${!isDisabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
       onClick={handleClick}
       dir="rtl"
@@ -67,7 +61,7 @@ export const ModernUserTypeCard: React.FC<ModernUserTypeCardProps> = ({
       {/* کارت اصلی */}
       <div className={`relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-2 ${
         isSelected ? 'border-blue-500 shadow-2xl' : 'border-slate-200/50 dark:border-slate-700/50 shadow-xl'
-      } rounded-3xl overflow-hidden transition-all duration-500 ${
+      } rounded-3xl overflow-hidden transition-all duration-300 ${
         !isDisabled ? 'hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-2xl' : 'opacity-75'
       }`}>
         
@@ -120,36 +114,14 @@ export const ModernUserTypeCard: React.FC<ModernUserTypeCardProps> = ({
             </p>
           </div>
 
-          {/* آمار */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="text-center p-3 bg-slate-50/50 dark:bg-slate-800/50 rounded-xl">
-              <div className="text-lg font-bold text-slate-900 dark:text-white">
-                {toPersianNumbers(userType.stats.users)}
-              </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">کاربران</div>
-            </div>
-            <div className="text-center p-3 bg-slate-50/50 dark:bg-slate-800/50 rounded-xl">
-              <div className="text-lg font-bold text-green-600">
-                {toPersianNumbers(userType.stats.success)}%
-              </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">موفقیت</div>
-            </div>
-            <div className="text-center p-3 bg-slate-50/50 dark:bg-slate-800/50 rounded-xl">
-              <div className="text-lg font-bold text-amber-600">
-                {toPersianNumbers(userType.stats.rating)}
-              </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">امتیاز</div>
-            </div>
-          </div>
-
           {/* لیست ویژگی‌ها */}
-          <div className="space-y-3 mb-8">
+          <div className="space-y-2 mb-8">
             {userType.features.map((feature, index) => (
               <motion.div
                 key={feature}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * index + 0.5 }}
+                transition={{ delay: 0.05 * index + 0.3 }}
                 className="flex items-center justify-between p-3 bg-slate-50/50 dark:bg-slate-800/50 rounded-xl"
               >
                 <span className="text-slate-700 dark:text-slate-200 font-medium">
