@@ -18,6 +18,17 @@ export const usePersianDate = () => {
     return months[monthIndex];
   };
 
+  const getPersianSeason = (monthIndex: number): string => {
+    // فروردین، اردیبهشت، خرداد = بهار
+    if (monthIndex >= 0 && monthIndex <= 2) return 'بهار';
+    // تیر، مرداد، شهریور = تابستان
+    if (monthIndex >= 3 && monthIndex <= 5) return 'تابستان';
+    // مهر، آبان، آذر = پاییز
+    if (monthIndex >= 6 && monthIndex <= 8) return 'پاییز';
+    // دی، بهمن، اسفند = زمستان
+    return 'زمستان';
+  };
+
   const formatPersianDate = (date: Date): string => {
     // Get Gregorian date components
     const year = date.getFullYear();
@@ -40,9 +51,10 @@ export const usePersianDate = () => {
     // Get Persian day and month names
     const dayName = getPersianDayName(dayOfWeek);
     const monthName = getPersianMonthName(persianMonth - 1);
+    const seasonName = getPersianSeason(persianMonth - 1);
 
-    // Format: "دوشنبه ۱۲ خرداد ۱۴۰۴"
-    return `${dayName} ${toPersianNumbers(persianDay.toString())} ${monthName} ${toPersianNumbers(persianYear.toString())}`;
+    // Format: "دوشنبه ۱۲ خرداد ۱۴۰۴ - بهار"
+    return `${dayName} ${toPersianNumbers(persianDay.toString())} ${monthName} ${toPersianNumbers(persianYear.toString())} - ${seasonName}`;
   };
 
   useEffect(() => {

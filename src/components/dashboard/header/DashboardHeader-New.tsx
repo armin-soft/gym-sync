@@ -2,7 +2,20 @@
 import { motion } from "framer-motion";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { usePersianDate } from "@/hooks/usePersianDate";
-import { Calendar, Clock, User, Crown, Sparkles } from "lucide-react";
+import { 
+  Calendar, 
+  Clock, 
+  Crown, 
+  Sparkles,
+  Moon,
+  CloudMoon,
+  Sunrise,
+  Sun,
+  CloudSun,
+  Sunset,
+  CloudSunRain,
+  Snowflake
+} from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -27,11 +40,45 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
     });
   };
 
+  const getTimeIcon = () => {
+    const hour = new Date().getHours();
+    
+    if (hour >= 0 && hour < 3) return Moon; // نیمه شب - شب دیر
+    if (hour >= 3 && hour < 5) return CloudMoon; // پیش سحر
+    if (hour >= 5 && hour < 6) return Sunrise; // سحر
+    if (hour >= 6 && hour < 8) return Sunrise; // طلوع آفتاب
+    if (hour >= 8 && hour < 11) return Sun; // صبح
+    if (hour >= 11 && hour < 12) return Sun; // پیش از ظهر
+    if (hour >= 12 && hour < 14) return Sun; // ظهر
+    if (hour >= 14 && hour < 17) return CloudSun; // بعد از ظهر
+    if (hour >= 17 && hour < 19) return Sunset; // عصر
+    if (hour >= 19 && hour < 20) return Sunset; // غروب
+    if (hour >= 20 && hour < 22) return CloudSunRain; // اوایل شب
+    return CloudMoon; // شب
+  };
+
+  const getSeasonIcon = (dateString: string) => {
+    if (dateString.includes('بهار')) return Sun;
+    if (dateString.includes('تابستان')) return Sun;
+    if (dateString.includes('پاییز')) return CloudSun;
+    if (dateString.includes('زمستان')) return Snowflake;
+    return Calendar;
+  };
+
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "صبح بخیر";
-    if (hour < 18) return "ظهر بخیر";
-    return "عصر بخیر";
+    if (hour >= 0 && hour < 3) return "نیمه شب";
+    if (hour >= 3 && hour < 5) return "پیش سحر";
+    if (hour >= 5 && hour < 6) return "سحر";
+    if (hour >= 6 && hour < 8) return "طلوع آفتاب";
+    if (hour >= 8 && hour < 11) return "صبح بخیر";
+    if (hour >= 11 && hour < 12) return "پیش از ظهر";
+    if (hour >= 12 && hour < 14) return "ظهر بخیر";
+    if (hour >= 14 && hour < 17) return "بعد از ظهر";
+    if (hour >= 17 && hour < 19) return "عصر بخیر";
+    if (hour >= 19 && hour < 20) return "غروب";
+    if (hour >= 20 && hour < 22) return "اوایل شب";
+    return "شب بخیر";
   };
 
   const getInitials = (name: string) => {
@@ -42,6 +89,9 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
       .slice(0, 2)
       .toUpperCase();
   };
+
+  const TimeIcon = getTimeIcon();
+  const SeasonIcon = getSeasonIcon(persianDate);
 
   return (
     <motion.div 
@@ -91,14 +141,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
           <div>
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-3xl font-bold">
-                {getGreeting()} 
-                <motion.span
-                  animate={{ rotate: [0, 15, -15, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="inline-block mr-2"
-                >
-                  👋
-                </motion.span>
+                {getGreeting()}
               </h1>
             </div>
             
@@ -140,7 +183,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
                 animate={{ rotate: 360 }}
                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
               >
-                <Clock className="w-5 h-5 text-white/80" />
+                <TimeIcon className="w-5 h-5 text-white/80" />
               </motion.div>
               <div className="text-right">
                 <motion.div 
@@ -166,7 +209,7 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
             transition={{ type: "spring", stiffness: 300 }}
           >
             <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-white/80" />
+              <SeasonIcon className="w-5 h-5 text-white/80" />
               <div className="text-right">
                 <div className="text-sm font-medium">
                   {persianDate}
