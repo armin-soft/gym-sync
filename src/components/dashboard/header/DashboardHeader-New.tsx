@@ -2,23 +2,9 @@
 import { motion } from "framer-motion";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { usePersianDate } from "@/hooks/usePersianDate";
-import { 
-  Calendar, 
-  Clock, 
-  Crown, 
-  Sparkles,
-  Moon,
-  CloudMoon,
-  Sunrise,
-  Sun,
-  CloudSun,
-  Sunset,
-  CloudRain,
-  Snowflake
-} from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { HeaderProfile } from "./components/HeaderProfile";
+import { HeaderTimeDate } from "./components/HeaderTimeDate";
+import { getGreeting } from "./utils/timeUtils";
 
 interface DashboardHeaderNewProps {
   trainerProfile: {
@@ -31,74 +17,7 @@ interface DashboardHeaderNewProps {
 export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardHeaderNewProps) => {
   const currentTime = useCurrentTime();
   const persianDate = usePersianDate();
-
-  const formatTimeWithSeconds = (date: Date) => {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-    return toPersianNumbers(`${hours}:${minutes}:${seconds}`);
-  };
-
-  const getTimeIcon = () => {
-    const hour = currentTime.getHours();
-    
-    if (hour >= 0 && hour < 3) return Moon;
-    if (hour >= 3 && hour < 5) return CloudMoon;
-    if (hour >= 5 && hour < 6) return Sunrise;
-    if (hour >= 6 && hour < 8) return Sunrise;
-    if (hour >= 8 && hour < 11) return Sun;
-    if (hour >= 11 && hour < 12) return Sun;
-    if (hour >= 12 && hour < 14) return Sun;
-    if (hour >= 14 && hour < 17) return CloudSun;
-    if (hour >= 17 && hour < 19) return Sunset;
-    if (hour >= 19 && hour < 20) return Sunset;
-    if (hour >= 20 && hour < 22) return CloudRain;
-    return CloudMoon;
-  };
-
-  const getSeasonIcon = () => {
-    const now = new Date();
-    const month = now.getMonth() + 1; // JavaScript months are 0-based
-    
-    // تبدیل ماه میلادی به فصل شمسی
-    // فروردین تا خرداد (مارس تا مه) = بهار
-    if ((month >= 3 && month <= 5)) return Sun;
-    // تیر تا شهریور (ژوئن تا اوت) = تابستان  
-    if ((month >= 6 && month <= 8)) return Sun;
-    // مهر تا آذر (سپتامبر تا نوامبر) = پاییز
-    if ((month >= 9 && month <= 11)) return CloudSun;
-    // دی تا اسفند (دسامبر تا فوریه) = زمستان
-    return Snowflake;
-  };
-
-  const getGreeting = () => {
-    const hour = currentTime.getHours();
-    if (hour >= 0 && hour < 3) return "نیمه شب بخیر";
-    if (hour >= 3 && hour < 5) return "پیش سحر بخیر";
-    if (hour >= 5 && hour < 6) return "سحر بخیر";
-    if (hour >= 6 && hour < 8) return "طلوع آفتاب";
-    if (hour >= 8 && hour < 11) return "صبح بخیر";
-    if (hour >= 11 && hour < 12) return "پیش از ظهر بخیر";
-    if (hour >= 12 && hour < 14) return "ظهر بخیر";
-    if (hour >= 14 && hour < 17) return "بعد از ظهر بخیر";
-    if (hour >= 17 && hour < 19) return "عصر بخیر";
-    if (hour >= 19 && hour < 20) return "غروب بخیر";
-    if (hour >= 20 && hour < 22) return "اوایل شب بخیر";
-    return "شب بخیر";
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .slice(0, 2)
-      .toUpperCase();
-  };
-
-  // اینجا آیکون‌ها به عنوان کامپوننت دریافت می‌شوند
-  const TimeIcon = getTimeIcon();
-  const SeasonIcon = getSeasonIcon();
+  const greeting = getGreeting(currentTime);
 
   return (
     <motion.div 
@@ -108,142 +27,22 @@ export const DashboardHeaderNew = ({ trainerProfile, totalStudents }: DashboardH
       className="relative overflow-hidden rounded-3xl p-8 mb-8"
       style={{ background: 'var(--bg-gradient-primary)' }}
     >
-      {/* المان‌های تزیینی */}
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/15 rounded-full blur-2xl" />
       </div>
 
       <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 text-white">
+        <HeaderProfile 
+          trainerProfile={trainerProfile}
+          totalStudents={totalStudents}
+          greeting={greeting}
+        />
         
-        {/* بخش پروفایل مربی */}
-        <div className="flex items-center gap-6">
-          <div className="relative">
-            <motion.div 
-              className="absolute -inset-1 rounded-full bg-white/30 blur-sm"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            
-            <Avatar className="h-20 w-20 border-4 border-white/30 relative shadow-xl">
-              <AvatarImage 
-                src={trainerProfile.image} 
-                alt="تصویر پروفایل"
-              />
-              <AvatarFallback className="bg-white/20 text-white font-bold text-lg backdrop-blur-sm">
-                {getInitials(trainerProfile.name)}
-              </AvatarFallback>
-            </Avatar>
-            
-            {/* نشان تاج */}
-            <motion.div 
-              className="absolute -top-2 -right-2 p-1.5 rounded-full bg-yellow-400 shadow-lg"
-              animate={{ rotate: [-5, 5, -5] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              <Crown className="h-4 w-4 text-white" fill="currentColor" />
-            </motion.div>
-          </div>
-
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold">
-                {getGreeting()}
-              </h1>
-            </div>
-            
-            <div className="flex items-center gap-3 mb-2">
-              <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm">
-                {trainerProfile.name}
-              </Badge>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring" }}
-                className="flex items-center gap-1 text-xs bg-emerald-400/20 text-emerald-100 px-2 py-1 rounded-full"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>مربی حرفه‌ای</span>
-              </motion.div>
-            </div>
-            
-            <p className="text-white/80">
-              مدیریت حرفه‌ای برنامه‌های تمرینی و تغذیه
-            </p>
-            
-            <div className="mt-2 text-sm text-white/70">
-              شاگردان فعال: {toPersianNumbers(totalStudents.toString())}
-            </div>
-          </div>
-        </div>
-
-        {/* بخش زمان و تاریخ */}
-        <div className="flex flex-col gap-4">
-          {/* زمان فعلی با ثانیه */}
-          <motion.div 
-            className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <div className="flex items-center gap-3">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-              >
-                <TimeIcon className="w-5 h-5 text-white/80" />
-              </motion.div>
-              <div className="text-right">
-                <motion.div 
-                  className="text-xl font-bold"
-                  key={formatTimeWithSeconds(currentTime)}
-                  initial={{ scale: 1.1 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.2 }}
-                  style={{ fontFamily: 'Vazir, sans-serif' }}
-                >
-                  {formatTimeWithSeconds(currentTime)}
-                </motion.div>
-                <div className="text-xs text-white/70">
-                  زمان فعلی
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* تاریخ فارسی با آیکون فصل */}
-          <motion.div 
-            className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <div className="flex items-center gap-3">
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                  rotate: [0, 5, -5, 0]
-                }}
-                transition={{ 
-                  duration: 4, 
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <SeasonIcon className="w-5 h-5 text-white/80" />
-              </motion.div>
-              <div className="text-right">
-                <div 
-                  className="text-sm font-medium"
-                  style={{ fontFamily: 'Vazir, sans-serif' }}
-                >
-                  {persianDate}
-                </div>
-                <div className="text-xs text-white/70">
-                  تاریخ امروز
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        <HeaderTimeDate 
+          currentTime={currentTime}
+          persianDate={persianDate}
+        />
       </div>
     </motion.div>
   );

@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
 import { Student } from "@/components/students/StudentTypes";
@@ -57,7 +56,6 @@ export const DashboardContentNew = ({
       animate="animate"
       className="min-h-screen w-full"
     >
-      {/* هدر داشبورد */}
       <motion.div variants={itemVariants}>
         <DashboardHeaderNew 
           trainerProfile={trainerProfile}
@@ -65,27 +63,19 @@ export const DashboardContentNew = ({
         />
       </motion.div>
 
-      {/* شبکه آمار */}
       <motion.div variants={itemVariants}>
         <StatsGridNew stats={stats} />
       </motion.div>
 
-      {/* شبکه محتوای اصلی */}
       <div className={`grid gap-8 ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
-        
-        {/* ستون اصلی */}
         <motion.div 
           variants={itemVariants}
           className={deviceInfo.isMobile ? '' : 'xl:col-span-2 space-y-8'}
         >
-          {/* دسترسی سریع */}
           <QuickActionsNew />
-          
-          {/* نمایش شاگردان */}
           <StudentsOverviewNew students={students} />
         </motion.div>
         
-        {/* ستون کناری - اطلاعات تکمیلی */}
         <motion.div 
           variants={itemVariants}
           className="space-y-8"
