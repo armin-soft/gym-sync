@@ -23,6 +23,11 @@ export function RestoreSection({ dataKeys }: RestoreSectionProps) {
     handleFileRestore(file, dataKeys);
   };
 
+  const triggerFileInput = () => {
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fileInput?.click();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -79,7 +84,7 @@ export function RestoreSection({ dataKeys }: RestoreSectionProps) {
               />
 
               <Button
-                onClick={() => document.querySelector('input[type="file"]')?.click()}
+                onClick={triggerFileInput}
                 disabled={isLoading}
                 className="w-full bg-gradient-to-r from-sky-500 via-emerald-500 to-sky-600 hover:from-sky-600 hover:via-emerald-600 hover:to-sky-700 text-white border-0 rounded-2xl py-6 text-lg font-bold shadow-xl hover:shadow-2xl transition-all duration-300"
               >
