@@ -4,15 +4,15 @@ import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
-import { DashboardLayout } from "@/components/dashboard/layout/DashboardLayout";
-import { DashboardContent } from "@/components/dashboard/DashboardContent";
+import { DashboardLayoutNew } from "@/components/dashboard/layout/DashboardLayout-New";
+import { DashboardContentNew } from "@/components/dashboard/DashboardContent-New";
 
 const Index = () => {
   const stats = useDashboardStats();
   const currentTime = useCurrentTime();
   const [students, setStudents] = useState<Student[]>([]);
   
-  const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"","image":"/placeholder.svg"}');
+  const trainerProfile = JSON.parse(localStorage.getItem('trainerProfile') || '{"name":"مربی حرفه‌ای","image":""}');
 
   useEffect(() => {
     try {
@@ -36,14 +36,14 @@ const Index = () => {
 
   return (
     <PageContainer fullWidth noPadding>
-      <DashboardLayout>
-        <DashboardContent 
+      <DashboardLayoutNew>
+        <DashboardContentNew 
           stats={stats}
           currentTime={currentTime}
           students={students}
           trainerProfile={trainerProfile}
         />
-      </DashboardLayout>
+      </DashboardLayoutNew>
     </PageContainer>
   );
 };

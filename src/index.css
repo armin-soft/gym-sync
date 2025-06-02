@@ -12,6 +12,7 @@
 @import './styles/responsive.css';
 @import './styles/scrollbar.css';
 @import './styles/media-queries.css';
+@import './styles/custom-colors-new.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
