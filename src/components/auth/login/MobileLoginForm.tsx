@@ -4,6 +4,7 @@ import { ModernErrorMessage } from "./ModernErrorMessage";
 import { PhoneInputStep } from "./steps/PhoneInputStep";
 import { CodeVerificationStep } from "./steps/CodeVerificationStep";
 import { containerVariants, itemVariants } from "./utils/animationVariants";
+import { getOperatorInfo } from "@/lib/utils/operatorUtils";
 import type { TrainerProfile } from "@/types/trainer";
 
 interface MobileLoginFormProps {
@@ -88,41 +89,13 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     setLoading(true);
     setError("");
 
-    // Get current failed attempts
-    const attempts = parseInt(localStorage.getItem("loginAttempts") || "0");
-
     // Check for correct activation code: 012345
     if (code !== "012345") {
-      const newAttempts = attempts + 1;
-      localStorage.setItem("loginAttempts", newAttempts.toString());
-
-      // Reset the code input field when incorrect
       setCode("");
-
-      // Lock account after 3 failed attempts
-      if (newAttempts >= 3) {
-        const lockExpiry = new Date();
-        lockExpiry.setHours(lockExpiry.getHours() + 24); // Lock for 24 hours
-        localStorage.setItem("loginLockExpiry", lockExpiry.toString());
-        
-        setError("حساب شما به دلیل تلاش‌های ناموفق قفل شد");
-        setLoading(false);
-        
-        // Refresh page to show lock screen
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-        return;
-      }
-
-      setError(`کد وارد شده اشتباه است. ${3 - newAttempts} تلاش باقی‌مانده`);
+      setError("کد وارد شده اشتباه است");
       setLoading(false);
       return;
     }
-
-    // Reset failed attempts on successful login
-    localStorage.removeItem("loginAttempts");
-    localStorage.removeItem("loginLockExpiry");
 
     setTimeout(() => {
       localStorage.setItem("isLoggedIn", "true");
@@ -153,6 +126,9 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
     setError("");
   };
 
+  // Get operator info for display
+  const operatorInfo = phone.length >= 4 ? getOperatorInfo(phone) : null;
+
   return (
     <>
       <ModernErrorMessage error={error} />
@@ -166,6 +142,7 @@ export const MobileLoginForm = ({ onLoginSuccess }: MobileLoginFormProps) => {
           containerVariants={containerVariants}
           itemVariants={itemVariants}
           allowedPhones={getAllowedPhones()}
+          operatorInfo={operatorInfo}
         />
       ) : (
         <CodeVerificationStep
