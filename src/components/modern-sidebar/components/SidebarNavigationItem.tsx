@@ -2,11 +2,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, Sparkles } from "lucide-react";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarItem } from "../types";
+import { useSidebarDimensions } from "../utils/deviceUtils";
+import { NavigationItemIcon } from "./navigation-item/NavigationItemIcon";
+import { NavigationItemContent } from "./navigation-item/NavigationItemContent";
 
 interface SidebarNavigationItemProps {
   item: SidebarItem;
@@ -22,7 +23,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
   const location = useLocation();
   const isActive = location.pathname === item.href;
   const [isHovered, setIsHovered] = useState(false);
-  const deviceInfo = useDeviceInfo();
+  const { deviceInfo } = useSidebarDimensions();
   
   const itemVariants = {
     hidden: { opacity: 0, x: 20, y: 10 },
@@ -103,87 +104,19 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
         )}
         
         <div className="relative z-10 flex items-center gap-3" dir="rtl">
-          {/* Icon Container */}
-          <motion.div 
-            className={cn(
-              "flex-shrink-0 rounded-lg flex items-center justify-center relative overflow-hidden",
-              getIconContainer(),
-              isActive 
-                ? "bg-white/25 text-white shadow-md" 
-                : `bg-gradient-to-br ${item.gradient} text-white shadow-sm`
-            )}
-            whileHover={{ scale: 1.05, rotate: isActive ? 0 : 3 }}
-            transition={{ type: "spring", stiffness: 400 }}
-          >
-            {!isActive && (
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-            )}
-            <item.icon className={cn(getIconSize(), "relative z-10")} />
-            
-            {/* Sparkle effect for new items */}
-            {item.isNew && (
-              <motion.div
-                className="absolute -top-0.5 -right-0.5"
-                animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Sparkles className="w-2.5 h-2.5 text-yellow-400" />
-              </motion.div>
-            )}
-          </motion.div>
+          <NavigationItemIcon
+            item={item}
+            isActive={isActive}
+            iconSize={getIconSize()}
+            iconContainer={getIconContainer()}
+          />
           
-          {/* Content */}
-          <div className="flex-1 min-w-0" dir="rtl">
-            <div className="flex items-center justify-between mb-0.5" dir="rtl">
-              <motion.h3 
-                className={cn(
-                  "font-bold text-right",
-                  deviceInfo.isMobile ? "text-sm" : "text-sm",
-                  isActive ? "text-white" : "text-emerald-800 dark:text-emerald-200"
-                )}
-                layoutId={`title-${item.href}`}
-              >
-                {item.title}
-              </motion.h3>
-              
-              {/* Badges */}
-              <div className="flex items-center gap-1">
-                {item.badge && (
-                  <Badge 
-                    variant="secondary" 
-                    className={cn(
-                      "text-3xs px-1.5 py-0.5 shadow-sm",
-                      item.badgeColor || "bg-amber-500",
-                      isActive ? "bg-white/20 text-white" : "text-white"
-                    )}
-                  >
-                    {item.badge}
-                  </Badge>
-                )}
-                
-                {item.isNew && (
-                  <Badge variant="secondary" className="text-3xs px-1.5 py-0.5 bg-green-500 text-white shadow-sm">
-                    جدید
-                  </Badge>
-                )}
-              </div>
-            </div>
-            
-            <motion.p 
-              className={cn(
-                "text-right leading-relaxed",
-                deviceInfo.isMobile ? "text-2xs" : "text-xs",
-                isActive ? "text-white/85" : "text-emerald-600 dark:text-emerald-400"
-              )}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
-              {item.subtitle}
-            </motion.p>
-          </div>
+          <NavigationItemContent
+            item={item}
+            isActive={isActive}
+            deviceInfo={deviceInfo}
+          />
           
-          {/* Arrow indicator */}
           <motion.div
             className={cn(
               "flex-shrink-0 transition-all duration-200",

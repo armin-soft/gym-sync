@@ -3,7 +3,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarNavigationItem } from "./SidebarNavigationItem";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { NavigationHeader } from "./navigation/NavigationHeader";
+import { NavigationFooter } from "./navigation/NavigationFooter";
+import { useSidebarDimensions } from "../utils/deviceUtils";
 import { cn } from "@/lib/utils";
 import { SidebarItem } from "../types";
 
@@ -16,13 +18,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   items,
   onClose
 }) => {
-  const deviceInfo = useDeviceInfo();
-  
-  const getPadding = () => {
-    if (deviceInfo.isMobile) return "p-3";
-    if (deviceInfo.isTablet) return "p-3";
-    return "p-4";
-  };
+  const { getNavigationPadding } = useSidebarDimensions();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -38,36 +34,14 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   return (
     <ScrollArea className="h-full">
       <motion.div 
-        className={cn("space-y-1.5", getPadding())}
+        className={cn("space-y-1.5", getNavigationPadding())}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         dir="rtl"
       >
-        {/* Navigation Header */}
-        <motion.div
-          className="mb-4 text-center"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h4 className="text-sm font-bold bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-600 bg-clip-text text-transparent mb-1">
-            پنل مدیریت حرفه‌ای
-          </h4>
-          <p className="text-2xs text-emerald-600/70 dark:text-emerald-400/70">
-            دسترسی سریع به تمام بخش‌های سیستم
-          </p>
-          
-          {/* Decorative line */}
-          <motion.div
-            className="w-12 h-0.5 bg-gradient-to-r from-emerald-400 to-sky-400 rounded-full mx-auto mt-2"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          />
-        </motion.div>
+        <NavigationHeader />
 
-        {/* Navigation Items */}
         <div className="space-y-1">
           {items.map((item, index) => (
             <SidebarNavigationItem
@@ -79,22 +53,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           ))}
         </div>
 
-        {/* Bottom decorative section */}
-        <motion.div
-          className="mt-6 pt-4 border-t border-emerald-200/30 dark:border-emerald-700/30"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          <div className="text-center">
-            <p className="text-2xs text-emerald-600/60 dark:text-emerald-400/60 leading-relaxed">
-              سیستم مدیریت پیشرفته برای مربیان حرفه‌ای
-            </p>
-            <p className="text-3xs text-emerald-500/50 dark:text-emerald-400/50 mt-0.5">
-              همراه شما در مسیر موفقیت ورزشی
-            </p>
-          </div>
-        </motion.div>
+        <NavigationFooter />
       </motion.div>
     </ScrollArea>
   );

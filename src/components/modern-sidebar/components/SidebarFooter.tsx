@@ -1,47 +1,19 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Dumbbell, Zap, Shield, Star, Heart } from "lucide-react";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useSidebarDimensions } from "../utils/deviceUtils";
+import { useAppVersion } from "../hooks/useAppVersion";
 
 interface SidebarFooterProps {
   gymName?: string;
 }
 
 export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
-  const deviceInfo = useDeviceInfo();
-  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
-  
-  useEffect(() => {
-    const getVersionFromManifest = async () => {
-      try {
-        const response = await fetch('/Manifest.json');
-        const manifest = await response.json();
-        
-        if (manifest && manifest.version) {
-          setAppVersion(manifest.version);
-          localStorage.setItem('app_version', manifest.version);
-        } else {
-          const cachedVersion = localStorage.getItem('app_version');
-          setAppVersion(cachedVersion || "نامشخص");
-        }
-      } catch (err) {
-        console.error('Error loading Manifest.json:', err);
-        const cachedVersion = localStorage.getItem('app_version');
-        setAppVersion(cachedVersion || "خطا در بارگذاری");
-      }
-    };
-    
-    getVersionFromManifest();
-  }, []);
-  
-  const getFooterPadding = () => {
-    if (deviceInfo.isMobile) return "p-3";
-    if (deviceInfo.isTablet) return "p-3";
-    return "p-4";
-  };
+  const { getFooterPadding, deviceInfo } = useSidebarDimensions();
+  const appVersion = useAppVersion();
   
   const getContentPadding = () => {
     if (deviceInfo.isMobile) return "p-3";
@@ -59,7 +31,6 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.8, duration: 0.6 }}
     >
-      {/* Background decorations */}
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-emerald-400/15 to-sky-400/5 rounded-full blur-xl" />
       
       <motion.div 
@@ -70,7 +41,6 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
         whileHover={{ scale: 1.01, y: -1 }}
         transition={{ type: "spring", stiffness: 300 }}
       >
-        {/* Animated background effect */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
           animate={{ x: ['-100%', '200%'] }}
@@ -82,7 +52,6 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
         />
         
         <div className="relative z-10 flex items-center gap-3">
-          {/* Icon Container */}
           <motion.div 
             className="flex-shrink-0 rounded-xl bg-gradient-to-br from-emerald-500 via-sky-500 to-emerald-600 p-2.5 shadow-lg relative overflow-hidden"
             animate={{ 
@@ -97,7 +66,6 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
             <div className="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent" />
             <Dumbbell className="h-5 w-5 text-white relative z-10" />
             
-            {/* Floating heart effect */}
             <motion.div
               className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5"
               animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
@@ -107,7 +75,6 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
             </motion.div>
           </motion.div>
           
-          {/* Content */}
           <div className="flex-1">
             <motion.div 
               className="flex items-center gap-1.5 mb-1.5"
@@ -151,7 +118,6 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({ gymName }) => {
           </div>
         </div>
         
-        {/* Bottom decorative gradient */}
         <motion.div 
           className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 via-sky-500 to-emerald-500"
           initial={{ scaleX: 0 }}

@@ -6,7 +6,7 @@ import { SidebarHeader } from "./components/SidebarHeader";
 import { SidebarNavigation } from "./components/SidebarNavigation";
 import { SidebarFooter } from "./components/SidebarFooter";
 import { SidebarBackground } from "./components/SidebarBackground";
-import { useDeviceInfo } from "@/hooks/use-mobile";
+import { useSidebarDimensions } from "./utils/deviceUtils";
 import { cn } from "@/lib/utils";
 import { SidebarItem, TrainerProfile, SidebarStats } from "./types";
 
@@ -25,14 +25,7 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
   profile,
   stats
 }) => {
-  const deviceInfo = useDeviceInfo();
-  
-  const getSidebarWidth = () => {
-    if (deviceInfo.isMobile) return "w-[280px]";
-    if (deviceInfo.isTablet) return "w-[320px]";
-    if (deviceInfo.isSmallLaptop) return "w-[350px]";
-    return "w-[380px]";
-  };
+  const { getSidebarWidth } = useSidebarDimensions();
 
   return (
     <AnimatePresence>
@@ -49,7 +42,6 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
             <div className="flex h-full flex-col relative" dir="rtl">
               <SidebarBackground />
               
-              {/* Header */}
               <div className="relative z-20 flex-shrink-0">
                 <SidebarHeader 
                   profile={profile}
@@ -58,7 +50,6 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
                 />
               </div>
               
-              {/* Navigation */}
               <div className="relative z-20 flex-1 overflow-hidden">
                 <SidebarNavigation 
                   items={items}
@@ -66,7 +57,6 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
                 />
               </div>
               
-              {/* Footer */}
               <div className="relative z-20 flex-shrink-0">
                 <SidebarFooter gymName={profile.gymName} />
               </div>
