@@ -4,15 +4,14 @@ import { motion } from "framer-motion";
 
 export const LoadingBackground = () => {
   return (
-    <div className="absolute inset-0 w-full min-h-full overflow-hidden">
+    <div className="fixed inset-0 w-full h-full">
       {/* گرادیان اصلی با رنگ‌های انتخاب نوع کاربر - فول اسکرین */}
       <div 
-        className="absolute inset-0 w-full min-h-full bg-gradient-to-br from-emerald-600 via-sky-500 to-emerald-500"
-        style={{ minHeight: 'max(100vh, 100%)' }}
+        className="absolute inset-0 w-full h-full bg-gradient-to-br from-emerald-600 via-sky-500 to-emerald-500"
       />
       
       {/* المان‌های انیمیشنی */}
-      <div className="absolute inset-0 w-full min-h-full" style={{ minHeight: 'max(100vh, 100%)' }}>
+      <div className="absolute inset-0 w-full h-full">
         {/* دایره‌های شناور */}
         <motion.div
           animate={{ 
@@ -60,18 +59,17 @@ export const LoadingBackground = () => {
         />
       </div>
       
-      {/* الگوی نقطه‌ای - تکرار شود */}
+      {/* الگوی نقطه‌ای */}
       <div 
-        className="absolute inset-0 w-full min-h-full opacity-20"
+        className="absolute inset-0 w-full h-full opacity-20"
         style={{ 
           backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.3) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
-          minHeight: 'max(100vh, 100%)'
+          backgroundSize: '30px 30px'
         }}
       />
       
       {/* خطوط شعاعی */}
-      <div className="absolute inset-0 w-full min-h-full" style={{ minHeight: 'max(100vh, 100%)' }}>
+      <div className="absolute inset-0 w-full h-full">
         {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}

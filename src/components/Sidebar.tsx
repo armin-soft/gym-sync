@@ -92,6 +92,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         }
       } catch (error) {
         console.error('Error loading profile from localStorage:', error);
+        setTrainerProfile({
+          name: "مربی",
+          image: "",
+          phone: ""
+        });
       }
     }
   };

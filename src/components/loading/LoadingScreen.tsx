@@ -39,31 +39,25 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed inset-0 w-full h-full overflow-auto z-[9999]"
-        style={{ 
-          position: 'fixed', 
-          top: 0, 
-          left: 0, 
-          width: '100%', 
-          height: '100%',
-          minHeight: '100vh'
-        }}
+        className="fixed inset-0 w-full h-full z-[9999] bg-gradient-to-br from-emerald-600 via-sky-500 to-emerald-500"
       >
         <LoadingBackground />
         
-        <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center p-4">
-          <LoadingContent 
-            gymName={gymName}
-            systemInfo={systemInfo}
-          />
+        <div className="relative z-10 w-full min-h-screen overflow-y-auto">
+          <div className="flex flex-col items-center justify-center min-h-screen p-4">
+            <LoadingContent 
+              gymName={gymName}
+              systemInfo={systemInfo}
+            />
+            
+            <LoadingProgress 
+              progress={progress}
+              loadingText={loadingText}
+            />
+          </div>
           
-          <LoadingProgress 
-            progress={progress}
-            loadingText={loadingText}
-          />
-          
-          {/* اضافه کردن محتوای اضافی برای نمایش اسکرول */}
-          <div className="w-full max-w-4xl mt-16 space-y-8 text-center">
+          {/* محتوای اضافی برای نمایش اسکرول */}
+          <div className="w-full max-w-4xl mx-auto px-4 pb-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                 <h3 className="text-white font-bold text-lg mb-2">مدیریت شاگردان</h3>
@@ -96,7 +90,7 @@ export const LoadingScreen = React.memo<LoadingScreenProps>(({
               </div>
             </div>
             
-            <div className="mt-12 pb-8">
+            <div className="mt-12 text-center">
               <p className="text-white/60 text-sm">
                 © 2024 GymSync Pro - سیستم جامع مدیریت باشگاه
               </p>
