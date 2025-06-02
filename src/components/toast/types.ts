@@ -1,7 +1,7 @@
 
 import * as React from "react";
 
-export type ToastVariant = "default" | "success" | "error" | "warning" | "info";
+export type ToastVariant = "default" | "success" | "error" | "warning" | "info" | "destructive";
 
 export interface ToastType {
   id: string;

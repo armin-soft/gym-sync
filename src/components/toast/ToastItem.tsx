@@ -18,6 +18,7 @@ export const ToastItem = ({ toast }: ToastItemProps) => {
       case "success":
         return <CheckCircle className="responsive-w-xs responsive-h-xs text-emerald-600" />;
       case "error":
+      case "destructive":
         return <AlertCircle className="responsive-w-xs responsive-h-xs text-red-600" />;
       case "warning":
         return <AlertTriangle className="responsive-w-xs responsive-h-xs text-amber-600" />;
@@ -33,6 +34,7 @@ export const ToastItem = ({ toast }: ToastItemProps) => {
       case "success":
         return "bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-100 border-emerald-200 dark:from-emerald-950 dark:via-green-950 dark:to-emerald-900 dark:border-emerald-800";
       case "error":
+      case "destructive":
         return "bg-gradient-to-br from-red-50 via-rose-50 to-red-100 border-red-200 dark:from-red-950 dark:via-rose-950 dark:to-red-900 dark:border-red-800";
       case "warning":
         return "bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 border-amber-200 dark:from-amber-950 dark:via-yellow-950 dark:to-amber-900 dark:border-amber-800";
