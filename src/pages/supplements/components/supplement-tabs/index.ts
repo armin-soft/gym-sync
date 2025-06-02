@@ -1,2 +1,2 @@
 
-export { SupplementTabContent } from "./SupplementTabContent";
+export { SupplementsTabContent } from "./SupplementTabContent";
