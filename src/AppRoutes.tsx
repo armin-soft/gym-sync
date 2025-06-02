@@ -1,64 +1,52 @@
 
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Index from "./pages/Index";
-import Students from "./pages/students";
-import StudentHistory from "./pages/student-history";
-import StudentProgram from "./pages/student-program";
-import Exercises from "./pages/exercises";
-import Diet from "./pages/diet";
-import Supplements from "./pages/supplements";
-import Trainer from "./pages/trainer";
-import Backup from "./pages/backup";
-import Management from "./pages/management";
+import { Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import { LoadingScreen } from "./components/LoadingScreen";
 
-// Student Panel Pages
-import StudentPanel from "./pages/student-panel";
-import StudentProfile from "./pages/student-panel/profile";
-import StudentExercises from "./pages/student-panel/exercises";
-import StudentDiet from "./pages/student-panel/diet";
-import StudentSupplements from "./pages/student-panel/supplements";
+// Lazy load components
+const Index = lazy(() => import("./pages/Index"));
+const Students = lazy(() => import("./pages/students"));
+const StudentProgram = lazy(() => import("./pages/student-program"));
+const StudentHistory = lazy(() => import("./pages/student-history"));
+const Exercises = lazy(() => import("./pages/exercises"));
+const Diet = lazy(() => import("./pages/diet"));
+const Supplements = lazy(() => import("./pages/supplements"));
+const Management = lazy(() => import("./pages/management"));
+const Backup = lazy(() => import("./pages/backup"));
+const Trainer = lazy(() => import("./pages/trainer"));
+const FileManagementNew = lazy(() => import("./pages/file-management-new"));
+
+// Student Panel Routes
+const StudentPanel = lazy(() => import("./pages/student-panel"));
+const StudentPanelExercises = lazy(() => import("./pages/student-panel/exercises"));
+const StudentPanelDiet = lazy(() => import("./pages/student-panel/diet"));
+const StudentPanelSupplements = lazy(() => import("./pages/student-panel/supplements"));
+const StudentPanelProfile = lazy(() => import("./pages/student-panel/profile"));
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      {/* Main Routes */}
-      <Route path="/" element={<Index />} />
-      
-      {/* Management Panel Routes - Enhanced for direct access */}
-      <Route path="/Management" element={<Management />} />
-      <Route path="/Management/*" element={<Management />} />
-      <Route path="/Management/Coach-Profile" element={<Trainer />} />
-      <Route path="/Management/Students" element={<Students />} />
-      <Route path="/Management/Exercise-Movements" element={<Exercises />} />
-      <Route path="/Management/Diet-Plan" element={<Diet />} />
-      <Route path="/Management/Supplements-Vitamins" element={<Supplements />} />
-      <Route path="/Management/Backup-Restore" element={<Backup />} />
-      <Route path="/Management/Student-History" element={<StudentHistory />} />
-      
-      {/* Legacy management routes - redirect to new structure */}
-      <Route path="/students" element={<Navigate to="/Management/Students" replace />} />
-      <Route path="/student-history" element={<Navigate to="/Management/Student-History" replace />} />
-      <Route path="/student-program/:studentId" element={<StudentProgram />} />
-      <Route path="/exercises" element={<Navigate to="/Management/Exercise-Movements" replace />} />
-      <Route path="/diet" element={<Navigate to="/Management/Diet-Plan" replace />} />
-      <Route path="/supplements" element={<Navigate to="/Management/Supplements-Vitamins" replace />} />
-      <Route path="/trainer" element={<Navigate to="/Management/Coach-Profile" replace />} />
-      <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
-      <Route path="/management" element={<Navigate to="/Management" replace />} />
-
-      {/* Student Panel Routes - Enhanced for program display */}
-      <Route path="/Students" element={<StudentPanel />} />
-      <Route path="/Students/*" element={<StudentPanel />} />
-      <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
-      <Route path="/Students/profile" element={<StudentProfile />} />
-      <Route path="/Students/exercises" element={<StudentExercises />} />
-      <Route path="/Students/diet" element={<StudentDiet />} />
-      <Route path="/Students/supplements" element={<StudentSupplements />} />
-
-      {/* Catch all route - improved handling */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense fallback={<LoadingScreen />}>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/students" element={<Students />} />
+        <Route path="/student-program/:id" element={<StudentProgram />} />
+        <Route path="/student-history/:id" element={<StudentHistory />} />
+        <Route path="/exercises" element={<Exercises />} />
+        <Route path="/diet" element={<Diet />} />
+        <Route path="/supplements" element={<Supplements />} />
+        <Route path="/management" element={<Management />} />
+        <Route path="/backup" element={<Backup />} />
+        <Route path="/trainer" element={<Trainer />} />
+        <Route path="/file-management" element={<FileManagementNew />} />
+        
+        {/* Student Panel Routes */}
+        <Route path="/student-panel" element={<StudentPanel />} />
+        <Route path="/student-panel/exercises" element={<StudentPanelExercises />} />
+        <Route path="/student-panel/diet" element={<StudentPanelDiet />} />
+        <Route path="/student-panel/supplements" element={<StudentPanelSupplements />} />
+        <Route path="/student-panel/profile" element={<StudentPanelProfile />} />
+      </Routes>
+    </Suspense>
   );
 };
 
