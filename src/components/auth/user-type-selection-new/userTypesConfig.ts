@@ -1,0 +1,49 @@
+
+import { Shield, GraduationCap } from "lucide-react";
+
+export const userTypesConfig = [
+  {
+    id: 'management' as const,
+    title: 'پنل مدیریت',
+    subtitle: 'مربی و مدیر باشگاه',
+    description: 'دسترسی کامل به سیستم مدیریت باشگاه، شاگردان و برنامه‌های تمرینی',
+    icon: Shield,
+    gradient: 'from-blue-600 to-indigo-600',
+    features: [
+      'مدیریت کامل شاگردان و اعضا',
+      'طراحی برنامه‌های تمرینی پیشرفته',
+      'برنامه‌ریزی تغذیه اختصاصی',
+      'گزارشات تحلیلی و آماری',
+      'مدیریت مکمل‌ها و ویتامین‌ها',
+      'پشتیبان‌گیری و بازیابی اطلاعات'
+    ],
+    badge: 'مدیر',
+    stats: {
+      users: '2847',
+      success: '98',
+      rating: '4.9'
+    }
+  },
+  {
+    id: 'student' as const,
+    title: 'پنل شاگرد',
+    subtitle: 'دسترسی شخصی ورزشکار',
+    description: 'مشاهده برنامه‌های شخصی، پیگیری پیشرفت و دریافت راهنمایی‌های تخصصی',
+    icon: GraduationCap,
+    gradient: 'from-indigo-600 to-purple-600',
+    features: [
+      'مشاهده برنامه تمرینی شخصی',
+      'برنامه تغذیه اختصاصی',
+      'پیگیری پیشرفت و نتایج',
+      'لیست مکمل‌های توصیه شده',
+      'مدیریت اطلاعات شخصی',
+      'دسترسی به تاریخچه فعالیت‌ها'
+    ],
+    badge: 'شاگرد',
+    stats: {
+      users: '15632',
+      success: '94',
+      rating: '4.8'
+    }
+  }
+];

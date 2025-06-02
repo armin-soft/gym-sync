@@ -4,7 +4,7 @@ import { BrowserRouter, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/auth/AuthWrapper";
-import { UserTypeSelection } from "@/components/auth/UserTypeSelection";
+import { UserTypeSelectionNew } from "@/components/auth/UserTypeSelection-New";
 import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -62,9 +62,9 @@ function AppContent() {
     );
   }
 
-  // نمایش صفحه انتخاب نوع کاربر
+  // نمایش صفحه انتخاب نوع کاربر جدید
   if (showUserTypeSelection) {
-    return <UserTypeSelection />;
+    return <UserTypeSelectionNew />;
   }
 
   // نمایش محتوای اصلی

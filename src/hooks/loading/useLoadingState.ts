@@ -18,7 +18,7 @@ export const useLoadingState = () => {
   const [gymName, setGymName] = useState("");
   const [loadingText, setLoadingText] = useState("آماده‌سازی سیستم...");
   const [systemInfo, setSystemInfo] = useState<SystemInfo>({
-    version: "4.1.6",
+    version: "4.2.6",
     totalComponents: 128,
     loadedComponents: 0
   });
