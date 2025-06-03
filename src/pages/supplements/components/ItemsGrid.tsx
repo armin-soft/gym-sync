@@ -32,8 +32,7 @@ export const ItemsGrid: React.FC<ItemsGridProps> = ({
     const matchesCategory = !selectedCategory || item.category === selectedCategory;
     const matchesSearch = !searchQuery || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase()));
     
     return matchesType && matchesCategory && matchesSearch;
   });
@@ -101,10 +100,6 @@ export const ItemsGrid: React.FC<ItemsGridProps> = ({
             <Badge variant="outline" className={`mb-3 ${getIconColors()} border-current`}>
               {item.category}
             </Badge>
-          )}
-
-          {item.description && (
-            <p className="text-gray-600 text-sm mb-4 leading-relaxed">{item.description}</p>
           )}
 
           <div className="space-y-2">

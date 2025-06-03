@@ -179,19 +179,13 @@ export const ModernSupplementGrid: React.FC<ModernSupplementGridProps> = ({
 
                       {supplement.dosage && (
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium">دوز:</span> {supplement.dosage}
+                          <span className="font-medium">دوز:</span> {toPersianNumbers(supplement.dosage)}
                         </p>
                       )}
 
                       {supplement.timing && (
                         <p className="text-sm text-gray-600">
                           <span className="font-medium">زمان:</span> {supplement.timing}
-                        </p>
-                      )}
-
-                      {supplement.description && (
-                        <p className="text-sm text-gray-500 line-clamp-2">
-                          {supplement.description}
                         </p>
                       )}
                     </div>
