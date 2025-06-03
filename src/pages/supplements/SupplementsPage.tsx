@@ -121,6 +121,11 @@ const SupplementsPage = () => {
     }
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSelectedCategory(null); // Reset category selection when changing tabs
+  };
+
   const supplementCount = supplements.filter(s => s.type === 'supplement').length;
   const vitaminCount = supplements.filter(s => s.type === 'vitamin').length;
 
@@ -152,10 +157,7 @@ const SupplementsPage = () => {
             {/* Tab System */}
             <TabSystem
               activeTab={activeTab}
-              onTabChange={(tab) => {
-                setActiveTab(tab);
-                setSelectedCategory(null);
-              }}
+              onTabChange={handleTabChange}
               supplementCount={supplementCount}
               vitaminCount={vitaminCount}
               onAddClick={handleAddSupplement}
@@ -172,14 +174,16 @@ const SupplementsPage = () => {
               activeTab={activeTab}
             />
 
-            {/* Items Grid */}
-            <ItemsGrid
-              items={filteredSupplements}
-              onEdit={handleEditSupplement}
-              onDelete={handleDeleteSupplement}
-              activeTab={activeTab}
-              selectedCategory={selectedCategory}
-            />
+            {/* Items Grid - Only show when a category is selected */}
+            {selectedCategory && (
+              <ItemsGrid
+                items={filteredSupplements}
+                onEdit={handleEditSupplement}
+                onDelete={handleDeleteSupplement}
+                activeTab={activeTab}
+                selectedCategory={selectedCategory}
+              />
+            )}
           </div>
 
           {/* Dialogs */}

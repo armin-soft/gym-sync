@@ -56,7 +56,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-800">دسته‌بندی‌ها</h2>
             <p className="text-sm md:text-base text-gray-500">
-              مدیریت دسته‌بندی‌های {activeTab === "supplement" ? "مکمل‌ها" : "ویتامین‌ها"}
+              برای مشاهده {activeTab === "supplement" ? "مکمل‌ها" : "ویتامین‌ها"}، یک دسته‌بندی انتخاب کنید
             </p>
           </div>
         </div>
@@ -82,26 +82,6 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
           className="pr-10 md:pr-12 text-right border-2 border-gray-200 focus:border-emerald-400 rounded-2xl h-10 md:h-12 text-sm md:text-base"
           dir="rtl"
         />
-      </div>
-
-      {/* All Categories Button - Responsive */}
-      <div className="mb-4">
-        <Button
-          variant={selectedCategory === null ? "default" : "outline"}
-          onClick={() => onSelectCategory(null)}
-          className={`rounded-2xl text-sm md:text-base ${
-            selectedCategory === null
-              ? `bg-gradient-to-r ${getGradientColors()} text-white`
-              : "border-2 border-gray-200 hover:border-gray-300"
-          }`}
-          size="sm"
-        >
-          <Filter className="w-4 h-4 md:w-5 md:h-5 ml-2" />
-          همه دسته‌ها
-          <Badge variant="secondary" className="mr-2 text-xs md:text-sm">
-            {toPersianNumbers(categories.length)}
-          </Badge>
-        </Button>
       </div>
 
       {/* Categories Grid - Improved Responsive */}
