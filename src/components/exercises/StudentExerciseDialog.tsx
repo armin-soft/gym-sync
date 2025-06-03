@@ -1,79 +1,139 @@
 
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ExerciseWithSets } from "@/types/exercise";
-
-interface StudentExerciseDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  studentName: string;
-  onSave: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean;
-  initialExercises: number[];
-  initialExerciseSets?: { [key: number]: number };
-  initialExerciseReps?: { [key: number]: string };
-  initialExercisesDay1?: number[];
-  initialExerciseSetsDay1?: { [key: number]: number };
-  initialExerciseRepsDay1?: { [key: number]: string };
-  initialExercisesDay2?: number[];
-  initialExerciseSetsDay2?: { [key: number]: number };
-  initialExerciseRepsDay2?: { [key: number]: string };
-  initialExercisesDay3?: number[];
-  initialExerciseSetsDay3?: { [key: number]: number };
-  initialExerciseRepsDay3?: { [key: number]: string };
-  initialExercisesDay4?: number[];
-  initialExerciseSetsDay4?: { [key: number]: number };
-  initialExerciseRepsDay4?: { [key: number]: string };
-  initialExercisesDay5?: number[];
-  initialExerciseSetsDay5?: { [key: number]: number };
-  initialExerciseRepsDay5?: { [key: number]: string };
-}
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ExerciseWithSets } from "@/hooks/exercise-selection";
+import ExerciseDialogFooter from "./ExerciseDialogFooter";
+import ExerciseDialogHeader from "./ExerciseDialogHeader";
+import ExerciseDialogLoading from "./dialog/ExerciseDialogLoading";
+import { StudentExerciseDialogState } from "./dialog/StudentExerciseDialogState";
+import StudentExerciseDialogContent from "./dialog/StudentExerciseDialogContent";
+import { StudentExerciseDialogProps } from "./dialog/StudentExerciseDialogProps";
+import { Button } from "../ui/button";
+import { Save } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const StudentExerciseDialog: React.FC<StudentExerciseDialogProps> = ({
   open,
   onOpenChange,
   studentName,
   onSave,
-  initialExercises
+  initialExercises = [],
+  initialExercisesDay1 = [],
+  initialExercisesDay2 = [],
+  initialExercisesDay3 = [],
+  initialExercisesDay4 = [],
+  initialExercisesDay5 = [],
 }) => {
-  const handleSave = () => {
-    // Basic implementation - convert initialExercises to ExerciseWithSets format
-    const exercisesWithSets: ExerciseWithSets[] = initialExercises.map(id => ({
-      id,
-      sets: 3,
-      reps: "10"
-    }));
-    onSave(exercisesWithSets, 1);
-    onOpenChange(false);
-  };
+  const { toast } = useToast();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" dir="rtl">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-right">
-            برنامه تمرینی - {studentName}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="p-4 text-center text-right">
-          <p className="text-gray-600 mb-4">
-            تنظیم برنامه تمرینی برای {studentName}
-          </p>
-          <div className="flex gap-2 justify-end">
-            <button
-              onClick={() => onOpenChange(false)}
-              className="px-4 py-2 border rounded-md hover:bg-gray-50"
-            >
-              انصراف
-            </button>
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            >
-              ذخیره
-            </button>
-          </div>
+      <DialogContent 
+        className="max-w-[100vw] p-0 m-0 h-[100vh] w-[100vw] rounded-none border-none overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 flex flex-col"
+        aria-describedby="exercise-dialog-description"
+      >
+        <DialogTitle className="sr-only">
+          انتخاب تمرین برای {studentName}
+        </DialogTitle>
+        <div id="exercise-dialog-description" className="sr-only">
+          در این صفحه شما می‌توانید تمرین‌های مورد نظر را برای دانش‌آموز انتخاب کنید
         </div>
+        <ExerciseDialogHeader studentName={studentName} />
+
+        <StudentExerciseDialogState
+          open={open}
+          onOpenChange={onOpenChange}
+          studentName={studentName}
+          onSave={onSave}
+          initialExercises={initialExercises}
+          initialExercisesDay1={initialExercisesDay1}
+          initialExercisesDay2={initialExercisesDay2}
+          initialExercisesDay3={initialExercisesDay3}
+          initialExercisesDay4={initialExercisesDay4}
+          initialExercisesDay5={initialExercisesDay5}
+        >
+          {({ 
+            isLoading,
+            activeTab,
+            getActiveTabSelectedExercises,
+            getActiveTabSelectedExercisesWithSets,
+            handleSave,
+            handleSaveDay,
+            handleSaveAndContinue,
+            selectedExercisesDay5,
+            toggleExerciseDay5,
+            exerciseSetsDay5,
+            handleSetsChangeDay5,
+            exerciseRepsDay5,
+            handleRepsChangeDay5,
+            ...contentProps
+          }) => (
+            <>
+              {isLoading ? (
+                <ExerciseDialogLoading />
+              ) : (
+                <>
+                  {/* افزودن دکمه ذخیره روز فعلی در بالای صفحه */}
+                  <div className="flex items-center justify-end gap-2 p-2 bg-white dark:bg-gray-800 border-b">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1 text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+                      onClick={() => {
+                        const exercises = getActiveTabSelectedExercisesWithSets();
+                        const success = handleSaveDay(
+                          exercises,
+                          onSave,
+                          parseInt(activeTab.replace("day", ""))
+                        );
+                        if (success) {
+                          toast({
+                            title: "ذخیره موفق",
+                            description: `تمرین‌های روز ${parseInt(activeTab.replace("day", ""))} با موفقیت ذخیره شدند.`
+                          });
+                        }
+                      }}
+                    >
+                      <Save className="h-3.5 w-3.5" />
+                      <span>ذخیره روز فعلی</span>
+                    </Button>
+                  </div>
+                  
+                  <StudentExerciseDialogContent 
+                    isLoading={isLoading}
+                    activeTab={activeTab}
+                    selectedExercisesDay5={selectedExercisesDay5}
+                    toggleExerciseDay5={toggleExerciseDay5}
+                    exerciseSetsDay5={exerciseSetsDay5}
+                    handleSetsChangeDay5={handleSetsChangeDay5}
+                    exerciseRepsDay5={exerciseRepsDay5}
+                    handleRepsChangeDay5={handleRepsChangeDay5}
+                    handleSaveExercises={(exercisesWithSets, dayNumber) => {
+                      return handleSaveDay(
+                        exercisesWithSets, 
+                        onSave, 
+                        dayNumber || parseInt(activeTab.replace("day", ""))
+                      );
+                    }}
+                    {...contentProps} 
+                  />
+                </>
+              )}
+
+              <ExerciseDialogFooter
+                activeTab={activeTab}
+                selectedExercisesCount={getActiveTabSelectedExercises().length}
+                onCancel={() => onOpenChange(false)}
+                onSave={handleSave}
+                onSaveAndContinue={handleSaveAndContinue}
+              />
+            </>
+          )}
+        </StudentExerciseDialogState>
       </DialogContent>
     </Dialog>
   );

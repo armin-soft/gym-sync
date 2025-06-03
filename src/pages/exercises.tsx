@@ -1,7 +1,4 @@
 
-import React from "react";
-import { ExerciseManagementSystem } from "./exercises/ExerciseManagementSystem";
+import HierarchicalExercisesView from "./exercises/hierarchical-view";
 
-export default function ExercisesPage() {
-  return <ExerciseManagementSystem />;
-}
+export default HierarchicalExercisesView;

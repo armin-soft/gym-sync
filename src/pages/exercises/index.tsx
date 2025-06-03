@@ -1,8 +1,8 @@
 
-import { ExerciseManagementSystem } from "./ExerciseManagementSystem";
+import { ExercisePageContainer } from "./components/ExercisePageContainer";
 
 const ExercisesPage = () => {
-  return <ExerciseManagementSystem />;
+  return <ExercisePageContainer />;
 };
 
 export default ExercisesPage;
