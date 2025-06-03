@@ -31,13 +31,8 @@ import {
   ChefHat
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-interface Meal {
-  id?: number;
-  name: string;
-  type: string;
-  day: string;
-}
+import { Meal } from "./types";
+import { WEEK_DAYS } from "./utils";
 
 interface AddMealDialogProps {
   open: boolean;
@@ -45,10 +40,6 @@ interface AddMealDialogProps {
   meal?: Meal | null;
   onSave: (meal: Omit<Meal, 'id'>) => void;
 }
-
-const WEEK_DAYS = [
-  'شنبه', 'یکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنج شنبه', 'جمعه'
-];
 
 const MEAL_TYPES = [
   { id: 'صبحانه', name: 'صبحانه', icon: Coffee, gradient: 'from-amber-400 to-orange-500' },
