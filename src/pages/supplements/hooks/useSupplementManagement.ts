@@ -33,7 +33,7 @@ export const useSupplementManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Load data from localStorage
+  // Load data from localStorage only - no default data
   useEffect(() => {
     try {
       const savedSupplements = localStorage.getItem('supplements');
@@ -41,69 +41,10 @@ export const useSupplementManagement = () => {
       
       if (savedSupplements) {
         setSupplements(JSON.parse(savedSupplements));
-      } else {
-        // Initialize with real Iranian supplements and vitamins
-        const initialSupplements: Supplement[] = [
-          {
-            id: 1,
-            name: "پروتئین وی",
-            type: "supplement",
-            category: "پروتئین",
-            dosage: "۳۰ گرم",
-            timing: "بعد از تمرین",
-            description: "پروتئین با کیفیت بالا برای رشد عضلات",
-            benefits: ["رشد عضلات", "بهبود بازیابی", "افزایش قدرت"],
-            sideEffects: ["ممکن است باعث ناراحتی معده شود"],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          },
-          {
-            id: 2,
-            name: "کراتین مونوهیدرات",
-            type: "supplement",
-            category: "عملکردی",
-            dosage: "۵ گرم",
-            timing: "قبل یا بعد از تمرین",
-            description: "برای افزایش قدرت و عملکرد ورزشی",
-            benefits: ["افزایش قدرت", "بهبود عملکرد", "افزایش حجم عضلات"],
-            sideEffects: ["نیاز به مصرف آب بیشتر"],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          }
-        ];
-        setSupplements(initialSupplements);
-        localStorage.setItem('supplements', JSON.stringify(initialSupplements));
       }
       
       if (savedCategories) {
         setCategories(JSON.parse(savedCategories));
-      } else {
-        // Initialize with real categories
-        const initialCategories: Category[] = [
-          {
-            id: 1,
-            name: "پروتئین",
-            type: "supplement",
-            description: "مکمل‌های پروتئینی برای رشد عضلات",
-            createdAt: new Date().toISOString()
-          },
-          {
-            id: 2,
-            name: "عملکردی",
-            type: "supplement",
-            description: "مکمل‌های بهبود عملکرد ورزشی",
-            createdAt: new Date().toISOString()
-          },
-          {
-            id: 3,
-            name: "ویتامین‌های محلول در آب",
-            type: "vitamin",
-            description: "ویتامین‌های B و C",
-            createdAt: new Date().toISOString()
-          }
-        ];
-        setCategories(initialCategories);
-        localStorage.setItem('supplementCategories', JSON.stringify(initialCategories));
       }
     } catch (error) {
       console.error('Error loading data:', error);
