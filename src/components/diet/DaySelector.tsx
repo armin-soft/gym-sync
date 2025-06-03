@@ -19,7 +19,7 @@ export const DaySelector: React.FC<DaySelectorProps> = ({
   getDayMeals
 }) => {
   return (
-    <TabsList className="grid w-full grid-cols-7 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm h-12 sm:h-14 md:h-16 rounded-xl sm:rounded-2xl p-1 sm:p-2 shadow-lg mb-4 sm:mb-6 md:mb-8">
+    <TabsList className="grid w-full grid-cols-7 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm h-12 sm:h-14 md:h-16 rounded-xl sm:rounded-2xl p-1 sm:p-2 shadow-lg mb-4 sm:mb-6 md:mb-8" dir="rtl">
       {WEEK_DAYS.map((day) => {
         const dayMealCount = getDayMeals(day).length;
         return (
