@@ -23,14 +23,14 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4" dir="rtl">
       <div>
         <Select
-          value={selectedExerciseType || ""}
-          onValueChange={(value) => setSelectedExerciseType(value || null)}
+          value={selectedExerciseType || "all-types"}
+          onValueChange={(value) => setSelectedExerciseType(value === "all-types" ? null : value)}
         >
           <SelectTrigger>
             <SelectValue placeholder="انتخاب نوع تمرین" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">همه انواع</SelectItem>
+            <SelectItem value="all-types">همه انواع</SelectItem>
             {exerciseTypes.map((type, index) => (
               <SelectItem key={index} value={type}>
                 {type}
@@ -42,15 +42,15 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
 
       <div>
         <Select
-          value={selectedCategoryId?.toString() || ""}
-          onValueChange={(value) => setSelectedCategoryId(value ? parseInt(value) : null)}
+          value={selectedCategoryId?.toString() || "all-categories"}
+          onValueChange={(value) => setSelectedCategoryId(value === "all-categories" ? null : parseInt(value))}
           disabled={!selectedExerciseType}
         >
           <SelectTrigger>
             <SelectValue placeholder="انتخاب دسته‌بندی" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">همه دسته‌ها</SelectItem>
+            <SelectItem value="all-categories">همه دسته‌ها</SelectItem>
             {filteredCategories.map((category) => (
               <SelectItem key={category.id} value={category.id.toString()}>
                 {category.name}
