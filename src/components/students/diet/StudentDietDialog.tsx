@@ -12,7 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Search, Save } from "lucide-react";
-import { DayTabs } from "@/components/diet/DayTabs";
 import { WeekDay } from "@/types/meal";
 
 interface StudentDietDialogProps {

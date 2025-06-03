@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Edit, Trash2, Clock, Utensils, ChevronLeft, ChevronRight } from "lucide-react";
+import { Edit, Trash2, Clock, Utensils, ChevronLeft, ChevronRight, Coffee, Soup, Apple, Moon, Sun } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import type { Meal, WeekDay } from "@/types/meal";
 
@@ -21,12 +21,12 @@ interface WeeklyPlanViewProps {
 const weekDays: WeekDay[] = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنج شنبه', 'جمعه'];
 
 const mealTypes = [
-  { key: "صبحانه", color: "from-orange-400 to-red-500", icon: "🌅" },
-  { key: "میان وعده صبح", color: "from-yellow-400 to-orange-500", icon: "☀️" },
-  { key: "ناهار", color: "from-green-400 to-emerald-500", icon: "🥗" },
-  { key: "میان وعده عصر", color: "from-blue-400 to-cyan-500", icon: "🍎" },
-  { key: "شام", color: "from-purple-400 to-indigo-500", icon: "🍽️" },
-  { key: "میان وعده شام", color: "from-pink-400 to-purple-500", icon: "🌙" }
+  { key: "صبحانه", color: "from-orange-400 to-red-500", icon: Coffee },
+  { key: "میان وعده صبح", color: "from-yellow-400 to-orange-500", icon: Sun },
+  { key: "ناهار", color: "from-green-400 to-emerald-500", icon: Utensils },
+  { key: "میان وعده عصر", color: "from-blue-400 to-cyan-500", icon: Apple },
+  { key: "شام", color: "from-purple-400 to-indigo-500", icon: Soup },
+  { key: "میان وعده شام", color: "from-pink-400 to-purple-500", icon: Moon }
 ];
 
 export const WeeklyPlanView: React.FC<WeeklyPlanViewProps> = ({
@@ -106,8 +106,8 @@ export const WeeklyPlanView: React.FC<WeeklyPlanViewProps> = ({
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${mealType.color} flex items-center justify-center text-white text-lg`}>
-                            {mealType.icon}
+                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${mealType.color} flex items-center justify-center text-white`}>
+                            <mealType.icon className="w-5 h-5" />
                           </div>
                           <div className="text-right">
                             <h3 className="font-bold text-gray-800">{mealType.key}</h3>

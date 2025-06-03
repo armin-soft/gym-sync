@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Clock, TrendingUp, BookOpen, Edit } from "lucide-react";
+import { Plus, Search, Clock, TrendingUp, BookOpen, Edit, Utensils, Coffee, Soup } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import type { Meal } from "@/types/meal";
 
@@ -26,21 +26,21 @@ export const MealManagement: React.FC<MealManagementProps> = ({
     {
       title: "افزودن صبحانه",
       description: "ایجاد وعده صبحانه جدید",
-      icon: "🌅",
+      icon: Coffee,
       color: "from-orange-400 to-red-500",
       action: onAddMeal
     },
     {
       title: "افزودن ناهار", 
       description: "ایجاد وعده ناهار جدید",
-      icon: "🥗",
+      icon: Utensils,
       color: "from-green-400 to-emerald-500",
       action: onAddMeal
     },
     {
       title: "افزودن شام",
       description: "ایجاد وعده شام جدید", 
-      icon: "🍽️",
+      icon: Soup,
       color: "from-purple-400 to-indigo-500",
       action: onAddMeal
     }
@@ -75,8 +75,8 @@ export const MealManagement: React.FC<MealManagementProps> = ({
                 className="w-full justify-between text-right p-4 h-auto hover:bg-gradient-to-l hover:from-gray-50 hover:to-white transition-all duration-300 group"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${action.color} flex items-center justify-center text-lg group-hover:scale-110 transition-transform duration-300`}>
-                    {action.icon}
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${action.color} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}>
+                    <action.icon className="w-5 h-5" />
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-800">{action.title}</p>
@@ -156,7 +156,7 @@ export const MealManagement: React.FC<MealManagementProps> = ({
               className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-3 border border-green-100"
             >
               <p className="text-sm text-gray-700 text-right leading-relaxed">
-                💡 {tip}
+                {tip}
               </p>
             </motion.div>
           ))}

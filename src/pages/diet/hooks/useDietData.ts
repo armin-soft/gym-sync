@@ -26,9 +26,13 @@ export const useDietData = (): UseDietDataReturn => {
       if (savedMeals) {
         const parsedMeals = JSON.parse(savedMeals);
         setMeals(Array.isArray(parsedMeals) ? parsedMeals : []);
+      } else {
+        // اگر هیچ داده‌ای وجود ندارد، آرایه خالی تنظیم می‌شود
+        setMeals([]);
       }
     } catch (error) {
       console.error('خطا در بارگذاری وعده‌های غذایی:', error);
+      setMeals([]);
       toast({
         title: "خطا در بارگذاری",
         description: "مشکلی در بارگذاری اطلاعات رخ داده است",
