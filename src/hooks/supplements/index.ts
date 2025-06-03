@@ -105,13 +105,36 @@ export const useSupplementsManager = () => {
   }, [supplements, activeTab, selectedCategory]);
 
   const relevantCategories = useMemo(() => {
-    // اگر هیچ دسته‌بندی با نوع مشخص نشده است، همه دسته‌بندی‌ها را نمایش بده
-    const filtered = categories.filter(category => 
+    // ابتدا دسته‌بندی‌های ذخیره‌شده را فیلتر کن
+    const savedCategories = categories.filter(category => 
       !category.type || category.type === activeTab
     );
-    console.log('Relevant categories:', { activeTab, categories, filtered });
-    return filtered;
-  }, [categories, activeTab]);
+
+    // اگر دسته‌بندی ذخیره‌شده نداریم، از مکمل‌های موجود دسته‌بندی استخراج کن
+    if (savedCategories.length === 0 && supplements.length > 0) {
+      const uniqueCategories = new Set<string>();
+      
+      supplements
+        .filter(supplement => supplement.type === activeTab)
+        .forEach(supplement => {
+          if (supplement.category) {
+            uniqueCategories.add(supplement.category);
+          }
+        });
+
+      const extractedCategories = Array.from(uniqueCategories).map((categoryName, index) => ({
+        id: index + 1000, // ID منحصربه‌فرد برای دسته‌بندی‌های استخراج‌شده
+        name: categoryName,
+        type: activeTab as 'supplement' | 'vitamin'
+      }));
+
+      console.log('Extracted categories from supplements:', extractedCategories);
+      return extractedCategories;
+    }
+
+    console.log('Using saved categories:', savedCategories);
+    return savedCategories;
+  }, [categories, activeTab, supplements]);
 
   return {
     supplements,
