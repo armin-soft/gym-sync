@@ -12,8 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Search, Save } from "lucide-react";
-import { DayTabs } from "@/components/diet/DayTabs";
-import { WeekDay } from "@/types/meal";
+
+type WeekDay = "شنبه" | "یکشنبه" | "دوشنبه" | "سه شنبه" | "چهارشنبه" | "پنج شنبه" | "جمعه";
 
 interface StudentDietDialogProps {
   open: boolean;
@@ -49,7 +49,6 @@ const StudentDietDialog: React.FC<StudentDietDialogProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState<string>("general");
   const [selectedMeals, setSelectedMeals] = useState<number[]>([]);
-  const [selectedDay, setSelectedDay] = useState<WeekDay>("شنبه");
   const [isSaving, setIsSaving] = useState(false);
   
   const weekDays: WeekDay[] = [
