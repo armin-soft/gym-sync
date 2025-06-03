@@ -51,56 +51,78 @@ export const ModernSupplementsPage: React.FC = () => {
     setCategoryDialogOpen(true);
   };
 
+  const handleSupplementSave = (dataOrId: any, supplementData?: any) => {
+    if (editingSupplement && supplementData) {
+      // Edit mode: first param is id, second is data
+      updateSupplement(dataOrId, supplementData);
+    } else {
+      // Add mode: first param is data
+      addSupplement(dataOrId);
+    }
+  };
+
+  const handleCategorySave = (dataOrId: any, categoryData?: any) => {
+    if (editingCategory && categoryData) {
+      // Edit mode: first param is id, second is data
+      updateCategory(dataOrId, categoryData);
+    } else {
+      // Add mode: first param is data
+      addCategory(dataOrId);
+    }
+  };
+
   return (
-    <PageContainer fullHeight fullWidth noPadding className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50" dir="rtl">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col"
-      >
-        <SupplementsHeader />
-        
-        <div className="flex-1 p-4 md:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <SupplementsNavigation
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-            />
-            
-            <SupplementsContent
-              activeTab={activeTab}
-              supplements={supplements}
-              categories={categories}
-              isLoading={isLoading}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              onAddSupplement={handleAddSupplement}
-              onEditSupplement={handleEditSupplement}
-              onDeleteSupplement={deleteSupplement}
-              onAddCategory={handleAddCategory}
-              onEditCategory={handleEditCategory}
-              onDeleteCategory={deleteCategory}
-            />
+    <PageContainer fullHeight fullWidth noPadding className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div dir="rtl">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen flex flex-col"
+        >
+          <SupplementsHeader />
+          
+          <div className="flex-1 p-4 md:p-6 lg:p-8">
+            <div className="max-w-7xl mx-auto space-y-6">
+              <SupplementsNavigation
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+              />
+              
+              <SupplementsContent
+                activeTab={activeTab}
+                supplements={supplements}
+                categories={categories}
+                isLoading={isLoading}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                onAddSupplement={handleAddSupplement}
+                onEditSupplement={handleEditSupplement}
+                onDeleteSupplement={deleteSupplement}
+                onAddCategory={handleAddCategory}
+                onEditCategory={handleEditCategory}
+                onDeleteCategory={deleteCategory}
+              />
+            </div>
           </div>
-        </div>
 
-        <SupplementFormDialog
-          open={supplementDialogOpen}
-          onOpenChange={setSupplementDialogOpen}
-          supplement={editingSupplement}
-          categories={categories.filter(c => c.type === activeTab)}
-          type={activeTab}
-          onSave={editingSupplement ? updateSupplement : addSupplement}
-        />
+          <SupplementFormDialog
+            open={supplementDialogOpen}
+            onOpenChange={setSupplementDialogOpen}
+            supplement={editingSupplement}
+            categories={categories.filter(c => c.type === activeTab)}
+            type={activeTab}
+            onSave={handleSupplementSave}
+          />
 
-        <CategoryFormDialog
-          open={categoryDialogOpen}
-          onOpenChange={setCategoryDialogOpen}
-          category={editingCategory}
-          type={activeTab}
-          onSave={editingCategory ? updateCategory : addCategory}
-        />
-      </motion.div>
+          <CategoryFormDialog
+            open={categoryDialogOpen}
+            onOpenChange={setCategoryDialogOpen}
+            category={editingCategory}
+            type={activeTab}
+            onSave={handleCategorySave}
+          />
+        </motion.div>
+      </div>
     </PageContainer>
   );
 };

@@ -13,7 +13,7 @@ interface CategoryFormDialogProps {
   onOpenChange: (open: boolean) => void;
   category?: Category | null;
   type: 'supplement' | 'vitamin';
-  onSave: (data: any) => void;
+  onSave: (dataOrId: any, categoryData?: any) => void;
 }
 
 export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
@@ -58,7 +58,7 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} dir="rtl">
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md" dir="rtl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-xl">

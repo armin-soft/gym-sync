@@ -16,7 +16,7 @@ interface SupplementFormDialogProps {
   supplement?: Supplement | null;
   categories: Category[];
   type: 'supplement' | 'vitamin';
-  onSave: (data: any) => void;
+  onSave: (dataOrId: any, supplementData?: any) => void;
 }
 
 export const SupplementFormDialog: React.FC<SupplementFormDialogProps> = ({
@@ -113,7 +113,7 @@ export const SupplementFormDialog: React.FC<SupplementFormDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} dir="rtl">
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" dir="rtl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-xl">
