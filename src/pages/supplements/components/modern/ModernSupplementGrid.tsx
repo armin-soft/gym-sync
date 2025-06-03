@@ -1,12 +1,12 @@
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, Pill, Heart, Edit2, Trash2 } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import { Search, Pill, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Supplement, SupplementCategory } from "@/types/supplement";
-import { toPersianNumbers } from "@/lib/utils/numbers";
+import { GridHeader } from "./ModernSupplementGrid/GridHeader";
+import { SupplementCard } from "./ModernSupplementGrid/SupplementCard";
 
 interface ModernSupplementGridProps {
   supplements: Supplement[];
@@ -29,7 +29,6 @@ export const ModernSupplementGrid: React.FC<ModernSupplementGridProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter supplements
   const filteredSupplements = supplements.filter(supplement => {
     const matchesType = supplement.type === activeTab;
     const matchesSearch = !searchQuery || 
@@ -44,34 +43,12 @@ export const ModernSupplementGrid: React.FC<ModernSupplementGridProps> = ({
 
   return (
     <div className="space-y-4" dir="rtl">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          {activeTab === 'supplement' ? (
-            <Pill className="w-5 h-5 text-green-600" />
-          ) : (
-            <Heart className="w-5 h-5 text-purple-600" />
-          )}
-          {activeTab === 'supplement' ? 'مکمل‌های غذایی' : 'ویتامین‌ها'}
-          <Badge variant="secondary" className="mr-2">
-            {toPersianNumbers(filteredSupplements.length)}
-          </Badge>
-        </h2>
-
-        {hasCategories && (
-          <Button
-            onClick={onAddSupplement}
-            className={`${
-              activeTab === 'supplement'
-                ? 'bg-green-500 hover:bg-green-600'
-                : 'bg-purple-500 hover:bg-purple-600'
-            } text-white rounded-lg`}
-          >
-            <Plus className="w-4 h-4 ml-2" />
-            افزودن {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}
-          </Button>
-        )}
-      </div>
+      <GridHeader
+        activeTab={activeTab}
+        filteredCount={filteredSupplements.length}
+        hasCategories={hasCategories}
+        onAddSupplement={onAddSupplement}
+      />
 
       {!hasCategories ? (
         <div className="text-center py-12">
@@ -91,7 +68,6 @@ export const ModernSupplementGrid: React.FC<ModernSupplementGridProps> = ({
         </div>
       ) : (
         <>
-          {/* Search */}
           <div className="relative max-w-md">
             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -103,7 +79,6 @@ export const ModernSupplementGrid: React.FC<ModernSupplementGridProps> = ({
             />
           </div>
 
-          {/* Content */}
           {filteredSupplements.length === 0 ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -130,66 +105,13 @@ export const ModernSupplementGrid: React.FC<ModernSupplementGridProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <AnimatePresence>
                 {filteredSupplements.map((supplement) => (
-                  <motion.div
+                  <SupplementCard
                     key={supplement.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="group bg-white rounded-lg p-4 shadow-sm border hover:shadow-md transition-all"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className={`p-2 rounded-lg ${
-                        activeTab === 'supplement' ? 'bg-green-100' : 'bg-purple-100'
-                      }`}>
-                        {activeTab === 'supplement' ? (
-                          <Pill className="w-4 h-4 text-green-600" />
-                        ) : (
-                          <Heart className="w-4 h-4 text-purple-600" />
-                        )}
-                      </div>
-                      
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onEditSupplement(supplement)}
-                          className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600"
-                        >
-                          <Edit2 className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onDeleteSupplement(supplement.id)}
-                          className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="text-right space-y-2">
-                      <h3 className="font-medium text-gray-800">
-                        {supplement.name}
-                      </h3>
-                      
-                      <Badge variant="secondary" className="text-xs">
-                        {supplement.category}
-                      </Badge>
-
-                      {supplement.dosage && (
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">دوز:</span> {toPersianNumbers(supplement.dosage)}
-                        </p>
-                      )}
-
-                      {supplement.timing && (
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">زمان:</span> {supplement.timing}
-                        </p>
-                      )}
-                    </div>
-                  </motion.div>
+                    supplement={supplement}
+                    activeTab={activeTab}
+                    onEdit={onEditSupplement}
+                    onDelete={onDeleteSupplement}
+                  />
                 ))}
               </AnimatePresence>
             </div>
