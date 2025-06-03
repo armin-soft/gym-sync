@@ -1,4 +1,4 @@
 
-import SupplementsPage from "./SupplementsPage";
+import { ModernSupplementsPage } from "./ModernSupplementsPage";
 
-export default SupplementsPage;
+export default ModernSupplementsPage;
