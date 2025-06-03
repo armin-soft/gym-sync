@@ -95,22 +95,12 @@ export const useSupplementsManager = () => {
   };
 
   const filteredSupplements = useMemo(() => {
-    let filtered = supplements.filter(supplement => supplement.type === activeTab);
-    
-    // اگر دسته‌بندی انتخاب شده باشد، فقط مکمل‌های آن دسته را نمایش بده
-    if (selectedCategory) {
-      filtered = filtered.filter(supplement => supplement.category === selectedCategory);
-      console.log('Filtering by category:', { selectedCategory, filteredCount: filtered.length });
-    }
-    
-    console.log('Filtered supplements:', { 
-      activeTab, 
-      selectedCategory, 
-      totalSupplements: supplements.length,
-      filteredCount: filtered.length,
-      filtered 
+    const filtered = supplements.filter(supplement => {
+      const matchesType = supplement.type === activeTab;
+      const matchesCategory = !selectedCategory || supplement.category === selectedCategory;
+      return matchesType && matchesCategory;
     });
-    
+    console.log('Filtered supplements:', { activeTab, selectedCategory, filtered });
     return filtered;
   }, [supplements, activeTab, selectedCategory]);
 
