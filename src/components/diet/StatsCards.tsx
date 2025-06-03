@@ -2,57 +2,85 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Utensils, Calendar, Clock } from "lucide-react";
+import { Utensils, TrendingUp, Calendar, Clock } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { DietStats } from "./types";
 
 interface StatsCardsProps {
-  stats: DietStats;
+  stats: {
+    totalMeals: number;
+    todayMeals: number;
+    completedDays: number;
+    averagePerDay: number;
+  };
 }
 
 export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
+  const statsData = [
+    {
+      title: "کل وعده‌ها",
+      value: toPersianNumbers(stats.totalMeals),
+      icon: Utensils,
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-50 dark:bg-blue-950/20",
+      textColor: "text-blue-600 dark:text-blue-400"
+    },
+    {
+      title: "وعده‌های امروز",
+      value: toPersianNumbers(stats.todayMeals),
+      icon: Clock,
+      color: "from-emerald-500 to-emerald-600",
+      bgColor: "bg-emerald-50 dark:bg-emerald-950/20",
+      textColor: "text-emerald-600 dark:text-emerald-400"
+    },
+    {
+      title: "روزهای کامل",
+      value: toPersianNumbers(stats.completedDays),
+      icon: Calendar,
+      color: "from-purple-500 to-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-950/20",
+      textColor: "text-purple-600 dark:text-purple-400"
+    },
+    {
+      title: "میانگین روزانه",
+      value: toPersianNumbers(Math.round(stats.averagePerDay * 10) / 10),
+      icon: TrendingUp,
+      color: "from-orange-500 to-orange-600",
+      bgColor: "bg-orange-50 dark:bg-orange-950/20",
+      textColor: "text-orange-600 dark:text-orange-400"
+    }
+  ];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8"
-    >
-      <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border-emerald-200 dark:border-emerald-800 shadow-lg hover:shadow-xl transition-shadow">
-        <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg sm:rounded-xl flex items-center justify-center">
-              <Utensils className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
-            </div>
-            <span className="font-bold text-sm sm:text-base text-emerald-800 dark:text-emerald-200">کل وعده‌ها</span>
-          </div>
-          <p className="text-xl sm:text-2xl md:text-3xl font-black text-emerald-600">{toPersianNumbers(stats.totalMeals)}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-shadow">
-        <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg sm:rounded-xl flex items-center justify-center">
-              <Calendar className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
-            </div>
-            <span className="font-bold text-sm sm:text-base text-blue-800 dark:text-blue-200">روزهای فعال</span>
-          </div>
-          <p className="text-xl sm:text-2xl md:text-3xl font-black text-blue-600">{toPersianNumbers(stats.activeDays)}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl transition-shadow">
-        <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg sm:rounded-xl flex items-center justify-center">
-              <Clock className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
-            </div>
-            <span className="font-bold text-sm sm:text-base text-purple-800 dark:text-purple-200">امروز</span>
-          </div>
-          <p className="text-xl sm:text-2xl md:text-3xl font-black text-purple-600">{toPersianNumbers(stats.todayMeals)}</p>
-        </CardContent>
-      </Card>
-    </motion.div>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      {statsData.map((stat, index) => {
+        const IconComponent = stat.icon;
+        return (
+          <motion.div
+            key={stat.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+          >
+            <Card className="overflow-hidden bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.bgColor} rounded-xl flex items-center justify-center`}>
+                    <IconComponent className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.textColor}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">
+                      {stat.title}
+                    </p>
+                    <p className={`text-lg sm:text-xl font-bold ${stat.textColor} truncate`}>
+                      {stat.value}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        );
+      })}
+    </div>
   );
 };
