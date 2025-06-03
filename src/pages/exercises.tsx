@@ -1,4 +1,7 @@
 
-import HierarchicalExercisesView from "./exercises/hierarchical-view";
+import React from "react";
+import { ExerciseManagementSystem } from "./exercises/ExerciseManagementSystem";
 
-export default HierarchicalExercisesView;
+export default function ExercisesPage() {
+  return <ExerciseManagementSystem />;
+}
