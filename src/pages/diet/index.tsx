@@ -159,28 +159,28 @@ const Index = () => {
 
   return (
     <PageContainer fullHeight className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-emerald-950 dark:via-gray-900 dark:to-teal-950">
-      <div className="min-h-screen p-4 md:p-6 lg:p-8" dir="rtl">
+      <div className="min-h-screen p-2 sm:p-4 md:p-6 lg:p-8" dir="rtl">
         {/* هدر صفحه */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8"
+          className="text-center mb-4 sm:mb-6 md:mb-8"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="relative">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-2xl">
-                <Utensils className="h-8 w-8 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-2xl">
+                <Utensils className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
               </div>
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-orange-400 to-pink-500 rounded-full flex items-center justify-center">
-                <Sparkles className="h-3 w-3 text-white" />
+              <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-orange-400 to-pink-500 rounded-full flex items-center justify-center">
+                <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white" />
               </div>
             </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent mb-2 sm:mb-4">
             برنامه‌های غذایی
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
             مدیریت و تنظیم برنامه‌های غذایی هفتگی با دقت و حرفه‌ای‌ترین شکل ممکن
           </p>
         </motion.div>
@@ -190,41 +190,41 @@ const Index = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8"
         >
           <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border-emerald-200 dark:border-emerald-800 shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
-                  <Utensils className="h-6 w-6 text-white" />
+            <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <Utensils className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
                 </div>
-                <span className="font-bold text-emerald-800 dark:text-emerald-200">کل وعده‌ها</span>
+                <span className="font-bold text-sm sm:text-base text-emerald-800 dark:text-emerald-200">کل وعده‌ها</span>
               </div>
-              <p className="text-3xl font-black text-emerald-600">{toPersianNumbers(totalMeals)}</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-black text-emerald-600">{toPersianNumbers(totalMeals)}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-white" />
+            <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <Calendar className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
                 </div>
-                <span className="font-bold text-blue-800 dark:text-blue-200">روزهای فعال</span>
+                <span className="font-bold text-sm sm:text-base text-blue-800 dark:text-blue-200">روزهای فعال</span>
               </div>
-              <p className="text-3xl font-black text-blue-600">{toPersianNumbers(activeDays)}</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-black text-blue-600">{toPersianNumbers(activeDays)}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-white" />
+            <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <Clock className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
                 </div>
-                <span className="font-bold text-purple-800 dark:text-purple-200">امروز</span>
+                <span className="font-bold text-sm sm:text-base text-purple-800 dark:text-purple-200">امروز</span>
               </div>
-              <p className="text-3xl font-black text-purple-600">{toPersianNumbers(todayMeals)}</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-black text-purple-600">{toPersianNumbers(todayMeals)}</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -234,23 +234,24 @@ const Index = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between mb-8 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between mb-4 sm:mb-6 md:mb-8 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-lg"
         >
           <div className="flex-1 relative">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             <Input
               placeholder="جستجو در وعده‌های غذایی..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-12 h-12 text-base border-gray-200 dark:border-gray-700 focus:border-emerald-500 dark:focus:border-emerald-400 bg-white/80 dark:bg-gray-900/80"
+              className="pr-10 sm:pr-12 h-10 sm:h-12 text-sm sm:text-base border-gray-200 dark:border-gray-700 focus:border-emerald-500 dark:focus:border-emerald-400 bg-white/80 dark:bg-gray-900/80"
             />
           </div>
           <Button
             onClick={handleAddMeal}
-            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-8 h-12 text-base font-bold shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-4 sm:px-6 md:px-8 h-10 sm:h-12 text-sm sm:text-base font-bold shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            <Plus className="ml-2 h-5 w-5" />
-            افزودن وعده غذایی
+            <Plus className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="hidden xs:inline">افزودن وعده غذایی</span>
+            <span className="xs:hidden">افزودن</span>
           </Button>
         </motion.div>
 
@@ -261,7 +262,7 @@ const Index = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <Tabs value={selectedDay} onValueChange={setSelectedDay} className="w-full">
-            <TabsList className="grid w-full grid-cols-7 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm h-14 rounded-2xl p-2 shadow-lg">
+            <TabsList className="grid w-full grid-cols-7 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm h-12 sm:h-14 md:h-16 rounded-xl sm:rounded-2xl p-1 sm:p-2 shadow-lg mb-4 sm:mb-6 md:mb-8">
               {WEEK_DAYS.map((day) => {
                 const dayMealCount = getDayMeals(day).length;
                 return (
@@ -269,16 +270,24 @@ const Index = () => {
                     key={day}
                     value={day}
                     className={cn(
-                      "relative text-sm font-bold px-3 py-3 rounded-xl transition-all duration-300",
+                      "relative text-xs sm:text-sm font-bold px-1 sm:px-2 md:px-3 py-2 sm:py-3 rounded-lg sm:rounded-xl transition-all duration-300 flex flex-col items-center justify-center gap-1",
                       selectedDay === day 
                         ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg" 
                         : "hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
                     )}
                   >
-                    <div className="text-center">
-                      <div>{day}</div>
+                    <div className="text-center leading-tight">
+                      <div className="truncate">{day}</div>
                       {dayMealCount > 0 && (
-                        <Badge variant="secondary" className="mt-1 text-xs px-2 bg-white/20 text-white">
+                        <Badge 
+                          variant="secondary" 
+                          className={cn(
+                            "text-2xs sm:text-xs px-1 sm:px-2 mt-0.5 sm:mt-1 h-4 sm:h-5",
+                            selectedDay === day 
+                              ? "bg-white/20 text-white border-white/20" 
+                              : "bg-emerald-100 text-emerald-700 border-emerald-200"
+                          )}
+                        >
                           {toPersianNumbers(dayMealCount)}
                         </Badge>
                       )}
@@ -289,7 +298,7 @@ const Index = () => {
             </TabsList>
 
             {/* محتوای تب‌ها */}
-            <div className="mt-8">
+            <div>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedDay}
@@ -298,9 +307,9 @@ const Index = () => {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ScrollArea className="h-[calc(100vh-500px)]">
+                  <ScrollArea className="h-[calc(100vh-400px)] sm:h-[calc(100vh-450px)] md:h-[calc(100vh-500px)]">
                     {getDayMeals(selectedDay).length > 0 ? (
-                      <div className="space-y-6">
+                      <div className="space-y-4 sm:space-y-6">
                         {MEAL_TYPES.map((mealType) => {
                           const mealsForType = getMealsByType(mealType.id);
                           if (mealsForType.length === 0) return null;
@@ -313,25 +322,25 @@ const Index = () => {
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.4 }}
                               className={cn(
-                                "rounded-xl p-4 border-2",
+                                "rounded-lg sm:rounded-xl p-3 sm:p-4 border-2",
                                 mealType.color
                               )}
                             >
-                              <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
-                                  <IconComponent className="h-5 w-5 text-white" />
+                              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+                                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                                 </div>
                                 <div>
-                                  <h3 className="text-lg font-bold">
+                                  <h3 className="text-sm sm:text-base md:text-lg font-bold">
                                     {mealType.name}
                                   </h3>
-                                  <Badge variant="secondary" className="text-xs">
+                                  <Badge variant="secondary" className="text-2xs sm:text-xs">
                                     {toPersianNumbers(mealsForType.length)} وعده
                                   </Badge>
                                 </div>
                               </div>
 
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3">
                                 {mealsForType.map((meal, index) => (
                                   <motion.div
                                     key={meal.id}
@@ -340,17 +349,17 @@ const Index = () => {
                                     transition={{ duration: 0.3, delay: index * 0.05 }}
                                   >
                                     <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 dark:bg-gray-800/80 border">
-                                      <CardContent className="p-3">
+                                      <CardContent className="p-2 sm:p-3">
                                         <div className="flex items-center justify-between">
-                                          <h4 className="font-medium text-sm text-gray-800 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                          <h4 className="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate flex-1 ml-2">
                                             {meal.name}
                                           </h4>
-                                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                                             <Button
                                               variant="ghost"
                                               size="icon"
                                               onClick={() => handleEditMeal(meal)}
-                                              className="h-7 w-7 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600"
+                                              className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600"
                                             >
                                               <Edit3 className="h-3 w-3" />
                                             </Button>
@@ -358,7 +367,7 @@ const Index = () => {
                                               variant="ghost"
                                               size="icon"
                                               onClick={() => handleDeleteMeal(meal.id)}
-                                              className="h-7 w-7 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600"
+                                              className="h-6 w-6 sm:h-7 sm:w-7 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600"
                                             >
                                               <Trash2 className="h-3 w-3" />
                                             </Button>
@@ -377,22 +386,22 @@ const Index = () => {
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-center py-20"
+                        className="text-center py-12 sm:py-16 md:py-20"
                       >
-                        <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                          <Apple className="h-12 w-12 text-gray-400" />
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                          <Apple className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-gray-400" />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-600 dark:text-gray-300 mb-2">
                           هنوز وعده غذایی برای {selectedDay} تعریف نشده
                         </h3>
-                        <p className="text-gray-500 dark:text-gray-400 mb-6">
+                        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-4 sm:mb-6 px-4">
                           برای شروع، وعده غذایی جدید اضافه کنید
                         </p>
                         <Button
                           onClick={handleAddMeal}
-                          className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-8 py-3 text-base font-bold shadow-lg hover:shadow-xl transition-all duration-300"
+                          className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-bold shadow-lg hover:shadow-xl transition-all duration-300"
                         >
-                          <Plus className="ml-2 h-5 w-5" />
+                          <Plus className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                           افزودن اولین وعده
                         </Button>
                       </motion.div>
