@@ -9,9 +9,24 @@ export const useExerciseFilters = (exercises: any[], categories: any[], exercise
   const [sortBy, setSortBy] = useState("name");
 
   const filteredExercises = useMemo(() => {
+    // اگر نوع تمرین انتخاب نشده، هیچ تمرینی نمایش نده
+    if (!selectedType) {
+      return [];
+    }
+
+    // اگر دسته‌بندی انتخاب نشده، هیچ تمرینی نمایش نده
+    if (!selectedCategory) {
+      return [];
+    }
+
     let filtered = [...exercises];
 
-    // Search filter
+    // فیلتر بر اساس دسته‌بندی انتخاب شده
+    filtered = filtered.filter(exercise => 
+      exercise.categoryId === parseInt(selectedCategory)
+    );
+
+    // فیلتر جستجو
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(exercise =>
@@ -21,23 +36,7 @@ export const useExerciseFilters = (exercises: any[], categories: any[], exercise
       );
     }
 
-    // Category filter
-    if (selectedCategory) {
-      filtered = filtered.filter(exercise => 
-        exercise.categoryId === parseInt(selectedCategory)
-      );
-    }
-
-    // Type filter
-    if (selectedType) {
-      const typeCategories = categories.filter(cat => cat.type === selectedType);
-      const typeCategoryIds = typeCategories.map(cat => cat.id);
-      filtered = filtered.filter(exercise => 
-        typeCategoryIds.includes(exercise.categoryId)
-      );
-    }
-
-    // Sort
+    // مرتب‌سازی
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "name":

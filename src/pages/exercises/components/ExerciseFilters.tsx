@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Grid3X3, List, ArrowUpDown } from "lucide-react";
+import { Search, Grid3X3, List } from "lucide-react";
+import { SpeechToText } from "@/components/ui/speech-to-text";
 
 interface ExerciseFiltersProps {
   searchQuery: string;
@@ -36,6 +37,11 @@ export const ExerciseFilters: React.FC<ExerciseFiltersProps> = ({
   sortBy,
   onSortChange
 }) => {
+  // فیلتر کردن دسته‌بندی‌ها بر اساس نوع انتخاب شده
+  const filteredCategories = categories.filter(category => 
+    selectedType ? category.type === selectedType : false
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -44,84 +50,110 @@ export const ExerciseFilters: React.FC<ExerciseFiltersProps> = ({
     >
       <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-            {/* Search */}
-            <div className="lg:col-span-4 relative">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="جستجو در تمرینات..."
+          <div className="space-y-4">
+            {/* سلسله مراتب فیلترها */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* انتخاب نوع تمرین */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                  نوع تمرین (گام اول)
+                </label>
+                <Select 
+                  value={selectedType || "none"} 
+                  onValueChange={(value) => {
+                    const newType = value === "none" ? null : value;
+                    onTypeChange(newType);
+                    // پاک کردن دسته‌بندی انتخاب شده هنگام تغییر نوع
+                    if (newType !== selectedType) {
+                      onCategoryChange(null);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="border-gray-200 focus:border-emerald-500">
+                    <SelectValue placeholder="ابتدا نوع تمرین را انتخاب کنید" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">انتخاب نوع تمرین</SelectItem>
+                    {exerciseTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* انتخاب دسته‌بندی */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                  دسته‌بندی (گام دوم)
+                </label>
+                <Select 
+                  value={selectedCategory || "none"} 
+                  onValueChange={(value) => onCategoryChange(value === "none" ? null : value)}
+                  disabled={!selectedType}
+                >
+                  <SelectTrigger className={`border-gray-200 focus:border-emerald-500 ${!selectedType ? 'opacity-50' : ''}`}>
+                    <SelectValue placeholder={!selectedType ? "ابتدا نوع تمرین را انتخاب کنید" : "انتخاب دسته‌بندی"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">انتخاب دسته‌بندی</SelectItem>
+                    {filteredCategories.map((category) => (
+                      <SelectItem key={category.id} value={category.id.toString()}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* نوار جستجو با گفتار به نوشتار */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                جستجو در حرکات
+              </label>
+              <SpeechToText
                 value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="pr-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
+                onTranscriptChange={onSearchChange}
+                placeholder="جستجو در حرکات تمرینی..."
+                className="compact-speech"
               />
             </div>
 
-            {/* Type Filter */}
-            <div className="lg:col-span-2">
-              <Select value={selectedType || "all-types"} onValueChange={(value) => onTypeChange(value === "all-types" ? null : value)}>
-                <SelectTrigger className="border-gray-200 focus:border-emerald-500">
-                  <SelectValue placeholder="نوع تمرین" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all-types">همه انواع</SelectItem>
-                  {exerciseTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* کنترل‌های نمایش و مرتب‌سازی */}
+            <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+              <div className="flex gap-2">
+                <Select value={sortBy} onValueChange={onSortChange}>
+                  <SelectTrigger className="w-32 border-gray-200 focus:border-emerald-500">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="name">نام</SelectItem>
+                    <SelectItem value="category">دسته‌بندی</SelectItem>
+                    <SelectItem value="recent">جدیدترین</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Category Filter */}
-            <div className="lg:col-span-2">
-              <Select value={selectedCategory || "all-categories"} onValueChange={(value) => onCategoryChange(value === "all-categories" ? null : value)}>
-                <SelectTrigger className="border-gray-200 focus:border-emerald-500">
-                  <SelectValue placeholder="دسته‌بندی" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all-categories">همه دسته‌ها</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id.toString()}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Sort */}
-            <div className="lg:col-span-2">
-              <Select value={sortBy} onValueChange={onSortChange}>
-                <SelectTrigger className="border-gray-200 focus:border-emerald-500">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="name">نام</SelectItem>
-                  <SelectItem value="category">دسته‌بندی</SelectItem>
-                  <SelectItem value="recent">جدیدترین</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* View Mode */}
-            <div className="lg:col-span-2 flex gap-2">
-              <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
-                size="icon"
-                onClick={() => onViewModeChange("grid")}
-                className={viewMode === "grid" ? "bg-emerald-500 hover:bg-emerald-600" : ""}
-              >
-                <Grid3X3 className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "outline"}
-                size="icon"
-                onClick={() => onViewModeChange("list")}
-                className={viewMode === "list" ? "bg-emerald-500 hover:bg-emerald-600" : ""}
-              >
-                <List className="w-4 h-4" />
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => onViewModeChange("grid")}
+                  className={viewMode === "grid" ? "bg-emerald-500 hover:bg-emerald-600" : ""}
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => onViewModeChange("list")}
+                  className={viewMode === "list" ? "bg-emerald-500 hover:bg-emerald-600" : ""}
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </CardContent>
