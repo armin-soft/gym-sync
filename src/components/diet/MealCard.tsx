@@ -25,10 +25,10 @@ export const MealCard: React.FC<MealCardProps> = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
     >
-      <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 dark:bg-gray-800/80 border h-16 sm:h-18">
-        <CardContent className="p-2 sm:p-3 h-full flex items-center">
+      <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 dark:bg-gray-800/80 border h-12">
+        <CardContent className="p-2 h-full flex items-center">
           <div className="flex items-center justify-between w-full">
-            <h4 className="font-medium text-sm sm:text-base text-gray-800 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate flex-1">
+            <h4 className="font-medium text-sm text-gray-800 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate flex-1">
               {meal.name}
             </h4>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mr-2">
@@ -36,17 +36,17 @@ export const MealCard: React.FC<MealCardProps> = ({
                 variant="ghost"
                 size="icon"
                 onClick={() => onEdit(meal)}
-                className="h-7 w-7 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600"
+                className="h-6 w-6 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600"
               >
-                <Edit3 className="h-3.5 w-3.5" />
+                <Edit3 className="h-3 w-3" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => onDelete(meal.id)}
-                className="h-7 w-7 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600"
+                className="h-6 w-6 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3 w-3" />
               </Button>
             </div>
           </div>
