@@ -14,12 +14,18 @@ export const useSupplementsManager = () => {
       const savedSupplements = localStorage.getItem('supplements');
       const savedCategories = localStorage.getItem('supplementCategories');
       
+      console.log('Loading supplements data:', { savedSupplements, savedCategories });
+      
       if (savedSupplements) {
-        setSupplements(JSON.parse(savedSupplements));
+        const parsedSupplements = JSON.parse(savedSupplements);
+        console.log('Parsed supplements:', parsedSupplements);
+        setSupplements(parsedSupplements);
       }
       
       if (savedCategories) {
-        setCategories(JSON.parse(savedCategories));
+        const parsedCategories = JSON.parse(savedCategories);
+        console.log('Parsed categories:', parsedCategories);
+        setCategories(parsedCategories);
       }
     } catch (error) {
       console.error('Error loading supplements data:', error);
@@ -29,11 +35,13 @@ export const useSupplementsManager = () => {
   }, []);
 
   const saveSupplements = (newSupplements: Supplement[]) => {
+    console.log('Saving supplements:', newSupplements);
     setSupplements(newSupplements);
     localStorage.setItem('supplements', JSON.stringify(newSupplements));
   };
 
   const saveCategories = (newCategories: SupplementCategory[]) => {
+    console.log('Saving categories:', newCategories);
     setCategories(newCategories);
     localStorage.setItem('supplementCategories', JSON.stringify(newCategories));
   };
@@ -44,6 +52,7 @@ export const useSupplementsManager = () => {
       name,
       type: activeTab,
     };
+    console.log('Adding new category:', newCategory);
     saveCategories([...categories, newCategory]);
   };
 
@@ -69,6 +78,7 @@ export const useSupplementsManager = () => {
       id: Date.now(),
       type: activeTab,
     };
+    console.log('Adding new supplement:', newSupplement);
     saveSupplements([...supplements, newSupplement]);
   };
 
@@ -85,15 +95,22 @@ export const useSupplementsManager = () => {
   };
 
   const filteredSupplements = useMemo(() => {
-    return supplements.filter(supplement => {
+    const filtered = supplements.filter(supplement => {
       const matchesType = supplement.type === activeTab;
       const matchesCategory = !selectedCategory || supplement.category === selectedCategory;
       return matchesType && matchesCategory;
     });
+    console.log('Filtered supplements:', { activeTab, selectedCategory, filtered });
+    return filtered;
   }, [supplements, activeTab, selectedCategory]);
 
   const relevantCategories = useMemo(() => {
-    return categories.filter(category => category.type === activeTab);
+    // اگر هیچ دسته‌بندی با نوع مشخص نشده است، همه دسته‌بندی‌ها را نمایش بده
+    const filtered = categories.filter(category => 
+      !category.type || category.type === activeTab
+    );
+    console.log('Relevant categories:', { activeTab, categories, filtered });
+    return filtered;
   }, [categories, activeTab]);
 
   return {
