@@ -119,7 +119,7 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden p-0" dir="rtl">
+      <DialogContent className="max-w-xl sm:max-w-2xl max-h-[90vh] overflow-hidden p-0 w-[95vw] sm:w-full" dir="rtl">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -127,17 +127,17 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
           className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-emerald-950 dark:via-gray-900 dark:to-teal-950 rounded-lg overflow-hidden"
         >
           {/* هدر */}
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white p-6">
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white p-4 sm:p-6">
             <DialogHeader>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                  {meal ? <Utensils className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  {meal ? <Utensils className="h-5 w-5 sm:h-6 sm:w-6" /> : <Plus className="h-5 w-5 sm:h-6 sm:w-6" />}
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl font-black">
+                  <DialogTitle className="text-lg sm:text-2xl font-black">
                     {meal ? "ویرایش وعده غذایی" : "افزودن وعده غذایی جدید"}
                   </DialogTitle>
-                  <DialogDescription className="text-emerald-100 mt-1">
+                  <DialogDescription className="text-emerald-100 mt-1 text-sm sm:text-base">
                     {meal 
                       ? "اطلاعات وعده غذایی را ویرایش کنید"
                       : "وعده غذایی جدید به برنامه اضافه کنید"
@@ -149,113 +149,91 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
           </div>
 
           {/* محتوا */}
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-6">
-              <Card className="border-emerald-200 dark:border-emerald-800 shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-4 flex items-center gap-2">
-                    <IconComponent className="h-5 w-5" />
-                    اطلاعات وعده غذایی
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                        نام وعده غذایی *
-                      </Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                        placeholder="مثال: املت با نان سبوس‌دار"
-                        className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="type" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                        نوع وعده غذایی *
-                      </Label>
-                      <Select 
-                        value={formData.type} 
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
-                      >
-                        <SelectTrigger className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60">
-                          {MEAL_TYPES.map((type) => {
-                            const TypeIcon = type.icon;
-                            return (
-                              <SelectItem key={type.id} value={type.id} className="text-right p-3">
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${type.gradient} flex items-center justify-center`}>
-                                    <TypeIcon className="h-4 w-4 text-white" />
-                                  </div>
-                                  <span className="font-medium">{type.name}</span>
-                                </div>
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="day" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                        روز هفته *
-                      </Label>
-                      <Select 
-                        value={formData.day} 
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, day: value }))}
-                      >
-                        <SelectTrigger className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {WEEK_DAYS.map((day) => (
-                            <SelectItem key={day} value={day} className="text-right">
-                              {day}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6">
+            <Card className="border-emerald-200 dark:border-emerald-800 shadow-lg">
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-4 flex items-center gap-2">
+                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
+                  اطلاعات وعده غذایی
+                </h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="name" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                      نام وعده غذایی
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="مثال: املت با نان سبوس‌دار"
+                      className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500"
+                      required
+                    />
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* پیش‌نمایش */}
-              {formData.name && (
-                <Card className="border-purple-200 dark:border-purple-800 shadow-lg">
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-purple-800 dark:text-purple-200 mb-4">
-                      پیش‌نمایش
-                    </h3>
-                    <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 rounded-xl p-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${selectedMealType?.gradient} flex items-center justify-center`}>
-                          <IconComponent className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-gray-800 dark:text-gray-100">{formData.name}</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">{formData.type} - {formData.day}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+                  <div>
+                    <Label htmlFor="type" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                      نوع وعده غذایی
+                    </Label>
+                    <Select 
+                      value={formData.type} 
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
+                      required
+                    >
+                      <SelectTrigger className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {MEAL_TYPES.map((type) => {
+                          const TypeIcon = type.icon;
+                          return (
+                            <SelectItem key={type.id} value={type.id} className="text-right p-3">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-r ${type.gradient} flex items-center justify-center`}>
+                                  <TypeIcon className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                                </div>
+                                <span className="font-medium text-sm sm:text-base">{type.name}</span>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="day" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                      روز هفته
+                    </Label>
+                    <Select 
+                      value={formData.day} 
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, day: value }))}
+                      required
+                    >
+                      <SelectTrigger className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WEEK_DAYS.map((day) => (
+                          <SelectItem key={day} value={day} className="text-right">
+                            {day}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* دکمه‌های عملیات */}
-            <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                className="px-8 py-3 h-auto font-bold border-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 h-auto font-bold border-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                 disabled={isSubmitting}
               >
                 <X className="ml-2 h-4 w-4" />
@@ -263,7 +241,7 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
               </Button>
               <Button
                 type="submit"
-                className="px-8 py-3 h-auto font-bold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg hover:shadow-xl transition-all"
+                className="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 h-auto font-bold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg hover:shadow-xl transition-all"
                 disabled={isSubmitting}
               >
                 <Save className="ml-2 h-4 w-4" />
