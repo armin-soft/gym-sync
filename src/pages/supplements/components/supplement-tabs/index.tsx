@@ -1,2 +1,0 @@
-
-export { SupplementTabContent } from "./SupplementTabContent";

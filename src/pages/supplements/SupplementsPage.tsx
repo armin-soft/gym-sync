@@ -1,12 +1,14 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useSupplementsManager } from "@/hooks/supplements";
 import { PageContainer } from "@/components/ui/page-container";
-import { ModernSupplementsHeader } from "./components/modern/ModernSupplementsHeader";
-import { ModernTabSystem } from "./components/modern/ModernTabSystem";
-import { ModernSupplementDialog } from "./components/modern/ModernSupplementDialog";
-import { ModernCategoryDialog } from "./components/modern/ModernCategoryDialog";
+import { SupplementsHeader } from "./components/SupplementsHeader";
+import { TabSystem } from "./components/TabSystem";
+import { CategoryManager } from "./components/CategoryManager";
+import { ItemsGrid } from "./components/ItemsGrid";
+import { AddEditDialog } from "./components/AddEditDialog";
+import { CategoryDialog } from "./components/CategoryDialog";
 import { useToast } from "@/hooks/use-toast";
 
 const SupplementsPage = () => {
@@ -119,51 +121,79 @@ const SupplementsPage = () => {
     }
   };
 
+  const supplementCount = supplements.filter(s => s.type === 'supplement').length;
+  const vitaminCount = supplements.filter(s => s.type === 'vitamin').length;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 flex items-center justify-center" dir="rtl">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50" dir="rtl">
       <PageContainer fullHeight fullWidth noPadding scrollable className="min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="min-h-screen flex flex-col"
+          className="min-h-screen"
         >
           {/* Header */}
-          <ModernSupplementsHeader />
+          <SupplementsHeader />
           
           {/* Main Content */}
-          <div className="flex-1 p-6">
-            <ModernTabSystem
+          <div className="container mx-auto px-6 py-12 space-y-8">
+            {/* Tab System */}
+            <TabSystem
               activeTab={activeTab}
-              onTabChange={(value) => {
-                setActiveTab(value as 'supplement' | 'vitamin');
+              onTabChange={(tab) => {
+                setActiveTab(tab);
                 setSelectedCategory(null);
               }}
-              isLoading={isLoading}
+              supplementCount={supplementCount}
+              vitaminCount={vitaminCount}
+              onAddClick={handleAddSupplement}
+            />
+
+            {/* Category Manager */}
+            <CategoryManager
               categories={relevantCategories}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
               onAddCategory={handleAddCategory}
               onEditCategory={handleEditCategory}
               onDeleteCategory={handleDeleteCategory}
-              supplements={filteredSupplements}
-              onAddSupplement={handleAddSupplement}
-              onEditSupplement={handleEditSupplement}
-              onDeleteSupplement={handleDeleteSupplement}
+              activeTab={activeTab}
+            />
+
+            {/* Items Grid */}
+            <ItemsGrid
+              items={filteredSupplements}
+              onEdit={handleEditSupplement}
+              onDelete={handleDeleteSupplement}
+              activeTab={activeTab}
               selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
             />
           </div>
 
           {/* Dialogs */}
-          <ModernSupplementDialog
+          <AddEditDialog
             open={supplementDialogOpen}
             onOpenChange={setSupplementDialogOpen}
             onSubmit={handleSubmitSupplement}
             defaultValues={editingSupplement || undefined}
             mode={editingSupplement ? "edit" : "add"}
-            categories={categories.filter(c => c.type === activeTab)}
+            categories={relevantCategories}
             type={activeTab}
           />
 
-          <ModernCategoryDialog
+          <CategoryDialog
             open={categoryDialogOpen}
             onOpenChange={setCategoryDialogOpen}
             onSubmit={handleSubmitCategory}

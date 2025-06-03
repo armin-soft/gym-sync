@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Folder, Save, X } from "lucide-react";
 
-interface ModernCategoryDialogProps {
+interface CategoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (name: string) => void;
@@ -14,7 +14,7 @@ interface ModernCategoryDialogProps {
   mode: "add" | "edit";
 }
 
-export const ModernCategoryDialog: React.FC<ModernCategoryDialogProps> = ({
+export const CategoryDialog: React.FC<CategoryDialogProps> = ({
   open,
   onOpenChange,
   onSubmit,
@@ -32,6 +32,7 @@ export const ModernCategoryDialog: React.FC<ModernCategoryDialogProps> = ({
     if (name.trim()) {
       onSubmit(name.trim());
       setName("");
+      onOpenChange(false);
     }
   };
 
@@ -39,39 +40,42 @@ export const ModernCategoryDialog: React.FC<ModernCategoryDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md" dir="rtl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-100 rounded-lg">
-              <Folder className="w-5 h-5 text-gray-600" />
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl">
+              <Folder className="w-6 h-6 text-white" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-bold">
-                {mode === 'add' ? 'افزودن' : 'ویرایش'} دسته‌بندی
+              <DialogTitle className="text-2xl font-bold text-gray-800">
+                {mode === "add" ? "افزودن" : "ویرایش"} دسته‌بندی
               </DialogTitle>
+              <p className="text-gray-500">
+                نام دسته‌بندی را وارد کنید
+              </p>
             </div>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onOpenChange(false)}
-            className="h-8 w-8 p-0"
+            className="h-10 w-10 p-0 rounded-xl hover:bg-gray-100"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </Button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="categoryName" className="text-sm font-medium">
+            <Label htmlFor="categoryName" className="text-sm font-semibold text-gray-700">
               نام دسته‌بندی
             </Label>
             <Input
               id="categoryName"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="مثال: پروتئین، ویتامین، آمینو اسید"
-              className="text-right"
+              placeholder="مثال: پروتئین، ویتامین D، آمینو اسید"
+              className="text-right border-2 border-gray-200 focus:border-emerald-400 rounded-xl h-12"
               dir="rtl"
               required
               autoFocus
@@ -79,21 +83,21 @@ export const ModernCategoryDialog: React.FC<ModernCategoryDialogProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-4 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1"
+              className="flex-1 h-12 rounded-xl border-2 border-gray-300 hover:border-gray-400"
             >
               انصراف
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+              className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg rounded-xl"
             >
-              <Save className="w-4 h-4 ml-2" />
-              {mode === 'add' ? 'افزودن' : 'ویرایش'}
+              <Save className="w-5 h-5 ml-2" />
+              {mode === "add" ? "افزودن" : "ویرایش"}
             </Button>
           </div>
         </form>
