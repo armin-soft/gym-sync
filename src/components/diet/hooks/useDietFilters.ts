@@ -26,9 +26,14 @@ export const useDietFilters = (meals: Meal[]) => {
     return getDayMeals(selectedDay).filter(meal => meal.type === type);
   };
 
+  // تابع برای تغییر روز با تبدیل صحیح نوع
+  const handleDayChange = (day: string) => {
+    setSelectedDay(day as WeekDay);
+  };
+
   return {
     selectedDay,
-    setSelectedDay,
+    setSelectedDay: handleDayChange,
     searchQuery,
     setSearchQuery,
     filteredMeals,
