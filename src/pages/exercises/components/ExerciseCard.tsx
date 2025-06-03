@@ -50,25 +50,10 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, categories
               </h3>
               
               {category && (
-                <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 mb-3">
+                <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200">
                   {category.name}
                 </Badge>
               )}
-              
-              {exercise.description && (
-                <p className="text-gray-600 text-sm line-clamp-3">
-                  {exercise.description}
-                </p>
-              )}
-            </div>
-            
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <span>شناسه: #{exercise.id}</span>
-                {exercise.targetMuscle && (
-                  <span className="truncate mr-2">{exercise.targetMuscle}</span>
-                )}
-              </div>
             </div>
           </CardContent>
         </Card>

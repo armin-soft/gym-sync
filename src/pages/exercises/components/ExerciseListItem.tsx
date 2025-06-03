@@ -28,7 +28,7 @@ export const ExerciseListItem: React.FC<ExerciseListItemProps> = ({ exercise, ca
               </div>
               
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-1">
+                <div className="flex items-center gap-3">
                   <h3 className="font-semibold text-gray-800 truncate">
                     {exercise.name}
                   </h3>
@@ -36,13 +36,6 @@ export const ExerciseListItem: React.FC<ExerciseListItemProps> = ({ exercise, ca
                     <Badge className="bg-emerald-100 text-emerald-700 text-xs">
                       {category.name}
                     </Badge>
-                  )}
-                </div>
-                
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span>شناسه: #{exercise.id}</span>
-                  {exercise.targetMuscle && (
-                    <span className="truncate">{exercise.targetMuscle}</span>
                   )}
                 </div>
               </div>

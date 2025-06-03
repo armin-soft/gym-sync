@@ -24,8 +24,6 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({
 }) => {
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
-    targetMuscle: "",
     categoryId: ""
   });
   const { toast } = useToast();
@@ -35,8 +33,6 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({
     if (exercise) {
       setFormData({
         name: exercise.name || "",
-        description: exercise.description || "",
-        targetMuscle: exercise.targetMuscle || "",
         categoryId: exercise.categoryId?.toString() || ""
       });
     }
@@ -68,8 +64,6 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({
           ? { 
               ...ex, 
               name: formData.name.trim(),
-              description: formData.description.trim(),
-              targetMuscle: formData.targetMuscle.trim(),
               categoryId: parseInt(formData.categoryId)
             }
           : ex
@@ -125,26 +119,6 @@ export const EditExerciseModal: React.FC<EditExerciseModalProps> = ({
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="description" className="text-right block mb-2">توضیحات</Label>
-            <SpeechToText
-              value={formData.description}
-              onTranscriptChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
-              placeholder="توضیحات حرکت..."
-              className="compact-speech"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="targetMuscle" className="text-right block mb-2">عضله هدف</Label>
-            <SpeechToText
-              value={formData.targetMuscle}
-              onTranscriptChange={(value) => setFormData(prev => ({ ...prev, targetMuscle: value }))}
-              placeholder="عضله هدف..."
-              className="compact-speech"
-            />
           </div>
 
           <div className="flex gap-2 justify-end pt-4">
