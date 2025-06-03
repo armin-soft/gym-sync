@@ -34,11 +34,6 @@ interface Meal {
   name: string;
   type: string;
   day: string;
-  calories?: string;
-  protein?: string;
-  carbs?: string;
-  fat?: string;
-  description?: string;
 }
 
 const WEEK_DAYS = [
@@ -391,35 +386,6 @@ const Index = () => {
                                               <Trash2 className="h-4 w-4" />
                                             </Button>
                                           </div>
-                                        </div>
-                                        
-                                        {meal.description && (
-                                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                                            {meal.description}
-                                          </p>
-                                        )}
-
-                                        <div className="flex flex-wrap gap-2">
-                                          {meal.calories && (
-                                            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
-                                              {toPersianNumbers(meal.calories)} کالری
-                                            </Badge>
-                                          )}
-                                          {meal.protein && (
-                                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                                              {toPersianNumbers(meal.protein)}g پروتئین
-                                            </Badge>
-                                          )}
-                                          {meal.carbs && (
-                                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                                              {toPersianNumbers(meal.carbs)}g کربوهیدرات
-                                            </Badge>
-                                          )}
-                                          {meal.fat && (
-                                            <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
-                                              {toPersianNumbers(meal.fat)}g چربی
-                                            </Badge>
-                                          )}
                                         </div>
                                       </CardContent>
                                     </Card>

@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Select, 
   SelectContent, 
@@ -38,11 +37,6 @@ interface Meal {
   name: string;
   type: string;
   day: string;
-  calories?: string;
-  protein?: string;
-  carbs?: string;
-  fat?: string;
-  description?: string;
 }
 
 interface AddMealDialogProps {
@@ -75,12 +69,7 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
   const [formData, setFormData] = useState<Omit<Meal, 'id'>>({
     name: '',
     type: 'صبحانه',
-    day: 'شنبه',
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: '',
-    description: ''
+    day: 'شنبه'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -90,23 +79,13 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
       setFormData({
         name: meal.name || '',
         type: meal.type || 'صبحانه',
-        day: meal.day || 'شنبه',
-        calories: meal.calories || '',
-        protein: meal.protein || '',
-        carbs: meal.carbs || '',
-        fat: meal.fat || '',
-        description: meal.description || ''
+        day: meal.day || 'شنبه'
       });
     } else {
       setFormData({
         name: '',
         type: 'صبحانه',
-        day: 'شنبه',
-        calories: '',
-        protein: '',
-        carbs: '',
-        fat: '',
-        description: ''
+        day: 'شنبه'
       });
     }
   }, [meal, open]);
@@ -149,7 +128,7 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0" dir="rtl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden p-0" dir="rtl">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -180,211 +159,103 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
 
           {/* محتوا */}
           <form onSubmit={handleSubmit} className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* ستون اول - اطلاعات اصلی */}
-              <div className="space-y-6">
-                <Card className="border-emerald-200 dark:border-emerald-800 shadow-lg">
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-4 flex items-center gap-2">
-                      <IconComponent className="h-5 w-5" />
-                      اطلاعات وعده غذایی
-                    </h3>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="name" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          نام وعده غذایی *
-                        </Label>
-                        <Input
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                          placeholder="مثال: املت با نان سبوس‌دار"
-                          className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500"
-                          required
-                        />
-                      </div>
+            <div className="space-y-6">
+              <Card className="border-emerald-200 dark:border-emerald-800 shadow-lg">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-4 flex items-center gap-2">
+                    <IconComponent className="h-5 w-5" />
+                    اطلاعات وعده غذایی
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="name" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                        نام وعده غذایی *
+                      </Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="مثال: املت با نان سبوس‌دار"
+                        className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500"
+                        required
+                      />
+                    </div>
 
-                      <div>
-                        <Label htmlFor="type" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          نوع وعده غذایی *
-                        </Label>
-                        <Select 
-                          value={formData.type} 
-                          onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
-                        >
-                          <SelectTrigger className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-60">
-                            {MEAL_TYPES.map((type) => {
-                              const TypeIcon = type.icon;
-                              return (
-                                <SelectItem key={type.id} value={type.id} className="text-right p-3">
-                                  <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${type.gradient} flex items-center justify-center`}>
-                                      <TypeIcon className="h-4 w-4 text-white" />
-                                    </div>
-                                    <span className="font-medium">{type.name}</span>
+                    <div>
+                      <Label htmlFor="type" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                        نوع وعده غذایی *
+                      </Label>
+                      <Select 
+                        value={formData.type} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
+                      >
+                        <SelectTrigger className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60">
+                          {MEAL_TYPES.map((type) => {
+                            const TypeIcon = type.icon;
+                            return (
+                              <SelectItem key={type.id} value={type.id} className="text-right p-3">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${type.gradient} flex items-center justify-center`}>
+                                    <TypeIcon className="h-4 w-4 text-white" />
                                   </div>
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="day" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          روز هفته *
-                        </Label>
-                        <Select 
-                          value={formData.day} 
-                          onValueChange={(value) => setFormData(prev => ({ ...prev, day: value }))}
-                        >
-                          <SelectTrigger className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {WEEK_DAYS.map((day) => (
-                              <SelectItem key={day} value={day} className="text-right">
-                                {day}
+                                  <span className="font-medium">{type.name}</span>
+                                </div>
                               </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="description" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          توضیحات
-                        </Label>
-                        <Textarea
-                          id="description"
-                          value={formData.description}
-                          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                          placeholder="توضیحات اضافی در مورد این وعده غذایی..."
-                          className="mt-2 min-h-[100px] text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500"
-                          rows={4}
-                        />
-                      </div>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
 
-              {/* ستون دوم - اطلاعات تغذیه‌ای */}
-              <div className="space-y-6">
-                <Card className="border-amber-200 dark:border-amber-800 shadow-lg">
+                    <div>
+                      <Label htmlFor="day" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                        روز هفته *
+                      </Label>
+                      <Select 
+                        value={formData.day} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, day: value }))}
+                      >
+                        <SelectTrigger className="mt-2 h-12 text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {WEEK_DAYS.map((day) => (
+                            <SelectItem key={day} value={day} className="text-right">
+                              {day}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* پیش‌نمایش */}
+              {formData.name && (
+                <Card className="border-purple-200 dark:border-purple-800 shadow-lg">
                   <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-amber-800 dark:text-amber-200 mb-4 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"></div>
-                      اطلاعات تغذیه‌ای (اختیاری)
+                    <h3 className="text-lg font-bold text-purple-800 dark:text-purple-200 mb-4">
+                      پیش‌نمایش
                     </h3>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="calories" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          کالری
-                        </Label>
-                        <Input
-                          id="calories"
-                          value={formData.calories}
-                          onChange={(e) => setFormData(prev => ({ ...prev, calories: e.target.value }))}
-                          placeholder="۳۵۰"
-                          className="mt-2 h-11 border-amber-200 dark:border-amber-800 focus:border-amber-500"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="protein" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          پروتئین (گرم)
-                        </Label>
-                        <Input
-                          id="protein"
-                          value={formData.protein}
-                          onChange={(e) => setFormData(prev => ({ ...prev, protein: e.target.value }))}
-                          placeholder="۲۵"
-                          className="mt-2 h-11 border-green-200 dark:border-green-800 focus:border-green-500"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="carbs" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          کربوهیدرات (گرم)
-                        </Label>
-                        <Input
-                          id="carbs"
-                          value={formData.carbs}
-                          onChange={(e) => setFormData(prev => ({ ...prev, carbs: e.target.value }))}
-                          placeholder="۳۰"
-                          className="mt-2 h-11 border-blue-200 dark:border-blue-800 focus:border-blue-500"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="fat" className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                          چربی (گرم)
-                        </Label>
-                        <Input
-                          id="fat"
-                          value={formData.fat}
-                          onChange={(e) => setFormData(prev => ({ ...prev, fat: e.target.value }))}
-                          placeholder="۱۵"
-                          className="mt-2 h-11 border-red-200 dark:border-red-800 focus:border-red-500"
-                        />
+                    <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 rounded-xl p-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${selectedMealType?.gradient} flex items-center justify-center`}>
+                          <IconComponent className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-800 dark:text-gray-100">{formData.name}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">{formData.type} - {formData.day}</p>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* پیش‌نمایش */}
-                {formData.name && (
-                  <Card className="border-purple-200 dark:border-purple-800 shadow-lg">
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-bold text-purple-800 dark:text-purple-200 mb-4">
-                        پیش‌نمایش
-                      </h3>
-                      <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 rounded-xl p-4">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${selectedMealType?.gradient} flex items-center justify-center`}>
-                            <IconComponent className="h-5 w-5 text-white" />
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-gray-800 dark:text-gray-100">{formData.name}</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">{formData.type} - {formData.day}</p>
-                          </div>
-                        </div>
-                        {formData.description && (
-                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{formData.description}</p>
-                        )}
-                        <div className="flex flex-wrap gap-2">
-                          {formData.calories && (
-                            <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-lg text-xs">
-                              {formData.calories} کالری
-                            </span>
-                          )}
-                          {formData.protein && (
-                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded-lg text-xs">
-                              {formData.protein}g پروتئین
-                            </span>
-                          )}
-                          {formData.carbs && (
-                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs">
-                              {formData.carbs}g کربوهیدرات
-                            </span>
-                          )}
-                          {formData.fat && (
-                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded-lg text-xs">
-                              {formData.fat}g چربی
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+              )}
             </div>
 
             {/* دکمه‌های عملیات */}
