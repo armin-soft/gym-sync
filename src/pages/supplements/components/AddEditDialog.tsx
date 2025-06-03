@@ -4,10 +4,10 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pill, Heart, Save, X } from "lucide-react";
 import { Supplement, SupplementCategory } from "@/types/supplement";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface AddEditDialogProps {
   open: boolean;
@@ -33,7 +33,6 @@ export const AddEditDialog: React.FC<AddEditDialogProps> = ({
     category: "",
     dosage: "",
     timing: "",
-    description: "",
   });
 
   useEffect(() => {
@@ -43,7 +42,6 @@ export const AddEditDialog: React.FC<AddEditDialogProps> = ({
         category: defaultValues.category || "",
         dosage: defaultValues.dosage || "",
         timing: defaultValues.timing || "",
-        description: defaultValues.description || "",
       });
     } else {
       setFormData({
@@ -51,7 +49,6 @@ export const AddEditDialog: React.FC<AddEditDialogProps> = ({
         category: "",
         dosage: "",
         timing: "",
-        description: "",
       });
     }
   }, [defaultValues, open]);
@@ -63,6 +60,11 @@ export const AddEditDialog: React.FC<AddEditDialogProps> = ({
       type,
     });
     onOpenChange(false);
+  };
+
+  const handleDosageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, dosage: value }));
   };
 
   const getGradientColors = () => {
@@ -148,8 +150,8 @@ export const AddEditDialog: React.FC<AddEditDialogProps> = ({
               </Label>
               <Input
                 id="dosage"
-                value={formData.dosage}
-                onChange={(e) => setFormData(prev => ({ ...prev, dosage: e.target.value }))}
+                value={toPersianNumbers(formData.dosage)}
+                onChange={handleDosageChange}
                 placeholder="مثال: ۲ عدد در روز"
                 className="text-right border-2 border-gray-200 focus:border-emerald-400 rounded-xl h-12"
                 dir="rtl"
@@ -170,21 +172,6 @@ export const AddEditDialog: React.FC<AddEditDialogProps> = ({
                 dir="rtl"
               />
             </div>
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm font-semibold text-gray-700">
-              توضیحات
-            </Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="توضیحات اضافی..."
-              className="text-right border-2 border-gray-200 focus:border-emerald-400 rounded-xl min-h-[100px] resize-none"
-              dir="rtl"
-            />
           </div>
 
           {/* Actions */}
