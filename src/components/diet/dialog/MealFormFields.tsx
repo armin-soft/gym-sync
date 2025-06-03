@@ -31,15 +31,15 @@ export const MealFormFields: React.FC<MealFormFieldsProps> = ({
 
   return (
     <Card className="border-emerald-200 dark:border-emerald-800 shadow-lg">
-      <CardContent className="p-4 sm:p-6">
-        <h3 className="text-base sm:text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-4 flex items-center gap-2">
+      <CardContent className="p-3 sm:p-4 md:p-6">
+        <h3 className="text-sm sm:text-base md:text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-3 sm:mb-4 flex items-center gap-2">
           <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
           اطلاعات وعده غذایی
         </h3>
         
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div>
-            <Label htmlFor="name" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+            <Label htmlFor="name" className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">
               نام وعده غذایی
             </Label>
             <Input
@@ -47,13 +47,13 @@ export const MealFormFields: React.FC<MealFormFieldsProps> = ({
               value={formData.name}
               onChange={(e) => onFormDataChange({ ...formData, name: e.target.value })}
               placeholder="مثال: املت با نان سبوس‌دار"
-              className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500"
+              className="mt-1 sm:mt-2 h-8 sm:h-10 md:h-12 text-xs sm:text-sm md:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="type" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+            <Label htmlFor="type" className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">
               نوع وعده غذایی
             </Label>
             <Select 
@@ -61,19 +61,27 @@ export const MealFormFields: React.FC<MealFormFieldsProps> = ({
               onValueChange={(value) => onFormDataChange({ ...formData, type: value })}
               required
             >
-              <SelectTrigger className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
+              <SelectTrigger className="mt-1 sm:mt-2 h-8 sm:h-10 md:h-12 text-xs sm:text-sm md:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="max-h-60">
+              <SelectContent 
+                className="max-h-48 sm:max-h-60 md:max-h-72 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
+                position="popper"
+                sideOffset={4}
+              >
                 {MEAL_TYPES.map((type) => {
                   const TypeIcon = type.icon;
                   return (
-                    <SelectItem key={type.id} value={type.id} className="text-right p-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-r ${type.gradient} flex items-center justify-center`}>
-                          <TypeIcon className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                    <SelectItem 
+                      key={type.id} 
+                      value={type.id} 
+                      className="text-right p-2 sm:p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="flex items-center gap-2 sm:gap-3 w-full">
+                        <div className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-lg bg-gradient-to-r ${type.gradient} flex items-center justify-center shrink-0`}>
+                          <TypeIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 text-white" />
                         </div>
-                        <span className="font-medium text-sm sm:text-base">{type.name}</span>
+                        <span className="font-medium text-xs sm:text-sm md:text-base">{type.name}</span>
                       </div>
                     </SelectItem>
                   );
@@ -83,7 +91,7 @@ export const MealFormFields: React.FC<MealFormFieldsProps> = ({
           </div>
 
           <div>
-            <Label htmlFor="day" className="text-sm font-bold text-gray-700 dark:text-gray-300">
+            <Label htmlFor="day" className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">
               روز هفته
             </Label>
             <Select 
@@ -91,12 +99,20 @@ export const MealFormFields: React.FC<MealFormFieldsProps> = ({
               onValueChange={(value) => onFormDataChange({ ...formData, day: value })}
               required
             >
-              <SelectTrigger className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
+              <SelectTrigger className="mt-1 sm:mt-2 h-8 sm:h-10 md:h-12 text-xs sm:text-sm md:text-base border-emerald-200 dark:border-emerald-800 focus:border-emerald-500">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent 
+                className="z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
+                position="popper"
+                sideOffset={4}
+              >
                 {WEEK_DAYS.map((day) => (
-                  <SelectItem key={day} value={day} className="text-right">
+                  <SelectItem 
+                    key={day} 
+                    value={day} 
+                    className="text-right p-2 sm:p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-xs sm:text-sm md:text-base"
+                  >
                     {day}
                   </SelectItem>
                 ))}

@@ -73,28 +73,33 @@ export const AddMealDialog: React.FC<AddMealDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl sm:max-w-2xl max-h-[90vh] overflow-hidden p-0 w-[95vw] sm:w-full" dir="rtl">
+      <DialogContent 
+        className="w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl h-auto max-h-[95vh] overflow-hidden p-0" 
+        dir="rtl"
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-emerald-950 dark:via-gray-900 dark:to-teal-950 rounded-lg overflow-hidden"
+          className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-emerald-950 dark:via-gray-900 dark:to-teal-950 rounded-lg overflow-hidden h-full flex flex-col"
         >
           <MealDialogHeader isEditing={!!meal} />
 
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6">
-            <MealFormFields 
-              formData={formData}
-              onFormDataChange={setFormData}
-            />
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <MealFormFields 
+                formData={formData}
+                onFormDataChange={setFormData}
+              />
 
-            <MealDialogActions
-              isEditing={!!meal}
-              isSubmitting={isSubmitting}
-              onCancel={() => onOpenChange(false)}
-              onSubmit={handleSubmit}
-            />
-          </form>
+              <MealDialogActions
+                isEditing={!!meal}
+                isSubmitting={isSubmitting}
+                onCancel={() => onOpenChange(false)}
+                onSubmit={handleSubmit}
+              />
+            </form>
+          </div>
         </motion.div>
       </DialogContent>
     </Dialog>
