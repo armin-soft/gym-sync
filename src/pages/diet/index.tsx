@@ -1,45 +1,74 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { PageContainer } from "@/components/ui/page-container";
-import { DietHeader } from "./components/DietHeader";
-import { DietStats } from "./components/DietStats";
-import { WeeklyPlanView } from "./components/WeeklyPlanView";
-import { MealManagement } from "./components/MealManagement";
-import { useDietData } from "./hooks/useDietData";
+import { MealDialog } from "@/components/diet/MealDialog";
+import { DietPageHeader } from "@/components/diet/DietPageHeader";
+import { DietContentArea } from "@/components/diet/DietContentArea";
+import { useDietState } from "@/components/diet/hooks";
+import { MealType, WeekDay } from "@/types/meal";
 
-const DietPage = () => {
-  const [activeView, setActiveView] = useState<"weekly" | "meals">("weekly");
-  const { dietStats, weeklyPlans, meals, isLoading } = useDietData();
+const weekDays: WeekDay[] = [
+  'شنبه', 'یکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنج شنبه', 'جمعه'
+];
+
+const mealTypes: MealType[] = [
+  "صبحانه", "میان وعده صبح", "ناهار", "میان وعده عصر", "شام", "میان وعده شام"
+];
+
+const Index = () => {
+  const {
+    meals,
+    open,
+    setOpen,
+    selectedMeal,
+    selectedDay,
+    setSelectedDay,
+    filteredMeals,
+    handleOpen,
+    handleEdit,
+    handleSave,
+    handleDelete,
+  } = useDietState();
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50">
-      <PageContainer fullWidth className="p-6 space-y-8">
-        {/* Header Section */}
-        <DietHeader 
-          activeView={activeView} 
-          setActiveView={setActiveView}
-        />
-        
-        {/* Stats Overview */}
-        <DietStats stats={dietStats} isLoading={isLoading} />
-        
-        {/* Main Content */}
-        <div className="min-h-[600px]">
-          {activeView === "weekly" ? (
-            <WeeklyPlanView 
-              weeklyPlans={weeklyPlans} 
-              isLoading={isLoading}
+    <div dir="rtl" className="min-h-screen bg-background">
+      <PageContainer 
+        fullWidth 
+        fullHeight 
+        className="bg-background"
+      >
+        <div className="h-full flex flex-col space-y-6 p-6">
+          {/* Header */}
+          <div className="text-right">
+            <DietPageHeader onAddMeal={handleOpen} />
+          </div>
+          
+          {/* Main Content */}
+          <div className="flex-1 overflow-hidden">
+            <DietContentArea 
+              meals={filteredMeals}
+              mealTypes={mealTypes}
+              selectedDay={selectedDay}
+              sortOrder="asc"
+              onDayChange={setSelectedDay}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
-          ) : (
-            <MealManagement 
-              meals={meals} 
-              isLoading={isLoading}
-            />
-          )}
+          </div>
+          
+          {/* Dialog */}
+          <MealDialog
+            open={open}
+            onOpenChange={setOpen}
+            onSave={handleSave}
+            meal={selectedMeal}
+            mealTypes={mealTypes}
+            weekDays={weekDays}
+          />
         </div>
       </PageContainer>
     </div>
   );
 };
 
-export default DietPage;
+export default Index;
