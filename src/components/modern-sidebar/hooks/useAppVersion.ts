@@ -12,15 +12,12 @@ export const useAppVersion = () => {
         
         if (manifest && manifest.version) {
           setAppVersion(manifest.version);
-          localStorage.setItem('app_version', manifest.version);
         } else {
-          const cachedVersion = localStorage.getItem('app_version');
-          setAppVersion(cachedVersion || "نامشخص");
+          setAppVersion("نامشخص");
         }
       } catch (err) {
         console.error('Error loading Manifest.json:', err);
-        const cachedVersion = localStorage.getItem('app_version');
-        setAppVersion(cachedVersion || "خطا در بارگذاری");
+        setAppVersion("خطا در بارگذاری");
       }
     };
     

@@ -1,4 +1,3 @@
-
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { GraduationCap } from "lucide-react";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -18,24 +17,12 @@ export function StudentSidebarFooter() {
         
         if (manifest && manifest.version) {
           setAppVersion(manifest.version);
-          localStorage.setItem('app_version', manifest.version);
         } else {
-          const cachedVersion = localStorage.getItem('app_version');
-          if (cachedVersion) {
-            setAppVersion(cachedVersion);
-          } else {
-            setAppVersion("نامشخص");
-          }
+          setAppVersion("نامشخص");
         }
       } catch (err) {
         console.error('Error loading Manifest.json:', err);
-        
-        const cachedVersion = localStorage.getItem('app_version');
-        if (cachedVersion) {
-          setAppVersion(cachedVersion);
-        } else {
-          setAppVersion("خطا در بارگذاری");
-        }
+        setAppVersion("خطا در بارگذاری");
       }
     };
     
@@ -43,6 +30,7 @@ export function StudentSidebarFooter() {
   }, []);
   
   // تنظیمات ریسپانسیو برای فوتر
+  
   const getFooterPadding = () => {
     if (deviceInfo.isMobile) return "p-3";
     if (deviceInfo.isTablet) return "p-3.5";

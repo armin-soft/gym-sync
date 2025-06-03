@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -14,16 +13,12 @@ export const useLoadingState = () => {
       try {
         const response = await fetch('/Manifest.json');
         const manifest = await response.json();
-        const version = manifest.version || 'نامشخص';
+        const version = manifest.version;
         setAppVersion(version);
         console.log(`Version loaded from Manifest.json: ${version}`);
-        
-        // ذخیره در localStorage برای استفاده بعدی
-        localStorage.setItem('app_version', version);
       } catch (error) {
         console.error('Error loading version from Manifest.json:', error);
-        const cachedVersion = localStorage.getItem('app_version') || 'نامشخص';
-        setAppVersion(cachedVersion);
+        setAppVersion('خطا در بارگذاری');
       }
     };
     

@@ -11,31 +11,18 @@ function MainApp() {
   const [isInitialLoading, setIsInitialLoading] = React.useState(true);
   const [appVersion, setAppVersion] = React.useState('');
   
-  // دریافت نسخه از Manifest.json - بهینه‌سازی شده با کش
+  // دریافت نسخه از Manifest.json
   React.useEffect(() => {
-    const cachedVersion = localStorage.getItem('app_version');
-    
-    // اگر نسخه در localStorage وجود داشت، آن را استفاده کن
-    if (cachedVersion) {
-      setAppVersion(cachedVersion);
-      console.log(`Using cached app version: ${cachedVersion}`);
-    }
-    
-    // در هر صورت، دریافت نسخه جدید از Manifest.json
     const fetchVersion = async () => {
       try {
         const response = await fetch('/Manifest.json');
         const manifest = await response.json();
-        const version = manifest.version || 'نامشخص';
-        
-        // ذخیره نسخه در localStorage برای استفاده بعدی
-        if (version !== cachedVersion) {
-          localStorage.setItem('app_version', version);
-          setAppVersion(version);
-          console.log(`Updated app version from Manifest.json: ${version}`);
-        }
+        const version = manifest.version;
+        setAppVersion(version);
+        console.log(`Updated app version from Manifest.json: ${version}`);
       } catch (error) {
         console.error('Error loading version from Manifest.json:', error);
+        setAppVersion('خطا در بارگذاری');
       }
     };
     
