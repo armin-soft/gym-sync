@@ -21,22 +21,22 @@ export const MealTypeSelector: React.FC<MealTypeSelectorProps> = ({
   const IconComponent = mealType.icon;
 
   return (
-    <div className={cn("rounded-lg sm:rounded-xl p-3 sm:p-4 border-2", mealType.color)}>
-      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+    <div className={cn("rounded-lg p-3 sm:p-4 border-2", mealType.color)}>
+      <div className="flex items-center gap-2 sm:gap-3 mb-3">
+        <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
           <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
         </div>
         <div>
-          <h3 className="text-sm sm:text-base md:text-lg font-bold">
+          <h3 className="text-sm sm:text-base font-semibold">
             {mealType.name}
           </h3>
-          <Badge variant="secondary" className="text-2xs sm:text-xs">
+          <Badge variant="secondary" className="text-xs">
             {toPersianNumbers(meals.length)} وعده
           </Badge>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
         {children}
       </div>
     </div>
