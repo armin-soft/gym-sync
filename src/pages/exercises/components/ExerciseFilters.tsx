@@ -58,12 +58,12 @@ export const ExerciseFilters: React.FC<ExerciseFiltersProps> = ({
 
             {/* Type Filter */}
             <div className="lg:col-span-2">
-              <Select value={selectedType || ""} onValueChange={(value) => onTypeChange(value || null)}>
+              <Select value={selectedType || "all-types"} onValueChange={(value) => onTypeChange(value === "all-types" ? null : value)}>
                 <SelectTrigger className="border-gray-200 focus:border-emerald-500">
                   <SelectValue placeholder="نوع تمرین" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">همه انواع</SelectItem>
+                  <SelectItem value="all-types">همه انواع</SelectItem>
                   {exerciseTypes.map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
@@ -75,12 +75,12 @@ export const ExerciseFilters: React.FC<ExerciseFiltersProps> = ({
 
             {/* Category Filter */}
             <div className="lg:col-span-2">
-              <Select value={selectedCategory || ""} onValueChange={(value) => onCategoryChange(value || null)}>
+              <Select value={selectedCategory || "all-categories"} onValueChange={(value) => onCategoryChange(value === "all-categories" ? null : value)}>
                 <SelectTrigger className="border-gray-200 focus:border-emerald-500">
                   <SelectValue placeholder="دسته‌بندی" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">همه دسته‌ها</SelectItem>
+                  <SelectItem value="all-categories">همه دسته‌ها</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id.toString()}>
                       {category.name}
