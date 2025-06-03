@@ -12,7 +12,6 @@ import {
   Sunset,
   Moon,
   Search,
-  Filter,
   Edit3,
   Trash2,
   ChefHat,
@@ -45,55 +44,37 @@ const MEAL_TYPES = [
     id: 'صبحانه', 
     name: 'صبحانه', 
     icon: Coffee, 
-    gradient: 'from-amber-400 via-orange-500 to-red-500',
-    bgGradient: 'from-amber-50 via-orange-50 to-red-50',
-    darkBgGradient: 'from-amber-950/30 via-orange-950/30 to-red-950/30',
-    borderColor: 'border-amber-200 dark:border-amber-800'
+    color: 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-200'
   },
   { 
     id: 'میان وعده صبح', 
     name: 'میان وعده صبح', 
     icon: Sun, 
-    gradient: 'from-yellow-400 via-amber-500 to-orange-500',
-    bgGradient: 'from-yellow-50 via-amber-50 to-orange-50',
-    darkBgGradient: 'from-yellow-950/30 via-amber-950/30 to-orange-950/30',
-    borderColor: 'border-yellow-200 dark:border-yellow-800'
+    color: 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-950/30 dark:border-yellow-800 dark:text-yellow-200'
   },
   { 
     id: 'ناهار', 
     name: 'ناهار', 
     icon: Utensils, 
-    gradient: 'from-emerald-400 via-green-500 to-teal-500',
-    bgGradient: 'from-emerald-50 via-green-50 to-teal-50',
-    darkBgGradient: 'from-emerald-950/30 via-green-950/30 to-teal-950/30',
-    borderColor: 'border-emerald-200 dark:border-emerald-800'
+    color: 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-200'
   },
   { 
     id: 'میان وعده عصر', 
     name: 'میان وعده عصر', 
     icon: Sunset, 
-    gradient: 'from-pink-400 via-rose-500 to-purple-500',
-    bgGradient: 'from-pink-50 via-rose-50 to-purple-50',
-    darkBgGradient: 'from-pink-950/30 via-rose-950/30 to-purple-950/30',
-    borderColor: 'border-pink-200 dark:border-pink-800'
+    color: 'bg-pink-50 border-pink-200 text-pink-800 dark:bg-pink-950/30 dark:border-pink-800 dark:text-pink-200'
   },
   { 
     id: 'شام', 
     name: 'شام', 
     icon: ChefHat, 
-    gradient: 'from-blue-400 via-indigo-500 to-purple-500',
-    bgGradient: 'from-blue-50 via-indigo-50 to-purple-50',
-    darkBgGradient: 'from-blue-950/30 via-indigo-950/30 to-purple-950/30',
-    borderColor: 'border-blue-200 dark:border-blue-800'
+    color: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-200'
   },
   { 
     id: 'میان وعده شام', 
     name: 'میان وعده شام', 
     icon: Moon, 
-    gradient: 'from-violet-400 via-purple-500 to-indigo-500',
-    bgGradient: 'from-violet-50 via-purple-50 to-indigo-50',
-    darkBgGradient: 'from-violet-950/30 via-purple-950/30 to-indigo-950/30',
-    borderColor: 'border-violet-200 dark:border-violet-800'
+    color: 'bg-violet-50 border-violet-200 text-violet-800 dark:bg-violet-950/30 dark:border-violet-800 dark:text-violet-200'
   }
 ];
 
@@ -319,7 +300,7 @@ const Index = () => {
                 >
                   <ScrollArea className="h-[calc(100vh-500px)]">
                     {getDayMeals(selectedDay).length > 0 ? (
-                      <div className="space-y-8">
+                      <div className="space-y-6">
                         {MEAL_TYPES.map((mealType) => {
                           const mealsForType = getMealsByType(mealType.id);
                           if (mealsForType.length === 0) return null;
@@ -332,58 +313,54 @@ const Index = () => {
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.4 }}
                               className={cn(
-                                "rounded-3xl p-6 shadow-lg border-2",
-                                `bg-gradient-to-br ${mealType.bgGradient} dark:${mealType.darkBgGradient}`,
-                                mealType.borderColor
+                                "rounded-xl p-4 border-2",
+                                mealType.color
                               )}
                             >
-                              <div className="flex items-center gap-4 mb-6">
-                                <div className={cn(
-                                  "w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg",
-                                  `bg-gradient-to-br ${mealType.gradient}`
-                                )}>
-                                  <IconComponent className="h-7 w-7 text-white" />
+                              <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+                                  <IconComponent className="h-5 w-5 text-white" />
                                 </div>
                                 <div>
-                                  <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100">
+                                  <h3 className="text-lg font-bold">
                                     {mealType.name}
                                   </h3>
-                                  <Badge variant="secondary" className="mt-1">
+                                  <Badge variant="secondary" className="text-xs">
                                     {toPersianNumbers(mealsForType.length)} وعده
                                   </Badge>
                                 </div>
                               </div>
 
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {mealsForType.map((meal, index) => (
                                   <motion.div
                                     key={meal.id}
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                    transition={{ duration: 0.3, delay: index * 0.05 }}
                                   >
-                                    <Card className="group hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/50 dark:border-gray-700/50">
-                                      <CardContent className="p-5">
-                                        <div className="flex items-start justify-between mb-3">
-                                          <h4 className="font-bold text-lg text-gray-800 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                    <Card className="group hover:shadow-md transition-all duration-300 bg-white/80 dark:bg-gray-800/80 border">
+                                      <CardContent className="p-3">
+                                        <div className="flex items-center justify-between">
+                                          <h4 className="font-medium text-sm text-gray-800 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                             {meal.name}
                                           </h4>
-                                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Button
                                               variant="ghost"
                                               size="icon"
                                               onClick={() => handleEditMeal(meal)}
-                                              className="h-8 w-8 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600"
+                                              className="h-7 w-7 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600"
                                             >
-                                              <Edit3 className="h-4 w-4" />
+                                              <Edit3 className="h-3 w-3" />
                                             </Button>
                                             <Button
                                               variant="ghost"
                                               size="icon"
                                               onClick={() => handleDeleteMeal(meal.id)}
-                                              className="h-8 w-8 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600"
+                                              className="h-7 w-7 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600"
                                             >
-                                              <Trash2 className="h-4 w-4" />
+                                              <Trash2 className="h-3 w-3" />
                                             </Button>
                                           </div>
                                         </div>
