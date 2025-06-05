@@ -1,9 +1,8 @@
 
-import React from "react";
-import { ExerciseManagementContainer } from "./components/ExerciseManagementContainer";
+import { ExercisePageContainer } from "./components/ExercisePageContainer";
 
-const ExercisesPage: React.FC = () => {
-  return <ExerciseManagementContainer />;
+const ExercisesPage = () => {
+  return <ExercisePageContainer />;
 };
 
 export default ExercisesPage;
