@@ -86,10 +86,10 @@ const defaultProfile: ModernTrainerProfile = {
     }
   ],
   statistics: {
-    totalStudents: ۲۴۸,
-    yearsExperience: ۱۲,
-    completedPrograms: ۱۸۵,
-    successRate: ۹۴
+    totalStudents: 248,
+    yearsExperience: 12,
+    completedPrograms: 185,
+    successRate: 94
   }
 };
 
