@@ -21,21 +21,21 @@ const sections = [
     id: "personal", 
     label: "اطلاعات شخصی", 
     icon: User, 
-    gradient: "from-indigo-500 to-purple-600",
+    gradient: "from-emerald-500 to-emerald-600",
     description: "مدیریت اطلاعات شخصی"
   },
   { 
     id: "gym", 
     label: "اطلاعات باشگاه", 
     icon: Building, 
-    gradient: "from-blue-500 to-cyan-600",
+    gradient: "from-sky-500 to-sky-600",
     description: "مشخصات باشگاه"
   },
   { 
     id: "social", 
     label: "شبکه‌های اجتماعی", 
     icon: Globe, 
-    gradient: "from-purple-500 to-pink-600",
+    gradient: "from-slate-500 to-slate-600",
     description: "حضور آنلاین"
   }
 ];
@@ -75,7 +75,7 @@ export const TrainerProfileSidebar: React.FC<TrainerProfileSidebarProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-xl">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-sky-600 shadow-xl">
               <Crown className="h-6 w-6 text-white" />
             </div>
           </motion.div>
@@ -86,7 +86,7 @@ export const TrainerProfileSidebar: React.FC<TrainerProfileSidebarProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
           >
-            <h3 className="text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h3 className="text-2xl font-black bg-gradient-to-r from-emerald-600 via-sky-600 to-slate-600 bg-clip-text text-transparent">
               {profile.name || "نام مربی"}
             </h3>
             {profile.phone && (
@@ -101,7 +101,7 @@ export const TrainerProfileSidebar: React.FC<TrainerProfileSidebarProps> = ({
                 <CheckCircle className="h-3 w-3 ml-1" />
                 فعال
               </Badge>
-              <Badge className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800">
+              <Badge className="bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800">
                 مربی
               </Badge>
             </div>

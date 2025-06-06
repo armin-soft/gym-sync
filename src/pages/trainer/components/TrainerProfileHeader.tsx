@@ -13,7 +13,7 @@ export const TrainerProfileHeader: React.FC = () => {
     >
       {/* نشان حرفه‌ای */}
       <motion.div
-        className="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white rounded-full px-8 py-4 shadow-2xl border border-white/20 mb-8"
+        className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 via-sky-600 to-slate-600 text-white rounded-full px-8 py-4 shadow-2xl border border-white/20 mb-8"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.6 }}
@@ -54,7 +54,7 @@ export const TrainerProfileHeader: React.FC = () => {
         transition={{ delay: 0.4, duration: 0.8 }}
         className="space-y-6"
       >
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight">
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-black bg-gradient-to-r from-emerald-600 via-sky-600 to-slate-600 bg-clip-text text-transparent leading-tight">
           پروفایل مربی
         </h1>
         <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed font-medium">
@@ -70,9 +70,9 @@ export const TrainerProfileHeader: React.FC = () => {
         transition={{ delay: 0.6, duration: 0.8 }}
       >
         {[
-          { icon: Shield, text: "امنیت بالا", color: "from-emerald-500 to-teal-600" },
-          { icon: Zap, text: "به‌روزرسانی فوری", color: "from-orange-500 to-red-600" },
-          { icon: User, text: "رابط کاربرپسند", color: "from-blue-500 to-indigo-600" }
+          { icon: Shield, text: "امنیت بالا", color: "from-emerald-500 to-emerald-600" },
+          { icon: Zap, text: "به‌روزرسانی فوری", color: "from-sky-500 to-sky-600" },
+          { icon: User, text: "رابط کاربرپسند", color: "from-slate-500 to-slate-600" }
         ].map((feature, index) => (
           <motion.div
             key={feature.text}
@@ -96,9 +96,9 @@ export const TrainerProfileHeader: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 1 }}
       >
-        <div className="h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent flex-1 max-w-32" />
-        <div className="w-4 h-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-lg" />
-        <div className="h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent flex-1 max-w-32" />
+        <div className="h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent flex-1 max-w-32" />
+        <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-sky-600 rounded-full shadow-lg" />
+        <div className="h-px bg-gradient-to-r from-transparent via-sky-500 to-transparent flex-1 max-w-32" />
       </motion.div>
     </motion.div>
   );

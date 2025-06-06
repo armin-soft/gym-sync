@@ -80,7 +80,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({
         htmlFor={id}
         className={cn(
           "text-base font-bold transition-colors flex items-center gap-2",
-          focusedField === id ? "text-purple-600 dark:text-purple-400" : "text-gray-700 dark:text-gray-300"
+          focusedField === id ? "text-emerald-600 dark:text-emerald-400" : "text-gray-700 dark:text-gray-300"
         )}
       >
         {icon}
@@ -122,7 +122,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({
       <FormField
         id="instagram"
         label="اینستاگرام"
-        icon={<Instagram className="h-5 w-5 text-purple-600" />}
+        icon={<Instagram className="h-5 w-5 text-emerald-600" />}
         error={errors.instagram}
       >
         <div className="relative">
@@ -138,7 +138,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({
             className={cn(
               "h-14 text-lg pr-8 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-2 transition-all duration-300",
               focusedField === 'instagram' 
-                ? "border-purple-500 ring-4 ring-purple-500/20" 
+                ? "border-emerald-500 ring-4 ring-emerald-500/20" 
                 : errors.instagram 
                   ? "border-red-500" 
                   : "border-gray-200 dark:border-gray-700"
@@ -150,7 +150,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({
       <FormField
         id="website"
         label="وب‌سایت"
-        icon={<Globe className="h-5 w-5 text-purple-600" />}
+        icon={<Globe className="h-5 w-5 text-emerald-600" />}
         error={errors.website}
       >
         <Input
@@ -164,7 +164,7 @@ export const SocialMediaForm: React.FC<SocialMediaFormProps> = ({
           className={cn(
             "h-14 text-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-2 transition-all duration-300",
             focusedField === 'website' 
-              ? "border-purple-500 ring-4 ring-purple-500/20" 
+              ? "border-emerald-500 ring-4 ring-emerald-500/20" 
               : errors.website 
                 ? "border-red-500" 
                 : "border-gray-200 dark:border-gray-700"

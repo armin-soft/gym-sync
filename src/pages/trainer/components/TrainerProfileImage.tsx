@@ -86,7 +86,7 @@ export const TrainerProfileImage: React.FC<TrainerProfileImageProps> = ({
       >
         {/* حلقه درخشان */}
         <motion.div 
-          className="absolute -inset-4 rounded-full bg-gradient-to-r from-indigo-500/40 via-purple-500/40 to-blue-500/40 opacity-0"
+          className="absolute -inset-4 rounded-full bg-gradient-to-r from-emerald-500/40 via-sky-500/40 to-slate-500/40 opacity-0"
           animate={{ 
             opacity: isHovering ? 0.8 : 0, 
             scale: isHovering ? 1.1 : 1,
@@ -108,7 +108,7 @@ export const TrainerProfileImage: React.FC<TrainerProfileImageProps> = ({
           {image === "/Assets/Image/Place-Holder.svg" ? (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
               <div className="relative">
-                <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-xl"></div>
+                <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-emerald-400/20 to-sky-400/20 rounded-full blur-xl"></div>
                 <ImageIcon className="w-12 h-12 text-muted-foreground/40 mb-2 relative" />
               </div>
               <p className="text-sm text-muted-foreground font-bold">انتخاب تصویر</p>
@@ -162,7 +162,7 @@ export const TrainerProfileImage: React.FC<TrainerProfileImageProps> = ({
             variant="outline"
             size="sm"
             onClick={() => fileInputRef.current?.click()}
-            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 shadow-lg"
+            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950 shadow-lg"
           >
             <Upload className="h-4 w-4 ml-2" />
             تغییر

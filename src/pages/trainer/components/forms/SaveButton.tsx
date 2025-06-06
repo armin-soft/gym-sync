@@ -19,7 +19,7 @@ export const SaveButton: React.FC<SaveButtonProps> = ({ onSave, isLoading }) => 
     >
       {/* اطلاعات پیشرفت */}
       <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-        <Sparkles className="h-5 w-5 text-indigo-500" />
+        <Sparkles className="h-5 w-5 text-emerald-500" />
         <span className="text-lg font-medium">آماده برای ذخیره‌سازی تغییرات</span>
       </div>
 
@@ -31,7 +31,7 @@ export const SaveButton: React.FC<SaveButtonProps> = ({ onSave, isLoading }) => 
         <Button
           onClick={onSave}
           disabled={isLoading}
-          className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white font-black py-6 px-12 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 text-xl min-w-[280px]"
+          className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-sky-600 to-slate-600 hover:from-emerald-700 hover:via-sky-700 hover:to-slate-700 text-white font-black py-6 px-12 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 text-xl min-w-[280px]"
         >
           {/* افکت درخشش */}
           <div className="absolute -inset-x-1/2 top-0 h-[200%] w-[200%] -translate-x-full rotate-45 transform bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 ease-out group-hover:translate-x-full" />
@@ -62,7 +62,7 @@ export const SaveButton: React.FC<SaveButtonProps> = ({ onSave, isLoading }) => 
           </div>
           
           {/* حلقه درخشان */}
-          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 blur-2xl" />
+          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 bg-gradient-to-r from-emerald-400 via-sky-500 to-slate-500 blur-2xl" />
         </Button>
       </motion.div>
 
