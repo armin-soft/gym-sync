@@ -3,12 +3,15 @@ import { useState, useEffect } from "react";
 import { TrainerProfile, defaultProfile } from "@/types/trainer";
 import { useToast } from "@/hooks/use-toast";
 
-export const useTrainerProfileData = () => {
+export const useTrainerProfile = () => {
   const { toast } = useToast();
   const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
+  const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
+  const [activeSection, setActiveSection] = useState<string>("personal");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  // بارگذاری اطلاعات ذخیره شده
+  // Load saved profile from localStorage
   useEffect(() => {
     try {
       const savedProfile = localStorage.getItem('trainerProfile');
@@ -17,25 +20,27 @@ export const useTrainerProfileData = () => {
         setProfile(parsed);
       }
     } catch (error) {
-      console.error('خطا در بارگذاری اطلاعات پروفایل:', error);
+      console.error('Error loading profile from localStorage:', error);
       toast({
         variant: "destructive",
-        title: "خطا در بارگذاری",
+        title: "خطا در بارگذاری اطلاعات",
         description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
       });
     }
   }, [toast]);
 
-  const updateProfile = (key: keyof TrainerProfile, value: string) => {
+  const handleUpdate = (key: keyof TrainerProfile, value: string) => {
     setProfile(prev => ({ ...prev, [key]: value }));
+    if (errors[key]) {
+      setErrors(prev => ({ ...prev, [key]: '' }));
+    }
   };
 
-  const saveProfile = async () => {
-    setIsLoading(true);
+  const handleSave = async () => {
+    setIsSaving(true);
     
     try {
-      // شبیه‌سازی تاخیر شبکه
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
       window.dispatchEvent(new Event('storage'));
@@ -45,21 +50,27 @@ export const useTrainerProfileData = () => {
         description: "اطلاعات پروفایل با موفقیت ذخیره شد"
       });
     } catch (error) {
-      console.error('خطا در ذخیره اطلاعات:', error);
+      console.error('Error saving profile to localStorage:', error);
       toast({
         variant: "destructive",
-        title: "خطا در ذخیره",
+        title: "خطا در ذخیره اطلاعات",
         description: "مشکلی در ذخیره اطلاعات پیش آمده است"
       });
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
   return {
     profile,
-    updateProfile,
-    saveProfile,
-    isLoading
+    errors,
+    setErrors,
+    validFields,
+    setValidFields,
+    activeSection,
+    setActiveSection,
+    isSaving,
+    handleUpdate,
+    handleSave
   };
 };
