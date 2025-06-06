@@ -12,7 +12,8 @@ interface CertificatesSectionProps {
 
 export const CertificatesSection = ({ profileData, deviceInfo }: CertificatesSectionProps) => {
   const { profile, updateProfile } = profileData;
-  const certificates = profile?.certifications || [];
+  // Ensure certificates is always an array, even if it's undefined or null
+  const certificates = Array.isArray(profile?.certifications) ? profile.certifications : [];
 
   const addCertificate = () => {
     const newCertificate = {
