@@ -23,11 +23,22 @@ interface NewTrainerProfileSidebarProps {
 }
 
 export const NewTrainerProfileSidebar = ({ profileData }: NewTrainerProfileSidebarProps) => {
-  const { personalInfo, achievements, completionPercentage } = profileData;
+  // Add safety checks for undefined data
+  if (!profileData) {
+    return (
+      <div className="space-y-6">
+        <Card className="p-6">
+          <div className="text-center">در حال بارگذاری...</div>
+        </Card>
+      </div>
+    );
+  }
+
+  const { personalInfo = {}, achievements = {}, completionPercentage = 0 } = profileData;
 
   // نمایش نام یا متن پیش‌فرض
-  const displayName = personalInfo.displayName || personalInfo.fullName || "نام نمایشی";
-  const hasBasicInfo = personalInfo.fullName || personalInfo.phone || personalInfo.email;
+  const displayName = personalInfo?.displayName || personalInfo?.fullName || "نام نمایشی";
+  const hasBasicInfo = personalInfo?.fullName || personalInfo?.phone || personalInfo?.email;
 
   return (
     <motion.div
@@ -46,7 +57,7 @@ export const NewTrainerProfileSidebar = ({ profileData }: NewTrainerProfileSideb
             <div className="relative">
               <Avatar className="w-24 h-24 border-4 border-white/20 shadow-lg">
                 <AvatarImage 
-                  src={personalInfo.profileImage} 
+                  src={personalInfo?.profileImage} 
                   alt={displayName}
                   className="object-cover"
                 />
@@ -69,7 +80,7 @@ export const NewTrainerProfileSidebar = ({ profileData }: NewTrainerProfileSideb
                 {displayName}
               </h3>
               
-              {personalInfo.specialization ? (
+              {personalInfo?.specialization ? (
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
                   {personalInfo.specialization}
                 </p>
@@ -120,14 +131,14 @@ export const NewTrainerProfileSidebar = ({ profileData }: NewTrainerProfileSideb
           </h4>
           
           <div className="space-y-2 text-sm">
-            {personalInfo.phone && (
+            {personalInfo?.phone && (
               <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                 <Phone className="w-3 h-3" />
                 <span>{personalInfo.phone}</span>
               </div>
             )}
             
-            {personalInfo.email && (
+            {personalInfo?.email && (
               <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                 <Mail className="w-3 h-3" />
                 <span className="text-xs break-all">{personalInfo.email}</span>
@@ -156,28 +167,28 @@ export const NewTrainerProfileSidebar = ({ profileData }: NewTrainerProfileSideb
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="text-center p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
             <div className="text-lg font-bold text-emerald-600">
-              {achievements.totalStudents ? toPersianNumbers(achievements.totalStudents.toString()) : '۰'}
+              {achievements?.totalStudents ? toPersianNumbers(achievements.totalStudents.toString()) : '۰'}
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-300">شاگرد</div>
           </div>
           
           <div className="text-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
             <div className="text-lg font-bold text-blue-600">
-              {achievements.satisfaction ? `${toPersianNumbers(achievements.satisfaction.toString())}%` : '۰%'}
+              {achievements?.satisfaction ? `${toPersianNumbers(achievements.satisfaction.toString())}%` : '۰%'}
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-300">رضایت</div>
           </div>
           
           <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
             <div className="text-lg font-bold text-purple-600">
-              {achievements.successfulPrograms ? toPersianNumbers(achievements.successfulPrograms.toString()) : '۰'}
+              {achievements?.successfulPrograms ? toPersianNumbers(achievements.successfulPrograms.toString()) : '۰'}
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-300">برنامه</div>
           </div>
           
           <div className="text-center p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
             <div className="text-lg font-bold text-orange-600">
-              {achievements.yearsExperience ? toPersianNumbers(achievements.yearsExperience.toString()) : '۰'}
+              {achievements?.yearsExperience ? toPersianNumbers(achievements.yearsExperience.toString()) : '۰'}
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-300">سال تجربه</div>
           </div>
@@ -190,7 +201,7 @@ export const NewTrainerProfileSidebar = ({ profileData }: NewTrainerProfileSideb
           variant="outline" 
           size="sm" 
           className="w-full border-gray-300 hover:border-gray-400"
-          onClick={profileData.resetProfile}
+          onClick={profileData?.resetProfile}
         >
           <RotateCcw className="w-4 h-4 ml-2" />
           بازنشانی پروفایل
