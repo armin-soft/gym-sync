@@ -6,6 +6,11 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { safeJSONParse } from '@/utils/database/index';
 
+// Helper function to trigger stats update
+const triggerStatsUpdate = () => {
+  window.dispatchEvent(new CustomEvent('studentsUpdated'));
+};
+
 export const useStudents = () => {
   const { 
     students, 
@@ -48,6 +53,52 @@ export const useStudents = () => {
     handleClearSearch
   } = useStudentFiltering(students);
   
+  // Wrap the original functions to trigger stats updates
+  const enhancedHandleDelete = async (id: number) => {
+    const result = await handleDelete(id);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
+  };
+
+  const enhancedHandleSave = async (student: Student) => {
+    const result = await handleSave(student);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
+  };
+
+  const enhancedHandleSaveExercises = async (studentId: number, exercises: any) => {
+    const result = await handleSaveExercises(studentId, exercises);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
+  };
+
+  const enhancedHandleSaveDiet = async (studentId: number, diet: any) => {
+    const result = await handleSaveDiet(studentId, diet);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
+  };
+
+  const enhancedHandleSaveSupplements = async (studentId: number, supplements: any) => {
+    const result = await handleSaveSupplements(studentId, supplements);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
+  };
+
+  const enhancedSetStudents = (students: Student[]) => {
+    setStudents(students);
+    triggerStatsUpdate();
+  };
+  
   return {
     // Students data
     students,
@@ -68,13 +119,13 @@ export const useStudents = () => {
     toggleSort,
     handleClearSearch,
     
-    // CRUD operations
-    handleDelete,
-    handleSave,
-    handleSaveExercises,
-    handleSaveDiet,
-    handleSaveSupplements,
-    setStudents,
+    // CRUD operations with stats update triggers
+    handleDelete: enhancedHandleDelete,
+    handleSave: enhancedHandleSave,
+    handleSaveExercises: enhancedHandleSaveExercises,
+    handleSaveDiet: enhancedHandleSaveDiet,
+    handleSaveSupplements: enhancedHandleSaveSupplements,
+    setStudents: enhancedSetStudents,
     setSupplements
   };
 };

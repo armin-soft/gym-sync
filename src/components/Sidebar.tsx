@@ -125,17 +125,46 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       // Load students count
       const savedStudents = localStorage.getItem('students');
       let studentsCount = 0;
+      let activeProgramsCount = 0;
+      
       if (savedStudents) {
         const students = JSON.parse(savedStudents);
-        studentsCount = Array.isArray(students) ? students.length : 0;
+        if (Array.isArray(students)) {
+          studentsCount = students.length;
+          
+          // Count students with active programs (those who have exercises, diet, or supplements)
+          activeProgramsCount = students.filter(student => {
+            const hasExercises = student.exercises && Object.keys(student.exercises).length > 0;
+            const hasDiet = student.diet && Array.isArray(student.diet) && student.diet.length > 0;
+            const hasSupplements = student.supplements && Array.isArray(student.supplements) && student.supplements.length > 0;
+            return hasExercises || hasDiet || hasSupplements;
+          }).length;
+        }
       }
 
-      // Load other stats (you can expand this based on your data)
+      // Calculate total sessions from all students
+      let totalSessions = 0;
+      if (savedStudents) {
+        const students = JSON.parse(savedStudents);
+        if (Array.isArray(students)) {
+          students.forEach(student => {
+            if (student.exercises) {
+              // Count exercise sessions across all days
+              Object.keys(student.exercises).forEach(day => {
+                if (Array.isArray(student.exercises[day])) {
+                  totalSessions += student.exercises[day].length;
+                }
+              });
+            }
+          });
+        }
+      }
+
       setStats({
         totalStudents: studentsCount,
-        activePrograms: Math.max(1, Math.floor(studentsCount * 0.8)), // 80% of students have active programs
-        completedSessions: studentsCount * 12, // Average 12 sessions per student
-        rating: 5 // Perfect rating
+        activePrograms: activeProgramsCount,
+        completedSessions: totalSessions,
+        rating: 5 // Keep rating as 5 (perfect rating)
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -151,10 +180,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       loadStats();
     };
     
+    // Listen for storage events from other tabs
     window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom events when data changes in the same tab
+    window.addEventListener('studentsUpdated', handleStorageChange);
+    window.addEventListener('profileUpdated', handleStorageChange);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('studentsUpdated', handleStorageChange);
+      window.removeEventListener('profileUpdated', handleStorageChange);
     };
   }, []);
   
