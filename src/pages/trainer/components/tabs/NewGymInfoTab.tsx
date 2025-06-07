@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Building, Phone, Globe, MapPin, Clock, Users } from "lucide-react";
+import { Building, MapPin, Phone, Globe, Clock, Dumbbell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,51 @@ interface NewGymInfoTabProps {
 
 export const NewGymInfoTab = ({ profileData }: NewGymInfoTabProps) => {
   const gymInfo = profileData.profileData.gymInfo;
+
+  const formFields = [
+    {
+      id: "gymName",
+      label: "نام باشگاه",
+      icon: Building,
+      value: gymInfo.gymName,
+      type: "input"
+    },
+    {
+      id: "gymAddress", 
+      label: "آدرس باشگاه",
+      icon: MapPin,
+      value: gymInfo.gymAddress,
+      type: "input"
+    },
+    {
+      id: "gymPhone",
+      label: "تلفن باشگاه",
+      icon: Phone,
+      value: gymInfo.gymPhone,
+      type: "input"
+    },
+    {
+      id: "gymWebsite",
+      label: "وب‌سایت باشگاه",
+      icon: Globe,
+      value: gymInfo.gymWebsite,
+      type: "input"
+    },
+    {
+      id: "workingHours",
+      label: "ساعات کاری",
+      icon: Clock,
+      value: gymInfo.workingHours,
+      type: "input"
+    },
+    {
+      id: "gymDescription",
+      label: "توضیحات باشگاه",
+      icon: Building,
+      value: gymInfo.gymDescription,
+      type: "textarea"
+    }
+  ];
 
   return (
     <div className="space-y-6">
@@ -28,131 +73,68 @@ export const NewGymInfoTab = ({ profileData }: NewGymInfoTabProps) => {
           اطلاعات باشگاه
         </h3>
         <p className="text-gray-600 dark:text-gray-300">
-          اطلاعات کامل باشگاه خود را وارد کنید
+          مشخصات و اطلاعات باشگاه خود را وارد کنید
         </p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-        >
-          <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
-            <Building className="w-4 h-4 text-sky-600" />
-            نام باشگاه
-          </Label>
-          <Input
-            value={gymInfo.gymName}
-            className="bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
-            dir="rtl"
-          />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
-            <Phone className="w-4 h-4 text-sky-600" />
-            تلفن باشگاه
-          </Label>
-          <Input
-            value={gymInfo.gymPhone}
-            className="bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
-            dir="rtl"
-          />
-        </motion.div>
-
-        <motion.div
-          className="md:col-span-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
-            <MapPin className="w-4 h-4 text-sky-600" />
-            آدرس باشگاه
-          </Label>
-          <Input
-            value={gymInfo.gymAddress}
-            className="bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
-            dir="rtl"
-          />
-        </motion.div>
-
-        <motion.div
-          className="md:col-span-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
-            <Building className="w-4 h-4 text-sky-600" />
-            توضیحات باشگاه
-          </Label>
-          <Textarea
-            value={gymInfo.gymDescription}
-            className="min-h-[100px] bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
-            dir="rtl"
-          />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
-            <Globe className="w-4 h-4 text-sky-600" />
-            وب‌سایت
-          </Label>
-          <Input
-            value={gymInfo.gymWebsite}
-            className="bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
-            dir="ltr"
-          />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
-            <Clock className="w-4 h-4 text-sky-600" />
-            ساعات کاری
-          </Label>
-          <Input
-            value={gymInfo.workingHours}
-            className="bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
-            dir="rtl"
-          />
-        </motion.div>
-
-        <motion.div
-          className="md:col-span-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.5 }}
-        >
-          <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
-            <Users className="w-4 h-4 text-sky-600" />
-            امکانات
-          </Label>
-          <div className="flex flex-wrap gap-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            {gymInfo.facilities.map((facility: string, index: number) => (
-              <Badge 
-                key={index} 
-                className="bg-gradient-to-r from-sky-500 to-blue-600 text-white"
-              >
-                {facility}
-              </Badge>
-            ))}
-          </div>
-        </motion.div>
+        {formFields.map((field, index) => (
+          <motion.div
+            key={field.id}
+            className={field.type === "textarea" ? "md:col-span-2" : ""}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.5 }}
+          >
+            <Label htmlFor={field.id} className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
+              <field.icon className="w-4 h-4 text-sky-600" />
+              {field.label}
+            </Label>
+            
+            {field.type === "textarea" ? (
+              <Textarea
+                id={field.id}
+                value={field.value}
+                className="min-h-[120px] bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
+                placeholder={`${field.label} خود را وارد کنید`}
+                dir="rtl"
+              />
+            ) : (
+              <Input
+                id={field.id}
+                value={field.value}
+                className="bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:border-sky-500 focus:ring-sky-500"
+                placeholder={`${field.label} خود را وارد کنید`}
+                dir="rtl"
+              />
+            )}
+          </motion.div>
+        ))}
       </div>
+
+      {/* امکانات باشگاه */}
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+      >
+        <Label className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-4">
+          <Dumbbell className="w-4 h-4 text-sky-600" />
+          امکانات و تجهیزات
+        </Label>
+        
+        <div className="flex flex-wrap gap-2">
+          {gymInfo.facilities?.map((facility: string, index: number) => (
+            <Badge
+              key={index}
+              className="bg-gradient-to-r from-sky-500 to-blue-600 text-white border-none px-3 py-1"
+            >
+              {facility}
+            </Badge>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 };

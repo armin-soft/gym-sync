@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { BarChart3, Users, Trophy, Star, TrendingUp, Award } from "lucide-react";
+import { Trophy, Users, Target, TrendingUp, Star, Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -11,48 +11,38 @@ interface NewAchievementsTabProps {
 export const NewAchievementsTab = ({ profileData }: NewAchievementsTabProps) => {
   const achievements = profileData.profileData.achievements;
 
-  const stats = [
+  const achievementCards = [
     {
-      title: "تعداد کل شاگردان",
-      value: toPersianNumbers(achievements.totalStudents.toString()),
       icon: Users,
+      title: "تعداد شاگردان",
+      value: toPersianNumbers(achievements.totalStudents.toString()),
+      description: "شاگرد فعال",
       gradient: "from-emerald-500 to-teal-600",
-      description: "شاگرد فعال تحت نظارت"
+      growth: "+۱۲%"
     },
     {
+      icon: Target,
       title: "برنامه‌های موفق",
       value: toPersianNumbers(achievements.successfulPrograms.toString()),
-      icon: Trophy,
-      gradient: "from-sky-500 to-blue-600",
-      description: "برنامه با نتیجه مثبت"
+      description: "برنامه تکمیل شده",
+      gradient: "from-blue-500 to-indigo-600",
+      growth: "+۸%"
     },
     {
-      title: "رضایت شاگردان",
+      icon: TrendingUp,
+      title: "میزان رضایت",
       value: `${toPersianNumbers(achievements.satisfaction.toString())}%`,
-      icon: Star,
-      gradient: "from-yellow-500 to-orange-600",
-      description: "میانگین امتیاز رضایت"
+      description: "رضایت شاگردان",
+      gradient: "from-purple-500 to-pink-600",
+      growth: "+۳%"
     },
     {
+      icon: Award,
       title: "سال تجربه",
       value: toPersianNumbers(achievements.yearsExperience.toString()),
-      icon: Award,
-      gradient: "from-purple-500 to-pink-600",
-      description: "سال فعالیت حرفه‌ای"
-    },
-    {
-      title: "درآمد ماهانه",
-      value: `${toPersianNumbers((achievements.monthlyIncome / 1000000).toString())} میلیون`,
-      icon: TrendingUp,
-      gradient: "from-indigo-500 to-purple-600",
-      description: "تومان درآمد متوسط"
-    },
-    {
-      title: "دوره‌های تکمیلی",
-      value: toPersianNumbers(achievements.completedCourses.toString()),
-      icon: BarChart3,
-      gradient: "from-pink-500 to-rose-600",
-      description: "دوره آموزشی تکمیل شده"
+      description: "سال فعالیت حرفه‌ای",
+      gradient: "from-orange-500 to-red-600",
+      growth: "پیوسته"
     }
   ];
 
@@ -65,94 +55,76 @@ export const NewAchievementsTab = ({ profileData }: NewAchievementsTabProps) => 
         transition={{ duration: 0.6 }}
       >
         <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-          <BarChart3 className="w-8 h-8 text-white" />
+          <Trophy className="w-8 h-8 text-white" />
         </div>
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-          دستاوردها و آمار عملکرد
+          دستاوردها و آمار
         </h3>
         <p className="text-gray-600 dark:text-gray-300">
-          نگاهی به آمار و عملکرد حرفه‌ای شما
+          عملکرد و دستاوردهای حرفه‌ای شما
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {achievementCards.map((achievement, index) => (
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.5 }}
-            whileHover={{ scale: 1.02 }}
           >
-            <Card className="relative overflow-hidden bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-900/80 dark:to-gray-800/80 backdrop-blur-lg border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-              {/* پس‌زمینه گرادیان */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-5`} />
+            <Card className={`p-6 bg-gradient-to-br ${achievement.gradient} text-white shadow-xl border-none hover:scale-105 transition-transform duration-300`}>
+              <div className="flex items-center justify-between mb-4">
+                <achievement.icon className="w-8 h-8 text-white/90" />
+                <div className="bg-white/20 rounded-full px-3 py-1">
+                  <span className="text-sm font-medium">{achievement.growth}</span>
+                </div>
+              </div>
               
-              <div className="relative p-6 space-y-4">
-                {/* آیکون */}
-                <div className={`w-14 h-14 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
-                  <stat.icon className="w-7 h-7 text-white" />
-                </div>
-                
-                {/* محتوا */}
-                <div className="space-y-2">
-                  <h4 className="text-lg font-bold text-gray-900 dark:text-white">
-                    {stat.title}
-                  </h4>
-                  <div className={`text-3xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
-                    {stat.value}
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {stat.description}
-                  </p>
-                </div>
-                
-                {/* اندیکاتور پیشرفت */}
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <motion.div
-                    className={`bg-gradient-to-r ${stat.gradient} h-2 rounded-full`}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(parseInt(stat.value.replace(/[^\d]/g, '')) / 10, 100)}%` }}
-                    transition={{ delay: index * 0.1 + 0.5, duration: 1 }}
-                  />
-                </div>
+              <div className="space-y-2">
+                <h4 className="text-lg font-semibold">{achievement.title}</h4>
+                <div className="text-3xl font-bold">{achievement.value}</div>
+                <p className="text-white/80 text-sm">{achievement.description}</p>
               </div>
             </Card>
           </motion.div>
         ))}
       </div>
 
-      {/* کارت خلاصه عملکرد */}
+      {/* نمودار پیشرفت */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        className="mt-8"
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
       >
-        <Card className="p-8 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-800">
-          <div className="text-center space-y-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-              <Trophy className="w-10 h-10 text-white" />
+        <Card className="p-6 bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-900/80 dark:to-gray-800/80 backdrop-blur-lg border border-white/20 shadow-xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <Star className="w-6 h-6 text-white" />
             </div>
-            
             <div>
-              <h4 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                عملکرد ممتاز
+              <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                وضعیت کلی عملکرد
               </h4>
-              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                با توجه به آمار و عملکرد شما، در رده مربیان ممتاز قرار گرفته‌اید. 
-                ادامه این روند باعث افزایش اعتبار و جذب شاگردان بیشتر خواهد شد.
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                ارزیابی جامع عملکرد حرفه‌ای
               </p>
             </div>
-            
-            <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow">
-                <span className="text-sm text-gray-500">رتبه کلی:</span>
-                <span className="font-bold text-indigo-600 mr-2">A+</span>
-              </div>
-              <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow">
-                <span className="text-sm text-gray-500">سطح:</span>
-                <span className="font-bold text-purple-600 mr-2">حرفه‌ای</span>
-              </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700 dark:text-gray-300">میزان موفقیت کلی</span>
+              <span className="font-bold text-emerald-600">۹۵%</span>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+              <motion.div
+                className="bg-gradient-to-r from-emerald-500 to-teal-600 h-3 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: "95%" }}
+                transition={{ delay: 0.8, duration: 1.5 }}
+              />
             </div>
           </div>
         </Card>
