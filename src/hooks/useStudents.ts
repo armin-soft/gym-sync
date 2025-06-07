@@ -5,6 +5,7 @@ import { Student } from '@/components/students/StudentTypes';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { safeJSONParse } from '@/utils/database/index';
+import { ExerciseWithSets } from '@/types/exercise';
 
 // Helper function to trigger stats update
 const triggerStatsUpdate = () => {
@@ -70,24 +71,24 @@ export const useStudents = () => {
     return result;
   };
 
-  const enhancedHandleSaveExercises = async (studentId: number, exercises: any) => {
-    const result = await handleSaveExercises(studentId, exercises);
+  const enhancedHandleSaveExercises = async (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+    const result = await handleSaveExercises(exercisesWithSets, studentId, dayNumber);
     if (result) {
       triggerStatsUpdate();
     }
     return result;
   };
 
-  const enhancedHandleSaveDiet = async (studentId: number, diet: any) => {
-    const result = await handleSaveDiet(studentId, diet);
+  const enhancedHandleSaveDiet = async (mealIds: number[], studentId: number, dayNumber?: number) => {
+    const result = await handleSaveDiet(mealIds, studentId, dayNumber);
     if (result) {
       triggerStatsUpdate();
     }
     return result;
   };
 
-  const enhancedHandleSaveSupplements = async (studentId: number, supplements: any) => {
-    const result = await handleSaveSupplements(studentId, supplements);
+  const enhancedHandleSaveSupplements = async (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
+    const result = await handleSaveSupplements(data, studentId);
     if (result) {
       triggerStatsUpdate();
     }
