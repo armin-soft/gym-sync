@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   LayoutDashboard,
@@ -43,8 +42,6 @@ const sidebarItems: SidebarItem[] = [
     href: "/Management/Students",
     icon: Users,
     gradient: "from-emerald-500 to-teal-600",
-    badge: "فعال",
-    badgeColor: "bg-emerald-500",
   },
   {
     id: "exercises",
