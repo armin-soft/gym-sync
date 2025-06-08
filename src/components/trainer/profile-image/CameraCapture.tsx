@@ -1,5 +1,5 @@
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Camera, X, RotateCcw, Check } from "lucide-react";
@@ -19,9 +19,20 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setIsStreaming(false);
+    setCapturedImage(null);
+  }, []);
+
   const startCamera = useCallback(async () => {
     try {
       setError(null);
+      console.log('Starting camera...');
+      
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { 
           width: { ideal: 640 },
@@ -30,24 +41,22 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
         }
       });
       
+      console.log('Camera stream obtained');
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
-        setIsStreaming(true);
+        
+        // Wait for video to be ready
+        videoRef.current.onloadedmetadata = () => {
+          console.log('Video metadata loaded');
+          setIsStreaming(true);
+        };
       }
     } catch (err) {
       console.error('خطا در دسترسی به دوربین:', err);
-      setError('دسترسی به دوربین امکان‌پذیر نیست');
+      setError('دسترسی به دوربین امکان‌پذیر نیست. لطفاً اجازه دسترسی را بدهید.');
     }
-  }, []);
-
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    setIsStreaming(false);
-    setCapturedImage(null);
   }, []);
 
   const capturePhoto = useCallback(() => {
@@ -63,6 +72,7 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
         
         const imageData = canvas.toDataURL('image/jpeg', 0.8);
         setCapturedImage(imageData);
+        console.log('Photo captured');
       }
     }
   }, [isStreaming]);
@@ -75,6 +85,7 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
   };
 
   const handleClose = () => {
+    console.log('Closing camera dialog');
     stopCamera();
     setError(null);
     onClose();
@@ -84,15 +95,21 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
     setCapturedImage(null);
   };
 
-  // Start camera when dialog opens
-  useState(() => {
+  // Effect to handle camera when dialog opens/closes
+  useEffect(() => {
     if (isOpen && !isStreaming && !capturedImage) {
+      console.log('Dialog opened, starting camera...');
       startCamera();
     }
-    if (!isOpen) {
-      stopCamera();
-    }
-  });
+    
+    // Cleanup when dialog closes
+    return () => {
+      if (!isOpen) {
+        console.log('Dialog closed, stopping camera...');
+        stopCamera();
+      }
+    };
+  }, [isOpen, startCamera, stopCamera, isStreaming, capturedImage]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -120,9 +137,18 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
                   playsInline
                   muted
                   className="w-full h-full object-cover"
-                  style={{ transform: 'scaleX(-1)' }} // Mirror effect
+                  style={{ transform: 'scaleX(-1)' }}
                 />
                 <canvas ref={canvasRef} className="hidden" />
+                
+                {!isStreaming && !error && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+                    <div className="text-center">
+                      <Camera className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                      <p className="text-gray-600 dark:text-gray-300">در حال بارگذاری دوربین...</p>
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
               <motion.img
@@ -135,11 +161,11 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
               />
             )}
 
-            {!isStreaming && !capturedImage && !error && (
+            {!isStreaming && !capturedImage && error && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Button onClick={startCamera} variant="outline">
                   <Camera className="h-4 w-4 mr-2" />
-                  روشن کردن دوربین
+                  تلاش مجدد
                 </Button>
               </div>
             )}
