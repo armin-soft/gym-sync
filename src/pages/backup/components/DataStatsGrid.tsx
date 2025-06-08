@@ -9,6 +9,20 @@ interface DataStatsGridProps {
 }
 
 export function DataStatsGrid({ stats }: DataStatsGridProps) {
+  // محاسبه حداکثر مقادیر برای نمایش پیشرفت واقعی
+  const maxValues = {
+    students: Math.max(stats.students, 50),
+    exercises: Math.max(stats.exercises, 100),
+    meals: Math.max(stats.meals, 50),
+    supplements: Math.max(stats.supplements, 30),
+    totalRecords: Math.max(stats.students + stats.exercises + stats.meals + stats.supplements, 100)
+  };
+
+  // محاسبه درصد پیشرفت واقعی
+  const calculateProgress = (current: number, max: number) => {
+    return Math.min((current / max) * 100, 100);
+  };
+
   const statsItems = [
     {
       icon: Users,
@@ -16,7 +30,8 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
       value: stats.students,
       color: "from-emerald-500 to-emerald-700",
       bgColor: "from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900",
-      description: "کاربران فعال سیستم"
+      description: "کاربران فعال سیستم",
+      progress: calculateProgress(stats.students, maxValues.students)
     },
     {
       icon: Dumbbell,
@@ -24,7 +39,8 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
       value: stats.exercises,
       color: "from-sky-500 to-sky-700",
       bgColor: "from-sky-50 to-sky-100 dark:from-sky-950 dark:to-sky-900",
-      description: "برنامه‌های ورزشی طراحی‌شده"
+      description: "برنامه‌های ورزشی طراحی‌شده",
+      progress: calculateProgress(stats.exercises, maxValues.exercises)
     },
     {
       icon: UtensilsCrossed,
@@ -32,7 +48,8 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
       value: stats.meals,
       color: "from-slate-500 to-slate-700",
       bgColor: "from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900",
-      description: "برنامه‌های تغذیه‌ای تنظیم‌شده"
+      description: "برنامه‌های تغذیه‌ای تنظیم‌شده",
+      progress: calculateProgress(stats.meals, maxValues.meals)
     },
     {
       icon: Pill,
@@ -40,7 +57,8 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
       value: stats.supplements,
       color: "from-emerald-600 to-sky-600",
       bgColor: "from-emerald-50 to-sky-50 dark:from-emerald-950 dark:to-sky-950",
-      description: "مکمل‌ها و ویتامین‌ها"
+      description: "مکمل‌ها و ویتامین‌ها",
+      progress: calculateProgress(stats.supplements, maxValues.supplements)
     },
     {
       icon: Database,
@@ -49,7 +67,8 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
       color: "from-slate-600 to-emerald-600",
       bgColor: "from-slate-50 to-emerald-50 dark:from-slate-950 dark:to-emerald-950",
       description: "مجموع فضای اشغال‌شده",
-      isSize: true
+      isSize: true,
+      progress: 85 // برای حجم داده‌ها از یک مقدار تقریبی استفاده می‌کنیم
     },
     {
       icon: TrendingUp,
@@ -57,7 +76,11 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
       value: stats.students + stats.exercises + stats.meals + stats.supplements,
       color: "from-sky-600 to-slate-600",
       bgColor: "from-sky-50 to-slate-50 dark:from-sky-950 dark:to-slate-950",
-      description: "تعداد کل داده‌های ذخیره‌شده"
+      description: "تعداد کل داده‌های ذخیره‌شده",
+      progress: calculateProgress(
+        stats.students + stats.exercises + stats.meals + stats.supplements,
+        maxValues.totalRecords
+      )
     }
   ];
 
@@ -124,14 +147,19 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
                 {item.description}
               </p>
 
-              {/* Progress Bar */}
+              {/* Progress Bar - حالا بر اساس داده‌های واقعی */}
               <div className="mt-4 w-full bg-white/30 dark:bg-slate-700/30 rounded-full h-2 overflow-hidden">
                 <motion.div
                   className={`h-full bg-gradient-to-r ${item.color} rounded-full`}
                   initial={{ width: 0 }}
-                  animate={{ width: "75%" }}
+                  animate={{ width: `${item.progress}%` }}
                   transition={{ duration: 1.5, delay: 0.5 + index * 0.2 }}
                 />
+              </div>
+              
+              {/* نمایش درصد پیشرفت */}
+              <div className="mt-2 text-xs text-slate-500 dark:text-slate-400 text-left">
+                {toPersianNumbers(Math.round(item.progress))}%
               </div>
             </div>
 

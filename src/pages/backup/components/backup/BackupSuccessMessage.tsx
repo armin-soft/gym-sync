@@ -8,6 +8,11 @@ interface BackupSuccessMessageProps {
 }
 
 export function BackupSuccessMessage({ backupStats }: BackupSuccessMessageProps) {
+  // محاسبه پیشرفت واقعی بر اساس داده‌های موجود
+  const totalItems = Object.values(backupStats).reduce((sum, count) => sum + count, 0);
+  const expectedTotal = 100; // تعداد مورد انتظار برای یک پشتیبان کامل
+  const completionRate = Math.min((totalItems / expectedTotal) * 100, 100);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -24,29 +29,47 @@ export function BackupSuccessMessage({ backupStats }: BackupSuccessMessageProps)
             پشتیبان‌گیری کامل شد
           </h4>
           <p className="text-emerald-600 dark:text-emerald-300">
-            فایل با موفقیت دانلود شد
+            فایل با موفقیت دانلود شد ({toPersianNumbers(Math.round(completionRate))}% تکمیل)
           </p>
         </div>
       </div>
       
       {Object.keys(backupStats).length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {Object.entries(backupStats).map(([key, count]) => (
-            <div key={key} className="bg-white/50 dark:bg-slate-800/50 rounded-xl p-4 text-center">
-              <div className="font-bold text-emerald-700 dark:text-emerald-300 text-2xl">
-                {toPersianNumbers(count)}
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {Object.entries(backupStats).map(([key, count]) => (
+              <div key={key} className="bg-white/50 dark:bg-slate-800/50 rounded-xl p-4 text-center">
+                <div className="font-bold text-emerald-700 dark:text-emerald-300 text-2xl">
+                  {toPersianNumbers(count)}
+                </div>
+                <div className="text-xs text-emerald-600 dark:text-emerald-400">
+                  {key === 'students' ? 'شاگرد' : 
+                   key === 'exercises' ? 'تمرین' :
+                   key === 'meals' ? 'وعده' :
+                   key === 'supplements' ? 'مکمل' : 
+                   key === 'exerciseTypes' ? 'نوع تمرین' :
+                   key === 'exerciseCategories' ? 'دسته تمرین' :
+                   'آیتم'}
+                </div>
               </div>
-              <div className="text-xs text-emerald-600 dark:text-emerald-400">
-                {key === 'students' ? 'شاگرد' : 
-                 key === 'exercises' ? 'تمرین' :
-                 key === 'meals' ? 'وعده' :
-                 key === 'supplements' ? 'مکمل' : 
-                 key === 'exerciseTypes' ? 'نوع تمرین' :
-                 key === 'exerciseCategories' ? 'دسته تمرین' :
-                 'آیتم'}
-              </div>
+            ))}
+          </div>
+
+          {/* نوار پیشرفت کلی */}
+          <div className="mt-4">
+            <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400 mb-2">
+              <span>پیشرفت کلی پشتیبان‌گیری</span>
+              <span>{toPersianNumbers(Math.round(completionRate))}%</span>
             </div>
-          ))}
+            <div className="w-full bg-emerald-200 dark:bg-emerald-800 rounded-full h-2">
+              <motion.div
+                className="bg-emerald-500 h-2 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${completionRate}%` }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+              />
+            </div>
+          </div>
         </div>
       )}
     </motion.div>
