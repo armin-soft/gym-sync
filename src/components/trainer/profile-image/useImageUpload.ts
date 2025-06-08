@@ -49,11 +49,11 @@ export const useImageUpload = ({ onImageChange }: UseImageUploadProps) => {
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) { // 5MB
       toast({
         variant: "destructive",
-        title: "خطا",
-        description: "حجم تصویر نباید بیشتر از ۲ مگابایت باشد",
+        title: "خطا", 
+        description: "حجم تصویر نباید بیشتر از ۵ مگابایت باشد",
       });
       return;
     }
@@ -84,20 +84,57 @@ export const useImageUpload = ({ onImageChange }: UseImageUploadProps) => {
   };
 
   const handleFileUpload = () => {
-    fileInputRef.current?.click();
+    try {
+      fileInputRef.current?.click();
+    } catch (error) {
+      console.error('Error opening file dialog:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "مشکلی در باز کردن انتخاب فایل پیش آمد",
+      });
+    }
   };
 
   const handleCameraCapture = () => {
-    setShowCameraCapture(true);
+    try {
+      // Check if camera is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast({
+          variant: "destructive",
+          title: "خطا",
+          description: "دوربین در این مرورگر پشتیبانی نمی‌شود",
+        });
+        return;
+      }
+      
+      setShowCameraCapture(true);
+    } catch (error) {
+      console.error('Error opening camera:', error);
+      toast({
+        variant: "destructive", 
+        title: "خطا",
+        description: "مشکلی در باز کردن دوربین پیش آمد",
+      });
+    }
   };
 
   const handleCameraCaptureComplete = (imageData: string) => {
-    onImageChange(imageData);
-    setShowCameraCapture(false);
-    toast({
-      title: "عکس گرفته شد",
-      description: "تصویر پروفایل با موفقیت بروزرسانی شد",
-    });
+    try {
+      onImageChange(imageData);
+      setShowCameraCapture(false);
+      toast({
+        title: "عکس گرفته شد",
+        description: "تصویر پروفایل با موفقیت بروزرسانی شد",
+      });
+    } catch (error) {
+      console.error('Error processing captured image:', error);
+      toast({
+        variant: "destructive",
+        title: "خطا", 
+        description: "مشکلی در پردازش تصویر گرفته شده پیش آمد",
+      });
+    }
   };
 
   return {
