@@ -35,7 +35,18 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.onchange = handleImageUpload;
+    input.addEventListener('change', (e) => {
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const result = event.target?.result as string;
+          onImageChange(result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
     input.click();
   };
 

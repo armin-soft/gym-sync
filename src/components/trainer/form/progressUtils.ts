@@ -3,7 +3,7 @@ import { TrainerProfile } from "@/types/trainer";
 
 export const calculateCompletionPercentage = (profile: TrainerProfile) => {
   const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'gymName', 'gymAddress'];
-  const optionalFields: (keyof TrainerProfile)[] = ['fullName', 'bio', 'gymDescription', 'instagram', 'website'];
+  const optionalFields: (keyof TrainerProfile)[] = ['bio', 'gymDescription', 'instagram', 'website'];
   
   let completedRequired = 0;
   let completedOptional = 0;

@@ -11,7 +11,7 @@ interface ProfileProgressProps {
 export const ProfileProgress: React.FC<ProfileProgressProps> = ({ profile }) => {
   const calculateCompletionPercentage = () => {
     const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'gymName', 'gymAddress'];
-    const optionalFields: (keyof TrainerProfile)[] = ['fullName', 'bio', 'gymDescription', 'instagram', 'website'];
+    const optionalFields: (keyof TrainerProfile)[] = ['bio', 'gymDescription', 'instagram', 'website'];
     
     const completedRequired = requiredFields.filter(field => profile[field] && profile[field].trim() !== '').length;
     const completedOptional = optionalFields.filter(field => profile[field] && profile[field].trim() !== '').length;
