@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Camera, Upload, User, Edit3 } from "lucide-react";
 import { TrainerProfile } from "@/types/trainer";
-import { toPersianNumbers } from "@/lib/utils/numbers";
 import { CameraCapture } from "@/components/trainer/profile-image/CameraCapture";
 import { ImageUploadOptions } from "@/components/trainer/profile-image/ImageUploadOptions";
 
@@ -116,22 +115,6 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
           <p className="text-emerald-600 dark:text-emerald-400 font-semibold">
             {profile.gymName || "نام باشگاه"}
           </p>
-        </motion.div>
-
-        {/* وضعیت آنلاین */}
-        <motion.div 
-          className="inline-flex items-center gap-3 bg-emerald-100 dark:bg-emerald-900/30 px-4 py-2 rounded-full"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="relative">
-            <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-            <div className="absolute inset-0 w-3 h-3 bg-emerald-500/30 rounded-full animate-ping"></div>
-          </div>
-          <span className="text-emerald-700 dark:text-emerald-300 font-medium text-sm">
-            آنلاین - عضو از {toPersianNumbers("۱۴۰۲")}
-          </span>
         </motion.div>
       </div>
 
