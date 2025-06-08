@@ -1,9 +1,8 @@
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Camera, X, RotateCcw, Check, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
 
 interface CameraCaptureProps {
   isOpen: boolean;
@@ -14,81 +13,51 @@ interface CameraCaptureProps {
 export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const stopCamera = useCallback(() => {
+  const startCamera = async () => {
     try {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => {
-          track.stop();
-        });
-        streamRef.current = null;
-      }
-      setIsStreaming(false);
-      setCapturedImage(null);
-      setIsLoading(false);
-    } catch (err) {
-      console.error('Error stopping camera:', err);
-    }
-  }, []);
-
-  const startCamera = useCallback(async () => {
-    if (isLoading || isStreaming) return;
-    
-    try {
-      setError(null);
       setIsLoading(true);
-
-      // Check if getUserMedia is supported
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('دوربین در این مرورگر پشتیبانی نمی‌شود');
-      }
+      setError(null);
       
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          facingMode: 'user'
-        },
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480, facingMode: 'user' },
         audio: false
       });
       
-      if (videoRef.current && stream) {
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
-        
-        videoRef.current.onloadedmetadata = () => {
-          setIsStreaming(true);
-          setIsLoading(false);
-        };
-
-        videoRef.current.onerror = () => {
-          setError('خطا در بارگذاری ویدیو');
-          setIsLoading(false);
-        };
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
       }
     } catch (err: any) {
       console.error('Camera error:', err);
-      setIsLoading(false);
-      
       if (err.name === 'NotAllowedError') {
-        setError('دسترسی به دوربین رد شد. لطفاً در تنظیمات مرورگر اجازه دسترسی را بدهید.');
+        setError('دسترسی به دوربین رد شد');
       } else if (err.name === 'NotFoundError') {
-        setError('دوربینی پیدا نشد. لطفاً اطمینان حاصل کنید که دوربین متصل است.');
-      } else if (err.name === 'NotReadableError') {
-        setError('دوربین در حال استفاده توسط برنامه دیگری است.');
+        setError('دوربینی پیدا نشد');
       } else {
-        setError(err.message || 'خطا در دسترسی به دوربین. لطفاً دوباره تلاش کنید.');
+        setError('خطا در دسترسی به دوربین');
       }
+    } finally {
+      setIsLoading(false);
     }
-  }, [isLoading, isStreaming]);
+  };
 
-  const capturePhoto = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current || !isStreaming) return;
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
     
     try {
       const canvas = canvasRef.current;
@@ -105,9 +74,9 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
       }
     } catch (err) {
       console.error('Error capturing photo:', err);
-      setError('خطا در گرفتن عکس. لطفاً دوباره تلاش کنید.');
+      setError('خطا در گرفتن عکس');
     }
-  }, [isStreaming]);
+  };
 
   const handleConfirm = () => {
     if (capturedImage) {
@@ -118,6 +87,7 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
 
   const handleClose = () => {
     stopCamera();
+    setCapturedImage(null);
     setError(null);
     onClose();
   };
@@ -127,13 +97,8 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
   };
 
   useEffect(() => {
-    if (isOpen && !isStreaming && !capturedImage && !isLoading) {
-      // Add a small delay to ensure dialog is fully rendered
-      const timer = setTimeout(() => {
-        startCamera();
-      }, 100);
-      
-      return () => clearTimeout(timer);
+    if (isOpen && !stream && !capturedImage) {
+      startCamera();
     }
     
     return () => {
@@ -141,14 +106,7 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
         stopCamera();
       }
     };
-  }, [isOpen, startCamera, stopCamera, isStreaming, capturedImage, isLoading]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-  }, [stopCamera]);
+  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -162,15 +120,15 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
 
         <div className="space-y-4">
           {error && (
-            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-destructive" />
-                <p className="text-sm text-destructive">{error}</p>
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <p className="text-sm text-red-700">{error}</p>
               </div>
             </div>
           )}
 
-          <div className="relative bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden aspect-[4/3]">
+          <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/3]">
             {!capturedImage ? (
               <>
                 <video
@@ -183,50 +141,28 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
                 />
                 <canvas ref={canvasRef} className="hidden" />
                 
-                {(isLoading || (!isStreaming && !error)) && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
                     <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto mb-2"></div>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {isLoading ? 'در حال دسترسی به دوربین...' : 'در حال بارگذاری دوربین...'}
-                      </p>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                      <p className="text-gray-600">در حال دسترسی به دوربین...</p>
                     </div>
                   </div>
                 )}
               </>
             ) : (
-              <motion.img
+              <img
                 src={capturedImage}
                 alt="عکس گرفته شده"
                 className="w-full h-full object-cover"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
               />
-            )}
-
-            {error && !isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-                <div className="text-center p-4">
-                  <AlertCircle className="h-12 w-12 mx-auto mb-2 text-red-500" />
-                  <Button onClick={startCamera} variant="outline" disabled={isLoading}>
-                    <Camera className="h-4 w-4 mr-2" />
-                    تلاش مجدد
-                  </Button>
-                </div>
-              </div>
             )}
           </div>
 
           <div className="flex justify-center gap-3">
-            {!capturedImage && isStreaming && !error && (
-              <Button
-                onClick={capturePhoto}
-                size="lg"
-                className="bg-emerald-500 hover:bg-emerald-600"
-                disabled={isLoading}
-              >
-                <Camera className="h-5 w-5 mr-2" />
+            {!capturedImage && stream && !error && (
+              <Button onClick={capturePhoto} className="bg-blue-500 hover:bg-blue-600">
+                <Camera className="h-4 w-4 mr-2" />
                 گرفتن عکس
               </Button>
             )}

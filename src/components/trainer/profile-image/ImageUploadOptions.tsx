@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Camera, Upload, ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
 
 interface ImageUploadOptionsProps {
   onFileUpload: () => void;
@@ -18,21 +17,15 @@ export const ImageUploadOptions = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={className}
+        <Button
+          variant="outline"
+          size="sm"
+          className={`bg-white border-gray-200 hover:bg-gray-50 ${className}`}
         >
-          <Button
-            variant="outline"
-            size="sm"
-            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950"
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            تغییر تصویر
-            <ChevronDown className="h-3 w-3 ml-2" />
-          </Button>
-        </motion.div>
+          <Upload className="h-4 w-4 mr-2" />
+          تغییر تصویر
+          <ChevronDown className="h-3 w-3 ml-2" />
+        </Button>
       </DropdownMenuTrigger>
       
       <DropdownMenuContent align="center" className="w-48">
