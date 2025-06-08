@@ -16,7 +16,7 @@ export const defaultProfile: TrainerProfile = {
   name: "",
   fullName: "",
   bio: "",
-  phone: "09123823886",
+  phone: "",
   image: "/Assets/Image/Place-Holder.svg",
   gymName: "",
   gymDescription: "",
