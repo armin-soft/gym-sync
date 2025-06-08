@@ -26,7 +26,7 @@ export const ImageUploadOptions = ({
           <Button
             variant="outline"
             size="sm"
-            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-950"
+            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950"
           >
             <Upload className="h-4 w-4 mr-2" />
             تغییر تصویر

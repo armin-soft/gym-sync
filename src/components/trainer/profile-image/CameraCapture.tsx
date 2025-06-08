@@ -31,7 +31,6 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
   const startCamera = useCallback(async () => {
     try {
       setError(null);
-      console.log('Starting camera...');
       
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { 
@@ -41,20 +40,15 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
         }
       });
       
-      console.log('Camera stream obtained');
-      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
         
-        // Wait for video to be ready
         videoRef.current.onloadedmetadata = () => {
-          console.log('Video metadata loaded');
           setIsStreaming(true);
         };
       }
     } catch (err) {
-      console.error('خطا در دسترسی به دوربین:', err);
       setError('دسترسی به دوربین امکان‌پذیر نیست. لطفاً اجازه دسترسی را بدهید.');
     }
   }, []);
@@ -72,7 +66,6 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
         
         const imageData = canvas.toDataURL('image/jpeg', 0.8);
         setCapturedImage(imageData);
-        console.log('Photo captured');
       }
     }
   }, [isStreaming]);
@@ -85,7 +78,6 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
   };
 
   const handleClose = () => {
-    console.log('Closing camera dialog');
     stopCamera();
     setError(null);
     onClose();
@@ -95,17 +87,13 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
     setCapturedImage(null);
   };
 
-  // Effect to handle camera when dialog opens/closes
   useEffect(() => {
     if (isOpen && !isStreaming && !capturedImage) {
-      console.log('Dialog opened, starting camera...');
       startCamera();
     }
     
-    // Cleanup when dialog closes
     return () => {
       if (!isOpen) {
-        console.log('Dialog closed, stopping camera...');
         stopCamera();
       }
     };
@@ -176,7 +164,7 @@ export const CameraCapture = ({ isOpen, onClose, onCapture }: CameraCaptureProps
               <Button
                 onClick={capturePhoto}
                 size="lg"
-                className="bg-indigo-500 hover:bg-indigo-600"
+                className="bg-emerald-500 hover:bg-emerald-600"
               >
                 <Camera className="h-5 w-5 mr-2" />
                 گرفتن عکس
