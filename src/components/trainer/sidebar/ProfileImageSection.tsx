@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Camera } from "lucide-react";
+import { Upload } from "lucide-react";
 import { ProfileImage as ProfileImageComponent } from "../ProfileImage";
 
 interface ProfileImageSectionProps {
@@ -25,7 +25,7 @@ export const ProfileImageSection = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <Camera className="h-3.5 w-3.5 text-indigo-500" />
+        <Upload className="h-3.5 w-3.5 text-indigo-500" />
         <span className="text-xs font-medium">تغییر تصویر</span>
       </motion.div>
     </div>

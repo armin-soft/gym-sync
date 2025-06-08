@@ -1,9 +1,8 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Camera, Upload, User, Edit3 } from "lucide-react";
+import { Upload, User } from "lucide-react";
 import { TrainerProfile } from "@/types/trainer";
-import { CameraCapture } from "@/components/trainer/profile-image/CameraCapture";
 import { ImageUploadOptions } from "@/components/trainer/profile-image/ImageUploadOptions";
 
 interface ProfileImageSectionProps {
@@ -16,19 +15,6 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
   onImageChange 
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [showCameraCapture, setShowCameraCapture] = useState(false);
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        onImageChange(result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleFileUpload = () => {
     const input = document.createElement('input');
@@ -47,15 +33,6 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
       }
     });
     input.click();
-  };
-
-  const handleCameraCapture = () => {
-    setShowCameraCapture(true);
-  };
-
-  const handleCameraCaptureComplete = (imageData: string) => {
-    onImageChange(imageData);
-    setShowCameraCapture(false);
   };
 
   return (
@@ -86,9 +63,10 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.2 }}
+            onClick={handleFileUpload}
           >
             <div className="text-white text-center">
-              <Camera className="w-8 h-8 mx-auto mb-2" />
+              <Upload className="w-8 h-8 mx-auto mb-2" />
               <span className="text-sm font-medium">تغییر تصویر</span>
             </div>
           </motion.div>
@@ -97,7 +75,6 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
         {/* دکمه انتخاب تصویر */}
         <ImageUploadOptions
           onFileUpload={handleFileUpload}
-          onCameraCapture={handleCameraCapture}
           className="absolute -bottom-2 -left-2"
         />
       </motion.div>
@@ -117,13 +94,6 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
           </p>
         </motion.div>
       </div>
-
-      {/* Camera Capture Dialog */}
-      <CameraCapture
-        isOpen={showCameraCapture}
-        onClose={() => setShowCameraCapture(false)}
-        onCapture={handleCameraCaptureComplete}
-      />
     </div>
   );
 };

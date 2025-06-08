@@ -1,6 +1,6 @@
 
-import { motion, AnimatePresence } from "framer-motion";
-import { Camera, UploadCloud } from "lucide-react";
+import { motion } from "framer-motion";
+import { Upload, UploadCloud } from "lucide-react";
 
 interface HoverOverlayProps {
   isHovering: boolean;
@@ -26,7 +26,7 @@ export const HoverOverlay = ({ isHovering, dragActive, isUploading }: HoverOverl
         </div>
       ) : (
         <div className="text-white flex flex-col items-center">
-          <Camera className="h-8 w-8 text-white mb-1" />
+          <Upload className="h-8 w-8 text-white mb-1" />
           <p className="text-sm font-medium">تغییر تصویر</p>
         </div>
       )}

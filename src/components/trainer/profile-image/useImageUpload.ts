@@ -12,7 +12,6 @@ export const useImageUpload = ({ onImageChange }: UseImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [showCameraCapture, setShowCameraCapture] = useState(false);
 
   const processFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -90,32 +89,15 @@ export const useImageUpload = ({ onImageChange }: UseImageUploadProps) => {
     fileInputRef.current?.click();
   };
 
-  const handleCameraCapture = () => {
-    setShowCameraCapture(true);
-  };
-
-  const handleCameraCaptureComplete = (imageData: string) => {
-    onImageChange(imageData);
-    setShowCameraCapture(false);
-    toast({
-      title: "موفق",
-      description: "عکس با موفقیت گرفته شد",
-    });
-  };
-
   return {
     fileInputRef,
     isUploading,
     dragActive,
     isHovering,
     setIsHovering,
-    showCameraCapture,
-    setShowCameraCapture,
     handleImageUpload,
     handleDrag,
     handleDrop,
-    handleFileUpload,
-    handleCameraCapture,
-    handleCameraCaptureComplete
+    handleFileUpload
   };
 };
