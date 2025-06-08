@@ -30,16 +30,31 @@ export function useDataStats() {
       const mealsCount = mealsData ? JSON.parse(mealsData).length : 0;
       const supplementsCount = supplementsData ? JSON.parse(supplementsData).length : 0;
 
-      // Calculate total size
-      const totalBytes = (studentsData?.length || 0) + 
-                        (exercisesData?.length || 0) + 
-                        (mealsData?.length || 0) + 
-                        (supplementsData?.length || 0);
+      // Calculate total size more accurately
+      let totalBytes = 0;
       
-      const totalKB = Math.round(totalBytes / 1024);
-      const totalSize = totalKB > 1024 ? 
-        `${Math.round(totalKB / 1024)} مگابایت` : 
-        `${totalKB} کیلوبایت`;
+      // Calculate size of all localStorage data
+      for (let key in localStorage) {
+        if (localStorage.hasOwnProperty(key)) {
+          const value = localStorage.getItem(key);
+          if (value) {
+            // Calculate size including key and value
+            totalBytes += key.length + value.length;
+          }
+        }
+      }
+      
+      // Convert bytes to appropriate unit
+      let totalSize: string;
+      if (totalBytes < 1024) {
+        totalSize = `${totalBytes} بایت`;
+      } else if (totalBytes < 1024 * 1024) {
+        const totalKB = Math.round(totalBytes / 1024 * 100) / 100;
+        totalSize = `${totalKB} کیلوبایت`;
+      } else {
+        const totalMB = Math.round(totalBytes / (1024 * 1024) * 100) / 100;
+        totalSize = `${totalMB} مگابایت`;
+      }
 
       setStats({
         students: studentsCount,

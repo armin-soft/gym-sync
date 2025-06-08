@@ -23,6 +23,27 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
     return Math.min((current / max) * 100, 100);
   };
 
+  // محاسبه پیشرفت حجم بر اساس حد تقریبی 5 مگابایت
+  const calculateStorageProgress = (sizeStr: string) => {
+    const maxStorageMB = 5; // 5 مگابایت به عنوان حد بالا
+    
+    // استخراج عدد از متن فارسی
+    const numberMatch = sizeStr.match(/[\d.]+/);
+    if (!numberMatch) return 0;
+    
+    const size = parseFloat(numberMatch[0]);
+    
+    if (sizeStr.includes('مگابایت')) {
+      return Math.min((size / maxStorageMB) * 100, 100);
+    } else if (sizeStr.includes('کیلوبایت')) {
+      return Math.min((size / (maxStorageMB * 1024)) * 100, 100);
+    } else if (sizeStr.includes('بایت')) {
+      return Math.min((size / (maxStorageMB * 1024 * 1024)) * 100, 100);
+    }
+    
+    return 0;
+  };
+
   const statsItems = [
     {
       icon: Users,
@@ -68,7 +89,7 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
       bgColor: "from-slate-50 to-emerald-50 dark:from-slate-950 dark:to-emerald-950",
       description: "مجموع فضای اشغال‌شده",
       isSize: true,
-      progress: 85 // برای حجم داده‌ها از یک مقدار تقریبی استفاده می‌کنیم
+      progress: calculateStorageProgress(stats.totalSize)
     },
     {
       icon: TrendingUp,
@@ -147,7 +168,7 @@ export function DataStatsGrid({ stats }: DataStatsGridProps) {
                 {item.description}
               </p>
 
-              {/* Progress Bar - حالا بر اساس داده‌های واقعی */}
+              {/* Progress Bar - بر اساس داده‌های واقعی */}
               <div className="mt-4 w-full bg-white/30 dark:bg-slate-700/30 rounded-full h-2 overflow-hidden">
                 <motion.div
                   className={`h-full bg-gradient-to-r ${item.color} rounded-full`}
