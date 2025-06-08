@@ -1,7 +1,6 @@
 
 export interface TrainerProfile {
   name: string;
-  fullName: string;
   bio: string;
   phone: string;
   image: string;
@@ -14,7 +13,6 @@ export interface TrainerProfile {
 
 export const defaultProfile: TrainerProfile = {
   name: "",
-  fullName: "",
   bio: "",
   phone: "",
   image: "/Assets/Image/Place-Holder.svg",

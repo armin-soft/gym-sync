@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Camera, Upload, User, Edit3 } from "lucide-react";
 import { TrainerProfile } from "@/types/trainer";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { CameraCapture } from "@/components/trainer/profile-image/CameraCapture";
+import { ImageUploadOptions } from "@/components/trainer/profile-image/ImageUploadOptions";
 
 interface ProfileImageSectionProps {
   profile: TrainerProfile;
@@ -15,6 +17,7 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
   onImageChange 
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [showCameraCapture, setShowCameraCapture] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -26,6 +29,23 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleFileUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = handleImageUpload;
+    input.click();
+  };
+
+  const handleCameraCapture = () => {
+    setShowCameraCapture(true);
+  };
+
+  const handleCameraCaptureComplete = (imageData: string) => {
+    onImageChange(imageData);
+    setShowCameraCapture(false);
   };
 
   return (
@@ -64,22 +84,12 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
           </motion.div>
         </div>
 
-        {/* دکمه ویرایش */}
-        <motion.label
-          htmlFor="image-upload"
-          className="absolute -bottom-2 -left-2 w-12 h-12 bg-gradient-to-r from-emerald-500 to-sky-600 rounded-full flex items-center justify-center cursor-pointer shadow-xl border-4 border-white dark:border-slate-900"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <Edit3 className="w-5 h-5 text-white" />
-          <input
-            id="image-upload"
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
-        </motion.label>
+        {/* دکمه انتخاب تصویر */}
+        <ImageUploadOptions
+          onFileUpload={handleFileUpload}
+          onCameraCapture={handleCameraCapture}
+          className="absolute -bottom-2 -left-2"
+        />
       </motion.div>
 
       {/* اطلاعات کلی */}
@@ -113,6 +123,13 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
           </span>
         </motion.div>
       </div>
+
+      {/* Camera Capture Dialog */}
+      <CameraCapture
+        isOpen={showCameraCapture}
+        onClose={() => setShowCameraCapture(false)}
+        onCapture={handleCameraCaptureComplete}
+      />
     </div>
   );
 };

@@ -43,7 +43,6 @@ export const ModernFormField: React.FC<ModernFormFieldProps> = ({
     >
       <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
         {label}
-        {required && <span className="text-red-500 mr-1">*</span>}
       </label>
       
       <div className="relative">
@@ -64,6 +63,7 @@ export const ModernFormField: React.FC<ModernFormFieldProps> = ({
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             rows={rows}
+            required={required}
             className={cn(
               "w-full rounded-2xl border-2 transition-all duration-300 resize-none",
               Icon ? "pr-12" : "pr-4",
@@ -83,6 +83,7 @@ export const ModernFormField: React.FC<ModernFormFieldProps> = ({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
+            required={required}
             className={cn(
               "w-full h-14 rounded-2xl border-2 transition-all duration-300",
               Icon ? "pr-12" : "pr-4",

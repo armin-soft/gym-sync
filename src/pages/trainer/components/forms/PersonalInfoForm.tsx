@@ -36,28 +36,16 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ModernFormField
-          label="نام مربی"
-          value={profile.name}
-          onChange={(value) => handleUpdate('name', value)}
-          placeholder="نام خود را وارد کنید"
-          icon={User}
-          error={errors.name}
-          isValid={validFields.name}
-          required
-        />
-
-        <ModernFormField
-          label="نام کامل"
-          value={profile.fullName}
-          onChange={(value) => handleUpdate('fullName', value)}
-          placeholder="نام کامل خود را وارد کنید"
-          icon={User}
-          error={errors.fullName}
-          isValid={validFields.fullName}
-        />
-      </div>
+      <ModernFormField
+        label="نام مربی"
+        value={profile.name}
+        onChange={(value) => handleUpdate('name', value)}
+        placeholder="نام خود را وارد کنید"
+        icon={User}
+        error={errors.name}
+        isValid={validFields.name}
+        required
+      />
 
       <ModernFormField
         label="شماره تلفن"

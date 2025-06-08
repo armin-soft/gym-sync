@@ -4,57 +4,112 @@ import { TrainerProfile, defaultProfile } from "@/types/trainer";
 import { useToast } from "@/hooks/use-toast";
 
 export const useTrainerProfile = () => {
-  const { toast } = useToast();
   const [profile, setProfile] = useState<TrainerProfile>(defaultProfile);
   const [errors, setErrors] = useState<Partial<Record<keyof TrainerProfile, string>>>({});
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
-  const [activeSection, setActiveSection] = useState<string>("personal");
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState("personal");
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
 
-  // Load saved profile from localStorage
+  // Load profile data from localStorage on mount
   useEffect(() => {
-    try {
-      const savedProfile = localStorage.getItem('trainerProfile');
-      if (savedProfile) {
-        const parsed = JSON.parse(savedProfile);
-        setProfile(parsed);
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const parsedProfile = JSON.parse(savedProfile);
+        setProfile(parsedProfile);
+      } catch (error) {
+        console.error('Error loading profile:', error);
       }
-    } catch (error) {
-      console.error('Error loading profile from localStorage:', error);
-      toast({
-        variant: "destructive",
-        title: "خطا در بارگذاری اطلاعات",
-        description: "مشکلی در بارگذاری اطلاعات پیش آمده است"
-      });
     }
-  }, [toast]);
+  }, []);
+
+  const validateField = (key: keyof TrainerProfile, value: string): boolean => {
+    switch (key) {
+      case "name":
+        if (!value.trim()) {
+          setErrors(prev => ({ ...prev, [key]: "نام مربی الزامی است" }));
+          return false;
+        }
+        break;
+      case "phone":
+        if (!value.trim()) {
+          setErrors(prev => ({ ...prev, [key]: "شماره تلفن الزامی است" }));
+          return false;
+        }
+        if (!/^09\d{9}$/.test(value)) {
+          setErrors(prev => ({ ...prev, [key]: "شماره تلفن معتبر نیست" }));
+          return false;
+        }
+        break;
+      case "gymName":
+        if (!value.trim()) {
+          setErrors(prev => ({ ...prev, [key]: "نام باشگاه الزامی است" }));
+          return false;
+        }
+        break;
+      case "gymAddress":
+        if (!value.trim()) {
+          setErrors(prev => ({ ...prev, [key]: "آدرس باشگاه الزامی است" }));
+          return false;
+        }
+        break;
+    }
+
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[key];
+      return newErrors;
+    });
+    return true;
+  };
 
   const handleUpdate = (key: keyof TrainerProfile, value: string) => {
     setProfile(prev => ({ ...prev, [key]: value }));
-    if (errors[key]) {
-      setErrors(prev => ({ ...prev, [key]: '' }));
-    }
+    
+    const isValid = validateField(key, value);
+    setValidFields(prev => ({ ...prev, [key]: isValid }));
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Validate all required fields
+      const requiredFields: (keyof TrainerProfile)[] = ['name', 'phone', 'gymName', 'gymAddress'];
+      let isValid = true;
       
+      requiredFields.forEach(field => {
+        if (!validateField(field, profile[field])) {
+          isValid = false;
+        }
+      });
+
+      if (!isValid) {
+        toast({
+          variant: "destructive",
+          title: "خطا در اعتبارسنجی",
+          description: "لطفاً تمام فیلدهای الزامی را پر کنید"
+        });
+        setIsSaving(false);
+        return;
+      }
+
+      // Save to localStorage
       localStorage.setItem('trainerProfile', JSON.stringify(profile));
-      window.dispatchEvent(new Event('storage'));
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast({
-        title: "ذخیره موفق",
+        title: "موفقیت آمیز",
         description: "اطلاعات پروفایل با موفقیت ذخیره شد"
       });
     } catch (error) {
-      console.error('Error saving profile to localStorage:', error);
       toast({
         variant: "destructive",
-        title: "خطا در ذخیره اطلاعات",
-        description: "مشکلی در ذخیره اطلاعات پیش آمده است"
+        title: "خطا",
+        description: "خطایی در ذخیره اطلاعات رخ داد"
       });
     } finally {
       setIsSaving(false);
