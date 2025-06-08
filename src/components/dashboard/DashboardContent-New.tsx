@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { DashboardStats } from "@/types/dashboard";
 import { Student } from "@/components/students/StudentTypes";
@@ -6,6 +7,7 @@ import { DashboardHeaderNew } from "./header/DashboardHeader-New";
 import { StatsGridNew } from "./stats/StatsGrid-New";
 import { QuickActionsNew } from "./quick-access/QuickActions-New";
 import { StudentsOverviewNew } from "./students/StudentsOverview-New";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 const containerVariants = {
   initial: { opacity: 0 },
@@ -48,6 +50,23 @@ export const DashboardContentNew = ({
   trainerProfile 
 }: DashboardContentNewProps) => {
   const deviceInfo = useDeviceInfo();
+  
+  // محاسبه آمار واقعی بر اساس داده‌های localStorage
+  const calculateRealCapacityUsage = () => {
+    return Math.round((stats.totalStudents / stats.maxCapacity) * 100);
+  };
+
+  const getPerformanceMessage = () => {
+    if (stats.studentsProgress >= 80) {
+      return "عملکرد فوق‌العاده! ادامه دهید";
+    } else if (stats.studentsProgress >= 60) {
+      return "عملکرد خوب، قابل بهبود";
+    } else if (stats.studentsProgress >= 40) {
+      return "عملکرد متوسط، نیاز به توجه بیشتر";
+    } else {
+      return "نیاز به بررسی و بهبود برنامه‌ها";
+    }
+  };
   
   return (
     <motion.div
@@ -97,7 +116,7 @@ export const DashboardContentNew = ({
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span>میانگین پیشرفت</span>
-                  <span className="text-2xl font-bold">{stats.studentsProgress}%</span>
+                  <span className="text-2xl font-bold">{toPersianNumbers(stats.studentsProgress.toString())}%</span>
                 </div>
                 
                 <div className="w-full bg-white/20 rounded-full h-2">
@@ -110,12 +129,7 @@ export const DashboardContentNew = ({
                 </div>
                 
                 <p className="text-white/80 text-sm">
-                  {stats.studentsProgress > 70 
-                    ? "عملکرد فوق‌العاده! ادامه دهید" 
-                    : stats.studentsProgress > 50
-                    ? "عملکرد خوب، قابل بهبود"
-                    : "نیاز به توجه بیشتر"
-                  }
+                  {getPerformanceMessage()}
                 </p>
               </div>
             </div>
@@ -131,18 +145,25 @@ export const DashboardContentNew = ({
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
                 <span className="text-sm text-gray-600 dark:text-gray-400">نرخ تکمیل رژیم</span>
-                <span className="font-bold text-emerald-600">{stats.mealCompletionRate}%</span>
+                <span className="font-bold text-emerald-600">{toPersianNumbers(stats.mealCompletionRate.toString())}%</span>
               </div>
               
               <div className="flex justify-between items-center p-3 rounded-xl bg-sky-50 dark:bg-sky-950/30">
                 <span className="text-sm text-gray-600 dark:text-gray-400">نرخ مصرف مکمل</span>
-                <span className="font-bold text-sky-600">{stats.supplementCompletionRate}%</span>
+                <span className="font-bold text-sky-600">{toPersianNumbers(stats.supplementCompletionRate.toString())}%</span>
               </div>
               
               <div className="flex justify-between items-center p-3 rounded-xl bg-orange-50 dark:bg-orange-950/30">
                 <span className="text-sm text-gray-600 dark:text-gray-400">ظرفیت استفاده</span>
                 <span className="font-bold text-orange-600">
-                  {Math.round((stats.totalStudents / stats.maxCapacity) * 100)}%
+                  {toPersianNumbers(calculateRealCapacityUsage().toString())}%
+                </span>
+              </div>
+              
+              <div className="flex justify-between items-center p-3 rounded-xl bg-purple-50 dark:bg-purple-950/30">
+                <span className="text-sm text-gray-600 dark:text-gray-400">کل برنامه‌ها</span>
+                <span className="font-bold text-purple-600">
+                  {toPersianNumbers((stats.totalMeals + stats.totalSupplements).toString())}
                 </span>
               </div>
             </div>

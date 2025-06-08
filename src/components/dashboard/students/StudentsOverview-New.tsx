@@ -13,11 +13,21 @@ interface StudentsOverviewNewProps {
 export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
   const navigate = useNavigate();
   
-  const averageProgress = students.length > 0 
-    ? Math.round(students.reduce((sum, student) => sum + (student.progress || 0), 0) / students.length)
-    : 0;
+  // محاسبه میانگین پیشرفت واقعی بر اساس داده‌های شاگردان
+  const calculateRealAverageProgress = () => {
+    if (students.length === 0) return 0;
+    
+    const totalProgress = students.reduce((sum, student) => {
+      return sum + (student.progress || 0);
+    }, 0);
+    
+    return Math.round(totalProgress / students.length);
+  };
 
-  const recentStudents = students.slice(0, 3);
+  const averageProgress = calculateRealAverageProgress();
+
+  // نمایش آخرین شاگردان اضافه شده
+  const recentStudents = students.slice(-3).reverse();
 
   return (
     <motion.div
