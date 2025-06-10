@@ -34,7 +34,7 @@ export const StudentLogin = () => {
         });
         
         // Navigate to student dashboard
-        navigate(`/panel/dashboard/${student.id}`);
+        navigate(`/Students/dashboard/${student.id}`);
       } else {
         toast({
           title: "خطا در ورود",

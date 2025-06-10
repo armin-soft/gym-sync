@@ -47,9 +47,8 @@ const AppRoutes = () => {
       <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
       <Route path="/management" element={<Navigate to="/Management" replace />} />
 
-      {/* Student Panel Routes - Enhanced for program display */}
+      {/* Student Panel Routes - Fixed routing */}
       <Route path="/Students" element={<StudentPanel />} />
-      <Route path="/Students/*" element={<StudentPanel />} />
       <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
       <Route path="/Students/profile" element={<StudentProfile />} />
       <Route path="/Students/exercises" element={<StudentExercises />} />
