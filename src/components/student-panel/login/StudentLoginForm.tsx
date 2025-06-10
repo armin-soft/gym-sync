@@ -61,12 +61,12 @@ export const StudentLoginForm = ({ variants, onSubmit, loading }: StudentLoginFo
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  در حال ورود...
+                  در حال ورود به پنل شاگرد...
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <LogIn className="h-5 w-5" />
-                  ورود به پنل
+                  ورود به پنل شاگرد
                 </div>
               )}
             </Button>

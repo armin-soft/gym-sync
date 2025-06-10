@@ -29,7 +29,7 @@ export const StudentLogin = () => {
         localStorage.setItem("loggedInStudentId", student.id.toString());
         
         toast({
-          title: "ورود موفق",
+          title: "ورود موفق به پنل شاگرد",
           description: `${student.name} عزیز، خوش آمدید`,
         });
         
@@ -37,16 +37,16 @@ export const StudentLogin = () => {
         navigate(`/Students/dashboard/${student.id}`);
       } else {
         toast({
-          title: "خطا در ورود",
+          title: "خطا در ورود به پنل شاگرد",
           description: "شماره موبایل یافت نشد",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Student login error:", error);
       toast({
         title: "خطا",
-        description: "مشکلی در ورود پیش آمده است",
+        description: "مشکلی در ورود به پنل شاگرد پیش آمده است",
         variant: "destructive",
       });
     } finally {

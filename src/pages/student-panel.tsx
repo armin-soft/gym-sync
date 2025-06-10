@@ -51,10 +51,10 @@ const StudentPanel = () => {
       <div className="container mx-auto p-4">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <h1 className="text-2xl font-bold mb-4">
-            خوش آمدید {currentStudent?.name}
+            خوش آمدید به پنل شاگرد - {currentStudent?.name}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            این داشبورد شخصی شما است.
+            این داشبورد شخصی شما در پنل شاگرد است.
           </p>
           
           {/* Logout Button */}
@@ -66,7 +66,7 @@ const StudentPanel = () => {
             }}
             className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
           >
-            خروج
+            خروج از پنل شاگرد
           </button>
         </div>
       </div>

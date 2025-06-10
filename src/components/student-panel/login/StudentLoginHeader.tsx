@@ -24,7 +24,7 @@ export const StudentLoginHeader = ({ variants }: StudentLoginHeaderProps) => {
         />
       </div>
       <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-700 to-indigo-700 bg-clip-text text-transparent mb-2">
-        پنل شخصی شاگرد
+        ورود به پنل شاگرد
       </h1>
       <p className="text-gray-600 dark:text-gray-400">
         به پورتال تمرینات و برنامه شخصی خود خوش آمدید
