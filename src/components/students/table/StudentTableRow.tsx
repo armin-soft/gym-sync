@@ -4,7 +4,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Student } from "@/components/students/StudentTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu } from "lucide-react";
+import { UserRound, CheckCircle, CalendarDays, Edit, Trash2, Menu, User, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toPersianNumbers, formatPrice } from "@/lib/utils/numbers";
@@ -46,6 +46,15 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
       </TableCell>
       
       <TableCell className="text-center">{toPersianNumbers(student.phone)}</TableCell>
+      
+      <TableCell className="text-center">
+        {student.gender && (
+          <Badge variant="outline" className={`gap-2 ${student.gender === 'male' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-400' : 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:border-pink-700/30 dark:text-pink-400'}`}>
+            {student.gender === 'male' ? <User className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
+            {student.gender === 'male' ? "مرد" : "زن"}
+          </Badge>
+        )}
+      </TableCell>
       
       <TableCell className="text-center">
         <div className="flex flex-col">
