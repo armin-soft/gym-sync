@@ -39,11 +39,11 @@ export const RecentActivities = () => {
         });
       }
 
-      // Check for diet programs
-      if (student.dietPlan && Array.isArray(student.dietPlan) && student.dietPlan.length > 0) {
+      // Check for meal programs
+      if (student.meals && Array.isArray(student.meals) && student.meals.length > 0) {
         activities.push({
-          id: `diet-${student.id}`,
-          type: "diet_assigned",
+          id: `meals-${student.id}`,
+          type: "meals_assigned",
           title: "برنامه غذایی تعریف شد",
           description: `برنامه غذایی برای ${student.name || 'شاگرد'} تعریف شده است`,
           time: new Date(Date.now() - (index + 3) * 60 * 60 * 1000),

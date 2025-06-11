@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Users, TrendingUp, Target, Award, Calendar, Activity } from "lucide-react";
@@ -13,9 +12,9 @@ export const StatsOverview = () => {
   const activeStudents = students.filter(s => s.name && s.phone).length;
   const studentsWithPrograms = students.filter(student => {
     const hasExercises = student.exercises && Object.keys(student.exercises).length > 0;
-    const hasDiet = student.dietPlan && Array.isArray(student.dietPlan) && student.dietPlan.length > 0;
+    const hasMeals = student.meals && Array.isArray(student.meals) && student.meals.length > 0;
     const hasSupplements = student.supplements && Array.isArray(student.supplements) && student.supplements.length > 0;
-    return hasExercises || hasDiet || hasSupplements;
+    return hasExercises || hasMeals || hasSupplements;
   }).length;
   
   // Calculate completion percentage
