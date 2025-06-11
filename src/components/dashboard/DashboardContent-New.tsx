@@ -86,10 +86,10 @@ export const DashboardContentNew = ({
         <StatsGridNew stats={stats} />
       </motion.div>
 
-      <div className={`grid gap-8 ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
+      <div className={`responsive-grid responsive-gap ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
         <motion.div 
           variants={itemVariants}
-          className={deviceInfo.isMobile ? '' : 'xl:col-span-2 space-y-8'}
+          className={deviceInfo.isMobile ? '' : 'xl:col-span-2 responsive-space-y'}
         >
           <QuickActionsNew />
           <StudentsOverviewNew students={students} />
@@ -97,11 +97,11 @@ export const DashboardContentNew = ({
         
         <motion.div 
           variants={itemVariants}
-          className="space-y-8"
+          className="responsive-space-y"
         >
           {/* کارت خلاصه عملکرد */}
           <motion.div
-            className="relative overflow-hidden rounded-3xl p-8 text-white"
+            className="relative overflow-hidden responsive-rounded responsive-card text-white"
             style={{ background: 'var(--bg-gradient-secondary)' }}
             whileHover={{ scale: 1.01 }}
           >
@@ -111,12 +111,12 @@ export const DashboardContentNew = ({
             </div>
             
             <div className="relative z-10">
-              <h3 className="text-xl font-bold mb-4">خلاصه عملکرد</h3>
+              <h3 className="text-standard-lg font-bold mb-4">خلاصه عملکرد</h3>
               
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span>میانگین پیشرفت</span>
-                  <span className="text-2xl font-bold">{toPersianNumbers(stats.studentsProgress.toString())}%</span>
+              <div className="responsive-space-y">
+                <div className="responsive-flex-between">
+                  <span className="text-standard-sm">میانگین پیشرفت</span>
+                  <span className="text-standard-2xl font-bold">{toPersianNumbers(stats.studentsProgress.toString())}%</span>
                 </div>
                 
                 <div className="w-full bg-white/20 rounded-full h-2">
@@ -128,7 +128,7 @@ export const DashboardContentNew = ({
                   />
                 </div>
                 
-                <p className="text-white/80 text-sm">
+                <p className="text-white/80 text-standard-xs">
                   {getPerformanceMessage()}
                 </p>
               </div>
@@ -137,32 +137,32 @@ export const DashboardContentNew = ({
 
           {/* کارت آمار سریع */}
           <motion.div
-            className="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200/50 dark:border-gray-700/50"
+            className="bg-white dark:bg-gray-900 responsive-rounded responsive-card border border-gray-200/50 dark:border-gray-700/50"
             style={{ boxShadow: 'var(--shadow-soft)' }}
           >
-            <h4 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">آمار سریع</h4>
+            <h4 className="font-bold text-standard-lg mb-4 text-gray-900 dark:text-white">آمار سریع</h4>
             
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">نرخ تکمیل رژیم</span>
-                <span className="font-bold text-emerald-600">{toPersianNumbers(stats.mealCompletionRate.toString())}%</span>
+            <div className="responsive-space-y">
+              <div className="responsive-flex-between p-3 responsive-rounded-sm bg-emerald-50 dark:bg-emerald-950/30">
+                <span className="text-standard-xs text-gray-600 dark:text-gray-400">نرخ تکمیل رژیم</span>
+                <span className="font-bold text-emerald-600 text-standard-sm">{toPersianNumbers(stats.mealCompletionRate.toString())}%</span>
               </div>
               
-              <div className="flex justify-between items-center p-3 rounded-xl bg-sky-50 dark:bg-sky-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">نرخ مصرف مکمل</span>
-                <span className="font-bold text-sky-600">{toPersianNumbers(stats.supplementCompletionRate.toString())}%</span>
+              <div className="responsive-flex-between p-3 responsive-rounded-sm bg-sky-50 dark:bg-sky-950/30">
+                <span className="text-standard-xs text-gray-600 dark:text-gray-400">نرخ مصرف مکمل</span>
+                <span className="font-bold text-sky-600 text-standard-sm">{toPersianNumbers(stats.supplementCompletionRate.toString())}%</span>
               </div>
               
-              <div className="flex justify-between items-center p-3 rounded-xl bg-orange-50 dark:bg-orange-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">ظرفیت استفاده</span>
-                <span className="font-bold text-orange-600">
+              <div className="responsive-flex-between p-3 responsive-rounded-sm bg-orange-50 dark:bg-orange-950/30">
+                <span className="text-standard-xs text-gray-600 dark:text-gray-400">ظرفیت استفاده</span>
+                <span className="font-bold text-orange-600 text-standard-sm">
                   {toPersianNumbers(calculateRealCapacityUsage().toString())}%
                 </span>
               </div>
               
-              <div className="flex justify-between items-center p-3 rounded-xl bg-purple-50 dark:bg-purple-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">کل برنامه‌ها</span>
-                <span className="font-bold text-purple-600">
+              <div className="responsive-flex-between p-3 responsive-rounded-sm bg-purple-50 dark:bg-purple-950/30">
+                <span className="text-standard-xs text-gray-600 dark:text-gray-400">کل برنامه‌ها</span>
+                <span className="font-bold text-purple-600 text-standard-sm">
                   {toPersianNumbers((stats.totalMeals + stats.totalSupplements).toString())}
                 </span>
               </div>

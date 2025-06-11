@@ -39,22 +39,22 @@ export const QuickActionsNew = () => {
       variants={containerVariants}
       initial="initial"
       animate="animate"
-      className="mb-8"
+      className="mb-6 sm:mb-8"
     >
       <motion.div 
-        className="mb-6"
+        className="mb-4 sm:mb-6"
         variants={itemVariants}
       >
-        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">
+        <h2 className="text-standard-2xl font-bold mb-2 bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">
           دسترسی سریع
         </h2>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-standard-sm text-gray-600 dark:text-gray-400">
           ابزارهای پرکاربرد برای مدیریت بهتر
         </p>
       </motion.div>
 
       <motion.div
-        className={`grid gap-4 ${
+        className={`responsive-grid responsive-gap ${
           deviceInfo.isMobile 
             ? 'grid-cols-1' 
             : deviceInfo.isTablet 
