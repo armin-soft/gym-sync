@@ -47,7 +47,7 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
                 value={value}
                 onChange={onChange}
                 placeholder="روی میکروفون کلیک کنید و نام حرکت را بگویید..."
-                className="text-right"
+                className="text-right border-emerald-200 dark:border-emerald-800 focus:border-emerald-500 dark:focus:border-emerald-400"
               />
             </motion.div>
           ) : (
@@ -62,7 +62,7 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="نام حرکت را تایپ کنید..."
-                className="text-right"
+                className="text-right border-emerald-200 dark:border-emerald-800 focus:border-emerald-500 dark:focus:border-emerald-400"
                 dir="rtl"
               />
             </motion.div>
@@ -73,7 +73,7 @@ export const SingleExerciseForm: React.FC<SingleExerciseFormProps> = ({
       <div>
         <Label className="text-base mb-3 block">دسته‌بندی تمرین</Label>
         <select
-          className="flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 transition-shadow text-right"
+          className="flex h-11 w-full rounded-lg border border-emerald-200 dark:border-emerald-800 bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 transition-shadow text-right"
           value={categoryId}
           onChange={(e) => onCategoryChange(Number(e.target.value))}
           dir="rtl"

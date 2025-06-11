@@ -28,9 +28,9 @@ const AddDayDialog: React.FC<AddDayDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" aria-describedby="add-day-description">
+      <DialogContent className="sm:max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-emerald-200/30 dark:border-emerald-800/30" aria-describedby="add-day-description">
         <DialogHeader>
-          <DialogTitle className="text-center">افزودن روز جدید</DialogTitle>
+          <DialogTitle className="text-center text-emerald-700 dark:text-emerald-300">افزودن روز جدید</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4" id="add-day-description">
           <div className="space-y-2">
@@ -39,7 +39,7 @@ const AddDayDialog: React.FC<AddDayDialogProps> = ({
               onChange={(e) => setNewDayLabel(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="نام روز (مثال: روز پنجم)"
-              className="text-right"
+              className="text-right border-emerald-200 dark:border-emerald-800 focus:border-emerald-500 dark:focus:border-emerald-400"
               aria-label="نام روز"
             />
           </div>
@@ -49,6 +49,7 @@ const AddDayDialog: React.FC<AddDayDialogProps> = ({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
+            className="border-sky-200 text-sky-700 hover:bg-sky-50 dark:border-sky-800 dark:text-sky-300 dark:hover:bg-sky-900/20"
           >
             انصراف
           </Button>
@@ -56,6 +57,7 @@ const AddDayDialog: React.FC<AddDayDialogProps> = ({
             type="button"
             onClick={handleAddDay}
             disabled={!newDayLabel.trim()}
+            className="bg-gradient-to-r from-emerald-500 to-sky-500 hover:from-emerald-600 hover:to-sky-600 text-white border-0"
           >
             افزودن
           </Button>

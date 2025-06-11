@@ -24,9 +24,9 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
   const countText = toPersianNumbers(selectedExercisesCount);
   
   return (
-    <div className="flex items-center justify-between p-3 border-t bg-white dark:bg-gray-950">
+    <div className="flex items-center justify-between p-3 border-t bg-gradient-to-r from-emerald-50/50 to-sky-50/50 dark:from-emerald-900/20 dark:to-sky-900/20">
       <div className="text-xs text-gray-500 dark:text-gray-400">
-        <span className="font-medium text-primary">
+        <span className="font-medium text-emerald-600 dark:text-emerald-400">
           {countText}
         </span> تمرین برای روز {dayText} انتخاب شده
       </div>
@@ -36,7 +36,7 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
           variant="ghost"
           size="sm"
           onClick={onCancel}
-          className="gap-1"
+          className="gap-1 text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:text-sky-400 dark:hover:text-sky-300 dark:hover:bg-sky-900/20"
         >
           <X className="h-3.5 w-3.5" />
           <span>انصراف</span>
@@ -46,7 +46,7 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
           variant="default"
           size="sm"
           onClick={onSave}
-          className="gap-1 bg-primary/90 hover:bg-primary"
+          className="gap-1 bg-gradient-to-r from-emerald-500 to-sky-500 hover:from-emerald-600 hover:to-sky-600 text-white border-0"
         >
           <Save className="h-3.5 w-3.5" />
           <span>ذخیره</span>
@@ -57,7 +57,7 @@ const ExerciseDialogFooter: React.FC<ExerciseDialogFooterProps> = ({
             variant="default"
             size="sm"
             onClick={onSaveAndContinue}
-            className="gap-1 bg-indigo-500 hover:bg-indigo-600"
+            className="gap-1 bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-600 hover:to-emerald-600 text-white border-0"
           >
             <span>ذخیره و روز بعدی</span>
             <ChevronLeft className="h-3.5 w-3.5" />

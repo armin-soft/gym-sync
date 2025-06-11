@@ -41,8 +41,8 @@ export const StudentStatBadges: React.FC<StudentStatBadgesProps> = ({
           icon={<Dumbbell className="h-3 w-3" />}
           count={exercises.length}
           label="تمرین"
-          className="bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800/50 dark:text-indigo-400"
-          hoverClassName="hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
+          className="bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-800/50 dark:text-emerald-400"
+          hoverClassName="hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
         />
       </motion.div>
     </motion.div>
