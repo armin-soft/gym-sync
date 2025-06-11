@@ -31,8 +31,8 @@ export const MeasurementsSection: React.FC<MeasurementsSectionProps> = ({ form }
             <Ruler className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-emerald-500" />
             <Input
               id="height"
-              type="number"
-              {...register("height", { valueAsNumber: true })}
+              type="text"
+              {...register("height")}
               placeholder="170"
               className="pr-10 border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500/20"
             />
@@ -47,8 +47,8 @@ export const MeasurementsSection: React.FC<MeasurementsSectionProps> = ({ form }
             <Weight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-emerald-500" />
             <Input
               id="weight"
-              type="number"
-              {...register("weight", { valueAsNumber: true })}
+              type="text"
+              {...register("weight")}
               placeholder="70"
               className="pr-10 border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500/20"
             />

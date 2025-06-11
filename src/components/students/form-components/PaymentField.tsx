@@ -30,8 +30,8 @@ export const PaymentField: React.FC<PaymentFieldProps> = ({ form }) => {
           <CreditCard className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-emerald-500" />
           <Input
             id="payment"
-            type="number"
-            {...register("payment", { valueAsNumber: true })}
+            type="text"
+            {...register("payment")}
             placeholder="1000000"
             className="pr-10 border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500/20"
           />

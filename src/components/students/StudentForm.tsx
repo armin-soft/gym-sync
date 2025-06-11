@@ -132,42 +132,30 @@ export const StudentForm = ({
             className="flex justify-center"
           >
             <ProfileImageUpload 
-              previewImage={previewImage}
-              onChange={handleImageChange}
-              error={!!form.formState.errors.image}
+              currentImage={previewImage}
+              onImageChange={handleImageChange}
+              studentName={form.watch("name")}
             />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Personal Info Section */}
             <div className="space-y-4">
-              <PersonalInfoSection 
-                control={form.control} 
-                itemVariants={itemVariants} 
-              />
+              <PersonalInfoSection form={form} />
               
               {/* Gender Field */}
-              <GenderField 
-                control={form.control}
-                itemVariants={itemVariants}
-              />
+              <GenderField form={form} />
             </div>
             
             {/* Measurements Section */}
             <div>
-              <MeasurementsSection 
-                control={form.control} 
-                itemVariants={itemVariants} 
-              />
+              <MeasurementsSection form={form} />
             </div>
           </div>
 
           {/* Payment Field */}
           <motion.div variants={itemVariants} className="md:col-span-2">
-            <PaymentField 
-              control={form.control}
-              itemVariants={itemVariants}
-            />
+            <PaymentField form={form} />
           </motion.div>
 
           {/* Form Actions */}
