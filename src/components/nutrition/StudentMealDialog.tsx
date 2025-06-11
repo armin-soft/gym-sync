@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Dialog,
@@ -137,7 +138,7 @@ const StudentMealDialog: React.FC<StudentMealDialogProps> = ({
             dir="rtl"
           >
             <div className="border-b bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm sticky top-0 z-10 shrink-0">
-              <ScrollArea className="w-full" orientation="horizontal">
+              <ScrollArea className="w-full">
                 <TabsList className="h-14 w-full justify-center bg-transparent p-1 rounded-none shadow-sm">
                   <TabsTrigger 
                     value="all" 

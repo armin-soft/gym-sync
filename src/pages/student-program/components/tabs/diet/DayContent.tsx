@@ -90,7 +90,7 @@ const DayContent: React.FC<DayContentProps> = ({
       
       {/* Meal type selector */}
       <div className="flex items-center justify-center mb-4">
-        <ScrollArea className="w-full" orientation="horizontal">
+        <ScrollArea className="w-full">
           <div className={cn(
             "flex items-center space-x-1 space-x-reverse",
             centered ? "justify-center" : "justify-start"
