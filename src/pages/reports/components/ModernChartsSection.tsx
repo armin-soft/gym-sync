@@ -2,7 +2,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useStudents } from "@/hooks/useStudents";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 import { EmptyChartsState } from "./charts/EmptyChartsState";
 import { GenderDistributionChart } from "./charts/GenderDistributionChart";
 import { ActivityDistributionChart } from "./charts/ActivityDistributionChart";
@@ -11,7 +10,6 @@ import { prepareGenderData, prepareActivityData, prepareWeeklyData } from "./cha
 
 export const ModernChartsSection = () => {
   const { students } = useStudents();
-  const deviceInfo = useDeviceInfo();
   const totalStudents = students.length;
 
   if (totalStudents === 0) {
@@ -25,18 +23,14 @@ export const ModernChartsSection = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.4 }}
-      className="mb-8"
+      transition={{ duration: 0.8, delay: 0.4 }}
+      className="mb-12"
     >
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Charts Grid */}
-        <div className={`grid gap-6 ${
-          deviceInfo.isMobile 
-            ? 'grid-cols-1' 
-            : 'grid-cols-1 lg:grid-cols-2'
-        }`}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <GenderDistributionChart data={genderData} />
           <ActivityDistributionChart data={activityData} />
         </div>

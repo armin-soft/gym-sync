@@ -9,69 +9,71 @@ export const ModernReportsHeader = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: -30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="mb-6"
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="mb-10"
     >
       <div className="relative overflow-hidden">
-        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/30 rounded-2xl p-6 shadow-lg">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        {/* Main Header Card */}
+        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/20 dark:border-slate-700/30 rounded-3xl p-8 shadow-2xl">
+          {/* Header Content */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
             {/* Title Section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
                 className="relative"
               >
-                <div className="p-3 bg-gradient-to-br from-emerald-500 to-sky-500 rounded-xl shadow-md">
-                  <BarChart3 className="h-6 w-6 text-white" />
+                <div className="p-4 bg-gradient-to-br from-emerald-500 to-sky-500 rounded-2xl shadow-lg">
+                  <BarChart3 className="h-8 w-8 text-white" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse" />
               </motion.div>
               
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <motion.h1
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
-                  className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-800 bg-clip-text text-transparent"
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-800 bg-clip-text text-transparent"
                 >
                   گزارشات تحلیلی پیشرفته
                 </motion.h1>
                 
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5, duration: 0.5 }}
-                  className="flex items-center gap-2 text-slate-600 dark:text-slate-300"
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="flex items-center gap-3 text-slate-600 dark:text-slate-300"
                 >
-                  <Calendar className="h-4 w-4 text-emerald-500" />
-                  <span className="text-sm lg:text-base font-medium">{persianDate}</span>
+                  <Calendar className="h-5 w-5 text-emerald-500" />
+                  <span className="text-lg font-medium">{persianDate}</span>
                 </motion.div>
                 
                 <motion.p
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
-                  className="text-slate-500 dark:text-slate-400 text-sm lg:text-base max-w-md"
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="text-slate-500 dark:text-slate-400 max-w-md"
                 >
                   آنالیز جامع عملکرد، آمار دقیق و گزارشات تخصصی سیستم مدیریت باشگاه
                 </motion.p>
               </div>
             </div>
 
-            {/* Status Preview */}
+            {/* Stats Preview */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
-              className="flex items-center gap-3"
+              transition={{ delay: 0.7, duration: 0.6 }}
+              className="flex items-center gap-4"
             >
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-emerald-100 to-sky-100 dark:from-emerald-900/30 dark:to-sky-900/30 rounded-full">
-                <TrendingUp className="h-4 w-4 text-emerald-600" />
-                <span className="text-xs lg:text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100 to-sky-100 dark:from-emerald-900/30 dark:to-sky-900/30 rounded-full">
+                <TrendingUp className="h-5 w-5 text-emerald-600" />
+                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                   عملکرد عالی
                 </span>
               </div>
@@ -79,8 +81,8 @@ export const ModernReportsHeader = () => {
           </div>
 
           {/* Decorative Elements */}
-          <div className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-emerald-400/10 to-sky-500/10 rounded-full -translate-x-12 -translate-y-12" />
-          <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-sky-400/10 to-emerald-500/10 rounded-full translate-x-10 translate-y-10" />
+          <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/10 to-sky-500/10 rounded-full -translate-x-16 -translate-y-16" />
+          <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-sky-400/10 to-emerald-500/10 rounded-full translate-x-12 translate-y-12" />
         </div>
       </div>
     </motion.div>
