@@ -20,24 +20,32 @@ interface TrainerProfileContainerProps {
 
 export const TrainerProfileContainer: React.FC<TrainerProfileContainerProps> = (props) => {
   return (
-    <div className="w-full max-w-7xl mx-auto" dir="rtl">
+    <div className="w-full h-full max-w-7xl mx-auto flex flex-col" dir="rtl">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="space-y-8"
+        className="w-full h-full flex flex-col space-y-6 overflow-hidden"
       >
-        <TrainerProfileHeader />
+        <motion.div 
+          variants={{ 
+            initial: { opacity: 0, y: 20 }, 
+            animate: { opacity: 1, y: 0 }
+          }}
+          initial="initial"
+          animate="animate"
+          className="flex-shrink-0"
+        >
+          <TrainerProfileHeader />
+        </motion.div>
         
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
-          className="grid grid-cols-1 xl:grid-cols-12 gap-8"
+          className="flex-1 w-full overflow-hidden"
         >
-          <div className="xl:col-span-12">
-            <TrainerProfileCard {...props} />
-          </div>
+          <TrainerProfileCard {...props} />
         </motion.div>
       </motion.div>
     </div>
