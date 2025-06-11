@@ -36,12 +36,7 @@ export const ItemsGrid: React.FC<ItemsGridProps> = ({
   });
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg border border-gray-100 p-4 sm:p-6 lg:p-8"
-      dir="rtl"
-    >
+    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8" dir="rtl">
       <ItemsHeader
         activeTab={activeTab}
         filteredItemsCount={filteredItems.length}
@@ -65,9 +60,9 @@ export const ItemsGrid: React.FC<ItemsGridProps> = ({
       ) : (
         <motion.div
           layout
-          className={`gap-4 sm:gap-6 ${
+          className={`gap-6 ${
             viewMode === "grid"
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               : "flex flex-col"
           }`}
         >
@@ -84,6 +79,6 @@ export const ItemsGrid: React.FC<ItemsGridProps> = ({
           </AnimatePresence>
         </motion.div>
       )}
-    </motion.div>
+    </div>
   );
 };

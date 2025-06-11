@@ -1,9 +1,7 @@
 
 import React from "react";
+import { Grid, List, Pill, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Grid, List, Package } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ItemsHeaderProps {
@@ -21,57 +19,56 @@ export const ItemsHeader: React.FC<ItemsHeaderProps> = ({
   viewMode,
   onViewModeChange,
 }) => {
+  const getGradientColors = () => {
+    return activeTab === "supplement"
+      ? "from-emerald-500 to-teal-600"
+      : "from-cyan-500 to-blue-600";
+  };
+
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8" dir="rtl">
-      <div className="flex items-center gap-3 sm:gap-4">
-        <div className={cn(
-          "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center",
-          activeTab === 'supplement'
-            ? "bg-emerald-100 text-emerald-600"
-            : "bg-blue-100 text-blue-600"
-        )}>
-          <Package className="w-5 h-5 sm:w-6 sm:h-6" />
+    <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3">
+        <div className={`p-3 bg-gradient-to-br ${getGradientColors()} rounded-2xl`}>
+          {activeTab === "supplement" ? (
+            <Pill className="w-6 h-6 text-white" />
+          ) : (
+            <Heart className="w-6 h-6 text-white" />
+          )}
         </div>
-        
-        <div className="text-right">
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-1">
-            {activeTab === 'supplement' ? 'مکمل‌ها' : 'ویتامین‌ها'} - {selectedCategory}
-          </h3>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
-              {toPersianNumbers(filteredItemsCount)} مورد
-            </Badge>
-            <span className="text-xs sm:text-sm text-gray-500">
-              در این دسته‌بندی
-            </span>
-          </div>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">
+            {activeTab === "supplement" ? "مکمل‌های غذایی" : "ویتامین‌ها"}
+          </h2>
+          <p className="text-gray-500">
+            {toPersianNumbers(filteredItemsCount)} مورد
+            {selectedCategory && ` در دسته‌بندی "${selectedCategory}"`}
+          </p>
         </div>
       </div>
 
-      {/* View Mode Toggle */}
-      <div className="flex items-center bg-gray-100 rounded-lg p-1">
-        <Button
-          variant={viewMode === 'grid' ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => onViewModeChange('grid')}
-          className={cn(
-            "h-8 w-8 p-0 rounded-md",
-            viewMode === 'grid' && "bg-white shadow-sm"
-          )}
-        >
-          <Grid className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={viewMode === 'list' ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => onViewModeChange('list')}
-          className={cn(
-            "h-8 w-8 p-0 rounded-md",
-            viewMode === 'list' && "bg-white shadow-sm"
-          )}
-        >
-          <List className="h-4 w-4" />
-        </Button>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center bg-gray-100 rounded-2xl p-1">
+          <Button
+            variant={viewMode === "grid" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onViewModeChange("grid")}
+            className={`h-10 w-10 p-0 rounded-xl ${
+              viewMode === "grid" ? `bg-gradient-to-r ${getGradientColors()} text-white` : ""
+            }`}
+          >
+            <Grid className="w-5 h-5" />
+          </Button>
+          <Button
+            variant={viewMode === "list" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onViewModeChange("list")}
+            className={`h-10 w-10 p-0 rounded-xl ${
+              viewMode === "list" ? `bg-gradient-to-r ${getGradientColors()} text-white` : ""
+            }`}
+          >
+            <List className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
