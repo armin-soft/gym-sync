@@ -6,9 +6,10 @@
   }
   
   html, body, #root {
-    @apply w-full h-full overflow-x-hidden;
+    @apply w-full h-full;
     height: 100vh;
     width: 100vw;
+    overflow-x: hidden !important;
   }
 
   /* تنظیمات جداول فول ریسپانسیو */
@@ -16,6 +17,7 @@
     direction: rtl;
     @apply w-full border-collapse;
     @apply text-2xs xs:text-xs sm:text-sm md:text-base lg:text-lg;
+    overflow-x: hidden;
   }
 
   th {
@@ -56,6 +58,7 @@
     @apply px-1 xs:px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8;
     min-height: 100vh;
     max-width: 100vw;
+    overflow-x: hidden;
   }
 
   /* کامپوننت‌های فول ریسپانسیو */
@@ -64,6 +67,7 @@
     @apply px-1 xs:px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8;
     min-height: 100vh;
     max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .responsive-grid {
@@ -81,28 +85,33 @@
 
   /* تمام صفحه فول اسکرین */
   .full-page {
-    @apply w-full h-screen overflow-hidden;
+    @apply w-full h-screen;
     min-height: 100vh;
     max-width: 100vw;
+    overflow-x: hidden;
   }
   
   .full-container {
-    @apply w-full h-full flex flex-col overflow-hidden;
+    @apply w-full h-full flex flex-col;
     min-height: 100vh;
     max-width: 100vw;
+    overflow-x: hidden;
   }
   
   .full-content {
-    @apply flex-1 w-full overflow-y-auto overflow-x-hidden;
+    @apply flex-1 w-full overflow-y-auto;
+    overflow-x: hidden;
   }
 
   /* کلاس‌های اسکرول فول ریسپانسیو */
   .scroll-container {
-    @apply w-full h-full overflow-y-auto overflow-x-hidden;
+    @apply w-full h-full overflow-y-auto;
+    overflow-x: hidden;
   }
 
   .scrollable {
-    @apply w-full h-full overflow-y-auto overflow-x-hidden;
+    @apply w-full h-full overflow-y-auto;
+    overflow-x: hidden;
   }
 
   /* ریسپانسیو تایپوگرافی فول */
@@ -284,7 +293,8 @@
   }
 
   .scroll-auto {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .scroll-y-auto {
@@ -297,26 +307,31 @@
   }
 
   .scroll-full {
-    @apply w-full h-full overflow-y-auto overflow-x-hidden;
+    @apply w-full h-full overflow-y-auto;
+    overflow-x: hidden;
   }
 
   /* کلاس‌های فول اسکرین */
   .full-screen {
     @apply w-screen h-screen;
+    overflow-x: hidden;
   }
 
   .full-viewport {
     @apply w-full h-full;
     min-height: 100vh;
     max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .full-container-absolute {
     @apply absolute inset-0 w-full h-full;
+    overflow-x: hidden;
   }
 
   .full-container-fixed {
     @apply fixed inset-0 w-full h-full;
+    overflow-x: hidden;
   }
 
   /* ریسپانسیو برای انیمیشن‌ها */
@@ -332,6 +347,7 @@
   @media (max-width: 640px) {
     .mobile-full {
       @apply w-full h-full p-2;
+      overflow-x: hidden;
     }
     
     .mobile-grid {
@@ -343,6 +359,7 @@
   @media (min-width: 641px) and (max-width: 1024px) {
     .tablet-full {
       @apply w-full h-full p-4;
+      overflow-x: hidden;
     }
     
     .tablet-grid {
@@ -354,6 +371,7 @@
   @media (min-width: 1025px) {
     .desktop-full {
       @apply w-full h-full p-6;
+      overflow-x: hidden;
     }
     
     .desktop-grid {
@@ -399,24 +417,29 @@
 
 /* ریسپانسیو برای کامپوننت‌های خاص */
 .page-container {
-  @apply w-full h-full flex flex-col overflow-hidden;
+  @apply w-full h-full flex flex-col;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .content-area {
-  @apply flex-1 w-full overflow-y-auto overflow-x-hidden;
+  @apply flex-1 w-full overflow-y-auto;
+  overflow-x: hidden;
 }
 
 .sidebar-container {
-  @apply h-full overflow-y-auto overflow-x-hidden;
+  @apply h-full overflow-y-auto;
+  overflow-x: hidden;
 }
 
 .modal-container {
   @apply w-full h-full flex items-center justify-center;
   @apply p-2 xs:p-4 sm:p-6 md:p-8;
+  overflow-x: hidden;
 }
 
 .card-container {
   @apply w-full h-full rounded-lg shadow-sm border bg-card;
   @apply p-2 xs:p-3 sm:p-4 md:p-6;
+  overflow-x: hidden;
 }

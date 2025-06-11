@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
-    orientation?: "horizontal" | "vertical" | "both"
+    orientation?: "vertical"
     className?: string
     viewportClassName?: string
   }
@@ -19,19 +19,13 @@ const ScrollArea = React.forwardRef<
   >
     <ScrollAreaPrimitive.Viewport 
       className={cn(
-        "h-full w-full rounded-[inherit]",
-        orientation === "horizontal" ? "overflow-x-auto overflow-y-hidden" :
-        orientation === "both" ? "overflow-auto" :
-        "overflow-y-auto overflow-x-hidden",
+        "h-full w-full rounded-[inherit] overflow-y-auto overflow-x-hidden",
         viewportClassName
       )}
     >
       {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar orientation="vertical" />
-    {(orientation === "horizontal" || orientation === "both") && (
-      <ScrollBar orientation="horizontal" />
-    )}
     <ScrollAreaPrimitive.Corner />
   </ScrollAreaPrimitive.Root>
 ))
@@ -48,8 +42,6 @@ const ScrollBar = React.forwardRef<
       "flex touch-none select-none transition-colors",
       orientation === "vertical" &&
         "h-full w-2.5 border-l border-l-transparent p-[1px]",
-      orientation === "horizontal" &&
-        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
       className
     )}
     {...props}

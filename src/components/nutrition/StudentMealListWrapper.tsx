@@ -52,7 +52,7 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
 
   return (
     <div className={cn(
-      "border-0 rounded-none bg-white/95 backdrop-blur-sm transition-all text-gray-900 dark:text-white overflow-hidden h-full w-full", 
+      "border-0 rounded-none bg-white/95 backdrop-blur-sm transition-all text-gray-900 dark:text-white h-full w-full overflow-x-hidden", 
       className
     )}>
       {showControls && (
@@ -63,12 +63,12 @@ const StudentMealListWrapper: React.FC<StudentMealListWrapperProps> = ({
       <ScrollArea 
         className="w-full h-full" 
         style={{ maxHeight: getResponsiveMaxHeight() }}
-        orientation="both"
+        orientation="vertical"
       >
         <motion.div 
           layout 
           className={cn(
-            "w-full flex flex-col space-y-1.5 sm:space-y-2 md:space-y-3",
+            "w-full flex flex-col space-y-1.5 sm:space-y-2 md:space-y-3 overflow-x-hidden",
             getResponsivePadding()
           )}
         >

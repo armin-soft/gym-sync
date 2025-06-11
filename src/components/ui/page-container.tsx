@@ -54,18 +54,18 @@ export const PageContainer = React.memo(({
   const containerClasses = React.useMemo(() => {
     if (fullScreen) {
       return cn(
-        "fixed inset-0 w-full h-full overflow-auto",
+        "fixed inset-0 w-full h-full overflow-y-auto overflow-x-hidden",
         withBackground && "relative",
         className
       );
     }
 
     return cn(
-      "w-full flex flex-col relative",
+      "w-full flex flex-col relative overflow-x-hidden",
       fullHeight ? "min-h-screen" : "h-full min-h-full",
       withBackground && "relative",
       fullWidth ? "max-w-none" : maxWidth !== "none" ? maxWidth : "max-w-full mx-auto",
-      scrollable ? "overflow-auto" : "overflow-visible",
+      scrollable ? "overflow-y-auto" : "overflow-visible",
       className
     );
   }, [fullHeight, fullScreen, withBackground, fullWidth, maxWidth, scrollable, className]);
@@ -74,14 +74,14 @@ export const PageContainer = React.memo(({
   const contentClasses = React.useMemo(() => {
     if (fullScreen || noPadding) {
       return cn(
-        "w-full h-full flex-1",
-        scrollable ? "overflow-auto" : "overflow-visible"
+        "w-full h-full flex-1 overflow-x-hidden",
+        scrollable ? "overflow-y-auto" : "overflow-visible"
       );
     }
 
     return cn(
-      "w-full h-full flex-1",
-      scrollable ? "overflow-auto" : "overflow-visible",
+      "w-full h-full flex-1 overflow-x-hidden",
+      scrollable ? "overflow-y-auto" : "overflow-visible",
       getPadding
     );
   }, [fullScreen, noPadding, getPadding, scrollable]);

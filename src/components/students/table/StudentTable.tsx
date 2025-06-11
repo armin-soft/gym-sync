@@ -70,7 +70,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
           exit="exit"
           className="overflow-hidden rounded-lg border border-slate-200/70 dark:border-slate-700/70 backdrop-blur-sm bg-white/70 dark:bg-slate-900/60 shadow-lg shadow-slate-200/30 dark:shadow-slate-900/30"
         >
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+          <div className="overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
             <Table>
               <StudentTableHeader 
                 sortField={sortField}

@@ -33,7 +33,7 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   direction: rtl;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   position: relative;
 }
 

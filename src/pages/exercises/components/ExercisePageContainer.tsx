@@ -42,9 +42,9 @@ export const ExercisePageContainer = () => {
       withBackground 
       fullWidth 
       fullHeight 
-      className="w-full h-full min-h-screen overflow-hidden"
+      className="w-full h-full min-h-screen overflow-x-hidden"
     >
-      <div className={`w-full h-full flex flex-col ${getResponsiveClasses()}`}>
+      <div className={`w-full h-full flex flex-col overflow-x-hidden ${getResponsiveClasses()}`}>
         <div className="flex-shrink-0">
           <ExercisePageHeader />
         </div>

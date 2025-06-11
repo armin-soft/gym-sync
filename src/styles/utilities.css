@@ -28,7 +28,7 @@
   width: 100vw;
   min-height: 100vh;
   min-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 .full-container {
@@ -36,7 +36,7 @@
   width: 100vw;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden !important;
 }
 
 .full-content {
@@ -44,7 +44,7 @@
   height: 100%;
   width: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 /* کلاس‌های کمکی برای اسکرول */
@@ -54,7 +54,7 @@
 
 .scroll-container {
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   height: 100%;
   width: 100%;
 }
