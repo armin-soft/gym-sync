@@ -34,7 +34,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
       
       <Button
         type="submit"
-        className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 gap-1"
+        className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 gap-1"
       >
         <Save className="h-4 w-4" />
         <span>{isEdit ? "ذخیره تغییرات" : "افزودن شاگرد"}</span>

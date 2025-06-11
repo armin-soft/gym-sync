@@ -26,7 +26,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         className={cn(
           "animate-spin",
           sizeClasses[size],
-          size === "sm" ? "text-slate-600" : "text-primary",
+          size === "sm" ? "text-violet-600" : "text-gradient-to-r from-violet-600 to-indigo-600",
+          "text-violet-600",
           className
         )}
       />
