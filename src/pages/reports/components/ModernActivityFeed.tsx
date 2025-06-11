@@ -95,6 +95,16 @@ export const ModernActivityFeed = () => {
     }
   };
 
+  const getActivityTypeLabel = (type: string): string => {
+    switch (type) {
+      case 'student_added': return 'افزودن شاگرد';
+      case 'exercise_assigned': return 'تعریف تمرین';
+      case 'meals_assigned': return 'تعریف تغذیه';
+      case 'supplement_assigned': return 'تجویز مکمل';
+      default: return 'فعالیت';
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -169,7 +179,7 @@ export const ModernActivityFeed = () => {
                       <Clock className="h-3 w-3" />
                       <span>{getTimeAgo(activity.time)}</span>
                       <span className="w-1 h-1 bg-slate-400 rounded-full" />
-                      <span className="capitalize">{activity.type.replace('_', ' ')}</span>
+                      <span>{getActivityTypeLabel(activity.type)}</span>
                     </div>
                   </div>
                   
