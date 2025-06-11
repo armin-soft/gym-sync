@@ -69,108 +69,108 @@ export const DashboardContentNew = ({
   };
   
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="initial"
-      animate="animate"
-      className="min-h-screen w-full"
-    >
-      <motion.div variants={itemVariants}>
-        <DashboardHeaderNew 
-          trainerProfile={trainerProfile}
-          totalStudents={stats.totalStudents}
-        />
-      </motion.div>
-
-      <motion.div variants={itemVariants}>
-        <StatsGridNew stats={stats} />
-      </motion.div>
-
-      <div className={`grid gap-8 ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
-        <motion.div 
-          variants={itemVariants}
-          className={deviceInfo.isMobile ? '' : 'xl:col-span-2 space-y-8'}
-        >
-          <QuickActionsNew />
-          <StudentsOverviewNew students={students} />
+    <div className="w-full h-full overflow-y-auto overflow-x-hidden">
+      <motion.div
+        variants={containerVariants}
+        initial="initial"
+        animate="animate"
+        className="w-full h-full p-4 lg:p-6 space-y-6"
+      >
+        <motion.div variants={itemVariants}>
+          <DashboardHeaderNew 
+            trainerProfile={trainerProfile}
+            totalStudents={stats.totalStudents}
+          />
         </motion.div>
-        
-        <motion.div 
-          variants={itemVariants}
-          className="space-y-8"
-        >
-          {/* کارت خلاصه عملکرد */}
-          <motion.div
-            className="relative overflow-hidden rounded-3xl p-8 text-white"
-            style={{ background: 'var(--bg-gradient-secondary)' }}
-            whileHover={{ scale: 1.01 }}
+
+        <motion.div variants={itemVariants}>
+          <StatsGridNew stats={stats} />
+        </motion.div>
+
+        <div className={`grid gap-6 ${deviceInfo.isMobile ? 'grid-cols-1' : 'grid-cols-1 xl:grid-cols-3'}`}>
+          <motion.div 
+            variants={itemVariants}
+            className={deviceInfo.isMobile ? 'space-y-6' : 'xl:col-span-2 space-y-6'}
           >
-            <div className="absolute inset-0">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/15 rounded-full blur-2xl" />
-            </div>
-            
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold mb-4">خلاصه عملکرد</h3>
+            <QuickActionsNew />
+            <StudentsOverviewNew students={students} />
+          </motion.div>
+          
+          <motion.div 
+            variants={itemVariants}
+            className="space-y-6"
+          >
+            {/* کارت خلاصه عملکرد */}
+            <motion.div
+              className="relative overflow-hidden rounded-3xl p-6 text-white bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700"
+              whileHover={{ scale: 1.01 }}
+            >
+              <div className="absolute inset-0">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/15 rounded-full blur-2xl" />
+              </div>
               
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span>میانگین پیشرفت</span>
-                  <span className="text-2xl font-bold">{toPersianNumbers(stats.studentsProgress.toString())}%</span>
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold mb-4">خلاصه عملکرد</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span>میانگین پیشرفت</span>
+                    <span className="text-2xl font-bold">{toPersianNumbers(stats.studentsProgress.toString())}%</span>
+                  </div>
+                  
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <motion.div 
+                      className="h-full bg-white rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${stats.studentsProgress}%` }}
+                      transition={{ delay: 0.5, duration: 1 }}
+                    />
+                  </div>
+                  
+                  <p className="text-white/80 text-sm">
+                    {getPerformanceMessage()}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* کارت آمار سریع */}
+            <motion.div
+              className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 border border-gray-200/50 shadow-xl"
+            >
+              <h4 className="font-bold text-lg mb-4 text-gray-900">آمار سریع</h4>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 rounded-xl bg-emerald-50">
+                  <span className="text-sm text-gray-600">نرخ تکمیل رژیم</span>
+                  <span className="font-bold text-emerald-600">{toPersianNumbers(stats.mealCompletionRate.toString())}%</span>
                 </div>
                 
-                <div className="w-full bg-white/20 rounded-full h-2">
-                  <motion.div 
-                    className="h-full bg-white rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${stats.studentsProgress}%` }}
-                    transition={{ delay: 0.5, duration: 1 }}
-                  />
+                <div className="flex justify-between items-center p-3 rounded-xl bg-sky-50">
+                  <span className="text-sm text-gray-600">نرخ مصرف مکمل</span>
+                  <span className="font-bold text-sky-600">{toPersianNumbers(stats.supplementCompletionRate.toString())}%</span>
                 </div>
                 
-                <p className="text-white/80 text-sm">
-                  {getPerformanceMessage()}
-                </p>
+                <div className="flex justify-between items-center p-3 rounded-xl bg-orange-50">
+                  <span className="text-sm text-gray-600">ظرفیت استفاده</span>
+                  <span className="font-bold text-orange-600">
+                    {toPersianNumbers(calculateRealCapacityUsage().toString())}%
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-center p-3 rounded-xl bg-purple-50">
+                  <span className="text-sm text-gray-600">کل برنامه‌ها</span>
+                  <span className="font-bold text-purple-600">
+                    {toPersianNumbers((stats.totalMeals + stats.totalSupplements).toString())}
+                  </span>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-
-          {/* کارت آمار سریع */}
-          <motion.div
-            className="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200/50 dark:border-gray-700/50"
-            style={{ boxShadow: 'var(--shadow-soft)' }}
-          >
-            <h4 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">آمار سریع</h4>
-            
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">نرخ تکمیل رژیم</span>
-                <span className="font-bold text-emerald-600">{toPersianNumbers(stats.mealCompletionRate.toString())}%</span>
-              </div>
-              
-              <div className="flex justify-between items-center p-3 rounded-xl bg-sky-50 dark:bg-sky-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">نرخ مصرف مکمل</span>
-                <span className="font-bold text-sky-600">{toPersianNumbers(stats.supplementCompletionRate.toString())}%</span>
-              </div>
-              
-              <div className="flex justify-between items-center p-3 rounded-xl bg-orange-50 dark:bg-orange-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">ظرفیت استفاده</span>
-                <span className="font-bold text-orange-600">
-                  {toPersianNumbers(calculateRealCapacityUsage().toString())}%
-                </span>
-              </div>
-              
-              <div className="flex justify-between items-center p-3 rounded-xl bg-purple-50 dark:bg-purple-950/30">
-                <span className="text-sm text-gray-600 dark:text-gray-400">کل برنامه‌ها</span>
-                <span className="font-bold text-purple-600">
-                  {toPersianNumbers((stats.totalMeals + stats.totalSupplements).toString())}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-    </motion.div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
