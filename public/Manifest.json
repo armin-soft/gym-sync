@@ -27,17 +27,22 @@
   "related_applications": [],
   "shortcuts": [
     {
+      "name": "داشبورد مدیریت",
+      "url": "./Management",
+      "icons": []
+    },
+    {
       "name": "پروفایل مربی",
       "url": "./Management/Coach-Profile",
       "icons": []
     },
     {
-      "name": "شاگردان",
+      "name": "مدیریت شاگردان",
       "url": "./Management/Students",
       "icons": []
     },
     {
-      "name": "تمرینات",
+      "name": "حرکات تمرینی",
       "url": "./Management/Exercise-Movements",
       "icons": []
     },
@@ -47,8 +52,18 @@
       "icons": []
     },
     {
-      "name": "مکمل‌ها",
+      "name": "مکمل‌ها و ویتامین‌ها",
       "url": "./Management/Supplements-Vitamins",
+      "icons": []
+    },
+    {
+      "name": "پشتیبان‌گیری داده‌ها",
+      "url": "./Management/Backup-Restore",
+      "icons": []
+    },
+    {
+      "name": "گزارشات و تحلیل‌ها",
+      "url": "./Management/Report",
       "icons": []
     }
   ]
