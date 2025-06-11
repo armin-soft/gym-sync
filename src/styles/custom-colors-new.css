@@ -1,51 +1,162 @@
 
-/* رنگ‌های اختصاصی جدید پروژه GymSync */
+/* رنگ‌های اختصاصی جدید پروژه GymSync - الهام گرفته از بخش انتخاب نوع ورود */
 :root {
-  /* رنگ اصلی پروژه - گرادیان سبز زمردی */
-  --primary-emerald: #10b981;
-  --primary-emerald-dark: #059669;
-  --primary-emerald-light: #34d399;
+  /* رنگ‌های اصلی - الهام از gradient های انتخاب نوع کاربر */
+  --primary-purple: #8b5cf6;
+  --primary-purple-dark: #7c3aed;
+  --primary-purple-light: #a78bfa;
   
-  /* رنگ‌های ثانویه - آبی اقیانوسی */
-  --secondary-ocean: #0ea5e9;
-  --secondary-ocean-dark: #0284c7;
-  --secondary-ocean-light: #38bdf8;
+  --primary-indigo: #6366f1;
+  --primary-indigo-dark: #4f46e5;
+  --primary-indigo-light: #818cf8;
   
-  /* رنگ‌های تاکیدی - نارنجی آتشین */
-  --accent-fire: #f97316;
-  --accent-fire-dark: #ea580c;
-  --accent-fire-light: #fb923c;
+  /* رنگ‌های ثانویه - سبز زمردی */
+  --secondary-emerald: #10b981;
+  --secondary-emerald-dark: #059669;
+  --secondary-emerald-light: #34d399;
   
-  /* رنگ‌های خنثی مدرن */
-  --neutral-dark: #1f2937;
-  --neutral-medium: #6b7280;
-  --neutral-light: #f9fafb;
-  --neutral-white: #ffffff;
+  --secondary-teal: #14b8a6;
+  --secondary-teal-dark: #0d9488;
+  --secondary-teal-light: #5eead4;
   
-  /* رنگ‌های پس‌زمینه گرادیانی */
-  --bg-gradient-primary: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
-  --bg-gradient-secondary: linear-gradient(135deg, #f97316 0%, #10b981 100%);
-  --bg-gradient-soft: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+  /* رنگ‌های تاکیدی - صورتی و گلی */
+  --accent-rose: #f43f5e;
+  --accent-rose-dark: #e11d48;
+  --accent-rose-light: #fb7185;
   
-  /* سایه‌های مدرن */
-  --shadow-soft: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
-  --shadow-medium: 0 10px 15px -3px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05);
-  --shadow-strong: 0 25px 50px -12px rgba(16, 185, 129, 0.25);
+  --accent-pink: #ec4899;
+  --accent-pink-dark: #db2777;
+  --accent-pink-light: #f472b6;
+  
+  /* رنگ‌های گرادیانی اصلی - مطابق با انتخاب نوع کاربر */
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  --gradient-secondary: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+  --gradient-accent: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+  
+  /* پس‌زمینه‌های نرم گرادیانی */
+  --bg-gradient-purple: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #ede9fe 100%);
+  --bg-gradient-emerald: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+  --bg-gradient-rose: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fecdd3 100%);
+  
+  /* dark mode gradients */
+  --bg-gradient-purple-dark: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+  --bg-gradient-emerald-dark: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
+  --bg-gradient-rose-dark: linear-gradient(135deg, rgba(244, 63, 94, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+  
+  /* سایه‌های رنگی مدرن */
+  --shadow-purple: 0 10px 25px -5px rgba(139, 92, 246, 0.2), 0 4px 6px -2px rgba(139, 92, 246, 0.1);
+  --shadow-emerald: 0 10px 25px -5px rgba(16, 185, 129, 0.2), 0 4px 6px -2px rgba(16, 185, 129, 0.1);
+  --shadow-rose: 0 10px 25px -5px rgba(244, 63, 94, 0.2), 0 4px 6px -2px rgba(244, 63, 94, 0.1);
+  
+  /* حاشیه‌های رنگی */
+  --border-purple: rgba(139, 92, 246, 0.3);
+  --border-emerald: rgba(16, 185, 129, 0.3);
+  --border-rose: rgba(244, 63, 94, 0.3);
+  
+  /* رنگ‌های متن */
+  --text-purple: #7c3aed;
+  --text-emerald: #059669;
+  --text-rose: #e11d48;
 }
 
-/* کلاس‌های کمکی رنگ */
-.text-primary-emerald { color: var(--primary-emerald); }
-.text-secondary-ocean { color: var(--secondary-ocean); }
-.text-accent-fire { color: var(--accent-fire); }
+/* کلاس‌های کمکی برای رنگ‌ها */
+.text-primary-purple { color: var(--primary-purple); }
+.text-primary-indigo { color: var(--primary-indigo); }
+.text-secondary-emerald { color: var(--secondary-emerald); }
+.text-secondary-teal { color: var(--secondary-teal); }
+.text-accent-rose { color: var(--accent-rose); }
+.text-accent-pink { color: var(--accent-pink); }
 
-.bg-primary-emerald { background-color: var(--primary-emerald); }
-.bg-secondary-ocean { background-color: var(--secondary-ocean); }
-.bg-accent-fire { background-color: var(--accent-fire); }
+.bg-primary-purple { background-color: var(--primary-purple); }
+.bg-primary-indigo { background-color: var(--primary-indigo); }
+.bg-secondary-emerald { background-color: var(--secondary-emerald); }
+.bg-secondary-teal { background-color: var(--secondary-teal); }
+.bg-accent-rose { background-color: var(--accent-rose); }
+.bg-accent-pink { background-color: var(--accent-pink); }
 
-.bg-gradient-primary { background: var(--bg-gradient-primary); }
-.bg-gradient-secondary { background: var(--bg-gradient-secondary); }
-.bg-gradient-soft { background: var(--bg-gradient-soft); }
+.bg-gradient-primary { background: var(--gradient-primary); }
+.bg-gradient-secondary { background: var(--gradient-secondary); }
+.bg-gradient-accent { background: var(--gradient-accent); }
 
-.shadow-custom-soft { box-shadow: var(--shadow-soft); }
-.shadow-custom-medium { box-shadow: var(--shadow-medium); }
-.shadow-custom-strong { box-shadow: var(--shadow-strong); }
+.bg-soft-purple { background: var(--bg-gradient-purple); }
+.bg-soft-emerald { background: var(--bg-gradient-emerald); }
+.bg-soft-rose { background: var(--bg-gradient-rose); }
+
+.shadow-purple { box-shadow: var(--shadow-purple); }
+.shadow-emerald { box-shadow: var(--shadow-emerald); }
+.shadow-rose { box-shadow: var(--shadow-rose); }
+
+.border-purple { border-color: var(--border-purple); }
+.border-emerald { border-color: var(--border-emerald); }
+.border-rose { border-color: var(--border-rose); }
+
+/* کلاس‌های ترکیبی برای کامپوننت‌ها */
+.modern-card-purple {
+  @apply bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200 dark:from-purple-900/20 dark:to-indigo-900/20 dark:border-purple-700;
+  box-shadow: var(--shadow-purple);
+}
+
+.modern-card-emerald {
+  @apply bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 dark:from-emerald-900/20 dark:to-teal-900/20 dark:border-emerald-700;
+  box-shadow: var(--shadow-emerald);
+}
+
+.modern-card-rose {
+  @apply bg-gradient-to-br from-rose-50 to-pink-50 border-rose-200 dark:from-rose-900/20 dark:to-pink-900/20 dark:border-rose-700;
+  box-shadow: var(--shadow-rose);
+}
+
+.modern-button-purple {
+  @apply bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white;
+  box-shadow: var(--shadow-purple);
+}
+
+.modern-button-emerald {
+  @apply bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white;
+  box-shadow: var(--shadow-emerald);
+}
+
+.modern-button-rose {
+  @apply bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white;
+  box-shadow: var(--shadow-rose);
+}
+
+/* انیمیشن‌های رنگی */
+.gradient-shimmer {
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.4), 
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* هاور افکت‌های مدرن */
+.modern-hover-purple:hover {
+  background: var(--bg-gradient-purple);
+  border-color: var(--border-purple);
+  box-shadow: var(--shadow-purple);
+  transform: translateY(-1px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-hover-emerald:hover {
+  background: var(--bg-gradient-emerald);
+  border-color: var(--border-emerald);
+  box-shadow: var(--shadow-emerald);
+  transform: translateY(-1px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-hover-rose:hover {
+  background: var(--bg-gradient-rose);
+  border-color: var(--border-rose);
+  box-shadow: var(--shadow-rose);
+  transform: translateY(-1px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
