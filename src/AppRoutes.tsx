@@ -11,6 +11,7 @@ import Supplements from "./pages/supplements";
 import Trainer from "./pages/trainer";
 import Backup from "./pages/backup";
 import Management from "./pages/management";
+import Reports from "./pages/reports";
 
 // Student Panel Pages
 import StudentPanel from "./pages/student-panel";
@@ -24,6 +25,10 @@ const AppRoutes = () => {
     <Routes>
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
+      
+      {/* Reports Route */}
+      <Route path="/Report" element={<Reports />} />
+      <Route path="/Reports" element={<Navigate to="/Report" replace />} />
       
       {/* Management Panel Routes - Enhanced for direct access */}
       <Route path="/Management" element={<Management />} />
