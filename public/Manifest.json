@@ -7,7 +7,7 @@
   "display": "standalone",
   "background_color": "#10b981",
   "theme_color": "#0ea5e9",
-  "version": "6.1.1",
+  "version": "6.0.0",
   "orientation": "portrait-primary",
   "icons": [
     {
