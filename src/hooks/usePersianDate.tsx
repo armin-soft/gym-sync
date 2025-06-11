@@ -16,7 +16,24 @@ export const usePersianDate = () => {
       
       // Convert to Persian calendar
       const persianDateString = new Intl.DateTimeFormat('fa-IR-u-ca-persian', options).format(now);
-      setPersianDate(persianDateString);
+      
+      // Parse the date parts to reformat
+      const parts = persianDateString.split(' ');
+      if (parts.length >= 4) {
+        // Original format: "۱۴۰۴ خرداد ۲۱, چهارشنبه"
+        // Extract parts: year, month, day, weekday
+        const year = parts[0];
+        const month = parts[1];
+        const dayWithComma = parts[2];
+        const day = dayWithComma.replace(',', '');
+        const weekday = parts[3];
+        
+        // New format: "چهارشنبه ۲۱ خرداد ۱۴۰۴"
+        const reformattedDate = `${weekday} ${day} ${month} ${year}`;
+        setPersianDate(reformattedDate);
+      } else {
+        setPersianDate(persianDateString);
+      }
     };
 
     updateDate();
