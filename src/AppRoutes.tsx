@@ -26,10 +26,6 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
-      {/* Reports Route */}
-      <Route path="/Report" element={<Reports />} />
-      <Route path="/Reports" element={<Navigate to="/Report" replace />} />
-      
       {/* Management Panel Routes - Enhanced for direct access */}
       <Route path="/Management" element={<Management />} />
       <Route path="/Management/*" element={<Management />} />
@@ -40,8 +36,11 @@ const AppRoutes = () => {
       <Route path="/Management/Supplements-Vitamins" element={<Supplements />} />
       <Route path="/Management/Backup-Restore" element={<Backup />} />
       <Route path="/Management/Student-History" element={<StudentHistory />} />
+      <Route path="/Management/Report" element={<Reports />} />
       
-      {/* Legacy management routes - redirect to new structure */}
+      {/* Legacy reports and management routes - redirect to new structure */}
+      <Route path="/Report" element={<Navigate to="/Management/Report" replace />} />
+      <Route path="/Reports" element={<Navigate to="/Management/Report" replace />} />
       <Route path="/students" element={<Navigate to="/Management/Students" replace />} />
       <Route path="/student-history" element={<Navigate to="/Management/Student-History" replace />} />
       <Route path="/student-program/:studentId" element={<StudentProgram />} />

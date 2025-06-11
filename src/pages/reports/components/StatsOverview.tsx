@@ -8,45 +8,58 @@ import { useStudents } from "@/hooks/useStudents";
 export const StatsOverview = () => {
   const { students } = useStudents();
   
+  // Calculate real statistics from actual data
+  const totalStudents = students.length;
+  const activeStudents = students.filter(s => s.name && s.phone).length;
+  const studentsWithPrograms = students.filter(student => {
+    const hasExercises = student.exercises && Object.keys(student.exercises).length > 0;
+    const hasDiet = student.diet && Array.isArray(student.diet) && student.diet.length > 0;
+    const hasSupplements = student.supplements && Array.isArray(student.supplements) && student.supplements.length > 0;
+    return hasExercises || hasDiet || hasSupplements;
+  }).length;
+  
+  // Calculate completion percentage
+  const completionRate = totalStudents > 0 ? Math.round((studentsWithPrograms / totalStudents) * 100) : 0;
+  
   const stats = [
     {
       id: 1,
       title: "تعداد کل شاگردان",
-      value: students.length,
+      value: totalStudents,
       icon: Users,
-      gradient: "from-violet-600 to-indigo-600",
-      bgGradient: "from-violet-100 to-indigo-100",
-      change: "+۱۲%",
+      gradient: "from-emerald-600 to-sky-600",
+      bgGradient: "from-emerald-100 to-sky-100",
+      change: totalStudents > 0 ? "+۱۰۰%" : "۰%",
       changeType: "positive"
     },
     {
       id: 2,
       title: "شاگردان فعال",
-      value: students.filter(s => s.name && s.phone).length,
+      value: activeStudents,
       icon: Activity,
       gradient: "from-emerald-600 to-teal-600",
       bgGradient: "from-emerald-100 to-teal-100",
-      change: "+۸%",
+      change: activeStudents > 0 ? "+۱۰۰%" : "۰%",
       changeType: "positive"
     },
     {
       id: 3,
       title: "برنامه‌های تمرینی",
-      value: students.length * 3, // فرض می‌کنیم هر شاگرد ۳ برنامه دارد
+      value: studentsWithPrograms,
       icon: Target,
-      gradient: "from-blue-600 to-cyan-600",
-      bgGradient: "from-blue-100 to-cyan-100",
-      change: "+۱۵%",
+      gradient: "from-sky-600 to-cyan-600",
+      bgGradient: "from-sky-100 to-cyan-100",
+      change: studentsWithPrograms > 0 ? "+۱۰۰%" : "۰%",
       changeType: "positive"
     },
     {
       id: 4,
-      title: "پیشرفت کلی",
-      value: 87,
+      title: "نرخ تکمیل برنامه",
+      value: completionRate,
       icon: Award,
       gradient: "from-orange-600 to-yellow-600",
       bgGradient: "from-orange-100 to-yellow-100",
-      change: "+۵%",
+      change: completionRate > 0 ? "+۱۰۰%" : "۰%",
       changeType: "positive",
       suffix: "%"
     }

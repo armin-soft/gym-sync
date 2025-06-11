@@ -23,14 +23,14 @@ export const StudentLoginForm = ({ variants, onSubmit, loading }: StudentLoginFo
 
   return (
     <motion.div variants={variants} className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl blur-xl opacity-20"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-sky-600 rounded-3xl blur-xl opacity-20"></div>
       <div className="relative backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl p-8 sm:p-10 shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
           {/* Phone Number Field */}
           <motion.div variants={variants} className="space-y-2">
             <Label htmlFor="phone" className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
-              <div className="w-8 h-8 bg-violet-100 dark:bg-violet-900/30 rounded-lg flex items-center justify-center">
-                <Phone className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+              <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                <Phone className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               </div>
               شماره موبایل
             </Label>
@@ -41,12 +41,12 @@ export const StudentLoginForm = ({ variants, onSubmit, loading }: StudentLoginFo
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder={toPersianNumbers("09123456789")}
-                className="h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-violet-500 focus:ring-violet-500/20 rounded-xl pr-4 text-right backdrop-blur-sm"
+                className="h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl pr-4 text-right backdrop-blur-sm"
                 dir="ltr"
                 required
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
               </div>
             </div>
           </motion.div>
@@ -55,7 +55,7 @@ export const StudentLoginForm = ({ variants, onSubmit, loading }: StudentLoginFo
           <motion.div variants={variants} className="pt-4">
             <Button 
               type="submit" 
-              className="w-full h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+              className="w-full h-12 bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
               disabled={loading}
             >
               {loading ? (

@@ -13,11 +13,11 @@ export const StudentLoginBackground = () => {
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* Gradient Mesh Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-50 dark:from-violet-950 dark:via-indigo-950 dark:to-purple-950"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-sky-50 to-teal-50 dark:from-emerald-950 dark:via-sky-950 dark:to-teal-950"></div>
       
       {/* Animated Blob Shapes */}
       <motion.div
-        className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-violet-400/20 to-purple-500/20 rounded-full blur-3xl"
+        className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-emerald-400/20 to-sky-500/20 rounded-full blur-3xl"
         animate={{
           x: [0, 100, 0],
           y: [0, -50, 0],
@@ -30,7 +30,7 @@ export const StudentLoginBackground = () => {
         }}
       />
       <motion.div
-        className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-r from-indigo-400/20 to-blue-500/20 rounded-full blur-3xl"
+        className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-r from-sky-400/20 to-teal-500/20 rounded-full blur-3xl"
         animate={{
           x: [0, -80, 0],
           y: [0, 40, 0],
@@ -64,7 +64,7 @@ export const StudentLoginBackground = () => {
           }}
         >
           <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-            <item.icon className="h-6 w-6 text-violet-600/60" />
+            <item.icon className="h-6 w-6 text-emerald-600/60" />
           </div>
         </motion.div>
       ))}

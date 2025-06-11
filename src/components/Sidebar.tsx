@@ -7,6 +7,7 @@ import {
   UtensilsCrossed,
   Pill,
   Database,
+  BarChart3,
 } from "lucide-react";
 import { ModernSidebar } from "./modern-sidebar/ModernSidebar";
 import { SidebarItem, TrainerProfile, SidebarStats } from "./modern-sidebar/types";
@@ -23,7 +24,16 @@ const sidebarItems: SidebarItem[] = [
     subtitle: "نمای کلی و آمار جامع باشگاه",
     href: "/Management",
     icon: LayoutDashboard,
-    gradient: "from-violet-500 to-purple-600",
+    gradient: "from-emerald-500 to-sky-600",
+    isNew: false,
+  },
+  {
+    id: "reports",
+    title: "گزارشات و تحلیل‌ها",
+    subtitle: "آمار و گزارشات جامع عملکرد",
+    href: "/Management/Report",
+    icon: BarChart3,
+    gradient: "from-teal-500 to-cyan-600",
     isNew: false,
   },
   {
@@ -67,7 +77,7 @@ const sidebarItems: SidebarItem[] = [
     subtitle: "مدیریت مکمل‌های ورزشی و تغذیه‌ای",
     href: "/Management/Supplements-Vitamins",
     icon: Pill,
-    gradient: "from-indigo-500 to-purple-600",
+    gradient: "from-sky-500 to-blue-600",
     isNew: false,
   },
   {
