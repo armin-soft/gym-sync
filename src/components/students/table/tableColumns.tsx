@@ -48,6 +48,7 @@ export const useTableColumns = () => {
       header: () => "جنسیت",
       cell: ({ row }) => {
         const value = row.original.gender;
+        if (!value) return <div className="text-center">-</div>;
         const isMale = value === "male";
         return (
           <div className="text-center">
@@ -93,13 +94,13 @@ export const useTableColumns = () => {
         return (
           <div className="text-center">
             {isComplete ? (
-              <Badge variant="outline" className="gap-2">
+              <Badge variant="outline" className="gap-2 bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:border-green-700/30 dark:text-green-400">
                 <CheckCircle className="h-3.5 w-3.5 text-green-500" />
                 کامل
               </Badge>
             ) : (
               <Badge variant="outline" className="gap-2 bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:border-amber-700/30 dark:text-amber-400">
-                {toPersianNumbers(value)}٪
+                ناقص
               </Badge>
             )}
           </div>

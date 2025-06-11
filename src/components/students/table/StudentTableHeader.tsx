@@ -1,11 +1,8 @@
 
 import React from "react";
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useTableColumns } from "./tableColumns";
-import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { ColumnDef, Header, HeaderContext } from "@tanstack/react-table";
-import { Student } from "@/components/students/StudentTypes";
+import { Button } from "@/components/ui/button";
 
 interface StudentTableHeaderProps {
   sortField?: string;
@@ -16,55 +13,82 @@ interface StudentTableHeaderProps {
 export const StudentTableHeader: React.FC<StudentTableHeaderProps> = ({
   sortField,
   sortOrder,
-  onSortChange
+  onSortChange,
 }) => {
-  const columns = useTableColumns();
-  
-  const getSortIcon = (column: string) => {
-    if (sortField !== column) return null;
-    return sortOrder === "asc" ? (
-      <ChevronUp className="ml-1 h-3 w-3 text-purple-500" />
-    ) : (
-      <ChevronDown className="ml-1 h-3 w-3 text-purple-500" />
-    );
+  const handleSort = (field: string) => {
+    if (onSortChange) {
+      onSortChange(field);
+    }
+  };
+
+  const getSortIcon = (field: string) => {
+    if (sortField === field) {
+      return sortOrder === "asc" ? (
+        <ChevronUp className="h-3 w-3 ml-1" />
+      ) : (
+        <ChevronDown className="h-3 w-3 ml-1" />
+      );
+    }
+    return null;
   };
 
   return (
-    <TableHeader className="bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm sticky top-0 z-10">
-      <TableRow>
-        {columns.map((column) => {
-          // Properly handle column keys based on different column types
-          const key = typeof column.id === "string" ? column.id : 
-                     "accessorKey" in column && typeof column.accessorKey === "string" ? column.accessorKey : 
-                     String(column.id);
-          
-          const isSortable = key && ["name", "payment", "height", "weight"].includes(key);
-          
-          const handleClick = () => {
-            if (isSortable && onSortChange) {
-              onSortChange(key);
-            }
-          };
-          
-          return (
-            <TableHead
-              key={key}
-              className={`text-center px-4 py-3 font-semibold text-xs uppercase tracking-wider text-slate-600 dark:text-slate-300 ${
-                isSortable ? "cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-700/30" : ""
-              }`}
-              style={column.size ? { width: column.size } : {}}
-              onClick={handleClick}
-            >
-              <motion.div
-                className="flex items-center justify-center"
-                whileHover={isSortable ? { scale: 1.05 } : undefined}
-              >
-                {typeof column.header === "function" ? column.header({} as any) : column.header}
-                {isSortable && getSortIcon(key)}
-              </motion.div>
-            </TableHead>
-          );
-        })}
+    <TableHeader className="bg-slate-50/80 dark:bg-slate-800/60 backdrop-blur-sm border-b border-slate-200/60 dark:border-slate-700/60">
+      <TableRow className="hover:bg-transparent">
+        <TableHead className="text-center w-16">تصویر</TableHead>
+        <TableHead className="text-right">
+          <Button
+            variant="ghost"
+            className="h-auto p-0 font-medium hover:bg-transparent text-slate-700 dark:text-slate-300"
+            onClick={() => handleSort("name")}
+          >
+            نام
+            {getSortIcon("name")}
+          </Button>
+        </TableHead>
+        <TableHead className="text-center">
+          <Button
+            variant="ghost"
+            className="h-auto p-0 font-medium hover:bg-transparent text-slate-700 dark:text-slate-300"
+            onClick={() => handleSort("phone")}
+          >
+            شماره موبایل
+            {getSortIcon("phone")}
+          </Button>
+        </TableHead>
+        <TableHead className="text-center">جنسیت</TableHead>
+        <TableHead className="text-center">
+          <Button
+            variant="ghost"
+            className="h-auto p-0 font-medium hover:bg-transparent text-slate-700 dark:text-slate-300"
+            onClick={() => handleSort("height")}
+          >
+            قد
+            {getSortIcon("height")}
+          </Button>
+        </TableHead>
+        <TableHead className="text-center">
+          <Button
+            variant="ghost"
+            className="h-auto p-0 font-medium hover:bg-transparent text-slate-700 dark:text-slate-300"
+            onClick={() => handleSort("weight")}
+          >
+            وزن
+            {getSortIcon("weight")}
+          </Button>
+        </TableHead>
+        <TableHead className="text-center">
+          <Button
+            variant="ghost"
+            className="h-auto p-0 font-medium hover:bg-transparent text-slate-700 dark:text-slate-300"
+            onClick={() => handleSort("payment")}
+          >
+            مبلغ
+            {getSortIcon("payment")}
+          </Button>
+        </TableHead>
+        <TableHead className="text-center">تکمیل پروفایل</TableHead>
+        <TableHead className="text-center w-24">اقدامات</TableHead>
       </TableRow>
     </TableHeader>
   );
