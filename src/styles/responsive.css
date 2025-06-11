@@ -4,20 +4,20 @@
 /* کلاس‌های ریسپانسیو اندازه */
 .responsive-container {
   @apply w-full h-full;
-  @apply px-1 xs:px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8;
-  @apply py-1 xs:py-2 sm:py-3 md:py-4 lg:py-6 xl:py-8;
+  @apply px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8;
+  @apply py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 xl:py-8;
 }
 
 .responsive-padding {
-  @apply p-1 xs:p-2 sm:p-3 md:p-4 lg:p-6 xl:p-8;
+  @apply p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8;
 }
 
 .responsive-margin {
-  @apply m-1 xs:m-2 sm:m-3 md:m-4 lg:m-6 xl:m-8;
+  @apply m-2 xs:m-3 sm:m-4 md:m-5 lg:m-6 xl:m-8;
 }
 
 .responsive-gap {
-  @apply gap-1 xs:gap-2 sm:gap-3 md:gap-4 lg:gap-6 xl:gap-8;
+  @apply gap-2 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8;
 }
 
 /* تایپوگرافی ریسپانسیو */
@@ -78,22 +78,64 @@
 /* کارت‌ها و باکس‌ها */
 .responsive-card {
   @apply w-full rounded-lg shadow-sm border bg-card text-card-foreground;
-  @apply p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8;
+  @apply p-3 xs:p-4 sm:p-5 md:p-6 lg:p-8;
 }
 
 .responsive-header {
   @apply w-full sticky top-0 z-50 bg-background/95 backdrop-blur;
   @apply h-12 xs:h-14 sm:h-16 md:h-18 lg:h-20;
-  @apply px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8;
+  @apply px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8;
 }
 
 /* دکمه‌ها و کنترل‌ها */
 .responsive-button {
-  @apply px-2 xs:px-3 sm:px-4 md:px-6;
-  @apply py-1 xs:py-1.5 sm:py-2 md:py-3;
-  @apply text-xs xs:text-sm sm:text-base md:text-lg;
+  @apply px-3 xs:px-4 sm:px-5 md:px-6;
+  @apply py-2 xs:py-2.5 sm:py-3 md:py-3.5;
+  @apply text-sm xs:text-base sm:text-lg md:text-xl;
 }
 
 .responsive-icon {
-  @apply w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6;
+  @apply w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7;
+}
+
+/* کلاس‌های استاندارد داشبورد */
+.dashboard-card {
+  @apply bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50;
+  @apply p-4 xs:p-5 sm:p-6 md:p-7 lg:p-8;
+  @apply hover:shadow-xl transition-all duration-300;
+}
+
+.dashboard-title {
+  @apply text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  @apply font-bold text-gray-800 mb-2;
+}
+
+.dashboard-subtitle {
+  @apply text-sm xs:text-base sm:text-lg md:text-xl;
+  @apply text-gray-600 mb-4;
+}
+
+.dashboard-stat {
+  @apply text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
+  @apply font-bold text-center;
+}
+
+.dashboard-icon {
+  @apply w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16;
+}
+
+.dashboard-grid {
+  @apply grid gap-4 xs:gap-5 sm:gap-6 md:gap-7 lg:gap-8;
+  @apply grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+}
+
+.dashboard-stats-grid {
+  @apply grid gap-3 xs:gap-4 sm:gap-5 md:gap-6;
+  @apply grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5;
+}
+
+.dashboard-content {
+  @apply max-w-7xl mx-auto;
+  @apply px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8;
+  @apply py-4 xs:py-5 sm:py-6 md:py-7 lg:py-8;
 }
