@@ -52,7 +52,7 @@ export const ExercisesTabHeader = ({
     <>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Activity className="w-5 h-5 text-pink-500" />
+          <Activity className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           حرکات تمرینی
         </h3>
         
@@ -61,7 +61,7 @@ export const ExercisesTabHeader = ({
             variant="ghost" 
             size="icon" 
             onClick={toggleSortOrder}
-            className="hover:bg-indigo-50 text-indigo-600 transition-all duration-300"
+            className="hover:bg-emerald-50 text-emerald-600 dark:hover:bg-emerald-900/30 dark:text-emerald-400 transition-all duration-300"
           >
             <ArrowUpDown className={`h-4 w-4 transition-transform duration-300 ${sortOrder === 'asc' ? 'rotate-0' : 'rotate-180'}`} />
           </Button>
@@ -71,7 +71,7 @@ export const ExercisesTabHeader = ({
               <Button 
                 variant="outline" 
                 size="icon"
-                className="hover:bg-indigo-50 text-indigo-600 transition-all duration-300"
+                className="hover:bg-emerald-50 text-emerald-600 dark:hover:bg-emerald-900/30 dark:text-emerald-400 transition-all duration-300 border-emerald-200 dark:border-emerald-700"
               >
                 <Filter className="h-4 w-4" />
               </Button>
@@ -81,7 +81,7 @@ export const ExercisesTabHeader = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 onClick={() => setSelectedCategoryId(null)}
-                className={!selectedCategoryId ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
+                className={!selectedCategoryId ? "bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-900/30 dark:text-emerald-400" : ""}
               >
                 همه دسته‌بندی‌ها
               </DropdownMenuItem>
@@ -90,7 +90,7 @@ export const ExercisesTabHeader = ({
                 <DropdownMenuItem 
                   key={category.id}
                   onClick={() => setSelectedCategoryId(category.id)}
-                  className={selectedCategoryId === category.id ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
+                  className={selectedCategoryId === category.id ? "bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-900/30 dark:text-emerald-400" : ""}
                 >
                   {category.name}
                 </DropdownMenuItem>
@@ -102,7 +102,7 @@ export const ExercisesTabHeader = ({
             variant="ghost"
             size="icon"
             onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            className="hover:bg-indigo-50 text-indigo-600 transition-all duration-300"
+            className="hover:bg-emerald-50 text-emerald-600 dark:hover:bg-emerald-900/30 dark:text-emerald-400 transition-all duration-300"
           >
             {viewMode === "grid" ? (
               <ListOrdered className="h-4 w-4" />
@@ -125,7 +125,7 @@ export const ExercisesTabHeader = ({
 
           <Button
             onClick={onAddExercise}
-            className="bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-700 hover:to-indigo-500 text-white shadow-indigo-200 shadow-lg transition-all duration-300 hover:scale-105"
+            className="bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white shadow-lg transition-all duration-300 hover:scale-105"
             size="sm"
           >
             <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
@@ -136,14 +136,14 @@ export const ExercisesTabHeader = ({
 
       {selectedCategoryId && (
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="bg-indigo-50 text-indigo-700">
+          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-700">
             {categories.find(c => c.id === selectedCategoryId)?.name}
           </Badge>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => setSelectedCategoryId(null)}
-            className="h-6 text-xs"
+            className="h-6 text-xs hover:text-red-600"
           >
             حذف فیلتر
           </Button>

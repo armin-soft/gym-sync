@@ -32,14 +32,14 @@ const ExerciseDialogHeader: React.FC<ExerciseDialogHeaderProps> = ({ studentName
   return (
     <DialogHeader className={getHeaderClasses()}>
       <motion.div 
-        className={`absolute ${deviceInfo.isMobile ? '-top-6' : '-top-8'} left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-primary rounded-full ${deviceInfo.isMobile ? 'p-2' : 'p-3'} shadow-lg`}
+        className={`absolute ${deviceInfo.isMobile ? '-top-6' : '-top-8'} left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-gradient-to-r from-emerald-600 to-sky-600 rounded-full ${deviceInfo.isMobile ? 'p-2' : 'p-3'} shadow-lg`}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 150, damping: 15 }}
       >
         <Activity className={getIconSize() + " text-white"} />
       </motion.div>
-      <DialogTitle className={`text-center mt-4 ${getTitleSize()} font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent pb-1`}>
+      <DialogTitle className={`text-center mt-4 ${getTitleSize()} font-bold bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent pb-1`}>
         مدیریت تمرین‌های {studentName}
       </DialogTitle>
       <DialogDescription className={`text-center text-muted-foreground max-w-md mx-auto ${deviceInfo.isMobile ? 'text-xs' : 'text-sm'}`}>

@@ -46,9 +46,9 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
   };
 
   return (
-    <Card className="p-4 flex flex-col gap-3">
+    <Card className="p-4 flex flex-col gap-3 bg-gradient-to-br from-emerald-50/50 to-sky-50/50 dark:from-emerald-900/20 dark:to-sky-900/20 border-emerald-200 dark:border-emerald-800">
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-muted-foreground">نوع تمرین</label>
+        <label className="text-sm font-medium text-emerald-700 dark:text-emerald-400">نوع تمرین</label>
         <TypeSelector 
           exerciseTypes={exerciseTypes}
           selectedType={selectedExerciseType}
@@ -63,7 +63,7 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
       
       {selectedExerciseType && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-muted-foreground">دسته‌بندی</label>
+          <label className="text-sm font-medium text-sky-700 dark:text-sky-400">دسته‌بندی</label>
           {filteredCategories.length > 0 ? (
             <div className="flex flex-wrap gap-2 mt-1">
               {filteredCategories.map(category => (
@@ -71,10 +71,10 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
                   key={category.id}
                   variant={selectedCategoryId === category.id ? "default" : "outline"}
                   className={cn(
-                    "text-sm h-8",
+                    "text-sm h-8 transition-all duration-200",
                     selectedCategoryId === category.id
-                      ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                      : "bg-white hover:bg-slate-100"
+                      ? "bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white"
+                      : "bg-white hover:bg-emerald-50 dark:bg-gray-800 dark:hover:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700"
                   )}
                   onClick={() => setSelectedCategoryId(category.id)}
                 >
@@ -84,7 +84,7 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
               {onAddCategory && (
                 <Button
                   variant="outline"
-                  className="text-sm h-8 border-dashed border-muted-foreground/30"
+                  className="text-sm h-8 border-dashed border-emerald-300 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
                   onClick={onAddCategory}
                 >
                   <Plus className="h-3.5 w-3.5 mr-1" />
@@ -93,14 +93,14 @@ export const HierarchicalMenu: React.FC<HierarchicalMenuProps> = ({
               )}
             </div>
           ) : (
-            <div className="text-sm text-muted-foreground p-2 border border-dashed rounded-md text-center">
+            <div className="text-sm text-muted-foreground p-2 border border-dashed rounded-md text-center border-emerald-200 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-900/20">
               هیچ دسته‌بندی برای این نوع تمرین یافت نشد
             </div>
           )}
         </div>
       )}
       
-      <div className="flex items-center text-xs text-muted-foreground mt-1">
+      <div className="flex items-center text-xs text-emerald-600 dark:text-emerald-400 mt-1">
         <Menu className="h-3 w-3 ml-1" />
         <span>
           {selectedExerciseType && selectedCategoryId ? (

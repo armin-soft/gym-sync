@@ -27,9 +27,9 @@ export function EditExerciseDialog({
 }: EditExerciseDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center">
+      <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)] mx-auto bg-gradient-to-br from-white to-emerald-50/30 dark:from-gray-900 dark:to-emerald-900/10 border-emerald-200 dark:border-emerald-800">
+        <DialogHeader className="border-b border-emerald-100 dark:border-emerald-800 pb-4">
+          <DialogTitle className="text-xl font-bold text-center bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">
             ویرایش حرکت
           </DialogTitle>
         </DialogHeader>

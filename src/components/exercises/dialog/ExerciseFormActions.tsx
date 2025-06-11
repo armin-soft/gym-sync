@@ -48,7 +48,7 @@ export const ExerciseFormActions: React.FC<ExerciseFormActionsProps> = ({
           type="button"
           onClick={handleSave}
           disabled={isSaving || isDisabled}
-          className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 transition-all min-w-24 shadow-md hover:shadow-lg"
+          className="bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 transition-all min-w-24 shadow-md hover:shadow-lg"
         >
           {isSaving ? "در حال ذخیره..." : "ذخیره"}
         </Button>

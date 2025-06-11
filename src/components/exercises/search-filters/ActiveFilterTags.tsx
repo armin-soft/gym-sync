@@ -46,7 +46,7 @@ export const ActiveFilterTags: React.FC<ActiveFilterTagsProps> = ({
       )}
       
       {selectedExerciseType && (
-        <Badge variant="secondary" className="py-1 px-2 gap-1 bg-primary/10 hover:bg-primary/20 text-primary">
+        <Badge variant="secondary" className="py-1 px-2 gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
           <span>نوع: {selectedExerciseType}</span>
           <Button 
             variant="ghost" 

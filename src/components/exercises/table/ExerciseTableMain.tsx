@@ -91,7 +91,7 @@ export function ExerciseTableMain({
   const hasActiveFilters = searchQuery !== "" || selectedCategoryId !== null;
 
   return (
-    <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-indigo-50/30 w-full h-full">
+    <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-emerald-50/30 dark:from-gray-900 dark:to-emerald-900/10 w-full h-full">
       <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 h-full flex flex-col">
         <ExerciseTableHeader
           selectedCount={selectedExercises.length}
