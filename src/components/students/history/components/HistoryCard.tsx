@@ -32,12 +32,12 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/40 to-white/20 dark:from-slate-800/60 dark:via-slate-800/40 dark:to-slate-800/20 backdrop-blur-xl rounded-2xl" />
       
       {/* Border with gradient */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 p-[1px]">
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/20 via-transparent to-sky-500/20 p-[1px]">
         <div className="h-full w-full rounded-2xl bg-white/40 dark:bg-slate-900/40" />
       </div>
       
       {/* Content */}
-      <div className="relative p-6 rounded-2xl transition-all duration-300 group-hover:shadow-xl group-hover:shadow-primary/5">
+      <div className="relative p-6 rounded-2xl transition-all duration-300 group-hover:shadow-xl group-hover:shadow-emerald-500/5">
         <div className="flex items-start gap-4">
           {/* Action Icon */}
           <motion.div
@@ -46,7 +46,7 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl blur-sm" />
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 rounded-xl blur-sm" />
             <div className="relative bg-gradient-to-br from-white/80 to-white/60 dark:from-slate-700/80 dark:to-slate-700/60 p-3 rounded-xl border border-white/20 dark:border-slate-600/20 group-hover:scale-110 transition-transform duration-300">
               {getActionIcon(entry.type)}
             </div>
@@ -64,13 +64,13 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
                 >
                   <Avatar className="h-8 w-8 ring-2 ring-white/50 dark:ring-slate-700/50">
                     <AvatarImage src={entry.studentImage} alt={entry.studentName} />
-                    <AvatarFallback className="text-sm bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-bold">
+                    <AvatarFallback className="text-sm bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold">
                       {entry.studentName.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   
                   {/* Online indicator */}
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-800" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-800" />
                 </motion.div>
                 
                 <div>
@@ -78,7 +78,7 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.15 }}
-                    className="font-bold text-foreground group-hover:text-primary transition-colors"
+                    className="font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
                   >
                     {entry.studentName}
                   </motion.h4>
@@ -108,9 +108,9 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
                 
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 45 }}
-                  className="p-1.5 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="p-1.5 bg-emerald-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 >
-                  <ArrowUpRight className="h-3.5 w-3.5 text-primary" />
+                  <ArrowUpRight className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                 </motion.div>
               </motion.div>
             </div>
@@ -135,7 +135,7 @@ export const HistoryCard: React.FC<HistoryCardProps> = ({ entry }) => {
           animate={{ scaleX: 0 }}
           whileHover={{ scaleX: 1 }}
           transition={{ duration: 0.3 }}
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-primary origin-left"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 via-sky-500 to-emerald-500 origin-left"
         />
       </div>
     </motion.div>

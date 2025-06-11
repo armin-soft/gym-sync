@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 export const getActionIcon = (action: string) => {
   switch (action) {
     case 'edit':
-      return <Edit className="h-4 w-4 text-blue-500" />;
+      return <Edit className="h-4 w-4 text-sky-500" />;
     case 'exercise':
-      return <Dumbbell className="h-4 w-4 text-indigo-500" />;
+      return <Dumbbell className="h-4 w-4 text-emerald-500" />;
     case 'diet':
-      return <UtensilsCrossed className="h-4 w-4 text-green-500" />;
+      return <UtensilsCrossed className="h-4 w-4 text-sky-500" />;
     case 'supplement':
-      return <Pill className="h-4 w-4 text-purple-500" />;
+      return <Pill className="h-4 w-4 text-emerald-500" />;
     case 'delete':
       return <Trash className="h-4 w-4 text-red-500" />;
     default:
@@ -24,37 +24,37 @@ export const getActionBadge = (action: string) => {
   switch (action) {
     case 'edit':
       return (
-        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+        <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800">
           ویرایش اطلاعات
         </Badge>
       );
     case 'exercise':
       return (
-        <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
+        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800">
           برنامه تمرینی
         </Badge>
       );
     case 'diet':
       return (
-        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+        <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800">
           رژیم غذایی
         </Badge>
       );
     case 'supplement':
       return (
-        <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800">
           مکمل و ویتامین
         </Badge>
       );
     case 'delete':
       return (
-        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800">
           حذف شاگرد
         </Badge>
       );
     default:
       return (
-        <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+        <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-950/50 dark:text-gray-300 dark:border-gray-800">
           سایر
         </Badge>
       );

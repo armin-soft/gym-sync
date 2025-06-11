@@ -31,39 +31,39 @@ export const HistoryTabs: React.FC<HistoryTabsProps> = ({
 }) => {
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="mb-4 w-auto inline-flex bg-gray-100/80 dark:bg-gray-800/50 p-1 gap-1">
+      <TabsList className="mb-4 w-auto inline-flex bg-emerald-100/80 dark:bg-emerald-800/50 p-1 gap-1">
         <TabsTrigger value="all" className="flex items-center gap-2">
           <History className="h-4 w-4" />
           <span>همه</span>
-          <Badge variant="outline" className="ml-1.5 bg-gray-200/80 dark:bg-gray-700/50 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-emerald-200/80 dark:bg-emerald-700/50 text-xs">
             {toPersianNumbers(historyEntries.length)}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="edits" className="flex items-center gap-2">
-          <Edit className="h-4 w-4 text-blue-500" />
+          <Edit className="h-4 w-4 text-sky-500" />
           <span>ویرایش</span>
-          <Badge variant="outline" className="ml-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'edit').length)}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="exercises" className="flex items-center gap-2">
-          <Dumbbell className="h-4 w-4 text-indigo-500" />
+          <Dumbbell className="h-4 w-4 text-emerald-500" />
           <span>تمرین</span>
-          <Badge variant="outline" className="ml-1.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'exercise').length)}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="diets" className="flex items-center gap-2">
-          <UtensilsCrossed className="h-4 w-4 text-green-500" />
+          <UtensilsCrossed className="h-4 w-4 text-sky-500" />
           <span>رژیم</span>
-          <Badge variant="outline" className="ml-1.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'diet').length)}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="supplements" className="flex items-center gap-2">
-          <Pill className="h-4 w-4 text-amber-500" />
+          <Pill className="h-4 w-4 text-emerald-500" />
           <span>مکمل</span>
-          <Badge variant="outline" className="ml-1.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'supplement').length)}
           </Badge>
         </TabsTrigger>

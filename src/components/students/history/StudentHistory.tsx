@@ -100,13 +100,13 @@ export const StudentHistory: React.FC<StudentHistoryProps> = ({
       transition={{ duration: 0.6 }}
       className="w-full min-h-full flex flex-col"
     >
-      <Card className="w-full flex-1 relative overflow-hidden border-0 shadow-2xl shadow-primary/5">
-        {/* Modern Glass Background with Gradient */}
+      <Card className="w-full flex-1 relative overflow-hidden border-0 shadow-2xl shadow-emerald-500/5">
+        {/* Modern Glass Background with Emerald-Sky Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/90 to-white/85 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-900/85 backdrop-blur-xl" />
         
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -translate-y-48 translate-x-48" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-secondary/10 to-transparent rounded-full blur-3xl translate-y-32 -translate-x-32" />
+        {/* Decorative Elements with new colors */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-full blur-3xl -translate-y-48 translate-x-48" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-sky-500/10 to-transparent rounded-full blur-3xl translate-y-32 -translate-x-32" />
         
         {/* Content Container */}
         <div className="relative z-10 flex flex-col h-full">

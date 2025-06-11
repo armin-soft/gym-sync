@@ -25,9 +25,9 @@ export const HistoryHeader: React.FC<HistoryHeaderProps> = ({
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
           className="relative"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl blur-sm" />
-          <div className="relative bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-2xl border border-primary/20">
-            <History className="h-8 w-8 text-primary" />
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 rounded-2xl blur-sm" />
+          <div className="relative bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-4 rounded-2xl border border-emerald-500/20">
+            <History className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
           </div>
         </motion.div>
         
@@ -36,7 +36,7 @@ export const HistoryHeader: React.FC<HistoryHeaderProps> = ({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+            className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-700 dark:from-emerald-400 dark:via-sky-400 dark:to-emerald-500 bg-clip-text text-transparent"
           >
             تاریخچه فعالیت‌ها
           </motion.h1>
@@ -47,9 +47,9 @@ export const HistoryHeader: React.FC<HistoryHeaderProps> = ({
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex items-center gap-3"
           >
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full border border-primary/20">
-              <Activity className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary" style={{ direction: 'rtl' }}>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+              <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300" style={{ direction: 'rtl' }}>
                 {toPersianNumbers(entriesCount)} فعالیت
               </span>
             </div>
@@ -59,10 +59,10 @@ export const HistoryHeader: React.FC<HistoryHeaderProps> = ({
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/20 rounded-full border border-green-200 dark:border-green-800"
+                className="flex items-center gap-2 px-3 py-1.5 bg-sky-100 dark:bg-sky-900/20 rounded-full border border-sky-200 dark:border-sky-800"
               >
-                <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                <TrendingUp className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                <span className="text-sm font-medium text-sky-700 dark:text-sky-300">
                   فعال
                 </span>
               </motion.div>
