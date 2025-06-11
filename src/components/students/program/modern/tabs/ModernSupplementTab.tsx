@@ -44,6 +44,8 @@ const ModernSupplementTab: React.FC<ModernSupplementTabProps> = ({
   const [selectedType, setSelectedType] = useState("all");
   const { toast } = useToast();
 
+  console.log("ModernSupplementTab loaded with supplements:", supplements);
+
   // Load supplements for the selected day
   useEffect(() => {
     const supplementDayKey = `supplementsDay${selectedDay}`;
@@ -112,22 +114,16 @@ const ModernSupplementTab: React.FC<ModernSupplementTabProps> = ({
 
   const getSupplementTypeIcon = (type: string) => {
     switch (type) {
-      case 'پروتئین': return <Heart className="w-4 h-4 text-red-500" />;
-      case 'ویتامین': return <Sparkles className="w-4 h-4 text-yellow-500" />;
-      case 'مولتی ویتامین': return <Shield className="w-4 h-4 text-green-500" />;
-      case 'امگا ۳': return <Brain className="w-4 h-4 text-blue-500" />;
-      case 'کراتین': return <Zap className="w-4 h-4 text-orange-500" />;
+      case 'supplement': return <Heart className="w-4 h-4 text-red-500" />;
+      case 'vitamin': return <Sparkles className="w-4 h-4 text-yellow-500" />;
       default: return <Pill className="w-4 h-4 text-purple-500" />;
     }
   };
 
   const getSupplementTypeColor = (type: string) => {
     switch (type) {
-      case 'پروتئین': return 'from-red-50 to-rose-50 border-red-200 text-red-700';
-      case 'ویتامین': return 'from-yellow-50 to-amber-50 border-yellow-200 text-yellow-700';
-      case 'مولتی ویتامین': return 'from-green-50 to-emerald-50 border-green-200 text-green-700';
-      case 'امگا ۳': return 'from-blue-50 to-sky-50 border-blue-200 text-blue-700';
-      case 'کراتین': return 'from-orange-50 to-red-50 border-orange-200 text-orange-700';
+      case 'supplement': return 'from-red-50 to-rose-50 border-red-200 text-red-700';
+      case 'vitamin': return 'from-yellow-50 to-amber-50 border-yellow-200 text-yellow-700';
       default: return 'from-purple-50 to-indigo-50 border-purple-200 text-purple-700';
     }
   };
@@ -208,7 +204,7 @@ const ModernSupplementTab: React.FC<ModernSupplementTabProps> = ({
               >
                 <option value="all">همه انواع</option>
                 {types.map(type => (
-                  <option key={type} value={type}>{type}</option>
+                  <option key={type} value={type}>{type === 'supplement' ? 'مکمل' : 'ویتامین'}</option>
                 ))}
               </select>
               
@@ -260,14 +256,8 @@ const ModernSupplementTab: React.FC<ModernSupplementTabProps> = ({
                           
                           {supplement.type && (
                             <Badge variant="outline" className={`text-xs mb-2 bg-gradient-to-r ${getSupplementTypeColor(supplement.type)} dark:${getSupplementTypeColor(supplement.type).replace('50', '900/20').replace('200', '700')}`}>
-                              {supplement.type}
+                              {supplement.type === 'supplement' ? 'مکمل' : 'ویتامین'}
                             </Badge>
-                          )}
-
-                          {supplement.description && (
-                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                              {supplement.description}
-                            </p>
                           )}
 
                           <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-4">
