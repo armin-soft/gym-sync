@@ -1,6 +1,5 @@
 
 import { 
-  LayoutDashboard,
   User2,
   Users, 
   Dumbbell, 
@@ -11,12 +10,6 @@ import {
 } from "lucide-react";
 
 export const quickActions = [
-  {
-    title: "داشبورد مدیریت",
-    description: "نمای کلی و آمار جامع باشگاه",
-    icon: LayoutDashboard,
-    href: "/Management"
-  },
   {
     title: "پروفایل مربی",
     description: "مدیریت اطلاعات شخصی و حرفه‌ای",

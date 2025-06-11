@@ -23,7 +23,7 @@ export const ReportsHeader = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
-              className="p-4 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl text-white shadow-lg"
+              className="p-4 bg-gradient-to-r from-emerald-600 to-sky-600 rounded-2xl text-white shadow-lg"
             >
               <BarChart3 className="h-8 w-8" />
             </motion.div>
@@ -33,7 +33,7 @@ export const ReportsHeader = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent"
+                className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent"
               >
                 گزارشات و تحلیل‌ها
               </motion.h1>
@@ -48,27 +48,6 @@ export const ReportsHeader = () => {
               </motion.p>
             </div>
           </div>
-
-          {/* بخش دکمه‌های عملیات */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="flex items-center gap-3"
-          >
-            <Button
-              variant="outline"
-              className="gap-2 border-violet-200 hover:bg-gradient-to-r hover:from-violet-100 hover:to-indigo-100 hover:text-violet-700"
-            >
-              <Filter className="h-4 w-4" />
-              فیلتر گزارشات
-            </Button>
-            
-            <Button className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
-              <Download className="h-4 w-4" />
-              دانلود گزارش
-            </Button>
-          </motion.div>
         </div>
       </div>
     </motion.div>

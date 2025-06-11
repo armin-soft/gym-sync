@@ -28,15 +28,6 @@ const sidebarItems: SidebarItem[] = [
     isNew: false,
   },
   {
-    id: "reports",
-    title: "گزارشات و تحلیل‌ها",
-    subtitle: "آمار و گزارشات جامع عملکرد",
-    href: "/Management/Report",
-    icon: BarChart3,
-    gradient: "from-teal-500 to-cyan-600",
-    isNew: false,
-  },
-  {
     id: "coach-profile",
     title: "پروفایل مربی",
     subtitle: "مدیریت اطلاعات شخصی و حرفه‌ای",
@@ -87,6 +78,15 @@ const sidebarItems: SidebarItem[] = [
     href: "/Management/Backup-Restore",
     icon: Database,
     gradient: "from-slate-500 to-gray-600",
+    isNew: false,
+  },
+  {
+    id: "reports",
+    title: "گزارشات و تحلیل‌ها",
+    subtitle: "آمار و گزارشات جامع عملکرد",
+    href: "/Management/Report",
+    icon: BarChart3,
+    gradient: "from-teal-500 to-cyan-600",
     isNew: false,
   },
 ];
