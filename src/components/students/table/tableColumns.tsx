@@ -12,10 +12,77 @@ export const useTableColumns = () => {
 
   const columns: ColumnDef<Student>[] = [
     {
-      id: "actions",
-      header: () => "اقدامات",
-      cell: () => "",
-      size: deviceInfo.isMobile ? 80 : 100,
+      accessorKey: "image",
+      header: () => "تصویر",
+      cell: ({ row }) => {
+        const student = row.original;
+        return (
+          <div className="flex items-center justify-center">
+            <Avatar className="h-10 w-10 border-2 border-white/20 shadow-lg">
+              <AvatarImage src={student.image} alt={student.name} />
+              <AvatarFallback><UserRound className="h-4 w-4" /></AvatarFallback>
+            </Avatar>
+          </div>
+        );
+      },
+      size: deviceInfo.isMobile ? 40 : 80,
+    },
+    {
+      accessorKey: "name",
+      header: () => "نام",
+      cell: ({ row }) => {
+        const value = row.original.name;
+        return <div className="font-medium text-right">{value || ""}</div>;
+      },
+    },
+    {
+      accessorKey: "phone",
+      header: () => "شماره موبایل",
+      cell: ({ row }) => {
+        const value = row.original.phone;
+        return <div className="text-center">{toPersianNumbers(value) || ""}</div>;
+      },
+    },
+    {
+      accessorKey: "gender",
+      header: () => "جنسیت",
+      cell: ({ row }) => {
+        const value = row.original.gender;
+        if (!value) return <div className="text-center">-</div>;
+        const isMale = value === "male";
+        return (
+          <div className="text-center">
+            <Badge variant="outline" className={`gap-2 ${isMale ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-400' : 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:border-pink-700/30 dark:text-pink-400'}`}>
+              {isMale ? <User className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
+              {isMale ? "مرد" : "زن"}
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "height",
+      header: () => "قد",
+      cell: ({ row }) => {
+        const value = row.original.height;
+        return <div className="text-center">{toPersianNumbers(value)} <span className="text-xs text-muted-foreground">سانتی‌متر</span></div>;
+      },
+    },
+    {
+      accessorKey: "weight",
+      header: () => "وزن",
+      cell: ({ row }) => {
+        const value = row.original.weight;
+        return <div className="text-center">{toPersianNumbers(value)} <span className="text-xs text-muted-foreground">کیلوگرم</span></div>;
+      },
+    },
+    {
+      accessorKey: "payment",
+      header: () => "مبلغ",
+      cell: ({ row }) => {
+        const value = row.original.payment;
+        return <div className="text-center">{value ? formatPrice(value) : "-"}</div>;
+      },
     },
     {
       accessorKey: "progress",
@@ -41,77 +108,9 @@ export const useTableColumns = () => {
       },
     },
     {
-      accessorKey: "payment",
-      header: () => "مبلغ",
-      cell: ({ row }) => {
-        const value = row.original.payment;
-        return <div className="text-center">{value ? formatPrice(value) : "-"}</div>;
-      },
-    },
-    {
-      accessorKey: "weight",
-      header: () => "وزن",
-      cell: ({ row }) => {
-        const value = row.original.weight;
-        return <div className="text-center">{toPersianNumbers(value)} <span className="text-xs text-muted-foreground">کیلوگرم</span></div>;
-      },
-    },
-    {
-      accessorKey: "height",
-      header: () => "قد",
-      cell: ({ row }) => {
-        const value = row.original.height;
-        return <div className="text-center">{toPersianNumbers(value)} <span className="text-xs text-muted-foreground">سانتی‌متر</span></div>;
-      },
-    },
-    {
-      accessorKey: "gender",
-      header: () => "جنسیت",
-      cell: ({ row }) => {
-        const value = row.original.gender;
-        if (!value) return <div className="text-center">-</div>;
-        const isMale = value === "male";
-        return (
-          <div className="text-center">
-            <Badge variant="outline" className={`gap-2 ${isMale ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-400' : 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:border-pink-700/30 dark:text-pink-400'}`}>
-              {isMale ? <User className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
-              {isMale ? "مرد" : "زن"}
-            </Badge>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "phone",
-      header: () => "شماره موبایل",
-      cell: ({ row }) => {
-        const value = row.original.phone;
-        return <div className="text-center">{toPersianNumbers(value) || ""}</div>;
-      },
-    },
-    {
-      accessorKey: "name",
-      header: () => "نام",
-      cell: ({ row }) => {
-        const value = row.original.name;
-        return <div className="font-medium text-right">{value || ""}</div>;
-      },
-    },
-    {
-      accessorKey: "image",
-      header: () => "تصویر",
-      cell: ({ row }) => {
-        const student = row.original;
-        return (
-          <div className="flex items-center justify-center">
-            <Avatar className="h-10 w-10 border-2 border-white/20 shadow-lg">
-              <AvatarImage src={student.image} alt={student.name} />
-              <AvatarFallback><UserRound className="h-4 w-4" /></AvatarFallback>
-            </Avatar>
-          </div>
-        );
-      },
-      size: deviceInfo.isMobile ? 40 : 80,
+      id: "actions",
+      header: () => "اقدامات",
+      cell: () => "",
     },
   ];
 
