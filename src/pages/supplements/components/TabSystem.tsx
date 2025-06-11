@@ -1,9 +1,10 @@
 
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Pill, Heart, Plus } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Plus, Pill, Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface TabSystemProps {
@@ -22,114 +23,91 @@ export const TabSystem: React.FC<TabSystemProps> = ({
   onAddClick,
 }) => {
   return (
-    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-2 mb-8" dir="rtl">
-      <div className="grid grid-cols-2 gap-2">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => onTabChange("supplement")}
-          className={`relative p-6 rounded-2xl transition-all duration-300 ${
-            activeTab === "supplement"
-              ? "bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl"
-              : "bg-gray-50 hover:bg-gray-100 text-gray-700"
-          }`}
-        >
-          <div className="flex items-center justify-center gap-4">
-            <motion.div
-              animate={activeTab === "supplement" ? { rotate: [0, 10, -10, 0] } : {}}
-              transition={{ duration: 0.5 }}
-            >
-              <Pill className="w-8 h-8" />
-            </motion.div>
-            <div className="text-right">
-              <h3 className="text-xl font-bold mb-1">مکمل‌های غذایی</h3>
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant={activeTab === "supplement" ? "secondary" : "outline"}
-                  className={`text-sm ${
-                    activeTab === "supplement" 
-                      ? "bg-white/20 text-white border-white/30" 
-                      : "bg-emerald-100 text-emerald-700 border-emerald-200"
-                  }`}
-                >
-                  {toPersianNumbers(supplementCount)} مکمل
-                </Badge>
-              </div>
-            </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg border border-gray-100 p-4 sm:p-6 lg:p-8"
+      dir="rtl"
+    >
+      <div className="flex flex-col gap-4 sm:gap-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="text-right">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">
+              انتخاب نوع محصول
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600">
+              مکمل‌ها یا ویتامین‌های مورد نظر خود را انتخاب کنید
+            </p>
           </div>
-          {activeTab === "supplement" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="absolute top-3 left-3"
-            >
-              <div className="w-3 h-3 bg-white rounded-full" />
-            </motion.div>
-          )}
-        </motion.button>
+          
+          <Button
+            onClick={onAddClick}
+            className={cn(
+              "flex items-center gap-2 text-white shadow-lg px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl transition-all",
+              activeTab === 'supplement'
+                ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            )}
+          >
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">
+              افزودن {activeTab === 'supplement' ? 'مکمل' : 'ویتامین'}
+            </span>
+            <span className="sm:hidden">
+              افزودن
+            </span>
+          </Button>
+        </div>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => onTabChange("vitamin")}
-          className={`relative p-6 rounded-2xl transition-all duration-300 ${
-            activeTab === "vitamin"
-              ? "bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-xl"
-              : "bg-gray-50 hover:bg-gray-100 text-gray-700"
-          }`}
-        >
-          <div className="flex items-center justify-center gap-4">
-            <motion.div
-              animate={activeTab === "vitamin" ? { rotate: [0, 10, -10, 0] } : {}}
-              transition={{ duration: 0.5 }}
+        {/* Tab Buttons */}
+        <div className="bg-gray-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 w-full">
+          <div className="grid grid-cols-2 gap-1 sm:gap-2">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onTabChange('supplement')}
+              className={cn(
+                "flex items-center justify-center gap-2 sm:gap-3 py-3 sm:py-4 px-4 sm:px-6 rounded-md sm:rounded-lg transition-all text-sm sm:text-base font-medium",
+                activeTab === 'supplement'
+                  ? "bg-white text-emerald-700 shadow-md"
+                  : "text-gray-600 hover:bg-white/50"
+              )}
             >
-              <Heart className="w-8 h-8" />
-            </motion.div>
-            <div className="text-right">
-              <h3 className="text-xl font-bold mb-1">ویتامین‌ها</h3>
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant={activeTab === "vitamin" ? "secondary" : "outline"}
-                  className={`text-sm ${
-                    activeTab === "vitamin" 
-                      ? "bg-white/20 text-white border-white/30" 
-                      : "bg-cyan-100 text-cyan-700 border-cyan-200"
-                  }`}
-                >
-                  {toPersianNumbers(vitaminCount)} ویتامین
-                </Badge>
-              </div>
-            </div>
+              <Pill className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>مکمل‌ها</span>
+              <Badge 
+                variant={activeTab === 'supplement' ? "default" : "secondary"}
+                className="text-xs px-2 py-1"
+              >
+                {toPersianNumbers(supplementCount)}
+              </Badge>
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onTabChange('vitamin')}
+              className={cn(
+                "flex items-center justify-center gap-2 sm:gap-3 py-3 sm:py-4 px-4 sm:px-6 rounded-md sm:rounded-lg transition-all text-sm sm:text-base font-medium",
+                activeTab === 'vitamin'
+                  ? "bg-white text-blue-700 shadow-md"
+                  : "text-gray-600 hover:bg-white/50"
+              )}
+            >
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>ویتامین‌ها</span>
+              <Badge 
+                variant={activeTab === 'vitamin' ? "default" : "secondary"}
+                className="text-xs px-2 py-1"
+              >
+                {toPersianNumbers(vitaminCount)}
+              </Badge>
+            </motion.button>
           </div>
-          {activeTab === "vitamin" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="absolute top-3 left-3"
-            >
-              <div className="w-3 h-3 bg-white rounded-full" />
-            </motion.div>
-          )}
-        </motion.button>
+        </div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex justify-center mt-4"
-      >
-        <Button
-          onClick={onAddClick}
-          className={`${
-            activeTab === "supplement"
-              ? "bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800"
-              : "bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800"
-          } text-white shadow-lg rounded-2xl px-8 py-3 text-lg font-semibold`}
-        >
-          <Plus className="w-6 h-6 ml-2" />
-          افزودن {activeTab === "supplement" ? "مکمل" : "ویتامین"} جدید
-        </Button>
-      </motion.div>
-    </div>
+    </motion.div>
   );
 };

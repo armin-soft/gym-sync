@@ -123,7 +123,7 @@ const SupplementsPage = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setSelectedCategory(null); // Reset category selection when changing tabs
+    setSelectedCategory(null);
   };
 
   const supplementCount = supplements.filter(s => s.type === 'supplement').length;
@@ -135,7 +135,7 @@ const SupplementsPage = () => {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full"
+          className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full"
         />
       </div>
     );
@@ -153,7 +153,7 @@ const SupplementsPage = () => {
           <SupplementsHeader />
           
           {/* Main Content */}
-          <div className="container mx-auto px-6 py-12 space-y-8">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-6 sm:space-y-8">
             {/* Tab System */}
             <TabSystem
               activeTab={activeTab}
