@@ -32,63 +32,6 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
 }) => {
   return (
     <>
-      <TableCell className="p-2">
-        <div className="flex items-center justify-center">
-          <Avatar className="h-10 w-10 border-2 border-white/20 shadow-lg">
-            <AvatarImage src={student.image} alt={student.name} />
-            <AvatarFallback><UserRound className="h-4 w-4" /></AvatarFallback>
-          </Avatar>
-        </div>
-      </TableCell>
-      
-      <TableCell>
-        <div className="font-medium">{student.name}</div>
-      </TableCell>
-      
-      <TableCell className="text-center">{toPersianNumbers(student.phone)}</TableCell>
-      
-      <TableCell className="text-center">
-        {student.gender && (
-          <Badge variant="outline" className={`gap-2 ${student.gender === 'male' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-400' : 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:border-pink-700/30 dark:text-pink-400'}`}>
-            {student.gender === 'male' ? <User className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
-            {student.gender === 'male' ? "مرد" : "زن"}
-          </Badge>
-        )}
-      </TableCell>
-      
-      <TableCell className="text-center">
-        <div className="flex flex-col">
-          <span>{toPersianNumbers(student.height)}</span>
-          <span className="text-xs text-muted-foreground">سانتی‌متر</span>
-        </div>
-      </TableCell>
-      
-      <TableCell className="text-center">
-        <div className="flex flex-col">
-          <span>{toPersianNumbers(student.weight)}</span>
-          <span className="text-xs text-muted-foreground">کیلوگرم</span>
-        </div>
-      </TableCell>
-      
-      <TableCell className="text-center">
-        <span className="inline-block bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/30 px-2.5 py-1 rounded-lg text-purple-700 dark:text-purple-300 font-medium text-sm">
-          {formatPrice(student.payment)}
-        </span>
-      </TableCell>
-      
-      <TableCell className="text-center">
-        {isProfileComplete ? (
-          <Badge variant="outline" className="gap-2 bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:border-green-700/30 dark:text-green-400">
-            <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-            کامل
-          </Badge>
-        ) : (
-          <Badge variant="outline" className="gap-2 bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:border-amber-700/30 dark:text-amber-400">
-            ناقص
-          </Badge>
-        )}
-      </TableCell>
-      
       <TableCell className="text-center">
         <div className="flex items-center justify-center space-x-1 rtl:space-x-reverse">
           {/* Mobile view: dropdown menu */}
@@ -150,6 +93,63 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
               <span>حذف</span>
             </Button>
           </div>
+        </div>
+      </TableCell>
+      
+      <TableCell className="text-center">
+        {isProfileComplete ? (
+          <Badge variant="outline" className="gap-2 bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:border-green-700/30 dark:text-green-400">
+            <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+            کامل
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="gap-2 bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:border-amber-700/30 dark:text-amber-400">
+            ناقص
+          </Badge>
+        )}
+      </TableCell>
+      
+      <TableCell className="text-center">
+        <span className="inline-block bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/30 px-2.5 py-1 rounded-lg text-purple-700 dark:text-purple-300 font-medium text-sm">
+          {formatPrice(student.payment)}
+        </span>
+      </TableCell>
+      
+      <TableCell className="text-center">
+        <div className="flex flex-col">
+          <span>{toPersianNumbers(student.weight)}</span>
+          <span className="text-xs text-muted-foreground">کیلوگرم</span>
+        </div>
+      </TableCell>
+      
+      <TableCell className="text-center">
+        <div className="flex flex-col">
+          <span>{toPersianNumbers(student.height)}</span>
+          <span className="text-xs text-muted-foreground">سانتی‌متر</span>
+        </div>
+      </TableCell>
+      
+      <TableCell className="text-center">
+        {student.gender && (
+          <Badge variant="outline" className={`gap-2 ${student.gender === 'male' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-400' : 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:border-pink-700/30 dark:text-pink-400'}`}>
+            {student.gender === 'male' ? <User className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
+            {student.gender === 'male' ? "مرد" : "زن"}
+          </Badge>
+        )}
+      </TableCell>
+      
+      <TableCell className="text-center">{toPersianNumbers(student.phone)}</TableCell>
+      
+      <TableCell>
+        <div className="font-medium">{student.name}</div>
+      </TableCell>
+      
+      <TableCell className="p-2">
+        <div className="flex items-center justify-center">
+          <Avatar className="h-10 w-10 border-2 border-white/20 shadow-lg">
+            <AvatarImage src={student.image} alt={student.name} />
+            <AvatarFallback><UserRound className="h-4 w-4" /></AvatarFallback>
+          </Avatar>
         </div>
       </TableCell>
     </>
