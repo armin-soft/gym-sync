@@ -24,7 +24,7 @@ export function BackupSection({ dataKeys }: BackupSectionProps) {
       className="max-w-4xl mx-auto"
       dir="rtl"
     >
-      <Card className="relative overflow-hidden bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border-0 shadow-2xl rounded-3xl">
+      <Card className="relative overflow-hidden bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border-0 shadow-2xl rounded-2xl lg:rounded-3xl">
         <BackupHeader />
         <BackupContent 
           onBackup={handleBackup} 

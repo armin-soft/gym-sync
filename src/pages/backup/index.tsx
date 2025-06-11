@@ -31,14 +31,14 @@ const BackupPage = () => {
     >
       {/* Advanced Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-gradient-to-br from-emerald-400/10 via-sky-400/5 to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-gradient-to-tr from-sky-400/10 via-emerald-400/5 to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 w-[600px] h-[600px] bg-gradient-to-br from-slate-400/5 via-emerald-400/5 to-transparent rounded-full blur-2xl animate-pulse" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] lg:w-[1000px] lg:h-[1000px] bg-gradient-to-br from-emerald-400/10 via-sky-400/5 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] lg:w-[800px] lg:h-[800px] bg-gradient-to-tr from-sky-400/10 via-emerald-400/5 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] lg:w-[600px] lg:h-[600px] bg-gradient-to-br from-slate-400/5 via-emerald-400/5 to-transparent rounded-full blur-2xl animate-pulse" />
         
-        {/* Geometric Shapes */}
-        <div className="absolute top-32 right-32 w-40 h-40 bg-gradient-to-br from-emerald-500/10 to-sky-600/10 rounded-3xl rotate-12 animate-float" />
-        <div className="absolute bottom-40 left-20 w-32 h-32 bg-gradient-to-br from-sky-500/10 to-slate-600/10 rounded-full animate-float-delayed" />
-        <div className="absolute top-1/4 right-1/3 w-24 h-24 bg-gradient-to-br from-slate-500/10 to-emerald-600/10 rounded-2xl -rotate-12 animate-float" />
+        {/* Geometric Shapes - Responsive */}
+        <div className="absolute top-16 right-16 lg:top-32 lg:right-32 w-20 h-20 lg:w-40 lg:h-40 bg-gradient-to-br from-emerald-500/10 to-sky-600/10 rounded-2xl lg:rounded-3xl rotate-12 animate-float" />
+        <div className="absolute bottom-20 left-10 lg:bottom-40 lg:left-20 w-16 h-16 lg:w-32 lg:h-32 bg-gradient-to-br from-sky-500/10 to-slate-600/10 rounded-full animate-float-delayed" />
+        <div className="absolute top-1/4 right-1/3 w-12 h-12 lg:w-24 lg:h-24 bg-gradient-to-br from-slate-500/10 to-emerald-600/10 rounded-xl lg:rounded-2xl -rotate-12 animate-float" />
       </div>
 
       <motion.div
@@ -61,11 +61,11 @@ const BackupPage = () => {
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(12deg); }
-          50% { transform: translateY(-30px) rotate(18deg); }
+          50% { transform: translateY(-20px) rotate(18deg); }
         }
         @keyframes float-delayed {
           0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-25px) scale(1.1); }
+          50% { transform: translateY(-15px) scale(1.05); }
         }
         .animate-float {
           animation: float 8s ease-in-out infinite;
