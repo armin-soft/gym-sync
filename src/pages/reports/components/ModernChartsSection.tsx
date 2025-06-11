@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useStudents } from "@/hooks/useStudents";
-import { EmptyChartsState } from "./EmptyChartsState";
+import { EmptyChartsState } from "./charts/EmptyChartsState";
 import { GenderDistributionChart } from "./charts/GenderDistributionChart";
 import { ActivityDistributionChart } from "./charts/ActivityDistributionChart";
 import { WeeklyProgressChart } from "./charts/WeeklyProgressChart";
