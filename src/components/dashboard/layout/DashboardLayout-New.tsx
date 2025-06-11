@@ -41,7 +41,7 @@ export const DashboardLayoutNew = ({ children }: DashboardLayoutNewProps) => {
       {/* المان‌های تزیینی شناور */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
         <motion.div 
-          className="absolute top-20 right-20 w-48 sm:w-64 h-48 sm:h-64 rounded-full opacity-10 bg-gradient-to-r from-emerald-500 to-sky-500"
+          className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-10 bg-gradient-to-r from-emerald-500 to-sky-500"
           animate={{ 
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360]
@@ -54,7 +54,7 @@ export const DashboardLayoutNew = ({ children }: DashboardLayoutNewProps) => {
         />
         
         <motion.div 
-          className="absolute bottom-20 left-20 w-36 sm:w-48 h-36 sm:h-48 rounded-full opacity-15 bg-gradient-to-r from-sky-500 to-emerald-500"
+          className="absolute bottom-20 left-20 w-48 h-48 rounded-full opacity-15 bg-gradient-to-r from-sky-500 to-emerald-500"
           animate={{ 
             scale: [1, 1.3, 1],
             rotate: [360, 180, 0]
