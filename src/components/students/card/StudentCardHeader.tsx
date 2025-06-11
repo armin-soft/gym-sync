@@ -30,7 +30,7 @@ export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
             alt={student.name} 
             className="object-cover"
           />
-          <AvatarFallback className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">
+          <AvatarFallback className="bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
             {student.name?.substring(0, 2)}
           </AvatarFallback>
         </Avatar>
@@ -45,7 +45,7 @@ export const StudentCardHeader: React.FC<StudentCardHeaderProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full hover:bg-indigo-100/80 dark:hover:bg-indigo-900/30 transition-colors duration-200"
+          className="h-8 w-8 rounded-full hover:bg-emerald-100/80 dark:hover:bg-emerald-900/30 transition-colors duration-200"
           onClick={onEdit}
         >
           <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-300" />

@@ -27,7 +27,7 @@ export const AddStudentButton = ({
         <Button
           variant={variant}
           size={size}
-          className={`gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}
+          className={`gap-2 bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}
           onClick={onClick}
         >
           <UserPlus className={size === "icon" ? "h-4 w-4" : "h-5 w-5 -mr-1"} />
@@ -46,7 +46,7 @@ export const AddStudentButton = ({
         asChild
         variant={variant}
         size={size}
-        className={`gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}
+        className={`gap-2 bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}
       >
         <Link to="/students/add-edit">
           <UserPlus className={size === "icon" ? "h-4 w-4" : "h-5 w-5 -mr-1"} />

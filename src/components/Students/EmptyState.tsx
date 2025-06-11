@@ -60,9 +60,9 @@ export const EmptyState = ({ onAdd }: EmptyStateProps) => {
         variants={itemVariants}
         className="relative mb-3 md:mb-4"
       >
-        <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl opacity-30"></div>
-        <div className={`${getContainerSize()} rounded-full bg-primary/10 flex items-center justify-center relative`}>
-          <Users className={`${getIconSize()} text-primary`} />
+        <div className="absolute inset-0 bg-emerald-500/10 rounded-full blur-3xl opacity-30"></div>
+        <div className={`${getContainerSize()} rounded-full bg-emerald-500/10 flex items-center justify-center relative`}>
+          <Users className={`${getIconSize()} text-emerald-600`} />
         </div>
       </motion.div>
       
@@ -78,9 +78,9 @@ export const EmptyState = ({ onAdd }: EmptyStateProps) => {
         <Button 
           onClick={onAdd}
           size={deviceInfo.isMobile ? "default" : "lg"}
-          className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md shadow-primary/20 relative overflow-hidden group"
+          className="gap-2 bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white shadow-md shadow-emerald-500/20 relative overflow-hidden group"
         >
-          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-700 to-violet-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-700 to-sky-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
           <UserPlus className="h-4 w-4 md:h-5 md:w-5 relative z-10" />
           <span className="relative z-10 text-sm md:text-base">افزودن شاگرد جدید</span>
           <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
