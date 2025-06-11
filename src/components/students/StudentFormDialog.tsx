@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -8,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Save, X } from "lucide-react";
 import { Student } from "./StudentTypes";
+import { studentFormSchema, StudentFormValues } from "@/lib/validations/student";
 import { PersonalInfoSection } from "./form-components/PersonalInfoSection";
 import { MeasurementsSection } from "./form-components/MeasurementsSection";
 import { GenderField } from "./form-components/GenderField";
@@ -32,45 +34,49 @@ const StudentFormDialog: React.FC<StudentFormDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<string>("");
 
-  const form = useForm<Student>({
+  const form = useForm<StudentFormValues>({
+    resolver: zodResolver(studentFormSchema),
     defaultValues: {
-      id: 0,
       name: "",
       phone: "",
-      birthDate: "",
-      address: "",
-      gender: "male",
       height: "",
       weight: "",
       payment: "",
+      age: "",
+      grade: "",
+      group: "",
+      gender: "male",
       image: "",
-      exercises: [],
-      meals: [],
-      supplements: [],
-      progress: 0
     }
   });
 
   useEffect(() => {
     if (student && isEditing) {
-      form.reset(student);
+      form.reset({
+        name: student.name || "",
+        phone: student.phone || "",
+        height: student.height || "",
+        weight: student.weight || "",
+        payment: student.payment || "",
+        age: student.age || "",
+        grade: student.grade || "",
+        group: student.group || "",
+        gender: student.gender || "male",
+        image: student.image || "",
+      });
       setProfileImage(student.image || "");
     } else {
       form.reset({
-        id: 0,
         name: "",
         phone: "",
-        birthDate: "",
-        address: "",
-        gender: "male",
         height: "",
         weight: "",
         payment: "",
+        age: "",
+        grade: "",
+        group: "",
+        gender: "male",
         image: "",
-        exercises: [],
-        meals: [],
-        supplements: [],
-        progress: 0
       });
       setProfileImage("");
     }
@@ -82,20 +88,26 @@ const StudentFormDialog: React.FC<StudentFormDialogProps> = ({
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setProfileImage(result);
+        form.setValue("image", result);
       };
       reader.readAsDataURL(file);
     } else {
       setProfileImage("");
+      form.setValue("image", "");
     }
   };
 
-  const onSubmit = async (data: Student) => {
+  const onSubmit = async (data: StudentFormValues) => {
     setIsLoading(true);
     try {
-      const studentData = {
+      const studentData: Student = {
         ...data,
-        image: profileImage,
-        id: isEditing ? student?.id || 0 : Date.now()
+        id: isEditing ? student?.id || 0 : Date.now(),
+        exercises: student?.exercises || [],
+        meals: student?.meals || [],
+        supplements: student?.supplements || [],
+        progress: student?.progress || 0,
+        image: profileImage || "/Assets/Image/Place-Holder.svg",
       };
       
       await new Promise(resolve => setTimeout(resolve, 500));

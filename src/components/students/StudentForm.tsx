@@ -108,9 +108,19 @@ export const StudentForm = ({
     },
   };
 
-  const handleImageChange = (imageData: string) => {
-    setPreviewImage(imageData);
-    form.setValue("image", imageData);
+  const handleImageChange = (file: File | null) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setPreviewImage(result);
+        form.setValue("image", result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage("/Assets/Image/Place-Holder.svg");
+      form.setValue("image", "/Assets/Image/Place-Holder.svg");
+    }
   };
 
   return (
