@@ -13,7 +13,7 @@ export const StatsOverview = () => {
   const activeStudents = students.filter(s => s.name && s.phone).length;
   const studentsWithPrograms = students.filter(student => {
     const hasExercises = student.exercises && Object.keys(student.exercises).length > 0;
-    const hasDiet = student.diet && Array.isArray(student.diet) && student.diet.length > 0;
+    const hasDiet = student.dietPlan && Array.isArray(student.dietPlan) && student.dietPlan.length > 0;
     const hasSupplements = student.supplements && Array.isArray(student.supplements) && student.supplements.length > 0;
     return hasExercises || hasDiet || hasSupplements;
   }).length;

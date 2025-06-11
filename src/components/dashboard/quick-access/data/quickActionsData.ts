@@ -1,7 +1,28 @@
 
-import { Users, Dumbbell, UtensilsCrossed, BarChart3 } from "lucide-react";
+import { 
+  LayoutDashboard,
+  User2,
+  Users, 
+  Dumbbell, 
+  UtensilsCrossed, 
+  Pill,
+  Database,
+  BarChart3 
+} from "lucide-react";
 
 export const quickActions = [
+  {
+    title: "داشبورد مدیریت",
+    description: "نمای کلی و آمار جامع باشگاه",
+    icon: LayoutDashboard,
+    href: "/Management"
+  },
+  {
+    title: "پروفایل مربی",
+    description: "مدیریت اطلاعات شخصی و حرفه‌ای",
+    icon: User2,
+    href: "/Management/Coach-Profile"
+  },
   {
     title: "مدیریت شاگردان",
     description: "افزودن، ویرایش و مشاهده اطلاعات شاگردان",
@@ -19,6 +40,18 @@ export const quickActions = [
     description: "طراحی و مدیریت رژیم‌های تغذیه‌ای",
     icon: UtensilsCrossed,
     href: "/Management/Diet-Plan"
+  },
+  {
+    title: "مکمل و ویتامین",
+    description: "مدیریت مکمل‌های ورزشی و تغذیه‌ای",
+    icon: Pill,
+    href: "/Management/Supplements-Vitamins"
+  },
+  {
+    title: "پشتیبان‌گیری داده‌ها",
+    description: "بکاپ و بازیابی اطلاعات سیستم",
+    icon: Database,
+    href: "/Management/Backup-Restore"
   },
   {
     title: "گزارشات و تحلیل‌ها",

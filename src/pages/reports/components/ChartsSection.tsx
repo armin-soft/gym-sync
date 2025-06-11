@@ -28,14 +28,14 @@ export const ChartsSection = () => {
 
   // Calculate progress levels based on program completion
   const beginnerStudents = students.filter(student => {
-    const hasPrograms = student.exercises || student.diet || student.supplements;
+    const hasPrograms = student.exercises || student.dietPlan || student.supplements;
     return !hasPrograms;
   }).length;
 
   const intermediateStudents = students.filter(student => {
     const programCount = [
       student.exercises && Object.keys(student.exercises).length > 0,
-      student.diet && Array.isArray(student.diet) && student.diet.length > 0,
+      student.dietPlan && Array.isArray(student.dietPlan) && student.dietPlan.length > 0,
       student.supplements && Array.isArray(student.supplements) && student.supplements.length > 0
     ].filter(Boolean).length;
     return programCount === 1 || programCount === 2;
@@ -43,7 +43,7 @@ export const ChartsSection = () => {
 
   const advancedStudents = students.filter(student => {
     const hasExercises = student.exercises && Object.keys(student.exercises).length > 0;
-    const hasDiet = student.diet && Array.isArray(student.diet) && student.diet.length > 0;
+    const hasDiet = student.dietPlan && Array.isArray(student.dietPlan) && student.dietPlan.length > 0;
     const hasSupplements = student.supplements && Array.isArray(student.supplements) && student.supplements.length > 0;
     return hasExercises && hasDiet && hasSupplements;
   }).length;

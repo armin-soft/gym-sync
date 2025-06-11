@@ -40,7 +40,7 @@ export const RecentActivities = () => {
       }
 
       // Check for diet programs
-      if (student.diet && Array.isArray(student.diet) && student.diet.length > 0) {
+      if (student.dietPlan && Array.isArray(student.dietPlan) && student.dietPlan.length > 0) {
         activities.push({
           id: `diet-${student.id}`,
           type: "diet_assigned",
