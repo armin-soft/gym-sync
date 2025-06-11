@@ -112,7 +112,7 @@ const ExerciseDialogContent: React.FC<ExerciseDialogContentProps> = ({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0.5, y: 10 }}
         transition={{ duration: 0.2 }}
-        className="flex flex-col flex-1 overflow-hidden"
+        className="flex flex-col flex-1 overflow-hidden bg-gradient-to-br from-emerald-50/30 to-sky-50/30 dark:from-emerald-900/10 dark:to-sky-900/10"
       >
         <ExerciseSearchFilters
           searchQuery={searchQuery}

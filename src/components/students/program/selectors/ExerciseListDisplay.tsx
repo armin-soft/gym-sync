@@ -25,7 +25,7 @@ const ExerciseListDisplay: React.FC<ExerciseListDisplayProps> = ({
 }) => {
   if (!selectedType && !selectedCategoryId) {
     return (
-      <div className="text-center p-8 border border-dashed rounded-md">
+      <div className="text-center p-8 border border-dashed rounded-md border-emerald-200 dark:border-emerald-800">
         <p className="text-muted-foreground">لطفاً ابتدا یک نوع تمرین انتخاب کنید</p>
       </div>
     );
@@ -33,7 +33,7 @@ const ExerciseListDisplay: React.FC<ExerciseListDisplayProps> = ({
   
   if (selectedType && !selectedCategoryId) {
     return (
-      <div className="text-center p-8 border border-dashed rounded-md">
+      <div className="text-center p-8 border border-dashed rounded-md border-emerald-200 dark:border-emerald-800">
         <p className="text-muted-foreground">لطفاً یک دسته‌بندی انتخاب کنید</p>
       </div>
     );
@@ -41,7 +41,7 @@ const ExerciseListDisplay: React.FC<ExerciseListDisplayProps> = ({
   
   if (filteredExercises.length === 0) {
     return (
-      <div className="text-center p-8 border border-dashed rounded-md">
+      <div className="text-center p-8 border border-dashed rounded-md border-emerald-200 dark:border-emerald-800">
         <p className="text-muted-foreground">هیچ تمرینی برای این دسته‌بندی یافت نشد</p>
       </div>
     );
@@ -53,20 +53,20 @@ const ExerciseListDisplay: React.FC<ExerciseListDisplayProps> = ({
         {filteredExercises.map(exercise => (
           <div 
             key={exercise.id} 
-            className={`border rounded-md p-2 flex items-center justify-between cursor-pointer hover:bg-slate-50 ${
-              selectedExercises.some(ex => ex.id === exercise.id) ? 'border-indigo-500 bg-indigo-50' : ''
+            className={`border rounded-md p-2 flex items-center justify-between cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 ${
+              selectedExercises.some(ex => ex.id === exercise.id) ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30' : ''
             }`}
             onClick={() => toggleExercise(exercise.id)}
           >
             <div className="flex items-center gap-3">
               <Checkbox 
                 checked={selectedExercises.some(ex => ex.id === exercise.id)}
-                className="data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500"
+                className="data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
               />
               <div className="text-right">
                 <div className="font-medium">{exercise.name}</div>
                 {exercise.category && (
-                  <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200 mt-1">
+                  <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-700 mt-1">
                     {exercise.category}
                   </Badge>
                 )}
@@ -75,7 +75,7 @@ const ExerciseListDisplay: React.FC<ExerciseListDisplayProps> = ({
             <Button 
               variant="ghost" 
               size="sm" 
-              className="h-7 w-7 p-0"
+              className="h-7 w-7 p-0 text-emerald-600 dark:text-emerald-400"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleExercise(exercise.id);

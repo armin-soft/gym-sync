@@ -38,7 +38,7 @@ const SelectedExercisesList: React.FC<SelectedExercisesListProps> = ({
             {selectedExercises.map((exercise, index) => {
               const exerciseInfo = exercises.find(e => e.id === exercise.id);
               return (
-                <div key={exercise.id} className="border rounded-md p-3" dir="rtl">
+                <div key={exercise.id} className="border rounded-md p-3 border-emerald-200 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-900/20" dir="rtl">
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">
@@ -49,7 +49,7 @@ const SelectedExercisesList: React.FC<SelectedExercisesListProps> = ({
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                      className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-red-100 dark:hover:bg-red-900/30"
                       onClick={() => toggleExercise(exercise.id)}
                     >
                       <Minus className="h-4 w-4" />
@@ -63,7 +63,7 @@ const SelectedExercisesList: React.FC<SelectedExercisesListProps> = ({
                         exerciseId={exercise.id}
                         sets={exercise.sets}
                         onSetsChange={handleSetsChange}
-                        className="mt-1 w-full text-right"
+                        className="mt-1 w-full text-right border-emerald-200 dark:border-emerald-800 focus:border-emerald-500 dark:focus:border-emerald-400"
                         isPersian={true}
                       />
                     </div>
@@ -73,7 +73,7 @@ const SelectedExercisesList: React.FC<SelectedExercisesListProps> = ({
                         exerciseId={exercise.id}
                         reps={exercise.reps}
                         onRepsChange={handleRepsChange}
-                        className="mt-1 w-full text-right"
+                        className="mt-1 w-full text-right border-emerald-200 dark:border-emerald-800 focus:border-emerald-500 dark:focus:border-emerald-400"
                       />
                     </div>
                   </div>

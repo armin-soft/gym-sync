@@ -54,7 +54,7 @@ const ExercisesStage = React.memo(({
   } = useExercisesStage({ categoryId, typeId });
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full bg-gradient-to-br from-emerald-50/30 to-sky-50/30 dark:from-emerald-900/10 dark:to-sky-900/10">
       {/* Back Navigation */}
       <div className="flex-shrink-0 mb-4">
         <BackNavigation
@@ -89,7 +89,7 @@ const ExercisesStage = React.memo(({
       </div>
 
       {showQuickSpeech && (
-        <div className="flex-shrink-0 border-t bg-background">
+        <div className="flex-shrink-0 border-t bg-background border-emerald-200 dark:border-emerald-800">
           <QuickSpeechAdd
             onQuickAdd={handleQuickAdd}
             quickSpeechText={quickSpeechText}

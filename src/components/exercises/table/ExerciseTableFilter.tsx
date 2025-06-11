@@ -44,22 +44,22 @@ export const ExerciseTableFilter: React.FC<ExerciseTableFilterProps> = ({
           placeholder="جستجوی حرکت..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pr-9 sm:pr-10 text-sm h-8 sm:h-9 md:h-10 w-full"
+          className="pr-9 sm:pr-10 text-sm h-8 sm:h-9 md:h-10 w-full border-emerald-200 dark:border-emerald-800 focus:border-emerald-500 dark:focus:border-emerald-400"
         />
       </div>
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="gap-1.5 sm:gap-2 w-full xs:w-auto h-8 sm:h-9 md:h-10 text-xs sm:text-sm whitespace-nowrap">
-            <Filter className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" />
+          <Button variant="outline" className="gap-1.5 sm:gap-2 w-full xs:w-auto h-8 sm:h-9 md:h-10 text-xs sm:text-sm whitespace-nowrap border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30">
+            <Filter className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-emerald-600 dark:text-emerald-400" />
             فیلتر دسته‌بندی
-            {selectedCategoryId && <span className="px-1 py-0.5 bg-indigo-100 text-indigo-800 rounded-full text-xs mr-1">{toPersianNumbers(1)}</span>}
+            {selectedCategoryId && <span className="px-1 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-full text-xs mr-1">{toPersianNumbers(1)}</span>}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align={isMobile ? "center" : "end"} className="w-[200px] sm:w-56">
           <DropdownMenuItem 
             onClick={() => onCategoryChange(null)}
-            className={!selectedCategoryId ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
+            className={!selectedCategoryId ? "bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-900/30 dark:text-emerald-400" : ""}
           >
             همه دسته‌بندی‌ها
           </DropdownMenuItem>
@@ -69,7 +69,7 @@ export const ExerciseTableFilter: React.FC<ExerciseTableFilterProps> = ({
             <DropdownMenuItem
               key={category.id}
               onClick={() => onCategoryChange(category.id)}
-              className={selectedCategoryId === category.id ? "bg-indigo-50 text-indigo-700 font-medium" : ""}
+              className={selectedCategoryId === category.id ? "bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-900/30 dark:text-emerald-400" : ""}
             >
               {category.name}
             </DropdownMenuItem>
