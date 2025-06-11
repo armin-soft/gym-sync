@@ -18,9 +18,9 @@ export const StudentDialogHeader: React.FC<StudentDialogHeaderProps> = ({ isEdit
           className="flex items-center gap-2"
         >
           {isEdit ? (
-            <UserRound className="h-7 w-7 text-indigo-500" />
+            <UserRound className="h-7 w-7 text-emerald-500" />
           ) : (
-            <UserPlus className="h-7 w-7 text-indigo-500" />
+            <UserPlus className="h-7 w-7 text-emerald-500" />
           )}
           <DialogTitle className="text-2xl font-bold text-foreground">
             {isEdit ? "ویرایش اطلاعات شاگرد" : "افزودن شاگرد جدید"}

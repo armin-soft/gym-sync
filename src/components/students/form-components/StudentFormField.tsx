@@ -50,7 +50,7 @@ export const StudentFormField = ({
       render={({ field }) => (
         <FormItem className={className}>
           <FormLabel className="flex items-center gap-2">
-            <Icon className="h-4 w-4 text-indigo-500" />
+            <Icon className="h-4 w-4 text-emerald-500" />
             {label}
           </FormLabel>
           <FormControl>
@@ -58,7 +58,7 @@ export const StudentFormField = ({
               {...field}
               dir={direction}
               className={cn(
-                "bg-slate-50 dark:bg-slate-800/50 focus-visible:ring-indigo-400",
+                "bg-slate-50 dark:bg-slate-800/50 focus-visible:ring-emerald-400",
                 direction === "ltr" && "text-left"
               )}
               placeholder={placeholder}

@@ -50,7 +50,7 @@ export const StudentDialogContent: React.FC<StudentDialogContentProps> = ({
       animate="visible"
       variants={dialogVariants}
     >
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-indigo-600 to-violet-600 -z-10" />
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-emerald-600 to-sky-600 -z-10" />
       
       <StudentDialogHeader isEdit={Boolean(student)} itemVariants={itemVariants} />
       

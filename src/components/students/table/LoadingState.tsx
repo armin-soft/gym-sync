@@ -23,7 +23,7 @@ export const LoadingState = () => {
         <div className="relative flex items-center justify-center">
           <LoadingSpinner 
             size="lg"
-            className="text-violet-600"
+            className="text-emerald-600"
             text="در حال بارگذاری اطلاعات..."
           />
         </div>
