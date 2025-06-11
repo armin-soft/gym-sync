@@ -1,139 +1,60 @@
 
 import React from "react";
-import { motion } from "framer-motion";
-import { FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { UseFormReturn } from "react-hook-form";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Ruler, Weight } from "lucide-react";
-import { Control } from "react-hook-form";
-import { toPersianNumbers } from "@/lib/utils/numbers";
-import { StudentFormData, StudentFormErrors } from "./hooks/useStudentForm";
+import { Student } from "../StudentTypes";
 
 interface MeasurementsSectionProps {
-  control?: Control<any>;
-  value?: {
-    height: string;
-    weight: string;
-  };
-  onChange?: (field: keyof StudentFormData, value: string) => void;
-  errors?: StudentFormErrors;
-  itemVariants: any;
+  form: UseFormReturn<Student>;
 }
 
-export const MeasurementsSection = ({ 
-  control, 
-  value,
-  onChange,
-  errors,
-  itemVariants 
-}: MeasurementsSectionProps) => {
-  // If using react-hook-form
-  if (control) {
-    return (
-      <div className="grid grid-cols-2 gap-4">
-        {/* Height Field */}
-        <motion.div variants={itemVariants}>
-          <FormField
-            control={control}
-            name="height"
-            render={({ field }) => (
-              <FormItem>
-                <Label className="flex items-center gap-2 mb-2">
-                  <Ruler className="h-4 w-4 text-indigo-500" />
-                  قد (سانتی متر)
-                </Label>
-                <Input
-                  dir="ltr"
-                  className="text-left focus-visible:ring-indigo-400 bg-slate-50 dark:bg-slate-800/50"
-                  value={toPersianNumbers(field.value || '')}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    field.onChange(value);
-                  }}
-                  placeholder="۱۷۵"
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </motion.div>
+export const MeasurementsSection: React.FC<MeasurementsSectionProps> = ({ form }) => {
+  const { register } = form;
 
-        {/* Weight Field */}
-        <motion.div variants={itemVariants}>
-          <FormField
-            control={control}
-            name="weight"
-            render={({ field }) => (
-              <FormItem>
-                <Label className="flex items-center gap-2 mb-2">
-                  <Weight className="h-4 w-4 text-indigo-500" />
-                  وزن (کیلوگرم)
-                </Label>
-                <Input
-                  dir="ltr"
-                  className="text-left focus-visible:ring-indigo-400 bg-slate-50 dark:bg-slate-800/50"
-                  value={toPersianNumbers(field.value || '')}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-                    field.onChange(value);
-                  }}
-                  placeholder="۷۵"
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </motion.div>
-      </div>
-    );
-  }
-  
-  // If using controlled component pattern
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {/* Height Field */}
-      <motion.div variants={itemVariants}>
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2 mb-2" htmlFor="height">
-            <Ruler className="h-4 w-4 text-indigo-500" />
-            قد (سانتی متر)
-          </Label>
-          <Input
-            id="height"
-            dir="ltr"
-            className="text-left focus-visible:ring-indigo-400 bg-slate-50 dark:bg-slate-800/50"
-            value={toPersianNumbers(value?.height || '')}
-            onChange={(e) => {
-              const cleanValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-              onChange && onChange('height', cleanValue);
-            }}
-            placeholder="۱۷۵"
-          />
-          {errors?.height && <p className="text-sm font-medium text-destructive">{errors.height}</p>}
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 pb-2 mb-4 border-b border-emerald-100 dark:border-emerald-800">
+        <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-900/20 dark:to-sky-900/20">
+          <Ruler className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
         </div>
-      </motion.div>
+        <h3 className="text-lg font-semibold text-emerald-700 dark:text-emerald-300">اندازه‌گیری‌ها</h3>
+      </div>
 
-      {/* Weight Field */}
-      <motion.div variants={itemVariants}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="flex items-center gap-2 mb-2" htmlFor="weight">
-            <Weight className="h-4 w-4 text-indigo-500" />
+          <Label htmlFor="height" className="text-emerald-700 dark:text-emerald-300 font-medium">
+            قد (سانتی‌متر)
+          </Label>
+          <div className="relative">
+            <Ruler className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-emerald-500" />
+            <Input
+              id="height"
+              type="number"
+              {...register("height", { valueAsNumber: true })}
+              placeholder="170"
+              className="pr-10 border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500/20"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="weight" className="text-emerald-700 dark:text-emerald-300 font-medium">
             وزن (کیلوگرم)
           </Label>
-          <Input
-            id="weight"
-            dir="ltr"
-            className="text-left focus-visible:ring-indigo-400 bg-slate-50 dark:bg-slate-800/50"
-            value={toPersianNumbers(value?.weight || '')}
-            onChange={(e) => {
-              const cleanValue = e.target.value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-              onChange && onChange('weight', cleanValue);
-            }}
-            placeholder="۷۵"
-          />
-          {errors?.weight && <p className="text-sm font-medium text-destructive">{errors.weight}</p>}
+          <div className="relative">
+            <Weight className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-emerald-500" />
+            <Input
+              id="weight"
+              type="number"
+              {...register("weight", { valueAsNumber: true })}
+              placeholder="70"
+              className="pr-10 border-emerald-200 dark:border-emerald-700 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-emerald-500/20"
+            />
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
