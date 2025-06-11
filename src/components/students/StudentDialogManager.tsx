@@ -5,7 +5,6 @@ import { ExerciseWithSets } from "@/types/exercise";
 import { useDialogState } from "./hooks/useDialogState";
 import {
   FormDialog,
-  ExerciseDialog,
   DietDialog,
   SupplementDialog
 } from "./dialogs";
@@ -41,7 +40,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
     const {
       state,
       setFormDialogOpen,
-      setExerciseDialogOpen,
       setDietDialogOpen,
       setSupplementDialogOpen,
       setSelectedStudent,
@@ -60,9 +58,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
         setFormDialogOpen(true);
       },
       handleAddExercise: onSaveExercises ? (student) => {
-        console.log("Opening exercise dialog for student:", student);
-        setSelectedStudent(student);
-        setExerciseDialogOpen(true);
+        console.log("Exercise functionality moved to ModernProgramManager");
       } : undefined,
       handleAddDiet: onSaveDiet ? (student) => {
         console.log("Opening diet dialog for student:", student);
@@ -84,13 +80,6 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
           selectedStudent={state.selectedStudent}
           isEditing={state.isEditing}
           onSave={onSave}
-        />
-
-        <ExerciseDialog
-          open={state.exerciseDialog}
-          onOpenChange={setExerciseDialogOpen}
-          selectedStudent={state.selectedStudent}
-          onSaveExercises={onSaveExercises}
         />
 
         <DietDialog

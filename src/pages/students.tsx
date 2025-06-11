@@ -3,10 +3,10 @@ import { useStudentManagement } from "@/hooks/students/useStudentManagement";
 import { useStudentExercises } from "@/hooks/students/useStudentExercises";
 import { useStudentDiet } from "@/hooks/students/useStudentDiet";
 import { useStudentSupplements } from "@/hooks/students/useStudentSupplements";
-import StudentsHeader from "@/components/students/StudentsHeader";
-import StudentCard from "@/components/students/StudentCard";
-import EmptyStudentState from "@/components/students/EmptyStudentState";
-import StudentFormDialog from "@/components/students/StudentFormDialog";
+import { StudentsHeader } from "@/components/students/StudentsHeader";
+import { StudentCard } from "@/components/students/StudentCard";
+import { EmptyStudentState } from "@/components/students/EmptyStudentState";
+import { StudentFormDialog } from "@/components/students/StudentFormDialog";
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 
@@ -31,6 +31,10 @@ const StudentsPage = () => {
   const handleEdit = (student: Student) => {
     setEditingStudent(student);
     setShowForm(true);
+  };
+
+  const handleDeleteStudent = (studentId: number) => {
+    handleDelete(studentId);
   };
 
   const handleAddExercise = (student: Student) => {
@@ -65,7 +69,7 @@ const StudentsPage = () => {
               key={student.id}
               student={student}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={handleDeleteStudent}
               onAddExercise={handleAddExercise}
             />
           ))}
@@ -73,7 +77,7 @@ const StudentsPage = () => {
       )}
 
       <StudentFormDialog
-        isOpen={showForm}
+        open={showForm}
         onClose={handleFormClose}
         onSave={handleFormSave}
         student={editingStudent}

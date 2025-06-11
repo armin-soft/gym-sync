@@ -1,5 +1,4 @@
 
-export * from "./FormDialog";
-export * from "./ExerciseDialog";
-export * from "./DietDialog";
-export * from "./SupplementDialog";
+export { FormDialog } from './FormDialog';
+export { DietDialog } from './DietDialog';
+export { SupplementDialog } from './SupplementDialog';
