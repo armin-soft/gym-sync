@@ -88,7 +88,7 @@ export function StudentSidebar({ isOpen, onClose, student, onLogout }: StudentSi
         side="right" 
         className={cn(
           getSidebarWidth(),
-          "p-0 border-l shadow-2xl bg-gradient-to-b from-violet-50 to-indigo-50 dark:from-violet-950/50 dark:to-indigo-950/50 backdrop-blur-lg"
+          "p-0 border-l shadow-2xl bg-gradient-to-b from-emerald-50 to-sky-50 dark:from-emerald-950/50 dark:to-sky-950/50 backdrop-blur-lg"
         )}
         dir="rtl"
       >
@@ -102,7 +102,7 @@ export function StudentSidebar({ isOpen, onClose, student, onLogout }: StudentSi
           
           <div className="px-4 py-3 border-b bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm" dir="rtl">
             <h4 className={cn(
-              "text-sm font-medium text-center text-violet-700 dark:text-violet-300",
+              "text-sm font-medium text-center text-emerald-700 dark:text-emerald-300",
               deviceInfo.isMobile ? "text-xs" : 
               deviceInfo.isTablet ? "text-sm" : "text-base"
             )}>

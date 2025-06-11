@@ -142,7 +142,7 @@ const StudentsPage = () => {
           />
           
           <Link to="/Management/Student-History">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white border-0 hover:from-emerald-600 hover:to-sky-600">
               <History className="h-4 w-4" />
               <span>تاریخچه</span>
             </Button>
@@ -162,10 +162,10 @@ const StudentsPage = () => {
           
           {/* Gender Tabs */}
           <Tabs value={activeGenderTab} onValueChange={setActiveGenderTab} className="w-full mb-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="all">همه ({students.length})</TabsTrigger>
-              <TabsTrigger value="male">آقایان ({maleStudentsCount})</TabsTrigger>
-              <TabsTrigger value="female">بانوان ({femaleStudentsCount})</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-950/30 dark:to-sky-950/30">
+              <TabsTrigger value="all" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-sky-500 data-[state=active]:text-white">همه ({students.length})</TabsTrigger>
+              <TabsTrigger value="male" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-sky-500 data-[state=active]:text-white">آقایان ({maleStudentsCount})</TabsTrigger>
+              <TabsTrigger value="female" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-sky-500 data-[state=active]:text-white">بانوان ({femaleStudentsCount})</TabsTrigger>
             </TabsList>
             
             <TabsContent value="all" className="mt-4">

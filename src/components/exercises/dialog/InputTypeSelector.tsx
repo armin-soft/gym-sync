@@ -30,8 +30,8 @@ export const InputTypeSelector: React.FC<InputTypeSelectorProps> = ({
             onClick={() => onInputTypeChange("speech")}
             className={`w-full h-16 flex flex-col items-center gap-2 ${
               selectedInputType === "speech" 
-                ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white" 
-                : "border-2 hover:border-purple-300"
+                ? "bg-gradient-to-r from-emerald-600 to-sky-600 text-white" 
+                : "border-2 hover:border-emerald-300"
             }`}
           >
             <Mic className="w-5 h-5" />
@@ -49,8 +49,8 @@ export const InputTypeSelector: React.FC<InputTypeSelectorProps> = ({
             onClick={() => onInputTypeChange("manual")}
             className={`w-full h-16 flex flex-col items-center gap-2 ${
               selectedInputType === "manual" 
-                ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white" 
-                : "border-2 hover:border-green-300"
+                ? "bg-gradient-to-r from-sky-600 to-emerald-600 text-white" 
+                : "border-2 hover:border-sky-300"
             }`}
           >
             <Edit3 className="w-5 h-5" />

@@ -49,7 +49,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
       
       <TableCell className="text-center">
         {student.gender && (
-          <Badge variant="outline" className={`gap-2 ${student.gender === 'male' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:border-blue-700/30 dark:text-blue-400' : 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:border-pink-700/30 dark:text-pink-400'}`}>
+          <Badge variant="outline" className={`gap-2 ${student.gender === 'male' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-700/30 dark:text-emerald-400' : 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900/20 dark:border-sky-700/30 dark:text-sky-400'}`}>
             {student.gender === 'male' ? <User className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
             {student.gender === 'male' ? "مرد" : "زن"}
           </Badge>
@@ -71,7 +71,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
       </TableCell>
       
       <TableCell className="text-center">
-        <span className="inline-block bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/30 px-2.5 py-1 rounded-lg text-purple-700 dark:text-purple-300 font-medium text-sm">
+        <span className="inline-block bg-gradient-to-br from-emerald-50 to-sky-100 dark:from-emerald-900/20 dark:to-sky-800/30 px-2.5 py-1 rounded-lg text-emerald-700 dark:text-emerald-300 font-medium text-sm">
           {formatPrice(student.payment)}
         </span>
       </TableCell>
@@ -121,7 +121,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-purple-900/20 dark:hover:text-purple-400 transition-colors"
+              className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-400 transition-colors"
               onClick={() => onAddExercise(student)}
             >
               <CalendarDays className="h-3.5 w-3.5" />
@@ -132,7 +132,7 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400 transition-colors"
+                className="flex items-center gap-1 text-xs py-1 px-2 hover:bg-sky-50 hover:text-sky-700 dark:hover:bg-sky-900/20 dark:hover:text-sky-400 transition-colors"
                 onClick={() => onEdit(student)}
               >
                 <Edit className="h-3.5 w-3.5" />
