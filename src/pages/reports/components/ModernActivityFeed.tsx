@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import { Clock, User, Dumbbell, Apple, Pill, TrendingUp, Calendar } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useStudents } from "@/hooks/useStudents";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 export const ModernActivityFeed = () => {
   const { students } = useStudents();
+  const deviceInfo = useDeviceInfo();
 
   // Generate real activities from student data
   const generateActivities = () => {
@@ -68,7 +70,7 @@ export const ModernActivityFeed = () => {
 
     return activities
       .sort((a, b) => b.time.getTime() - a.time.getTime())
-      .slice(0, 8); // Show latest 8 activities
+      .slice(0, deviceInfo.isMobile ? 4 : 8);
   };
 
   const activities = generateActivities();
@@ -107,76 +109,76 @@ export const ModernActivityFeed = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.6 }}
+      transition={{ duration: 0.6, delay: 0.6 }}
     >
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-2xl p-6 shadow-xl">
+      <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-xl p-4 lg:p-6 shadow-md">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            <h3 className="text-lg lg:text-xl font-bold text-slate-900 dark:text-white mb-1">
               آخرین فعالیت‌ها
             </h3>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               جدیدترین رویدادها و تغییرات سیستم
             </p>
           </div>
           
-          <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full">
-            <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full">
+            <TrendingUp className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
               به‌روزرسانی لحظه‌ای
             </span>
           </div>
         </div>
 
         {activities.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-full flex items-center justify-center">
-              <Calendar className="w-10 h-10 text-slate-400" />
+          <div className="text-center py-12">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-full flex items-center justify-center">
+              <Calendar className="w-8 h-8 text-slate-400" />
             </div>
-            <h4 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
+            <h4 className="text-lg font-semibold text-slate-600 dark:text-slate-400 mb-2">
               هنوز فعالیتی ثبت نشده
             </h4>
-            <p className="text-slate-500 dark:text-slate-500 max-w-md mx-auto">
+            <p className="text-sm text-slate-500 dark:text-slate-500 max-w-md mx-auto">
               پس از شروع کار با سیستم و افزودن شاگردان، فعالیت‌ها در اینجا نمایش داده خواهند شد
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {activities.map((activity, index) => (
               <motion.div
                 key={activity.id}
-                initial={{ opacity: 0, x: -30 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7 + index * 0.1, duration: 0.5 }}
+                transition={{ delay: 0.7 + index * 0.1, duration: 0.4 }}
                 className={`group relative border-r-4 ${getPriorityColor(activity.priority)} rounded-lg transition-all duration-300 hover:shadow-md`}
               >
-                <div className="flex items-start gap-4 p-4">
+                <div className="flex items-start gap-3 p-3">
                   {/* Icon */}
                   <motion.div
                     whileHover={{ scale: 1.1, rotate: 5 }}
-                    className={`flex-shrink-0 p-3 bg-gradient-to-r ${activity.color} rounded-xl shadow-lg`}
+                    className={`flex-shrink-0 p-2 bg-gradient-to-r ${activity.color} rounded-lg shadow-md`}
                   >
-                    <activity.icon className="h-5 w-5 text-white" />
+                    <activity.icon className="h-4 w-4 text-white" />
                   </motion.div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-start justify-between gap-2 mb-1">
                       <div>
-                        <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
                           {activity.title}
                         </h4>
-                        <p className="text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                        <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
                           {activity.description}
                         </p>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                      <Clock className="h-3 w-3" />
+                      <Clock className="h-2.5 w-2.5" />
                       <span>{getTimeAgo(activity.time)}</span>
                       <span className="w-1 h-1 bg-slate-400 rounded-full" />
                       <span>{getActivityTypeLabel(activity.type)}</span>
@@ -184,14 +186,14 @@ export const ModernActivityFeed = () => {
                   </div>
                   
                   {/* Priority Indicator */}
-                  <div className={`w-2 h-2 rounded-full ${
+                  <div className={`w-1.5 h-1.5 rounded-full ${
                     activity.priority === 'high' ? 'bg-emerald-400' :
                     activity.priority === 'medium' ? 'bg-yellow-400' : 'bg-blue-400'
                   } group-hover:scale-125 transition-transform duration-200`} />
                 </div>
 
                 {/* Hover Effect Line */}
-                <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all duration-500" />
+                <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all duration-300" />
               </motion.div>
             ))}
           </div>
