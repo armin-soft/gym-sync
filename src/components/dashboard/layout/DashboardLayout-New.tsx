@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface DashboardLayoutNewProps {
   children: ReactNode;
@@ -19,12 +20,20 @@ const pageVariants = {
 };
 
 export const DashboardLayoutNew = ({ children }: DashboardLayoutNewProps) => {
+  const deviceInfo = useDeviceInfo();
+
+  const getPadding = () => {
+    if (deviceInfo.isMobile) return "p-4";
+    if (deviceInfo.isTablet) return "p-6";
+    return "p-8";
+  };
+
   return (
     <motion.div 
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="w-full h-full overflow-hidden"
+      className={`min-h-screen w-full relative ${getPadding()}`}
     >
       {/* پس‌زمینه گرادیانی با رنگ‌های انتخاب نوع ورود */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-sky-50/30 to-emerald-50/40 -z-10" />
