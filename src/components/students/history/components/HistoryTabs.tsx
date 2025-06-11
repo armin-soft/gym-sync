@@ -40,30 +40,30 @@ export const HistoryTabs: React.FC<HistoryTabsProps> = ({
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="edits" className="flex items-center gap-2">
-          <Edit className="h-4 w-4 text-sky-500" />
+          <Edit className="h-4 w-4 text-emerald-500" />
           <span>ویرایش</span>
-          <Badge variant="outline" className="ml-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'edit').length)}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="exercises" className="flex items-center gap-2">
-          <Dumbbell className="h-4 w-4 text-emerald-500" />
+          <Dumbbell className="h-4 w-4 text-sky-500" />
           <span>تمرین</span>
-          <Badge variant="outline" className="ml-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'exercise').length)}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="diets" className="flex items-center gap-2">
-          <UtensilsCrossed className="h-4 w-4 text-sky-500" />
+          <UtensilsCrossed className="h-4 w-4 text-emerald-500" />
           <span>رژیم</span>
-          <Badge variant="outline" className="ml-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'diet').length)}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="supplements" className="flex items-center gap-2">
-          <Pill className="h-4 w-4 text-emerald-500" />
+          <Pill className="h-4 w-4 text-sky-500" />
           <span>مکمل</span>
-          <Badge variant="outline" className="ml-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs">
+          <Badge variant="outline" className="ml-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 text-xs">
             {toPersianNumbers(historyEntries.filter(e => e.type === 'supplement').length)}
           </Badge>
         </TabsTrigger>
