@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Students from "./pages/students";
 import StudentHistory from "./pages/student-history";
+import StudentProgram from "./pages/student-program";
 import Exercises from "./pages/exercises";
 import Diet from "./pages/diet";
 import Supplements from "./pages/supplements";
@@ -42,6 +43,7 @@ const AppRoutes = () => {
       <Route path="/Reports" element={<Navigate to="/Management/Report" replace />} />
       <Route path="/students" element={<Navigate to="/Management/Students" replace />} />
       <Route path="/student-history" element={<Navigate to="/Management/Student-History" replace />} />
+      <Route path="/student-program/:studentId" element={<StudentProgram />} />
       <Route path="/exercises" element={<Navigate to="/Management/Exercise-Movements" replace />} />
       <Route path="/diet" element={<Navigate to="/Management/Diet-Plan" replace />} />
       <Route path="/supplements" element={<Navigate to="/Management/Supplements-Vitamins" replace />} />
