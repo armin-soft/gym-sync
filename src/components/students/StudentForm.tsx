@@ -108,19 +108,9 @@ export const StudentForm = ({
     },
   };
 
-  const handleImageChange = (file: File | null) => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setPreviewImage(result);
-        form.setValue("image", result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage("/Assets/Image/Place-Holder.svg");
-      form.setValue("image", "/Assets/Image/Place-Holder.svg");
-    }
+  const handleImageChange = (imageData: string) => {
+    setPreviewImage(imageData);
+    form.setValue("image", imageData);
   };
 
   return (
@@ -142,30 +132,42 @@ export const StudentForm = ({
             className="flex justify-center"
           >
             <ProfileImageUpload 
-              currentImage={previewImage}
-              onImageChange={handleImageChange}
-              studentName={form.watch("name")}
+              previewImage={previewImage}
+              onChange={handleImageChange}
+              error={!!form.formState.errors.image}
             />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Personal Info Section */}
             <div className="space-y-4">
-              <PersonalInfoSection form={form} />
+              <PersonalInfoSection 
+                control={form.control} 
+                itemVariants={itemVariants} 
+              />
               
               {/* Gender Field */}
-              <GenderField form={form} />
+              <GenderField 
+                control={form.control}
+                itemVariants={itemVariants}
+              />
             </div>
             
             {/* Measurements Section */}
             <div>
-              <MeasurementsSection form={form} />
+              <MeasurementsSection 
+                control={form.control} 
+                itemVariants={itemVariants} 
+              />
             </div>
           </div>
 
           {/* Payment Field */}
           <motion.div variants={itemVariants} className="md:col-span-2">
-            <PaymentField form={form} />
+            <PaymentField 
+              control={form.control}
+              itemVariants={itemVariants}
+            />
           </motion.div>
 
           {/* Form Actions */}
