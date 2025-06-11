@@ -74,9 +74,9 @@ const StudentsPage = () => {
             <StudentCard
               key={student.id}
               student={student}
-              onEdit={handleEdit}
-              onDelete={handleDeleteStudent}
-              onAddExercise={handleAddExercise}
+              onEdit={() => handleEdit(student)}
+              onDelete={() => handleDeleteStudent(student.id)}
+              onAddExercise={() => handleAddExercise(student)}
             />
           ))}
         </div>
