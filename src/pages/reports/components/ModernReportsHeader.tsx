@@ -27,7 +27,7 @@ export const ModernReportsHeader = () => {
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
                 className="relative"
               >
-                <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                <div className="p-4 bg-gradient-to-br from-emerald-500 to-sky-500 rounded-2xl shadow-lg">
                   <BarChart3 className="h-8 w-8 text-white" />
                 </div>
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse" />
@@ -38,7 +38,7 @@ export const ModernReportsHeader = () => {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4, duration: 0.6 }}
-                  className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent"
+                  className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-800 bg-clip-text text-transparent"
                 >
                   گزارشات تحلیلی پیشرفته
                 </motion.h1>
@@ -49,7 +49,7 @@ export const ModernReportsHeader = () => {
                   transition={{ delay: 0.5, duration: 0.6 }}
                   className="flex items-center gap-3 text-slate-600 dark:text-slate-300"
                 >
-                  <Calendar className="h-5 w-5 text-blue-500" />
+                  <Calendar className="h-5 w-5 text-emerald-500" />
                   <span className="text-lg font-medium">{persianDate}</span>
                 </motion.div>
                 
@@ -71,9 +71,9 @@ export const ModernReportsHeader = () => {
               transition={{ delay: 0.7, duration: 0.6 }}
               className="flex items-center gap-4"
             >
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-full">
-                <TrendingUp className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-semibold text-green-700 dark:text-green-400">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100 to-sky-100 dark:from-emerald-900/30 dark:to-sky-900/30 rounded-full">
+                <TrendingUp className="h-5 w-5 text-emerald-600" />
+                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                   عملکرد عالی
                 </span>
               </div>
@@ -81,8 +81,8 @@ export const ModernReportsHeader = () => {
           </div>
 
           {/* Decorative Elements */}
-          <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-500/10 rounded-full -translate-x-16 -translate-y-16" />
-          <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-purple-400/10 to-blue-500/10 rounded-full translate-x-12 translate-y-12" />
+          <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-400/10 to-sky-500/10 rounded-full -translate-x-16 -translate-y-16" />
+          <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-sky-400/10 to-emerald-500/10 rounded-full translate-x-12 translate-y-12" />
         </div>
       </div>
     </motion.div>

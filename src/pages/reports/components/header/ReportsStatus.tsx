@@ -11,9 +11,9 @@ export const ReportsStatus = () => {
       transition={{ delay: 0.7, duration: 0.6 }}
       className="flex items-center gap-4"
     >
-      <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-full">
-        <TrendingUp className="h-5 w-5 text-green-600" />
-        <span className="text-sm font-semibold text-green-700 dark:text-green-400">
+      <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100 to-sky-100 dark:from-emerald-900/30 dark:to-sky-900/30 rounded-full">
+        <TrendingUp className="h-5 w-5 text-emerald-600" />
+        <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
           عملکرد عالی
         </span>
       </div>

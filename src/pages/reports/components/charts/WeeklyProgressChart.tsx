@@ -31,12 +31,12 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ data }
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorStudents" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
               </linearGradient>
               <linearGradient id="colorSessions" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.5} />
@@ -55,7 +55,7 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ data }
             <Area
               type="monotone"
               dataKey="students"
-              stroke="#3b82f6"
+              stroke="#10b981"
               strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorStudents)"
@@ -64,7 +64,7 @@ export const WeeklyProgressChart: React.FC<WeeklyProgressChartProps> = ({ data }
             <Area
               type="monotone"
               dataKey="sessions"
-              stroke="#8b5cf6"
+              stroke="#0ea5e9"
               strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorSessions)"

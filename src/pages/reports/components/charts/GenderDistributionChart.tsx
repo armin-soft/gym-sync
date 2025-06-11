@@ -19,6 +19,13 @@ interface GenderDistributionChartProps {
 export const GenderDistributionChart: React.FC<GenderDistributionChartProps> = ({ data }) => {
   if (!data.length) return null;
 
+  // Use emerald-sky color scheme
+  const colorScheme = ["#10b981", "#0ea5e9", "#059669", "#0284c7"];
+  const updatedData = data.map((item, index) => ({
+    ...item,
+    color: colorScheme[index % colorScheme.length]
+  }));
+
   return (
     <ChartContainer
       title="توزیع جنسیتی شاگردان"
@@ -29,7 +36,7 @@ export const GenderDistributionChart: React.FC<GenderDistributionChartProps> = (
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={updatedData}
               cx="50%"
               cy="50%"
               outerRadius={80}
@@ -37,7 +44,7 @@ export const GenderDistributionChart: React.FC<GenderDistributionChartProps> = (
               paddingAngle={5}
               dataKey="value"
             >
-              {data.map((entry, index) => (
+              {updatedData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
@@ -48,7 +55,7 @@ export const GenderDistributionChart: React.FC<GenderDistributionChartProps> = (
       </div>
       
       <div className="grid grid-cols-2 gap-4 mt-4">
-        {data.map((item, index) => (
+        {updatedData.map((item, index) => (
           <div key={index} className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
             <div className="flex items-center justify-center gap-2 mb-1">
               <div 

@@ -8,13 +8,13 @@ interface ModernReportsContainerProps {
 
 export const ModernReportsContainer: React.FC<ModernReportsContainerProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-900 dark:via-blue-950/30 dark:to-purple-950/20" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-sky-50/30 to-emerald-50/40 dark:from-emerald-950 dark:via-sky-950/30 dark:to-emerald-950/40" dir="rtl">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute -top-40 -right-40 w-80 h-80 rounded-full opacity-20"
           style={{
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, transparent 100%)'
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(14, 165, 233, 0.2) 50%, transparent 100%)'
           }}
           animate={{
             scale: [1, 1.1, 1],
@@ -30,7 +30,7 @@ export const ModernReportsContainer: React.FC<ModernReportsContainerProps> = ({ 
         <motion.div
           className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-15"
           style={{
-            background: 'radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, rgba(59, 130, 246, 0.2) 50%, transparent 100%)'
+            background: 'radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, rgba(16, 185, 129, 0.2) 50%, transparent 100%)'
           }}
           animate={{
             scale: [1.1, 1, 1.1],
@@ -48,8 +48,8 @@ export const ModernReportsContainer: React.FC<ModernReportsContainerProps> = ({ 
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: `
-              radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.2) 1px, transparent 0),
-              radial-gradient(circle at 20px 20px, rgba(147, 51, 234, 0.15) 1px, transparent 0)
+              radial-gradient(circle at 1px 1px, rgba(16, 185, 129, 0.2) 1px, transparent 0),
+              radial-gradient(circle at 20px 20px, rgba(14, 165, 233, 0.15) 1px, transparent 0)
             `,
             backgroundSize: '40px 40px, 80px 80px'
           }}
