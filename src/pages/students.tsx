@@ -6,7 +6,7 @@ import { useStudentSupplements } from "@/hooks/students/useStudentSupplements";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
 import { StudentCard } from "@/components/students/StudentCard";
 import { EmptyStudentState } from "@/components/students/EmptyStudentState";
-import { StudentFormDialog } from "@/components/students/StudentFormDialog";
+import StudentFormDialog from "@/components/students/StudentFormDialog";
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 
@@ -34,7 +34,10 @@ const StudentsPage = () => {
   };
 
   const handleDeleteStudent = (studentId: number) => {
-    handleDelete(studentId);
+    const studentToDelete = students.find(s => s.id === studentId);
+    if (studentToDelete) {
+      handleDelete(studentToDelete);
+    }
   };
 
   const handleAddExercise = (student: Student) => {
@@ -57,11 +60,14 @@ const StudentsPage = () => {
     <div className="container mx-auto p-6 space-y-6" dir="rtl">
       <StudentsHeader 
         onAddStudent={() => setShowForm(true)}
-        totalStudents={students.length}
       />
       
       {students.length === 0 ? (
-        <EmptyStudentState onAddStudent={() => setShowForm(true)} />
+        <EmptyStudentState 
+          isSearching={false}
+          onAddStudent={() => setShowForm(true)}
+          onClearSearch={() => {}}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {students.map((student) => (
@@ -78,9 +84,10 @@ const StudentsPage = () => {
 
       <StudentFormDialog
         open={showForm}
-        onClose={handleFormClose}
-        onSave={handleFormSave}
+        onOpenChange={setShowForm}
         student={editingStudent}
+        isEditing={!!editingStudent}
+        onSave={handleFormSave}
       />
     </div>
   );
