@@ -7,6 +7,7 @@ import { Check, SearchX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface ExerciseTabContentProps {
   filteredExercises: Exercise[];
@@ -33,6 +34,8 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
   repsInfo = {},  
   onRepsChange
 }) => {
+  const deviceInfo = useDeviceInfo();
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -53,6 +56,23 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
     }
   };
 
+  // Responsive grid classes
+  const getGridClasses = () => {
+    if (deviceInfo.isMobile) {
+      return viewMode === "grid" 
+        ? "grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-3"
+        : "grid-cols-1 gap-2";
+    } else if (deviceInfo.isTablet) {
+      return viewMode === "grid"
+        ? "grid-cols-2 md:grid-cols-3 gap-3 md:gap-4"
+        : "grid-cols-1 gap-3";
+    } else {
+      return viewMode === "grid"
+        ? "grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 lg:gap-6"
+        : "grid-cols-1 gap-4";
+    }
+  };
+
   if (filteredExercises.length === 0) {
     return (
       <motion.div 
@@ -61,18 +81,18 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center">
-          <SearchX className="h-10 w-10 text-muted-foreground/40" />
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-muted/20 rounded-full flex items-center justify-center">
+          <SearchX className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/40" />
         </div>
-        <h3 className="text-lg font-medium text-center mt-2">هیچ تمرینی پیدا نشد</h3>
-        <p className="text-sm text-muted-foreground text-center max-w-md">
+        <h3 className="text-base sm:text-lg font-medium text-center mt-2">هیچ تمرینی پیدا نشد</h3>
+        <p className="text-xs sm:text-sm text-muted-foreground text-center max-w-md px-4">
           تمرینی با این فیلترها پیدا نشد. لطفا فیلترها را تغییر دهید یا جستجوی جدیدی انجام دهید.
         </p>
         <Button
           onClick={handleClearSearch}
           variant="outline"
-          className="mt-3 bg-background/50 border-dashed"
-          size="sm"
+          className="mt-3 bg-background/50 border-dashed text-xs sm:text-sm"
+          size={deviceInfo.isMobile ? "sm" : "default"}
         >
           پاک کردن جستجو
         </Button>
@@ -86,16 +106,16 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
     <>
       {selectedCount > 0 && (
         <motion.div 
-          className="mb-4 py-2 px-3 bg-primary/5 border border-primary/10 rounded-lg flex items-center justify-between"
+          className="mb-3 sm:mb-4 py-2 px-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg flex items-center justify-between"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
         >
           <div className="flex items-center gap-2">
-            <div className="bg-primary/10 rounded-full p-1">
-              <Check className="h-4 w-4 text-primary" />
+            <div className="bg-emerald-100 dark:bg-emerald-800 rounded-full p-1">
+              <Check className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <span className="text-sm font-medium text-primary">
+            <span className="text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-300">
               {selectedCount} تمرین انتخاب شده
             </span>
           </div>
@@ -103,12 +123,7 @@ export const ExerciseTabContent: React.FC<ExerciseTabContentProps> = ({
       )}
       
       <motion.div
-        className={cn(
-          "grid gap-4 pb-6",
-          viewMode === "grid"
-            ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-            : "grid-cols-1"
-        )}
+        className={cn("grid pb-6", getGridClasses())}
         variants={containerVariants}
         initial="hidden"
         animate="visible"

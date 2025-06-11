@@ -24,16 +24,16 @@ export const ExercisePageContainer = () => {
     onStorageChange: true
   });
 
-  // تنظیم کلاس‌های شرطی برای پاسخگویی بهتر
-  const getResponsiveSpacing = () => {
+  // Responsive spacing based on device type
+  const getResponsiveClasses = () => {
     if (deviceInfo.isMobile) {
-      return "space-y-3 px-1 py-2";
+      return "space-y-2 p-2";
     } else if (deviceInfo.isTablet) {
-      return "space-y-4 px-2 py-3";
+      return "space-y-3 p-3";
     } else if (deviceInfo.isSmallLaptop) {
-      return "space-y-6 px-3 py-4"; 
+      return "space-y-4 p-4"; 
     } else {
-      return "space-y-6 px-4 py-4";
+      return "space-y-6 p-6";
     }
   };
 
@@ -44,21 +44,27 @@ export const ExercisePageContainer = () => {
       fullHeight 
       className="w-full h-full min-h-screen overflow-hidden"
     >
-      <div className={`w-full h-full flex flex-col ${getResponsiveSpacing()}`}>
-        <ExercisePageHeader />
+      <div className={`w-full h-full flex flex-col ${getResponsiveClasses()}`}>
+        <div className="flex-shrink-0">
+          <ExercisePageHeader />
+        </div>
         
-        <ExerciseStatsSection
-          exerciseTypesCount={state.exerciseTypes.length}
-          categoriesCount={state.categories.length}
-          exercisesCount={state.exercises.length}
-        />
+        <div className="flex-shrink-0">
+          <ExerciseStatsSection
+            exerciseTypesCount={state.exerciseTypes.length}
+            categoriesCount={state.categories.length}
+            exercisesCount={state.exercises.length}
+          />
+        </div>
 
-        <ExercisePageTabs
-          activeTab={state.activeTab}
-          setActiveTab={state.setActiveTab}
-          state={state}
-          handlers={handlers}
-        />
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ExercisePageTabs
+            activeTab={state.activeTab}
+            setActiveTab={state.setActiveTab}
+            state={state}
+            handlers={handlers}
+          />
+        </div>
 
         <TypeDialog
           isOpen={state.isTypeDialogOpen}

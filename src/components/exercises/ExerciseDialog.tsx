@@ -37,7 +37,7 @@ const ResponsiveExerciseDialog = ({
       onFormDataChange={onFormChange}
       onSave={onSave}
       deviceInfo={deviceInfo} 
-      fullScreen={true} // Always use fullscreen mode
+      fullScreen={deviceInfo.isMobile || deviceInfo.isTablet} // Use fullscreen for mobile and tablet
     />
   );
 };

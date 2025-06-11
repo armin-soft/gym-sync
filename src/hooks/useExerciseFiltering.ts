@@ -1,7 +1,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 export const useExerciseFiltering = (
   exercises: Exercise[],
@@ -10,7 +10,7 @@ export const useExerciseFiltering = (
   console.log("useExerciseFiltering received exercises:", exercises);
   console.log("useExerciseFiltering received categories:", categories);
   
-  const isMobile = useIsMobile();
+  const deviceInfo = useDeviceInfo();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedExerciseType, setSelectedExerciseType] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -19,10 +19,10 @@ export const useExerciseFiltering = (
 
   // Update view mode when screen size changes
   useEffect(() => {
-    if (isMobile) {
+    if (deviceInfo.isMobile) {
       setViewMode("grid");
     }
-  }, [isMobile]);
+  }, [deviceInfo.isMobile]);
 
   // Force reset category when exercise type changes 
   useEffect(() => {

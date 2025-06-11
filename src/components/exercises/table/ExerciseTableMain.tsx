@@ -6,7 +6,7 @@ import ExerciseTableHeader from "./ExerciseTableHeader";
 import ExerciseTableFilter from "./ExerciseTableFilter";
 import ExerciseTableContent from "./ExerciseTableContent";
 import ExerciseTableDeleteDialog from "./ExerciseTableDeleteDialog";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface ExerciseTableMainProps {
   exercises: Exercise[];
@@ -27,13 +27,24 @@ export function ExerciseTableMain({
   onSort,
   isAscending
 }: ExerciseTableMainProps) {
-  const isMobile = useIsMobile();
+  const deviceInfo = useDeviceInfo();
   const [selectedExercises, setSelectedExercises] = useState<number[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [exercisesToDelete, setExercisesToDelete] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [filteredExercises, setFilteredExercises] = useState<Exercise[]>(exercises);
+
+  // Responsive padding
+  const getCardPadding = () => {
+    if (deviceInfo.isMobile) {
+      return "p-2 sm:p-3";
+    } else if (deviceInfo.isTablet) {
+      return "p-3 md:p-4";
+    } else {
+      return "p-4 lg:p-6";
+    }
+  };
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -92,25 +103,29 @@ export function ExerciseTableMain({
 
   return (
     <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-emerald-50/30 dark:from-gray-900 dark:to-emerald-900/10 w-full h-full">
-      <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 h-full flex flex-col">
-        <ExerciseTableHeader
-          selectedCount={selectedExercises.length}
-          onAdd={onAdd}
-          onSort={onSort}
-          onDelete={() => confirmDelete(selectedExercises)}
-          isAscending={isAscending}
-        />
+      <div className={`${getCardPadding()} h-full flex flex-col`}>
+        <div className="flex-shrink-0 mb-3 sm:mb-4">
+          <ExerciseTableHeader
+            selectedCount={selectedExercises.length}
+            onAdd={onAdd}
+            onSort={onSort}
+            onDelete={() => confirmDelete(selectedExercises)}
+            isAscending={isAscending}
+          />
+        </div>
 
-        <ExerciseTableFilter
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedCategoryId={selectedCategoryId}
-          onCategoryChange={setSelectedCategoryId}
-          categories={categories}
-          onClearFilters={handleClearFilters}
-          hasActiveFilters={hasActiveFilters}
-          isMobile={isMobile}
-        />
+        <div className="flex-shrink-0 mb-3 sm:mb-4">
+          <ExerciseTableFilter
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedCategoryId={selectedCategoryId}
+            onCategoryChange={setSelectedCategoryId}
+            categories={categories}
+            onClearFilters={handleClearFilters}
+            hasActiveFilters={hasActiveFilters}
+            isMobile={deviceInfo.isMobile}
+          />
+        </div>
 
         <div className="flex-1 min-h-0 w-full">
           <ExerciseTableContent
@@ -122,7 +137,7 @@ export function ExerciseTableMain({
             onEdit={onEdit}
             onDelete={confirmDelete}
             onClearFilters={hasActiveFilters ? handleClearFilters : undefined}
-            isMobile={isMobile}
+            isMobile={deviceInfo.isMobile}
           />
         </div>
       </div>
