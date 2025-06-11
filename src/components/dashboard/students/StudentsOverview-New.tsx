@@ -5,7 +5,6 @@ import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { useDeviceInfo } from "@/hooks/use-mobile";
 
 interface StudentsOverviewNewProps {
   students: Student[];
@@ -13,7 +12,6 @@ interface StudentsOverviewNewProps {
 
 export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
   const navigate = useNavigate();
-  const deviceInfo = useDeviceInfo();
   
   // محاسبه میانگین پیشرفت واقعی بر اساس داده‌های شاگردان
   const calculateRealAverageProgress = () => {
@@ -36,19 +34,19 @@ export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.6 }}
-      className="bg-white dark:bg-gray-900 rounded-2xl responsive-padding border border-gray-200/50 dark:border-gray-700/50"
+      className="bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-200/50 dark:border-gray-700/50"
       style={{ boxShadow: 'var(--shadow-soft)' }}
     >
-      <div className="responsive-flex-between responsive-gap mb-4 sm:mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="responsive-icon-lg rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-            <Users className="responsive-icon text-white" />
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
+            <Users className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="responsive-text-lg font-bold text-gray-900 dark:text-white text-readable">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
               شاگردان اخیر
             </h3>
-            <p className="responsive-text-xs text-gray-600 dark:text-gray-400 text-readable">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {toPersianNumbers(students.length.toString())} شاگرد فعال
             </p>
           </div>
@@ -56,24 +54,24 @@ export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
         
         <Button
           onClick={() => navigate('/Management/Students')}
-          className={`bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl ${deviceInfo.isMobile ? 'text-sm px-3 py-2' : 'responsive-button'}`}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl"
         >
-          <Plus className="responsive-icon ml-2" />
+          <Plus className="w-4 h-4 ml-2" />
           مشاهده همه
         </Button>
       </div>
 
       {/* Progress Summary */}
-      <div className="mb-4 sm:mb-6 responsive-padding rounded-xl bg-gradient-to-l from-emerald-50 to-emerald-100/30 dark:from-emerald-950/30 dark:to-emerald-900/20">
+      <div className="mb-6 p-4 rounded-2xl bg-gradient-to-l from-emerald-50 to-emerald-100/30 dark:from-emerald-950/30 dark:to-emerald-900/20">
         <div className="flex items-center gap-3 mb-3">
-          <TrendingUp className="responsive-icon text-emerald-600" />
-          <span className="font-medium text-emerald-700 dark:text-emerald-300 responsive-text-sm text-readable">
+          <TrendingUp className="w-5 h-5 text-emerald-600" />
+          <span className="font-medium text-emerald-700 dark:text-emerald-300">
             میانگین پیشرفت کلی
           </span>
         </div>
         
-        <div className="responsive-flex-between responsive-gap">
-          <div className="flex-1 bg-emerald-200 dark:bg-emerald-800 rounded-full h-2 sm:h-3">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 bg-emerald-200 dark:bg-emerald-800 rounded-full h-3 mr-4">
             <motion.div 
               className="h-full bg-emerald-500 rounded-full"
               initial={{ width: 0 }}
@@ -81,14 +79,14 @@ export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
               transition={{ delay: 0.5, duration: 1 }}
             />
           </div>
-          <span className="responsive-text-xl font-bold text-emerald-600">
+          <span className="text-2xl font-bold text-emerald-600">
             {toPersianNumbers(averageProgress.toString())}%
           </span>
         </div>
       </div>
 
       {/* Recent Students List */}
-      <div className="responsive-space-y">
+      <div className="space-y-3">
         {recentStudents.length > 0 ? (
           recentStudents.map((student, index) => (
             <motion.div
@@ -96,9 +94,9 @@ export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 + index * 0.1 }}
-              className="flex items-center responsive-gap p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
-              <div className={`${deviceInfo.isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full overflow-hidden border-2 border-emerald-200`}>
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-200">
                 <img 
                   src={student.image || "/Assets/Image/Place-Holder.svg"} 
                   alt={student.name}
@@ -107,15 +105,15 @@ export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
               </div>
               
               <div className="flex-1">
-                <h4 className="font-medium text-gray-900 dark:text-white responsive-text-sm text-readable">
+                <h4 className="font-medium text-gray-900 dark:text-white">
                   {student.name}
                 </h4>
-                <p className="responsive-text-xs text-gray-600 dark:text-gray-400 text-readable">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   پیشرفت: {toPersianNumbers((student.progress || 0).toString())}%
                 </p>
               </div>
               
-              <div className={`${deviceInfo.isMobile ? 'w-8 h-1.5' : 'w-12 h-2'} bg-gray-200 dark:bg-gray-700 rounded-full`}>
+              <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
                 <div 
                   className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                   style={{ width: `${student.progress || 0}%` }}
@@ -124,15 +122,15 @@ export const StudentsOverviewNew = ({ students }: StudentsOverviewNewProps) => {
             </motion.div>
           ))
         ) : (
-          <div className="text-center responsive-padding">
-            <Users className={`${deviceInfo.isMobile ? 'w-8 h-8' : 'w-12 h-12'} text-gray-400 mx-auto mb-3`} />
-            <p className="text-gray-600 dark:text-gray-400 responsive-text-sm text-readable">
+          <div className="text-center py-8">
+            <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+            <p className="text-gray-600 dark:text-gray-400">
               هنوز شاگردی اضافه نشده است
             </p>
             <Button
               onClick={() => navigate('/Management/Students')}
               variant="outline"
-              className="mt-3 responsive-text-xs"
+              className="mt-3"
             >
               اضافه کردن شاگرد اول
             </Button>

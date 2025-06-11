@@ -89,7 +89,7 @@ export const StatsGridNew = ({ stats }: StatsGridNewProps) => {
       variants={containerVariants}
       initial="initial"
       animate="animate"
-      className={`responsive-grid-6 responsive-gap mb-6 sm:mb-8 ${
+      className={`grid gap-6 mb-8 ${
         deviceInfo.isMobile 
           ? 'grid-cols-1' 
           : deviceInfo.isTablet 
@@ -111,35 +111,35 @@ export const StatsGridNew = ({ stats }: StatsGridNewProps) => {
               scale: 1.02,
               transition: { type: "spring", stiffness: 300 }
             }}
-            className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${colors.bg} border ${colors.border} backdrop-blur-xl responsive-padding`}
+            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${colors.bg} border ${colors.border} backdrop-blur-xl p-6`}
             style={{ boxShadow: 'var(--shadow-soft)' }}
           >
-            <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full blur-2xl -translate-y-8 translate-x-8" />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl -translate-y-12 translate-x-12" />
 
             <div className="relative z-10">
               <motion.div 
-                className={`responsive-icon-lg rounded-lg bg-gradient-to-br ${colors.icon} flex items-center justify-center mb-3 sm:mb-4 shadow-lg`}
+                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors.icon} flex items-center justify-center mb-4 shadow-lg`}
                 whileHover={{ rotate: 8, scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <Icon className="responsive-icon text-white" />
+                <Icon className="w-6 h-6 text-white" />
               </motion.div>
 
               <motion.div 
-                className="responsive-space-y"
+                className="space-y-2"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 + 0.3 }}
               >
-                <h3 className="responsive-text-lg font-bold text-gray-900 dark:text-white text-readable">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {toPersianNumbers(value.toString())}{stat.suffix || ''}
                 </h3>
                 
-                <p className="responsive-text-xs font-medium text-gray-600 dark:text-gray-400 text-readable">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {stat.title}
                 </p>
                 
-                <p className="text-xs text-gray-500 dark:text-gray-500 text-readable">
+                <p className="text-xs text-gray-500 dark:text-gray-500">
                   {stat.description}
                 </p>
               </motion.div>
