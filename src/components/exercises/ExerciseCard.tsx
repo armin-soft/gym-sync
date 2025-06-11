@@ -47,14 +47,14 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         <Card 
           onClick={onClick}
           className={cn(
-            "cursor-pointer hover:shadow-md transition-all duration-300 mb-2 border-l-4",
-            isSelected ? "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 dark:border-indigo-400" : "border-transparent hover:border-indigo-300 dark:hover:border-indigo-700"
+            "cursor-pointer hover:shadow-lg transition-all duration-300 mb-2 border-l-4",
+            isSelected ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 dark:border-emerald-400" : "border-transparent hover:border-emerald-300 dark:hover:border-emerald-700"
           )}
         >
           <div className="flex items-center justify-between p-3 sm:p-4">
             <div className="flex items-center gap-3 text-right">
-              <div className="flex-shrink-0 bg-indigo-100 dark:bg-indigo-900/50 p-2 rounded-full">
-                <Activity className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              <div className="flex-shrink-0 bg-gradient-to-r from-emerald-100 to-sky-100 dark:from-emerald-900/50 dark:to-sky-900/50 p-2 rounded-full">
+                <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div className="space-y-1">
                 <h4 className="font-medium">{exercise.name}</h4>
@@ -69,7 +69,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
                 <Button 
                   size="icon" 
                   variant="ghost" 
-                  className="h-8 w-8 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+                  className="h-8 w-8 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
                   onClick={handleEdit}
                 >
                   <Edit className="h-4 w-4" />
@@ -102,20 +102,20 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       <Card 
         onClick={onClick}
         className={cn(
-          "cursor-pointer overflow-hidden h-full shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-100 dark:border-indigo-800/50",
-          isSelected && "ring-2 ring-indigo-500 dark:ring-indigo-400"
+          "cursor-pointer overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300 border border-emerald-100 dark:border-emerald-800/50",
+          isSelected && "ring-2 ring-emerald-500 dark:ring-emerald-400"
         )}
       >
         <CardHeader className={cn(
-          "p-3 pb-2 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/50 dark:to-violet-950/50",
-          isSelected && "bg-gradient-to-r from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30"
+          "p-3 pb-2 bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-950/50 dark:to-sky-950/50",
+          isSelected && "bg-gradient-to-r from-emerald-100 to-sky-100 dark:from-emerald-900/30 dark:to-sky-900/30"
         )}>
           <div className="flex items-center justify-between">
             <div className="bg-white/80 dark:bg-gray-800/80 p-1.5 rounded-full">
-              <Activity className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+              <Activity className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
             </div>
             
-            <div className="text-xs font-medium px-2 py-1 rounded-full bg-white/80 dark:bg-gray-800/80 text-indigo-700 dark:text-indigo-300">
+            <div className="text-xs font-medium px-2 py-1 rounded-full bg-white/80 dark:bg-gray-800/80 text-emerald-700 dark:text-emerald-300">
               {category?.name || "دسته‌بندی نشده"}
             </div>
           </div>
@@ -126,12 +126,12 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         </CardContent>
         
         {(onEdit || onDelete) && (
-          <CardFooter className="p-2 flex justify-center gap-2 border-t border-indigo-50 dark:border-indigo-900/50">
+          <CardFooter className="p-2 flex justify-center gap-2 border-t border-emerald-50 dark:border-emerald-900/50">
             {onEdit && (
               <Button 
                 size="sm" 
                 variant="ghost" 
-                className="h-8 w-8 p-0 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+                className="h-8 w-8 p-0 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
                 onClick={handleEdit}
               >
                 <Edit className="h-3.5 w-3.5" />

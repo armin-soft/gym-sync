@@ -1,0 +1,34 @@
+
+/* رنگ‌های اختصاصی صفحه حرکات تمرینی */
+:root {
+  /* رنگ‌های اصلی از بخش انتخاب نوع ورود */
+  --exercise-emerald-primary: #10b981;
+  --exercise-emerald-secondary: #059669;
+  --exercise-emerald-light: #34d399;
+  
+  --exercise-sky-primary: #0ea5e9;
+  --exercise-sky-secondary: #0284c7;
+  --exercise-sky-light: #38bdf8;
+  
+  /* گرادیان‌های اختصاصی */
+  --exercise-gradient-primary: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+  --exercise-gradient-secondary: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+  --exercise-gradient-soft: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+  
+  /* سایه‌های اختصاصی */
+  --exercise-shadow-emerald: 0 4px 20px rgba(16, 185, 129, 0.15);
+  --exercise-shadow-sky: 0 4px 20px rgba(14, 165, 233, 0.15);
+  --exercise-shadow-mixed: 0 8px 32px rgba(16, 185, 129, 0.1), 0 4px 16px rgba(14, 165, 233, 0.1);
+}
+
+/* کلاس‌های کمکی */
+.exercise-bg-gradient-primary { background: var(--exercise-gradient-primary); }
+.exercise-bg-gradient-secondary { background: var(--exercise-gradient-secondary); }
+.exercise-bg-gradient-soft { background: var(--exercise-gradient-soft); }
+
+.exercise-text-emerald { color: var(--exercise-emerald-primary); }
+.exercise-text-sky { color: var(--exercise-sky-primary); }
+
+.exercise-shadow-emerald { box-shadow: var(--exercise-shadow-emerald); }
+.exercise-shadow-sky { box-shadow: var(--exercise-shadow-sky); }
+.exercise-shadow-mixed { box-shadow: var(--exercise-shadow-mixed); }
