@@ -3,14 +3,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
 import { Dumbbell, CheckSquare } from "lucide-react";
-import { useExercises } from "@/hooks/useExerciseManagement";
+import { useExerciseManagement } from "@/hooks/useExerciseManagement";
 
 interface StudentActivityCardsProps {
   student: Student;
 }
 
 export const StudentActivityCards: React.FC<StudentActivityCardsProps> = ({ student }) => {
-  const { exercises: allExercises } = useExercises();
+  const { exercises: allExercises } = useExerciseManagement();
   const studentExerciseIds = student.exercises || [];
   
   // Get exercise details from IDs
