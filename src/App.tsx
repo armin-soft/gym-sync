@@ -76,13 +76,18 @@ function AppContent() {
   }
 
   // اگر پنل مدیریت انتخاب شده، از AuthWrapper استفاده کنید
-  return (
-    <AuthWrapper>
-      <Layout>
-        <AppRoutes />
-      </Layout>
-    </AuthWrapper>
-  );
+  if (selectedUserType === "management") {
+    return (
+      <AuthWrapper>
+        <Layout>
+          <AppRoutes />
+        </Layout>
+      </AuthWrapper>
+    );
+  }
+
+  // fallback - اگر نوع کاربر نامشخص باشد، به صفحه انتخاب برگردید
+  return <UserTypeSelectionNew />;
 }
 
 function App() {

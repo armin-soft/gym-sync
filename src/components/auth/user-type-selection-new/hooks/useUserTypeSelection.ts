@@ -25,17 +25,17 @@ export const useUserTypeSelection = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
       setCurrentStep(3);
       
-      // مرحله ۳: هدایت مستقیم به صفحه مقصد
+      // مرحله ۳: هدایت به صفحه اصلی برای اعمال مسیریابی مناسب
       await new Promise(resolve => setTimeout(resolve, 600));
       
-      if (type === 'management') {
-        console.log('هدایت به: /Management');
-        navigate("/Management", { replace: true });
-      } else if (type === 'student') {
-        console.log('هدایت مستقیم به: /Students');
-        // هدایت مستقیم به پنل شاگرد بدون نیاز به AuthWrapper
-        navigate("/Students", { replace: true });
-      }
+      console.log('هدایت به صفحه اصلی برای اعمال مسیریابی نوع کاربر:', type);
+      // هدایت به صفحه اصلی تا App.tsx مسیریابی مناسب را اعمال کند
+      navigate("/", { replace: true });
+      
+      // رفرش صفحه برای اطمینان از اعمال تغییرات
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error('خطا در هنگام هدایت:', error);
       setIsProcessing(false);
