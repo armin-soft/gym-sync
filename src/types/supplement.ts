@@ -13,6 +13,7 @@ export interface SupplementCategory {
   id: number;
   name: string;
   description?: string;
+  type?: 'supplement' | 'vitamin';
 }
 
 export type SupplementType = 'supplement' | 'vitamin';
