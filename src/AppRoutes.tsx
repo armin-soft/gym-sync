@@ -27,6 +27,14 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
+      {/* Student Panel Routes - این مسیرها برای پنل شاگرد هستند */}
+      <Route path="/Students" element={<StudentPanel />} />
+      <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
+      <Route path="/Students/profile" element={<StudentProfile />} />
+      <Route path="/Students/exercises" element={<StudentExercises />} />
+      <Route path="/Students/diet" element={<StudentDiet />} />
+      <Route path="/Students/supplements" element={<StudentSupplements />} />
+      
       {/* Management Panel Routes - Enhanced for direct access */}
       <Route path="/Management" element={<Management />} />
       <Route path="/Management/*" element={<Management />} />
@@ -52,14 +60,6 @@ const AppRoutes = () => {
       <Route path="/trainer" element={<Navigate to="/Management/Coach-Profile" replace />} />
       <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
       <Route path="/management" element={<Navigate to="/Management" replace />} />
-
-      {/* Student Panel Routes - Fixed to show Student Panel instead of Management */}
-      <Route path="/Students" element={<StudentPanel />} />
-      <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
-      <Route path="/Students/profile" element={<StudentProfile />} />
-      <Route path="/Students/exercises" element={<StudentExercises />} />
-      <Route path="/Students/diet" element={<StudentDiet />} />
-      <Route path="/Students/supplements" element={<StudentSupplements />} />
 
       {/* Catch all route - improved handling */}
       <Route path="*" element={<Navigate to="/" replace />} />
