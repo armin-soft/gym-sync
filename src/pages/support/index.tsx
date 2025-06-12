@@ -27,47 +27,7 @@ export default function SupportPage() {
         const parsedMessages = JSON.parse(savedMessages);
         setMessages(parsedMessages);
       } else {
-        // داده‌های نمونه واقعی برای شروع
-        const sampleMessages: SupportMessage[] = [
-          {
-            id: "1",
-            studentId: "student_001",
-            studentName: "علی احمدی",
-            studentImage: "",
-            subject: "سوال درباره برنامه تمرینی",
-            message: "سلام استاد. من در مورد تمرین اسکات سوال داشتم. آیا باید هر روز انجام دهم؟",
-            timestamp: new Date().getTime() - 2 * 60 * 60 * 1000, // 2 ساعت پیش
-            status: "unread",
-            priority: "medium",
-            category: "exercise"
-          },
-          {
-            id: "2",
-            studentId: "student_002",
-            studentName: "فاطمه کریمی",
-            studentImage: "",
-            subject: "مشکل در برنامه غذایی",
-            message: "استاد محترم، من نسبت به برخی غذاها حساسیت دارم. آیا می‌توانید برنامه غذایی من را تغییر دهید؟",
-            timestamp: new Date().getTime() - 5 * 60 * 60 * 1000, // 5 ساعت پیش
-            status: "read",
-            priority: "high",
-            category: "diet"
-          },
-          {
-            id: "3",
-            studentId: "student_003",
-            studentName: "محمد رضایی",
-            studentImage: "",
-            subject: "درخواست جلسه مشاوره",
-            message: "سلام. می‌خواستم یک جلسه مشاوره حضوری با شما داشته باشم. چه زمانی امکان‌پذیر است؟",
-            timestamp: new Date().getTime() - 24 * 60 * 60 * 1000, // 1 روز پیش
-            status: "replied",
-            priority: "low",
-            category: "consultation"
-          }
-        ];
-        setMessages(sampleMessages);
-        localStorage.setItem('supportMessages', JSON.stringify(sampleMessages));
+        setMessages([]);
       }
     } catch (error) {
       console.error('Error loading support messages:', error);
@@ -108,7 +68,7 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-sky-50/30 to-violet-50/40" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40" dir="rtl">
       <div className={cn("w-full", getContainerClasses())}>
         <SupportHeader />
         <SupportStats messages={messages} />

@@ -35,42 +35,36 @@ export function MessagesFilters({
       count: messages.length,
       color: "text-gray-600",
       bgColor: "bg-gray-50",
-      activeColor: "bg-violet-50 text-violet-600 border-violet-200"
+      activeColor: "bg-emerald-50 text-emerald-600 border-emerald-200"
     },
     {
       key: "unread" as MessageFilter,
       label: "خوانده نشده",
       icon: MessageCircle,
       count: messages.filter(m => m.status === "unread").length,
-      color: "text-red-600",
-      bgColor: "bg-red-50",
-      activeColor: "bg-red-50 text-red-600 border-red-200"
+      color: "text-sky-600",
+      bgColor: "bg-sky-50",
+      activeColor: "bg-sky-50 text-sky-600 border-sky-200"
     },
     {
       key: "read" as MessageFilter,
       label: "خوانده شده",
       icon: MessageSquare,
       count: messages.filter(m => m.status === "read").length,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-      activeColor: "bg-blue-50 text-blue-600 border-blue-200"
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-50",
+      activeColor: "bg-emerald-50 text-emerald-600 border-emerald-200"
     },
     {
       key: "replied" as MessageFilter,
       label: "پاسخ داده شده",
       icon: CheckCircle,
       count: messages.filter(m => m.status === "replied").length,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      activeColor: "bg-green-50 text-green-600 border-green-200"
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-50",
+      activeColor: "bg-emerald-50 text-emerald-600 border-emerald-200"
     }
   ];
-
-  const getCardPadding = () => {
-    if (deviceInfo.isMobile) return "p-3";
-    if (deviceInfo.isTablet) return "p-4";
-    return "p-5";
-  };
 
   return (
     <div className="space-y-4">
@@ -83,7 +77,7 @@ export function MessagesFilters({
             placeholder="جستجو در پیام‌ها..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-right"
+            className="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-right"
             dir="rtl"
           />
         </div>

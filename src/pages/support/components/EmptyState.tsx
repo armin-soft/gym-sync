@@ -44,17 +44,17 @@ export function EmptyState({ filter, searchQuery }: EmptyStateProps) {
     )} dir="rtl">
       <div className="flex flex-col items-center">
         <div className={cn(
-          "rounded-full bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center mb-6",
+          "rounded-full bg-gradient-to-br from-emerald-100 to-sky-100 flex items-center justify-center mb-6",
           getIconSize()
         )}>
           {isSearching ? (
             <Search className={cn(
-              "text-violet-600",
+              "text-emerald-600",
               deviceInfo.isMobile ? "w-8 h-8" : deviceInfo.isTablet ? "w-10 h-10" : "w-12 h-12"
             )} />
           ) : (
             <MessageSquare className={cn(
-              "text-violet-600",
+              "text-emerald-600",
               deviceInfo.isMobile ? "w-8 h-8" : deviceInfo.isTablet ? "w-10 h-10" : "w-12 h-12"
             )} />
           )}
@@ -82,8 +82,8 @@ export function EmptyState({ filter, searchQuery }: EmptyStateProps) {
         </p>
         
         {!isSearching && !hasFilter && (
-          <div className="mt-6 p-4 bg-violet-50 rounded-lg border border-violet-200">
-            <p className="text-violet-700 text-sm font-medium">
+          <div className="mt-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+            <p className="text-emerald-700 text-sm font-medium">
               💡 شاگردان می‌توانند از پنل شخصی خود پیام ارسال کنند
             </p>
           </div>
