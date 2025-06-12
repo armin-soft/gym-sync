@@ -36,6 +36,11 @@ export const getColorClasses = (color: string) => {
       border: "border-pink-200/50 dark:border-pink-800/50",
       icon: "from-pink-500 to-pink-600"
     },
+    purple: {
+      bg: "from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20",
+      border: "border-purple-200/50 dark:border-purple-800/50",
+      icon: "from-purple-500 to-purple-600"
+    },
     indigo: {
       bg: "from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20",
       border: "border-indigo-200/50 dark:border-indigo-800/50",
