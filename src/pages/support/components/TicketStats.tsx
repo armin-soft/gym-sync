@@ -1,12 +1,11 @@
-
 import React from "react";
 import { Ticket, Clock, CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
-import { TicketStats } from "../types";
+import type { TicketStats as TicketStatsType } from "../types";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 interface TicketStatsProps {
-  stats: TicketStats;
+  stats: TicketStatsType;
 }
 
 export function TicketStats({ stats }: TicketStatsProps) {

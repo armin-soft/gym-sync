@@ -1,23 +1,24 @@
 
 import React from "react";
-import { MessageSquare, Search } from "lucide-react";
-import { MessageFilter } from "../types";
+import { Ticket, Search } from "lucide-react";
+import { TicketFilter } from "../types";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
-  filter: MessageFilter;
+  filter: TicketFilter;
   searchQuery: string;
 }
 
 export function EmptyState({ filter, searchQuery }: EmptyStateProps) {
   const deviceInfo = useDeviceInfo();
   
-  const getFilterLabel = (filter: MessageFilter): string => {
+  const getFilterLabel = (filter: TicketFilter): string => {
     switch (filter) {
-      case "unread": return "خوانده نشده";
-      case "read": return "خوانده شده";
-      case "replied": return "پاسخ داده شده";
+      case "open": return "باز";
+      case "in_progress": return "در حال بررسی";
+      case "resolved": return "حل شده";
+      case "closed": return "بسته شده";
       default: return "";
     }
   };
@@ -53,7 +54,7 @@ export function EmptyState({ filter, searchQuery }: EmptyStateProps) {
               deviceInfo.isMobile ? "w-8 h-8" : deviceInfo.isTablet ? "w-10 h-10" : "w-12 h-12"
             )} />
           ) : (
-            <MessageSquare className={cn(
+            <Ticket className={cn(
               "text-emerald-600",
               deviceInfo.isMobile ? "w-8 h-8" : deviceInfo.isTablet ? "w-10 h-10" : "w-12 h-12"
             )} />
@@ -65,8 +66,8 @@ export function EmptyState({ filter, searchQuery }: EmptyStateProps) {
           deviceInfo.isMobile ? "text-lg" : deviceInfo.isTablet ? "text-xl" : "text-2xl"
         )}>
           {isSearching ? "نتیجه‌ای یافت نشد" : 
-           hasFilter ? `هیچ پیام ${getFilterLabel(filter)}ای وجود ندارد` : 
-           "هیچ پیامی وجود ندارد"}
+           hasFilter ? `هیچ تیکت ${getFilterLabel(filter)}ی وجود ندارد` : 
+           "هیچ تیکتی وجود ندارد"}
         </h3>
         
         <p className={cn(
@@ -76,15 +77,15 @@ export function EmptyState({ filter, searchQuery }: EmptyStateProps) {
           {isSearching ? 
             `برای جستجوی "${searchQuery}" هیچ نتیجه‌ای پیدا نشد. لطفاً کلمات کلیدی دیگری امتحان کنید.` :
            hasFilter ? 
-            `در حال حاضر هیچ پیام ${getFilterLabel(filter)}ای در سیستم موجود نیست.` :
-            "هنوز هیچ پیامی از شاگردان دریافت نکرده‌اید. به محض ارسال پیام توسط شاگردان، در اینجا نمایش داده خواهد شد."
+            `در حال حاضر هیچ تیکت ${getFilterLabel(filter)}ی در سیستم موجود نیست.` :
+            "هنوز هیچ تیکتی از شاگردان دریافت نکرده‌اید. به محض ارسال تیکت توسط شاگردان، در اینجا نمایش داده خواهد شد."
           }
         </p>
         
         {!isSearching && !hasFilter && (
           <div className="mt-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
             <p className="text-emerald-700 text-sm font-medium">
-              💡 شاگردان می‌توانند از پنل شخصی خود پیام ارسال کنند
+              💡 شاگردان می‌توانند از پنل شخصی خود تیکت پشتیبانی ارسال کنند
             </p>
           </div>
         )}
