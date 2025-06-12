@@ -35,34 +35,34 @@ export function MessagesFilters({
       count: messages.length,
       color: "text-gray-600",
       bgColor: "bg-gray-50",
-      activeColor: "bg-emerald-50 text-emerald-600 border-emerald-200"
+      activeColor: "bg-indigo-50 text-indigo-600 border-indigo-200"
     },
     {
       key: "unread" as MessageFilter,
       label: "خوانده نشده",
       icon: MessageCircle,
       count: messages.filter(m => m.status === "unread").length,
-      color: "text-sky-600",
-      bgColor: "bg-sky-50",
-      activeColor: "bg-sky-50 text-sky-600 border-sky-200"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      activeColor: "bg-purple-50 text-purple-600 border-purple-200"
     },
     {
       key: "read" as MessageFilter,
       label: "خوانده شده",
       icon: MessageSquare,
       count: messages.filter(m => m.status === "read").length,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-50",
-      activeColor: "bg-emerald-50 text-emerald-600 border-emerald-200"
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50",
+      activeColor: "bg-indigo-50 text-indigo-600 border-indigo-200"
     },
     {
       key: "replied" as MessageFilter,
       label: "پاسخ داده شده",
       icon: CheckCircle,
       count: messages.filter(m => m.status === "replied").length,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-50",
-      activeColor: "bg-emerald-50 text-emerald-600 border-emerald-200"
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50",
+      activeColor: "bg-indigo-50 text-indigo-600 border-indigo-200"
     }
   ];
 
@@ -77,7 +77,7 @@ export function MessagesFilters({
             placeholder="جستجو در پیام‌ها..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-right"
+            className="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-right"
             dir="rtl"
           />
         </div>

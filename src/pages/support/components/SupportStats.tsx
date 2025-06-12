@@ -43,33 +43,33 @@ export function SupportStats({ messages }: SupportStatsProps) {
       title: "کل پیام‌ها",
       value: stats.total,
       icon: MessageSquare,
-      color: "from-emerald-500 to-sky-600",
-      bgColor: "bg-emerald-50",
-      textColor: "text-emerald-600"
+      color: "from-indigo-500 to-purple-600",
+      bgColor: "bg-indigo-50",
+      textColor: "text-indigo-600"
     },
     {
       title: "پیام‌های جدید",
       value: stats.unread,
       icon: MessageCircle,
-      color: "from-sky-500 to-emerald-600",
-      bgColor: "bg-sky-50",
-      textColor: "text-sky-600"
+      color: "from-purple-500 to-indigo-600",
+      bgColor: "bg-purple-50",
+      textColor: "text-purple-600"
     },
     {
       title: "پاسخ داده شده",
       value: stats.replied,
       icon: CheckCircle,
-      color: "from-emerald-500 to-sky-600",
-      bgColor: "bg-emerald-50",
-      textColor: "text-emerald-600"
+      color: "from-indigo-500 to-purple-600",
+      bgColor: "bg-indigo-50",
+      textColor: "text-indigo-600"
     },
     {
       title: "پیام‌های امروز",
       value: stats.today,
       icon: Clock,
-      color: "from-sky-500 to-emerald-600",
-      bgColor: "bg-sky-50",
-      textColor: "text-sky-600"
+      color: "from-purple-500 to-indigo-600",
+      bgColor: "bg-purple-50",
+      textColor: "text-purple-600"
     }
   ];
 
