@@ -78,7 +78,7 @@ export const StudentContextMenu: React.FC<StudentContextMenuProps> = ({
               subtitle="برنامه‌های تمرینی و رژیم"
               onClick={handleProgramClick}
               index={0}
-              variant="purple"
+              variant="emerald"
             />
             
             {onAddDiet && (
