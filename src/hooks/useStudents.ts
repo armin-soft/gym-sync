@@ -13,6 +13,8 @@ const triggerStatsUpdate = () => {
 };
 
 export const useStudents = () => {
+  console.log('useStudents: Hook called');
+  
   const { 
     students, 
     exercises, 
@@ -26,6 +28,26 @@ export const useStudents = () => {
     handleSaveDiet,
     handleSaveSupplements
   } = useStudentsImpl();
+  
+  console.log('useStudents: Students from useStudentsImpl:', students.length);
+  
+  // مجدداً بررسی مستقیم localStorage
+  useEffect(() => {
+    const checkLocalStorage = () => {
+      try {
+        const savedStudents = localStorage.getItem('students');
+        console.log('useStudents: Direct localStorage check:', savedStudents ? 'Data exists' : 'No data');
+        if (savedStudents) {
+          const parsed = JSON.parse(savedStudents);
+          console.log('useStudents: Parsed students:', Array.isArray(parsed) ? parsed.length : 'Not an array');
+        }
+      } catch (error) {
+        console.error('useStudents: Error checking localStorage:', error);
+      }
+    };
+    
+    checkLocalStorage();
+  }, []);
   
   const { toast } = useToast();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
