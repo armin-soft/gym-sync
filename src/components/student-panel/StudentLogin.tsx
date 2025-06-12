@@ -3,7 +3,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { PageContainer } from "@/components/ui/page-container";
+import { useStudents } from "@/hooks/useStudents";
 import { StudentLoginBackground } from "./login/StudentLoginBackground";
 import { StudentLoginHeader } from "./login/StudentLoginHeader";
 import { StudentLoginStats } from "./login/StudentLoginStats";
@@ -15,13 +15,16 @@ import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
 export const StudentLogin = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { students } = useStudents();
 
   const handleLoginSuccess = async (phone: string) => {
     try {
+      console.log('Login success for phone:', phone);
       // Find student by phone
       const student = students.find(s => s.phone === phone);
       
       if (student) {
+        console.log('Found student:', student);
         // Store student login info
         localStorage.setItem("studentLoggedIn", "true");
         localStorage.setItem("loggedInStudentId", student.id.toString());
@@ -34,6 +37,7 @@ export const StudentLogin = () => {
         // Navigate to student dashboard
         navigate(`/Students/dashboard/${student.id}`);
       } else {
+        console.log('Student not found for phone:', phone);
         toast({
           title: "خطا در ورود به پنل شاگرد",
           description: "شماره موبایل یافت نشد",
@@ -65,8 +69,7 @@ export const StudentLogin = () => {
     handlePhoneSubmit,
     handleCodeSubmit,
     handleChangePhone,
-    handleResendCode,
-    students
+    handleResendCode
   } = useStudentLogin({ onLoginSuccess: handleLoginSuccess });
 
   if (locked) {
