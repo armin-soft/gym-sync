@@ -8,6 +8,7 @@ import {
   Pill,
   Database,
   BarChart3,
+  MessageCircle,
 } from "lucide-react";
 import { ModernSidebar } from "./modern-sidebar/ModernSidebar";
 import { SidebarItem, TrainerProfile, SidebarStats } from "./modern-sidebar/types";
@@ -88,6 +89,15 @@ const sidebarItems: SidebarItem[] = [
     icon: BarChart3,
     gradient: "from-teal-500 to-cyan-600",
     isNew: false,
+  },
+  {
+    id: "support",
+    title: "مرکز پشتیبانی",
+    subtitle: "مدیریت پیام‌های شاگردان و ارتباطات",
+    href: "/Management/Support",
+    icon: MessageCircle,
+    gradient: "from-emerald-500 to-sky-500",
+    isNew: true,
   },
 ];
 
