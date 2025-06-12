@@ -9,6 +9,7 @@ import {
   Database,
   BarChart3,
   MessageSquare,
+  LogOut,
 } from "lucide-react";
 import { ModernSidebar } from "./modern-sidebar/ModernSidebar";
 import { SidebarItem, TrainerProfile, SidebarStats } from "./modern-sidebar/types";
@@ -187,6 +188,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       console.error('Error loading stats:', error);
     }
   };
+
+  const handleLogout = () => {
+    // Clear authentication data
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("rememberedEmail");
+    localStorage.removeItem("rememberMeExpiry");
+    localStorage.removeItem("hasSelectedUserType");
+    localStorage.removeItem("selectedUserType");
+    
+    // Reload the page to show user type selection
+    window.location.reload();
+  };
   
   useEffect(() => {
     loadProfile();
@@ -218,6 +231,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       items={sidebarItems}
       profile={trainerProfile}
       stats={stats}
+      onLogout={handleLogout}
     />
   );
 }

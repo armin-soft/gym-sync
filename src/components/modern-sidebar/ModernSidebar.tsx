@@ -16,6 +16,7 @@ interface ModernSidebarProps {
   items: SidebarItem[];
   profile: TrainerProfile;
   stats: SidebarStats;
+  onLogout?: () => void;
 }
 
 export const ModernSidebar: React.FC<ModernSidebarProps> = ({
@@ -23,7 +24,8 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
   onClose,
   items,
   profile,
-  stats
+  stats,
+  onLogout
 }) => {
   const { getSidebarWidth } = useSidebarDimensions();
 
@@ -58,7 +60,10 @@ export const ModernSidebar: React.FC<ModernSidebarProps> = ({
               </div>
               
               <div className="relative z-20 flex-shrink-0">
-                <SidebarFooter gymName={profile.gymName} />
+                <SidebarFooter 
+                  gymName={profile.gymName} 
+                  onLogout={onLogout}
+                />
               </div>
             </div>
           </SheetContent>
