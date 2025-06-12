@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +45,12 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
           console.log('StudentLogin: No callback, navigating directly');
           navigate(`/Students/dashboard/${student.id}`, { replace: true });
         }
+        
+        // نمایش پیام موفقیت
+        toast({
+          title: "ورود موفق به پنل شاگرد",
+          description: `${student.name} عزیز، خوش آمدید`,
+        });
       } else {
         console.error('StudentLogin: Student not found for phone:', phone);
         toast({

@@ -100,12 +100,13 @@ const StudentPanel = () => {
       localStorage.setItem("studentLoggedIn", "true");
       localStorage.setItem("loggedInStudentId", student.id.toString());
       
-      // به‌روزرسانی state
+      // به‌روزرسانی state فوری
       setLoggedInStudent(student);
       setIsLoggedIn(true);
       
-      // هدایت به داشبورد
       console.log('Navigating to dashboard...');
+      
+      // هدایت فوری بدون تاخیر
       navigate(`/Students/dashboard/${student.id}`, { replace: true });
       
       // ارسال event برای سایر component‌ها
@@ -148,13 +149,21 @@ const StudentPanel = () => {
     );
   }
 
-  console.log('Current state - isLoggedIn:', isLoggedIn, 'loggedInStudent:', loggedInStudent);
+  console.log('Current state - isLoggedIn:', isLoggedIn, 'loggedInStudent:', loggedInStudent, 'studentId:', studentId);
 
-  if (!isLoggedIn || !loggedInStudent) {
-    return <StudentLogin onLoginSuccess={handleLoginSuccess} />;
+  // اگر در مسیر داشبورد هستیم و شاگرد وارد شده
+  if (studentId && isLoggedIn && loggedInStudent) {
+    return <StudentDashboard />;
   }
 
-  return <StudentDashboard />;
+  // اگر شاگرد وارد شده ولی در مسیر اصلی است، هدایت به داشبورد
+  if (isLoggedIn && loggedInStudent && !studentId) {
+    navigate(`/Students/dashboard/${loggedInStudent.id}`, { replace: true });
+    return null;
+  }
+
+  // در غیر این صورت نمایش فرم ورود
+  return <StudentLogin onLoginSuccess={handleLoginSuccess} />;
 };
 
 export default StudentPanel;
