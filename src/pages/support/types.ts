@@ -1,27 +1,56 @@
 
-export type MessageStatus = "unread" | "read" | "replied";
-export type MessagePriority = "low" | "medium" | "high";
-export type MessageCategory = "exercise" | "diet" | "supplement" | "consultation" | "technical" | "other";
-export type MessageFilter = "all" | MessageStatus;
+export type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
+export type TicketPriority = "low" | "medium" | "high" | "urgent";
+export type TicketCategory = "exercise" | "diet" | "supplement" | "consultation" | "technical" | "payment" | "other";
 
-export interface SupportMessage {
+export interface SupportTicket {
   id: string;
-  studentId: string;
+  ticketNumber: string;
+  studentId: number;
   studentName: string;
   studentImage?: string;
+  studentPhone?: string;
+  studentEmail?: string;
   subject: string;
-  message: string;
-  timestamp: number;
-  status: MessageStatus;
-  priority: MessagePriority;
-  category: MessageCategory;
-  reply?: string;
-  replyTimestamp?: number;
+  description: string;
+  category: TicketCategory;
+  priority: TicketPriority;
+  status: TicketStatus;
+  createdAt: number;
+  updatedAt: number;
+  assignedTo?: string;
+  responses: TicketResponse[];
+  attachments?: TicketAttachment[];
 }
 
-export interface SupportStats {
-  totalMessages: number;
-  unreadMessages: number;
-  repliedMessages: number;
-  todayMessages: number;
+export interface TicketResponse {
+  id: string;
+  ticketId: string;
+  authorType: "trainer" | "student";
+  authorName: string;
+  message: string;
+  timestamp: number;
+  isInternal?: boolean;
 }
+
+export interface TicketAttachment {
+  id: string;
+  ticketId: string;
+  fileName: string;
+  fileUrl: string;
+  uploadedAt: number;
+  uploadedBy: string;
+}
+
+export interface TicketStats {
+  totalTickets: number;
+  openTickets: number;
+  inProgressTickets: number;
+  resolvedTickets: number;
+  closedTickets: number;
+  todayTickets: number;
+  averageResponseTime: number;
+}
+
+export type TicketFilter = "all" | TicketStatus;
+export type TicketSort = "newest" | "oldest" | "priority" | "status";
