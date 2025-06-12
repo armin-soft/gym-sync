@@ -1,43 +1,27 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { UtensilsCrossed, X } from "lucide-react";
+import { Salad } from "lucide-react";
 
 interface StudentMealHeaderProps {
   studentName: string;
-  onClose?: () => void;
 }
 
-const StudentMealHeader: React.FC<StudentMealHeaderProps> = ({ 
-  studentName,
-  onClose 
-}) => {
+const StudentMealHeader: React.FC<StudentMealHeaderProps> = ({ studentName }) => {
   return (
-    <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-950/30 dark:to-sky-950/30">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-xl flex items-center justify-center shadow-lg">
-          <UtensilsCrossed className="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            برنامه غذایی {studentName}
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            انتخاب وعده‌های غذایی
-          </p>
+    <div className="px-6 py-4 border-b bg-white dark:bg-gray-800/50 shadow-sm shrink-0 text-right">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-md">
+              <Salad className="h-5 w-5 text-white" />
+            </div>
+            <div className="text-right">
+              <h2 className="text-lg font-bold text-foreground">تخصیص برنامه</h2>
+              <p className="text-sm font-medium text-muted-foreground">{studentName}</p>
+            </div>
+          </div>
         </div>
       </div>
-      
-      {onClose && (
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={onClose}
-          className="h-8 w-8"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-      )}
     </div>
   );
 };

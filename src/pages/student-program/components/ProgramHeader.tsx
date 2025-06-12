@@ -1,8 +1,9 @@
 
 import React from "react";
+import { Student } from "@/components/students/StudentTypes";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { Student } from "@/components/students/StudentTypes";
+import { motion } from "framer-motion";
 
 interface ProgramHeaderProps {
   student: Student;
@@ -11,15 +12,24 @@ interface ProgramHeaderProps {
 
 const ProgramHeader: React.FC<ProgramHeaderProps> = ({ student, onBack }) => {
   return (
-    <div className="flex items-center justify-between p-4 border-b">
-      <div className="flex items-center gap-3">
-        <Button variant="outline" size="sm" onClick={onBack}>
-          <ArrowRight className="w-4 h-4 ml-2" />
-          بازگشت
+    <motion.div
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="bg-white dark:bg-gray-800 border-b px-4 sm:px-6 py-4 sticky top-0 z-10"
+    >
+      <div className="flex items-center gap-2">
+        <Button
+          onClick={onBack}
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-1"
+        >
+          <ArrowRight className="h-4 w-4" />
+          <span>بازگشت</span>
         </Button>
-        <h1 className="text-xl font-bold">برنامه {student.name}</h1>
+        <h1 className="text-lg font-semibold">برنامه {student.name}</h1>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

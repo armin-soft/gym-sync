@@ -1,6 +1,10 @@
+
 import { useState, useEffect } from "react";
-import { ExerciseWithSets } from "@/types/exercise";
-import { useExerciseData } from "@/hooks/exercises/useExerciseData";
+import { ExerciseWithSets } from "@/hooks/exercise-selection";
+import { useExerciseDialogData } from "./useExerciseDialogData";
+import { useExerciseSelection } from "@/hooks/exercise-selection";
+import { useExerciseDialogState } from "./useExerciseDialogState";
+import { useToast } from "@/hooks/use-toast";
 
 interface UseStudentExerciseDialogStateProps {
   open: boolean;
@@ -15,6 +19,9 @@ interface UseStudentExerciseDialogStateProps {
   initialExercisesDay5?: number[];
 }
 
+/**
+ * Custom hook that manages all state for the student exercise dialog
+ */
 export const useStudentExerciseDialogState = ({
   open,
   onOpenChange,
@@ -27,198 +34,18 @@ export const useStudentExerciseDialogState = ({
   initialExercisesDay4 = [],
   initialExercisesDay5 = []
 }: UseStudentExerciseDialogStateProps) => {
-  const { exercises, categories, exerciseTypes, isLoading } = useExerciseData();
+  // For notifications
+  const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState("day1");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [selectedExerciseType, setSelectedExerciseType] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
-  // Exercise selections for each day
-  const [selectedExercisesDay1, setSelectedExercisesDay1] = useState<number[]>(initialExercisesDay1);
-  const [selectedExercisesDay2, setSelectedExercisesDay2] = useState<number[]>(initialExercisesDay2);
-  const [selectedExercisesDay3, setSelectedExercisesDay3] = useState<number[]>(initialExercisesDay3);
-  const [selectedExercisesDay4, setSelectedExercisesDay4] = useState<number[]>(initialExercisesDay4);
-  const [selectedExercisesDay5, setSelectedExercisesDay5] = useState<number[]>(initialExercisesDay5);
-
-  // Exercise sets for each day
-  const [exerciseSetsDay1, setExerciseSetsDay1] = useState<Record<number, number>>({});
-  const [exerciseSetsDay2, setExerciseSetsDay2] = useState<Record<number, number>>({});
-  const [exerciseSetsDay3, setExerciseSetsDay3] = useState<Record<number, number>>({});
-  const [exerciseSetsDay4, setExerciseSetsDay4] = useState<Record<number, number>>({});
-  const [exerciseSetsDay5, setExerciseSetsDay5] = useState<Record<number, number>>({});
-
-  // Exercise reps for each day
-  const [exerciseRepsDay1, setExerciseRepsDay1] = useState<Record<number, string>>({});
-  const [exerciseRepsDay2, setExerciseRepsDay2] = useState<Record<number, string>>({});
-  const [exerciseRepsDay3, setExerciseRepsDay3] = useState<Record<number, string>>({});
-  const [exerciseRepsDay4, setExerciseRepsDay4] = useState<Record<number, string>>({});
-  const [exerciseRepsDay5, setExerciseRepsDay5] = useState<Record<number, string>>({});
-
-  // Filtered data - Remove exerciseType references
-  const filteredCategories = categories;
-
-  const filteredExercises = exercises.filter(exercise => {
-    const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategoryId === null || exercise.categoryId === selectedCategoryId;
-    
-    return matchesSearch && matchesCategory;
-  });
-
-  // Handlers
-  const toggleSortOrder = () => {
-    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery("");
-    setSelectedCategoryId(null);
-    setSelectedExerciseType("");
-  };
-
-  const toggleExerciseDay1 = (id: number) => {
-    setSelectedExercisesDay1(prev =>
-      prev.includes(id) ? prev.filter(exerciseId => exerciseId !== id) : [...prev, id]
-    );
-  };
-
-  const toggleExerciseDay2 = (id: number) => {
-    setSelectedExercisesDay2(prev =>
-      prev.includes(id) ? prev.filter(exerciseId => exerciseId !== id) : [...prev, id]
-    );
-  };
-
-  const toggleExerciseDay3 = (id: number) => {
-    setSelectedExercisesDay3(prev =>
-      prev.includes(id) ? prev.filter(exerciseId => exerciseId !== id) : [...prev, id]
-    );
-  };
-
-  const toggleExerciseDay4 = (id: number) => {
-    setSelectedExercisesDay4(prev =>
-      prev.includes(id) ? prev.filter(exerciseId => exerciseId !== id) : [...prev, id]
-    );
-  };
-
-  const toggleExerciseDay5 = (id: number) => {
-    setSelectedExercisesDay5(prev =>
-      prev.includes(id) ? prev.filter(exerciseId => exerciseId !== id) : [...prev, id]
-    );
-  };
-
-  const handleSetsChangeDay1 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay1(prev => ({ ...prev, [exerciseId]: sets }));
-  };
-
-  const handleSetsChangeDay2 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay2(prev => ({ ...prev, [exerciseId]: sets }));
-  };
-
-  const handleSetsChangeDay3 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay3(prev => ({ ...prev, [exerciseId]: sets }));
-  };
-
-  const handleSetsChangeDay4 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay4(prev => ({ ...prev, [exerciseId]: sets }));
-  };
-
-  const handleSetsChangeDay5 = (exerciseId: number, sets: number) => {
-    setExerciseSetsDay5(prev => ({ ...prev, [exerciseId]: sets }));
-  };
-
-  const handleRepsChangeDay1 = (exerciseId: number, reps: string) => {
-    setExerciseRepsDay1(prev => ({ ...prev, [exerciseId]: reps }));
-  };
-
-  const handleRepsChangeDay2 = (exerciseId: number, reps: string) => {
-    setExerciseRepsDay2(prev => ({ ...prev, [exerciseId]: reps }));
-  };
-
-  const handleRepsChangeDay3 = (exerciseId: number, reps: string) => {
-    setExerciseRepsDay3(prev => ({ ...prev, [exerciseId]: reps }));
-  };
-
-  const handleRepsChangeDay4 = (exerciseId: number, reps: string) => {
-    setExerciseRepsDay4(prev => ({ ...prev, [exerciseId]: reps }));
-  };
-
-  const handleRepsChangeDay5 = (exerciseId: number, reps: string) => {
-    setExerciseRepsDay5(prev => ({ ...prev, [exerciseId]: reps }));
-  };
-
-  const getActiveTabSelectedExercises = () => {
-    switch (activeTab) {
-      case "day1": return selectedExercisesDay1;
-      case "day2": return selectedExercisesDay2;
-      case "day3": return selectedExercisesDay3;
-      case "day4": return selectedExercisesDay4;
-      case "day5": return selectedExercisesDay5;
-      default: return [];
-    }
-  };
-
-  const getActiveTabSelectedExercisesWithSets = (): ExerciseWithSets[] => {
-    const selectedExercises = getActiveTabSelectedExercises();
-    const sets = activeTab === "day1" ? exerciseSetsDay1 :
-                activeTab === "day2" ? exerciseSetsDay2 :
-                activeTab === "day3" ? exerciseSetsDay3 :
-                activeTab === "day4" ? exerciseSetsDay4 :
-                exerciseSetsDay5;
-    const reps = activeTab === "day1" ? exerciseRepsDay1 :
-                activeTab === "day2" ? exerciseRepsDay2 :
-                activeTab === "day3" ? exerciseRepsDay3 :
-                activeTab === "day4" ? exerciseRepsDay4 :
-                exerciseRepsDay5;
-
-    return selectedExercises.map(exerciseId => ({
-      id: Date.now() + Math.random(),
-      exerciseId,
-      sets: sets[exerciseId] || 3,
-      reps: reps[exerciseId] || "10"
-    }));
-  };
-
-  const handleSave = () => {
-    const exercisesWithSets = getActiveTabSelectedExercisesWithSets();
-    const dayNumber = parseInt(activeTab.replace("day", ""));
-    return onSave(exercisesWithSets, dayNumber);
-  };
-
-  const handleSaveAndContinue = () => {
-    const success = handleSave();
-    if (success && activeTab !== "day5") {
-      const nextDay = parseInt(activeTab.replace("day", "")) + 1;
-      setActiveTab(`day${nextDay}`);
-    }
-    return success;
-  };
-
-  const handleSaveDay = (exercisesWithSets: ExerciseWithSets[], onSaveCallback: (exercisesWithSets: ExerciseWithSets[], dayNumber?: number) => boolean, dayNumber: number) => {
-    return onSaveCallback(exercisesWithSets, dayNumber);
-  };
-
-  return {
-    isLoading,
-    exercises,
-    categories,
-    exerciseTypes,
-    activeTab,
-    setActiveTab,
-    searchQuery,
-    setSearchQuery,
-    selectedCategoryId,
-    setSelectedCategoryId,
-    selectedExerciseType,
-    setSelectedExerciseType,
-    sortOrder,
-    toggleSortOrder,
-    viewMode,
-    setViewMode,
-    filteredExercises,
-    filteredCategories,
-    handleClearSearch,
+  // Current tab state and changes - manage saving on each tab change
+  const [previousTab, setPreviousTab] = useState<string>("");
+  const [shouldAutoSave, setShouldAutoSave] = useState<boolean>(true);
+  
+  // Fetch exercises data
+  const { exercises, categories, exerciseTypes, isLoading } = useExerciseDialogData();
+  
+  // Exercise selection state with day 5
+  const {
     selectedExercisesDay1,
     selectedExercisesDay2,
     selectedExercisesDay3,
@@ -249,10 +76,232 @@ export const useStudentExerciseDialogState = ({
     handleRepsChangeDay3,
     handleRepsChangeDay4,
     handleRepsChangeDay5,
+    getSelectedExercisesWithSetsDay1,
+    getSelectedExercisesWithSetsDay2,
+    getSelectedExercisesWithSetsDay3,
+    getSelectedExercisesWithSetsDay4,
+    getSelectedExercisesWithSetsDay5
+  } = useExerciseSelection({
+    initialExercises,
+    initialExercisesDay1,
+    initialExercisesDay2,
+    initialExercisesDay3,
+    initialExercisesDay4,
+    initialExercisesDay5
+  });
+
+  // Dialog state management
+  const {
+    activeTab,
+    setActiveTab,
+    searchQuery,
+    setSearchQuery,
+    selectedCategoryId,
+    setSelectedCategoryId,
+    selectedExerciseType,
+    setSelectedExerciseType,
+    sortOrder,
+    toggleSortOrder,
+    viewMode,
+    setViewMode,
+    filteredExercises,
+    filteredCategories,
+    handleClearSearch,
+    handleSaveDay
+  } = useExerciseDialogState({
+    open,
+    initialExercises,
+    initialExercisesDay1,
+    initialExercisesDay2,
+    initialExercisesDay3,
+    initialExercisesDay4,
+    initialExercisesDay5,
+    categories,
+    exercises
+  });
+  
+  // Auto-save when changing tabs
+  useEffect(() => {
+    if (previousTab && activeTab !== previousTab && shouldAutoSave) {
+      const prevDayNumber = parseInt(previousTab.replace("day", ""));
+      let exercisesWithSets: ExerciseWithSets[] = [];
+      
+      switch(previousTab) {
+        case "day1":
+          exercisesWithSets = getSelectedExercisesWithSetsDay1();
+          break;
+        case "day2":
+          exercisesWithSets = getSelectedExercisesWithSetsDay2();
+          break;
+        case "day3":
+          exercisesWithSets = getSelectedExercisesWithSetsDay3();
+          break;
+        case "day4":
+          exercisesWithSets = getSelectedExercisesWithSetsDay4();
+          break;
+        case "day5":
+          exercisesWithSets = getSelectedExercisesWithSetsDay5();
+          break;
+      }
+      
+      if (exercisesWithSets.length > 0) {
+        const success = handleSaveDay(exercisesWithSets, onSave, prevDayNumber);
+        if (success) {
+          console.log(`Auto-saved exercises for day ${prevDayNumber}`);
+        }
+      }
+    }
+    
+    // Save current tab for next auto-save
+    setPreviousTab(activeTab);
+  }, [activeTab]);
+
+  // Update getActiveTabSelectedExercises to support day 5
+  const getActiveTabSelectedExercises = () => {
+    switch(activeTab) {
+      case "day1": return selectedExercisesDay1;
+      case "day2": return selectedExercisesDay2;
+      case "day3": return selectedExercisesDay3;
+      case "day4": return selectedExercisesDay4;
+      case "day5": return selectedExercisesDay5;
+      default: return [];
+    }
+  };
+
+  // Update getActiveTabSelectedExercisesWithSets to support day 5
+  const getActiveTabSelectedExercisesWithSets = () => {
+    switch(activeTab) {
+      case "day1": return getSelectedExercisesWithSetsDay1();
+      case "day2": return getSelectedExercisesWithSetsDay2();
+      case "day3": return getSelectedExercisesWithSetsDay3();
+      case "day4": return getSelectedExercisesWithSetsDay4();
+      case "day5": return getSelectedExercisesWithSetsDay5();
+      default: return [];
+    }
+  };
+
+  // Update handleSaveAndContinue to support 5 days
+  const handleSaveAndContinue = () => {
+    const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
+    const currentDayNumber = parseInt(activeTab.replace("day", ""));
+    
+    const success = handleSaveDay(selectedExercisesWithSets, onSave, currentDayNumber);
+    if (success) {
+      // Move to the next day - updated for 5 days
+      if (currentDayNumber < 5) {
+        // Disable auto-save for this tab change
+        setShouldAutoSave(false);
+        setActiveTab(`day${currentDayNumber + 1}`);
+        setShouldAutoSave(true);
+        
+        toast({
+          title: "ذخیره موفق",
+          description: `تمرین‌های روز ${currentDayNumber} ذخیره شد. اکنون روز ${currentDayNumber + 1} را تنظیم کنید.`
+        });
+      } else {
+        // If we're on the last day, close the dialog
+        toast({
+          title: "تکمیل برنامه",
+          description: "تمام روزهای تمرینی با موفقیت ذخیره شدند."
+        });
+        onOpenChange(false);
+      }
+    }
+    return success;
+  };
+
+  const handleSave = () => {
+    const selectedExercisesWithSets = getActiveTabSelectedExercisesWithSets();
+    const dayNumber = parseInt(activeTab.replace("day", ""));
+    
+    const success = handleSaveDay(selectedExercisesWithSets, onSave, dayNumber);
+    if (success) {
+      toast({
+        title: "ذخیره موفق",
+        description: `تمرین‌های روز ${dayNumber} با موفقیت ذخیره شدند.`
+      });
+      
+      // If we're on the last day, close the dialog
+      if (dayNumber === 5) {
+        onOpenChange(false);
+      }
+    }
+    return success;
+  };
+
+  return {
+    // Data
+    isLoading,
+    exercises,
+    categories,
+    exerciseTypes,
+    
+    // Tab state
+    activeTab,
+    setActiveTab,
+    
+    // Search and filter state
+    searchQuery,
+    setSearchQuery,
+    selectedCategoryId,
+    setSelectedCategoryId,
+    selectedExerciseType,
+    setSelectedExerciseType,
+    sortOrder,
+    toggleSortOrder,
+    viewMode,
+    setViewMode,
+    filteredExercises,
+    filteredCategories,
+    handleClearSearch,
+    
+    // Day 1 state
+    selectedExercisesDay1,
+    toggleExerciseDay1,
+    exerciseSetsDay1,
+    handleSetsChangeDay1,
+    exerciseRepsDay1,
+    handleRepsChangeDay1,
+    
+    // Day 2 state
+    selectedExercisesDay2,
+    toggleExerciseDay2,
+    exerciseSetsDay2,
+    handleSetsChangeDay2,
+    exerciseRepsDay2,
+    handleRepsChangeDay2,
+    
+    // Day 3 state
+    selectedExercisesDay3,
+    toggleExerciseDay3,
+    exerciseSetsDay3,
+    handleSetsChangeDay3,
+    exerciseRepsDay3,
+    handleRepsChangeDay3,
+    
+    // Day 4 state
+    selectedExercisesDay4,
+    toggleExerciseDay4,
+    exerciseSetsDay4,
+    handleSetsChangeDay4,
+    exerciseRepsDay4,
+    handleRepsChangeDay4,
+    
+    // Day 5 state
+    selectedExercisesDay5,
+    toggleExerciseDay5,
+    exerciseSetsDay5,
+    handleSetsChangeDay5,
+    exerciseRepsDay5,
+    handleRepsChangeDay5,
+    
+    // Helper functions
     getActiveTabSelectedExercises,
     getActiveTabSelectedExercisesWithSets,
     handleSave,
-    handleSaveAndContinue,
-    handleSaveDay
+    handleSaveDay,
+    handleSaveAndContinue
   };
 };
+
+export default useStudentExerciseDialogState;

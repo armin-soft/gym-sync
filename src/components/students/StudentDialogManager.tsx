@@ -1,91 +1,111 @@
 
-import React, { forwardRef, useImperativeHandle, useState } from "react";
-import { Student } from "./StudentTypes";
-import { StudentFormDialog } from "./dialogs/FormDialog";
-import { ExerciseDialog } from "./dialogs/ExerciseDialog";
-import { DietDialog } from "./dialogs/DietDialog";
-import { SupplementDialog } from "./dialogs/SupplementDialog";
+import React, { useImperativeHandle, forwardRef } from "react";
+import { Student } from "@/components/students/StudentTypes";
 import { ExerciseWithSets } from "@/types/exercise";
+import { useDialogState } from "./hooks/useDialogState";
+import {
+  FormDialog,
+  ExerciseDialog,
+  DietDialog,
+  SupplementDialog
+} from "./dialogs";
 
 export interface StudentDialogManagerRef {
   handleAdd: () => void;
   handleEdit: (student: Student) => void;
-  handleAddExercise: (student: Student) => void;
-  handleAddDiet: (student: Student) => void;
-  handleAddSupplement: (student: Student) => void;
+  handleAddExercise?: (student: Student) => void;
+  handleAddDiet?: (student: Student) => void;
+  handleAddSupplement?: (student: Student) => void;
 }
 
 interface StudentDialogManagerProps {
-  onSave: (data: any, selectedStudent?: Student) => boolean;
-  onSaveExercises: (exercisesData: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
-  onSaveDiet: (mealIds: number[], studentId: number, dayNumber?: number) => boolean;
-  onSaveSupplements: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
-  exercises: any[];
-  meals: any[];
-  supplements: any[];
+  onSave: (student: Student, selectedStudent?: Student) => void;
+  onSaveExercises?: (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => boolean;
+  onSaveDiet?: (mealIds: number[], studentId: number, dayNumber?: number) => boolean;
+  onSaveSupplements?: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
+  exercises?: any[];
+  meals?: any[];
+  supplements?: any[];
 }
 
 export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentDialogManagerProps>(
-  ({ onSave, onSaveExercises, onSaveDiet, onSaveSupplements, exercises, meals, supplements }, ref) => {
-    const [dialogType, setDialogType] = useState<'form' | 'exercise' | 'diet' | 'supplement' | null>(null);
-    const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  ({ 
+    onSave, 
+    onSaveExercises, 
+    onSaveDiet, 
+    onSaveSupplements, 
+    exercises, 
+    meals, 
+    supplements 
+  }, ref) => {
+    const {
+      state,
+      setFormDialogOpen,
+      setExerciseDialogOpen,
+      setDietDialogOpen,
+      setSupplementDialogOpen,
+      setSelectedStudent,
+      setIsEditing
+    } = useDialogState();
 
     useImperativeHandle(ref, () => ({
       handleAdd: () => {
         setSelectedStudent(null);
-        setDialogType('form');
+        setIsEditing(false);
+        setFormDialogOpen(true);
       },
-      handleEdit: (student: Student) => {
+      handleEdit: (student) => {
         setSelectedStudent(student);
-        setDialogType('form');
+        setIsEditing(true);
+        setFormDialogOpen(true);
       },
-      handleAddExercise: (student: Student) => {
+      handleAddExercise: onSaveExercises ? (student) => {
+        console.log("Opening exercise dialog for student:", student);
         setSelectedStudent(student);
-        setDialogType('exercise');
-      },
-      handleAddDiet: (student: Student) => {
+        setExerciseDialogOpen(true);
+      } : undefined,
+      handleAddDiet: onSaveDiet ? (student) => {
+        console.log("Opening diet dialog for student:", student);
         setSelectedStudent(student);
-        setDialogType('diet');
-      },
-      handleAddSupplement: (student: Student) => {
+        setDietDialogOpen(true);
+      } : undefined,
+      handleAddSupplement: onSaveSupplements ? (student) => {
+        console.log("Opening supplement dialog for student:", student);
         setSelectedStudent(student);
-        setDialogType('supplement');
-      }
+        setSupplementDialogOpen(true);
+      } : undefined
     }));
-
-    const closeDialog = () => {
-      setDialogType(null);
-      setSelectedStudent(null);
-    };
 
     return (
       <>
-        <StudentFormDialog
-          open={dialogType === 'form'}
-          onOpenChange={(open) => !open && closeDialog()}
-          selectedStudent={selectedStudent}
-          isEditing={!!selectedStudent}
+        <FormDialog
+          open={state.formDialog}
+          onOpenChange={setFormDialogOpen}
+          selectedStudent={state.selectedStudent}
+          isEditing={state.isEditing}
           onSave={onSave}
         />
 
         <ExerciseDialog
-          open={dialogType === 'exercise'}
-          onOpenChange={(open) => !open && closeDialog()}
-          selectedStudent={selectedStudent}
+          open={state.exerciseDialog}
+          onOpenChange={setExerciseDialogOpen}
+          selectedStudent={state.selectedStudent}
           onSaveExercises={onSaveExercises}
         />
 
         <DietDialog
-          open={dialogType === 'diet'}
-          onOpenChange={(open) => !open && closeDialog()}
-          selectedStudent={selectedStudent}
+          open={state.dietDialog}
+          onOpenChange={setDietDialogOpen}
+          selectedStudent={state.selectedStudent}
+          meals={meals}
           onSaveDiet={onSaveDiet}
         />
 
         <SupplementDialog
-          open={dialogType === 'supplement'}
-          onOpenChange={(open) => !open && closeDialog()}
-          selectedStudent={selectedStudent}
+          open={state.supplementDialog}
+          onOpenChange={setSupplementDialogOpen}
+          selectedStudent={state.selectedStudent}
+          supplements={supplements}
           onSaveSupplements={onSaveSupplements}
         />
       </>

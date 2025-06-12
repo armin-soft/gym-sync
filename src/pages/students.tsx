@@ -14,18 +14,18 @@ import { History } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Import from the correct paths
+import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
 import StudentSearchControls from "./students/components/StudentSearchControls";
 // Import from the list-views folder instead of local components
 import { StudentTableView } from "@/components/students/list-views";
 import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
-import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
-  const [activeGenderTab, setActiveGenderTab] = useState<string>("all");
   const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
+  const [activeGenderTab, setActiveGenderTab] = useState<string>("all");
   const deviceInfo = useDeviceInfo();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   

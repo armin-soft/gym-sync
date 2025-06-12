@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { PageContainer } from '@/components/ui/page-container';
@@ -24,7 +25,7 @@ const MEAL_TYPES = [
 
 const StudentDietPage = () => {
   const { studentId } = useParams();
-  const { currentStudentProgram } = useStudentPrograms();
+  const { currentStudentProgram } = useStudentPrograms(Number(studentId));
   const [selectedDay, setSelectedDay] = useState('شنبه');
   const [meals, setMeals] = useState<any[]>([]);
 

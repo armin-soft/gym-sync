@@ -1,7 +1,8 @@
 
 import React from "react";
-import { TabsContent } from "@/components/ui/tabs";
 import { Student } from "@/components/students/StudentTypes";
+import { DaySelector, DayContent, ProgramDietHeader } from "./diet";
+import { useDietTabState } from "./diet/useDietTabState";
 
 interface ProgramDietTabProps {
   student: Student;
@@ -9,17 +10,51 @@ interface ProgramDietTabProps {
   onSaveDiet: (mealIds: number[]) => boolean;
 }
 
-const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
+export const ProgramDietTab: React.FC<ProgramDietTabProps> = ({
   student,
   meals,
   onSaveDiet
 }) => {
+  const {
+    currentDay,
+    setCurrentDay,
+    selectedMeals,
+    setSelectedMeals,
+    handleSave,
+    isLoading
+  } = useDietTabState(student, onSaveDiet);
+
+  // Define the week days
+  const weekDays = [
+    { id: 1, name: "شنبه" },
+    { id: 2, name: "یکشنبه" },
+    { id: 3, name: "دوشنبه" },
+    { id: 4, name: "سه شنبه" },
+    { id: 5, name: "چهارشنبه" },
+    { id: 6, name: "پنج شنبه" },
+    { id: 7, name: "جمعه" }
+  ];
+
   return (
-    <TabsContent value="diet">
-      <div className="p-4">
-        <h3>برنامه غذایی {student.name}</h3>
-      </div>
-    </TabsContent>
+    <div className="space-y-4 p-1">
+      <ProgramDietHeader 
+        onSave={handleSave} 
+        isLoading={isLoading}
+      />
+      
+      <DaySelector 
+        currentDay={currentDay}
+        setCurrentDay={setCurrentDay}
+      />
+      
+      <DayContent
+        currentDay={currentDay}
+        weekDays={weekDays}
+        meals={meals}
+        selectedMeals={selectedMeals}
+        setSelectedMeals={setSelectedMeals}
+      />
+    </div>
   );
 };
 

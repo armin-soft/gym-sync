@@ -1,6 +1,6 @@
 
 import { BackupSecurityFeatures } from "./BackupSecurityFeatures";
-import BackupActionButton from "./BackupActionButton";
+import { BackupActionButton } from "./BackupActionButton";
 import { BackupSuccessMessage } from "./BackupSuccessMessage";
 
 interface BackupContentProps {
@@ -14,7 +14,7 @@ export function BackupContent({ onBackup, isLoading, backupSuccess, backupStats 
   return (
     <div className="p-8 space-y-8">
       <BackupSecurityFeatures />
-      <BackupActionButton onBackup={onBackup} isLoading={isLoading} backupSuccess={backupSuccess} />
+      <BackupActionButton onBackup={onBackup} isLoading={isLoading} />
       {backupSuccess && <BackupSuccessMessage backupStats={backupStats} />}
     </div>
   );

@@ -2,65 +2,69 @@
 import { useState, useEffect } from 'react';
 import { Student } from '@/components/students/StudentTypes';
 
-export const useStudentPrograms = (studentId?: number) => {
-  const [students, setStudents] = useState<Student[]>([]);
+export interface StudentProgram {
+  studentId: number;
+  exercises: any[];
+  diet: any[];
+  supplements: any[];
+  vitamins: any[];
+}
+
+export function useStudentPrograms(studentId?: number) {
+  const [programs, setPrograms] = useState<StudentProgram[]>([]);
+  const [currentStudentProgram, setCurrentStudentProgram] = useState<StudentProgram | null>(null);
 
   useEffect(() => {
-    const loadStudents = () => {
-      try {
-        const savedStudents = localStorage.getItem('students');
-        if (savedStudents) {
-          setStudents(JSON.parse(savedStudents));
-        }
-      } catch (error) {
-        console.error('Error loading students:', error);
+    // Load programs from localStorage
+    try {
+      const savedPrograms = localStorage.getItem('studentPrograms');
+      if (savedPrograms) {
+        const parsedPrograms = JSON.parse(savedPrograms);
+        setPrograms(Array.isArray(parsedPrograms) ? parsedPrograms : []);
       }
-    };
-
-    loadStudents();
+    } catch (error) {
+      console.error('Error loading student programs:', error);
+      setPrograms([]);
+    }
   }, []);
 
-  const getStudentById = (id: number): Student => {
-    return students.find(s => s.id === id) || {} as Student;
-  };
-
-  const getStudentExercises = (studentId: number, day?: number) => {
-    const student = getStudentById(studentId);
-    if (day) {
-      return student[`exercisesDay${day}` as keyof Student] || [];
+  useEffect(() => {
+    if (studentId && programs.length > 0) {
+      const program = programs.find(p => p.studentId === studentId);
+      setCurrentStudentProgram(program || null);
     }
-    return student.exercises || [];
+  }, [studentId, programs]);
+
+  const getStudentProgram = (id: number): StudentProgram | null => {
+    return programs.find(p => p.studentId === id) || null;
   };
 
-  const getStudentMeals = (studentId: number, day?: number) => {
-    const student = getStudentById(studentId);
-    if (day) {
-      return student[`mealsDay${day}` as keyof Student] || [];
+  const updateStudentProgram = (studentId: number, programData: Partial<StudentProgram>) => {
+    const updatedPrograms = programs.map(p => 
+      p.studentId === studentId 
+        ? { ...p, ...programData }
+        : p
+    );
+    
+    if (!programs.find(p => p.studentId === studentId)) {
+      updatedPrograms.push({
+        studentId,
+        exercises: [],
+        diet: [],
+        supplements: [],
+        vitamins: [],
+        ...programData
+      });
     }
-    return student.meals || [];
+    
+    setPrograms(updatedPrograms);
+    localStorage.setItem('studentPrograms', JSON.stringify(updatedPrograms));
   };
-
-  const getStudentSupplements = (studentId: number) => {
-    const student = getStudentById(studentId);
-    return {
-      supplements: student.supplements || [],
-      vitamins: student.vitamins || []
-    };
-  };
-
-  const currentStudentProgram = studentId ? {
-    exercises: [],
-    diet: [],
-    supplements: getStudentSupplements(studentId).supplements,
-    vitamins: getStudentSupplements(studentId).vitamins
-  } : null;
 
   return {
-    students,
-    getStudentById,
-    getStudentExercises,
-    getStudentMeals,
-    getStudentSupplements,
-    currentStudentProgram
+    programs,
+    currentStudentProgram,
+    getStudentProgram,
+    updateStudentProgram
   };
-};
+}

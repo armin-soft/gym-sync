@@ -1,12 +1,13 @@
 
 import React from "react";
 import { Student } from "../StudentTypes";
-import { StudentSupplementDialog } from "@/components/supplements/student/SupplementDialog";
+import { SupplementDialog as StudentSupplementDialog } from "@/components/supplements/student/SupplementDialog";
 
 interface SupplementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedStudent: Student | null;
+  supplements?: any[];
   onSaveSupplements?: (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => boolean;
 }
 
@@ -14,12 +15,10 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
   open,
   onOpenChange,
   selectedStudent,
+  supplements = [],
   onSaveSupplements,
 }) => {
   if (!selectedStudent || !onSaveSupplements) return null;
-
-  const initialSupplements = selectedStudent.supplements || [];
-  const initialVitamins = selectedStudent.vitamins || [];
 
   return (
     <StudentSupplementDialog
@@ -29,9 +28,11 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
       onSave={(data) => {
         return onSaveSupplements(data, selectedStudent.id);
       }}
-      supplements={[]} // Pass empty array as supplements will be loaded from localStorage
-      initialSupplements={initialSupplements}
-      initialVitamins={initialVitamins}
+      supplements={supplements}
+      initialSupplements={selectedStudent.supplements}
+      initialVitamins={selectedStudent.vitamins}
+      initialSupplementsDay1={selectedStudent.supplementsDay1 || []}
+      initialVitaminsDay1={selectedStudent.vitaminsDay1 || []}
     />
   );
 };
