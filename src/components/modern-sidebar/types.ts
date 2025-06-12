@@ -10,6 +10,7 @@ export interface SidebarItem {
   gradient?: string;
   isNew?: boolean;
   badge?: string;
+  badgeColor?: string;
 }
 
 export interface TrainerProfile {
@@ -17,7 +18,7 @@ export interface TrainerProfile {
   phone: string;
   image: string;
   gymName: string;
-  status: 'active' | 'inactive' | 'busy';
+  status: 'active' | 'busy' | 'offline';
   membersSince: string;
 }
 
