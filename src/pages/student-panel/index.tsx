@@ -54,14 +54,14 @@ const StudentPanel = () => {
     setIsLoading(false);
   };
 
-  // بررسی اولیه وضعیت ورود
+  // بررسی اولیه وضعیت ورود - dependency array پایدار
   useEffect(() => {
     if (students.length > 0) {
       checkLoginStatus();
     } else {
       setIsLoading(false);
     }
-  }, [students, studentId, navigate]);
+  }, [students.length, studentId]); // استفاده از students.length به جای students
 
   // Listen to localStorage changes and custom events
   useEffect(() => {
@@ -85,7 +85,7 @@ const StudentPanel = () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('studentLoginSuccess', handleLoginSuccess);
     };
-  }, [students]);
+  }, []); // dependency array خالی
 
   const handleLoginSuccess = (phone: string) => {
     console.log('Login success callback triggered for phone:', phone);

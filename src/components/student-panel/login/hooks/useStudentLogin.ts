@@ -147,7 +147,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
     setState(prev => ({ ...prev, code }));
   };
 
-  // Resend countdown timer
+  // Resend countdown timer - بهبود dependency array
   useEffect(() => {
     if (step === "code" && state.countdown > 0) {
       const timer = setTimeout(() => {
@@ -155,7 +155,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [step, state.countdown]);
+  }, [step, state.countdown]); // فقط dependency های ضروری
 
   return {
     step,
