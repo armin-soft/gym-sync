@@ -1,4 +1,5 @@
 
+
 export const getColorClasses = (color: string) => {
   const colorMap: { [key: string]: { bg: string; border: string; icon: string; } } = {
     emerald: {
@@ -37,15 +38,16 @@ export const getColorClasses = (color: string) => {
       icon: "from-pink-500 to-pink-600"
     },
     purple: {
-      bg: "from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20",
-      border: "border-purple-200/50 dark:border-purple-800/50",
-      icon: "from-purple-500 to-purple-600"
+      bg: "from-emerald-50 to-sky-100/50 dark:from-emerald-950/30 dark:to-sky-900/20",
+      border: "border-emerald-200/50 dark:border-sky-800/50",
+      icon: "from-emerald-600 to-sky-600"
     },
     indigo: {
-      bg: "from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20",
-      border: "border-indigo-200/50 dark:border-indigo-800/50",
-      icon: "from-indigo-500 to-indigo-600"
+      bg: "from-sky-50 to-emerald-100/50 dark:from-sky-950/30 dark:to-emerald-900/20",
+      border: "border-sky-200/50 dark:border-emerald-800/50",
+      icon: "from-sky-600 to-emerald-600"
     }
   };
   return colorMap[color];
 };
+

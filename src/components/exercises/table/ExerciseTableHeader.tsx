@@ -22,7 +22,7 @@ export const ExerciseTableHeader: React.FC<ExerciseTableHeaderProps> = ({
   return (
     <div className="flex flex-wrap items-center justify-between mb-4 sm:mb-6 gap-3">
       <h3 className="text-lg font-semibold flex items-center gap-2">
-        <Dumbbell className="w-5 h-5 text-indigo-500" />
+        <Dumbbell className="w-5 h-5 text-emerald-500" />
         حرکات تمرینی
       </h3>
       <div className="flex items-center gap-2 flex-wrap">
@@ -43,13 +43,13 @@ export const ExerciseTableHeader: React.FC<ExerciseTableHeaderProps> = ({
           variant="ghost" 
           size="icon" 
           onClick={onSort}
-          className="hover:bg-indigo-50 text-indigo-600 transition-all duration-300"
+          className="hover:bg-emerald-50 text-emerald-600 transition-all duration-300"
         >
           <ArrowUpDown className={`h-4 w-4 transition-transform duration-300 ${isAscending ? 'rotate-0' : 'rotate-180'}`} />
         </Button>
         <Button 
           onClick={onAdd}
-          className="bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-700 hover:to-indigo-500 text-white shadow-indigo-200 shadow-lg transition-all duration-300 hover:scale-105"
+          className="bg-gradient-to-r from-emerald-600 to-sky-400 hover:from-emerald-700 hover:to-sky-500 text-white shadow-emerald-200 shadow-lg transition-all duration-300 hover:scale-105"
           size="sm"
         >
           <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
