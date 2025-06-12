@@ -26,7 +26,6 @@ const queryClient = new QueryClient({
 function AppContent() {
   const [showUserTypeSelection, setShowUserTypeSelection] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedUserType, setSelectedUserType] = useState<string | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -34,18 +33,17 @@ function AppContent() {
     
     // بررسی وجود انتخاب نوع کاربر
     const hasSelectedType = localStorage.getItem("hasSelectedUserType");
-    const savedUserType = localStorage.getItem("selectedUserType");
+    const selectedUserType = localStorage.getItem("selectedUserType");
     
     console.log('hasSelectedType:', hasSelectedType);
-    console.log('selectedUserType:', savedUserType);
+    console.log('selectedUserType:', selectedUserType);
     
     // اگر نوع کاربر انتخاب نشده، نمایش صفحه انتخاب
-    if (!hasSelectedType || !savedUserType) {
+    if (!hasSelectedType || !selectedUserType) {
       console.log('No user type selected, showing selection page');
       setShowUserTypeSelection(true);
     } else {
       console.log('User type already selected, hiding selection page');
-      setSelectedUserType(savedUserType);
       setShowUserTypeSelection(false);
     }
     
@@ -69,12 +67,7 @@ function AppContent() {
     return <UserTypeSelectionNew />;
   }
 
-  // اگر نوع کاربر "student" باشد، مستقیماً AppRoutes را نمایش دهیم
-  if (selectedUserType === 'student') {
-    return <AppRoutes />;
-  }
-
-  // برای نوع کاربر "management" از AuthWrapper استفاده کنیم
+  // نمایش محتوای اصلی
   return (
     <AuthWrapper>
       <Layout>
