@@ -1,8 +1,9 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Dumbbell, Apple, Pill, Calendar, BarChart3, Target, MessageCircle, Settings } from "lucide-react";
 import { Student } from "@/components/students/StudentTypes";
+import { Dumbbell, Utensils, PlusCircle, Pill } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface StudentQuickActionsProps {
   student: Student;
@@ -10,49 +11,63 @@ interface StudentQuickActionsProps {
 
 export const StudentQuickActions: React.FC<StudentQuickActionsProps> = ({ student }) => {
   const actions = [
-    { title: "شروع تمرین", icon: Dumbbell, color: "from-orange-500 to-red-500", bgColor: "from-orange-50 to-red-50" },
-    { title: "رژیم غذایی", icon: Apple, color: "from-green-500 to-emerald-500", bgColor: "from-green-50 to-emerald-50" },
-    { title: "مکمل‌ها", icon: Pill, color: "from-purple-500 to-violet-500", bgColor: "from-purple-50 to-violet-50" },
-    { title: "تقویم", icon: Calendar, color: "from-blue-500 to-indigo-500", bgColor: "from-blue-50 to-indigo-50" },
-    { title: "پیشرفت", icon: BarChart3, color: "from-cyan-500 to-blue-500", bgColor: "from-cyan-50 to-blue-50" },
-    { title: "اهداف", icon: Target, color: "from-pink-500 to-rose-500", bgColor: "from-pink-50 to-rose-50" },
-    { title: "پشتیبانی", icon: MessageCircle, color: "from-teal-500 to-green-500", bgColor: "from-teal-50 to-green-50" },
-    { title: "تنظیمات", icon: Settings, color: "from-slate-500 to-gray-500", bgColor: "from-slate-50 to-gray-50" }
+    {
+      title: "برنامه تمرینی",
+      description: "مشاهده و پیگیری تمرینات",
+      icon: Dumbbell,
+      color: "from-emerald-500 to-teal-500",
+      path: "/Students/exercises",
+    },
+    {
+      title: "برنامه تغذیه",
+      description: "مشاهده و پیگیری غذاها",
+      icon: Utensils,
+      color: "from-blue-500 to-indigo-500",
+      path: "/Students/diet",
+    },
+    {
+      title: "مکمل‌ها",
+      description: "مشاهده و پیگیری مکمل‌ها",
+      icon: Pill,
+      color: "from-purple-500 to-indigo-500",
+      path: "/Students/supplements",
+    },
+    {
+      title: "ثبت پیشرفت",
+      description: "ثبت تغییرات وزن و اندازه",
+      icon: PlusCircle,
+      color: "from-amber-500 to-orange-500",
+      path: "/Students/profile",
+    },
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl p-6 border border-violet-200/50 dark:border-violet-800/50 shadow-lg"
-    >
-      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-6">دسترسی سریع</h3>
+    <div className="pt-4">
+      <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">دسترسی سریع</h2>
       
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {actions.map((action, index) => (
-          <motion.button
-            key={action.title}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`group relative overflow-hidden bg-gradient-to-br ${action.bgColor} dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border border-white/20 dark:border-slate-700/50 hover:shadow-lg transition-all duration-300`}
-          >
-            <div className="flex flex-col items-center gap-3">
-              <div className={`p-3 bg-gradient-to-br ${action.color} rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                <action.icon className="h-6 w-6 text-white" />
+          <Link to={action.path} key={index}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="bg-white dark:bg-slate-800 rounded-2xl shadow-md p-5 border border-gray-100 dark:border-gray-700/50 h-full cursor-pointer"
+            >
+              <div className={`w-14 h-14 rounded-2xl mb-4 flex items-center justify-center bg-gradient-to-br ${action.color}`}>
+                <action.icon className="w-7 h-7 text-white" />
               </div>
-              <span className="font-medium text-slate-700 dark:text-slate-300 text-sm text-center">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base mb-1">
                 {action.title}
-              </span>
-            </div>
-            
-            {/* Hover effect */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
-          </motion.button>
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
+                {action.description}
+              </p>
+            </motion.div>
+          </Link>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 };

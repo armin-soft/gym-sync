@@ -16,6 +16,7 @@ import Support from "./pages/support";
 
 // Student Panel Pages
 import StudentPanel from "./pages/student-panel";
+import StudentDashboard from "./pages/student-panel/dashboard";
 import StudentProfile from "./pages/student-panel/profile";
 import StudentExercises from "./pages/student-panel/exercises";
 import StudentDiet from "./pages/student-panel/diet";
@@ -29,7 +30,7 @@ const AppRoutes = () => {
       
       {/* Student Panel Routes - این مسیرها برای پنل شاگرد هستند */}
       <Route path="/Students" element={<StudentPanel />} />
-      <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
+      <Route path="/Students/dashboard/:studentId" element={<StudentDashboard />} />
       <Route path="/Students/profile" element={<StudentProfile />} />
       <Route path="/Students/exercises" element={<StudentExercises />} />
       <Route path="/Students/diet" element={<StudentDiet />} />
