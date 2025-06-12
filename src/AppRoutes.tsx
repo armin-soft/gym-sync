@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
@@ -52,7 +53,7 @@ const AppRoutes = () => {
       <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
       <Route path="/management" element={<Navigate to="/Management" replace />} />
 
-      {/* Student Panel Routes - Fixed routing */}
+      {/* Student Panel Routes - Fixed to show Student Panel instead of Management */}
       <Route path="/Students" element={<StudentPanel />} />
       <Route path="/Students/dashboard/:studentId" element={<StudentPanel />} />
       <Route path="/Students/profile" element={<StudentProfile />} />

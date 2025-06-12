@@ -1,0 +1,178 @@
+
+import { useState, useEffect } from "react";
+import { useStudents } from "@/hooks/useStudents";
+import { validatePhone, validatePhoneAccess, validateCode } from "@/components/auth/login/utils/validation";
+import { toPersianNumbers } from "@/lib/utils/numbers";
+
+interface StudentLoginState {
+  phone: string;
+  code: string;
+  loading: boolean;
+  error: string;
+  locked: boolean;
+  lockExpiry: Date | null;
+  timeLeft: string;
+  countdown: number;
+  attempts: number;
+}
+
+interface UseStudentLoginProps {
+  onLoginSuccess: (phone: string) => void;
+}
+
+export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
+  const { students } = useStudents();
+  const [step, setStep] = useState<"phone" | "code">("phone");
+  const [state, setState] = useState<StudentLoginState>({
+    phone: "",
+    code: "",
+    loading: false,
+    error: "",
+    locked: false,
+    lockExpiry: null,
+    timeLeft: "",
+    countdown: 0,
+    attempts: 0
+  });
+
+  const STUDENT_VALID_CODE = "987654";
+  const MAX_ATTEMPTS = 3;
+  const RESEND_COUNTDOWN = 120;
+
+  // Check if phone number exists in registered students
+  const isValidStudentPhone = (phone: string): boolean => {
+    return students.some(student => student.phone === phone);
+  };
+
+  const handlePhoneSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setState(prev => ({ ...prev, loading: true, error: "" }));
+
+    const phoneError = validatePhone(state.phone);
+    if (phoneError) {
+      setState(prev => ({ ...prev, error: phoneError, loading: false }));
+      return;
+    }
+
+    if (!isValidStudentPhone(state.phone)) {
+      setState(prev => ({ 
+        ...prev, 
+        error: "شماره موبایل شما در سیستم ثبت نشده است. لطفاً با مربی خود تماس بگیرید.",
+        loading: false 
+      }));
+      return;
+    }
+
+    setTimeout(() => {
+      setStep("code");
+      setState(prev => ({ 
+        ...prev, 
+        countdown: RESEND_COUNTDOWN,
+        loading: false 
+      }));
+      console.log(`کد تأیید برای شاگرد با شماره ${state.phone} ارسال شد`);
+    }, 1500);
+  };
+
+  const handleCodeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setState(prev => ({ ...prev, loading: true, error: "" }));
+
+    if (state.locked) {
+      setState(prev => ({ 
+        ...prev, 
+        error: "حساب کاربری شما قفل شده است. لطفاً صبر کنید.",
+        loading: false 
+      }));
+      return;
+    }
+
+    if (state.code !== STUDENT_VALID_CODE) {
+      const newAttempts = state.attempts + 1;
+      
+      if (newAttempts >= MAX_ATTEMPTS) {
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 1);
+        
+        setState(prev => ({
+          ...prev,
+          locked: true,
+          lockExpiry: expiryDate,
+          attempts: newAttempts,
+          error: "حساب کاربری شما به دلیل ورود ناموفق بیش از حد مجاز، به مدت یک روز قفل شده است.",
+          loading: false
+        }));
+      } else {
+        setState(prev => ({ 
+          ...prev, 
+          attempts: newAttempts,
+          error: `کد وارد شده اشتباه است. (${toPersianNumbers(MAX_ATTEMPTS - newAttempts)} تلاش باقی مانده)`,
+          loading: false
+        }));
+      }
+      
+      return;
+    }
+
+    setTimeout(() => {
+      onLoginSuccess(state.phone);
+    }, 1200);
+  };
+
+  const handleChangePhone = () => {
+    setStep("phone");
+    setState(prev => ({ ...prev, code: "", error: "", countdown: 0 }));
+  };
+
+  const handleResendCode = () => {
+    if (state.countdown > 0) return;
+    
+    setState(prev => ({ ...prev, loading: true, error: "" }));
+    
+    setTimeout(() => {
+      setState(prev => ({ 
+        ...prev, 
+        countdown: RESEND_COUNTDOWN,
+        loading: false 
+      }));
+      console.log(`کد تأیید مجدداً برای شماره ${state.phone} ارسال شد`);
+    }, 1000);
+  };
+
+  const setPhone = (phone: string) => {
+    setState(prev => ({ ...prev, phone }));
+  };
+
+  const setCode = (code: string) => {
+    setState(prev => ({ ...prev, code }));
+  };
+
+  // Resend countdown timer
+  useEffect(() => {
+    if (step === "code" && state.countdown > 0) {
+      const timer = setTimeout(() => {
+        setState(prev => ({ ...prev, countdown: prev.countdown - 1 }));
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [step, state.countdown]);
+
+  return {
+    step,
+    phone: state.phone,
+    code: state.code,
+    loading: state.loading,
+    error: state.error,
+    locked: state.locked,
+    lockExpiry: state.lockExpiry,
+    timeLeft: state.timeLeft,
+    countdown: state.countdown,
+    setPhone,
+    setCode,
+    handlePhoneSubmit,
+    handleCodeSubmit,
+    handleChangePhone,
+    handleResendCode,
+    students
+  };
+};
