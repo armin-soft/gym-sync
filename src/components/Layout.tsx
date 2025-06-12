@@ -93,9 +93,11 @@ export const Layout = ({ children }: LayoutProps) => {
     setSidebarOpen(true);
   }, []);
 
+  console.log('Layout rendering with sidebarOpen:', sidebarOpen);
+
   return (
     <div className="full-screen bg-gradient-to-br from-emerald-50 via-sky-50/30 to-emerald-50/40 persian-numbers flex flex-col overflow-hidden" dir="rtl">
-      {sidebarOpen && <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />}
+      <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />
       
       <header 
         className={cn(

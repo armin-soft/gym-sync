@@ -75,7 +75,7 @@ function AppContent() {
     return <AppRoutes />;
   }
 
-  // اگر پنل مدیریت انتخاب شده، از AuthWrapper استفاده کنید
+  // اگر پنل مدیریت انتخاب شده، همیشه از AuthWrapper و Layout استفاده کنید
   if (selectedUserType === "management") {
     return (
       <AuthWrapper>
