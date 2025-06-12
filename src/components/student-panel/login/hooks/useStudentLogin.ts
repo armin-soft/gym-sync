@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useStudents } from "@/hooks/useStudents";
 import { validatePhone, validatePhoneAccess, validateCode } from "@/components/auth/login/utils/validation";
@@ -41,12 +40,28 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
 
   // Check if phone number exists in registered students
   const isValidStudentPhone = (phone: string): boolean => {
-    return students.some(student => student.phone === phone);
+    console.log('useStudentLogin: Checking phone:', phone);
+    console.log('useStudentLogin: Available students:', students.length);
+    console.log('useStudentLogin: Student phones:', students.map(s => ({ id: s.id, name: s.name, phone: s.phone })));
+    
+    // بررسی دقیق شماره تلفن
+    const foundStudent = students.find(student => {
+      const studentPhone = student.phone?.trim();
+      const inputPhone = phone?.trim();
+      console.log(`Comparing: "${studentPhone}" === "${inputPhone}"`);
+      return studentPhone === inputPhone;
+    });
+    
+    console.log('useStudentLogin: Found student:', foundStudent);
+    return !!foundStudent;
   };
 
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setState(prev => ({ ...prev, loading: true, error: "" }));
+
+    console.log('useStudentLogin: Phone submit started with phone:', state.phone);
+    console.log('useStudentLogin: Students available:', students.length);
 
     const phoneError = validatePhone(state.phone);
     if (phoneError) {
@@ -155,7 +170,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [step, state.countdown]); // فقط dependency های ضروری
+  }, [step, state.countdown]);
 
   return {
     step,
