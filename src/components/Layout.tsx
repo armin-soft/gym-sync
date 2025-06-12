@@ -1,12 +1,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu, Bell } from "lucide-react";
+import { Menu } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
 import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,9 +15,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
   const [scrolled, setScrolled] = useState(false);
-  const [supportUnreadCount, setSupportUnreadCount] = useState(0);
   const deviceInfo = useDeviceInfo();
-  const navigate = useNavigate();
   
   // بارگذاری اطلاعات
   useEffect(() => {
@@ -28,30 +25,9 @@ export const Layout = ({ children }: LayoutProps) => {
         const profile = JSON.parse(savedProfile);
         setGymName(profile.gymName || "");
       }
-
-      // بارگذاری پیام‌های پشتیبانی
-      const savedMessages = localStorage.getItem('supportMessages');
-      if (savedMessages) {
-        const messages = JSON.parse(savedMessages);
-        const unreadCount = messages.filter((msg: any) => !msg.isRead).length;
-        setSupportUnreadCount(unreadCount);
-      }
     } catch (error) {
       console.error('خطا در بارگذاری پروفایل:', error);
     }
-  }, []);
-
-  // گوش دادن به تغییرات پیام‌های پشتیبانی
-  useEffect(() => {
-    const handleSupportMessagesUpdate = (event: CustomEvent) => {
-      setSupportUnreadCount(event.detail.unreadCount);
-    };
-
-    window.addEventListener('supportMessagesUpdated', handleSupportMessagesUpdate as EventListener);
-    
-    return () => {
-      window.removeEventListener('supportMessagesUpdated', handleSupportMessagesUpdate as EventListener);
-    };
   }, []);
 
   // مدیریت اسکرول
@@ -80,10 +56,6 @@ export const Layout = ({ children }: LayoutProps) => {
   const handleSidebarOpen = useCallback(() => {
     setSidebarOpen(true);
   }, []);
-
-  const handleNotificationClick = useCallback(() => {
-    navigate('/Management/Support');
-  }, [navigate]);
 
   return (
     <div className="full-screen bg-gradient-to-br from-emerald-50 via-sky-50/30 to-emerald-50/40 persian-numbers flex flex-col overflow-hidden" dir="rtl">
@@ -118,36 +90,6 @@ export const Layout = ({ children }: LayoutProps) => {
               </h1>
             </div>
           </div>
-
-          {/* نوتیفیکیشن پشتیبانی */}
-          {supportUnreadCount > 0 && (
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={handleNotificationClick}
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "relative rounded-lg hover:bg-emerald-100/50 dark:hover:bg-emerald-800/20",
-                  buttonSize
-                )}
-                aria-label="پیام‌های جدید پشتیبانی"
-              >
-                <Bell className={cn(iconSize, "text-emerald-700 dark:text-emerald-300")} />
-                <div className="absolute -top-1 -left-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                  {supportUnreadCount > 99 ? '99+' : supportUnreadCount}
-                </div>
-              </Button>
-              
-              <div className="hidden sm:block text-right">
-                <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                  مربی عزیز
-                </p>
-                <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
-                  شما {supportUnreadCount.toLocaleString('fa-IR')} پیام جدید دارید
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </header>
       
