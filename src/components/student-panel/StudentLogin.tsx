@@ -10,6 +10,7 @@ import { StudentLoginStats } from "./login/StudentLoginStats";
 import { StudentLoginFormStep } from "./login/StudentLoginFormStep";
 import { StudentCodeVerificationStep } from "./login/StudentCodeVerificationStep";
 import { useStudentLogin } from "./login/hooks/useStudentLogin";
+import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
 
 export const StudentLogin = () => {
   const { toast } = useToast();
@@ -68,43 +69,19 @@ export const StudentLogin = () => {
     students
   } = useStudentLogin({ onLoginSuccess: handleLoginSuccess });
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 24,
-      },
-    },
-  };
-
   if (locked) {
     return (
-      <PageContainer fullScreen fullHeight withBackground>
+      <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-violet-50/20 to-purple-50/30 dark:from-slate-900 dark:via-violet-950/20 dark:to-purple-950/30">
         <StudentLoginBackground />
-        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
+        
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             animate="visible"
-            variants={containerVariants}
+            variants={ANIMATION_VARIANTS.container}
             className="w-full max-w-md"
           >
-            <motion.div variants={itemVariants} className="relative">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-600 rounded-3xl blur-xl opacity-20"></div>
               <div className="relative backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl p-8 sm:p-10 shadow-2xl text-center">
                 <h2 className="text-xl font-bold text-red-600 mb-4">حساب قفل شده</h2>
@@ -120,69 +97,76 @@ export const StudentLogin = () => {
             </motion.div>
           </motion.div>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer fullScreen fullHeight withBackground>
+    <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-violet-50/20 to-purple-50/30 dark:from-slate-900 dark:via-violet-950/20 dark:to-purple-950/30">
       <StudentLoginBackground />
 
       {/* Main Content */}
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={containerVariants}
+          variants={ANIMATION_VARIANTS.container}
           className="w-full max-w-md"
         >
-          <StudentLoginHeader variants={itemVariants} />
+          <motion.div 
+            variants={ANIMATION_VARIANTS.item}
+            className="backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl shadow-2xl p-8 sm:p-10"
+          >
+            <StudentLoginHeader variants={ANIMATION_VARIANTS.item} />
+            
+            <div className="mt-8" dir="rtl">
+              <AnimatePresence mode="wait">
+                {step === "phone" ? (
+                  <motion.div
+                    key="phone"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <StudentLoginFormStep 
+                      variants={ANIMATION_VARIANTS.item} 
+                      phone={phone}
+                      setPhone={setPhone}
+                      loading={loading}
+                      error={error}
+                      onSubmit={handlePhoneSubmit}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="code"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <StudentCodeVerificationStep
+                      variants={ANIMATION_VARIANTS.item}
+                      code={code}
+                      setCode={setCode}
+                      phone={phone}
+                      countdown={countdown}
+                      loading={loading}
+                      error={error}
+                      onSubmit={handleCodeSubmit}
+                      onChangePhone={handleChangePhone}
+                      onResendCode={handleResendCode}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
           
-          <AnimatePresence mode="wait">
-            {step === "phone" ? (
-              <motion.div
-                key="phone"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.4 }}
-              >
-                <StudentLoginFormStep 
-                  variants={itemVariants} 
-                  phone={phone}
-                  setPhone={setPhone}
-                  loading={loading}
-                  error={error}
-                  onSubmit={handlePhoneSubmit}
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="code"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.4 }}
-              >
-                <StudentCodeVerificationStep
-                  variants={itemVariants}
-                  code={code}
-                  setCode={setCode}
-                  phone={phone}
-                  countdown={countdown}
-                  loading={loading}
-                  error={error}
-                  onSubmit={handleCodeSubmit}
-                  onChangePhone={handleChangePhone}
-                  onResendCode={handleResendCode}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          
-          <StudentLoginStats variants={itemVariants} />
+          <StudentLoginStats variants={ANIMATION_VARIANTS.item} />
         </motion.div>
       </div>
-    </PageContainer>
+    </div>
   );
 };

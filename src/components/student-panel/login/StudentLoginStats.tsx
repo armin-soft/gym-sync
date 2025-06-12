@@ -1,6 +1,7 @@
 
+import React from "react";
 import { motion } from "framer-motion";
-import { GraduationCap, Dumbbell, Trophy, TrendingUp } from "lucide-react";
+import { Users, Shield, Clock } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentLoginStatsProps {
@@ -8,26 +9,39 @@ interface StudentLoginStatsProps {
 }
 
 export const StudentLoginStats = ({ variants }: StudentLoginStatsProps) => {
-  const stats = [
-    { label: "شاگردان فعال", value: toPersianNumbers("1250"), icon: GraduationCap },
-    { label: "تمرینات موثر", value: toPersianNumbers("850"), icon: Dumbbell },
-    { label: "نرخ موفقیت", value: toPersianNumbers("95") + "%", icon: TrendingUp },
-  ];
-
   return (
-    <motion.div variants={variants} className="mt-8 grid grid-cols-3 gap-4">
-      {stats.map((stat, index) => (
-        <div
-          key={index}
-          className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/20"
-        >
-          <div className="w-8 h-8 bg-violet-100 dark:bg-violet-900/30 rounded-lg flex items-center justify-center mx-auto mb-2">
-            <stat.icon className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+    <motion.div
+      variants={variants}
+      className="mt-8 text-center"
+    >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-8 text-sm sm:text-base text-slate-500 dark:text-slate-400"
+      >
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="absolute inset-0 w-3 h-3 bg-green-500/30 rounded-full animate-ping"></div>
           </div>
-          <div className="text-lg font-bold text-gray-800 dark:text-gray-200">{stat.value}</div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">{stat.label}</div>
+          <span className="font-medium">سیستم آنلاین</span>
         </div>
-      ))}
+        
+        <div className="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+        
+        <div className="flex items-center gap-2">
+          <Users className="w-4 h-4" />
+          <span>پنل شاگرد</span>
+        </div>
+        
+        <div className="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+        
+        <div className="flex items-center gap-2">
+          <Shield className="w-4 h-4" />
+          <span>امنیت بالا</span>
+        </div>
+      </motion.div>
     </motion.div>
   );
 };
