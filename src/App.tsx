@@ -67,7 +67,15 @@ function AppContent() {
     return <UserTypeSelectionNew />;
   }
 
-  // نمایش محتوای اصلی
+  // بررسی نوع کاربر انتخاب شده
+  const selectedUserType = localStorage.getItem("selectedUserType");
+
+  // اگر پنل شاگرد انتخاب شده، مستقیماً نمایش دهید
+  if (selectedUserType === "student") {
+    return <AppRoutes />;
+  }
+
+  // اگر پنل مدیریت انتخاب شده، از AuthWrapper استفاده کنید
   return (
     <AuthWrapper>
       <Layout>

@@ -25,14 +25,15 @@ export const useUserTypeSelection = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
       setCurrentStep(3);
       
-      // مرحله ۳: هدایت به صفحه مقصد
+      // مرحله ۳: هدایت مستقیم به صفحه مقصد
       await new Promise(resolve => setTimeout(resolve, 600));
       
       if (type === 'management') {
         console.log('هدایت به: /Management');
         navigate("/Management", { replace: true });
       } else if (type === 'student') {
-        console.log('هدایت به: /Students');
+        console.log('هدایت مستقیم به: /Students');
+        // هدایت مستقیم به پنل شاگرد بدون نیاز به AuthWrapper
         navigate("/Students", { replace: true });
       }
     } catch (error) {

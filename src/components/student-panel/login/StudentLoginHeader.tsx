@@ -10,14 +10,14 @@ interface StudentLoginHeaderProps {
 export const StudentLoginHeader = ({ variants }: StudentLoginHeaderProps) => {
   return (
     <motion.div variants={variants} className="text-center mb-8">
-      {/* آیکون اصلی */}
+      {/* آیکون اصلی - مطابق با طراحی پنل مدیریت */}
       <motion.div 
         className="w-20 h-20 mx-auto mb-6 relative"
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl blur-xl opacity-20"></div>
-        <div className="relative w-full h-full bg-gradient-to-br from-violet-500/80 to-purple-600/80 rounded-2xl backdrop-blur-sm border border-white/20 flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-sky-600 rounded-2xl blur-xl opacity-20"></div>
+        <div className="relative w-full h-full bg-gradient-to-br from-emerald-500/80 to-sky-600/80 rounded-2xl backdrop-blur-sm border border-white/20 flex items-center justify-center">
           <User className="h-10 w-10 text-white" />
         </div>
         
@@ -33,7 +33,7 @@ export const StudentLoginHeader = ({ variants }: StudentLoginHeaderProps) => {
 
       {/* عنوان اصلی */}
       <motion.h1 
-        className="text-3xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-violet-600 via-purple-600 to-violet-800 bg-clip-text text-transparent"
+        className="text-3xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-800 bg-clip-text text-transparent"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -66,7 +66,7 @@ export const StudentLoginHeader = ({ variants }: StudentLoginHeaderProps) => {
         <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
         
         <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-violet-500" />
+          <Users className="h-4 w-4 text-emerald-500" />
           <span>پنل اختصاصی</span>
         </div>
       </motion.div>
