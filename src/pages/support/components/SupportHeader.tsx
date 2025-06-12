@@ -27,7 +27,7 @@ export function SupportHeader() {
 
   return (
     <div className={cn(
-      "relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white shadow-2xl",
+      "relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-sky-600 to-emerald-700 text-white shadow-2xl",
       getHeaderClasses()
     )}>
       {/* Background decoration */}
@@ -54,7 +54,7 @@ export function SupportHeader() {
             سیستم پشتیبانی
           </h1>
           <p className={cn(
-            "text-indigo-100",
+            "text-emerald-100",
             deviceInfo.isMobile ? "text-sm" : deviceInfo.isTablet ? "text-base" : "text-lg"
           )}>
             مدیریت پیام‌ها و ارتباط با شاگردان
@@ -63,8 +63,8 @@ export function SupportHeader() {
         
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
-            <Bell className="w-4 h-4 text-indigo-200" />
-            <span className="text-xs text-indigo-200">فعال</span>
+            <Bell className="w-4 h-4 text-emerald-200" />
+            <span className="text-xs text-emerald-200">فعال</span>
           </div>
         </div>
       </div>

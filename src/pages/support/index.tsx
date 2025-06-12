@@ -27,7 +27,7 @@ export default function SupportPage() {
         const parsedMessages = JSON.parse(savedMessages);
         setMessages(parsedMessages);
       } else {
-        setMessages([]); // هیچ داده پیشفرضی
+        setMessages([]);
       }
     } catch (error) {
       console.error('Error loading support messages:', error);
@@ -68,7 +68,7 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/40" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40" dir="rtl">
       <div className={cn("w-full", getContainerClasses())}>
         <SupportHeader />
         <SupportStats messages={messages} />
