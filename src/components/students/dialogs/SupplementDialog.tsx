@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Student } from "../StudentTypes";
-import { StudentSupplementDialog } from "@/components/supplements/StudentSupplementDialog";
+import { StudentSupplementDialog } from "@/components/supplements/student/SupplementDialog";
 
 interface SupplementDialogProps {
   open: boolean;
@@ -26,12 +26,10 @@ export const SupplementDialog: React.FC<SupplementDialogProps> = ({
       open={open}
       onOpenChange={onOpenChange}
       studentName={selectedStudent.name}
-      onSave={(supplements, vitamins) => {
-        return onSaveSupplements(
-          { supplements, vitamins },
-          selectedStudent.id
-        );
+      onSave={(data) => {
+        return onSaveSupplements(data, selectedStudent.id);
       }}
+      supplements={[]} // Pass empty array as supplements will be loaded from localStorage
       initialSupplements={initialSupplements}
       initialVitamins={initialVitamins}
     />

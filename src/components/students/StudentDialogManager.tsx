@@ -64,6 +64,7 @@ export const StudentDialogManager = forwardRef<StudentDialogManagerRef, StudentD
           open={dialogType === 'form'}
           onOpenChange={(open) => !open && closeDialog()}
           selectedStudent={selectedStudent}
+          isEditing={!!selectedStudent}
           onSave={onSave}
         />
 

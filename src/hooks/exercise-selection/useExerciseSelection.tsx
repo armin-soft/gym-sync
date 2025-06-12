@@ -1,12 +1,6 @@
 
 import { useState } from "react";
-
-export interface ExerciseWithSets {
-  id: number;
-  exerciseId: number;
-  sets: number;
-  reps: string;
-}
+import { ExerciseWithSets } from "@/types/exercise";
 
 export const useExerciseSelection = () => {
   const [selectedExercises, setSelectedExercises] = useState<ExerciseWithSets[]>([]);

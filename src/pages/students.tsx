@@ -20,7 +20,7 @@ import { StudentTableView } from "@/components/students/list-views";
 import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
-import { StudentProgramManagerView } from "./students/components/program/StudentProgramManagerView";
+import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
