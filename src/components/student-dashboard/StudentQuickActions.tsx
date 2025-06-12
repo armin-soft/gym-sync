@@ -2,8 +2,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Dumbbell, Apple, Pill, Calendar, BarChart3, Target, MessageCircle, Settings } from "lucide-react";
+import { Student } from "@/components/students/StudentTypes";
 
-export const StudentQuickActions: React.FC = () => {
+interface StudentQuickActionsProps {
+  student: Student;
+}
+
+export const StudentQuickActions: React.FC<StudentQuickActionsProps> = ({ student }) => {
   const actions = [
     { title: "شروع تمرین", icon: Dumbbell, color: "from-orange-500 to-red-500", bgColor: "from-orange-50 to-red-50" },
     { title: "رژیم غذایی", icon: Apple, color: "from-green-500 to-emerald-500", bgColor: "from-green-50 to-emerald-50" },
