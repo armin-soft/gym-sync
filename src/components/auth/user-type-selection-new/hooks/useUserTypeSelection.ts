@@ -25,17 +25,18 @@ export const useUserTypeSelection = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
       setCurrentStep(3);
       
-      // مرحله ۳: هدایت به صفحه اصلی برای اعمال مسیریابی مناسب
+      // مرحله ۳: هدایت به پنل مناسب
       await new Promise(resolve => setTimeout(resolve, 600));
       
-      console.log('هدایت به صفحه اصلی برای اعمال مسیریابی نوع کاربر:', type);
-      // هدایت به صفحه اصلی تا App.tsx مسیریابی مناسب را اعمال کند
-      navigate("/", { replace: true });
+      console.log('هدایت به پنل مناسب برای نوع کاربر:', type);
       
-      // رفرش صفحه برای اطمینان از اعمال تغییرات
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+      // هدایت مستقیم به پنل مناسب
+      if (type === 'student') {
+        navigate("/Students", { replace: true });
+      } else if (type === 'management') {
+        navigate("/Management", { replace: true });
+      }
+      
     } catch (error) {
       console.error('خطا در هنگام هدایت:', error);
       setIsProcessing(false);

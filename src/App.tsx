@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, useLocation } from "react-router-dom";
+import { BrowserRouter, useLocation, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/auth/AuthWrapper";
@@ -27,6 +27,7 @@ function AppContent() {
   const [showUserTypeSelection, setShowUserTypeSelection] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('Current location:', location.pathname);
@@ -45,10 +46,19 @@ function AppContent() {
     } else {
       console.log('User type already selected, hiding selection page');
       setShowUserTypeSelection(false);
+      
+      // هدایت مناسب بر اساس نوع کاربر
+      if (selectedUserType === "student" && location.pathname === "/") {
+        console.log('Redirecting student to student panel');
+        navigate("/Students", { replace: true });
+      } else if (selectedUserType === "management" && location.pathname === "/") {
+        console.log('Redirecting management to management panel');
+        navigate("/Management", { replace: true });
+      }
     }
     
     setIsLoading(false);
-  }, [location.pathname]);
+  }, [location.pathname, navigate]);
 
   // نمایش loading در حین بررسی
   if (isLoading) {
@@ -70,7 +80,7 @@ function AppContent() {
   // بررسی نوع کاربر انتخاب شده
   const selectedUserType = localStorage.getItem("selectedUserType");
 
-  // اگر پنل شاگرد انتخاب شده، مستقیماً نمایش دهید
+  // اگر پنل شاگرد انتخاب شده، بدون Layout و AuthWrapper نمایش دهید
   if (selectedUserType === "student") {
     return <AppRoutes />;
   }
