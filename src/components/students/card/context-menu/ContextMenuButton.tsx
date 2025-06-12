@@ -5,7 +5,7 @@ interface ContextMenuButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  variant?: "blue" | "purple" | "green" | "orange" | "red" | "slate";
+  variant?: "blue" | "emerald" | "green" | "orange" | "red" | "slate";
 }
 
 export const ContextMenuButton: React.FC<ContextMenuButtonProps> = ({ 
@@ -18,8 +18,8 @@ export const ContextMenuButton: React.FC<ContextMenuButtonProps> = ({
     const baseClasses = "group hover:bg-opacity-90 dark:hover:bg-opacity-30";
     
     switch (variant) {
-      case "purple":
-        return `${baseClasses} hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-700 dark:hover:text-purple-300`;
+      case "emerald":
+        return `${baseClasses} hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-300`;
       case "blue":
         return `${baseClasses} hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300`;
       case "green":
@@ -37,7 +37,7 @@ export const ContextMenuButton: React.FC<ContextMenuButtonProps> = ({
 
   const getIconClasses = () => {
     switch (variant) {
-      case "purple": return "text-purple-500 dark:text-purple-400";
+      case "emerald": return "text-emerald-500 dark:text-emerald-400";
       case "blue": return "text-blue-500 dark:text-blue-400";
       case "green": return "text-green-500 dark:text-green-400";
       case "orange": return "text-orange-500 dark:text-orange-400";

@@ -26,10 +26,10 @@ export const getColorClasses = (color: string) => {
       border: "border-orange-200/50 dark:border-orange-800/50",
       icon: "from-orange-500 to-orange-600"
     },
-    purple: {
-      bg: "from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20",
-      border: "border-purple-200/50 dark:border-purple-800/50",
-      icon: "from-purple-500 to-purple-600"
+    teal: {
+      bg: "from-teal-50 to-teal-100/50 dark:from-teal-950/30 dark:to-teal-900/20",
+      border: "border-teal-200/50 dark:border-teal-800/50",
+      icon: "from-teal-500 to-teal-600"
     },
     pink: {
       bg: "from-pink-50 to-pink-100/50 dark:from-pink-950/30 dark:to-pink-900/20",

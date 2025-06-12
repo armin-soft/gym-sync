@@ -26,7 +26,7 @@ export const LoadingButton = ({
     <Button 
       type={type}
       onClick={onClick}
-      className={`bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}
+      className={`bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}
       disabled={loading || disabled}
     >
       {loading ? (

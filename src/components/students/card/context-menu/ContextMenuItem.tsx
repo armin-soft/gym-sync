@@ -9,7 +9,7 @@ interface ContextMenuItemWithAnimationProps {
   subtitle: string;
   onClick: () => void;
   index: number;
-  variant?: 'purple' | 'blue' | 'green' | 'red' | 'orange' | 'indigo';
+  variant?: 'emerald' | 'blue' | 'green' | 'red' | 'orange' | 'sky';
 }
 
 export const ContextMenuItemWithAnimation: React.FC<ContextMenuItemWithAnimationProps> = ({
@@ -23,11 +23,11 @@ export const ContextMenuItemWithAnimation: React.FC<ContextMenuItemWithAnimation
   // Define variant colors
   const getVariantClasses = () => {
     switch (variant) {
-      case 'purple':
+      case 'emerald':
         return {
-          icon: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
-          hover: 'hover:bg-purple-50 dark:hover:bg-purple-900/20',
-          text: 'group-hover:text-purple-600 dark:group-hover:text-purple-400'
+          icon: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
+          hover: 'hover:bg-emerald-50 dark:hover:bg-emerald-900/20',
+          text: 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
         };
       case 'blue':
         return {
@@ -53,11 +53,11 @@ export const ContextMenuItemWithAnimation: React.FC<ContextMenuItemWithAnimation
           hover: 'hover:bg-orange-50 dark:hover:bg-orange-900/20',
           text: 'group-hover:text-orange-600 dark:group-hover:text-orange-400'
         };
-      case 'indigo':
+      case 'sky':
         return {
-          icon: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
-          hover: 'hover:bg-indigo-50 dark:hover:bg-indigo-900/20',
-          text: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+          icon: 'bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400',
+          hover: 'hover:bg-sky-50 dark:hover:bg-sky-900/20',
+          text: 'group-hover:text-sky-600 dark:group-hover:text-sky-400'
         };
       default:
         return {

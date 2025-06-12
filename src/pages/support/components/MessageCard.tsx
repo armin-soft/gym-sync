@@ -97,7 +97,7 @@ export function MessageCard({ message, onMarkAsRead, onReply }: MessageCardProps
       {/* هدر کارت */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-sky-600 rounded-full flex items-center justify-center">
             {message.studentImage ? (
               <img 
                 src={message.studentImage} 
@@ -149,7 +149,7 @@ export function MessageCard({ message, onMarkAsRead, onReply }: MessageCardProps
         {message.message.length > 150 && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-violet-600 text-sm mt-2 hover:underline"
+            className="text-emerald-600 text-sm mt-2 hover:underline"
           >
             {isExpanded ? "کمتر نمایش بده" : "بیشتر نمایش بده"}
           </button>
@@ -183,7 +183,7 @@ export function MessageCard({ message, onMarkAsRead, onReply }: MessageCardProps
           {!isReplying && message.status !== "replied" && (
             <button
               onClick={() => setIsReplying(true)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-violet-50 text-violet-600 rounded-lg hover:bg-violet-100 transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors text-sm"
             >
               <Reply className="w-4 h-4" />
               پاسخ دادن
@@ -203,7 +203,7 @@ export function MessageCard({ message, onMarkAsRead, onReply }: MessageCardProps
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="پاسخ خود را اینجا بنویسید..."
-            className="w-full p-3 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-right"
+            className="w-full p-3 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-right"
             rows={4}
             dir="rtl"
           />
@@ -212,7 +212,7 @@ export function MessageCard({ message, onMarkAsRead, onReply }: MessageCardProps
             <button
               onClick={handleReply}
               disabled={!replyText.trim()}
-              className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-sky-600 text-white rounded-lg hover:from-emerald-700 hover:to-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
             >
               ارسال پاسخ
             </button>

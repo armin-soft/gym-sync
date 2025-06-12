@@ -15,33 +15,33 @@ export const ModernLoginBackground = () => {
   return (
     <div className="absolute inset-0 overflow-hidden">
       {/* Base Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-sky-900 to-slate-900"></div>
       
       {/* Animated Gradient Mesh */}
       <motion.div
         className="absolute inset-0"
         style={{
           background: `
-            radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-            radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 90% 60%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)
+            radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(5, 150, 105, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 90% 60%, rgba(8, 145, 178, 0.2) 0%, transparent 50%)
           `
         }}
         animate={{
           background: [
-            `radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
-             radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-             radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.3) 0%, transparent 50%),
-             radial-gradient(circle at 90% 60%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)`,
-            `radial-gradient(circle at 30% 40%, rgba(168, 85, 247, 0.3) 0%, transparent 50%),
-             radial-gradient(circle at 70% 30%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
-             radial-gradient(circle at 50% 70%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
-             radial-gradient(circle at 80% 50%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)`,
-            `radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
-             radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-             radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.3) 0%, transparent 50%),
-             radial-gradient(circle at 90% 60%, rgba(16, 185, 129, 0.2) 0%, transparent 50%)`
+            `radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+             radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.2) 0%, transparent 50%),
+             radial-gradient(circle at 40% 80%, rgba(5, 150, 105, 0.3) 0%, transparent 50%),
+             radial-gradient(circle at 90% 60%, rgba(8, 145, 178, 0.2) 0%, transparent 50%)`,
+            `radial-gradient(circle at 30% 40%, rgba(5, 150, 105, 0.3) 0%, transparent 50%),
+             radial-gradient(circle at 70% 30%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+             radial-gradient(circle at 50% 70%, rgba(14, 165, 233, 0.3) 0%, transparent 50%),
+             radial-gradient(circle at 80% 50%, rgba(8, 145, 178, 0.2) 0%, transparent 50%)`,
+            `radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+             radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.2) 0%, transparent 50%),
+             radial-gradient(circle at 40% 80%, rgba(5, 150, 105, 0.3) 0%, transparent 50%),
+             radial-gradient(circle at 90% 60%, rgba(8, 145, 178, 0.2) 0%, transparent 50%)`
           ]
         }}
         transition={{
