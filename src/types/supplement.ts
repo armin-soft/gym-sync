@@ -1,17 +1,18 @@
 
-export interface SupplementCategory {
-  id: number;
-  name: string;
-  type: 'supplement' | 'vitamin';
-}
-
 export interface Supplement {
   id: number;
   name: string;
-  category: string;
+  category?: string;
+  dosage?: string;
+  timing?: string;
+  description?: string;
   type: 'supplement' | 'vitamin';
-  dosage?: string;          // دوز مصرف
-  timing?: string;          // زمان مصرف  
-  notes?: string;           // یادداشت
-  supplementType?: string;  // نوع مکمل (برای سازگاری با کد قبلی)
 }
+
+export interface SupplementCategory {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+export type SupplementType = 'supplement' | 'vitamin';
