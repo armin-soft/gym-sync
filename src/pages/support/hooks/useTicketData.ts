@@ -16,7 +16,7 @@ export const useTicketData = () => {
   const loadTickets = () => {
     try {
       const savedTickets = getLocalStorageItem<SupportTicket[]>('supportTickets', []);
-      setTickets(savedTickets);
+      setTickets(Array.isArray(savedTickets) ? savedTickets : []);
     } catch (error) {
       console.error('Error loading tickets:', error);
       setTickets([]);
@@ -26,8 +26,10 @@ export const useTicketData = () => {
   };
 
   const saveTickets = (updatedTickets: SupportTicket[]) => {
-    setTickets(updatedTickets);
-    setLocalStorageItem('supportTickets', updatedTickets);
+    if (Array.isArray(updatedTickets)) {
+      setTickets(updatedTickets);
+      setLocalStorageItem('supportTickets', updatedTickets);
+    }
   };
 
   const updateTicketStatus = (ticketId: string, newStatus: SupportTicket['status']) => {
@@ -44,7 +46,7 @@ export const useTicketData = () => {
       ticket.id === ticketId 
         ? {
             ...ticket,
-            responses: [...ticket.responses, { ...response, id: `resp_${Date.now()}` }],
+            responses: [...(ticket.responses || []), { ...response, id: `resp_${Date.now()}` }],
             updatedAt: Date.now(),
             status: response.authorType === "trainer" ? "in_progress" : ticket.status
           }
@@ -55,25 +57,28 @@ export const useTicketData = () => {
 
   const getTicketStats = (): TicketStats => {
     const today = new Date().setHours(0, 0, 0, 0);
+    const safeTickets = Array.isArray(tickets) ? tickets : [];
     
     return {
-      totalTickets: tickets.length,
-      openTickets: tickets.filter(t => t.status === "open").length,
-      inProgressTickets: tickets.filter(t => t.status === "in_progress").length,
-      resolvedTickets: tickets.filter(t => t.status === "resolved").length,
-      closedTickets: tickets.filter(t => t.status === "closed").length,
-      todayTickets: tickets.filter(t => new Date(t.createdAt).setHours(0, 0, 0, 0) === today).length,
+      totalTickets: safeTickets.length,
+      openTickets: safeTickets.filter(t => t?.status === "open").length,
+      inProgressTickets: safeTickets.filter(t => t?.status === "in_progress").length,
+      resolvedTickets: safeTickets.filter(t => t?.status === "resolved").length,
+      closedTickets: safeTickets.filter(t => t?.status === "closed").length,
+      todayTickets: safeTickets.filter(t => t?.createdAt && new Date(t.createdAt).setHours(0, 0, 0, 0) === today).length,
       averageResponseTime: calculateAverageResponseTime()
     };
   };
 
   const calculateAverageResponseTime = (): number => {
-    const respondedTickets = tickets.filter(t => t.responses.length > 0);
+    const safeTickets = Array.isArray(tickets) ? tickets : [];
+    const respondedTickets = safeTickets.filter(t => t?.responses && Array.isArray(t.responses) && t.responses.length > 0);
+    
     if (respondedTickets.length === 0) return 0;
     
     const totalTime = respondedTickets.reduce((acc, ticket) => {
-      const firstResponse = ticket.responses.find(r => r.authorType === "trainer");
-      if (firstResponse) {
+      const firstResponse = ticket.responses?.find(r => r?.authorType === "trainer");
+      if (firstResponse && firstResponse.timestamp && ticket.createdAt) {
         return acc + (firstResponse.timestamp - ticket.createdAt);
       }
       return acc;
@@ -83,11 +88,11 @@ export const useTicketData = () => {
   };
 
   const getStudentInfo = (studentId: number) => {
-    return students.find(s => s.id === studentId);
+    return Array.isArray(students) ? students.find(s => s?.id === studentId) : undefined;
   };
 
   return {
-    tickets,
+    tickets: Array.isArray(tickets) ? tickets : [],
     loading,
     updateTicketStatus,
     addTicketResponse,

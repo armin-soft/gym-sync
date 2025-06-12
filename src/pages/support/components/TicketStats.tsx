@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Ticket, Clock, CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
 import type { TicketStats as TicketStatsType } from "../types";
@@ -28,10 +29,21 @@ export function TicketStats({ stats }: TicketStatsProps) {
     return "p-4";
   };
 
+  // Ensure stats exists and has default values
+  const safeStats = {
+    totalTickets: stats?.totalTickets || 0,
+    openTickets: stats?.openTickets || 0,
+    inProgressTickets: stats?.inProgressTickets || 0,
+    resolvedTickets: stats?.resolvedTickets || 0,
+    closedTickets: stats?.closedTickets || 0,
+    todayTickets: stats?.todayTickets || 0,
+    averageResponseTime: stats?.averageResponseTime || 0
+  };
+
   const statsData = [
     {
       title: "کل تیکت‌ها",
-      value: stats.totalTickets,
+      value: safeStats.totalTickets,
       icon: Ticket,
       color: "from-emerald-500 to-sky-600",
       bgColor: "bg-emerald-50",
@@ -39,7 +51,7 @@ export function TicketStats({ stats }: TicketStatsProps) {
     },
     {
       title: "تیکت‌های باز",
-      value: stats.openTickets,
+      value: safeStats.openTickets,
       icon: AlertTriangle,
       color: "from-red-500 to-orange-600",
       bgColor: "bg-red-50",
@@ -47,7 +59,7 @@ export function TicketStats({ stats }: TicketStatsProps) {
     },
     {
       title: "در حال بررسی",
-      value: stats.inProgressTickets,
+      value: safeStats.inProgressTickets,
       icon: Clock,
       color: "from-blue-500 to-sky-600",
       bgColor: "bg-blue-50",
@@ -55,7 +67,7 @@ export function TicketStats({ stats }: TicketStatsProps) {
     },
     {
       title: "حل شده",
-      value: stats.resolvedTickets,
+      value: safeStats.resolvedTickets,
       icon: CheckCircle,
       color: "from-green-500 to-emerald-600",
       bgColor: "bg-green-50",
@@ -63,7 +75,7 @@ export function TicketStats({ stats }: TicketStatsProps) {
     },
     {
       title: "تیکت‌های امروز",
-      value: stats.todayTickets,
+      value: safeStats.todayTickets,
       icon: TrendingUp,
       color: "from-sky-500 to-emerald-600",
       bgColor: "bg-sky-50",
@@ -71,7 +83,7 @@ export function TicketStats({ stats }: TicketStatsProps) {
     },
     {
       title: "میانگین پاسخ (ساعت)",
-      value: stats.averageResponseTime,
+      value: safeStats.averageResponseTime,
       icon: Clock,
       color: "from-emerald-500 to-sky-600",
       bgColor: "bg-emerald-50",
@@ -81,11 +93,13 @@ export function TicketStats({ stats }: TicketStatsProps) {
 
   return (
     <div className={cn("grid", getGridClasses())}>
-      {statsData.map((stat, index) => {
+      {statsData.filter(stat => stat && stat.bgColor).map((stat, index) => {
+        if (!stat || !stat.icon) return null;
+        
         const Icon = stat.icon;
         return (
           <div
-            key={index}
+            key={`stat-${index}`}
             className={cn(
               "relative overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:scale-105",
               getCardPadding()
