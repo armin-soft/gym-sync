@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,11 @@ import { StudentCodeVerificationStep } from "./login/StudentCodeVerificationStep
 import { useStudentLogin } from "./login/hooks/useStudentLogin";
 import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
 
-export const StudentLogin = () => {
+interface StudentLoginProps {
+  onLoginSuccess?: (phone: string) => void;
+}
+
+export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { students } = useStudents();
@@ -34,8 +37,13 @@ export const StudentLogin = () => {
           description: `${student.name} عزیز، خوش آمدید`,
         });
         
-        // Navigate to student dashboard
-        navigate(`/Students/dashboard/${student.id}`);
+        // Call the callback if provided
+        if (onLoginSuccess) {
+          onLoginSuccess(phone);
+        } else {
+          // Fallback navigation
+          navigate(`/Students/dashboard/${student.id}`);
+        }
       } else {
         console.log('Student not found for phone:', phone);
         toast({

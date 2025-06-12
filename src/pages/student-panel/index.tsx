@@ -16,15 +16,32 @@ const StudentPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Listen to localStorage changes
   useEffect(() => {
+    const handleStorageChange = () => {
+      console.log('Storage changed, rechecking login status...');
+      checkLoginStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('studentLoginSuccess', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('studentLoginSuccess', handleStorageChange);
+    };
+  }, []);
+
+  const checkLoginStatus = () => {
     console.log('StudentPanel: Checking authentication state...');
     const studentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
     const loggedInStudentId = localStorage.getItem("loggedInStudentId");
     
     console.log('studentLoggedIn:', studentLoggedIn);
     console.log('loggedInStudentId:', loggedInStudentId);
+    console.log('students:', students);
     
-    if (studentLoggedIn && loggedInStudentId) {
+    if (studentLoggedIn && loggedInStudentId && students.length > 0) {
       const student = students.find(s => s.id.toString() === loggedInStudentId);
       console.log('Found student:', student);
       
@@ -47,10 +64,29 @@ const StudentPanel = () => {
     } else {
       console.log('Not logged in, showing login form');
       setIsLoggedIn(false);
+      setLoggedInStudent(null);
     }
     
     setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (students.length > 0) {
+      checkLoginStatus();
+    } else {
+      setIsLoading(false);
+    }
   }, [students, studentId, navigate]);
+
+  const handleLoginSuccess = (phone: string) => {
+    console.log('Login success callback triggered for phone:', phone);
+    // Force recheck after a small delay to ensure localStorage is updated
+    setTimeout(() => {
+      checkLoginStatus();
+      // Dispatch custom event to trigger recheck
+      window.dispatchEvent(new Event('studentLoginSuccess'));
+    }, 100);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("studentLoggedIn");
@@ -75,19 +111,10 @@ const StudentPanel = () => {
     );
   }
 
-  if (!isLoggedIn) {
-    return <StudentLogin />;
-  }
+  console.log('Current state - isLoggedIn:', isLoggedIn, 'loggedInStudent:', loggedInStudent);
 
-  if (!loggedInStudent) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-violet-50/30 to-indigo-50/50">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">در حال بارگذاری...</p>
-        </div>
-      </div>
-    );
+  if (!isLoggedIn || !loggedInStudent) {
+    return <StudentLogin onLoginSuccess={handleLoginSuccess} />;
   }
 
   return <StudentDashboard />;
