@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { LogOut, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebarDimensions } from "../utils/deviceUtils";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface SidebarFooterProps {
   gymName?: string;
@@ -16,6 +17,25 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   onLogout 
 }) => {
   const { getFooterPadding, deviceInfo } = useSidebarDimensions();
+  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
+
+  // دریافت نسخه از Manifest.json
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/Manifest.json');
+        const manifest = await response.json();
+        const version = manifest.version;
+        setAppVersion(version);
+        console.log(`Version loaded from Manifest.json: ${version}`);
+      } catch (error) {
+        console.error('Error loading version from Manifest.json:', error);
+        setAppVersion('خطا در بارگذاری');
+      }
+    };
+    
+    fetchVersion();
+  }, []);
 
   const getButtonSize = () => {
     if (deviceInfo.isMobile) return "text-xs";
@@ -85,7 +105,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
             "text-gray-500 dark:text-gray-400",
             deviceInfo.isMobile ? "text-xs" : "text-sm"
           )}>
-            ورژن ۱.۰.۰
+            نسخه {toPersianNumbers(appVersion)}
           </p>
         </motion.div>
       </div>
