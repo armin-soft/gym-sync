@@ -1,8 +1,7 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
-import { Activity, Dumbbell, Salad, Pills } from "lucide-react";
+import { Activity, Dumbbell, Salad, Pill } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentStatsGridProps {
@@ -30,7 +29,7 @@ export const StudentStatsGrid: React.FC<StudentStatsGridProps> = ({ student }) =
     {
       title: "مکمل‌های ورزشی",
       value: student.supplements?.length || 0,
-      icon: Pills,
+      icon: Pill,
       color: "bg-purple-50 dark:bg-purple-950/30",
       iconColor: "text-purple-600 dark:text-purple-400",
       textColor: "text-purple-700 dark:text-purple-300",

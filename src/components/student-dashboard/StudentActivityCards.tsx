@@ -3,13 +3,20 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Student } from "@/components/students/StudentTypes";
 import { Dumbbell, CheckSquare } from "lucide-react";
+import { useExercises } from "@/hooks/useExerciseManagement";
 
 interface StudentActivityCardsProps {
   student: Student;
 }
 
 export const StudentActivityCards: React.FC<StudentActivityCardsProps> = ({ student }) => {
-  const exercises = student.exercises || [];
+  const { exercises: allExercises } = useExercises();
+  const studentExerciseIds = student.exercises || [];
+  
+  // Get exercise details from IDs
+  const studentExercises = studentExerciseIds.map(id => 
+    allExercises.find(exercise => exercise.id === id)
+  ).filter(Boolean);
   
   return (
     <motion.div
@@ -26,8 +33,8 @@ export const StudentActivityCards: React.FC<StudentActivityCardsProps> = ({ stud
       </div>
       
       <div className="space-y-4">
-        {exercises.length > 0 ? (
-          exercises.slice(0, 4).map((exercise, index) => (
+        {studentExercises.length > 0 ? (
+          studentExercises.slice(0, 4).map((exercise, index) => (
             <div 
               key={index}
               className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700"
@@ -37,10 +44,10 @@ export const StudentActivityCards: React.FC<StudentActivityCardsProps> = ({ stud
               </div>
               <div className="flex-1">
                 <p className="font-medium text-slate-800 dark:text-slate-100">
-                  {exercise.name || "تمرین بدون نام"}
+                  {exercise?.name || "تمرین بدون نام"}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {exercise.sets} ست - {exercise.reps} تکرار
+                  {student.exerciseSets?.[exercise?.id || 0] || 3} ست - {student.exerciseReps?.[exercise?.id || 0] || "8-12"} تکرار
                 </p>
               </div>
               <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
