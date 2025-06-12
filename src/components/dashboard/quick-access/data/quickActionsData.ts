@@ -6,7 +6,8 @@ import {
   UtensilsCrossed, 
   Pill,
   Database,
-  BarChart3 
+  BarChart3,
+  MessageSquare
 } from "lucide-react";
 
 export const quickActions = [
@@ -51,5 +52,11 @@ export const quickActions = [
     description: "مشاهده آمار و گزارشات جامع عملکرد",
     icon: BarChart3,
     href: "/Management/Report"
+  },
+  {
+    title: "پشتیبانی و ارتباط",
+    description: "مدیریت پیام‌ها و ارتباط با شاگردان",
+    icon: MessageSquare,
+    href: "/Management/Support"
   }
 ];

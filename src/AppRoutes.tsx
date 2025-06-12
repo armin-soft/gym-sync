@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
@@ -12,6 +11,7 @@ import Trainer from "./pages/trainer";
 import Backup from "./pages/backup";
 import Management from "./pages/management";
 import Reports from "./pages/reports";
+import Support from "./pages/support";
 
 // Student Panel Pages
 import StudentPanel from "./pages/student-panel";
@@ -37,6 +37,7 @@ const AppRoutes = () => {
       <Route path="/Management/Backup-Restore" element={<Backup />} />
       <Route path="/Management/Student-History" element={<StudentHistory />} />
       <Route path="/Management/Report" element={<Reports />} />
+      <Route path="/Management/Support" element={<Support />} />
       
       {/* Legacy reports and management routes - redirect to new structure */}
       <Route path="/Report" element={<Navigate to="/Management/Report" replace />} />

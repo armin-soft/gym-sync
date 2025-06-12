@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Sidebar } from "./Sidebar";
-import { Menu } from "lucide-react";
+import { Menu, Bell } from "lucide-react";
 import { AppIcon } from "./ui/app-icon";
 import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
@@ -15,6 +14,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gymName, setGymName] = useState("");
   const [scrolled, setScrolled] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const deviceInfo = useDeviceInfo();
   
   // بارگذاری اطلاعات
@@ -30,6 +30,37 @@ export const Layout = ({ children }: LayoutProps) => {
     }
   }, []);
 
+  // بارگذاری تعداد پیام‌های خوانده نشده
+  useEffect(() => {
+    const loadUnreadMessages = () => {
+      try {
+        const savedMessages = localStorage.getItem('supportMessages');
+        if (savedMessages) {
+          const messages = JSON.parse(savedMessages);
+          const unreadCount = messages.filter((msg: any) => msg.status === 'unread').length;
+          setUnreadMessages(unreadCount);
+        }
+      } catch (error) {
+        console.error('خطا در بارگذاری پیام‌ها:', error);
+      }
+    };
+
+    loadUnreadMessages();
+
+    // گوش دادن به تغییرات پیام‌ها
+    const handleStorageChange = () => {
+      loadUnreadMessages();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('supportMessagesUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('supportMessagesUpdated', handleStorageChange);
+    };
+  }, []);
+
   // مدیریت اسکرول
   const scrollHandler = useCallback(() => {
     const offset = window.scrollY;
@@ -40,6 +71,11 @@ export const Layout = ({ children }: LayoutProps) => {
     window.addEventListener('scroll', scrollHandler, { passive: true });
     return () => window.removeEventListener('scroll', scrollHandler);
   }, [scrollHandler]);
+
+  const convertToFarsiNumbers = (num: number): string => {
+    const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    return num.toString().replace(/\d/g, (digit) => farsiDigits[parseInt(digit)]);
+  };
   
   // محاسبه استایل‌های فول ریسپانسیو
   const headerHeight = deviceInfo.isMobile ? "h-12" : deviceInfo.isTablet ? "h-14" : deviceInfo.isSmallLaptop ? "h-16" : "h-18";
@@ -90,6 +126,19 @@ export const Layout = ({ children }: LayoutProps) => {
               </h1>
             </div>
           </div>
+          
+          {/* اعلان پیام‌ها */}
+          {unreadMessages > 0 && (
+            <div className="flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-1.5 rounded-full shadow-lg">
+              <Bell className="w-4 h-4" />
+              <span className={cn(
+                "font-medium",
+                deviceInfo.isMobile ? "text-xs" : "text-sm"
+              )}>
+                {convertToFarsiNumbers(unreadMessages)} پیام جدید
+              </span>
+            </div>
+          )}
         </div>
       </header>
       
