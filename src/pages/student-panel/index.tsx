@@ -16,22 +16,6 @@ const StudentPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Listen to localStorage changes
-  useEffect(() => {
-    const handleStorageChange = () => {
-      console.log('Storage changed, rechecking login status...');
-      checkLoginStatus();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('studentLoginSuccess', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('studentLoginSuccess', handleStorageChange);
-    };
-  }, []);
-
   const checkLoginStatus = () => {
     console.log('StudentPanel: Checking authentication state...');
     const studentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
@@ -70,6 +54,7 @@ const StudentPanel = () => {
     setIsLoading(false);
   };
 
+  // بررسی اولیه وضعیت ورود
   useEffect(() => {
     if (students.length > 0) {
       checkLoginStatus();
@@ -78,14 +63,66 @@ const StudentPanel = () => {
     }
   }, [students, studentId, navigate]);
 
+  // Listen to localStorage changes and custom events
+  useEffect(() => {
+    const handleStorageChange = () => {
+      console.log('Storage changed, rechecking login status...');
+      checkLoginStatus();
+    };
+
+    const handleLoginSuccess = () => {
+      console.log('Login success event received, rechecking...');
+      // کمی تاخیر برای اطمینان از ذخیره localStorage
+      setTimeout(() => {
+        checkLoginStatus();
+      }, 100);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('studentLoginSuccess', handleLoginSuccess);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('studentLoginSuccess', handleLoginSuccess);
+    };
+  }, [students]);
+
   const handleLoginSuccess = (phone: string) => {
     console.log('Login success callback triggered for phone:', phone);
-    // Force recheck after a small delay to ensure localStorage is updated
-    setTimeout(() => {
-      checkLoginStatus();
-      // Dispatch custom event to trigger recheck
+    
+    // پیدا کردن شاگرد بر اساس شماره تلفن
+    const student = students.find(s => s.phone === phone);
+    
+    if (student) {
+      console.log('Setting up student login state for:', student.name);
+      
+      // ذخیره در localStorage
+      localStorage.setItem("studentLoggedIn", "true");
+      localStorage.setItem("loggedInStudentId", student.id.toString());
+      
+      // به‌روزرسانی state
+      setLoggedInStudent(student);
+      setIsLoggedIn(true);
+      
+      // هدایت به داشبورد
+      console.log('Navigating to dashboard...');
+      navigate(`/Students/dashboard/${student.id}`, { replace: true });
+      
+      // ارسال event برای سایر component‌ها
       window.dispatchEvent(new Event('studentLoginSuccess'));
-    }, 100);
+      
+      toast({
+        title: "ورود موفق به پنل شاگرد",
+        description: `${student.name} عزیز، خوش آمدید`,
+      });
+    } else {
+      console.error('Student not found for phone:', phone);
+      toast({
+        title: "خطا در ورود",
+        description: "شماره موبایل یافت نشد",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleLogout = () => {

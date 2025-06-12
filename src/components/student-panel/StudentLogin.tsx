@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -22,30 +23,31 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
 
   const handleLoginSuccess = async (phone: string) => {
     try {
-      console.log('Login success for phone:', phone);
-      // Find student by phone
+      console.log('StudentLogin: Login success for phone:', phone);
+      
+      // پیدا کردن شاگرد بر اساس شماره تلفن
       const student = students.find(s => s.phone === phone);
       
       if (student) {
-        console.log('Found student:', student);
-        // Store student login info
+        console.log('StudentLogin: Found student:', student);
+        
+        // ذخیره در localStorage
         localStorage.setItem("studentLoggedIn", "true");
         localStorage.setItem("loggedInStudentId", student.id.toString());
         
-        toast({
-          title: "ورود موفق به پنل شاگرد",
-          description: `${student.name} عزیز، خوش آمدید`,
-        });
+        console.log('StudentLogin: Saved to localStorage');
         
-        // Call the callback if provided
+        // فراخوانی callback والد
         if (onLoginSuccess) {
+          console.log('StudentLogin: Calling parent callback');
           onLoginSuccess(phone);
         } else {
-          // Fallback navigation
-          navigate(`/Students/dashboard/${student.id}`);
+          // fallback navigation اگر callback موجود نباشد
+          console.log('StudentLogin: No callback, navigating directly');
+          navigate(`/Students/dashboard/${student.id}`, { replace: true });
         }
       } else {
-        console.log('Student not found for phone:', phone);
+        console.error('StudentLogin: Student not found for phone:', phone);
         toast({
           title: "خطا در ورود به پنل شاگرد",
           description: "شماره موبایل یافت نشد",
@@ -53,7 +55,7 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
         });
       }
     } catch (error) {
-      console.error("Student login error:", error);
+      console.error("StudentLogin: Login error:", error);
       toast({
         title: "خطا",
         description: "مشکلی در ورود به پنل شاگرد پیش آمده است",
