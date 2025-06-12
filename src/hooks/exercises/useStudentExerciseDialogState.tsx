@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { ExerciseWithSets } from "@/hooks/exercise-selection";
+import { ExerciseWithSets } from "@/types/exercise";
 import { useExerciseData } from "@/hooks/exercises/useExerciseData";
 
 interface UseStudentExerciseDialogStateProps {
@@ -58,18 +57,14 @@ export const useStudentExerciseDialogState = ({
   const [exerciseRepsDay4, setExerciseRepsDay4] = useState<Record<number, string>>({});
   const [exerciseRepsDay5, setExerciseRepsDay5] = useState<Record<number, string>>({});
 
-  // Filtered data
-  const filteredCategories = categories.filter(category =>
-    selectedExerciseType === "" || category.exerciseType === selectedExerciseType
-  );
+  // Filtered data - Remove exerciseType references
+  const filteredCategories = categories;
 
   const filteredExercises = exercises.filter(exercise => {
     const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategoryId === null || exercise.categoryId === selectedCategoryId;
-    const matchesType = selectedExerciseType === "" || 
-      categories.find(cat => cat.id === exercise.categoryId)?.exerciseType === selectedExerciseType;
     
-    return matchesSearch && matchesCategory && matchesType;
+    return matchesSearch && matchesCategory;
   });
 
   // Handlers
@@ -178,6 +173,7 @@ export const useStudentExerciseDialogState = ({
                 exerciseRepsDay5;
 
     return selectedExercises.map(exerciseId => ({
+      id: Date.now() + Math.random(),
       exerciseId,
       sets: sets[exerciseId] || 3,
       reps: reps[exerciseId] || "10"

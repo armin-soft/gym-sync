@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { StudentsHeader } from "@/components/students/StudentsHeader";
@@ -19,10 +20,12 @@ import { StudentTableView } from "@/components/students/list-views";
 import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
+import { StudentProgramManagerView } from "./students/components/program/StudentProgramManagerView";
 
 const StudentsPage = () => {
   const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [activeGenderTab, setActiveGenderTab] = useState<string>("all");
+  const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
   const deviceInfo = useDeviceInfo();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   

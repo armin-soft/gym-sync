@@ -31,3 +31,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
     />
   );
 };
+
+// Export as default and named export for compatibility
+export { FormDialog as StudentFormDialog };
+export default FormDialog;

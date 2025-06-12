@@ -169,6 +169,8 @@ export const useStudentManagement = () => {
     exercises,
     meals,
     supplements,
+    setStudents,
+    setSupplements,
     handleSave,
     handleDelete,
     handleSaveExercises,

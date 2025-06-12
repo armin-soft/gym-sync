@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Student } from "../StudentTypes";
-import StudentSupplementDialog from "@/components/supplements/StudentSupplementDialog";
+import { StudentSupplementDialog } from "@/components/supplements/StudentSupplementDialog";
 
 interface SupplementDialogProps {
   open: boolean;

@@ -2,6 +2,7 @@
 import { useState } from "react";
 
 export interface ExerciseWithSets {
+  id: number;
   exerciseId: number;
   sets: number;
   reps: string;
@@ -16,7 +17,12 @@ export const useExerciseSelection = () => {
       if (exists) {
         return prev.filter(ex => ex.exerciseId !== exerciseId);
       } else {
-        return [...prev, { exerciseId, sets: 3, reps: "10" }];
+        return [...prev, { 
+          id: Date.now(),
+          exerciseId, 
+          sets: 3, 
+          reps: "10" 
+        }];
       }
     });
   };
