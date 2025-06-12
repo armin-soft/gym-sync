@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { StudentLogin } from "@/components/student-panel/StudentLogin";
 import { useStudents } from "@/hooks/useStudents";
@@ -16,14 +16,27 @@ const StudentPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const checkLoginStatus = () => {
+  // Memoized functions to prevent dependency array changes
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("studentLoggedIn");
+    localStorage.removeItem("loggedInStudentId");
+    setIsLoggedIn(false);
+    setLoggedInStudent(null);
+    navigate("/Students");
+    toast({
+      title: "خروج موفق",
+      description: "با موفقیت از حساب کاربری خارج شدید",
+    });
+  }, [navigate, toast]);
+
+  const checkLoginStatus = useCallback(() => {
     console.log('StudentPanel: Checking authentication state...');
     const studentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
     const loggedInStudentId = localStorage.getItem("loggedInStudentId");
     
     console.log('studentLoggedIn:', studentLoggedIn);
     console.log('loggedInStudentId:', loggedInStudentId);
-    console.log('students:', students);
+    console.log('students length:', students.length);
     
     if (studentLoggedIn && loggedInStudentId && students.length > 0) {
       const student = students.find(s => s.id.toString() === loggedInStudentId);
@@ -52,7 +65,7 @@ const StudentPanel = () => {
     }
     
     setIsLoading(false);
-  };
+  }, [students.length, studentId, navigate, handleLogout]);
 
   // بررسی اولیه وضعیت ورود - dependency array پایدار
   useEffect(() => {
@@ -61,7 +74,7 @@ const StudentPanel = () => {
     } else {
       setIsLoading(false);
     }
-  }, [students.length, studentId]); // استفاده از students.length به جای students
+  }, [checkLoginStatus, students.length]);
 
   // Listen to localStorage changes and custom events
   useEffect(() => {
@@ -85,9 +98,9 @@ const StudentPanel = () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('studentLoginSuccess', handleLoginSuccess);
     };
-  }, []); // dependency array خالی
+  }, [checkLoginStatus]); // فقط checkLoginStatus dependency
 
-  const handleLoginSuccess = (phone: string) => {
+  const handleLoginSuccess = useCallback((phone: string) => {
     console.log('Login success callback triggered for phone:', phone);
     
     // پیدا کردن شاگرد بر اساس شماره تلفن
@@ -124,19 +137,7 @@ const StudentPanel = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("studentLoggedIn");
-    localStorage.removeItem("loggedInStudentId");
-    setIsLoggedIn(false);
-    setLoggedInStudent(null);
-    navigate("/Students");
-    toast({
-      title: "خروج موفق",
-      description: "با موفقیت از حساب کاربری خارج شدید",
-    });
-  };
+  }, [students, navigate, toast]);
 
   if (isLoading) {
     return (

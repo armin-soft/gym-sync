@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useStudents } from "@/hooks/students";
+import { useStudents } from "@/hooks/useStudents";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
 import { StudentDashboardLayout } from "@/components/student-dashboard/StudentDashboardLayout";
@@ -38,7 +38,7 @@ const StudentDashboard = () => {
     } else {
       navigate("/Students");
     }
-  }, [students, studentId, navigate]);
+  }, [students.length, studentId, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("studentLoggedIn");
