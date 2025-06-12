@@ -28,11 +28,11 @@ export const useUserTypeSelection = () => {
       // مرحله ۳: هدایت به صفحه مقصد
       await new Promise(resolve => setTimeout(resolve, 600));
       
-      console.log('هدایت به:', type === 'management' ? '/Management' : '/Students');
-      
       if (type === 'management') {
+        console.log('هدایت به: /Management');
         navigate("/Management", { replace: true });
-      } else {
+      } else if (type === 'student') {
+        console.log('هدایت به: /Students');
         navigate("/Students", { replace: true });
       }
     } catch (error) {
