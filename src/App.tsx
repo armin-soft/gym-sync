@@ -24,7 +24,7 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  const [showUserTypeSelection, setShowUserTypeSelection] = useState(true);
+  const [showUserTypeSelection, setShowUserTypeSelection] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,28 +32,60 @@ function AppContent() {
   useEffect(() => {
     console.log('Current location:', location.pathname);
     
-    // بررسی وجود انتخاب نوع کاربر
+    // بررسی وضعیت احراز هویت و نوع کاربر
     const hasSelectedType = localStorage.getItem("hasSelectedUserType");
     const selectedUserType = localStorage.getItem("selectedUserType");
+    const isStudentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
+    const isManagementLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     
     console.log('hasSelectedType:', hasSelectedType);
     console.log('selectedUserType:', selectedUserType);
+    console.log('isStudentLoggedIn:', isStudentLoggedIn);
+    console.log('isManagementLoggedIn:', isManagementLoggedIn);
     
-    // اگر نوع کاربر انتخاب نشده، نمایش صفحه انتخاب
-    if (!hasSelectedType || !selectedUserType) {
-      console.log('No user type selected, showing selection page');
-      setShowUserTypeSelection(true);
-    } else {
-      console.log('User type already selected, hiding selection page');
-      setShowUserTypeSelection(false);
-      
-      // هدایت مناسب بر اساس نوع کاربر
-      if (selectedUserType === "student" && location.pathname === "/") {
-        console.log('Redirecting student to student panel');
-        navigate("/Students", { replace: true });
-      } else if (selectedUserType === "management" && location.pathname === "/") {
-        console.log('Redirecting management to management panel');
-        navigate("/Management", { replace: true });
+    // اگر کاربر در مسیر پنل شاگرد است
+    if (location.pathname.startsWith('/Students')) {
+      if (isStudentLoggedIn) {
+        // شاگرد وارد شده، نیازی به انتخاب نوع کاربر نیست
+        setShowUserTypeSelection(false);
+      } else {
+        // شاگرد وارد نشده، نمایش فرم ورود شاگرد
+        localStorage.setItem("hasSelectedUserType", "true");
+        localStorage.setItem("selectedUserType", "student");
+        setShowUserTypeSelection(false);
+      }
+    }
+    // اگر کاربر در مسیر پنل مدیریت است
+    else if (location.pathname.startsWith('/Management') || location.pathname === '/') {
+      if (isManagementLoggedIn) {
+        // مدیر وارد شده، نیازی به انتخاب نوع کاربر نیست
+        localStorage.setItem("hasSelectedUserType", "true");
+        localStorage.setItem("selectedUserType", "management");
+        setShowUserTypeSelection(false);
+      } else {
+        // مدیر وارد نشده، بررسی انتخاب نوع کاربر
+        if (!hasSelectedType || !selectedUserType) {
+          setShowUserTypeSelection(true);
+        } else if (selectedUserType === "management") {
+          setShowUserTypeSelection(false);
+        } else {
+          // نوع کاربر متفاوت انتخاب شده، نمایش انتخاب مجدد
+          setShowUserTypeSelection(true);
+        }
+      }
+    }
+    // برای سایر مسیرها
+    else {
+      if (!hasSelectedType || !selectedUserType) {
+        setShowUserTypeSelection(true);
+      } else {
+        setShowUserTypeSelection(false);
+        // هدایت بر اساس نوع کاربر انتخاب شده
+        if (selectedUserType === "student") {
+          navigate("/Students", { replace: true });
+        } else if (selectedUserType === "management") {
+          navigate("/Management", { replace: true });
+        }
       }
     }
     
@@ -72,7 +104,7 @@ function AppContent() {
     );
   }
 
-  // نمایش صفحه انتخاب نوع کاربر جدید
+  // نمایش صفحه انتخاب نوع کاربر
   if (showUserTypeSelection) {
     return <UserTypeSelectionNew />;
   }
@@ -81,12 +113,12 @@ function AppContent() {
   const selectedUserType = localStorage.getItem("selectedUserType");
 
   // اگر پنل شاگرد انتخاب شده، بدون Layout و AuthWrapper نمایش دهید
-  if (selectedUserType === "student") {
+  if (selectedUserType === "student" || location.pathname.startsWith('/Students')) {
     return <AppRoutes />;
   }
 
-  // اگر پنل مدیریت انتخاب شده، همیشه از AuthWrapper و Layout استفاده کنید
-  if (selectedUserType === "management") {
+  // اگر پنل مدیریت انتخاب شده، از AuthWrapper و Layout استفاده کنید
+  if (selectedUserType === "management" || location.pathname.startsWith('/Management') || location.pathname === '/') {
     return (
       <AuthWrapper>
         <Layout>
@@ -96,7 +128,7 @@ function AppContent() {
     );
   }
 
-  // fallback - اگر نوع کاربر نامشخص باشد، به صفحه انتخاب برگردید
+  // fallback - نمایش انتخاب نوع کاربر
   return <UserTypeSelectionNew />;
 }
 
