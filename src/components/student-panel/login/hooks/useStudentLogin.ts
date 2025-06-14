@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { useStudents } from "@/hooks/useStudents";
 import { validatePhone } from "@/components/auth/login/utils/validation";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { storageManager } from "@/utils/storageManager";
 
 interface StudentLoginState {
   phone: string;
@@ -39,7 +39,17 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
   const MAX_ATTEMPTS = 3;
   const RESEND_COUNTDOWN = 120;
 
-  // Check if phone number exists in registered students
+  // Add storage availability check
+  useEffect(() => {
+    console.log('Storage availability:', storageManager.isAvailable());
+    if (!storageManager.isAvailable()) {
+      setState(prev => ({ 
+        ...prev, 
+        error: "مرورگر شما دسترسی به ذخیره‌سازی را مسدود کرده است. لطفاً تنظیمات حریم خصوصی را بررسی کنید." 
+      }));
+    }
+  }, []);
+
   const isValidStudentPhone = (phone: string): boolean => {
     console.log('useStudentLogin: Checking phone:', phone);
     console.log('useStudentLogin: Available students:', students.length);
@@ -135,6 +145,15 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
 
     setTimeout(() => {
       console.log('useStudentLogin: Code is correct, calling onLoginSuccess');
+      
+      // Save login state using safe storage manager
+      storageManager.setItem("studentLoggedIn", "true");
+      const student = students.find(s => s.phone === state.phone);
+      if (student) {
+        storageManager.setItem("loggedInStudentId", student.id.toString());
+        console.log('useStudentLogin: Login state saved successfully');
+      }
+      
       onLoginSuccess(state.phone);
       setState(prev => ({ ...prev, loading: false }));
     }, 1200);

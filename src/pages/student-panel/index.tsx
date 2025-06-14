@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { StudentLogin } from "@/components/student-panel/StudentLogin";
 import { useStudents } from "@/hooks/useStudents";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
+import { storageManager } from "@/utils/storageManager";
 import StudentDashboard from "./dashboard";
 
 const StudentPanel = () => {
@@ -17,8 +17,8 @@ const StudentPanel = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("studentLoggedIn");
-    localStorage.removeItem("loggedInStudentId");
+    storageManager.removeItem("studentLoggedIn");
+    storageManager.removeItem("loggedInStudentId");
     setIsLoggedIn(false);
     setLoggedInStudent(null);
     navigate("/Students");
@@ -30,8 +30,10 @@ const StudentPanel = () => {
 
   const checkLoginStatus = useCallback(() => {
     console.log('StudentPanel: Checking authentication state...');
-    const studentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
-    const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+    console.log('Storage available:', storageManager.isAvailable());
+    
+    const studentLoggedIn = storageManager.getItem("studentLoggedIn") === "true";
+    const loggedInStudentId = storageManager.getItem("loggedInStudentId");
     
     console.log('studentLoggedIn:', studentLoggedIn);
     console.log('loggedInStudentId:', loggedInStudentId);
@@ -66,7 +68,6 @@ const StudentPanel = () => {
     setIsLoading(false);
   }, [students.length, studentId, navigate, handleLogout]);
 
-  // بررسی اولیه وضعیت ورود
   useEffect(() => {
     if (students.length > 0) {
       checkLoginStatus();
@@ -88,9 +89,15 @@ const StudentPanel = () => {
     if (student) {
       console.log('Setting up student login state for:', student.name);
       
-      // ذخیره در localStorage
-      localStorage.setItem("studentLoggedIn", "true");
-      localStorage.setItem("loggedInStudentId", student.id.toString());
+      // ذخیره با استفاده از safe storage manager
+      const loginSaved = storageManager.setItem("studentLoggedIn", "true");
+      const idSaved = storageManager.setItem("loggedInStudentId", student.id.toString());
+      
+      if (loginSaved && idSaved) {
+        console.log('Login state saved successfully');
+      } else {
+        console.warn('Warning: Login state may not be persisted due to storage restrictions');
+      }
       
       // به‌روزرسانی state فوری
       setLoggedInStudent(student);
