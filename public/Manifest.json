@@ -1,7 +1,7 @@
 
 {
-  "name": "GymSync - مدیریت برنامه تمرینی و تغذیه",
-  "short_name": "GymSync",
+  "name": "Gym-Sync - مدیریت برنامه تمرینی و تغذیه",
+  "short_name": "Gym-Sync",
   "description": "سیستم مدیریت برنامه های تمرینی و تغذیه ورزشکاران",
   "start_url": "./",
   "display": "standalone",
