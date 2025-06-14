@@ -23,7 +23,7 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
   const { students } = useStudents();
 
   const handleLoginSuccess = (phone: string) => {
-    console.log('StudentLogin: Login success for phone:', phone);
+    console.log('StudentLogin: Login success callback triggered for phone:', phone);
     
     // پیدا کردن شاگرد بر اساس شماره تلفن
     const student = students.find(s => s.phone === phone);
@@ -31,11 +31,13 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
     if (student) {
       console.log('StudentLogin: Found student:', student);
       
-      // ذخیره فوری در storageManager
-      const loginSaved = storageManager.setItem("studentLoggedIn", "true");
-      const idSaved = storageManager.setItem("loggedInStudentId", student.id.toString());
+      // ذخیره مجدد برای اطمینان
+      storageManager.setItem("studentLoggedIn", "true");
+      storageManager.setItem("loggedInStudentId", student.id.toString());
       
-      console.log('StudentLogin: Storage saved - login:', loginSaved, 'id:', idSaved);
+      console.log('StudentLogin: Storage confirmed - checking...');
+      console.log('StudentLogin: studentLoggedIn:', storageManager.getItem("studentLoggedIn"));
+      console.log('StudentLogin: loggedInStudentId:', storageManager.getItem("loggedInStudentId"));
       
       // نمایش پیام موفقیت
       toast({
@@ -80,6 +82,9 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
     handleChangePhone,
     handleResendCode
   } = useStudentLogin({ onLoginSuccess: handleLoginSuccess });
+
+  // اضافه کردن console log برای debugging
+  console.log('StudentLogin: Current state - students count:', students.length);
 
   if (locked) {
     return (

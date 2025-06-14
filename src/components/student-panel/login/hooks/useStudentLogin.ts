@@ -42,7 +42,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
 
   // بررسی دسترسی به storage
   useEffect(() => {
-    console.log('Storage availability:', storageManager.isAvailable());
+    console.log('useStudentLogin: Storage availability:', storageManager.isAvailable());
     if (!storageManager.isAvailable()) {
       setState(prev => ({ 
         ...prev, 
@@ -54,6 +54,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
   const isValidStudentPhone = (phone: string): boolean => {
     console.log('useStudentLogin: Checking phone:', phone);
     console.log('useStudentLogin: Available students:', students.length);
+    console.log('useStudentLogin: Students data:', students);
     
     if (students.length === 0) {
       console.log('useStudentLogin: No students loaded yet');
@@ -77,6 +78,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
 
     console.log('useStudentLogin: Phone submit started with phone:', state.phone);
     console.log('useStudentLogin: Students available:', students.length);
+    console.log('useStudentLogin: All students:', students);
 
     const phoneError = validatePhone(state.phone);
     if (phoneError) {
@@ -108,6 +110,9 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
   const handleCodeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setState(prev => ({ ...prev, loading: true, error: "" }));
+
+    console.log('useStudentLogin: Code submit started');
+    console.log('useStudentLogin: Entered code:', state.code);
 
     if (state.locked) {
       setState(prev => ({ 
@@ -145,12 +150,35 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
       return;
     }
 
-    // کد صحیح است - فوری callback را فراخوانی کنید
-    console.log('useStudentLogin: Code is correct, calling onLoginSuccess immediately');
+    // کد صحیح است
+    console.log('useStudentLogin: Code is correct!');
+    console.log('useStudentLogin: Phone for success:', state.phone);
     
-    // فراخوانی فوری callback موفقیت
-    onLoginSuccess(state.phone);
-    setState(prev => ({ ...prev, loading: false }));
+    // پیدا کردن شاگرد
+    const foundStudent = students.find(s => s.phone === state.phone);
+    console.log('useStudentLogin: Found student for login:', foundStudent);
+    
+    if (foundStudent) {
+      // ذخیره فوری در localStorage
+      const loginSaved = storageManager.setItem("studentLoggedIn", "true");
+      const idSaved = storageManager.setItem("loggedInStudentId", foundStudent.id.toString());
+      
+      console.log('useStudentLogin: Storage results - login:', loginSaved, 'id:', idSaved);
+      
+      // تأخیر کوتاه برای نمایش loading و سپس فراخوانی callback
+      setTimeout(() => {
+        setState(prev => ({ ...prev, loading: false }));
+        console.log('useStudentLogin: Calling onLoginSuccess with phone:', state.phone);
+        onLoginSuccess(state.phone);
+      }, 500);
+    } else {
+      console.error('useStudentLogin: Student not found for phone:', state.phone);
+      setState(prev => ({ 
+        ...prev, 
+        error: "خطا در ورود. شاگرد یافت نشد.",
+        loading: false 
+      }));
+    }
   };
 
   const handleChangePhone = () => {

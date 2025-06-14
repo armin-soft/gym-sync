@@ -31,75 +31,83 @@ const StudentPanel = () => {
 
   const checkLoginStatus = useCallback(() => {
     console.log('StudentPanel: Checking authentication state...');
-    console.log('Storage available:', storageManager.isAvailable());
+    console.log('StudentPanel: Storage available:', storageManager.isAvailable());
     
     const studentLoggedIn = storageManager.getItem("studentLoggedIn") === "true";
     const loggedInStudentId = storageManager.getItem("loggedInStudentId");
     
-    console.log('studentLoggedIn:', studentLoggedIn);
-    console.log('loggedInStudentId:', loggedInStudentId);
-    console.log('students length:', students.length);
+    console.log('StudentPanel: studentLoggedIn:', studentLoggedIn);
+    console.log('StudentPanel: loggedInStudentId:', loggedInStudentId);
+    console.log('StudentPanel: students length:', students.length);
+    console.log('StudentPanel: available students:', students);
     
     if (studentLoggedIn && loggedInStudentId && students.length > 0) {
       const student = students.find(s => s.id.toString() === loggedInStudentId);
-      console.log('Found student:', student);
+      console.log('StudentPanel: Found student:', student);
       
       if (student) {
-        console.log('Setting student login state...');
+        console.log('StudentPanel: Setting student login state...');
         setLoggedInStudent(student);
         setIsLoggedIn(true);
         
         // اگر در مسیر داشبورد نیستیم، هدایت کنیم
         if (!studentId || studentId !== student.id.toString()) {
-          console.log('Redirecting to dashboard for student:', student.id);
+          console.log('StudentPanel: Redirecting to dashboard for student:', student.id);
           navigate(`/Students/dashboard/${student.id}`, { replace: true });
           return;
         }
       } else {
-        console.log('Student not found, logging out...');
+        console.log('StudentPanel: Student not found, logging out...');
         handleLogout();
         return;
       }
     } else {
-      console.log('Not logged in, showing login form');
+      console.log('StudentPanel: Not logged in, showing login form');
       setIsLoggedIn(false);
       setLoggedInStudent(null);
     }
     
     setIsLoading(false);
-  }, [students.length, studentId, navigate, handleLogout]);
+  }, [students, studentId, navigate, handleLogout]);
 
   useEffect(() => {
+    console.log('StudentPanel: useEffect triggered - students.length:', students.length);
+    
     if (students.length > 0) {
+      console.log('StudentPanel: Students loaded, checking login status');
       checkLoginStatus();
     } else {
+      console.log('StudentPanel: Waiting for students to load...');
       // انتظار کوتاه برای بارگذاری شاگردان
       const timer = setTimeout(() => {
+        console.log('StudentPanel: Timeout reached, checking again...');
         if (students.length === 0) {
+          console.log('StudentPanel: Still no students, stopping loading');
           setIsLoading(false);
         } else {
+          console.log('StudentPanel: Students now available, checking login status');
           checkLoginStatus();
         }
-      }, 1000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [checkLoginStatus, students.length]);
 
   const handleLoginSuccess = useCallback((phone: string) => {
-    console.log('Login success callback triggered for phone:', phone);
+    console.log('StudentPanel: Login success callback triggered for phone:', phone);
     
     // پیدا کردن شاگرد بر اساس شماره تلفن
     const student = students.find(s => s.phone === phone);
     
     if (student) {
-      console.log('Setting up student login state for:', student.name);
+      console.log('StudentPanel: Setting up student login state for:', student.name);
       
       // به‌روزرسانی state فوری
       setLoggedInStudent(student);
       setIsLoggedIn(true);
       setIsLoading(false);
       
-      console.log('Navigating to dashboard...');
+      console.log('StudentPanel: Navigating to dashboard...');
       
       // هدایت فوری به داشبورد
       navigate(`/Students/dashboard/${student.id}`, { replace: true });
@@ -109,7 +117,7 @@ const StudentPanel = () => {
         description: `${student.name} عزیز، خوش آمدید`,
       });
     } else {
-      console.error('Student not found for phone:', phone);
+      console.error('StudentPanel: Student not found for phone:', phone);
       toast({
         title: "خطا در ورود",
         description: "شماره موبایل یافت نشد",
@@ -129,14 +137,16 @@ const StudentPanel = () => {
     );
   }
 
-  console.log('Current state - isLoggedIn:', isLoggedIn, 'loggedInStudent:', loggedInStudent, 'studentId:', studentId);
+  console.log('StudentPanel: Current state - isLoggedIn:', isLoggedIn, 'loggedInStudent:', loggedInStudent, 'studentId:', studentId);
 
   // اگر در مسیر داشبورد هستیم و شاگرد وارد شده
   if (studentId && isLoggedIn && loggedInStudent && studentId === loggedInStudent.id.toString()) {
+    console.log('StudentPanel: Rendering dashboard for student:', loggedInStudent.name);
     return <StudentDashboard />;
   }
 
   // در غیر این صورت نمایش فرم ورود
+  console.log('StudentPanel: Rendering login form');
   return <StudentLogin onLoginSuccess={handleLoginSuccess} />;
 };
 
