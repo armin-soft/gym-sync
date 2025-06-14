@@ -25,9 +25,8 @@ const AppRoutes = () => {
       {/* Student Panel Routes - فقط صفحه ورود */}
       <Route path="/Students" element={<StudentPanel />} />
       
-      {/* Management Panel Routes - Enhanced for direct access */}
+      {/* Management Panel Routes - مسیرهای بهینه‌شده */}
       <Route path="/Management" element={<Management />} />
-      <Route path="/Management/*" element={<Management />} />
       <Route path="/Management/Coach-Profile" element={<Trainer />} />
       <Route path="/Management/Students" element={<Students />} />
       <Route path="/Management/Exercise-Movements" element={<Exercises />} />

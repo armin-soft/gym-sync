@@ -27,63 +27,29 @@ function AppContent() {
   const [showUserTypeSelection, setShowUserTypeSelection] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-
+  const currentPath = location.pathname;
+  
+  // بررسی وضعیت احراز هویت و نوع کاربر فقط یکبار در لود اولیه
   useEffect(() => {
-    console.log('Current location:', location.pathname);
-    
     // بررسی وضعیت احراز هویت و نوع کاربر
     const hasSelectedType = localStorage.getItem("hasSelectedUserType");
     const selectedUserType = localStorage.getItem("selectedUserType");
-    const isStudentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
-    const isManagementLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     
-    console.log('hasSelectedType:', hasSelectedType);
-    console.log('selectedUserType:', selectedUserType);
-    console.log('isStudentLoggedIn:', isStudentLoggedIn);
-    console.log('isManagementLoggedIn:', isManagementLoggedIn);
-    
-    // تنظیم یکبار در شروع - جلوگیری از تغییرات مکرر localStorage
-    let shouldShowSelection = false;
-    
-    // اگر کاربر در مسیر پنل شاگرد است
-    if (location.pathname.startsWith('/Students')) {
-      if (selectedUserType !== "student") {
-        localStorage.setItem("hasSelectedUserType", "true");
-        localStorage.setItem("selectedUserType", "student");
-      }
-    }
-    // اگر کاربر در مسیر پنل مدیریت است یا صفحه اصلی
-    else if (location.pathname.startsWith('/Management') || location.pathname === '/') {
-      if (selectedUserType !== "management") {
-        localStorage.setItem("hasSelectedUserType", "true");
-        localStorage.setItem("selectedUserType", "management");
-      }
-    }
-    // برای سایر مسیرها
-    else {
-      if (!hasSelectedType || !selectedUserType) {
-        shouldShowSelection = true;
-      }
-    }
-    
-    setShowUserTypeSelection(shouldShowSelection);
-    setIsLoading(false);
-  }, []); // حذف dependency برای جلوگیری از re-run
-
-  // تنظیم اولیه فقط یکبار
-  useEffect(() => {
-    const currentUserType = localStorage.getItem("selectedUserType");
-    const currentPath = location.pathname;
-    
-    // تنظیم بر اساس مسیر فعلی فقط اگر مطابقت نداشته باشد
-    if (currentPath.startsWith('/Students') && currentUserType !== "student") {
+    // تنظیم مسیر بر اساس وضعیت فعلی - فقط یکبار در لود اولیه
+    if (!hasSelectedType || !selectedUserType) {
+      // اگر هیچ نوع کاربری انتخاب نشده، صفحه انتخاب را نمایش بده
+      setShowUserTypeSelection(true);
+    } 
+    // در غیر این صورت، تنظیم نوع کاربر بر اساس مسیر فعلی
+    else if (currentPath.startsWith('/Students') && selectedUserType !== "student") {
       localStorage.setItem("selectedUserType", "student");
-      localStorage.setItem("hasSelectedUserType", "true");
-    } else if ((currentPath.startsWith('/Management') || currentPath === '/') && currentUserType !== "management") {
+    } 
+    else if ((currentPath.startsWith('/Management') || currentPath === '/') && selectedUserType !== "management") {
       localStorage.setItem("selectedUserType", "management");
-      localStorage.setItem("hasSelectedUserType", "true");
     }
-  }, [location.pathname]);
+    
+    setIsLoading(false);
+  }, []); // فقط یکبار در لود اولیه اجرا شود
 
   // نمایش loading در حین بررسی
   if (isLoading) {
@@ -106,12 +72,12 @@ function AppContent() {
   const selectedUserType = localStorage.getItem("selectedUserType");
 
   // اگر پنل شاگرد انتخاب شده، بدون Layout و AuthWrapper نمایش دهید
-  if (selectedUserType === "student" || location.pathname.startsWith('/Students')) {
+  if (selectedUserType === "student" || currentPath.startsWith('/Students')) {
     return <AppRoutes />;
   }
 
   // اگر پنل مدیریت انتخاب شده، از AuthWrapper و Layout استفاده کنید
-  if (selectedUserType === "management" || location.pathname.startsWith('/Management') || location.pathname === '/') {
+  if (selectedUserType === "management" || currentPath.startsWith('/Management') || currentPath === '/') {
     return (
       <AuthWrapper>
         <Layout>
@@ -130,7 +96,6 @@ function App() {
 
   useEffect(() => {
     console.log('App component mounted successfully');
-    console.log('Current URL:', window.location.href);
     
     // اضافه کردن error handler برای خطاهای JavaScript
     const handleGlobalError = (e: ErrorEvent) => {
