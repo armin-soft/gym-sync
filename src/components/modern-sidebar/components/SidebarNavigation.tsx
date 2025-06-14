@@ -43,10 +43,11 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         <NavigationHeader />
 
         <div className="space-y-1">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <SidebarNavigationItem
               key={item.id}
               item={item}
+              index={index}
               onClose={onClose}
             />
           ))}

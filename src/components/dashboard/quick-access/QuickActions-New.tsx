@@ -69,10 +69,9 @@ export const QuickActionsNew = () => {
             title={action.title}
             description={action.description}
             icon={action.icon}
-            path={action.href}
-            gradient={index % 2 === 0 ? "from-emerald-500 to-sky-600" : "from-sky-500 to-emerald-600"}
-            bgGradient={index % 2 === 0 ? "from-emerald-50 to-sky-50" : "from-sky-50 to-emerald-50"}
-            darkBgGradient={index % 2 === 0 ? "from-emerald-900/20 to-sky-900/20" : "from-sky-900/20 to-emerald-900/20"}
+            color={index % 2 === 0 ? "emerald-sky" : "sky-emerald"}
+            href={action.href}
+            onClick={() => navigate(action.href)}
             index={index}
           />
         ))}

@@ -3,25 +3,18 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { SidebarItem } from "../../types";
 
 interface NavigationItemContentProps {
-  title: string;
-  description?: string;
+  item: SidebarItem;
   isActive: boolean;
-  badge?: string;
-  badgeColor?: string;
-  isNew?: boolean;
-  deviceInfo?: any;
+  deviceInfo: any;
 }
 
 export const NavigationItemContent: React.FC<NavigationItemContentProps> = ({
-  title,
-  description,
+  item,
   isActive,
-  badge,
-  badgeColor,
-  isNew = false,
-  deviceInfo = { isMobile: false }
+  deviceInfo
 }) => {
   return (
     <div className="flex-1 min-w-0" dir="rtl">
@@ -32,26 +25,26 @@ export const NavigationItemContent: React.FC<NavigationItemContentProps> = ({
             deviceInfo.isMobile ? "text-sm" : "text-sm",
             isActive ? "text-white" : "text-emerald-800 dark:text-emerald-200"
           )}
-          layoutId={`title-${title}`}
+          layoutId={`title-${item.href}`}
         >
-          {title}
+          {item.title}
         </motion.h3>
         
         <div className="flex items-center gap-1">
-          {badge && (
+          {item.badge && (
             <Badge 
               variant="secondary" 
               className={cn(
                 "text-3xs px-1.5 py-0.5 shadow-sm",
-                badgeColor || "bg-amber-500",
+                item.badgeColor || "bg-amber-500",
                 isActive ? "bg-white/20 text-white" : "text-white"
               )}
             >
-              {badge}
+              {item.badge}
             </Badge>
           )}
           
-          {isNew && (
+          {item.isNew && (
             <Badge variant="secondary" className="text-3xs px-1.5 py-0.5 bg-green-500 text-white shadow-sm">
               جدید
             </Badge>
@@ -59,20 +52,18 @@ export const NavigationItemContent: React.FC<NavigationItemContentProps> = ({
         </div>
       </div>
       
-      {description && (
-        <motion.p 
-          className={cn(
-            "text-right leading-relaxed",
-            deviceInfo.isMobile ? "text-2xs" : "text-xs",
-            isActive ? "text-white/85" : "text-emerald-600 dark:text-emerald-400"
-          )}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          {description}
-        </motion.p>
-      )}
+      <motion.p 
+        className={cn(
+          "text-right leading-relaxed",
+          deviceInfo.isMobile ? "text-2xs" : "text-xs",
+          isActive ? "text-white/85" : "text-emerald-600 dark:text-emerald-400"
+        )}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+      >
+        {item.subtitle}
+      </motion.p>
     </div>
   );
 };
