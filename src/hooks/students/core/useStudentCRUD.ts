@@ -10,14 +10,28 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
   const handleDelete = (studentId: number) => {
     try {
       setIsDeleting(true);
+      console.log("Deleting student with ID:", studentId);
+      console.log("Current students:", students);
+      
       const updatedStudents = students.filter(student => student.id !== studentId);
+      console.log("Updated students after filter:", updatedStudents);
+      
+      // بروزرسانی localStorage
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      
+      // بروزرسانی state محلی
       setStudents(updatedStudents);
+      
+      // اطلاع‌رسانی به سایر کامپوننت‌ها
+      window.dispatchEvent(new CustomEvent('studentsUpdated'));
+      window.dispatchEvent(new Event('storage'));
       
       toast({
         title: "حذف موفق",
         description: "شاگرد با موفقیت حذف شد",
       });
       
+      console.log("Student deleted successfully");
       return true;
     } catch (error) {
       console.error("Error deleting student:", error);
@@ -37,9 +51,11 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
       console.log("Saving student data:", studentData);
       console.log("Existing student:", existingStudent);
       
+      let updatedStudents;
+      
       if (existingStudent) {
         // ویرایش شاگرد موجود
-        const updatedStudents = students.map(student =>
+        updatedStudents = students.map(student =>
           student.id === existingStudent.id
             ? { 
                 ...student, 
@@ -50,7 +66,6 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
         );
         
         console.log("Updated student:", updatedStudents.find(s => s.id === existingStudent.id));
-        setStudents(updatedStudents);
         
         toast({
           title: "ویرایش موفق",
@@ -66,13 +81,23 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
         };
         
         console.log("Creating new student:", newStudent);
-        setStudents([...students, newStudent]);
+        updatedStudents = [...students, newStudent];
         
         toast({
           title: "افزودن موفق",
           description: "شاگرد جدید با موفقیت اضافه شد",
         });
       }
+      
+      // بروزرسانی localStorage
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      
+      // بروزرسانی state محلی
+      setStudents(updatedStudents);
+      
+      // اطلاع‌رسانی به سایر کامپوننت‌ها
+      window.dispatchEvent(new CustomEvent('studentsUpdated'));
+      window.dispatchEvent(new Event('storage'));
       
       return true;
     } catch (error) {
@@ -89,6 +114,17 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
   const refreshData = () => {
     // اینجا می‌توان داده‌ها را از منبع اصلی بارگذاری کرد
     console.log("Refreshing student data...");
+    try {
+      const savedStudents = localStorage.getItem('students');
+      if (savedStudents) {
+        const parsedStudents = JSON.parse(savedStudents);
+        if (Array.isArray(parsedStudents)) {
+          setStudents(parsedStudents);
+        }
+      }
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    }
   };
 
   return {
