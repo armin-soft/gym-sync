@@ -99,7 +99,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
         ...prev, 
         countdown: RESEND_COUNTDOWN,
         loading: false,
-        error: "" // پاک کردن خطاهای قبلی
+        error: ""
       }));
       console.log(`کد تأیید برای شاگرد با شماره ${state.phone} ارسال شد`);
     }, 1500);
@@ -145,22 +145,12 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
       return;
     }
 
-    // کد صحیح است
-    setTimeout(() => {
-      console.log('useStudentLogin: Code is correct, calling onLoginSuccess');
-      
-      // ذخیره state ورود
-      storageManager.setItem("studentLoggedIn", "true");
-      const student = students.find(s => s.phone === state.phone);
-      if (student) {
-        storageManager.setItem("loggedInStudentId", student.id.toString());
-        console.log('useStudentLogin: Login state saved successfully');
-      }
-      
-      // فراخوانی callback موفقیت
-      onLoginSuccess(state.phone);
-      setState(prev => ({ ...prev, loading: false }));
-    }, 1200);
+    // کد صحیح است - فوری callback را فراخوانی کنید
+    console.log('useStudentLogin: Code is correct, calling onLoginSuccess immediately');
+    
+    // فراخوانی فوری callback موفقیت
+    onLoginSuccess(state.phone);
+    setState(prev => ({ ...prev, loading: false }));
   };
 
   const handleChangePhone = () => {

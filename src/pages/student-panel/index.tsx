@@ -45,14 +45,15 @@ const StudentPanel = () => {
       console.log('Found student:', student);
       
       if (student) {
+        console.log('Setting student login state...');
         setLoggedInStudent(student);
         setIsLoggedIn(true);
         
-        // فوری هدایت به داشبورد
+        // اگر در مسیر داشبورد نیستیم، هدایت کنیم
         if (!studentId || studentId !== student.id.toString()) {
           console.log('Redirecting to dashboard for student:', student.id);
           navigate(`/Students/dashboard/${student.id}`, { replace: true });
-          return; // مهم: از ادامه جلوگیری می‌کند
+          return;
         }
       } else {
         console.log('Student not found, logging out...');
@@ -93,16 +94,6 @@ const StudentPanel = () => {
     if (student) {
       console.log('Setting up student login state for:', student.name);
       
-      // ذخیره با استفاده از safe storage manager
-      const loginSaved = storageManager.setItem("studentLoggedIn", "true");
-      const idSaved = storageManager.setItem("loggedInStudentId", student.id.toString());
-      
-      if (loginSaved && idSaved) {
-        console.log('Login state saved successfully');
-      } else {
-        console.warn('Warning: Login state may not be persisted due to storage restrictions');
-      }
-      
       // به‌روزرسانی state فوری
       setLoggedInStudent(student);
       setIsLoggedIn(true);
@@ -110,10 +101,8 @@ const StudentPanel = () => {
       
       console.log('Navigating to dashboard...');
       
-      // هدایت فوری به داشبورد با timeout کوتاه برای اطمینان از به‌روزرسانی state
-      setTimeout(() => {
-        navigate(`/Students/dashboard/${student.id}`, { replace: true });
-      }, 100);
+      // هدایت فوری به داشبورد
+      navigate(`/Students/dashboard/${student.id}`, { replace: true });
       
       toast({
         title: "ورود موفق به پنل شاگرد",

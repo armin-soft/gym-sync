@@ -10,6 +10,7 @@ import { StudentStatsGrid } from "@/components/student-dashboard/StudentStatsGri
 import { StudentActivityCards } from "@/components/student-dashboard/StudentActivityCards";
 import { StudentQuickActions } from "@/components/student-dashboard/StudentQuickActions";
 import { StudentProgressOverview } from "@/components/student-dashboard/StudentProgressOverview";
+import { storageManager } from "@/utils/storageManager";
 
 const StudentDashboard = () => {
   const { studentId } = useParams<{ studentId: string }>();
@@ -20,8 +21,12 @@ const StudentDashboard = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const studentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
-    const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+    const studentLoggedIn = storageManager.getItem("studentLoggedIn") === "true";
+    const loggedInStudentId = storageManager.getItem("loggedInStudentId");
+    
+    console.log('Dashboard: studentLoggedIn:', studentLoggedIn);
+    console.log('Dashboard: loggedInStudentId:', loggedInStudentId);
+    console.log('Dashboard: studentId from params:', studentId);
     
     if (studentLoggedIn && loggedInStudentId) {
       const student = students.find(s => s.id.toString() === loggedInStudentId);
@@ -41,8 +46,8 @@ const StudentDashboard = () => {
   }, [students.length, studentId, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("studentLoggedIn");
-    localStorage.removeItem("loggedInStudentId");
+    storageManager.removeItem("studentLoggedIn");
+    storageManager.removeItem("loggedInStudentId");
     setIsLoggedIn(false);
     setLoggedInStudent(null);
     navigate("/Students");
@@ -53,7 +58,14 @@ const StudentDashboard = () => {
   };
 
   if (!isLoggedIn || !loggedInStudent) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-violet-50/30 to-indigo-50/50">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600">در حال هدایت به صفحه ورود...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

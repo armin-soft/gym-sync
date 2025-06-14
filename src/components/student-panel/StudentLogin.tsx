@@ -22,53 +22,42 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
   const navigate = useNavigate();
   const { students } = useStudents();
 
-  const handleLoginSuccess = async (phone: string) => {
-    try {
-      console.log('StudentLogin: Login success for phone:', phone);
+  const handleLoginSuccess = (phone: string) => {
+    console.log('StudentLogin: Login success for phone:', phone);
+    
+    // پیدا کردن شاگرد بر اساس شماره تلفن
+    const student = students.find(s => s.phone === phone);
+    
+    if (student) {
+      console.log('StudentLogin: Found student:', student);
       
-      // پیدا کردن شاگرد بر اساس شماره تلفن
-      const student = students.find(s => s.phone === phone);
+      // ذخیره فوری در storageManager
+      const loginSaved = storageManager.setItem("studentLoggedIn", "true");
+      const idSaved = storageManager.setItem("loggedInStudentId", student.id.toString());
       
-      if (student) {
-        console.log('StudentLogin: Found student:', student);
-        
-        // ذخیره در storageManager
-        storageManager.setItem("studentLoggedIn", "true");
-        storageManager.setItem("loggedInStudentId", student.id.toString());
-        
-        console.log('StudentLogin: Saved to storage');
-        
-        // نمایش پیام موفقیت
-        toast({
-          title: "ورود موفق به پنل شاگرد",
-          description: `${student.name} عزیز، خوش آمدید`,
-        });
-        
-        // فراخوانی callback والد با تاخیر کوتاه
-        setTimeout(() => {
-          if (onLoginSuccess) {
-            console.log('StudentLogin: Calling parent callback');
-            onLoginSuccess(phone);
-          } else {
-            // fallback navigation اگر callback موجود نباشد
-            console.log('StudentLogin: No callback, navigating directly');
-            navigate(`/Students/dashboard/${student.id}`, { replace: true });
-          }
-        }, 500);
-        
-      } else {
-        console.error('StudentLogin: Student not found for phone:', phone);
-        toast({
-          title: "خطا در ورود به پنل شاگرد",
-          description: "شماره موبایل یافت نشد",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("StudentLogin: Login error:", error);
+      console.log('StudentLogin: Storage saved - login:', loginSaved, 'id:', idSaved);
+      
+      // نمایش پیام موفقیت
       toast({
-        title: "خطا",
-        description: "مشکلی در ورود به پنل شاگرد پیش آمده است",
+        title: "ورود موفق به پنل شاگرد",
+        description: `${student.name} عزیز، خوش آمدید`,
+      });
+      
+      // فراخوانی callback والد
+      if (onLoginSuccess) {
+        console.log('StudentLogin: Calling parent callback');
+        onLoginSuccess(phone);
+      } else {
+        // fallback navigation اگر callback موجود نباشد
+        console.log('StudentLogin: No callback, navigating directly');
+        navigate(`/Students/dashboard/${student.id}`, { replace: true });
+      }
+      
+    } else {
+      console.error('StudentLogin: Student not found for phone:', phone);
+      toast({
+        title: "خطا در ورود به پنل شاگرد",
+        description: "شماره موبایل یافت نشد",
         variant: "destructive",
       });
     }
