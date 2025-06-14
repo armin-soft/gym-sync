@@ -28,9 +28,9 @@ const StudentPanel = () => {
     });
   }, [navigate, toast]);
 
+  // تابع بررسی وضعیت ورود بدون dependency های مشکل‌ساز
   const checkLoginStatus = useCallback(() => {
     console.log('StudentPanel: Checking authentication state...');
-    console.log('StudentPanel: Storage available:', storageManager.isAvailable());
     
     const studentLoggedIn = storageManager.getItem("studentLoggedIn") === "true";
     const loggedInStudentId = storageManager.getItem("loggedInStudentId");
@@ -63,10 +63,13 @@ const StudentPanel = () => {
     }
   }, [students, studentId, navigate, handleLogout]);
 
+  // useEffect ساده‌تر برای جلوگیری از infinite loop
   useEffect(() => {
-    console.log('StudentPanel: useEffect triggered - students.length:', students.length);
-    checkLoginStatus();
-  }, [checkLoginStatus, students.length]);
+    if (students.length > 0) {
+      console.log('StudentPanel: Students loaded, checking login status');
+      checkLoginStatus();
+    }
+  }, [students.length]); // فقط وقتی تعداد شاگردان تغییر کند
 
   const handleLoginSuccess = useCallback((phone: string) => {
     console.log('StudentPanel: Login success callback triggered for phone:', phone);
