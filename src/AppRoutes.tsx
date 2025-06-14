@@ -14,13 +14,8 @@ import Management from "./pages/management";
 import Reports from "./pages/reports";
 import Support from "./pages/support";
 
-// Student Panel Pages
+// Student Panel Pages - فقط صفحه ورود
 import StudentPanel from "./pages/student-panel";
-import StudentDashboard from "./pages/student-panel/dashboard";
-import StudentProfile from "./pages/student-panel/profile";
-import StudentExercises from "./pages/student-panel/exercises";
-import StudentDiet from "./pages/student-panel/diet";
-import StudentSupplements from "./pages/student-panel/supplements";
 
 const AppRoutes = () => {
   return (
@@ -28,13 +23,8 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
-      {/* Student Panel Routes - این مسیرها برای پنل شاگرد هستند */}
+      {/* Student Panel Routes - فقط صفحه ورود */}
       <Route path="/Students" element={<StudentPanel />} />
-      <Route path="/Students/dashboard/:studentId" element={<StudentDashboard />} />
-      <Route path="/Students/profile" element={<StudentProfile />} />
-      <Route path="/Students/exercises" element={<StudentExercises />} />
-      <Route path="/Students/diet" element={<StudentDiet />} />
-      <Route path="/Students/supplements" element={<StudentSupplements />} />
       
       {/* Management Panel Routes - Enhanced for direct access */}
       <Route path="/Management" element={<Management />} />

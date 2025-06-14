@@ -1,7 +1,6 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useStudents } from "@/hooks/useStudents";
 import { StudentLoginBackground } from "./login/StudentLoginBackground";
@@ -11,7 +10,6 @@ import { StudentLoginFormStep } from "./login/StudentLoginFormStep";
 import { StudentCodeVerificationStep } from "./login/StudentCodeVerificationStep";
 import { useStudentLogin } from "./login/hooks/useStudentLogin";
 import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
-import { storageManager } from "@/utils/storageManager";
 
 interface StudentLoginProps {
   onLoginSuccess?: (phone: string) => void;
@@ -19,40 +17,24 @@ interface StudentLoginProps {
 
 export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const { students } = useStudents();
 
   const handleLoginSuccess = (phone: string) => {
     console.log('StudentLogin: Login success callback triggered for phone:', phone);
     
-    // پیدا کردن شاگرد بر اساس شماره تلفن
     const student = students.find(s => s.phone === phone);
     
     if (student) {
       console.log('StudentLogin: Found student:', student);
       
-      // ذخیره مجدد برای اطمینان
-      storageManager.setItem("studentLoggedIn", "true");
-      storageManager.setItem("loggedInStudentId", student.id.toString());
-      
-      console.log('StudentLogin: Storage confirmed - checking...');
-      console.log('StudentLogin: studentLoggedIn:', storageManager.getItem("studentLoggedIn"));
-      console.log('StudentLogin: loggedInStudentId:', storageManager.getItem("loggedInStudentId"));
-      
-      // نمایش پیام موفقیت
       toast({
         title: "ورود موفق به پنل شاگرد",
         description: `${student.name} عزیز، خوش آمدید`,
       });
       
-      // فراخوانی callback والد
       if (onLoginSuccess) {
         console.log('StudentLogin: Calling parent callback');
         onLoginSuccess(phone);
-      } else {
-        // fallback navigation اگر callback موجود نباشد
-        console.log('StudentLogin: No callback, navigating directly');
-        navigate(`/Students/dashboard/${student.id}`, { replace: true });
       }
       
     } else {
@@ -83,7 +65,6 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
     handleResendCode
   } = useStudentLogin({ onLoginSuccess: handleLoginSuccess });
 
-  // اضافه کردن console log برای debugging
   console.log('StudentLogin: Current state - students count:', students.length);
 
   if (locked) {
