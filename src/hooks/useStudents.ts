@@ -15,39 +15,72 @@ const triggerStatsUpdate = () => {
 export const useStudents = () => {
   console.log('useStudents: Hook called');
   
+  // بارگذاری مستقیم از localStorage
+  const [students, setStudents] = useState<Student[]>([]);
+  const [isStudentsLoaded, setIsStudentsLoaded] = useState(false);
+  
+  // بارگذاری اولیه شاگردان از localStorage
+  useEffect(() => {
+    const loadStudentsFromStorage = () => {
+      try {
+        console.log('useStudents: Loading students directly from localStorage...');
+        const savedStudents = localStorage.getItem('students');
+        console.log('useStudents: Raw localStorage data:', savedStudents ? 'Data exists' : 'No data');
+        
+        if (savedStudents) {
+          const parsedStudents = JSON.parse(savedStudents);
+          console.log('useStudents: Parsed students:', parsedStudents);
+          console.log('useStudents: Students count:', Array.isArray(parsedStudents) ? parsedStudents.length : 'Not an array');
+          
+          if (Array.isArray(parsedStudents)) {
+            setStudents(parsedStudents);
+            console.log('useStudents: Students loaded successfully:', parsedStudents.length);
+          } else {
+            console.warn('useStudents: Parsed data is not an array, setting empty array');
+            setStudents([]);
+          }
+        } else {
+          console.log('useStudents: No students found in localStorage');
+          setStudents([]);
+        }
+      } catch (error) {
+        console.error('useStudents: Error loading students from localStorage:', error);
+        setStudents([]);
+      } finally {
+        setIsStudentsLoaded(true);
+      }
+    };
+
+    loadStudentsFromStorage();
+
+    // گوش دادن به تغییرات localStorage
+    const handleStorageChange = () => {
+      console.log('useStudents: Storage change detected, reloading students...');
+      loadStudentsFromStorage();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('studentsUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('studentsUpdated', handleStorageChange);
+    };
+  }, []);
+  
   const { 
-    students, 
     exercises, 
     meals, 
     supplements, 
-    setStudents,
     setSupplements, 
-    handleDelete, 
-    handleSave,
-    handleSaveExercises,
-    handleSaveDiet,
-    handleSaveSupplements
+    handleDelete: originalHandleDelete, 
+    handleSave: originalHandleSave,
+    handleSaveExercises: originalHandleSaveExercises,
+    handleSaveDiet: originalHandleSaveDiet,
+    handleSaveSupplements: originalHandleSaveSupplements
   } = useStudentsImpl();
   
-  console.log('useStudents: Students from useStudentsImpl:', students.length);
-  
-  // مجدداً بررسی مستقیم localStorage
-  useEffect(() => {
-    const checkLocalStorage = () => {
-      try {
-        const savedStudents = localStorage.getItem('students');
-        console.log('useStudents: Direct localStorage check:', savedStudents ? 'Data exists' : 'No data');
-        if (savedStudents) {
-          const parsed = JSON.parse(savedStudents);
-          console.log('useStudents: Parsed students:', Array.isArray(parsed) ? parsed.length : 'Not an array');
-        }
-      } catch (error) {
-        console.error('useStudents: Error checking localStorage:', error);
-      }
-    };
-    
-    checkLocalStorage();
-  }, []);
+  console.log('useStudents: Final students count:', students.length);
   
   const { toast } = useToast();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
@@ -76,25 +109,38 @@ export const useStudents = () => {
     handleClearSearch
   } = useStudentFiltering(students);
   
-  // Wrap the original functions to trigger stats updates
+  // Wrap the original functions to trigger stats updates and update local state
   const enhancedHandleDelete = async (id: number) => {
-    const result = await handleDelete(id);
+    const result = await originalHandleDelete(id);
     if (result) {
+      // حذف از state محلی
+      setStudents(prev => prev.filter(student => student.id !== id));
       triggerStatsUpdate();
     }
     return result;
   };
 
   const enhancedHandleSave = async (student: Student) => {
-    const result = await handleSave(student);
+    const result = await originalHandleSave(student);
     if (result) {
+      // بروزرسانی state محلی
+      setStudents(prev => {
+        const existingIndex = prev.findIndex(s => s.id === student.id);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = student;
+          return updated;
+        } else {
+          return [...prev, student];
+        }
+      });
       triggerStatsUpdate();
     }
     return result;
   };
 
   const enhancedHandleSaveExercises = async (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
-    const result = await handleSaveExercises(exercisesWithSets, studentId, dayNumber);
+    const result = await originalHandleSaveExercises(exercisesWithSets, studentId, dayNumber);
     if (result) {
       triggerStatsUpdate();
     }
@@ -102,7 +148,7 @@ export const useStudents = () => {
   };
 
   const enhancedHandleSaveDiet = async (mealIds: number[], studentId: number, dayNumber?: number) => {
-    const result = await handleSaveDiet(mealIds, studentId, dayNumber);
+    const result = await originalHandleSaveDiet(mealIds, studentId, dayNumber);
     if (result) {
       triggerStatsUpdate();
     }
@@ -110,15 +156,15 @@ export const useStudents = () => {
   };
 
   const enhancedHandleSaveSupplements = async (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
-    const result = await handleSaveSupplements(data, studentId);
+    const result = await originalHandleSaveSupplements(data, studentId);
     if (result) {
       triggerStatsUpdate();
     }
     return result;
   };
 
-  const enhancedSetStudents = (students: Student[]) => {
-    setStudents(students);
+  const enhancedSetStudents = (newStudents: Student[]) => {
+    setStudents(newStudents);
     triggerStatsUpdate();
   };
   
@@ -131,7 +177,7 @@ export const useStudents = () => {
     supplements,
     
     // State management
-    loading,
+    loading: loading || !isStudentsLoaded,
     isProfileComplete,
     
     // Search & sort
