@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useStudents } from "@/hooks/useStudents";
 import { validatePhone } from "@/components/auth/login/utils/validation";
@@ -39,7 +40,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
   const MAX_ATTEMPTS = 3;
   const RESEND_COUNTDOWN = 120;
 
-  // Add storage availability check
+  // بررسی دسترسی به storage
   useEffect(() => {
     console.log('Storage availability:', storageManager.isAvailable());
     if (!storageManager.isAvailable()) {
@@ -97,7 +98,8 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
       setState(prev => ({ 
         ...prev, 
         countdown: RESEND_COUNTDOWN,
-        loading: false 
+        loading: false,
+        error: "" // پاک کردن خطاهای قبلی
       }));
       console.log(`کد تأیید برای شاگرد با شماره ${state.phone} ارسال شد`);
     }, 1500);
@@ -143,10 +145,11 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
       return;
     }
 
+    // کد صحیح است
     setTimeout(() => {
       console.log('useStudentLogin: Code is correct, calling onLoginSuccess');
       
-      // Save login state using safe storage manager
+      // ذخیره state ورود
       storageManager.setItem("studentLoggedIn", "true");
       const student = students.find(s => s.phone === state.phone);
       if (student) {
@@ -154,6 +157,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
         console.log('useStudentLogin: Login state saved successfully');
       }
       
+      // فراخوانی callback موفقیت
       onLoginSuccess(state.phone);
       setState(prev => ({ ...prev, loading: false }));
     }, 1200);
@@ -187,7 +191,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
     setState(prev => ({ ...prev, code }));
   };
 
-  // Resend countdown timer
+  // شمارش معکوس برای ارسال مجدد کد
   useEffect(() => {
     if (step === "code" && state.countdown > 0) {
       const timer = setTimeout(() => {

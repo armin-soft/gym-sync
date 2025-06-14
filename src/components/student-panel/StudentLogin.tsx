@@ -11,6 +11,7 @@ import { StudentLoginFormStep } from "./login/StudentLoginFormStep";
 import { StudentCodeVerificationStep } from "./login/StudentCodeVerificationStep";
 import { useStudentLogin } from "./login/hooks/useStudentLogin";
 import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
+import { storageManager } from "@/utils/storageManager";
 
 interface StudentLoginProps {
   onLoginSuccess?: (phone: string) => void;
@@ -31,27 +32,30 @@ export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) =>
       if (student) {
         console.log('StudentLogin: Found student:', student);
         
-        // ذخیره در localStorage
-        localStorage.setItem("studentLoggedIn", "true");
-        localStorage.setItem("loggedInStudentId", student.id.toString());
+        // ذخیره در storageManager
+        storageManager.setItem("studentLoggedIn", "true");
+        storageManager.setItem("loggedInStudentId", student.id.toString());
         
-        console.log('StudentLogin: Saved to localStorage');
-        
-        // فراخوانی callback والد
-        if (onLoginSuccess) {
-          console.log('StudentLogin: Calling parent callback');
-          onLoginSuccess(phone);
-        } else {
-          // fallback navigation اگر callback موجود نباشد
-          console.log('StudentLogin: No callback, navigating directly');
-          navigate(`/Students/dashboard/${student.id}`, { replace: true });
-        }
+        console.log('StudentLogin: Saved to storage');
         
         // نمایش پیام موفقیت
         toast({
           title: "ورود موفق به پنل شاگرد",
           description: `${student.name} عزیز، خوش آمدید`,
         });
+        
+        // فراخوانی callback والد با تاخیر کوتاه
+        setTimeout(() => {
+          if (onLoginSuccess) {
+            console.log('StudentLogin: Calling parent callback');
+            onLoginSuccess(phone);
+          } else {
+            // fallback navigation اگر callback موجود نباشد
+            console.log('StudentLogin: No callback, navigating directly');
+            navigate(`/Students/dashboard/${student.id}`, { replace: true });
+          }
+        }, 500);
+        
       } else {
         console.error('StudentLogin: Student not found for phone:', phone);
         toast({

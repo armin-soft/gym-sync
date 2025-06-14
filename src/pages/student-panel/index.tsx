@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { StudentLogin } from "@/components/student-panel/StudentLogin";
@@ -47,17 +48,16 @@ const StudentPanel = () => {
         setLoggedInStudent(student);
         setIsLoggedIn(true);
         
-        // هدایت به داشبورد اگر در مسیر اصلی هستیم
-        if (!studentId) {
+        // فوری هدایت به داشبورد
+        if (!studentId || studentId !== student.id.toString()) {
           console.log('Redirecting to dashboard for student:', student.id);
           navigate(`/Students/dashboard/${student.id}`, { replace: true });
-        } else if (studentId !== student.id.toString()) {
-          console.log('Student ID mismatch, redirecting...');
-          navigate(`/Students/dashboard/${student.id}`, { replace: true });
+          return; // مهم: از ادامه جلوگیری می‌کند
         }
       } else {
         console.log('Student not found, logging out...');
         handleLogout();
+        return;
       }
     } else {
       console.log('Not logged in, showing login form');
@@ -72,9 +72,13 @@ const StudentPanel = () => {
     if (students.length > 0) {
       checkLoginStatus();
     } else {
-      // Wait a bit for students to load
+      // انتظار کوتاه برای بارگذاری شاگردان
       const timer = setTimeout(() => {
-        setIsLoading(false);
+        if (students.length === 0) {
+          setIsLoading(false);
+        } else {
+          checkLoginStatus();
+        }
       }, 1000);
       return () => clearTimeout(timer);
     }
@@ -102,11 +106,14 @@ const StudentPanel = () => {
       // به‌روزرسانی state فوری
       setLoggedInStudent(student);
       setIsLoggedIn(true);
+      setIsLoading(false);
       
       console.log('Navigating to dashboard...');
       
-      // هدایت فوری به داشبورد
-      navigate(`/Students/dashboard/${student.id}`, { replace: true });
+      // هدایت فوری به داشبورد با timeout کوتاه برای اطمینان از به‌روزرسانی state
+      setTimeout(() => {
+        navigate(`/Students/dashboard/${student.id}`, { replace: true });
+      }, 100);
       
       toast({
         title: "ورود موفق به پنل شاگرد",
@@ -136,7 +143,7 @@ const StudentPanel = () => {
   console.log('Current state - isLoggedIn:', isLoggedIn, 'loggedInStudent:', loggedInStudent, 'studentId:', studentId);
 
   // اگر در مسیر داشبورد هستیم و شاگرد وارد شده
-  if (studentId && isLoggedIn && loggedInStudent) {
+  if (studentId && isLoggedIn && loggedInStudent && studentId === loggedInStudent.id.toString()) {
     return <StudentDashboard />;
   }
 
