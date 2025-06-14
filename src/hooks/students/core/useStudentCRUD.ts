@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
@@ -12,9 +11,30 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
       setIsDeleting(true);
       console.log("Deleting student with ID:", studentId);
       console.log("Current students:", students);
+      console.log("Current students count:", students.length);
       
-      const updatedStudents = students.filter(student => student.id !== studentId);
+      // بررسی اینکه شاگرد با این ID وجود دارد یا نه
+      const studentToDelete = students.find(student => student.id === studentId);
+      if (!studentToDelete) {
+        console.log("Student with ID", studentId, "not found");
+        toast({
+          title: "خطا",
+          description: "شاگرد مورد نظر یافت نشد",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      console.log("Found student to delete:", studentToDelete);
+      
+      // فیلتر کردن شاگردان و حذف شاگرد مورد نظر
+      const updatedStudents = students.filter(student => {
+        console.log(`Comparing: student.id (${student.id}) !== studentId (${studentId})`);
+        return student.id !== studentId;
+      });
+      
       console.log("Updated students after filter:", updatedStudents);
+      console.log("Updated students count:", updatedStudents.length);
       
       // بروزرسانی localStorage
       localStorage.setItem('students', JSON.stringify(updatedStudents));
@@ -28,7 +48,7 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
       
       toast({
         title: "حذف موفق",
-        description: "شاگرد با موفقیت حذف شد",
+        description: `شاگرد ${studentToDelete.name} با موفقیت حذف شد`,
       });
       
       console.log("Student deleted successfully");
