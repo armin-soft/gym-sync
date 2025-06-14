@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useStudents } from "@/hooks/useStudents";
-import { validatePhone, validatePhoneAccess, validateCode } from "@/components/auth/login/utils/validation";
+import { validatePhone } from "@/components/auth/login/utils/validation";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentLoginState {
@@ -43,9 +43,12 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
   const isValidStudentPhone = (phone: string): boolean => {
     console.log('useStudentLogin: Checking phone:', phone);
     console.log('useStudentLogin: Available students:', students.length);
-    console.log('useStudentLogin: Student phones:', students.map(s => ({ id: s.id, name: s.name, phone: s.phone })));
     
-    // بررسی دقیق شماره تلفن
+    if (students.length === 0) {
+      console.log('useStudentLogin: No students loaded yet');
+      return false;
+    }
+    
     const foundStudent = students.find(student => {
       const studentPhone = student.phone?.trim();
       const inputPhone = phone?.trim();
@@ -131,7 +134,9 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
     }
 
     setTimeout(() => {
+      console.log('useStudentLogin: Code is correct, calling onLoginSuccess');
       onLoginSuccess(state.phone);
+      setState(prev => ({ ...prev, loading: false }));
     }, 1200);
   };
 
@@ -163,7 +168,7 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
     setState(prev => ({ ...prev, code }));
   };
 
-  // Resend countdown timer - بهبود dependency array
+  // Resend countdown timer
   useEffect(() => {
     if (step === "code" && state.countdown > 0) {
       const timer = setTimeout(() => {

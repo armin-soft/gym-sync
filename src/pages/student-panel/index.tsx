@@ -16,7 +16,6 @@ const StudentPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Memoized functions to prevent dependency array changes
   const handleLogout = useCallback(() => {
     localStorage.removeItem("studentLoggedIn");
     localStorage.removeItem("loggedInStudentId");
@@ -67,38 +66,18 @@ const StudentPanel = () => {
     setIsLoading(false);
   }, [students.length, studentId, navigate, handleLogout]);
 
-  // بررسی اولیه وضعیت ورود - dependency array پایدار
+  // بررسی اولیه وضعیت ورود
   useEffect(() => {
     if (students.length > 0) {
       checkLoginStatus();
     } else {
-      setIsLoading(false);
+      // Wait a bit for students to load
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
   }, [checkLoginStatus, students.length]);
-
-  // Listen to localStorage changes and custom events
-  useEffect(() => {
-    const handleStorageChange = () => {
-      console.log('Storage changed, rechecking login status...');
-      checkLoginStatus();
-    };
-
-    const handleLoginSuccess = () => {
-      console.log('Login success event received, rechecking...');
-      // کمی تاخیر برای اطمینان از ذخیره localStorage
-      setTimeout(() => {
-        checkLoginStatus();
-      }, 100);
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('studentLoginSuccess', handleLoginSuccess);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('studentLoginSuccess', handleLoginSuccess);
-    };
-  }, [checkLoginStatus]); // فقط checkLoginStatus dependency
 
   const handleLoginSuccess = useCallback((phone: string) => {
     console.log('Login success callback triggered for phone:', phone);
@@ -119,11 +98,8 @@ const StudentPanel = () => {
       
       console.log('Navigating to dashboard...');
       
-      // هدایت فوری بدون تاخیر
+      // هدایت فوری به داشبورد
       navigate(`/Students/dashboard/${student.id}`, { replace: true });
-      
-      // ارسال event برای سایر component‌ها
-      window.dispatchEvent(new Event('studentLoginSuccess'));
       
       toast({
         title: "ورود موفق به پنل شاگرد",
@@ -155,12 +131,6 @@ const StudentPanel = () => {
   // اگر در مسیر داشبورد هستیم و شاگرد وارد شده
   if (studentId && isLoggedIn && loggedInStudent) {
     return <StudentDashboard />;
-  }
-
-  // اگر شاگرد وارد شده ولی در مسیر اصلی است، هدایت به داشبورد
-  if (isLoggedIn && loggedInStudent && !studentId) {
-    navigate(`/Students/dashboard/${loggedInStudent.id}`, { replace: true });
-    return null;
   }
 
   // در غیر این صورت نمایش فرم ورود
