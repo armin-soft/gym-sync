@@ -1,4 +1,3 @@
-
 import { useStudents as useStudentsImpl } from './students';
 import { useStudentFiltering } from './useStudentFiltering';
 import { Student } from '@/components/students/StudentTypes';
@@ -24,13 +23,18 @@ export const useStudents = () => {
     const loadStudentsFromStorage = () => {
       try {
         console.log('useStudents: Loading students directly from localStorage...');
+        
+        // بررسی تمام کلیدهای localStorage
+        console.log('useStudents: All localStorage keys:', Object.keys(localStorage));
+        
         const savedStudents = localStorage.getItem('students');
-        console.log('useStudents: Raw localStorage data:', savedStudents ? 'Data exists' : 'No data');
+        console.log('useStudents: Raw localStorage data for "students":', savedStudents);
         
         if (savedStudents) {
           const parsedStudents = JSON.parse(savedStudents);
           console.log('useStudents: Parsed students:', parsedStudents);
           console.log('useStudents: Students count:', Array.isArray(parsedStudents) ? parsedStudents.length : 'Not an array');
+          console.log('useStudents: Students data:', parsedStudents);
           
           if (Array.isArray(parsedStudents)) {
             setStudents(parsedStudents);
@@ -61,10 +65,12 @@ export const useStudents = () => {
 
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('studentsUpdated', handleStorageChange);
+    window.addEventListener('localStorage-updated', handleStorageChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('studentsUpdated', handleStorageChange);
+      window.removeEventListener('localStorage-updated', handleStorageChange);
     };
   }, []);
   
@@ -81,6 +87,7 @@ export const useStudents = () => {
   } = useStudentsImpl();
   
   console.log('useStudents: Final students count:', students.length);
+  console.log('useStudents: Final students data:', students);
   
   const { toast } = useToast();
   const [isProfileComplete, setIsProfileComplete] = useState(false);
@@ -113,7 +120,6 @@ export const useStudents = () => {
   const enhancedHandleDelete = async (id: number) => {
     const result = await originalHandleDelete(id);
     if (result) {
-      // حذف از state محلی
       setStudents(prev => prev.filter(student => student.id !== id));
       triggerStatsUpdate();
     }
@@ -123,7 +129,6 @@ export const useStudents = () => {
   const enhancedHandleSave = async (student: Student) => {
     const result = await originalHandleSave(student);
     if (result) {
-      // بروزرسانی state محلی
       setStudents(prev => {
         const existingIndex = prev.findIndex(s => s.id === student.id);
         if (existingIndex >= 0) {
