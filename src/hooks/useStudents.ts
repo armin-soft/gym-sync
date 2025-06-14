@@ -1,10 +1,8 @@
 
-import { useStudents as useStudentsImpl } from './students';
 import { useStudentFiltering } from './useStudentFiltering';
 import { Student } from '@/components/students/StudentTypes';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { safeJSONParse } from '@/utils/database/index';
 import { ExerciseWithSets } from '@/types/exercise';
 
 // Helper function to trigger stats update
@@ -17,51 +15,71 @@ export const useStudents = () => {
   
   // بارگذاری مستقیم از localStorage
   const [students, setStudents] = useState<Student[]>([]);
+  const [exercises, setExercises] = useState<any[]>([]);
+  const [meals, setMeals] = useState<any[]>([]);
+  const [supplements, setSupplements] = useState<any[]>([]);
   const [isStudentsLoaded, setIsStudentsLoaded] = useState(false);
+  const { toast } = useToast();
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
+  const [loading, setLoading] = useState(true);
   
-  // بارگذاری اولیه شاگردان از localStorage
+  // بارگذاری اولیه داده‌ها از localStorage
   useEffect(() => {
-    const loadStudentsFromStorage = () => {
+    const loadAllData = () => {
       try {
-        console.log('useStudents: Loading students directly from localStorage...');
+        console.log('useStudents: Loading all data from localStorage...');
         
-        // بررسی تمام کلیدهای localStorage
-        console.log('useStudents: All localStorage keys:', Object.keys(localStorage));
-        
+        // بارگذاری شاگردان
         const savedStudents = localStorage.getItem('students');
-        console.log('useStudents: Raw localStorage data for "students":', savedStudents);
-        
         if (savedStudents) {
           const parsedStudents = JSON.parse(savedStudents);
-          console.log('useStudents: Parsed students:', parsedStudents);
-          console.log('useStudents: Students count:', Array.isArray(parsedStudents) ? parsedStudents.length : 'Not an array');
-          console.log('useStudents: Students data:', parsedStudents);
-          
           if (Array.isArray(parsedStudents)) {
             setStudents(parsedStudents);
             console.log('useStudents: Students loaded successfully:', parsedStudents.length);
-          } else {
-            console.warn('useStudents: Parsed data is not an array, setting empty array');
-            setStudents([]);
           }
-        } else {
-          console.log('useStudents: No students found in localStorage');
-          setStudents([]);
         }
+        
+        // بارگذاری تمرینات
+        const savedExercises = localStorage.getItem('exercises');
+        if (savedExercises) {
+          const parsedExercises = JSON.parse(savedExercises);
+          if (Array.isArray(parsedExercises)) {
+            setExercises(parsedExercises);
+          }
+        }
+        
+        // بارگذاری وعده‌های غذایی
+        const savedMeals = localStorage.getItem('meals');
+        if (savedMeals) {
+          const parsedMeals = JSON.parse(savedMeals);
+          if (Array.isArray(parsedMeals)) {
+            setMeals(parsedMeals);
+          }
+        }
+        
+        // بارگذاری مکمل‌ها
+        const savedSupplements = localStorage.getItem('supplements');
+        if (savedSupplements) {
+          const parsedSupplements = JSON.parse(savedSupplements);
+          if (Array.isArray(parsedSupplements)) {
+            setSupplements(parsedSupplements);
+          }
+        }
+        
       } catch (error) {
-        console.error('useStudents: Error loading students from localStorage:', error);
+        console.error('useStudents: Error loading data from localStorage:', error);
         setStudents([]);
       } finally {
         setIsStudentsLoaded(true);
       }
     };
 
-    loadStudentsFromStorage();
+    loadAllData();
 
     // گوش دادن به تغییرات localStorage
     const handleStorageChange = () => {
-      console.log('useStudents: Storage change detected, reloading students...');
-      loadStudentsFromStorage();
+      console.log('useStudents: Storage change detected, reloading...');
+      loadAllData();
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -75,25 +93,7 @@ export const useStudents = () => {
     };
   }, []);
   
-  const { 
-    exercises, 
-    meals, 
-    supplements, 
-    setSupplements, 
-    handleDelete: originalHandleDelete, 
-    handleSave: originalHandleSave,
-    handleSaveExercises: originalHandleSaveExercises,
-    handleSaveDiet: originalHandleSaveDiet,
-    handleSaveSupplements: originalHandleSaveSupplements
-  } = useStudentsImpl();
-  
-  console.log('useStudents: Final students count:', students.length);
-  console.log('useStudents: Final students data:', students);
-  
-  const { toast } = useToast();
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
-  const [loading, setLoading] = useState(true);
-  
+  // بررسی تکمیل پروفایل
   useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
     if (savedProfile) {
@@ -117,62 +117,210 @@ export const useStudents = () => {
     handleClearSearch
   } = useStudentFiltering(students);
   
-  // Wrap the original functions to trigger stats updates and update local state - make them synchronous
-  const enhancedHandleDelete = (id: number) => {
-    const result = originalHandleDelete(id);
-    if (result) {
-      setStudents(prev => prev.filter(student => student.id !== id));
+  // تابع حذف شاگرد
+  const handleDelete = (studentId: number) => {
+    try {
+      console.log("Deleting student with ID:", studentId);
+      
+      const updatedStudents = students.filter(student => student.id !== studentId);
+      
+      // بروزرسانی localStorage
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      
+      // بروزرسانی state محلی
+      setStudents(updatedStudents);
+      
+      // اطلاع‌رسانی به سایر کامپوننت‌ها
       triggerStatsUpdate();
-    }
-    return result;
-  };
-
-  const enhancedHandleSave = (studentData: any, existingStudent?: Student) => {
-    const result = originalHandleSave(studentData, existingStudent);
-    if (result) {
-      setStudents(prev => {
-        const existingIndex = prev.findIndex(s => s.id === (existingStudent?.id || studentData.id));
-        if (existingIndex >= 0) {
-          const updated = [...prev];
-          updated[existingIndex] = { ...existingStudent, ...studentData };
-          return updated;
-        } else {
-          const newId = Math.max(...prev.map(s => s.id), 0) + 1;
-          return [...prev, { ...studentData, id: newId, createdAt: new Date().toISOString() }];
-        }
+      
+      toast({
+        title: "حذف موفق",
+        description: "شاگرد با موفقیت حذف شد",
       });
-      triggerStatsUpdate();
+      
+      return true;
+    } catch (error) {
+      console.error("Error deleting student:", error);
+      toast({
+        title: "خطا در حذف",
+        description: "مشکلی در حذف شاگرد پیش آمد",
+        variant: "destructive",
+      });
+      return false;
     }
-    return result;
   };
 
-  const enhancedHandleSaveExercises = (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
-    const result = originalHandleSaveExercises(exercisesWithSets, studentId, dayNumber);
-    if (result) {
+  // تابع ذخیره شاگرد
+  const handleSave = (studentData: any, existingStudent?: Student) => {
+    try {
+      console.log("Saving student data:", studentData);
+      
+      let updatedStudents;
+      
+      if (existingStudent) {
+        // ویرایش شاگرد موجود
+        updatedStudents = students.map(student =>
+          student.id === existingStudent.id
+            ? { 
+                ...student, 
+                ...studentData,
+                createdAt: student.createdAt
+              }
+            : student
+        );
+        
+        toast({
+          title: "ویرایش موفق",
+          description: "اطلاعات شاگرد با موفقیت ویرایش شد",
+        });
+      } else {
+        // افزودن شاگرد جدید
+        const newId = Math.max(...students.map(s => s.id), 0) + 1;
+        const newStudent: Student = {
+          ...studentData,
+          id: newId,
+          createdAt: new Date().toISOString()
+        };
+        
+        updatedStudents = [...students, newStudent];
+        
+        toast({
+          title: "افزودن موفق",
+          description: "شاگرد جدید با موفقیت اضافه شد",
+        });
+      }
+      
+      // بروزرسانی localStorage
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      
+      // بروزرسانی state محلی
+      setStudents(updatedStudents);
+      
+      // اطلاع‌رسانی به سایر کامپوننت‌ها
       triggerStatsUpdate();
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving student:", error);
+      toast({
+        title: "خطا در ذخیره‌سازی",
+        description: "مشکلی در ذخیره‌سازی اطلاعات شاگرد پیش آمد",
+        variant: "destructive",
+      });
+      return false;
     }
-    return result;
   };
 
-  const enhancedHandleSaveDiet = (mealIds: number[], studentId: number, dayNumber?: number) => {
-    const result = originalHandleSaveDiet(mealIds, studentId, dayNumber);
-    if (result) {
+  // تابع ذخیره تمرینات
+  const handleSaveExercises = (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+    try {
+      const updatedStudents = students.map(student => {
+        if (student.id === studentId) {
+          const updatedStudent = { ...student };
+          
+          if (dayNumber) {
+            const dayKey = `exercisesDay${dayNumber}` as keyof Student;
+            const setsKey = `exerciseSetsDay${dayNumber}` as keyof Student;
+            const repsKey = `exerciseRepsDay${dayNumber}` as keyof Student;
+            
+            (updatedStudent as any)[dayKey] = exercisesWithSets.map(e => e.exercise.id);
+            (updatedStudent as any)[setsKey] = exercisesWithSets.reduce((acc, e) => ({
+              ...acc,
+              [e.exercise.id]: e.sets
+            }), {});
+            (updatedStudent as any)[repsKey] = exercisesWithSets.reduce((acc, e) => ({
+              ...acc,
+              [e.exercise.id]: e.reps
+            }), {});
+          } else {
+            updatedStudent.exercises = exercisesWithSets.map(e => e.exercise.id);
+            updatedStudent.exerciseSets = exercisesWithSets.reduce((acc, e) => ({
+              ...acc,
+              [e.exercise.id]: e.sets
+            }), {});
+            updatedStudent.exerciseReps = exercisesWithSets.reduce((acc, e) => ({
+              ...acc,
+              [e.exercise.id]: e.reps
+            }), {});
+          }
+          
+          return updatedStudent;
+        }
+        return student;
+      });
+      
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      setStudents(updatedStudents);
       triggerStatsUpdate();
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+      return false;
     }
-    return result;
   };
 
-  const enhancedHandleSaveSupplements = (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
-    const result = originalHandleSaveSupplements(data, studentId);
-    if (result) {
+  // تابع ذخیره رژیم غذایی
+  const handleSaveDiet = (mealIds: number[], studentId: number, dayNumber?: number) => {
+    try {
+      const updatedStudents = students.map(student => {
+        if (student.id === studentId) {
+          const updatedStudent = { ...student };
+          
+          if (dayNumber) {
+            const dayKey = `mealsDay${dayNumber}` as keyof Student;
+            (updatedStudent as any)[dayKey] = mealIds;
+          } else {
+            updatedStudent.meals = mealIds;
+          }
+          
+          return updatedStudent;
+        }
+        return student;
+      });
+      
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      setStudents(updatedStudents);
       triggerStatsUpdate();
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving diet:", error);
+      return false;
     }
-    return result;
   };
 
-  const enhancedSetStudents = (newStudents: Student[]) => {
-    setStudents(newStudents);
-    triggerStatsUpdate();
+  // تابع ذخیره مکمل‌ها
+  const handleSaveSupplements = (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
+    try {
+      const updatedStudents = students.map(student => {
+        if (student.id === studentId) {
+          const updatedStudent = { ...student };
+          
+          if (data.day) {
+            const suppKey = `supplementsDay${data.day}` as keyof Student;
+            const vitKey = `vitaminsDay${data.day}` as keyof Student;
+            (updatedStudent as any)[suppKey] = data.supplements;
+            (updatedStudent as any)[vitKey] = data.vitamins;
+          } else {
+            updatedStudent.supplements = data.supplements;
+            updatedStudent.vitamins = data.vitamins;
+          }
+          
+          return updatedStudent;
+        }
+        return student;
+      });
+      
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      setStudents(updatedStudents);
+      triggerStatsUpdate();
+      
+      return true;
+    } catch (error) {
+      console.error("Error saving supplements:", error);
+      return false;
+    }
   };
   
   return {
@@ -195,15 +343,13 @@ export const useStudents = () => {
     toggleSort,
     handleClearSearch,
     
-    // CRUD operations with stats update triggers
-    handleDelete: enhancedHandleDelete,
-    handleSave: enhancedHandleSave,
-    handleSaveExercises: enhancedHandleSaveExercises,
-    handleSaveDiet: enhancedHandleSaveDiet,
-    handleSaveSupplements: enhancedHandleSaveSupplements,
-    setStudents: enhancedSetStudents,
+    // CRUD operations
+    handleDelete,
+    handleSave,
+    handleSaveExercises,
+    handleSaveDiet,
+    handleSaveSupplements,
+    setStudents,
     setSupplements
   };
 };
-
-export * from './students';
