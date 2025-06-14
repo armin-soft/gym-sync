@@ -7,7 +7,7 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async (studentId: number) => {
+  const handleDelete = (studentId: number) => {
     try {
       setIsDeleting(true);
       const updatedStudents = students.filter(student => student.id !== studentId);

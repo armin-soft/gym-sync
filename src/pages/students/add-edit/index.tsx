@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
@@ -48,6 +47,7 @@ const AddEditStudent = () => {
   }, [id, students, navigate, toast]);
 
   const handleSaveStudent = (data: any) => {
+    // Fix: Call handleSave with the correct signature
     const success = handleSave(data, student);
     
     if (success) {

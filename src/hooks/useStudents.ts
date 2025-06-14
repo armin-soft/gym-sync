@@ -1,3 +1,4 @@
+
 import { useStudents as useStudentsImpl } from './students';
 import { useStudentFiltering } from './useStudentFiltering';
 import { Student } from '@/components/students/StudentTypes';
@@ -116,9 +117,9 @@ export const useStudents = () => {
     handleClearSearch
   } = useStudentFiltering(students);
   
-  // Wrap the original functions to trigger stats updates and update local state
-  const enhancedHandleDelete = async (id: number) => {
-    const result = await originalHandleDelete(id);
+  // Wrap the original functions to trigger stats updates and update local state - make them synchronous
+  const enhancedHandleDelete = (id: number) => {
+    const result = originalHandleDelete(id);
     if (result) {
       setStudents(prev => prev.filter(student => student.id !== id));
       triggerStatsUpdate();
@@ -126,17 +127,18 @@ export const useStudents = () => {
     return result;
   };
 
-  const enhancedHandleSave = async (student: Student) => {
-    const result = await originalHandleSave(student);
+  const enhancedHandleSave = (studentData: any, existingStudent?: Student) => {
+    const result = originalHandleSave(studentData, existingStudent);
     if (result) {
       setStudents(prev => {
-        const existingIndex = prev.findIndex(s => s.id === student.id);
+        const existingIndex = prev.findIndex(s => s.id === (existingStudent?.id || studentData.id));
         if (existingIndex >= 0) {
           const updated = [...prev];
-          updated[existingIndex] = student;
+          updated[existingIndex] = { ...existingStudent, ...studentData };
           return updated;
         } else {
-          return [...prev, student];
+          const newId = Math.max(...prev.map(s => s.id), 0) + 1;
+          return [...prev, { ...studentData, id: newId, createdAt: new Date().toISOString() }];
         }
       });
       triggerStatsUpdate();
@@ -144,24 +146,24 @@ export const useStudents = () => {
     return result;
   };
 
-  const enhancedHandleSaveExercises = async (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
-    const result = await originalHandleSaveExercises(exercisesWithSets, studentId, dayNumber);
+  const enhancedHandleSaveExercises = (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+    const result = originalHandleSaveExercises(exercisesWithSets, studentId, dayNumber);
     if (result) {
       triggerStatsUpdate();
     }
     return result;
   };
 
-  const enhancedHandleSaveDiet = async (mealIds: number[], studentId: number, dayNumber?: number) => {
-    const result = await originalHandleSaveDiet(mealIds, studentId, dayNumber);
+  const enhancedHandleSaveDiet = (mealIds: number[], studentId: number, dayNumber?: number) => {
+    const result = originalHandleSaveDiet(mealIds, studentId, dayNumber);
     if (result) {
       triggerStatsUpdate();
     }
     return result;
   };
 
-  const enhancedHandleSaveSupplements = async (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
-    const result = await originalHandleSaveSupplements(data, studentId);
+  const enhancedHandleSaveSupplements = (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
+    const result = originalHandleSaveSupplements(data, studentId);
     if (result) {
       triggerStatsUpdate();
     }
