@@ -27,7 +27,6 @@ function AppContent() {
   const [showUserTypeSelection, setShowUserTypeSelection] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('Current location:', location.pathname);
@@ -43,28 +42,47 @@ function AppContent() {
     console.log('isStudentLoggedIn:', isStudentLoggedIn);
     console.log('isManagementLoggedIn:', isManagementLoggedIn);
     
+    // تنظیم یکبار در شروع - جلوگیری از تغییرات مکرر localStorage
+    let shouldShowSelection = false;
+    
     // اگر کاربر در مسیر پنل شاگرد است
     if (location.pathname.startsWith('/Students')) {
-      localStorage.setItem("hasSelectedUserType", "true");
-      localStorage.setItem("selectedUserType", "student");
-      setShowUserTypeSelection(false);
+      if (selectedUserType !== "student") {
+        localStorage.setItem("hasSelectedUserType", "true");
+        localStorage.setItem("selectedUserType", "student");
+      }
     }
     // اگر کاربر در مسیر پنل مدیریت است یا صفحه اصلی
     else if (location.pathname.startsWith('/Management') || location.pathname === '/') {
-      localStorage.setItem("hasSelectedUserType", "true");
-      localStorage.setItem("selectedUserType", "management");
-      setShowUserTypeSelection(false);
+      if (selectedUserType !== "management") {
+        localStorage.setItem("hasSelectedUserType", "true");
+        localStorage.setItem("selectedUserType", "management");
+      }
     }
     // برای سایر مسیرها
     else {
       if (!hasSelectedType || !selectedUserType) {
-        setShowUserTypeSelection(true);
-      } else {
-        setShowUserTypeSelection(false);
+        shouldShowSelection = true;
       }
     }
     
+    setShowUserTypeSelection(shouldShowSelection);
     setIsLoading(false);
+  }, []); // حذف dependency برای جلوگیری از re-run
+
+  // تنظیم اولیه فقط یکبار
+  useEffect(() => {
+    const currentUserType = localStorage.getItem("selectedUserType");
+    const currentPath = location.pathname;
+    
+    // تنظیم بر اساس مسیر فعلی فقط اگر مطابقت نداشته باشد
+    if (currentPath.startsWith('/Students') && currentUserType !== "student") {
+      localStorage.setItem("selectedUserType", "student");
+      localStorage.setItem("hasSelectedUserType", "true");
+    } else if ((currentPath.startsWith('/Management') || currentPath === '/') && currentUserType !== "management") {
+      localStorage.setItem("selectedUserType", "management");
+      localStorage.setItem("hasSelectedUserType", "true");
+    }
   }, [location.pathname]);
 
   // نمایش loading در حین بررسی
