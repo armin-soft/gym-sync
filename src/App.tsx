@@ -45,34 +45,15 @@ function AppContent() {
     
     // اگر کاربر در مسیر پنل شاگرد است
     if (location.pathname.startsWith('/Students')) {
-      if (isStudentLoggedIn) {
-        // شاگرد وارد شده، نیازی به انتخاب نوع کاربر نیست
-        setShowUserTypeSelection(false);
-      } else {
-        // شاگرد وارد نشده، نمایش فرم ورود شاگرد
-        localStorage.setItem("hasSelectedUserType", "true");
-        localStorage.setItem("selectedUserType", "student");
-        setShowUserTypeSelection(false);
-      }
+      localStorage.setItem("hasSelectedUserType", "true");
+      localStorage.setItem("selectedUserType", "student");
+      setShowUserTypeSelection(false);
     }
-    // اگر کاربر در مسیر پنل مدیریت است
+    // اگر کاربر در مسیر پنل مدیریت است یا صفحه اصلی
     else if (location.pathname.startsWith('/Management') || location.pathname === '/') {
-      if (isManagementLoggedIn) {
-        // مدیر وارد شده، نیازی به انتخاب نوع کاربر نیست
-        localStorage.setItem("hasSelectedUserType", "true");
-        localStorage.setItem("selectedUserType", "management");
-        setShowUserTypeSelection(false);
-      } else {
-        // مدیر وارد نشده، بررسی انتخاب نوع کاربر
-        if (!hasSelectedType || !selectedUserType) {
-          setShowUserTypeSelection(true);
-        } else if (selectedUserType === "management") {
-          setShowUserTypeSelection(false);
-        } else {
-          // نوع کاربر متفاوت انتخاب شده، نمایش انتخاب مجدد
-          setShowUserTypeSelection(true);
-        }
-      }
+      localStorage.setItem("hasSelectedUserType", "true");
+      localStorage.setItem("selectedUserType", "management");
+      setShowUserTypeSelection(false);
     }
     // برای سایر مسیرها
     else {
@@ -80,17 +61,11 @@ function AppContent() {
         setShowUserTypeSelection(true);
       } else {
         setShowUserTypeSelection(false);
-        // هدایت بر اساس نوع کاربر انتخاب شده
-        if (selectedUserType === "student") {
-          navigate("/Students", { replace: true });
-        } else if (selectedUserType === "management") {
-          navigate("/Management", { replace: true });
-        }
       }
     }
     
     setIsLoading(false);
-  }, [location.pathname, navigate]);
+  }, [location.pathname]);
 
   // نمایش loading در حین بررسی
   if (isLoading) {

@@ -11,6 +11,7 @@ interface AuthWrapperProps {
 
 export const AuthWrapper = ({ children }: AuthWrapperProps) => {
   const [authenticated, setAuthenticated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     // Initialize default trainer profile if it doesn't exist
@@ -26,6 +27,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       
       if (isLoggedIn) {
         setAuthenticated(true);
+        setIsChecking(false);
         return;
       }
       
@@ -53,9 +55,11 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
           // But keep the remembered email
         }
       }
+      
+      setIsChecking(false);
     };
     
-    // بررسی فوری وضعیت احراز هویت بدون نمایش صفحه لودینگ
+    // بررسی فوری وضعیت احراز هویت
     checkAuth();
   }, []);
 
@@ -72,6 +76,18 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
       localStorage.removeItem("rememberMeExpiry");
     }
   };
+
+  // Show loading while checking authentication
+  if (isChecking) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">در حال بررسی احراز هویت...</p>
+        </div>
+      </div>
+    );
+  }
 
   // If not authenticated, show the login form
   if (!authenticated) {
