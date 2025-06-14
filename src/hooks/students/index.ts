@@ -1,4 +1,3 @@
-
 import { useStudentManagement } from './useStudentManagement';
 import { useStudentExercises } from './useStudentExercises';
 import { useStudentDiet } from './useStudentDiet';
@@ -19,9 +18,6 @@ export const useStudents = () => {
       try {
         console.log('hooks/students/index.ts: Loading students directly from localStorage...');
         
-        // بررسی تمام کلیدهای localStorage
-        console.log('hooks/students/index.ts: All localStorage keys:', Object.keys(localStorage));
-        
         const savedStudents = localStorage.getItem('students');
         console.log('hooks/students/index.ts: Raw localStorage data for "students":', savedStudents);
         
@@ -29,7 +25,6 @@ export const useStudents = () => {
           const parsedStudents = JSON.parse(savedStudents);
           console.log('hooks/students/index.ts: Parsed students:', parsedStudents);
           console.log('hooks/students/index.ts: Students count:', Array.isArray(parsedStudents) ? parsedStudents.length : 'Not an array');
-          console.log('hooks/students/index.ts: Students data:', parsedStudents);
           
           if (Array.isArray(parsedStudents)) {
             setStudents(parsedStudents);
@@ -53,19 +48,24 @@ export const useStudents = () => {
     loadStudentsFromStorage();
 
     // گوش دادن به تغییرات localStorage
-    const handleStorageChange = () => {
+    const handleStorageChange = (event?: StorageEvent) => {
       console.log('hooks/students/index.ts: Storage change detected, reloading students...');
+      if (!event || event.key === 'students' || event.key === null) {
+        loadStudentsFromStorage();
+      }
+    };
+
+    const handleCustomStudentsUpdate = () => {
+      console.log('hooks/students/index.ts: Custom students update event detected');
       loadStudentsFromStorage();
     };
 
     window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('studentsUpdated', handleStorageChange);
-    window.addEventListener('localStorage-updated', handleStorageChange);
+    window.addEventListener('studentsUpdated', handleCustomStudentsUpdate);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('studentsUpdated', handleStorageChange);
-      window.removeEventListener('localStorage-updated', handleStorageChange);
+      window.removeEventListener('studentsUpdated', handleCustomStudentsUpdate);
     };
   }, []);
   
@@ -84,7 +84,6 @@ export const useStudents = () => {
   const { handleSaveSupplements } = useStudentSupplements(students, setStudents);
 
   console.log('hooks/students/index.ts: Final students count:', students.length);
-  console.log('hooks/students/index.ts: Final students data:', students);
 
   // Helper function to trigger stats update
   const triggerStatsUpdate = () => {
@@ -93,9 +92,15 @@ export const useStudents = () => {
 
   // Wrap the original functions to trigger stats updates and update local state
   const enhancedHandleDelete = (id: number) => {
+    console.log('hooks/students/index.ts: Enhanced delete called for ID:', id);
     const result = originalHandleDelete(id);
     if (result) {
-      setStudents(prev => prev.filter(student => student.id !== id));
+      // بروزرسانی فوری state محلی
+      setStudents(prev => {
+        const updated = prev.filter(student => student.id !== id);
+        console.log('hooks/students/index.ts: Local state updated after delete, new count:', updated.length);
+        return updated;
+      });
       triggerStatsUpdate();
     }
     return result;
@@ -104,6 +109,7 @@ export const useStudents = () => {
   const enhancedHandleSave = (studentData: any, existingStudent?: Student) => {
     const result = originalHandleSave(studentData, existingStudent);
     if (result) {
+      // بروزرسانی فوری state محلی
       setStudents(prev => {
         const existingIndex = prev.findIndex(s => s.id === (existingStudent?.id || studentData.id));
         if (existingIndex >= 0) {
@@ -121,6 +127,7 @@ export const useStudents = () => {
   };
 
   const enhancedSetStudents = (newStudents: Student[]) => {
+    console.log('hooks/students/index.ts: Setting students:', newStudents.length);
     setStudents(newStudents);
     triggerStatsUpdate();
   };

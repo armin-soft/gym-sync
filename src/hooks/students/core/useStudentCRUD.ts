@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Student } from "@/components/students/StudentTypes";
 import { useToast } from "@/hooks/use-toast";
@@ -16,12 +17,43 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
       // بررسی اینکه شاگرد با این ID وجود دارد یا نه
       const studentToDelete = students.find(student => student.id === studentId);
       if (!studentToDelete) {
-        console.log("Student with ID", studentId, "not found");
-        toast({
-          title: "خطا",
-          description: "شاگرد مورد نظر یافت نشد",
-          variant: "destructive",
-        });
+        console.log("Student with ID", studentId, "not found in current students array");
+        
+        // بررسی localStorage برای اطمینان
+        const savedStudents = localStorage.getItem('students');
+        if (savedStudents) {
+          const parsedStudents = JSON.parse(savedStudents);
+          const studentInStorage = parsedStudents.find((student: Student) => student.id === studentId);
+          
+          if (!studentInStorage) {
+            toast({
+              title: "خطا",
+              description: "شاگرد مورد نظر یافت نشد",
+              variant: "destructive",
+            });
+            return false;
+          }
+          
+          // اگر در localStorage وجود دارد ولی در state محلی نیست، ابتدا state را به‌روزرسانی کنیم
+          setStudents(parsedStudents);
+          
+          // سپس حذف را انجام دهیم
+          const updatedStudents = parsedStudents.filter((student: Student) => student.id !== studentId);
+          localStorage.setItem('students', JSON.stringify(updatedStudents));
+          setStudents(updatedStudents);
+          
+          // اطلاع‌رسانی به سایر کامپوننت‌ها
+          window.dispatchEvent(new CustomEvent('studentsUpdated'));
+          window.dispatchEvent(new Event('storage'));
+          
+          toast({
+            title: "حذف موفق",
+            description: `شاگرد با موفقیت حذف شد`,
+          });
+          
+          return true;
+        }
+        
         return false;
       }
 
@@ -71,11 +103,15 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
       console.log("Saving student data:", studentData);
       console.log("Existing student:", existingStudent);
       
+      // بارگذاری شاگردان فعلی از localStorage
+      const savedStudents = localStorage.getItem('students');
+      const currentStudents = savedStudents ? JSON.parse(savedStudents) : students;
+      
       let updatedStudents;
       
       if (existingStudent) {
         // ویرایش شاگرد موجود
-        updatedStudents = students.map(student =>
+        updatedStudents = currentStudents.map((student: Student) =>
           student.id === existingStudent.id
             ? { 
                 ...student, 
@@ -85,7 +121,7 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
             : student
         );
         
-        console.log("Updated student:", updatedStudents.find(s => s.id === existingStudent.id));
+        console.log("Updated student:", updatedStudents.find((s: Student) => s.id === existingStudent.id));
         
         toast({
           title: "ویرایش موفق",
@@ -93,7 +129,7 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
         });
       } else {
         // افزودن شاگرد جدید
-        const newId = Math.max(...students.map(s => s.id), 0) + 1;
+        const newId = Math.max(...currentStudents.map((s: Student) => s.id), 0) + 1;
         const newStudent: Student = {
           ...studentData,
           id: newId,
@@ -101,7 +137,7 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
         };
         
         console.log("Creating new student:", newStudent);
-        updatedStudents = [...students, newStudent];
+        updatedStudents = [...currentStudents, newStudent];
         
         toast({
           title: "افزودن موفق",
@@ -140,6 +176,7 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
         const parsedStudents = JSON.parse(savedStudents);
         if (Array.isArray(parsedStudents)) {
           setStudents(parsedStudents);
+          console.log("Data refreshed successfully");
         }
       }
     } catch (error) {
