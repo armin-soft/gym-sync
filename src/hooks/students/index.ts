@@ -92,8 +92,8 @@ export const useStudents = () => {
   };
 
   // Wrap the original functions to trigger stats updates and update local state
-  const enhancedHandleDelete = async (id: number) => {
-    const result = await originalHandleDelete(id);
+  const enhancedHandleDelete = (id: number) => {
+    const result = originalHandleDelete(id);
     if (result) {
       setStudents(prev => prev.filter(student => student.id !== id));
       triggerStatsUpdate();
@@ -101,17 +101,18 @@ export const useStudents = () => {
     return result;
   };
 
-  const enhancedHandleSave = async (student: Student) => {
-    const result = await originalHandleSave(student);
+  const enhancedHandleSave = (studentData: any, existingStudent?: Student) => {
+    const result = originalHandleSave(studentData, existingStudent);
     if (result) {
       setStudents(prev => {
-        const existingIndex = prev.findIndex(s => s.id === student.id);
+        const existingIndex = prev.findIndex(s => s.id === (existingStudent?.id || studentData.id));
         if (existingIndex >= 0) {
           const updated = [...prev];
-          updated[existingIndex] = student;
+          updated[existingIndex] = { ...existingStudent, ...studentData };
           return updated;
         } else {
-          return [...prev, student];
+          const newId = Math.max(...prev.map(s => s.id), 0) + 1;
+          return [...prev, { ...studentData, id: newId, createdAt: new Date().toISOString() }];
         }
       });
       triggerStatsUpdate();

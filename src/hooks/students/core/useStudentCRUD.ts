@@ -32,7 +32,7 @@ export const useStudentCRUD = (students: Student[], setStudents: (students: Stud
     }
   };
 
-  const handleSave = (studentData: any, existingStudent?: Student | null) => {
+  const handleSave = (studentData: any, existingStudent?: Student) => {
     try {
       console.log("Saving student data:", studentData);
       console.log("Existing student:", existingStudent);

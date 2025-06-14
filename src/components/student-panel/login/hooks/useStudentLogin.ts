@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useStudents } from "@/hooks/useStudents";
 import { validatePhone, validatePhoneAccess, validateCode } from "@/components/auth/login/utils/validation";
@@ -37,6 +38,33 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
   const STUDENT_VALID_CODE = "987654";
   const MAX_ATTEMPTS = 3;
   const RESEND_COUNTDOWN = 120;
+
+  // اضافه کردن شاگرد تست اگر هیچ شاگردی موجود نباشد
+  useEffect(() => {
+    if (students.length === 0) {
+      console.log('No students found, creating test student...');
+      const testStudent = {
+        id: 1,
+        name: "علی احمدی",
+        phone: "09123456789",
+        height: "175",
+        weight: "70",
+        age: "25",
+        grade: "متوسط",
+        group: "صبح",
+        gender: "male" as const,
+        payment: "500000",
+        image: "/Assets/Image/Place-Holder.svg",
+        createdAt: new Date().toISOString()
+      };
+      
+      // ذخیره شاگرد تست در localStorage
+      localStorage.setItem('students', JSON.stringify([testStudent]));
+      window.dispatchEvent(new CustomEvent('studentsUpdated'));
+      
+      console.log('Test student created:', testStudent);
+    }
+  }, [students.length]);
 
   // Check if phone number exists in registered students
   const isValidStudentPhone = (phone: string): boolean => {
