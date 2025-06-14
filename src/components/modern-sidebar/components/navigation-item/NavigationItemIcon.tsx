@@ -1,22 +1,25 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SidebarItem } from "../../types";
 
 interface NavigationItemIconProps {
-  item: SidebarItem;
+  icon: LucideIcon;
   isActive: boolean;
-  iconSize: string;
-  iconContainer: string;
+  iconSize?: string;
+  iconContainer?: string;
+  isNew?: boolean;
+  gradient?: string;
 }
 
 export const NavigationItemIcon: React.FC<NavigationItemIconProps> = ({
-  item,
+  icon: Icon,
   isActive,
-  iconSize,
-  iconContainer
+  iconSize = "w-5 h-5",
+  iconContainer = "w-9 h-9",
+  isNew = false,
+  gradient = "from-emerald-500 to-sky-600"
 }) => {
   return (
     <motion.div 
@@ -25,7 +28,7 @@ export const NavigationItemIcon: React.FC<NavigationItemIconProps> = ({
         iconContainer,
         isActive 
           ? "bg-white/25 text-white shadow-md" 
-          : `bg-gradient-to-br ${item.gradient} text-white shadow-sm`
+          : `bg-gradient-to-br ${gradient} text-white shadow-sm`
       )}
       whileHover={{ scale: 1.05, rotate: isActive ? 0 : 3 }}
       transition={{ type: "spring", stiffness: 400 }}
@@ -33,9 +36,9 @@ export const NavigationItemIcon: React.FC<NavigationItemIconProps> = ({
       {!isActive && (
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
       )}
-      <item.icon className={cn(iconSize, "relative z-10")} />
+      <Icon className={cn(iconSize, "relative z-10")} />
       
-      {item.isNew && (
+      {isNew && (
         <motion.div
           className="absolute -top-0.5 -right-0.5"
           animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}

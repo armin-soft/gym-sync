@@ -6,11 +6,13 @@ export interface SidebarItem {
   title: string;
   subtitle?: string;
   href: string;
+  path: string; // Add this property
   icon: LucideIcon;
   gradient?: string;
   isNew?: boolean;
   badge?: string;
   badgeColor?: string;
+  description?: string; // Add this property
 }
 
 export interface TrainerProfile {
