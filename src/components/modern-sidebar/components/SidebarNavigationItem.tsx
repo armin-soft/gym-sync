@@ -58,6 +58,16 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
     return "w-11 h-11";
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClose();
+    // کمی تاخیر برای بسته شدن sidebar
+    setTimeout(() => {
+      window.history.pushState({}, '', item.href);
+      window.location.href = item.href;
+    }, 100);
+  };
+
   return (
     <motion.div 
       variants={itemVariants}
@@ -132,7 +142,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
               deviceInfo.isMobile ? "w-3.5 h-3.5" : "w-4 h-4",
               isActive ? "text-white" : "text-emerald-500 dark:text-emerald-400"
             )} />
-          </motion.div>
+          </div>
         </div>
       </Link>
     </motion.div>
