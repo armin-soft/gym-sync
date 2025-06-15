@@ -51,7 +51,7 @@ export const useStudentProfileData = () => {
     }
   }, []);
 
-  // Auto-load profile on mount
+  // Load profile only once on mount - no automatic refresh
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);

@@ -1,14 +1,9 @@
 
-// Enhanced localStorage utilities with automatic refresh triggers
-import { triggerDataChange } from '@/hooks/useDataRefresh';
-
+// Enhanced localStorage utilities without automatic refresh triggers
 export const setLocalStorageItem = (key: string, value: any) => {
   try {
     const serializedValue = JSON.stringify(value);
     localStorage.setItem(key, serializedValue);
-    
-    // Trigger refresh for this key
-    triggerDataChange(key);
     
     console.log(`Data saved to localStorage: ${key}`);
     return true;
@@ -32,7 +27,6 @@ export const getLocalStorageItem = <T = any>(key: string, defaultValue: T): T =>
 export const removeLocalStorageItem = (key: string) => {
   try {
     localStorage.removeItem(key);
-    triggerDataChange(key);
     console.log(`Data removed from localStorage: ${key}`);
     return true;
   } catch (error) {

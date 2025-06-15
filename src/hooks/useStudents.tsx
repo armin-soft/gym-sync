@@ -34,20 +34,7 @@ export const useStudents = () => {
     };
 
     loadStudents();
-
-    // Listen for storage changes
-    const handleStorageChange = () => {
-      console.log('useStudents.tsx: Storage change detected, reloading...');
-      loadStudents();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('studentsUpdated', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('studentsUpdated', handleStorageChange);
-    };
+    // Remove automatic refresh listeners - only manual loading
   }, []);
 
   console.log('useStudents.tsx: Returning students count:', students.length);

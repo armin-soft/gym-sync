@@ -3,22 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { useToast } from "@/hooks/use-toast";
 import { getLocalStorageItem } from "@/utils/localStorage";
-import { useDataRefresh } from "@/hooks/useDataRefresh";
 
 /**
- * Hook to fetch exercises data from localStorage with automatic refresh
+ * Hook to fetch exercises data from localStorage without automatic refresh
  */
 export const useExerciseData = () => {
   const { toast } = useToast();
 
-  // Setup automatic refresh for exercise-related data
-  useDataRefresh({
-    keys: ['exercises', 'exerciseCategories', 'exerciseTypes'],
-    interval: 10000, // Refresh every 10 seconds
-    onStorageChange: true
-  });
-
-  // Get exercises data
+  // Get exercises data - no automatic refresh
   const { data: exercises = [], isLoading: exercisesLoading, error: exercisesError } = useQuery({
     queryKey: ["exercises"],
     queryFn: () => {
@@ -35,12 +27,12 @@ export const useExerciseData = () => {
         return [];
       }
     },
-    staleTime: 5000, // Consider data stale after 5 seconds
-    refetchOnWindowFocus: true,
-    refetchOnMount: true
+    staleTime: Infinity, // Never consider data stale
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
-  // Get categories data
+  // Get categories data - no automatic refresh
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["exerciseCategories"],
     queryFn: () => {
@@ -57,12 +49,12 @@ export const useExerciseData = () => {
         return [];
       }
     },
-    staleTime: 5000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
-  // Get exercise types data
+  // Get exercise types data - no automatic refresh
   const { data: exerciseTypes = [], isLoading: typesLoading } = useQuery({
     queryKey: ["exerciseTypes"],
     queryFn: () => {
@@ -79,9 +71,9 @@ export const useExerciseData = () => {
         return [];
       }
     },
-    staleTime: 5000,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
   const isLoading = exercisesLoading || categoriesLoading || typesLoading;

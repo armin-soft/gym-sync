@@ -29,22 +29,10 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
+  // Load data only once on mount - no automatic refresh
   useEffect(() => {
     loadProfile();
     loadStats();
-    
-    const handleStorageChange = () => {
-      loadProfile();
-      loadStats();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('studentDataUpdated', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('studentDataUpdated', handleStorageChange);
-    };
   }, [loadProfile, loadStats]);
 
   const handleSidebarToggle = () => {

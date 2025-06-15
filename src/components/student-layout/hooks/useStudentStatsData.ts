@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect } from "react";
 import { StudentSidebarStats } from "../types/studentSidebarTypes";
 
@@ -51,7 +52,7 @@ export const useStudentStatsData = () => {
     }
   }, []);
 
-  // Auto-load stats on mount
+  // Load stats only once on mount - no automatic refresh
   useEffect(() => {
     loadStats();
   }, [loadStats]);
