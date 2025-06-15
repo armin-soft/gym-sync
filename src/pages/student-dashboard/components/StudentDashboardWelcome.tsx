@@ -1,38 +1,51 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Target, Award, TrendingUp, Sparkles } from "lucide-react";
+import { Calendar, Clock, Target, Award, TrendingUp, Sparkles, User } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useStudentData } from "../hooks/useStudentData";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useCurrentTime } from "@/hooks/useCurrentTime";
+import { usePersianDate } from "@/hooks/usePersianDate";
+import { getGreeting } from "@/components/dashboard/header/utils/timeUtils";
 
 export const StudentDashboardWelcome: React.FC = () => {
   const { studentData, loading } = useStudentData();
+  const currentTime = useCurrentTime();
+  const persianDate = usePersianDate();
 
-  const getCurrentPersianDate = () => {
-    const date = new Date();
-    return new Intl.DateTimeFormat('fa-IR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    }).format(date);
+  const formatTimeWithSeconds = (date: Date) => {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return toPersianNumbers(`${hours}:${minutes}:${seconds}`);
   };
 
-  const getCurrentTime = () => {
-    const date = new Date();
-    return toPersianNumbers(date.toLocaleTimeString('fa-IR', {
-      hour: '2-digit',
-      minute: '2-digit'
-    }));
+  const getStudentProfile = () => {
+    try {
+      const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+      const students = JSON.parse(localStorage.getItem("students") || "[]");
+      
+      if (loggedInStudentId && students.length > 0) {
+        const student = students.find((s: any) => s.id === loggedInStudentId);
+        return student || null;
+      }
+    } catch (error) {
+      console.error('خطا در بارگذاری پروفایل شاگرد:', error);
+    }
+    return null;
   };
 
-  const getGreetingMessage = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "صبح بخیر";
-    if (hour < 17) return "ظهر بخیر";
-    return "عصر بخیر";
+  const studentProfile = getStudentProfile();
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .slice(0, 2);
   };
 
   const getMotivationalQuote = () => {
@@ -71,41 +84,106 @@ export const StudentDashboardWelcome: React.FC = () => {
         </div>
 
         <div className="relative z-10 p-8 text-white">
-          {/* ردیف بالا - تاریخ و زمان */}
+          {/* ردیف بالا - پروفایل و تاریخ/زمان */}
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <motion.div 
-                className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
-                <Sparkles className="w-8 h-8 text-yellow-200" />
-              </motion.div>
+            {/* بخش راست - پروفایل و سلام */}
+            <div className="flex items-center gap-6">
+              {/* عکس پروفایل */}
+              <div className="relative">
+                <motion.div 
+                  className="absolute -inset-1 rounded-full bg-white/30 blur-sm"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                
+                <Avatar className="h-20 w-20 border-4 border-white/30 relative shadow-xl">
+                  <AvatarImage 
+                    src={studentProfile?.image || "/Assets/Images/Place-Holder.svg"} 
+                    alt="تصویر پروفایل شاگرد"
+                  />
+                  <AvatarFallback className="bg-white/20 text-white font-bold text-lg backdrop-blur-sm">
+                    {getInitials(studentData.name)}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <motion.div 
+                  className="absolute -top-2 -right-2 p-1.5 rounded-full bg-yellow-400 shadow-lg"
+                  animate={{ rotate: [-5, 5, -5] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
+                  <Sparkles className="h-4 w-4 text-white" fill="currentColor" />
+                </motion.div>
+              </div>
+
+              {/* متن سلام و احوال‌پرسی */}
               <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black">
-                  {getGreetingMessage()} {studentData.name}! 👋
-                </h1>
-                <p className="text-white/90 text-lg mt-2">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black">
+                    {getGreeting(currentTime)} {studentData.name}! 👋
+                  </h1>
+                </div>
+                <p className="text-white/90 text-lg">
                   {getMotivationalQuote()}
                 </p>
               </div>
             </div>
             
-            <motion.div 
-              className="text-left space-y-2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <div className="flex items-center gap-3 justify-end">
-                <span className="text-white/90 text-sm">{getCurrentPersianDate()}</span>
-                <Calendar className="w-5 h-5 text-white/80" />
-              </div>
-              <div className="flex items-center gap-3 justify-end">
-                <span className="text-2xl font-bold">{getCurrentTime()}</span>
-                <Clock className="w-5 h-5 text-white/80" />
-              </div>
-            </motion.div>
+            {/* بخش چپ - تاریخ و زمان */}
+            <div className="flex flex-col gap-4">
+              {/* تاریخ */}
+              <motion.div 
+                className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-white/80" />
+                  <div className="text-right">
+                    <div 
+                      className="text-sm font-medium"
+                      style={{ fontFamily: 'Vazir, sans-serif' }}
+                    >
+                      {persianDate}
+                    </div>
+                    <div className="text-xs text-white/70">
+                      تاریخ امروز
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* زمان زنده */}
+              <motion.div 
+                className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <div className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-white/80" />
+                  <div className="text-right">
+                    <motion.div 
+                      className="text-xl font-bold"
+                      key={formatTimeWithSeconds(currentTime)}
+                      initial={{ scale: 1.1 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ fontFamily: 'Vazir, sans-serif' }}
+                    >
+                      {formatTimeWithSeconds(currentTime)}
+                    </motion.div>
+                    <div className="text-xs text-white/70">
+                      زمان فعلی
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
 
           {/* نشان‌های دستاورد */}
@@ -113,7 +191,7 @@ export const StudentDashboardWelcome: React.FC = () => {
             className="flex flex-wrap items-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.7 }}
           >
             <Badge className="bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-white border-yellow-300/30 hover:from-yellow-400/30 hover:to-orange-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
               <Target className="w-4 h-4 ml-2" />
