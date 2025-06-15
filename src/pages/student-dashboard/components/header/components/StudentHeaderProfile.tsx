@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User, TrendingUp } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentHeaderProfileProps {
@@ -16,44 +16,54 @@ interface StudentHeaderProfileProps {
 export const StudentHeaderProfile = ({ studentProfile, overallProgress, greeting }: StudentHeaderProfileProps) => {
   return (
     <div className="flex items-center gap-6">
-      <div className="relative">
-        <motion.div 
-          className="absolute -inset-1 rounded-full bg-white/30 blur-sm"
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-        
-        <Avatar className="h-20 w-20 border-4 border-white/30 relative shadow-xl">
-          <AvatarImage 
-            src={studentProfile.image} 
-            alt="تصویر پروفایل شاگرد"
-          />
-          <AvatarFallback className="bg-white/20 text-white font-bold text-lg backdrop-blur-sm">
-            <User className="h-8 w-8" />
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+      >
+        <Avatar className="h-20 w-20 border-4 border-white/20 shadow-lg">
+          <AvatarImage src={studentProfile.image} alt={studentProfile.name} />
+          <AvatarFallback className="bg-white/20 text-white text-xl font-bold">
+            {studentProfile.name.charAt(0)}
           </AvatarFallback>
         </Avatar>
-        
-        <motion.div 
-          className="absolute -top-2 -right-2 p-1.5 rounded-full bg-green-400 shadow-lg"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <TrendingUp className="h-4 w-4 text-white" fill="currentColor" />
-        </motion.div>
-      </div>
+      </motion.div>
 
-      <div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">
-          {greeting} {studentProfile.name}!
-        </h1>
-        <div className="flex items-center gap-2">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1">
-            <span className="text-white/90 text-sm">پیشرفت کلی: </span>
-            <span className="text-white font-bold">
+      <div className="flex-1">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <h1 className="text-3xl font-bold mb-2">
+            {greeting}، {studentProfile.name}!
+          </h1>
+          <p className="text-white/80 mb-4 text-lg">
+            امروز روز عالی برای پیشرفت است 💪
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="space-y-2"
+        >
+          <div className="flex justify-between items-center">
+            <span className="text-white/90 text-sm font-medium">پیشرفت کلی</span>
+            <span className="text-white font-bold text-sm">
               {toPersianNumbers(overallProgress.toString())}%
             </span>
           </div>
-        </div>
+          <Progress 
+            value={overallProgress} 
+            className="h-3 bg-white/20" 
+            // @ts-ignore
+            style={{
+              "--progress-foreground": "linear-gradient(90deg, #fbbf24, #f59e0b)"
+            }}
+          />
+        </motion.div>
       </div>
     </div>
   );
