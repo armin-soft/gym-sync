@@ -5,13 +5,11 @@ import { TrainerProfile } from "@/components/modern-sidebar/types";
 export const useStudentProfileData = () => {
   const [studentProfile, setStudentProfile] = useState<TrainerProfile>({
     name: "دانش‌آموز",
-    role: "شاگرد",
-    avatar: "/Assets/Images/Place-Holder.svg",
-    status: "active",
-    gymName: "",
-    membersSince: "",
     phone: "",
-    email: ""
+    image: "/Assets/Images/Place-Holder.svg",
+    gymName: "",
+    status: "active",
+    membersSince: ""
   });
 
   const loadProfile = useCallback(() => {
@@ -27,13 +25,11 @@ export const useStudentProfileData = () => {
           
           setStudentProfile({
             name: student.name || "دانش‌آموز",
-            role: "شاگرد",
-            avatar: student.profileImage || "/Assets/Images/Place-Holder.svg",
-            status: "active",
-            gymName: "باشگاه ورزشی",
-            membersSince: student.membershipDate || new Date().toISOString().split('T')[0],
             phone: student.phone || "",
-            email: student.email || ""
+            image: student.profileImage || "/Assets/Images/Place-Holder.svg",
+            gymName: "باشگاه ورزشی",
+            status: "active",
+            membersSince: student.membershipDate || new Date().toISOString().split('T')[0]
           });
         }
       }

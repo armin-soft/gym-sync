@@ -5,19 +5,19 @@ import { SidebarStats } from "@/components/modern-sidebar/types";
 export const useStudentStatsData = () => {
   const [stats, setStats] = useState<SidebarStats>({
     totalStudents: 0,
-    activeStudents: 0,
-    completedToday: 0,
-    monthlyGrowth: 0
+    activePrograms: 0,
+    completedSessions: 0,
+    rating: 0
   });
 
   const loadStats = useCallback(() => {
     try {
-      // For student panel, we show different stats
+      // For student panel, we show different stats but use same interface
       setStats({
         totalStudents: 12, // Total workouts
-        activeStudents: 8, // Completed workouts
-        completedToday: 3, // Today's exercises
-        monthlyGrowth: 15  // Progress percentage
+        activePrograms: 8, // Completed workouts  
+        completedSessions: 3, // Today's exercises
+        rating: 4.8  // Progress rating
       });
       
       console.log('Student stats loaded');
