@@ -13,11 +13,9 @@ import Management from "./pages/management";
 import Reports from "./pages/reports";
 import Support from "./pages/support";
 
-// Student Panel Pages - صفحه ورود و داشبورد
+// Student Panel Components
 import { StudentAuthWrapper } from "./components/student-auth/StudentAuthWrapper";
 import { StudentLayout } from "./components/student-layout/StudentLayout";
-
-// Student Dashboard Pages - صفحات پنل شاگرد
 import StudentDashboard from "./pages/student-dashboard";
 import StudentProfile from "./pages/student-profile";
 import StudentExercises from "./pages/student-exercises";
@@ -29,68 +27,60 @@ import StudentSupport from "./pages/student-support";
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Main Routes */}
+      {/* Home Route */}
       <Route path="/" element={<Index />} />
       
-      {/* Student Panel Routes - تمام مسیرهای شاگرد محافظت شده */}
-      <Route path="/Student" element={
+      {/* Student Panel Routes - Protected */}
+      <Route path="/Student/*" element={
         <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentDashboard />
-          </StudentLayout>
-        </StudentAuthWrapper>
-      } />
-      <Route path="/Student/Dashboard" element={
-        <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentDashboard />
-          </StudentLayout>
-        </StudentAuthWrapper>
-      } />
-      <Route path="/Student/Profile" element={
-        <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentProfile />
-          </StudentLayout>
-        </StudentAuthWrapper>
-      } />
-      <Route path="/Student/Exercise-Movements" element={
-        <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentExercises />
-          </StudentLayout>
-        </StudentAuthWrapper>
-      } />
-      <Route path="/Student/Diet-Plan" element={
-        <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentDiet />
-          </StudentLayout>
-        </StudentAuthWrapper>
-      } />
-      <Route path="/Student/Supplements-Vitamins" element={
-        <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentSupplements />
-          </StudentLayout>
-        </StudentAuthWrapper>
-      } />
-      <Route path="/Student/Report" element={
-        <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentReports />
-          </StudentLayout>
-        </StudentAuthWrapper>
-      } />
-      <Route path="/Student/Support" element={
-        <StudentAuthWrapper>
-          <StudentLayout>
-            <StudentSupport />
-          </StudentLayout>
+          <Routes>
+            <Route index element={
+              <StudentLayout>
+                <StudentDashboard />
+              </StudentLayout>
+            } />
+            <Route path="Dashboard" element={
+              <StudentLayout>
+                <StudentDashboard />
+              </StudentLayout>
+            } />
+            <Route path="Profile" element={
+              <StudentLayout>
+                <StudentProfile />
+              </StudentLayout>
+            } />
+            <Route path="Exercise-Movements" element={
+              <StudentLayout>
+                <StudentExercises />
+              </StudentLayout>
+            } />
+            <Route path="Diet-Plan" element={
+              <StudentLayout>
+                <StudentDiet />
+              </StudentLayout>
+            } />
+            <Route path="Supplements-Vitamins" element={
+              <StudentLayout>
+                <StudentSupplements />
+              </StudentLayout>
+            } />
+            <Route path="Report" element={
+              <StudentLayout>
+                <StudentReports />
+              </StudentLayout>
+            } />
+            <Route path="Support" element={
+              <StudentLayout>
+                <StudentSupport />
+              </StudentLayout>
+            } />
+            {/* Student panel fallback */}
+            <Route path="*" element={<Navigate to="/Student/Dashboard" replace />} />
+          </Routes>
         </StudentAuthWrapper>
       } />
       
-      {/* Management Panel Routes - مسیرهای بهینه‌شده */}
+      {/* Management Panel Routes */}
       <Route path="/Management" element={<Management />} />
       <Route path="/Management/Coach-Profile" element={<Trainer />} />
       <Route path="/Management/Students" element={<Students />} />
@@ -102,7 +92,7 @@ const AppRoutes = () => {
       <Route path="/Management/Report" element={<Reports />} />
       <Route path="/Management/Support" element={<Support />} />
       
-      {/* Legacy routes redirects */}
+      {/* Legacy Routes Redirects */}
       <Route path="/Students" element={<Navigate to="/Student" replace />} />
       <Route path="/Report" element={<Navigate to="/Management/Report" replace />} />
       <Route path="/Reports" element={<Navigate to="/Management/Report" replace />} />
@@ -115,7 +105,7 @@ const AppRoutes = () => {
       <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
       <Route path="/management" element={<Navigate to="/Management" replace />} />
 
-      {/* Catch all route - improved handling */}
+      {/* Catch All Route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
