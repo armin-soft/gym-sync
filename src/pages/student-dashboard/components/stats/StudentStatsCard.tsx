@@ -3,113 +3,79 @@ import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
-export type StudentStatsColor = "emerald" | "sky" | "orange" | "purple" | "pink" | "indigo";
-
-export interface StudentStatsCardProps {
+interface StudentStatsCardProps {
   title: string;
   value: number;
   total: number;
   icon: LucideIcon;
-  color: StudentStatsColor;
+  color: "emerald" | "sky" | "orange" | "purple";
   progress: number;
 }
 
-const colorClasses = {
-  emerald: {
-    bg: "from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20",
-    border: "border-emerald-200/50 dark:border-emerald-800/50",
-    icon: "from-emerald-500 to-emerald-600",
-    text: "text-emerald-600 dark:text-emerald-400",
-    progress: "bg-emerald-500"
-  },
-  sky: {
-    bg: "from-sky-50 to-sky-100/50 dark:from-sky-950/30 dark:to-sky-900/20",
-    border: "border-sky-200/50 dark:border-sky-800/50", 
-    icon: "from-sky-500 to-sky-600",
-    text: "text-sky-600 dark:text-sky-400",
-    progress: "bg-sky-500"
-  },
-  orange: {
-    bg: "from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20",
-    border: "border-orange-200/50 dark:border-orange-800/50",
-    icon: "from-orange-500 to-orange-600", 
-    text: "text-orange-600 dark:text-orange-400",
-    progress: "bg-orange-500"
-  },
-  purple: {
-    bg: "from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20",
-    border: "border-purple-200/50 dark:border-purple-800/50",
-    icon: "from-purple-500 to-purple-600",
-    text: "text-purple-600 dark:text-purple-400", 
-    progress: "bg-purple-500"
-  },
-  pink: {
-    bg: "from-pink-50 to-pink-100/50 dark:from-pink-950/30 dark:to-pink-900/20",
-    border: "border-pink-200/50 dark:border-pink-800/50",
-    icon: "from-pink-500 to-pink-600",
-    text: "text-pink-600 dark:text-pink-400",
-    progress: "bg-pink-500"
-  },
-  indigo: {
-    bg: "from-indigo-50 to-indigo-100/50 dark:from-indigo-950/30 dark:to-indigo-900/20",
-    border: "border-indigo-200/50 dark:border-indigo-800/50",
-    icon: "from-indigo-500 to-indigo-600",
-    text: "text-indigo-600 dark:text-indigo-400",
-    progress: "bg-indigo-500"
-  }
-};
-
-export const StudentStatsCard = ({
-  title,
-  value,
-  total,
-  icon: Icon,
-  color,
-  progress
-}: StudentStatsCardProps) => {
-  const colors = colorClasses[color];
+export const StudentStatsCard = ({ title, value, total, icon: Icon, color, progress }: StudentStatsCardProps) => {
+  const colorClasses = {
+    emerald: {
+      bg: "from-emerald-500 to-emerald-600",
+      icon: "text-emerald-500",
+      progress: "bg-emerald-500"
+    },
+    sky: {
+      bg: "from-sky-500 to-sky-600", 
+      icon: "text-sky-500",
+      progress: "bg-sky-500"
+    },
+    orange: {
+      bg: "from-orange-500 to-orange-600",
+      icon: "text-orange-500", 
+      progress: "bg-orange-500"
+    },
+    purple: {
+      bg: "from-purple-500 to-purple-600",
+      icon: "text-purple-500",
+      progress: "bg-purple-500"
+    }
+  };
 
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.02 }}
-      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${colors.bg} border ${colors.border} p-6`}
+      className="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-900 border border-gray-200/50 dark:border-gray-700/50 p-6"
       style={{ boxShadow: 'var(--shadow-soft)' }}
+      whileHover={{ scale: 1.02, y: -4 }}
+      transition={{ duration: 0.2 }}
     >
-      <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl -translate-y-12 translate-x-12" />
+      <div className="absolute top-0 right-0 w-20 h-20 opacity-10">
+        <div className={`w-full h-full rounded-full bg-gradient-to-br ${colorClasses[color].bg}`} />
+      </div>
       
       <div className="relative z-10">
-        <motion.div 
-          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors.icon} flex items-center justify-center mb-4 shadow-lg`}
-          whileHover={{ rotate: 8, scale: 1.05 }}
-        >
-          <Icon className="w-6 h-6 text-white" />
-        </motion.div>
-
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-              {title}
-            </h3>
-            <span className={`text-sm font-medium ${colors.text}`}>
+        <div className="flex items-center justify-between mb-4">
+          <div className={`p-3 rounded-2xl bg-gray-50 dark:bg-gray-800`}>
+            <Icon className={`h-6 w-6 ${colorClasses[color].icon}`} />
+          </div>
+          <div className="text-left">
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+              {title === "پیشرفت کلی" ? 
+                `${toPersianNumbers(value.toString())}%` : 
+                `${toPersianNumbers(value.toString())}/${toPersianNumbers(total.toString())}`
+              }
+            </div>
+          </div>
+        </div>
+        
+        <div className="mb-3">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-gray-600 dark:text-gray-400">{title}</span>
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">
               {toPersianNumbers(progress.toString())}%
             </span>
           </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">
-                {toPersianNumbers(value.toString())} از {toPersianNumbers(total.toString())}
-              </span>
-            </div>
-            
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <motion.div 
-                className={`h-full ${colors.progress} rounded-full`}
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ delay: 0.5, duration: 1 }}
-              />
-            </div>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <motion.div 
+              className={`h-full ${colorClasses[color].progress} rounded-full`}
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ delay: 0.3, duration: 1 }}
+            />
           </div>
         </div>
       </div>

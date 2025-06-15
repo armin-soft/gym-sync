@@ -2,96 +2,78 @@
 import { motion } from "framer-motion";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { StudentStatsCard } from "./StudentStatsCard";
-import { Dumbbell, Apple, Pill, TrendingUp } from "lucide-react";
-
-interface StudentDashboardStats {
-  weeklyProgress: number;
-  completedExercises: number;
-  totalExercises: number;
-  completedMeals: number;
-  totalMeals: number;
-  supplementsCompleted: number;
-  totalSupplements: number;
-  overallProgress: number;
-}
+import { Dumbbell, Utensils, Pill, TrendingUp } from "lucide-react";
 
 interface StudentStatsGridNewProps {
-  stats: StudentDashboardStats;
+  stats: {
+    weeklyProgress: number;
+    completedExercises: number;
+    totalExercises: number;
+    completedMeals: number;
+    totalMeals: number;
+    supplementsCompleted: number;
+    totalSupplements: number;
+    overallProgress: number;
+  };
 }
-
-const containerVariants = {
-  initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
 
 export const StudentStatsGridNew = ({ stats }: StudentStatsGridNewProps) => {
   const deviceInfo = useDeviceInfo();
-
+  
   const statsCards = [
     {
       title: "تمرینات",
       value: stats.completedExercises,
       total: stats.totalExercises,
       icon: Dumbbell,
-      color: "emerald" as const,
-      progress: stats.totalExercises > 0 ? Math.round((stats.completedExercises / stats.totalExercises) * 100) : 0
+      color: "emerald",
+      progress: Math.round((stats.completedExercises / stats.totalExercises) * 100)
     },
     {
       title: "وعده‌های غذایی",
       value: stats.completedMeals,
       total: stats.totalMeals,
-      icon: Apple,
-      color: "sky" as const,
-      progress: stats.totalMeals > 0 ? Math.round((stats.completedMeals / stats.totalMeals) * 100) : 0
+      icon: Utensils,
+      color: "sky",
+      progress: Math.round((stats.completedMeals / stats.totalMeals) * 100)
     },
     {
       title: "مکمل‌ها",
       value: stats.supplementsCompleted,
       total: stats.totalSupplements,
       icon: Pill,
-      color: "orange" as const,
-      progress: stats.totalSupplements > 0 ? Math.round((stats.supplementsCompleted / stats.totalSupplements) * 100) : 0
+      color: "orange",
+      progress: Math.round((stats.supplementsCompleted / stats.totalSupplements) * 100)
     },
     {
-      title: "پیشرفت هفتگی",
-      value: Math.round(stats.weeklyProgress),
+      title: "پیشرفت کلی",
+      value: stats.overallProgress,
       total: 100,
       icon: TrendingUp,
-      color: "purple" as const,
-      progress: stats.weeklyProgress
+      color: "purple",
+      progress: stats.overallProgress
     }
   ];
 
+  const getGridCols = () => {
+    if (deviceInfo.isMobile) return "grid-cols-2";
+    if (deviceInfo.isTablet) return "grid-cols-2 md:grid-cols-4";
+    return "grid-cols-4";
+  };
+
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="initial"
-      animate="animate"
-      className={`grid gap-6 mb-8 ${
-        deviceInfo.isMobile 
-          ? 'grid-cols-1' 
-          : deviceInfo.isTablet 
-          ? 'grid-cols-2' 
-          : 'grid-cols-4'
-      }`}
-    >
+    <div className={`grid ${getGridCols()} gap-6 mb-8`}>
       {statsCards.map((card, index) => (
-        <StudentStatsCard
+        <motion.div
           key={card.title}
-          title={card.title}
-          value={card.value}
-          total={card.total}
-          icon={card.icon}
-          color={card.color}
-          progress={card.progress}
-        />
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1, duration: 0.5 }}
+        >
+          <StudentStatsCard {...card} />
+        </motion.div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 
