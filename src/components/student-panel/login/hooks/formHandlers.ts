@@ -1,7 +1,7 @@
 
 import { validatePhone } from "@/components/auth/login/utils/validation";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { Student } from "@/types/student";
+import { Student } from "@/components/students/StudentTypes";
 import { StudentLoginState, STUDENT_VALID_CODE, MAX_ATTEMPTS, RESEND_COUNTDOWN } from "./types";
 import { isValidStudentPhone, findStudentByPhone } from "./validation";
 import { saveStudentLogin } from "./storage";

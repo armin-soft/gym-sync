@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Phone, ArrowLeft, Shield, CheckCircle } from "lucide-react";
-import { ProfessionalErrorMessage } from "@/components/auth/login/professional/ProfessionalErrorMessage";
+import { Phone, LogIn } from "lucide-react";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentLoginFormStepProps {
   variants: any;
@@ -24,134 +24,60 @@ export const StudentLoginFormStep = ({
   error,
   onSubmit
 }: StudentLoginFormStepProps) => {
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    
-    // فقط اعداد انگلیسی مجاز
-    const numbersOnly = value.replace(/[^0-9]/g, '');
-    
-    // محدود کردن به 11 رقم
-    if (numbersOnly.length <= 11) {
-      setPhone(numbersOnly);
-    }
-  };
-
-  const isValidPhone = phone && phone.length === 11;
-
   return (
-    <motion.form
-      onSubmit={onSubmit}
-      className="space-y-6"
-      variants={variants}
-      initial="hidden"
-      animate="visible"
-    >
-      <ProfessionalErrorMessage error={error} />
-      
-      <motion.div variants={variants} className="space-y-4">
-        <Label htmlFor="phone" className="text-slate-700 dark:text-slate-200 font-bold flex items-center gap-3 text-base">
-          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-sky-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-emerald-500/20">
-            <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+    <form onSubmit={onSubmit} className="space-y-6" dir="rtl">
+      <motion.div variants={variants} className="space-y-2">
+        <Label htmlFor="phone" className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
+          <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+            <Phone className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          شماره موبایل شاگرد
+          شماره موبایل
         </Label>
-        
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-2xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
-          
-          <div className="relative">
-            <Input
-              id="phone"
-              type="tel"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={phone}
-              onChange={handlePhoneChange}
-              placeholder="09123456789"
-              className="h-16 bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white text-lg font-bold placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl pl-6 pr-6 backdrop-blur-sm transition-all duration-300 text-center"
-              dir="ltr"
-              required
-            />
-            
-            {/* نشانگر وضعیت */}
-            <div className="absolute left-4 top-1/2 -translate-y-1/2">
-              <motion.div
-                className={`w-3 h-3 rounded-full ${
-                  isValidPhone 
-                    ? 'bg-green-500' 
-                    : 'bg-slate-300 dark:bg-slate-600'
-                }`}
-                animate={{ 
-                  scale: isValidPhone ? [1, 1.2, 1] : 1,
-                  opacity: phone ? [0.6, 1, 0.6] : 0.6
-                }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              />
-            </div>
+        <div className="relative">
+          <Input
+            id="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder={toPersianNumbers("09123456789")}
+            className="h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl pr-4 text-right backdrop-blur-sm"
+            dir="ltr"
+            required
+          />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
           </div>
         </div>
-        
-        {/* نشانگر اعتبار شماره */}
-        {isValidPhone && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400"
-          >
-            <CheckCircle className="h-4 w-4" />
-            <span className="text-sm font-semibold">شماره موبایل تأیید شد</span>
-          </motion.div>
-        )}
-
-        {/* یادداشت امنیتی */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="text-center"
-        >
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            فقط شماره‌های ثبت شده در سیستم قابل ورود هستند
-          </p>
-        </motion.div>
       </motion.div>
       
-      <motion.div variants={variants}>
+      {error && (
+        <motion.div 
+          variants={variants}
+          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3"
+        >
+          <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
+        </motion.div>
+      )}
+      
+      <motion.div variants={variants} className="pt-4">
         <Button 
           type="submit" 
-          className="w-full h-16 bg-gradient-to-l from-emerald-600 via-sky-600 to-emerald-700 hover:from-emerald-700 hover:via-sky-700 hover:to-emerald-800 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={loading || !isValidPhone}
+          className="w-full h-12 bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+          disabled={loading}
         >
           {loading ? (
-            <div className="flex items-center gap-3">
-              <motion.div
-                className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-              <span>در حال ارسال کد تأیید...</span>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ارسال کد تأیید...
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              <span>دریافت کد تأیید</span>
-              <ArrowLeft className="h-5 w-5" />
+            <div className="flex items-center gap-2">
+              <LogIn className="h-5 w-5" />
+              ورود به پنل شاگرد
             </div>
           )}
         </Button>
-        
-        {/* یادداشت امنیتی */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-4 flex items-center justify-center gap-2"
-        >
-          <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-          <p className="text-center text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-            کد تأیید با رمزگذاری ۲۵۶ بیتی ارسال می‌شود
-          </p>
-        </motion.div>
       </motion.div>
-    </motion.form>
+    </form>
   );
 };

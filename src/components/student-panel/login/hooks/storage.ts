@@ -1,5 +1,5 @@
 
-import { Student } from "@/types/student";
+import { Student } from "@/components/students/StudentTypes";
 import { storageManager } from "@/utils/storageManager";
 
 export const saveStudentLogin = (student: Student): boolean => {

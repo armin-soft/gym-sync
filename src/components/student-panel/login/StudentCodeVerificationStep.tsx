@@ -1,21 +1,19 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Shield, LogIn, RefreshCw, Edit3, Clock } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { ProfessionalErrorMessage } from "@/components/auth/login/professional/ProfessionalErrorMessage";
 
 interface StudentCodeVerificationStepProps {
   variants: any;
   code: string;
   setCode: (code: string) => void;
-  phone: string;
-  countdown: number;
   loading: boolean;
   error: string;
+  countdown: number;
   onSubmit: (e: React.FormEvent) => void;
   onChangePhone: () => void;
   onResendCode: () => void;
@@ -25,168 +23,85 @@ export const StudentCodeVerificationStep = ({
   variants,
   code,
   setCode,
-  phone,
-  countdown,
   loading,
   error,
+  countdown,
   onSubmit,
   onChangePhone,
   onResendCode
 }: StudentCodeVerificationStepProps) => {
-  
-  // خودکار ارسال فرم وقتی کد کامل شد
-  useEffect(() => {
-    if (code.length === 6 && !loading) {
-      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
-      onSubmit(fakeEvent);
-    }
-  }, [code, loading, onSubmit]);
-
   return (
-    <motion.form
-      onSubmit={onSubmit}
-      className="space-y-6"
-      variants={variants}
-      initial="hidden"
-      animate="visible"
-    >
-      <ProfessionalErrorMessage error={error} />
-      
-      <motion.div variants={variants} className="space-y-6">
-        <Label htmlFor="code" className="text-slate-700 dark:text-slate-200 font-bold flex items-center gap-3 text-base">
-          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-sky-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-emerald-500/20">
-            <Shield className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-          </div>
+    <form onSubmit={onSubmit} className="space-y-6" dir="rtl">
+      <motion.div variants={variants} className="space-y-2">
+        <Label htmlFor="code" className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
           کد تأیید
         </Label>
-        
-        {/* ورودی کد OTP */}
-        <div className="flex justify-center mb-6" dir="ltr">
-          <div className="relative group">
-            {/* تأثیر درخشش پس‌زمینه */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
-            
-            <InputOTP
-              maxLength={6}
-              value={code}
-              onChange={(value) => setCode(value)}
-              dir="ltr"
-            >
-              <InputOTPGroup className="gap-3" dir="ltr">
-                {[...Array(6)].map((_, index) => {
-                  return (
-                    <InputOTPSlot 
-                      key={index}
-                      index={index}
-                      className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-emerald-400 flex items-center justify-center"
-                      dir="ltr"
-                    />
-                  );
-                })}
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
-        </div>
-        
-        {/* نمایش شماره و شمارش معکوس */}
-        <div className="text-center space-y-3">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-2"
-          >
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <p className="text-slate-700 dark:text-slate-200 text-base font-semibold">
-              کد تأیید به شماره {toPersianNumbers(phone)} ارسال شد
-            </p>
-          </motion.div>
-          
-          {countdown > 0 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center justify-center gap-2"
-            >
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-              >
-                <Clock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              </motion.div>
-              
-              <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">
-                ارسال مجدد کد تا {toPersianNumbers(Math.floor(countdown / 60))}:{toPersianNumbers((countdown % 60).toString().padStart(2, '0'))} دیگر
-              </p>
-            </motion.div>
-          )}
-        </div>
+        <Input
+          id="code"
+          type="text"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="کد ۶ رقمی"
+          className="h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl text-center backdrop-blur-sm text-lg tracking-widest"
+          maxLength={6}
+          required
+        />
       </motion.div>
-      
-      <motion.div variants={variants} className="space-y-4">
-        {/* دکمه ورود اصلی */}
+
+      {error && (
+        <motion.div 
+          variants={variants}
+          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3"
+        >
+          <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
+        </motion.div>
+      )}
+
+      <motion.div variants={variants} className="space-y-3">
         <Button 
           type="submit" 
-          className="w-full h-16 bg-gradient-to-l from-emerald-600 via-sky-600 to-emerald-700 hover:from-emerald-700 hover:via-sky-700 hover:to-emerald-800 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={loading || code.length !== 6}
+          className="w-full h-12 bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+          disabled={loading}
         >
           {loading ? (
-            <div className="flex items-center gap-3">
-              <motion.div
-                className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-              <span>در حال تأیید و ورود...</span>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              در حال ورود...
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              <span>ورود به پنل شاگرد</span>
-              <LogIn className="h-5 w-5" />
-            </div>
+            "تأیید و ورود"
           )}
         </Button>
-        
-        {/* دکمه‌های عملیات */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button 
-            type="button" 
+
+        <div className="flex items-center justify-between">
+          <Button
+            type="button"
             variant="ghost"
             onClick={onChangePhone}
-            className="h-12 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-white/20 dark:hover:bg-slate-800/40 border border-slate-300/50 dark:border-slate-600/50 rounded-xl backdrop-blur-sm transition-all duration-300"
+            className="text-gray-600 dark:text-gray-300 hover:text-emerald-600"
           >
-            <div className="flex items-center gap-2">
-              <Edit3 className="h-4 w-4" />
-              <span className="text-sm font-semibold">تغییر شماره</span>
-            </div>
+            <ArrowLeft className="h-4 w-4 ml-1" />
+            تغییر شماره
           </Button>
-          
-          {countdown === 0 ? (
-            <Button 
-              type="button" 
-              variant="ghost"
-              onClick={onResendCode}
-              className="h-12 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-white/20 dark:hover:bg-slate-800/40 border border-slate-300/50 dark:border-slate-600/50 rounded-xl backdrop-blur-sm transition-all duration-300"
-            >
-              <div className="flex items-center gap-2">
-                <RefreshCw className="h-4 w-4" />
-                <span className="text-sm font-semibold">ارسال مجدد</span>
-              </div>
-            </Button>
-          ) : (
-            <Button 
-              type="button" 
-              variant="ghost"
-              disabled
-              className="h-12 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200/50 dark:border-slate-700/50 rounded-xl backdrop-blur-sm"
-            >
-              <div className="flex items-center gap-2">
-                <RefreshCw className="h-4 w-4" />
-                <span className="text-sm">ارسال مجدد</span>
-              </div>
-            </Button>
-          )}
+
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onResendCode}
+            disabled={countdown > 0 || loading}
+            className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 disabled:opacity-50"
+          >
+            {countdown > 0 ? (
+              `ارسال مجدد ${toPersianNumbers(countdown)}s`
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 ml-1" />
+                ارسال مجدد کد
+              </>
+            )}
+          </Button>
         </div>
       </motion.div>
-    </motion.form>
+    </form>
   );
 };

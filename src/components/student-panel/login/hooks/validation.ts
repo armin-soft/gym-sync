@@ -1,5 +1,5 @@
 
-import { Student } from "@/types/student";
+import { Student } from "@/components/students/StudentTypes";
 
 export const isValidStudentPhone = (phone: string, students: Student[]): boolean => {
   console.log('validation: Checking phone:', phone);
