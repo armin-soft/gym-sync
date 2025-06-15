@@ -8,13 +8,9 @@ import { NewStudentProgressCharts } from "./components/NewStudentProgressCharts"
 import { NewStudentRecentActivities } from "./components/NewStudentRecentActivities";
 import { useStudentRealData } from "./hooks/useStudentRealData";
 
-interface StudentDashboardProps {
-  onSidebarToggle?: () => void;
-  sidebarOpen?: boolean;
-}
-
-const StudentDashboard: React.FC<StudentDashboardProps> = ({ onSidebarToggle }) => {
+const StudentDashboard = () => {
   const { data, loading } = useStudentRealData();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const containerVariants = {
     initial: { opacity: 0 },
@@ -55,7 +51,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onSidebarToggle }) 
             studentName={data.name}
             weeklyProgress={data.weeklyProgress}
             exerciseStreak={data.exerciseStreak}
-            onSidebarToggle={onSidebarToggle}
+            onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
           />
         </motion.div>
 

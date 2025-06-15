@@ -9,10 +9,9 @@ import { handleStudentLogout } from "./utils/studentAuthUtils";
 
 interface StudentLayoutProps {
   children: React.ReactNode;
-  onSidebarToggle?: (isOpen: boolean) => void;
 }
 
-export const StudentLayout: React.FC<StudentLayoutProps> = ({ children, onSidebarToggle }) => {
+export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { studentProfile, loadProfile } = useStudentProfileData();
@@ -36,23 +35,8 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children, onSideba
   }, [loadProfile, loadStats]);
 
   const handleSidebarToggle = () => {
-    const newState = !sidebarOpen;
-    setSidebarOpen(newState);
-    if (onSidebarToggle) {
-      onSidebarToggle(newState);
-    }
+    setSidebarOpen(!sidebarOpen);
   };
-
-  // Clone children and pass sidebar toggle function
-  const enhancedChildren = React.Children.map(children, (child) => {
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, { 
-        onSidebarToggle: handleSidebarToggle,
-        sidebarOpen 
-      } as any);
-    }
-    return child;
-  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-sky-50/20 to-emerald-50/40 dark:from-slate-950 dark:via-emerald-950/20 dark:to-sky-950/30" dir="rtl">
@@ -67,12 +51,9 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children, onSideba
       />
       
       {/* Main Content */}
-      <main className={cn(
-        "w-full min-h-screen transition-all duration-300 ease-in-out",
-        sidebarOpen && !isMobile ? "lg:mr-80" : ""
-      )}>
+      <main className="w-full min-h-screen">
         <div className="container mx-auto px-4 py-6">
-          {enhancedChildren}
+          {children}
         </div>
       </main>
       
