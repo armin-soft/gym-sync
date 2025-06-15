@@ -24,20 +24,10 @@ export const createPhoneSubmitHandler = (
       return;
     }
 
-    // برای تست، شماره 09123456789 را مجاز می‌کنیم
-    if (state.phone !== "09123456789" && students.length > 0) {
-      if (!isValidStudentPhone(state.phone, students)) {
-        setState(prev => ({ 
-          ...prev, 
-          error: "شماره موبایل شما در سیستم ثبت نشده است. لطفاً با مربی خود تماس بگیرید.",
-          loading: false 
-        }));
-        return;
-      }
-    } else if (state.phone !== "09123456789" && students.length === 0) {
+    if (!isValidStudentPhone(state.phone, students)) {
       setState(prev => ({ 
         ...prev, 
-        error: "هیچ شاگردی در سیستم ثبت نشده است. لطفاً ابتدا یک شاگرد در پنل مدیریت ثبت کنید.",
+        error: "شماره موبایل شما در سیستم ثبت نشده است. لطفاً با مربی خود تماس بگیرید.",
         loading: false 
       }));
       return;
@@ -109,39 +99,21 @@ export const createCodeSubmitHandler = (
     // کد صحیح است
     console.log('formHandlers: Code is correct!');
     
-    // اگر شماره تست است، یک شاگرد موقت ایجاد می‌کنیم
-    if (state.phone === "09123456789" && students.length === 0) {
-      const testStudent = {
-        id: "test-student",
-        name: "شاگرد تست",
-        phone: "09123456789",
-        profileImage: "/Assets/Images/Place-Holder.svg"
-      };
-      
-      saveStudentLogin(testStudent);
-      
-      setTimeout(() => {
-        setState(prev => ({ ...prev, loading: false }));
-        console.log('formHandlers: Test student login successful, navigating to /Student');
-        
-        navigate("/Student");
-        onLoginSuccess(state.phone);
-      }, 500);
-      
-      return;
-    }
-    
     const foundStudent = findStudentByPhone(state.phone, students);
     console.log('formHandlers: Found student for login:', foundStudent);
     
     if (foundStudent) {
       saveStudentLogin(foundStudent);
       
+      // انتقال فوری به داشبورد شاگرد
       setTimeout(() => {
         setState(prev => ({ ...prev, loading: false }));
         console.log('formHandlers: Calling onLoginSuccess and navigating to /Student');
         
+        // انتقال به داشبورد
         navigate("/Student");
+        
+        // فراخوانی callback
         onLoginSuccess(state.phone);
       }, 500);
     } else {

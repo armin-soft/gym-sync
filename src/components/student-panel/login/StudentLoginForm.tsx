@@ -33,8 +33,8 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
     students
   } = useStudentLogin({ onLoginSuccess });
 
-  // برای تست، از شماره پیش‌فرض استفاده می‌کنیم
-  const allowedPhone = "09123456789";
+  // Get the first student's phone as allowed phone (or empty string if no students)
+  const allowedPhone = students && students.length > 0 ? students[0].phone || "" : "";
 
   if (locked) {
     return (
