@@ -1,169 +1,70 @@
 
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
-import { useStudents } from "@/hooks/useStudents";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { StudentLoginForm } from "./login/StudentLoginForm";
 import { StudentLoginBackground } from "./login/StudentLoginBackground";
-import { StudentLoginHeader } from "./login/StudentLoginHeader";
 import { StudentLoginStats } from "./login/StudentLoginStats";
-import { StudentLoginFormStep } from "./login/StudentLoginFormStep";
-import { StudentCodeVerificationStep } from "./login/StudentCodeVerificationStep";
-import { useStudentLogin } from "./login/hooks/useStudentLogin";
-import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
+import { motion } from "framer-motion";
 
 interface StudentLoginProps {
-  onLoginSuccess?: (phone: string) => void;
+  onLoginSuccess: (phone: string) => void;
 }
 
 export const StudentLogin: React.FC<StudentLoginProps> = ({ onLoginSuccess }) => {
-  const { toast } = useToast();
-  const { students } = useStudents();
+  const navigate = useNavigate();
+
+  // بررسی وضعیت ورود شاگرد در لود اولیه
+  useEffect(() => {
+    const isStudentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
+    const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+    
+    console.log('StudentLogin: Checking login status on mount');
+    console.log('StudentLogin: isStudentLoggedIn:', isStudentLoggedIn);
+    console.log('StudentLogin: loggedInStudentId:', loggedInStudentId);
+    
+    if (isStudentLoggedIn && loggedInStudentId) {
+      console.log('StudentLogin: Student already logged in, redirecting to dashboard');
+      navigate("/Student");
+    }
+  }, [navigate]);
 
   const handleLoginSuccess = (phone: string) => {
-    console.log('StudentLogin: Login success callback triggered for phone:', phone);
+    console.log('StudentLogin: Login successful for phone:', phone);
+    console.log('StudentLogin: Calling navigate to /Student');
     
-    const student = students.find(s => s.phone === phone);
+    // انتقال فوری به داشبورد شاگرد
+    navigate("/Student");
     
-    if (student) {
-      console.log('StudentLogin: Found student:', student);
-      
-      toast({
-        title: "ورود موفق به پنل شاگرد",
-        description: `${student.name} عزیز، خوش آمدید`,
-      });
-      
-      if (onLoginSuccess) {
-        console.log('StudentLogin: Calling parent callback');
-        onLoginSuccess(phone);
-      }
-      
-    } else {
-      console.error('StudentLogin: Student not found for phone:', phone);
-      toast({
-        title: "خطا در ورود به پنل شاگرد",
-        description: "شماره موبایل یافت نشد",
-        variant: "destructive",
-      });
-    }
+    // فراخوانی callback والد
+    onLoginSuccess(phone);
   };
 
-  const {
-    step,
-    phone,
-    code,
-    loading,
-    error,
-    locked,
-    lockExpiry,
-    timeLeft,
-    countdown,
-    setPhone,
-    setCode,
-    handlePhoneSubmit,
-    handleCodeSubmit,
-    handleChangePhone,
-    handleResendCode
-  } = useStudentLogin({ onLoginSuccess: handleLoginSuccess });
-
-  console.log('StudentLogin: Current state - students count:', students.length);
-
-  if (locked) {
-    return (
-      <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-violet-50/20 to-purple-50/30 dark:from-slate-900 dark:via-violet-950/20 dark:to-purple-950/30">
-        <StudentLoginBackground />
-        
-        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-sky-50 to-emerald-50 dark:from-slate-950 dark:via-emerald-950/20 dark:to-sky-950/30 relative overflow-hidden" dir="rtl">
+      <StudentLoginBackground />
+      
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+          {/* Right Side - Login Form */}
           <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={ANIMATION_VARIANTS.container}
-            className="w-full max-w-md"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="order-1 lg:order-2"
           >
-            <motion.div variants={ANIMATION_VARIANTS.item} className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-600 rounded-3xl blur-xl opacity-20"></div>
-              <div className="relative backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl p-8 sm:p-10 shadow-2xl text-center">
-                <h2 className="text-xl font-bold text-red-600 mb-4">حساب قفل شده</h2>
-                <p className="text-gray-700 dark:text-gray-300 mb-4">
-                  حساب کاربری شما به دلیل تلاش‌های ناموفق زیاد قفل شده است.
-                </p>
-                {timeLeft && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    زمان باقی‌مانده: {timeLeft}
-                  </p>
-                )}
-              </div>
-            </motion.div>
+            <StudentLoginForm onLoginSuccess={handleLoginSuccess} />
+          </motion.div>
+
+          {/* Left Side - Stats */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="order-2 lg:order-1"
+          >
+            <StudentLoginStats />
           </motion.div>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-violet-50/20 to-purple-50/30 dark:from-slate-900 dark:via-violet-950/20 dark:to-purple-950/30">
-      <StudentLoginBackground />
-
-      {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={ANIMATION_VARIANTS.container}
-          className="w-full max-w-md"
-        >
-          <motion.div 
-            variants={ANIMATION_VARIANTS.item}
-            className="backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl shadow-2xl p-8 sm:p-10"
-          >
-            <StudentLoginHeader variants={ANIMATION_VARIANTS.item} />
-            
-            <div className="mt-8" dir="rtl">
-              <AnimatePresence mode="wait">
-                {step === "phone" ? (
-                  <motion.div
-                    key="phone"
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -30 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <StudentLoginFormStep 
-                      variants={ANIMATION_VARIANTS.item} 
-                      phone={phone}
-                      setPhone={setPhone}
-                      loading={loading}
-                      error={error}
-                      onSubmit={handlePhoneSubmit}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="code"
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -30 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <StudentCodeVerificationStep
-                      variants={ANIMATION_VARIANTS.item}
-                      code={code}
-                      setCode={setCode}
-                      phone={phone}
-                      countdown={countdown}
-                      loading={loading}
-                      error={error}
-                      onSubmit={handleCodeSubmit}
-                      onChangePhone={handleChangePhone}
-                      onResendCode={handleResendCode}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-          
-          <StudentLoginStats variants={ANIMATION_VARIANTS.item} />
-        </motion.div>
       </div>
     </div>
   );

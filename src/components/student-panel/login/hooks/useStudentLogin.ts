@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useStudents } from "@/hooks/useStudents";
 import { validatePhone } from "@/components/auth/login/utils/validation";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -22,6 +22,7 @@ interface UseStudentLoginProps {
 }
 
 export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
+  const navigate = useNavigate();
   const { students } = useStudents();
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [state, setState] = useState<StudentLoginState>({
@@ -54,7 +55,6 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
   const isValidStudentPhone = (phone: string): boolean => {
     console.log('useStudentLogin: Checking phone:', phone);
     console.log('useStudentLogin: Available students:', students.length);
-    console.log('useStudentLogin: Students data:', students);
     
     if (students.length === 0) {
       console.log('useStudentLogin: No students loaded yet');
@@ -77,8 +77,6 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
     setState(prev => ({ ...prev, loading: true, error: "" }));
 
     console.log('useStudentLogin: Phone submit started with phone:', state.phone);
-    console.log('useStudentLogin: Students available:', students.length);
-    console.log('useStudentLogin: All students:', students);
 
     const phoneError = validatePhone(state.phone);
     if (phoneError) {
@@ -152,23 +150,27 @@ export const useStudentLogin = ({ onLoginSuccess }: UseStudentLoginProps) => {
 
     // کد صحیح است
     console.log('useStudentLogin: Code is correct!');
-    console.log('useStudentLogin: Phone for success:', state.phone);
     
-    // پیدا کردن شاگرد
     const foundStudent = students.find(s => s.phone === state.phone);
     console.log('useStudentLogin: Found student for login:', foundStudent);
     
     if (foundStudent) {
-      // ذخیره فوری در localStorage
+      // ذخیره اطلاعات در localStorage
       const loginSaved = storageManager.setItem("studentLoggedIn", "true");
       const idSaved = storageManager.setItem("loggedInStudentId", foundStudent.id.toString());
+      const studentDataSaved = storageManager.setItem("studentData", JSON.stringify(foundStudent));
       
-      console.log('useStudentLogin: Storage results - login:', loginSaved, 'id:', idSaved);
+      console.log('useStudentLogin: Storage results - login:', loginSaved, 'id:', idSaved, 'data:', studentDataSaved);
       
-      // تأخیر کوتاه برای نمایش loading و سپس فراخوانی callback
+      // انتقال فوری به داشبورد شاگرد
       setTimeout(() => {
         setState(prev => ({ ...prev, loading: false }));
-        console.log('useStudentLogin: Calling onLoginSuccess with phone:', state.phone);
+        console.log('useStudentLogin: Calling onLoginSuccess and navigating to /Student');
+        
+        // انتقال به داشبورد
+        navigate("/Student");
+        
+        // فراخوانی callback
         onLoginSuccess(state.phone);
       }, 500);
     } else {

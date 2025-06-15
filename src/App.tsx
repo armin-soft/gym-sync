@@ -31,37 +31,50 @@ function AppContent() {
   const navigate = useNavigate();
   const currentPath = location.pathname;
   
-  // بررسی وضعیت احراز هویت و نوع کاربر فقط یکبار در لود اولیه
   useEffect(() => {
-    // بررسی وضعیت احراز هویت و نوع کاربر
+    console.log('AppContent: Current path:', currentPath);
+    
+    // بررسی وضعیت احراز هویت شاگرد
+    const isStudentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
+    const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+    
+    console.log('AppContent: Student login status:', isStudentLoggedIn);
+    console.log('AppContent: Student ID:', loggedInStudentId);
+    
+    // اگر شاگرد وارد شده و در مسیر ورود است، به داشبورد هدایت کن
+    if (isStudentLoggedIn && loggedInStudentId && currentPath === "/Students") {
+      console.log('AppContent: Student already logged in, redirecting to dashboard');
+      navigate("/Student");
+      setIsLoading(false);
+      return;
+    }
+    
+    // بررسی وضعیت نوع کاربر
     const hasSelectedType = localStorage.getItem("hasSelectedUserType");
     const selectedUserType = localStorage.getItem("selectedUserType");
     
-    // تنظیم مسیر بر اساس وضعیت فعلی - فقط یکبار در لود اولیه
+    console.log('AppContent: User type selected:', hasSelectedType);
+    console.log('AppContent: Selected user type:', selectedUserType);
+    
     if (!hasSelectedType || !selectedUserType) {
-      // اگر هیچ نوع کاربری انتخاب نشده، صفحه انتخاب را نمایش بده
       setShowUserTypeSelection(true);
-    } 
-    // در غیر این صورت، تنظیم نوع کاربر بر اساس مسیر فعلی
-    else if (currentPath.startsWith('/Students') && selectedUserType !== "student") {
+    } else if (currentPath.startsWith('/Students') && selectedUserType !== "student") {
       localStorage.setItem("selectedUserType", "student");
-    } 
-    else if (currentPath.startsWith('/Student') && selectedUserType !== "student") {
+    } else if (currentPath.startsWith('/Student') && selectedUserType !== "student") {
       localStorage.setItem("selectedUserType", "student");
-    }
-    else if ((currentPath.startsWith('/Management') || currentPath === '/') && selectedUserType !== "management") {
+    } else if ((currentPath.startsWith('/Management') || currentPath === '/') && selectedUserType !== "management") {
       localStorage.setItem("selectedUserType", "management");
     }
     
     setIsLoading(false);
-  }, []); // فقط یکبار در لود اولیه اجرا شود
+  }, [currentPath, navigate]);
 
   // نمایش loading در حین بررسی
   if (isLoading) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-sky-100">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">در حال بارگذاری...</p>
         </div>
       </div>
@@ -75,15 +88,20 @@ function AppContent() {
 
   // بررسی نوع کاربر انتخاب شده
   const selectedUserType = localStorage.getItem("selectedUserType");
+  
+  console.log('AppContent: Rendering for user type:', selectedUserType);
+  console.log('AppContent: Current path:', currentPath);
 
   // اگر پنل شاگرد انتخاب شده
   if (selectedUserType === "student") {
     // صفحه ورود شاگرد - بدون Layout
     if (currentPath.startsWith('/Students')) {
+      console.log('AppContent: Rendering student login page');
       return <AppRoutes />;
     }
     // صفحات پنل شاگرد - با StudentLayout
     if (currentPath.startsWith('/Student')) {
+      console.log('AppContent: Rendering student dashboard with StudentLayout');
       return (
         <StudentLayout>
           <AppRoutes />
@@ -92,8 +110,9 @@ function AppContent() {
     }
   }
 
-  // اگر پنل مدیریت انتخاب شده، از AuthWrapper و Layout استفاده کنید
+  // اگر پنل مدیریت انتخاب شده
   if (selectedUserType === "management" || currentPath.startsWith('/Management') || currentPath === '/') {
+    console.log('AppContent: Rendering management panel');
     return (
       <AuthWrapper>
         <Layout>
@@ -113,7 +132,6 @@ function App() {
   useEffect(() => {
     console.log('App component mounted successfully');
     
-    // اضافه کردن error handler برای خطاهای JavaScript
     const handleGlobalError = (e: ErrorEvent) => {
       console.error('Global error:', e.error);
     };
@@ -124,8 +142,6 @@ function App() {
     
     window.addEventListener('error', handleGlobalError);
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
-    
-    console.log('App render successful');
     
     return () => {
       window.removeEventListener('error', handleGlobalError);
