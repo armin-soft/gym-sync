@@ -29,41 +29,61 @@
     {
       "name": "داشبورد مدیریت",
       "url": "./Management",
+      "description": "نمای کلی و آمار جامع باشگاه",
       "icons": []
     },
     {
       "name": "پروفایل مربی",
       "url": "./Management/Coach-Profile",
+      "description": "مدیریت اطلاعات شخصی و حرفه‌ای",
       "icons": []
     },
     {
       "name": "مدیریت شاگردان",
       "url": "./Management/Students",
+      "description": "ثبت، ویرایش و پیگیری ورزشکاران",
       "icons": []
     },
     {
       "name": "حرکات تمرینی",
       "url": "./Management/Exercise-Movements",
+      "description": "مدیریت کتابخانه تمرینات ورزشی",
       "icons": []
     },
     {
       "name": "برنامه غذایی",
       "url": "./Management/Diet-Plan",
+      "description": "طراحی و مدیریت رژیم‌های تغذیه‌ای",
       "icons": []
     },
     {
       "name": "مکمل‌ها و ویتامین‌ها",
       "url": "./Management/Supplements-Vitamins",
+      "description": "مدیریت مکمل‌های ورزشی و تغذیه‌ای",
       "icons": []
     },
     {
       "name": "پشتیبان‌گیری داده‌ها",
       "url": "./Management/Backup-Restore",
+      "description": "بکاپ و بازیابی اطلاعات سیستم",
+      "icons": []
+    },
+    {
+      "name": "تاریخچه شاگردان",
+      "url": "./Management/Student-History",
+      "description": "پیگیری تاریخچه تغییرات شاگردان",
       "icons": []
     },
     {
       "name": "گزارشات و تحلیل‌ها",
       "url": "./Management/Report",
+      "description": "آمار و گزارشات جامع عملکرد",
+      "icons": []
+    },
+    {
+      "name": "پشتیبانی و ارتباط",
+      "url": "./Management/Support",
+      "description": "مدیریت پیام‌های شاگردان",
       "icons": []
     }
   ]
