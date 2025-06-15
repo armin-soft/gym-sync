@@ -6,6 +6,7 @@ import { useStudentData } from "../hooks/useStudentData";
 import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { usePersianDate } from "@/hooks/usePersianDate";
 import { useStudentProfile } from "../hooks/useStudentProfile";
+import { getMotivationalQuote } from "../utils/motivationalQuotes";
 import { ProfileSection } from "./welcome/ProfileSection";
 import { DateTimeSection } from "./welcome/DateTimeSection";
 import { AchievementBadges } from "./welcome/AchievementBadges";
@@ -15,6 +16,8 @@ export const StudentDashboardWelcome: React.FC = () => {
   const currentTime = useCurrentTime();
   const persianDate = usePersianDate();
   const { profileImageSrc } = useStudentProfile();
+
+  const motivationalQuote = getMotivationalQuote();
 
   if (loading) {
     return (
@@ -49,6 +52,7 @@ export const StudentDashboardWelcome: React.FC = () => {
               studentName={studentData.name}
               profileImageSrc={profileImageSrc}
               currentTime={currentTime}
+              motivationalQuote={motivationalQuote}
             />
             
             {/* بخش چپ - تاریخ و زمان */}
