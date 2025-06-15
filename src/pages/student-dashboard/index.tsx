@@ -1,39 +1,37 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { NewStudentDashboardHeader } from "./components/NewStudentDashboardHeader";
-import { NewStudentStatsGrid } from "./components/NewStudentStatsGrid";
-import { NewStudentQuickActions } from "./components/NewStudentQuickActions";
-import { NewStudentProgressCharts } from "./components/NewStudentProgressCharts";
-import { NewStudentRecentActivities } from "./components/NewStudentRecentActivities";
-import { useStudentRealData } from "./hooks/useStudentRealData";
+import { StudentDashboardWelcome } from "./components/StudentDashboardWelcome";
+import { StudentStatsOverview } from "./components/StudentStatsOverview";
+import { StudentQuickAccessGrid } from "./components/StudentQuickAccessGrid";
+import { StudentProgressSection } from "./components/StudentProgressSection";
+import { StudentActivityFeed } from "./components/StudentActivityFeed";
+import { StudentWeeklyOverview } from "./components/StudentWeeklyOverview";
 
 interface StudentDashboardProps {
   onSidebarToggle?: () => void;
 }
 
 const StudentDashboard: React.FC<StudentDashboardProps> = ({ onSidebarToggle }) => {
-  const { data, loading } = useStudentRealData();
-
   const containerVariants = {
     initial: { opacity: 0 },
     animate: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.08,
         delayChildren: 0.1
       }
     }
   };
 
   const itemVariants = {
-    initial: { opacity: 0, y: 20, scale: 0.98 },
+    initial: { opacity: 0, y: 25, scale: 0.97 },
     animate: { 
       opacity: 1, 
       y: 0,
       scale: 1,
       transition: { 
-        duration: 0.6,
+        duration: 0.7,
         ease: [0.23, 1, 0.32, 1]
       }
     }
@@ -44,41 +42,42 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onSidebarToggle }) 
       variants={containerVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen w-full bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-pink-50/50 dark:from-slate-950 dark:via-indigo-950/20 dark:to-purple-950/30"
+      className="min-h-screen w-full bg-gradient-to-br from-emerald-50/40 via-sky-50/30 to-emerald-50/50 dark:from-slate-950 dark:via-emerald-950/10 dark:to-sky-950/20"
       dir="rtl"
     >
-      <div className="space-y-8 p-6">
-        {/* Header */}
+      <div className="space-y-8 p-4 sm:p-6 lg:p-8">
+        {/* صفحه خوش‌آمدگویی */}
         <motion.div variants={itemVariants}>
-          <NewStudentDashboardHeader 
-            studentName={data.name}
-            weeklyProgress={data.weeklyProgress}
-            exerciseStreak={data.exerciseStreak}
-          />
+          <StudentDashboardWelcome />
         </motion.div>
 
-        {/* Stats Grid */}
+        {/* بررسی اجمالی آمار */}
         <motion.div variants={itemVariants}>
-          <NewStudentStatsGrid data={data} loading={loading} />
+          <StudentStatsOverview />
         </motion.div>
 
-        {/* Quick Actions */}
+        {/* دسترسی سریع */}
         <motion.div variants={itemVariants}>
-          <NewStudentQuickActions />
+          <StudentQuickAccessGrid />
         </motion.div>
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Progress Charts */}
-          <motion.div variants={itemVariants}>
-            <NewStudentProgressCharts data={data} />
+        {/* محتوای اصلی */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* بخش پیشرفت */}
+          <motion.div variants={itemVariants} className="lg:col-span-2">
+            <StudentProgressSection />
           </motion.div>
 
-          {/* Recent Activities */}
+          {/* خوراک فعالیت‌ها */}
           <motion.div variants={itemVariants}>
-            <NewStudentRecentActivities activities={data.recentActivities} />
+            <StudentActivityFeed />
           </motion.div>
         </div>
+
+        {/* بررسی کلی هفتگی */}
+        <motion.div variants={itemVariants}>
+          <StudentWeeklyOverview />
+        </motion.div>
       </div>
     </motion.div>
   );

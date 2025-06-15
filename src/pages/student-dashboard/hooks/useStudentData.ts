@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-interface StudentRealData {
+interface StudentData {
   name: string;
   totalWorkouts: number;
   completedDays: number;
@@ -29,17 +29,17 @@ interface StudentRealData {
   }>;
 }
 
-export const useStudentRealData = () => {
-  const [studentData, setStudentData] = useState<any>(null);
+export const useStudentData = () => {
+  const [rawData, setRawData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // بارگذاری داده‌ها فقط یک بار
   useEffect(() => {
-    const loadStudentData = () => {
+    const loadData = () => {
       try {
-        const data = localStorage.getItem('studentData');
-        if (data) {
-          setStudentData(JSON.parse(data));
+        const savedData = localStorage.getItem('studentData');
+        if (savedData) {
+          setRawData(JSON.parse(savedData));
         }
       } catch (error) {
         console.error('خطا در بارگذاری داده‌های شاگرد:', error);
@@ -48,12 +48,12 @@ export const useStudentRealData = () => {
       }
     };
 
-    loadStudentData();
+    loadData();
   }, []);
 
-  // محاسبات با useMemo برای بهینه‌سازی
-  const data = useMemo((): StudentRealData => {
-    if (!studentData) {
+  // پردازش داده‌ها با useMemo برای بهینه‌سازی
+  const studentData = useMemo((): StudentData => {
+    if (!rawData) {
       return {
         name: 'شاگرد عزیز',
         totalWorkouts: 0,
@@ -75,12 +75,12 @@ export const useStudentRealData = () => {
       };
     }
 
-    // محاسبه کل تمرین‌ها
+    // محاسبه کل تمرین‌ها و روزهای تکمیل شده
     let totalWorkouts = 0;
     let completedDays = 0;
     
     for (let day = 1; day <= 7; day++) {
-      const exercises = studentData[`exercisesDay${day}`];
+      const exercises = rawData[`exercisesDay${day}`];
       if (exercises && Array.isArray(exercises) && exercises.length > 0) {
         totalWorkouts += exercises.length;
         completedDays++;
@@ -92,39 +92,37 @@ export const useStudentRealData = () => {
     // تمرین امروز
     const today = new Date().getDay();
     const dayNumber = today === 0 ? 7 : today;
-    const todayExercises = studentData[`exercisesDay${dayNumber}`];
+    const todayExercises = rawData[`exercisesDay${dayNumber}`];
     const todayWorkouts = todayExercises && Array.isArray(todayExercises) ? todayExercises.length : 0;
 
-    const totalMeals = (studentData.meals || []).length;
-    const calories = totalMeals * 180;
-    const totalSupplements = (studentData.supplements || []).length + (studentData.vitamins || []).length;
+    // محاسبه وعده‌ها و مکمل‌ها
+    const totalMeals = (rawData.meals || []).length;
+    const totalSupplements = (rawData.supplements || []).length + (rawData.vitamins || []).length;
+    const calories = totalMeals * 180; // تخمین کالری
 
-    // پیدا کردن بعدی تمرین
-    let nextWorkout = 'برنامه‌ای تعریف نشده';
-    for (let i = 1; i <= 7; i++) {
-      const checkDay = (dayNumber + i - 1) % 7 + 1;
-      const exercises = studentData[`exercisesDay${checkDay}`];
-      if (exercises && Array.isArray(exercises) && exercises.length > 0) {
-        const dayNames = ['', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه', 'یکشنبه'];
-        nextWorkout = `${dayNames[checkDay]}`;
-        break;
-      }
+    // محاسبه پیشرفت وزن
+    const currentWeight = rawData.weight || 0;
+    const targetWeight = rawData.targetWeight || currentWeight;
+    const initialWeight = rawData.initialWeight || currentWeight;
+    let weightProgress = 0;
+    
+    if (targetWeight !== initialWeight) {
+      weightProgress = Math.round(((currentWeight - initialWeight) / (targetWeight - initialWeight)) * 100);
+      weightProgress = Math.max(0, Math.min(100, weightProgress));
     }
 
-    const currentWeight = studentData.weight || 0;
-    const targetWeight = studentData.targetWeight || currentWeight;
-    const weightProgress = targetWeight ? Math.round(((currentWeight - (studentData.initialWeight || currentWeight)) / (targetWeight - (studentData.initialWeight || currentWeight))) * 100) : 0;
-
+    // نرخ‌های تکمیل
     const mealCompletionRate = totalMeals > 0 ? 85 : 0;
     const supplementCompletionRate = totalSupplements > 0 ? 90 : 0;
     const exerciseStreak = completedDays;
 
+    // فعالیت‌های اخیر
     const recentActivities = [
       ...(totalWorkouts > 0 ? [{
         id: 'workout-week',
         type: 'workout' as const,
-        title: 'تکمیل برنامه تمرینی هفتگی',
-        description: `${totalWorkouts} تمرین در برنامه شما`,
+        title: 'برنامه تمرینی هفتگی',
+        description: `${totalWorkouts} تمرین در برنامه شما تعریف شده است`,
         time: 'امروز',
         status: 'completed' as const,
         value: totalWorkouts
@@ -132,8 +130,8 @@ export const useStudentRealData = () => {
       ...(totalMeals > 0 ? [{
         id: 'meal-plan',
         type: 'meal' as const,
-        title: 'برنامه غذایی تعریف شده',
-        description: `${totalMeals} وعده غذایی`,
+        title: 'برنامه غذایی روزانه',
+        description: `${totalMeals} وعده غذایی برای شما تنظیم شده`,
         time: 'امروز',
         status: 'pending' as const,
         value: totalMeals
@@ -142,23 +140,32 @@ export const useStudentRealData = () => {
         id: 'supplements',
         type: 'supplement' as const,
         title: 'مکمل‌ها و ویتامین‌ها',
-        description: `${totalSupplements} مکمل تعریف شده`,
+        description: `${totalSupplements} مکمل و ویتامین تجویز شده`,
         time: 'امروز',
         status: 'pending' as const,
         value: totalSupplements
-      }] : [])
+      }] : []),
+      {
+        id: 'progress-update',
+        type: 'progress' as const,
+        title: 'به‌روزرسانی پیشرفت',
+        description: `پیشرفت هفتگی شما ${weeklyProgress}% محاسبه شد`,
+        time: 'یک ساعت پیش',
+        status: 'completed' as const,
+        value: weeklyProgress
+      }
     ].slice(0, 5);
 
     return {
-      name: studentData.name || 'شاگرد عزیز',
+      name: rawData.name || 'شاگرد عزیز',
       totalWorkouts,
       completedDays,
       weeklyProgress,
       todayWorkouts,
       calories,
       weeklyGoal: 7,
-      weightProgress: Math.max(0, Math.min(100, weightProgress)),
-      nextWorkout,
+      weightProgress,
+      nextWorkout: 'برنامه بعدی',
       currentWeight,
       targetWeight,
       totalMeals,
@@ -168,7 +175,7 @@ export const useStudentRealData = () => {
       supplementCompletionRate,
       recentActivities
     };
-  }, [studentData]);
+  }, [rawData]);
 
-  return { data, loading };
+  return { studentData, loading };
 };
