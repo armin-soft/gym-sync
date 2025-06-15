@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Target, Award, TrendingUp, Sparkles, User } from "lucide-react";
+import { Calendar, Clock, Target, Award, TrendingUp, Sparkles, User, Hand, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -30,6 +30,9 @@ export const StudentDashboardWelcome: React.FC = () => {
       
       if (loggedInStudentId && students.length > 0) {
         const student = students.find((s: any) => s.id === loggedInStudentId);
+        console.log('Student found:', student);
+        console.log('Student image field:', student?.image);
+        console.log('Student profileImage field:', student?.profileImage);
         return student || null;
       }
     } catch (error) {
@@ -50,13 +53,19 @@ export const StudentDashboardWelcome: React.FC = () => {
 
   const getMotivationalQuote = () => {
     const quotes = [
-      "امروز روزی است که تبدیل به بهترین نسخه خودت شوی! 💪",
-      "هر قدم کوچک، شما را به هدف بزرگتری نزدیک می‌کند! 🎯",
-      "استقامت امروز، موفقیت فردا است! ⭐",
-      "راه هزار میل با یک قدم آغاز می‌شود! 🚀"
+      { text: "امروز روزی است که تبدیل به بهترین نسخه خودت شوی!", icon: Zap },
+      { text: "هر قدم کوچک، شما را به هدف بزرگتری نزدیک می‌کند!", icon: Target },
+      { text: "استقامت امروز، موفقیت فردا است!", icon: Award },
+      { text: "راه هزار میل با یک قدم آغاز می‌شود!", icon: TrendingUp }
     ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
+    const selectedQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    return selectedQuote;
   };
+
+  const motivationalQuote = getMotivationalQuote();
+
+  // استفاده از عکس پروفایل از studentProfile یا پیش‌فرض
+  const profileImageSrc = studentProfile?.image || studentProfile?.profileImage || "/Assets/Images/Place-Holder.svg";
 
   if (loading) {
     return (
@@ -98,7 +107,7 @@ export const StudentDashboardWelcome: React.FC = () => {
                 
                 <Avatar className="h-20 w-20 border-4 border-white/30 relative shadow-xl">
                   <AvatarImage 
-                    src={studentProfile?.image || "/Assets/Images/Place-Holder.svg"} 
+                    src={profileImageSrc} 
                     alt="تصویر پروفایل شاگرد"
                   />
                   <AvatarFallback className="bg-white/20 text-white font-bold text-lg backdrop-blur-sm">
@@ -119,12 +128,16 @@ export const StudentDashboardWelcome: React.FC = () => {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black">
-                    {getGreeting(currentTime)} {studentData.name}! 👋
+                    {getGreeting(currentTime)} {studentData.name}!
                   </h1>
+                  <Hand className="h-8 w-8 text-yellow-300" />
                 </div>
-                <p className="text-white/90 text-lg">
-                  {getMotivationalQuote()}
-                </p>
+                <div className="flex items-center gap-2">
+                  <motivationalQuote.icon className="h-5 w-5 text-white/90" />
+                  <p className="text-white/90 text-lg">
+                    {motivationalQuote.text}
+                  </p>
+                </div>
               </div>
             </div>
             
