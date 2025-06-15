@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from "react";
-import { StudentSidebarStats } from "../types/studentSidebarStats";
+import { StudentSidebarStats } from "../types/studentSidebarTypes";
 
 export const useStudentStatsData = () => {
   const [stats, setStats] = useState<StudentSidebarStats>({
