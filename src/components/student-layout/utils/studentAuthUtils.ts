@@ -1,16 +1,13 @@
 
-import { useNavigate } from "react-router-dom";
-
 export const handleStudentLogout = () => {
   try {
     // پاک کردن تمام اطلاعات مربوط به شاگرد
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("rememberedEmail");
-    localStorage.removeItem("rememberMeExpiry");
-    localStorage.removeItem("hasSelectedUserType");
-    localStorage.removeItem("selectedUserType");
+    localStorage.removeItem("studentLoggedIn");
+    localStorage.removeItem("loggedInStudentId");
     localStorage.removeItem("studentData");
     localStorage.removeItem("studentStats");
+    
+    console.log('studentAuthUtils: Student logout completed, clearing all data');
     
     // انتشار رویداد برای اطلاع سایر کامپوننت‌ها
     window.dispatchEvent(new Event('studentLogout'));

@@ -14,7 +14,8 @@ import Reports from "./pages/reports";
 import Support from "./pages/support";
 
 // Student Panel Pages - صفحه ورود و داشبورد
-import StudentPanel from "./pages/student-panel";
+import { StudentAuthWrapper } from "./components/student-auth/StudentAuthWrapper";
+import { StudentLayout } from "./components/student-layout/StudentLayout";
 
 // Student Dashboard Pages - صفحات پنل شاگرد
 import StudentDashboard from "./pages/student-dashboard";
@@ -31,15 +32,63 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
-      {/* Student Panel Routes - ورود و داشبورد در همان مسیر */}
-      <Route path="/Student" element={<StudentPanel />} />
-      <Route path="/Student/Dashboard" element={<StudentDashboard />} />
-      <Route path="/Student/Profile" element={<StudentProfile />} />
-      <Route path="/Student/Exercise-Movements" element={<StudentExercises />} />
-      <Route path="/Student/Diet-Plan" element={<StudentDiet />} />
-      <Route path="/Student/Supplements-Vitamins" element={<StudentSupplements />} />
-      <Route path="/Student/Report" element={<StudentReports />} />
-      <Route path="/Student/Support" element={<StudentSupport />} />
+      {/* Student Panel Routes - تمام مسیرهای شاگرد محافظت شده */}
+      <Route path="/Student" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentDashboard />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Dashboard" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentDashboard />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Profile" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentProfile />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Exercise-Movements" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentExercises />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Diet-Plan" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentDiet />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Supplements-Vitamins" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentSupplements />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Report" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentReports />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Support" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentSupport />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
       
       {/* Management Panel Routes - مسیرهای بهینه‌شده */}
       <Route path="/Management" element={<Management />} />
