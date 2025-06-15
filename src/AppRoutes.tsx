@@ -39,11 +39,6 @@ const AppRoutes = () => {
                 <StudentDashboard />
               </StudentLayout>
             } />
-            <Route path="Dashboard" element={
-              <StudentLayout>
-                <StudentDashboard />
-              </StudentLayout>
-            } />
             <Route path="Profile" element={
               <StudentLayout>
                 <StudentProfile />
@@ -75,7 +70,7 @@ const AppRoutes = () => {
               </StudentLayout>
             } />
             {/* Student panel fallback */}
-            <Route path="*" element={<Navigate to="/Student/Dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/Student/" replace />} />
           </Routes>
         </StudentAuthWrapper>
       } />

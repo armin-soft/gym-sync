@@ -1,70 +1,57 @@
 
 import { 
-  Home, User, Dumbbell, Apple, Pill, 
-  BarChart3, MessageCircle
+  LayoutDashboard, 
+  User, 
+  Dumbbell, 
+  Apple, 
+  Pill, 
+  BarChart3, 
+  MessageSquare,
+  Home
 } from "lucide-react";
 import { SidebarItem } from "@/components/modern-sidebar/types";
 
 export const studentSidebarItems: SidebarItem[] = [
   {
-    id: "dashboard",
     title: "داشبورد",
-    subtitle: "نمای کلی پیشرفت و آمار",
-    href: "/Student",
+    href: "/Student/",
     icon: Home,
-    gradient: "from-emerald-500 to-green-500"
+    description: "نمای کلی برنامه‌ها و پیشرفت"
   },
   {
-    id: "profile",
     title: "پروفایل شخصی",
-    subtitle: "مدیریت اطلاعات شخصی",
     href: "/Student/Profile",
     icon: User,
-    gradient: "from-blue-500 to-cyan-500"
+    description: "مشاهده و ویرایش اطلاعات شخصی"
   },
   {
-    id: "exercises",
-    title: "حرکات تمرینی",
-    subtitle: "برنامه تمرینی و تمارین",
+    title: "برنامه تمرینی",
     href: "/Student/Exercise-Movements",
     icon: Dumbbell,
-    gradient: "from-purple-500 to-violet-500",
-    badge: "12"
+    description: "تمرین‌های روزانه و هفتگی"
   },
   {
-    id: "diet",
     title: "برنامه غذایی",
-    subtitle: "رژیم غذایی و وعده‌ها",
     href: "/Student/Diet-Plan",
     icon: Apple,
-    gradient: "from-green-500 to-emerald-500",
-    badge: "8"
+    description: "وعده‌های غذایی و رژیم تغذیه"
   },
   {
-    id: "supplements",
     title: "مکمل‌ها و ویتامین‌ها",
-    subtitle: "مکمل‌های دریافتی",
     href: "/Student/Supplements-Vitamins",
     icon: Pill,
-    gradient: "from-orange-500 to-amber-500",
-    badge: "4"
+    description: "مکمل‌ها و ویتامین‌های تجویزی"
   },
   {
-    id: "reports",
-    title: "گزارشات و تحلیل‌ها",
-    subtitle: "آمار پیشرفت و نتایج",
+    title: "گزارشات",
     href: "/Student/Report",
     icon: BarChart3,
-    gradient: "from-red-500 to-pink-500"
+    description: "آمار پیشرفت و نمودارها"
   },
   {
-    id: "support",
-    title: "پشتیبانی و ارتباط",
-    subtitle: "ارتباط با مربی",
+    title: "پشتیبانی",
     href: "/Student/Support",
-    icon: MessageCircle,
-    gradient: "from-indigo-500 to-blue-500",
-    badge: "2",
-    isNew: true
+    icon: MessageSquare,
+    description: "ارتباط با مربی و پشتیبانی"
   }
 ];
