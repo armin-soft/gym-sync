@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { NewStudentDashboardHeader } from "./components/NewStudentDashboardHeader";
 import { NewStudentStatsGrid } from "./components/NewStudentStatsGrid";
@@ -10,6 +10,7 @@ import { useStudentRealData } from "./hooks/useStudentRealData";
 
 const StudentDashboard = () => {
   const { data, loading } = useStudentRealData();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const containerVariants = {
     initial: { opacity: 0 },
@@ -50,6 +51,7 @@ const StudentDashboard = () => {
             studentName={data.name}
             weeklyProgress={data.weeklyProgress}
             exerciseStreak={data.exerciseStreak}
+            onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
           />
         </motion.div>
 

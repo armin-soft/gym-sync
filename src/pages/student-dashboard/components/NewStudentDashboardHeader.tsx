@@ -1,20 +1,23 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Target, TrendingUp, Award, User } from "lucide-react";
+import { Calendar, Clock, Target, TrendingUp, Award, User, Menu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface NewStudentDashboardHeaderProps {
   studentName: string;
   weeklyProgress: number;
   exerciseStreak: number;
+  onSidebarToggle?: () => void;
 }
 
 export const NewStudentDashboardHeader: React.FC<NewStudentDashboardHeaderProps> = ({
   studentName,
   weeklyProgress,
-  exerciseStreak
+  exerciseStreak,
+  onSidebarToggle
 }) => {
   const getCurrentPersianDate = () => {
     const date = new Date();
@@ -56,59 +59,73 @@ export const NewStudentDashboardHeader: React.FC<NewStudentDashboardHeaderProps>
       </div>
 
       <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 text-white">
-        {/* User Info & Stats */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-6">
-            {/* Avatar */}
-            <motion.div 
-              className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border border-white/30"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        {/* Left Side - Menu Button & User Info */}
+        <div className="flex items-start gap-6 w-full">
+          {/* Menu Button */}
+          {onSidebarToggle && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onSidebarToggle}
+              className="h-12 w-12 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white flex-shrink-0"
             >
-              <User className="w-10 h-10 text-white" />
-            </motion.div>
-            
-            {/* Welcome Message */}
-            <div>
-              <motion.h1 
-                className="text-4xl font-black mb-2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                سلام {studentName}! 👋
-              </motion.h1>
-              <motion.p 
-                className="text-white/90 text-lg font-medium"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                {getMotivationalMessage()}
-              </motion.p>
-            </div>
-          </div>
+              <Menu className="h-6 w-6" />
+            </Button>
+          )}
           
-          {/* Achievement Badges */}
-          <motion.div 
-            className="flex flex-wrap items-center gap-3"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-              <Target className="w-4 h-4 ml-2" />
-              پیشرفت هفتگی: {toPersianNumbers(weeklyProgress.toString())}%
-            </Badge>
-            <Badge className="bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-white border-yellow-300/30 hover:from-yellow-400/30 hover:to-orange-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-              <Award className="w-4 h-4 ml-2" />
-              استریک: {toPersianNumbers(exerciseStreak.toString())} روز
-            </Badge>
-            <Badge className="bg-gradient-to-r from-green-400/20 to-emerald-400/20 text-white border-green-300/30 hover:from-green-400/30 hover:to-emerald-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-              <TrendingUp className="w-4 h-4 ml-2" />
-              روند صعودی
-            </Badge>
-          </motion.div>
+          <div className="space-y-6 flex-1">
+            <div className="flex items-center gap-6">
+              {/* Avatar */}
+              <motion.div 
+                className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border border-white/30"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              >
+                <User className="w-10 h-10 text-white" />
+              </motion.div>
+              
+              {/* Welcome Message */}
+              <div>
+                <motion.h1 
+                  className="text-4xl font-black mb-2"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  سلام {studentName}! 👋
+                </motion.h1>
+                <motion.p 
+                  className="text-white/90 text-lg font-medium"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {getMotivationalMessage()}
+                </motion.p>
+              </div>
+            </div>
+            
+            {/* Achievement Badges */}
+            <motion.div 
+              className="flex flex-wrap items-center gap-3"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                <Target className="w-4 h-4 ml-2" />
+                پیشرفت هفتگی: {toPersianNumbers(weeklyProgress.toString())}%
+              </Badge>
+              <Badge className="bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-white border-yellow-300/30 hover:from-yellow-400/30 hover:to-orange-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                <Award className="w-4 h-4 ml-2" />
+                استریک: {toPersianNumbers(exerciseStreak.toString())} روز
+              </Badge>
+              <Badge className="bg-gradient-to-r from-green-400/20 to-emerald-400/20 text-white border-green-300/30 hover:from-green-400/30 hover:to-emerald-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                <TrendingUp className="w-4 h-4 ml-2" />
+                روند صعودی
+              </Badge>
+            </motion.div>
+          </div>
         </div>
         
         {/* Date & Time */}

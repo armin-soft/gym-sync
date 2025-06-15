@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import { ModernSidebar } from "@/components/modern-sidebar/ModernSidebar";
-import { StudentHeader } from "./StudentHeader";
 import { cn } from "@/lib/utils";
 import { studentSidebarItems } from "./data/studentSidebarItems";
 import { useStudentProfileData } from "./hooks/useStudentProfileData";
@@ -41,10 +40,7 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-sky-50/20 to-emerald-50/40 dark:from-slate-950 dark:via-emerald-950/20 dark:to-sky-950/30" dir="rtl">
-      {/* Student Header */}
-      <StudentHeader onSidebarToggle={handleSidebarToggle} />
-      
-      {/* Student Sidebar - Using the same ModernSidebar component as management panel */}
+      {/* Student Sidebar */}
       <ModernSidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)}
@@ -55,12 +51,7 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
       />
       
       {/* Main Content */}
-      <main 
-        className={cn(
-          "transition-all duration-300 ease-in-out pt-16",
-          isMobile ? "pr-0" : sidebarOpen ? "pr-80" : "pr-0"
-        )}
-      >
+      <main className="w-full min-h-screen">
         <div className="container mx-auto px-4 py-6">
           {children}
         </div>
