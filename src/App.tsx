@@ -27,6 +27,7 @@ function AppContent() {
   const [showUserTypeSelection, setShowUserTypeSelection] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
   
   // بررسی وضعیت احراز هویت و نوع کاربر فقط یکبار در لود اولیه

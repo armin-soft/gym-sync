@@ -1,4 +1,6 @@
 
+import { useNavigate } from "react-router-dom";
+
 export const handleLogout = () => {
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("rememberedEmail");
@@ -6,5 +8,6 @@ export const handleLogout = () => {
   localStorage.removeItem("hasSelectedUserType");
   localStorage.removeItem("selectedUserType");
   
-  window.location.reload();
+  // استفاده از navigate به جای reload
+  window.location.href = "/";
 };
