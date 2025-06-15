@@ -52,9 +52,10 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
       
       {/* Main Content */}
       <main className="w-full min-h-screen">
-        <div className="container mx-auto px-4 py-6">
-          {children}
-        </div>
+        {/* Pass sidebar toggle to children */}
+        {React.cloneElement(children as React.ReactElement, { 
+          onSidebarToggle: handleSidebarToggle 
+        })}
       </main>
       
       {/* Mobile Overlay */}

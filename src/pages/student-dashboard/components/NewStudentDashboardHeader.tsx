@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Calendar, Clock, Target, TrendingUp, Award, User, Menu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AppIcon } from "@/components/ui/app-icon";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface NewStudentDashboardHeaderProps {
@@ -58,33 +59,64 @@ export const NewStudentDashboardHeader: React.FC<NewStudentDashboardHeaderProps>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white/5 rounded-full blur-xl" />
       </div>
 
-      <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 text-white">
-        {/* Left Side - Menu Button & User Info */}
-        <div className="flex items-start gap-6 w-full">
-          {/* Menu Button */}
-          {onSidebarToggle && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onSidebarToggle}
-              className="h-12 w-12 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white flex-shrink-0"
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          )}
-          
-          <div className="space-y-6 flex-1">
-            <div className="flex items-center gap-6">
-              {/* Avatar */}
-              <motion.div 
-                className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border border-white/30"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      <div className="relative z-10 text-white">
+        {/* Top Row - Menu Button, Logo, App Name */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            {/* Menu Button */}
+            {onSidebarToggle && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onSidebarToggle}
+                className="h-12 w-12 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white flex-shrink-0"
               >
-                <User className="w-10 h-10 text-white" />
-              </motion.div>
-              
-              {/* Welcome Message */}
+                <Menu className="h-6 w-6" />
+              </Button>
+            )}
+            
+            {/* App Logo and Name */}
+            <div className="flex items-center gap-4">
+              <AppIcon size="lg" />
+              <div>
+                <h2 className="text-2xl font-black text-white">Gym-Sync</h2>
+                <p className="text-white/80 text-sm">سیستم مدیریت باشگاه</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Date & Time */}
+          <motion.div 
+            className="text-left lg:text-right space-y-2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="flex items-center gap-3 justify-end">
+              <span className="text-white/90 text-sm">{getCurrentPersianDate()}</span>
+              <Calendar className="w-5 h-5 text-white/80" />
+            </div>
+            <div className="flex items-center gap-3 justify-end">
+              <span className="text-2xl font-bold">{getCurrentTime()}</span>
+              <Clock className="w-5 h-5 text-white/80" />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Main Content Row */}
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="flex items-start gap-6 w-full">
+            {/* Avatar */}
+            <motion.div 
+              className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border border-white/30"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
+              <User className="w-10 h-10 text-white" />
+            </motion.div>
+            
+            {/* Welcome Message and Badges */}
+            <div className="space-y-4 flex-1">
               <div>
                 <motion.h1 
                   className="text-4xl font-black mb-2"
@@ -103,47 +135,30 @@ export const NewStudentDashboardHeader: React.FC<NewStudentDashboardHeaderProps>
                   {getMotivationalMessage()}
                 </motion.p>
               </div>
+              
+              {/* Achievement Badges */}
+              <motion.div 
+                className="flex flex-wrap items-center gap-3"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                  <Target className="w-4 h-4 ml-2" />
+                  پیشرفت هفتگی: {toPersianNumbers(weeklyProgress.toString())}%
+                </Badge>
+                <Badge className="bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-white border-yellow-300/30 hover:from-yellow-400/30 hover:to-orange-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                  <Award className="w-4 h-4 ml-2" />
+                  استریک: {toPersianNumbers(exerciseStreak.toString())} روز
+                </Badge>
+                <Badge className="bg-gradient-to-r from-green-400/20 to-emerald-400/20 text-white border-green-300/30 hover:from-green-400/30 hover:to-emerald-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+                  <TrendingUp className="w-4 h-4 ml-2" />
+                  روند صعودی
+                </Badge>
+              </motion.div>
             </div>
-            
-            {/* Achievement Badges */}
-            <motion.div 
-              className="flex flex-wrap items-center gap-3"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-                <Target className="w-4 h-4 ml-2" />
-                پیشرفت هفتگی: {toPersianNumbers(weeklyProgress.toString())}%
-              </Badge>
-              <Badge className="bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-white border-yellow-300/30 hover:from-yellow-400/30 hover:to-orange-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-                <Award className="w-4 h-4 ml-2" />
-                استریک: {toPersianNumbers(exerciseStreak.toString())} روز
-              </Badge>
-              <Badge className="bg-gradient-to-r from-green-400/20 to-emerald-400/20 text-white border-green-300/30 hover:from-green-400/30 hover:to-emerald-400/30 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-                <TrendingUp className="w-4 h-4 ml-2" />
-                روند صعودی
-              </Badge>
-            </motion.div>
           </div>
         </div>
-        
-        {/* Date & Time */}
-        <motion.div 
-          className="text-left lg:text-right space-y-4"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <div className="flex items-center gap-3 justify-end">
-            <span className="text-white/90 text-lg">{getCurrentPersianDate()}</span>
-            <Calendar className="w-6 h-6 text-white/80" />
-          </div>
-          <div className="flex items-center gap-3 justify-end">
-            <span className="text-3xl font-bold">{getCurrentTime()}</span>
-            <Clock className="w-6 h-6 text-white/80" />
-          </div>
-        </motion.div>
       </div>
     </motion.div>
   );
