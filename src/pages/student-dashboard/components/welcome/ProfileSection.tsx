@@ -5,20 +5,17 @@ import { Hand, Sparkles } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getGreeting } from "@/components/dashboard/header/utils/timeUtils";
 import { getInitials } from "../../utils/timeFormatters";
-import { MotivationalQuote } from "../../utils/motivationalQuotes";
 
 interface ProfileSectionProps {
   studentName: string;
   profileImageSrc: string;
   currentTime: Date;
-  motivationalQuote: MotivationalQuote;
 }
 
 export const ProfileSection: React.FC<ProfileSectionProps> = ({
   studentName,
   profileImageSrc,
-  currentTime,
-  motivationalQuote
+  currentTime
 }) => {
   return (
     <div className="flex items-center gap-6">
@@ -51,17 +48,11 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
 
       {/* متن سلام و احوال‌پرسی */}
       <div>
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-3">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black">
             {getGreeting(currentTime)} {studentName}!
           </h1>
           <Hand className="h-8 w-8 text-yellow-300" />
-        </div>
-        <div className="flex items-center gap-2">
-          <motivationalQuote.icon className="h-5 w-5 text-white/90" />
-          <p className="text-white/90 text-lg">
-            {motivationalQuote.text}
-          </p>
         </div>
       </div>
     </div>
