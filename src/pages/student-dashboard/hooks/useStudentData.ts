@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo } from 'react';
 
 interface StudentData {
   name: string;
-  profileImage?: string;
   totalWorkouts: number;
   completedDays: number;
   weeklyProgress: number;
@@ -57,7 +56,6 @@ export const useStudentData = () => {
     if (!rawData) {
       return {
         name: 'شاگرد عزیز',
-        profileImage: undefined,
         totalWorkouts: 0,
         completedDays: 0,
         weeklyProgress: 0,
@@ -160,7 +158,6 @@ export const useStudentData = () => {
 
     return {
       name: rawData.name || 'شاگرد عزیز',
-      profileImage: rawData.profileImage,
       totalWorkouts,
       completedDays,
       weeklyProgress,
