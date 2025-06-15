@@ -134,10 +134,9 @@ export const StudentDashboardWelcome: React.FC = () => {
               <motion.div 
                 className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 300 }}
               >
                 <div className="flex items-center gap-3">
                   <Calendar className="w-5 h-5 text-white/80" />
@@ -159,10 +158,9 @@ export const StudentDashboardWelcome: React.FC = () => {
               <motion.div 
                 className="bg-white/15 backdrop-blur-lg rounded-2xl p-4 border border-white/20"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
               >
                 <div className="flex items-center gap-3">
                   <Clock className="w-5 h-5 text-white/80" />
