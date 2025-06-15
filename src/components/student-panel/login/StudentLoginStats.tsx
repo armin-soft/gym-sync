@@ -5,13 +5,20 @@ import { Users, Shield, Clock } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface StudentLoginStatsProps {
-  variants: any;
+  variants?: any;
 }
 
 export const StudentLoginStats = ({ variants }: StudentLoginStatsProps) => {
+  const defaultVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  const containerVariants = variants || defaultVariants;
+
   return (
     <motion.div
-      variants={variants}
+      variants={containerVariants}
       className="mt-8 text-center"
     >
       <motion.div
