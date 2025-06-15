@@ -4,45 +4,28 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
 import { LoadingScreen } from './components/loading/LoadingScreen'
+import { AppVersionProvider } from './contexts/AppVersionContext'
 import React from 'react'
 
-// کامپوننت اصلی برنامه با صفحه لودینگ جدید
+// کامپوننت اصلی برنامه با صفحه لودینگ بهینه شده
 function MainApp() {
   const [isInitialLoading, setIsInitialLoading] = React.useState(true);
-  const [appVersion, setAppVersion] = React.useState('');
-  
-  // دریافت نسخه از Manifest.json
-  React.useEffect(() => {
-    const fetchVersion = async () => {
-      try {
-        const response = await fetch('/Manifest.json');
-        const manifest = await response.json();
-        const version = manifest.version;
-        setAppVersion(version);
-        console.log(`Updated app version from Manifest.json: ${version}`);
-      } catch (error) {
-        console.error('Error loading version from Manifest.json:', error);
-        setAppVersion('خطا در بارگذاری');
-      }
-    };
-    
-    fetchVersion();
-  }, []);
   
   const handleLoadingComplete = React.useCallback(() => {
-    console.log(`Loading completed for version ${appVersion}, showing main app`);
+    console.log('Loading completed, showing main app');
     setIsInitialLoading(false);
-  }, [appVersion]);
+  }, []);
   
-  // بهینه‌سازی رندرینگ برای جلوگیری از overlay زیرین
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-      {isInitialLoading ? (
-        <LoadingScreen onLoadingComplete={handleLoadingComplete} />
-      ) : (
-        <App />
-      )}
-    </div>
+    <AppVersionProvider>
+      <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+        {isInitialLoading ? (
+          <LoadingScreen onLoadingComplete={handleLoadingComplete} />
+        ) : (
+          <App />
+        )}
+      </div>
+    </AppVersionProvider>
   );
 }
 
@@ -52,7 +35,7 @@ let root: any = null;
 // تابع راه‌اندازی اصلی برنامه - بهینه شده
 function startApp() {
   try {
-    console.log('Starting app initialization...');
+    console.log('Starting optimized app initialization...');
     
     const rootElement = document.getElementById('root');
     if (!rootElement) {
@@ -60,9 +43,7 @@ function startApp() {
       return;
     }
     
-    // بررسی اینکه آیا root قبلاً ایجاد شده است یا خیر
     if (!root) {
-      console.log('Root element found, creating React root...');
       root = createRoot(rootElement);
     }
     
@@ -71,11 +52,10 @@ function startApp() {
         <MainApp />
       </StrictMode>
     );
-    console.log('برنامه با موفقیت راه‌اندازی شد');
+    console.log('برنامه با موفقیت و سرعت بهینه راه‌اندازی شد');
     
   } catch (error) {
     console.error('خطا در راه‌اندازی برنامه:', error);
-    // نمایش پیام خطا برای کاربر
     document.body.innerHTML = `
       <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
         <h2>خطا در بارگذاری برنامه</h2>

@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Shield, Zap, GraduationCap } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { useState, useEffect } from "react";
+import { useAppVersion } from "@/contexts/AppVersionContext";
 
 interface ProfessionalLoginHeaderProps {
   gymName: string;
@@ -11,25 +11,8 @@ interface ProfessionalLoginHeaderProps {
 }
 
 export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLoginHeaderProps) => {
-  const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
+  const { version: appVersion, isLoading } = useAppVersion();
   const isStudentPanel = gymName === "پنل شاگرد";
-
-  useEffect(() => {
-    const fetchVersion = async () => {
-      try {
-        const response = await fetch('/Manifest.json');
-        const manifest = await response.json();
-        const version = manifest.version;
-        setAppVersion(version);
-        console.log(`Version loaded from Manifest.json: ${version}`);
-      } catch (error) {
-        console.error('Error loading version from Manifest.json:', error);
-        setAppVersion('خطا در بارگذاری');
-      }
-    };
-    
-    fetchVersion();
-  }, []);
 
   return (
     <motion.div variants={variants} className="text-center space-y-6">
@@ -72,7 +55,7 @@ export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLogin
       >
         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
         <span className="text-emerald-700 dark:text-emerald-300 text-sm font-semibold">
-          نسخه {toPersianNumbers(appVersion)}
+          نسخه {isLoading ? "..." : toPersianNumbers(appVersion)}
         </span>
       </motion.div>
 
