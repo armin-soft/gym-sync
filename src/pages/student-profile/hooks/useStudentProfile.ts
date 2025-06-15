@@ -23,7 +23,12 @@ export const useStudentProfile = () => {
     membershipDate: "",
     emergencyContact: "",
     medicalConditions: "",
-    fitnessLevel: "مبتدی"
+    fitnessLevel: "مبتدی",
+    payment: "",
+    age: "",
+    grade: "",
+    group: "",
+    gender: "male"
   });
 
   // بارگذاری داده‌های شاگرد از localStorage
@@ -45,11 +50,16 @@ export const useStudentProfile = () => {
             height: student.height || "",
             weight: student.weight || "",
             goal: student.goal || "",
-            image: student.profileImage || "",
+            image: student.image || student.profileImage || "",
             membershipDate: student.membershipDate || "",
             emergencyContact: student.emergencyContact || "",
             medicalConditions: student.medicalConditions || "",
-            fitnessLevel: student.fitnessLevel || "مبتدی"
+            fitnessLevel: student.fitnessLevel || "مبتدی",
+            payment: student.payment || "",
+            age: student.age || "",
+            grade: student.grade || "",
+            group: student.group || "",
+            gender: student.gender || "male"
           });
         }
       }
@@ -94,11 +104,17 @@ export const useStudentProfile = () => {
             height: profile.height,
             weight: profile.weight,
             goal: profile.goal,
+            image: profile.image,
             profileImage: profile.image,
             membershipDate: profile.membershipDate,
             emergencyContact: profile.emergencyContact,
             medicalConditions: profile.medicalConditions,
-            fitnessLevel: profile.fitnessLevel
+            fitnessLevel: profile.fitnessLevel,
+            payment: profile.payment,
+            age: profile.age,
+            grade: profile.grade,
+            group: profile.group,
+            gender: profile.gender
           };
           
           localStorage.setItem("students", JSON.stringify(students));
