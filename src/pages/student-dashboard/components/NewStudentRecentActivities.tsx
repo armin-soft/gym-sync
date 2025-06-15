@@ -1,15 +1,14 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dumbbell, Apple, Pill2, TrendingUp, Clock } from "lucide-react";
+import { Dumbbell, Apple, Pill, TrendingUp, Clock } from "lucide-react";
 
 const ActivityIcon = React.memo(({ type }: { type: string }) => {
   const icons = {
     workout: Dumbbell,
     meal: Apple,
-    supplement: Pill2,
+    supplement: Pill,
     progress: TrendingUp
   };
   

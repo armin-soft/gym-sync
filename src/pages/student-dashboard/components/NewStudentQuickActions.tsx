@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Dumbbell, 
   Apple, 
-  Pill2, 
+  Pill, 
   BarChart3, 
   MessageSquare, 
   User,
@@ -76,7 +75,7 @@ export const NewStudentQuickActions: React.FC = React.memo(() => {
       onClick: () => {}
     },
     {
-      icon: Pill2,
+      icon: Pill,
       title: "مکمل‌ها",
       description: "مکمل‌ها و ویتامین‌های تجویز شده",
       color: "bg-gradient-to-r from-purple-500 to-purple-600",

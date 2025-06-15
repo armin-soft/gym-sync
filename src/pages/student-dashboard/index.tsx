@@ -1,6 +1,8 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 import { NewStudentDashboardHeader } from "./components/NewStudentDashboardHeader";
 import { NewStudentStatsGrid } from "./components/NewStudentStatsGrid";
 import { NewStudentQuickActions } from "./components/NewStudentQuickActions";
@@ -48,13 +50,26 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onSidebarToggle }) 
       dir="rtl"
     >
       <div className="space-y-8 p-6">
+        {/* Top Menu Button */}
+        <div className="flex justify-start">
+          {onSidebarToggle && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onSidebarToggle}
+              className="h-12 w-12 rounded-xl bg-white/60 hover:bg-white/80 backdrop-blur-sm border border-white/30 text-gray-700 shadow-lg"
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+          )}
+        </div>
+
         {/* Header */}
         <motion.div variants={itemVariants}>
           <NewStudentDashboardHeader 
             studentName={data.name}
             weeklyProgress={data.weeklyProgress}
             exerciseStreak={data.exerciseStreak}
-            onSidebarToggle={onSidebarToggle}
           />
         </motion.div>
 

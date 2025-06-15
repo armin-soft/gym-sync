@@ -1,24 +1,20 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Target, TrendingUp, Award, User, Menu } from "lucide-react";
+import { Calendar, Clock, Target, TrendingUp, Award, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { AppIcon } from "@/components/ui/app-icon";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface NewStudentDashboardHeaderProps {
   studentName: string;
   weeklyProgress: number;
   exerciseStreak: number;
-  onSidebarToggle?: () => void;
 }
 
 export const NewStudentDashboardHeader: React.FC<NewStudentDashboardHeaderProps> = ({
   studentName,
   weeklyProgress,
-  exerciseStreak,
-  onSidebarToggle
+  exerciseStreak
 }) => {
   const getCurrentPersianDate = () => {
     const date = new Date();
@@ -60,30 +56,9 @@ export const NewStudentDashboardHeader: React.FC<NewStudentDashboardHeaderProps>
       </div>
 
       <div className="relative z-10 text-white">
-        {/* Top Row - Menu Button, Logo, App Name */}
+        {/* Top Row - Date & Time */}
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            {/* Menu Button */}
-            {onSidebarToggle && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onSidebarToggle}
-                className="h-12 w-12 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white flex-shrink-0"
-              >
-                <Menu className="h-6 w-6" />
-              </Button>
-            )}
-            
-            {/* App Logo and Name */}
-            <div className="flex items-center gap-4">
-              <AppIcon size="lg" />
-              <div>
-                <h2 className="text-2xl font-black text-white">Gym-Sync</h2>
-                <p className="text-white/80 text-sm">سیستم مدیریت باشگاه</p>
-              </div>
-            </div>
-          </div>
+          <div></div>
           
           {/* Date & Time */}
           <motion.div 
