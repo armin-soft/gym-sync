@@ -1,90 +1,46 @@
 
-import { useState, useCallback, useEffect } from "react";
-import { StudentProfile } from "../types/studentSidebarTypes";
+import { useState, useCallback } from "react";
+import { TrainerProfile } from "@/components/modern-sidebar/types";
 
 export const useStudentProfileData = () => {
-  const [studentProfile, setStudentProfile] = useState<StudentProfile>({
-    name: "کاربر عزیز",
+  const [studentProfile, setStudentProfile] = useState<TrainerProfile>({
+    name: "دانش‌آموز",
+    role: "شاگرد",
+    avatar: "/Assets/Images/Place-Holder.svg",
+    status: "active",
+    gymName: "",
+    membersSince: "",
     phone: "",
-    image: "",
-    level: "مبتدی",
-    status: 'offline',
-    membersSince: ""
+    email: ""
   });
 
   const loadProfile = useCallback(() => {
     try {
-      const savedData = localStorage.getItem('studentData');
-      if (savedData) {
-        const data = JSON.parse(savedData);
-        setStudentProfile(prev => ({
-          ...prev,
-          name: data.name || "کاربر عزیز",
-          phone: data.phone || "",
-          image: data.image || "",
-          level: determineLevel(data),
-          status: 'active', // Student is logged in so they're active
-          membersSince: data.createdAt ? formatDate(data.createdAt) : ""
-        }));
-      } else {
-        // Reset to empty profile if no data
-        setStudentProfile({
-          name: "کاربر عزیز",
-          phone: "",
-          image: "",
-          level: "مبتدی",
-          status: 'offline',
-          membersSince: ""
-        });
+      const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+      const students = JSON.parse(localStorage.getItem("students") || "[]");
+      
+      if (loggedInStudentId && students.length > 0) {
+        const student = students.find((s: any) => s.id === loggedInStudentId);
+        
+        if (student) {
+          console.log('Student profile loaded:', student);
+          
+          setStudentProfile({
+            name: student.name || "دانش‌آموز",
+            role: "شاگرد",
+            avatar: student.profileImage || "/Assets/Images/Place-Holder.svg",
+            status: "active",
+            gymName: "باشگاه ورزشی",
+            membersSince: student.membershipDate || new Date().toISOString().split('T')[0],
+            phone: student.phone || "",
+            email: student.email || ""
+          });
+        }
       }
     } catch (error) {
       console.error('خطا در بارگذاری پروفایل شاگرد:', error);
-      // Reset to empty on error
-      setStudentProfile({
-        name: "کاربر عزیز",
-        phone: "",
-        image: "",
-        level: "مبتدی",
-        status: 'offline',
-        membersSince: ""
-      });
     }
   }, []);
 
-  // Load profile only once on mount - no automatic refresh
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
-
   return { studentProfile, loadProfile };
-};
-
-// Helper function to determine student level based on their data
-const determineLevel = (studentData: any): string => {
-  const totalWorkouts = calculateTotalWorkouts(studentData);
-  
-  if (totalWorkouts === 0) return "مبتدی";
-  if (totalWorkouts < 10) return "مبتدی";
-  if (totalWorkouts < 20) return "متوسط";
-  return "پیشرفته";
-};
-
-const calculateTotalWorkouts = (student: any): number => {
-  let total = 0;
-  for (let day = 1; day <= 7; day++) {
-    const exercises = student[`exercisesDay${day}`];
-    if (exercises && Array.isArray(exercises)) {
-      total += exercises.length;
-    }
-  }
-  return total;
-};
-
-const formatDate = (dateString: string): string => {
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fa-IR');
-  } catch {
-    return "۱۴۰۳/۰۱/۰۱";
-  }
 };

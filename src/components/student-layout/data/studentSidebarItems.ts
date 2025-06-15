@@ -3,9 +3,9 @@ import {
   Home, User, Dumbbell, Apple, Pill, 
   BarChart3, MessageCircle
 } from "lucide-react";
-import { StudentSidebarItem } from "../types/studentSidebarTypes";
+import { SidebarItem } from "@/components/modern-sidebar/types";
 
-export const studentSidebarItems: StudentSidebarItem[] = [
+export const studentSidebarItems: SidebarItem[] = [
   {
     id: "dashboard",
     title: "داشبورد",

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { StudentModernSidebar } from "./StudentModernSidebar";
+import { ModernSidebar } from "@/components/modern-sidebar/ModernSidebar";
 import { StudentHeader } from "./StudentHeader";
 import { cn } from "@/lib/utils";
 import { studentSidebarItems } from "./data/studentSidebarItems";
@@ -44,8 +44,8 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
       {/* Student Header */}
       <StudentHeader onSidebarToggle={handleSidebarToggle} />
       
-      {/* Student Sidebar */}
-      <StudentModernSidebar 
+      {/* Student Sidebar - Using the same ModernSidebar component as management panel */}
+      <ModernSidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)}
         items={studentSidebarItems}
