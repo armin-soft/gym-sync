@@ -29,8 +29,12 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
     handlePhoneSubmit,
     handleCodeSubmit,
     handleChangePhone,
-    handleResendCode
+    handleResendCode,
+    students
   } = useStudentLogin({ onLoginSuccess });
+
+  // Get the first student's phone as allowed phone (or empty string if no students)
+  const allowedPhone = students && students.length > 0 ? students[0].phone || "" : "";
 
   if (locked) {
     return (
@@ -93,6 +97,7 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
                       error={error}
                       onSubmit={handlePhoneSubmit}
                       variants={ANIMATION_VARIANTS.item}
+                      allowedPhone={allowedPhone}
                     />
                   </motion.div>
                 ) : (
