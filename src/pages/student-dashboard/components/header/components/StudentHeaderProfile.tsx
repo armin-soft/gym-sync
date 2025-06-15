@@ -55,14 +55,17 @@ export const StudentHeaderProfile = ({ studentProfile, overallProgress, greeting
               {toPersianNumbers(overallProgress.toString())}%
             </span>
           </div>
-          <Progress 
-            value={overallProgress} 
-            className="h-3 bg-white/20" 
-            // @ts-ignore
-            style={{
-              "--progress-foreground": "linear-gradient(90deg, #fbbf24, #f59e0b)"
-            }}
-          />
+          <div className="relative">
+            <Progress 
+              value={overallProgress} 
+              className="h-3 bg-white/20"
+            />
+            <style jsx>{`
+              .progress-indicator {
+                background: linear-gradient(90deg, #fbbf24, #f59e0b);
+              }
+            `}</style>
+          </div>
         </motion.div>
       </div>
     </div>
