@@ -7,16 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useStudentData } from "../hooks/useStudentData";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { useCurrentTime } from "@/hooks/useCurrentTime";
-import { usePersianDate } from "@/hooks/usePersianDate";
 
 export const StudentDashboardWelcome: React.FC = () => {
   const { studentData, loading } = useStudentData();
-  const currentTime = useCurrentTime();
-  const persianDate = usePersianDate();
 
-  const getGreeting = (time: string) => {
-    const hour = parseInt(time.split(':')[0]);
+  const getGreeting = (hour: number) => {
     if (hour < 12) return "صبح بخیر";
     if (hour < 17) return "ظهر بخیر";
     return "عصر بخیر";
@@ -32,10 +27,35 @@ export const StudentDashboardWelcome: React.FC = () => {
   };
 
   const getCurrentTime = () => {
-    return toPersianNumbers(currentTime);
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('fa-IR', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+    return toPersianNumbers(timeString);
   };
 
-  const greeting = getGreeting(currentTime);
+  const getCurrentDate = () => {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    
+    try {
+      const formatter = new Intl.DateTimeFormat('fa-IR', options);
+      return formatter.format(now);
+    } catch (error) {
+      console.error('Error formatting Persian date:', error);
+      return '';
+    }
+  };
+
+  const greeting = getGreeting(new Date().getHours());
+  const currentTime = getCurrentTime();
+  const persianDate = getCurrentDate();
 
   if (loading) {
     return (
@@ -73,7 +93,7 @@ export const StudentDashboardWelcome: React.FC = () => {
             
             <Avatar className="h-20 w-20 border-4 border-white/30 relative shadow-xl">
               <AvatarImage 
-                src={studentData.profileImage || ""} 
+                src="" 
                 alt="تصویر پروفایل"
               />
               <AvatarFallback className="bg-white/20 text-white font-bold text-lg backdrop-blur-sm">
@@ -134,7 +154,7 @@ export const StudentDashboardWelcome: React.FC = () => {
             <Calendar className="w-5 h-5 text-white/80" />
           </div>
           <div className="flex items-center gap-3 justify-end">
-            <span className="text-2xl font-bold">{getCurrentTime()}</span>
+            <span className="text-2xl font-bold">{currentTime}</span>
             <Clock className="w-5 h-5 text-white/80" />
           </div>
         </motion.div>
