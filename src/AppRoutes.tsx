@@ -31,47 +31,53 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       
       {/* Student Panel Routes - Protected */}
-      <Route path="/Student/*" element={
+      <Route path="/Student" element={
         <StudentAuthWrapper>
-          <Routes>
-            <Route index element={
-              <StudentLayout>
-                <StudentDashboard />
-              </StudentLayout>
-            } />
-            <Route path="Profile" element={
-              <StudentLayout>
-                <StudentProfile />
-              </StudentLayout>
-            } />
-            <Route path="Exercise-Movements" element={
-              <StudentLayout>
-                <StudentExercises />
-              </StudentLayout>
-            } />
-            <Route path="Diet-Plan" element={
-              <StudentLayout>
-                <StudentDiet />
-              </StudentLayout>
-            } />
-            <Route path="Supplements-Vitamins" element={
-              <StudentLayout>
-                <StudentSupplements />
-              </StudentLayout>
-            } />
-            <Route path="Report" element={
-              <StudentLayout>
-                <StudentReports />
-              </StudentLayout>
-            } />
-            <Route path="Support" element={
-              <StudentLayout>
-                <StudentSupport />
-              </StudentLayout>
-            } />
-            {/* Student panel fallback */}
-            <Route path="*" element={<Navigate to="/Student" replace />} />
-          </Routes>
+          <StudentLayout>
+            <StudentDashboard />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Profile" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentProfile />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Exercise-Movements" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentExercises />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Diet-Plan" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentDiet />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Supplements-Vitamins" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentSupplements />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Report" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentReports />
+          </StudentLayout>
+        </StudentAuthWrapper>
+      } />
+      <Route path="/Student/Support" element={
+        <StudentAuthWrapper>
+          <StudentLayout>
+            <StudentSupport />
+          </StudentLayout>
         </StudentAuthWrapper>
       } />
       
