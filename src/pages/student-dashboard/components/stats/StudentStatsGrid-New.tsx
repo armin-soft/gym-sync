@@ -50,7 +50,7 @@ export const StudentStatsGridNew = ({ stats }: StudentStatsGridNewProps) => {
       value: stats.overallProgress,
       total: 100,
       icon: TrendingUp,
-      color: "purple" as const,
+      color: "emerald-sky" as const,
       progress: stats.overallProgress
     }
   ];

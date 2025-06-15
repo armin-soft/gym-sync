@@ -7,7 +7,7 @@ interface StudentQuickActionCardProps {
   title: string;
   description: string;
   icon: LucideIcon;
-  color: "emerald" | "sky" | "orange" | "purple" | "pink" | "indigo";
+  color: "emerald" | "sky" | "orange" | "emerald-sky" | "sky-emerald" | "teal";
   path: string;
 }
 
@@ -30,20 +30,20 @@ export const StudentQuickActionCard = ({ title, description, icon: Icon, color, 
       hover: "hover:from-orange-600 hover:to-orange-700",
       icon: "text-orange-500"
     },
-    purple: {
-      bg: "from-purple-500 to-purple-600",
-      hover: "hover:from-purple-600 hover:to-purple-700",
-      icon: "text-purple-500"
+    "emerald-sky": {
+      bg: "from-emerald-500 to-sky-600",
+      hover: "hover:from-emerald-600 hover:to-sky-700",
+      icon: "text-emerald-500"
     },
-    pink: {
-      bg: "from-pink-500 to-pink-600",
-      hover: "hover:from-pink-600 hover:to-pink-700",
-      icon: "text-pink-500"
+    "sky-emerald": {
+      bg: "from-sky-500 to-emerald-600",
+      hover: "hover:from-sky-600 hover:to-emerald-700",
+      icon: "text-sky-500"
     },
-    indigo: {
-      bg: "from-indigo-500 to-indigo-600",
-      hover: "hover:from-indigo-600 hover:to-indigo-700",
-      icon: "text-indigo-500"
+    teal: {
+      bg: "from-teal-500 to-teal-600",
+      hover: "hover:from-teal-600 hover:to-teal-700",
+      icon: "text-teal-500"
     }
   };
 

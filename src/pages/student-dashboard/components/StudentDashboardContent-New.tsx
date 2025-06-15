@@ -166,9 +166,9 @@ export const StudentDashboardContentNew = ({
                 </span>
               </div>
               
-              <div className="flex justify-between items-center p-3 rounded-xl bg-purple-50 dark:bg-purple-950/30">
+              <div className="flex justify-between items-center p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-950/30 dark:to-sky-950/30">
                 <span className="text-sm text-gray-600 dark:text-gray-400">پیشرفت هفتگی</span>
-                <span className="font-bold text-purple-600">
+                <span className="font-bold bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">
                   {toPersianNumbers(stats.weeklyProgress.toString())}%
                 </span>
               </div>

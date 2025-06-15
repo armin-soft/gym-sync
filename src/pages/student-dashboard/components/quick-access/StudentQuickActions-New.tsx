@@ -33,21 +33,21 @@ export const StudentQuickActionsNew = () => {
       title: "گزارشات",
       description: "پیشرفت و آمار",
       icon: BarChart3,
-      color: "purple" as const,
+      color: "emerald-sky" as const,
       path: "/Student/Report"
     },
     {
       title: "پروفایل",
       description: "اطلاعات شخصی",
       icon: User,
-      color: "pink" as const,
+      color: "sky-emerald" as const,
       path: "/Student/Profile"
     },
     {
       title: "پشتیبانی",
       description: "ارتباط با مربی",
       icon: MessageSquare,
-      color: "indigo" as const,
+      color: "teal" as const,
       path: "/Student/Support"
     }
   ];

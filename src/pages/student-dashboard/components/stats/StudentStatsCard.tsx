@@ -8,7 +8,7 @@ interface StudentStatsCardProps {
   value: number;
   total: number;
   icon: LucideIcon;
-  color: "emerald" | "sky" | "orange" | "purple";
+  color: "emerald" | "sky" | "orange" | "emerald-sky";
   progress: number;
 }
 
@@ -29,10 +29,10 @@ export const StudentStatsCard = ({ title, value, total, icon: Icon, color, progr
       icon: "text-orange-500", 
       progress: "bg-orange-500"
     },
-    purple: {
-      bg: "from-purple-500 to-purple-600",
-      icon: "text-purple-500",
-      progress: "bg-purple-500"
+    "emerald-sky": {
+      bg: "from-emerald-500 to-sky-600",
+      icon: "text-emerald-500",
+      progress: "bg-gradient-to-r from-emerald-500 to-sky-500"
     }
   };
 
