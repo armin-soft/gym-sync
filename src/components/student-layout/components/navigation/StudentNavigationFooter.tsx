@@ -18,7 +18,7 @@ export const StudentNavigationFooter: React.FC = () => {
           <span className="text-xs font-medium">ساخته شده با عشق</span>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          نسخه {toPersianNumbers("6.0.0")}
+          نسخه {toPersianNumbers("7.0.2")}
         </p>
       </div>
     </motion.div>

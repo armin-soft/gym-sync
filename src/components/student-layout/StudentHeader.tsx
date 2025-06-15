@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { AppIcon } from "@/components/ui/app-icon";
-import { cn } from "@/lib/utils";
+import { handleStudentLogout } from "./utils/studentAuthUtils";
 
 interface StudentHeaderProps {
   onSidebarToggle: () => void;
@@ -17,13 +17,7 @@ export const StudentHeader: React.FC<StudentHeaderProps> = ({ onSidebarToggle })
   const navigate = useNavigate();
   
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("rememberedEmail");
-    localStorage.removeItem("rememberMeExpiry");
-    localStorage.removeItem("hasSelectedUserType");
-    localStorage.removeItem("selectedUserType");
-    localStorage.removeItem("studentData");
-    navigate("/");
+    handleStudentLogout();
   };
 
   // دریافت اطلاعات شاگرد از localStorage
