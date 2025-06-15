@@ -12,42 +12,42 @@ export const StudentQuickActionsNew = () => {
       title: "تمرینات امروز",
       description: "مشاهده برنامه تمرینی",
       icon: Dumbbell,
-      color: "emerald",
+      color: "emerald" as const,
       path: "/Student/Exercise-Movements"
     },
     {
       title: "برنامه غذایی",
       description: "وعده‌های غذایی امروز",
       icon: Utensils,
-      color: "sky",
+      color: "sky" as const,
       path: "/Student/Diet-Plan"
     },
     {
       title: "مکمل‌ها",
       description: "مکمل‌های تجویزی",
       icon: Pill,
-      color: "orange",
+      color: "orange" as const,
       path: "/Student/Supplements-Vitamins"
     },
     {
       title: "گزارشات",
       description: "پیشرفت و آمار",
       icon: BarChart3,
-      color: "purple",
+      color: "purple" as const,
       path: "/Student/Report"
     },
     {
       title: "پروفایل",
       description: "اطلاعات شخصی",
       icon: User,
-      color: "pink",
+      color: "pink" as const,
       path: "/Student/Profile"
     },
     {
       title: "پشتیبانی",
       description: "ارتباط با مربی",
       icon: MessageSquare,
-      color: "indigo",
+      color: "indigo" as const,
       path: "/Student/Support"
     }
   ];

@@ -26,7 +26,7 @@ export const StudentStatsGridNew = ({ stats }: StudentStatsGridNewProps) => {
       value: stats.completedExercises,
       total: stats.totalExercises,
       icon: Dumbbell,
-      color: "emerald",
+      color: "emerald" as const,
       progress: Math.round((stats.completedExercises / stats.totalExercises) * 100)
     },
     {
@@ -34,7 +34,7 @@ export const StudentStatsGridNew = ({ stats }: StudentStatsGridNewProps) => {
       value: stats.completedMeals,
       total: stats.totalMeals,
       icon: Utensils,
-      color: "sky",
+      color: "sky" as const,
       progress: Math.round((stats.completedMeals / stats.totalMeals) * 100)
     },
     {
@@ -42,7 +42,7 @@ export const StudentStatsGridNew = ({ stats }: StudentStatsGridNewProps) => {
       value: stats.supplementsCompleted,
       total: stats.totalSupplements,
       icon: Pill,
-      color: "orange",
+      color: "orange" as const,
       progress: Math.round((stats.supplementsCompleted / stats.totalSupplements) * 100)
     },
     {
@@ -50,7 +50,7 @@ export const StudentStatsGridNew = ({ stats }: StudentStatsGridNewProps) => {
       value: stats.overallProgress,
       total: 100,
       icon: TrendingUp,
-      color: "purple",
+      color: "purple" as const,
       progress: stats.overallProgress
     }
   ];
