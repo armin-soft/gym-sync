@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { PageContainer } from "@/components/ui/page-container";
 import { ExercisePageHeader } from "@/components/exercises/ExercisePageHeader";
@@ -19,9 +18,7 @@ export const ExercisePageContainer = () => {
 
   // Auto-refresh exercise data
   useDataRefresh({
-    keys: ['exercises', 'exerciseCategories', 'exerciseTypes'],
-    interval: 8000, // Refresh every 8 seconds
-    onStorageChange: true
+    keys: ['exercises', 'exerciseCategories', 'exerciseTypes']
   });
 
   // Responsive spacing based on device type

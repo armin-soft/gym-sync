@@ -23,9 +23,7 @@ const ExercisesStage = React.memo(({
 }: ExercisesStageProps) => {
   // Auto-refresh data for exercises
   useDataRefresh({
-    keys: ['exercises', 'exerciseCategories'],
-    interval: 5000, // Refresh every 5 seconds
-    onStorageChange: true
+    keys: ['exercises', 'exerciseCategories']
   });
 
   const {

@@ -3,9 +3,9 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProfessionalLoginBackground } from "@/components/auth/login/professional/ProfessionalLoginBackground";
 import { StudentLoginHeader } from "./StudentLoginHeader";
-import { StudentPhoneInputSection } from "./StudentPhoneInputSection";
-import { StudentCodeVerificationSection } from "./StudentCodeVerificationSection";
-import { StudentAccountLockedSection } from "./StudentAccountLockedSection";
+import { PhoneInputSection } from "@/components/auth/login/professional/PhoneInputSection";
+import { CodeVerificationSection } from "@/components/auth/login/professional/CodeVerificationSection";
+import { AccountLockedSection } from "@/components/auth/login/professional/AccountLockedSection";
 import { useStudentLogin } from "./hooks/useStudentLogin";
 import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
 
@@ -44,7 +44,7 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
             variants={ANIMATION_VARIANTS.container}
             className="w-full max-w-md"
           >
-            <StudentAccountLockedSection 
+            <AccountLockedSection 
               timeLeft={timeLeft}
               lockExpiry={lockExpiry}
               variants={ANIMATION_VARIANTS.item}
@@ -86,7 +86,7 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
                     exit={{ opacity: 0, x: -30 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <StudentPhoneInputSection
+                    <PhoneInputSection
                       phone={phone}
                       setPhone={setPhone}
                       loading={loading}
@@ -103,7 +103,7 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
                     exit={{ opacity: 0, x: -30 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <StudentCodeVerificationSection
+                    <CodeVerificationSection
                       code={code}
                       setCode={setCode}
                       phone={phone}
