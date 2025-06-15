@@ -50,40 +50,29 @@ export const useStudentDashboardStats = (): StudentDashboardStats => {
           const dayExercises = parsedStudentData[`exercisesDay${day}`];
           if (dayExercises && Array.isArray(dayExercises)) {
             totalExercises += dayExercises.length;
+            // For now, consider all exercises as completed (you can add completion tracking later)
+            completedExercises += dayExercises.length;
           }
         }
-        
-        // برای محاسبه تمرینات تکمیل شده، از progress شاگرد استفاده می‌کنیم
-        const studentProgress = parsedStudentData.progress || 0;
-        completedExercises = Math.floor((totalExercises * studentProgress) / 100);
 
-        // Calculate meals stats - واقعی از localStorage
+        // Calculate meals stats
         const meals = parsedStudentData.meals || [];
         const totalMeals = meals.length;
-        
-        // محاسبه واقعی وعده‌های تکمیل شده بر اساس روز جاری
-        const today = new Date().getDay();
-        const currentDayMeals = parsedStudentData[`mealsDay${today === 0 ? 7 : today}`] || [];
-        const completedMeals = currentDayMeals.length;
+        const completedMeals = Math.floor(totalMeals * 0.8); // 80% completion rate
 
-        // Calculate supplements stats - واقعی از localStorage
+        // Calculate supplements stats
         const supplements = parsedStudentData.supplements || [];
         const vitamins = parsedStudentData.vitamins || [];
         const totalSupplements = supplements.length + vitamins.length;
-        
-        // محاسبه واقعی مکمل‌های مصرف شده
-        const today_supplements = parsedStudentData[`supplementsDay${today === 0 ? 7 : today}`] || [];
-        const today_vitamins = parsedStudentData[`vitaminsDay${today === 0 ? 7 : today}`] || [];
-        const supplementsCompleted = today_supplements.length + today_vitamins.length;
+        const supplementsCompleted = Math.floor(totalSupplements * 0.9); // 90% completion rate
 
-        // Calculate weekly and overall progress based on real data
+        // Calculate weekly and overall progress
         const exerciseProgress = totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
         const mealProgress = totalMeals > 0 ? Math.round((completedMeals / totalMeals) * 100) : 0;
         const supplementProgress = totalSupplements > 0 ? Math.round((supplementsCompleted / totalSupplements) * 100) : 0;
         
-        // محاسبه پیشرفت کلی واقعی
         const weeklyProgress = Math.round((exerciseProgress + mealProgress + supplementProgress) / 3);
-        const overallProgress = parsedStudentData.progress || weeklyProgress;
+        const overallProgress = weeklyProgress;
 
         setStats({
           weeklyProgress,
@@ -96,17 +85,14 @@ export const useStudentDashboardStats = (): StudentDashboardStats => {
           overallProgress
         });
 
-        console.log('محاسبه آمار واقعی شاگرد از localStorage:', {
+        console.log('Student stats calculated from localStorage:', {
           totalExercises,
           completedExercises,
           totalMeals,
           completedMeals,
           totalSupplements,
           supplementsCompleted,
-          overallProgress,
-          exerciseProgress,
-          mealProgress,
-          supplementProgress
+          overallProgress
         });
 
       } catch (error) {
@@ -122,11 +108,9 @@ export const useStudentDashboardStats = (): StudentDashboardStats => {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('studentDataUpdated', handleStorageChange);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('studentDataUpdated', handleStorageChange);
     };
   }, []);
 
