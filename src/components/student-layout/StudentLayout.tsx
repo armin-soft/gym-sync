@@ -1,8 +1,12 @@
 
 import React, { useState, useEffect } from "react";
-import { StudentSidebar } from "./StudentSidebar";
+import { StudentModernSidebar } from "./StudentModernSidebar";
 import { StudentHeader } from "./StudentHeader";
 import { cn } from "@/lib/utils";
+import { studentSidebarItems } from "./data/studentSidebarItems";
+import { useStudentProfileData } from "./hooks/useStudentProfileData";
+import { useStudentStatsData } from "./hooks/useStudentStatsData";
+import { handleStudentLogout } from "./utils/studentAuthUtils";
 
 interface StudentLayoutProps {
   children: React.ReactNode;
@@ -11,6 +15,8 @@ interface StudentLayoutProps {
 export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { studentProfile, loadProfile } = useStudentProfileData();
+  const { stats, loadStats } = useStudentStatsData();
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -23,6 +29,24 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
+  useEffect(() => {
+    loadProfile();
+    loadStats();
+    
+    const handleStorageChange = () => {
+      loadProfile();
+      loadStats();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('studentDataUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('studentDataUpdated', handleStorageChange);
+    };
+  }, [loadProfile, loadStats]);
+
   const handleSidebarToggle = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -33,9 +57,13 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
       <StudentHeader onSidebarToggle={handleSidebarToggle} />
       
       {/* Student Sidebar */}
-      <StudentSidebar 
+      <StudentModernSidebar 
         isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
+        onClose={() => setSidebarOpen(false)}
+        items={studentSidebarItems}
+        profile={studentProfile}
+        stats={stats}
+        onLogout={handleStudentLogout}
       />
       
       {/* Main Content */}
