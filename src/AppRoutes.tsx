@@ -13,7 +13,7 @@ import Management from "./pages/management";
 import Reports from "./pages/reports";
 import Support from "./pages/support";
 
-// Student Panel Pages - صفحه ورود
+// Student Panel Pages - صفحه ورود و داشبورد
 import StudentPanel from "./pages/student-panel";
 
 // Student Dashboard Pages - صفحات پنل شاگرد
@@ -31,11 +31,9 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
-      {/* Student Panel Login Route */}
-      <Route path="/Students" element={<StudentPanel />} />
-      
-      {/* Student Dashboard Routes */}
-      <Route path="/Student" element={<StudentDashboard />} />
+      {/* Student Panel Routes - ورود و داشبورد در همان مسیر */}
+      <Route path="/Student" element={<StudentPanel />} />
+      <Route path="/Student/Dashboard" element={<StudentDashboard />} />
       <Route path="/Student/Profile" element={<StudentProfile />} />
       <Route path="/Student/Exercise-Movements" element={<StudentExercises />} />
       <Route path="/Student/Diet-Plan" element={<StudentDiet />} />
@@ -55,7 +53,8 @@ const AppRoutes = () => {
       <Route path="/Management/Report" element={<Reports />} />
       <Route path="/Management/Support" element={<Support />} />
       
-      {/* Legacy reports and management routes - redirect to new structure */}
+      {/* Legacy routes redirects */}
+      <Route path="/Students" element={<Navigate to="/Student" replace />} />
       <Route path="/Report" element={<Navigate to="/Management/Report" replace />} />
       <Route path="/Reports" element={<Navigate to="/Management/Report" replace />} />
       <Route path="/students" element={<Navigate to="/Management/Students" replace />} />

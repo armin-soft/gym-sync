@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/auth/AuthWrapper";
 import { UserTypeSelectionNew } from "@/components/auth/UserTypeSelection-New";
-import { StudentLayout } from "@/components/student-layout/StudentLayout";
 import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -34,21 +33,6 @@ function AppContent() {
   useEffect(() => {
     console.log('AppContent: Current path:', currentPath);
     
-    // بررسی وضعیت احراز هویت شاگرد
-    const isStudentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
-    const loggedInStudentId = localStorage.getItem("loggedInStudentId");
-    
-    console.log('AppContent: Student login status:', isStudentLoggedIn);
-    console.log('AppContent: Student ID:', loggedInStudentId);
-    
-    // اگر شاگرد وارد شده و در مسیر ورود است، به داشبورد هدایت کن
-    if (isStudentLoggedIn && loggedInStudentId && currentPath === "/Students") {
-      console.log('AppContent: Student already logged in, redirecting to dashboard');
-      navigate("/Student");
-      setIsLoading(false);
-      return;
-    }
-    
     // بررسی وضعیت نوع کاربر
     const hasSelectedType = localStorage.getItem("hasSelectedUserType");
     const selectedUserType = localStorage.getItem("selectedUserType");
@@ -58,8 +42,6 @@ function AppContent() {
     
     if (!hasSelectedType || !selectedUserType) {
       setShowUserTypeSelection(true);
-    } else if (currentPath.startsWith('/Students') && selectedUserType !== "student") {
-      localStorage.setItem("selectedUserType", "student");
     } else if (currentPath.startsWith('/Student') && selectedUserType !== "student") {
       localStorage.setItem("selectedUserType", "student");
     } else if ((currentPath.startsWith('/Management') || currentPath === '/') && selectedUserType !== "management") {
@@ -92,22 +74,10 @@ function AppContent() {
   console.log('AppContent: Rendering for user type:', selectedUserType);
   console.log('AppContent: Current path:', currentPath);
 
-  // اگر پنل شاگرد انتخاب شده
-  if (selectedUserType === "student") {
-    // صفحه ورود شاگرد - بدون Layout
-    if (currentPath.startsWith('/Students')) {
-      console.log('AppContent: Rendering student login page');
-      return <AppRoutes />;
-    }
-    // صفحات پنل شاگرد - با StudentLayout
-    if (currentPath.startsWith('/Student')) {
-      console.log('AppContent: Rendering student dashboard with StudentLayout');
-      return (
-        <StudentLayout>
-          <AppRoutes />
-        </StudentLayout>
-      );
-    }
+  // اگر پنل شاگرد انتخاب شده یا در مسیر شاگرد هستیم
+  if (selectedUserType === "student" || currentPath.startsWith('/Student')) {
+    console.log('AppContent: Rendering student panel');
+    return <AppRoutes />;
   }
 
   // اگر پنل مدیریت انتخاب شده

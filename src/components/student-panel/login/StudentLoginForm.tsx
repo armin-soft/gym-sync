@@ -1,10 +1,13 @@
 
 import React from "react";
-import { motion } from "framer-motion";
-import { useStudentLogin } from "./hooks/useStudentLogin";
+import { motion, AnimatePresence } from "framer-motion";
+import { ProfessionalLoginBackground } from "@/components/auth/login/professional/ProfessionalLoginBackground";
 import { StudentLoginHeader } from "./StudentLoginHeader";
-import { StudentLoginFormStep } from "./StudentLoginFormStep";
-import { StudentCodeVerificationStep } from "./StudentCodeVerificationStep";
+import { StudentPhoneInputSection } from "./StudentPhoneInputSection";
+import { StudentCodeVerificationSection } from "./StudentCodeVerificationSection";
+import { StudentAccountLockedSection } from "./StudentAccountLockedSection";
+import { useStudentLogin } from "./hooks/useStudentLogin";
+import { ANIMATION_VARIANTS } from "@/components/auth/login/constants";
 
 interface StudentLoginFormProps {
   onLoginSuccess: (phone: string) => void;
@@ -14,81 +17,111 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
   const {
     step,
     phone,
+    setPhone,
     code,
+    setCode,
     loading,
     error,
+    locked,
+    lockExpiry,
+    timeLeft,
     countdown,
-    setPhone,
-    setCode,
     handlePhoneSubmit,
     handleCodeSubmit,
     handleChangePhone,
     handleResendCode
   } = useStudentLogin({ onLoginSuccess });
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.6, 
-        ease: "easeOut",
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
+  if (locked) {
+    return (
+      <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/20 to-sky-50/30 dark:from-slate-900 dark:via-emerald-950/20 dark:to-sky-950/30">
+        <ProfessionalLoginBackground variant="locked" />
+        
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={ANIMATION_VARIANTS.container}
+            className="w-full max-w-md"
+          >
+            <StudentAccountLockedSection 
+              timeLeft={timeLeft}
+              lockExpiry={lockExpiry}
+              variants={ANIMATION_VARIANTS.item}
+            />
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="relative"
-    >
-      <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-sky-600 rounded-3xl blur-xl opacity-20"></div>
-      <div className="relative backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl p-8 sm:p-10 shadow-2xl">
-        
-        <StudentLoginHeader 
-          step={step} 
-          phone={phone} 
-          variants={itemVariants} 
-        />
-        
-        {step === "phone" ? (
-          <StudentLoginFormStep
-            variants={itemVariants}
-            phone={phone}
-            setPhone={setPhone}
-            loading={loading}
-            error={error}
-            onSubmit={handlePhoneSubmit}
-          />
-        ) : (
-          <StudentCodeVerificationStep
-            variants={itemVariants}
-            code={code}
-            setCode={setCode}
-            loading={loading}
-            error={error}
-            countdown={countdown}
-            onSubmit={handleCodeSubmit}
-            onChangePhone={handleChangePhone}
-            onResendCode={handleResendCode}
-          />
-        )}
-
-        <motion.div variants={itemVariants} className="mt-6 pt-6 border-t border-gray-200/20 dark:border-gray-700/20">
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            شماره موبایل خود را که توسط مربی ثبت شده، وارد کنید
-          </p>
+    <div className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50/20 to-sky-50/30 dark:from-slate-900 dark:via-emerald-950/20 dark:to-sky-950/30">
+      <ProfessionalLoginBackground variant="normal" />
+      
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={ANIMATION_VARIANTS.container}
+          className="w-full max-w-md"
+        >
+          <motion.div 
+            variants={ANIMATION_VARIANTS.item}
+            className="backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl shadow-2xl p-8 sm:p-10"
+          >
+            <StudentLoginHeader 
+              step={step}
+              phone={phone}
+              variants={ANIMATION_VARIANTS.item} 
+            />
+            
+            <div className="mt-8" dir="rtl">
+              <AnimatePresence mode="wait">
+                {step === "phone" ? (
+                  <motion.div
+                    key="phone"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <StudentPhoneInputSection
+                      phone={phone}
+                      setPhone={setPhone}
+                      loading={loading}
+                      error={error}
+                      onSubmit={handlePhoneSubmit}
+                      variants={ANIMATION_VARIANTS.item}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="code"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <StudentCodeVerificationSection
+                      code={code}
+                      setCode={setCode}
+                      phone={phone}
+                      countdown={countdown}
+                      loading={loading}
+                      error={error}
+                      onSubmit={handleCodeSubmit}
+                      onChangePhone={handleChangePhone}
+                      onResendCode={handleResendCode}
+                      variants={ANIMATION_VARIANTS.item}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
