@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Shield, Zap } from "lucide-react";
+import { Shield, Zap, GraduationCap } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useState, useEffect } from "react";
 
@@ -12,6 +12,7 @@ interface ProfessionalLoginHeaderProps {
 
 export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLoginHeaderProps) => {
   const [appVersion, setAppVersion] = useState("در حال بارگذاری...");
+  const isStudentPanel = gymName === "پنل شاگرد";
 
   useEffect(() => {
     const fetchVersion = async () => {
@@ -40,7 +41,11 @@ export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLogin
       >
         <div className="relative">
           <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-sky-500 rounded-2xl flex items-center justify-center shadow-2xl">
-            <Shield className="h-10 w-10 text-white" />
+            {isStudentPanel ? (
+              <GraduationCap className="h-10 w-10 text-white" />
+            ) : (
+              <Shield className="h-10 w-10 text-white" />
+            )}
           </div>
           <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-orange-400 to-pink-500 rounded-full flex items-center justify-center">
             <Zap className="h-3 w-3 text-white" />
@@ -51,10 +56,10 @@ export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLogin
       {/* عنوان اصلی */}
       <div className="space-y-2">
         <h1 className="text-3xl font-black text-slate-800 dark:text-white">
-          ورود به پنل مدیریت
+          {isStudentPanel ? "ورود به پنل شاگرد" : "ورود به پنل مدیریت"}
         </h1>
         <p className="text-slate-600 dark:text-slate-300 text-lg font-medium">
-          {gymName || "سیستم مدیریت باشگاه"}
+          {isStudentPanel ? "سیستم مدیریت برنامه شخصی" : gymName || "سیستم مدیریت باشگاه"}
         </p>
       </div>
 
@@ -79,7 +84,10 @@ export const ProfessionalLoginHeader = ({ gymName, variants }: ProfessionalLogin
         className="text-center"
       >
         <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-          برای ورود به پنل مدیریت، شماره موبایل مجاز خود را وارد کنید
+          {isStudentPanel ? 
+            "برای ورود به پنل شخصی، شماره موبایل خود را وارد کنید" :
+            "برای ورود به پنل مدیریت، شماره موبایل مجاز خود را وارد کنید"
+          }
         </p>
       </motion.div>
     </motion.div>

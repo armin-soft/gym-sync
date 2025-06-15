@@ -2,7 +2,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProfessionalLoginBackground } from "@/components/auth/login/professional/ProfessionalLoginBackground";
-import { StudentLoginHeader } from "./StudentLoginHeader";
+import { ProfessionalLoginHeader } from "@/components/auth/login/professional/ProfessionalLoginHeader";
 import { PhoneInputSection } from "@/components/auth/login/professional/PhoneInputSection";
 import { CodeVerificationSection } from "@/components/auth/login/professional/CodeVerificationSection";
 import { AccountLockedSection } from "@/components/auth/login/professional/AccountLockedSection";
@@ -74,9 +74,8 @@ export const StudentLoginForm = ({ onLoginSuccess }: StudentLoginFormProps) => {
             variants={ANIMATION_VARIANTS.item}
             className="backdrop-blur-xl bg-white/10 dark:bg-slate-900/20 border border-white/20 dark:border-slate-700/30 rounded-3xl shadow-2xl p-8 sm:p-10"
           >
-            <StudentLoginHeader 
-              step={step}
-              phone={phone}
+            <ProfessionalLoginHeader 
+              gymName="پنل شاگرد" 
               variants={ANIMATION_VARIANTS.item} 
             />
             
