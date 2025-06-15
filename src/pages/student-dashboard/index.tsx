@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { StudentDashboardWelcome } from "./components/StudentDashboardWelcome";
+import { StudentDashboardHeader } from "./components/StudentDashboardHeader";
 import { StudentStatsOverview } from "./components/StudentStatsOverview";
 import { StudentQuickAccessGrid } from "./components/StudentQuickAccessGrid";
 import { StudentProgressSection } from "./components/StudentProgressSection";
@@ -46,9 +46,9 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onSidebarToggle }) 
       dir="rtl"
     >
       <div className="space-y-8 p-4 sm:p-6 lg:p-8">
-        {/* صفحه خوش‌آمدگویی */}
+        {/* هدر داشبورد */}
         <motion.div variants={itemVariants}>
-          <StudentDashboardWelcome />
+          <StudentDashboardHeader />
         </motion.div>
 
         {/* بررسی اجمالی آمار */}
