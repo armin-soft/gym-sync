@@ -13,10 +13,4 @@ export interface StudentProfile {
   emergencyContact: string;
   medicalConditions: string;
   fitnessLevel: string;
-  // اضافه کردن فیلدهای جدید از Student type
-  payment: string;
-  age: string;
-  grade: string;
-  group: string;
-  gender: "male" | "female";
 }

@@ -16,15 +16,10 @@ export const ProfileProgress: React.FC<ProfileProgressProps> = ({ profile }) => 
       profile.email,
       profile.height,
       profile.weight,
-      profile.goal,
-      profile.age,
-      profile.gender,
-      profile.grade,
-      profile.group,
-      profile.payment
+      profile.goal
     ];
     
-    const filledFields = fields.filter(field => field && field.toString().trim()).length;
+    const filledFields = fields.filter(field => field && field.trim()).length;
     return Math.round((filledFields / fields.length) * 100);
   };
 

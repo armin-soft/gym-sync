@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { User, Phone, Mail, Calendar, MapPin, Users, CreditCard, GraduationCap, UserCheck } from "lucide-react";
+import { User, Phone, Mail, MapPin } from "lucide-react";
 import { StudentProfile } from "../../types/studentProfile";
 import { ModernFormField } from "./ModernFormField";
 
@@ -32,7 +32,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           اطلاعات شخصی
         </h2>
         <p className="text-slate-600 dark:text-slate-400">
-          اطلاعات شخصی و تماس خود را وارد کنید
+          اطلاعات اساسی و شخصی خود را وارد کنید
         </p>
       </div>
 
@@ -45,134 +45,53 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           icon={User}
           error={errors.name}
           isValid={validFields.name}
+          required
         />
 
         <ModernFormField
-          label="شماره موبایل"
+          label="شماره تلفن"
           value={profile.phone}
           onChange={(value) => handleUpdate('phone', value)}
-          placeholder="09123456789"
+          placeholder="شماره موبایل خود را وارد کنید"
           icon={Phone}
           error={errors.phone}
           isValid={validFields.phone}
-          direction="ltr"
+          type="tel"
+          required
         />
 
         <ModernFormField
-          label="ایمیل"
+          label="آدرس ایمیل"
           value={profile.email}
           onChange={(value) => handleUpdate('email', value)}
-          placeholder="example@gmail.com"
+          placeholder="ایمیل خود را وارد کنید"
           icon={Mail}
           error={errors.email}
           isValid={validFields.email}
-          direction="ltr"
+          type="email"
         />
 
         <ModernFormField
           label="تاریخ تولد"
           value={profile.birthDate}
           onChange={(value) => handleUpdate('birthDate', value)}
-          placeholder="1380/01/01"
-          icon={Calendar}
+          placeholder="1370/01/01"
+          icon={User}
           error={errors.birthDate}
           isValid={validFields.birthDate}
-        />
-
-        <ModernFormField
-          label="سن"
-          value={profile.age}
-          onChange={(value) => handleUpdate('age', value)}
-          placeholder="25"
-          icon={UserCheck}
-          error={errors.age}
-          isValid={validFields.age}
-        />
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-            <Users className="w-4 h-4 text-emerald-500" />
-            جنسیت
-          </label>
-          <div className="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="gender"
-                value="male"
-                checked={profile.gender === "male"}
-                onChange={(e) => handleUpdate('gender', e.target.value)}
-                className="w-4 h-4 text-emerald-600"
-              />
-              <span className="text-sm text-slate-700 dark:text-slate-300">مرد</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="gender"
-                value="female"
-                checked={profile.gender === "female"}
-                onChange={(e) => handleUpdate('gender', e.target.value)}
-                className="w-4 h-4 text-emerald-600"
-              />
-              <span className="text-sm text-slate-700 dark:text-slate-300">زن</span>
-            </label>
-          </div>
-        </div>
-
-        <ModernFormField
-          label="مقطع تحصیلی"
-          value={profile.grade}
-          onChange={(value) => handleUpdate('grade', value)}
-          placeholder="دیپلم، کارشناسی، کارشناسی ارشد و ..."
-          icon={GraduationCap}
-          error={errors.grade}
-          isValid={validFields.grade}
-        />
-
-        <ModernFormField
-          label="گروه"
-          value={profile.group}
-          onChange={(value) => handleUpdate('group', value)}
-          placeholder="گروه مورد نظر"
-          icon={Users}
-          error={errors.group}
-          isValid={validFields.group}
-        />
-
-        <ModernFormField
-          label="مبلغ پرداختی"
-          value={profile.payment}
-          onChange={(value) => handleUpdate('payment', value)}
-          placeholder="500000"
-          icon={CreditCard}
-          error={errors.payment}
-          isValid={validFields.payment}
-          direction="ltr"
         />
       </div>
 
       <ModernFormField
-        label="آدرس"
+        label="آدرس منزل"
         value={profile.address}
         onChange={(value) => handleUpdate('address', value)}
-        placeholder="آدرس کامل محل سکونت"
+        placeholder="آدرس کامل محل سکونت خود را وارد کنید"
         icon={MapPin}
         error={errors.address}
         isValid={validFields.address}
         textarea
         rows={3}
-      />
-
-      <ModernFormField
-        label="شماره تماس اضطراری"
-        value={profile.emergencyContact}
-        onChange={(value) => handleUpdate('emergencyContact', value)}
-        placeholder="09123456789"
-        icon={Phone}
-        error={errors.emergencyContact}
-        isValid={validFields.emergencyContact}
-        direction="ltr"
       />
     </motion.div>
   );
