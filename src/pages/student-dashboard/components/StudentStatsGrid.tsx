@@ -1,146 +1,137 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Dumbbell, Target, Calendar, Award,
-  TrendingUp, Activity, Timer, Zap
+  Dumbbell, Apple, Pill, Target, Calendar, 
+  TrendingUp, Award, Clock, Activity, Heart
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { motion } from "framer-motion";
 
-const statsData = [
-  {
-    title: "تمرینات انجام شده",
-    value: "24",
-    unit: "تمرین",
-    icon: Dumbbell,
-    progress: 75,
-    change: "+۳",
-    changeType: "increase" as const,
-    gradient: "from-emerald-500 to-green-500",
-    bgGradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20"
-  },
-  {
-    title: "هدف ماهانه",
-    value: "85",
-    unit: "درصد",
-    icon: Target,
-    progress: 85,
-    change: "+۱۲",
-    changeType: "increase" as const,
-    gradient: "from-blue-500 to-cyan-500",
-    bgGradient: "from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20"
-  },
-  {
-    title: "روزهای فعال",
-    value: "18",
-    unit: "روز",
-    icon: Calendar,
-    progress: 60,
-    change: "+۵",
-    changeType: "increase" as const,
-    gradient: "from-purple-500 to-violet-500",
-    bgGradient: "from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20"
-  },
-  {
-    title: "امتیاز کلی",
-    value: "2,450",
-    unit: "امتیاز",
-    icon: Award,
-    progress: 92,
-    change: "+۲۱۰",
-    changeType: "increase" as const,
-    gradient: "from-orange-500 to-amber-500",
-    bgGradient: "from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20"
-  }
-];
+interface StatCardProps {
+  title: string;
+  value: string;
+  subtitle: string;
+  icon: React.ElementType;
+  progress?: number;
+  badge?: string;
+  gradient: string;
+  index: number;
+}
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
+const StatCard: React.FC<StatCardProps> = ({ 
+  title, value, subtitle, icon: Icon, progress, badge, gradient, index 
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        duration: 0.5, 
+        delay: index * 0.1,
+        ease: [0.23, 1, 0.32, 1]
+      }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      className="group cursor-pointer"
+    >
+      <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5 group-hover:opacity-10 transition-opacity`} />
+        
+        <CardContent className="p-6 relative">
+          <div className="flex items-start justify-between mb-4">
+            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+              <Icon className="h-6 w-6 text-white" />
+            </div>
+            {badge && (
+              <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                {badge}
+              </Badge>
+            )}
+          </div>
+          
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
+            
+            {progress !== undefined && (
+              <div className="space-y-2">
+                <Progress value={progress} className="h-2" />
+                <p className="text-xs text-right text-muted-foreground">
+                  {toPersianNumbers(progress.toString())}% تکمیل شده
+                </p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 };
 
 export const StudentStatsGrid = () => {
+  const stats = [
+    {
+      title: "تمرینات امروز",
+      value: toPersianNumbers("8"),
+      subtitle: "از ۱۰ تمرین برنامه‌ریزی شده",
+      icon: Dumbbell,
+      progress: 80,
+      badge: "فعال",
+      gradient: "from-emerald-500 to-green-600"
+    },
+    {
+      title: "وعده‌های غذایی",
+      value: toPersianNumbers("3"),
+      subtitle: "از ۵ وعده امروز",
+      icon: Apple,
+      progress: 60,
+      gradient: "from-sky-500 to-blue-600"
+    },
+    {
+      title: "مکمل‌ها",
+      value: toPersianNumbers("2"),
+      subtitle: "از ۳ مکمل روزانه",
+      icon: Pill,
+      progress: 66,
+      gradient: "from-purple-500 to-violet-600"
+    },
+    {
+      title: "اهداف هفتگی",
+      value: toPersianNumbers("85"),
+      subtitle: "درصد تکمیل",
+      icon: Target,
+      progress: 85,
+      badge: "عالی",
+      gradient: "from-orange-500 to-red-500"
+    },
+    {
+      title: "روزهای فعالیت",
+      value: toPersianNumbers("12"),
+      subtitle: "روز متوالی",
+      icon: Calendar,
+      gradient: "from-teal-500 to-cyan-600"
+    },
+    {
+      title: "پیشرفت کلی",
+      value: toPersianNumbers("92"),
+      subtitle: "درصد بهبود",
+      icon: TrendingUp,
+      gradient: "from-pink-500 to-rose-600"
+    }
+  ];
+
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"
-    >
-      {statsData.map((stat, index) => {
-        const Icon = stat.icon;
-        
-        return (
-          <motion.div
-            key={stat.title}
-            variants={itemVariants}
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          >
-            <Card className={`relative overflow-hidden border-0 shadow-lg bg-gradient-to-br ${stat.bgGradient} hover:shadow-xl transition-all duration-300`}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg`}>
-                    <Icon className="h-6 w-6 text-white" />
-                  </div>
-                  <Badge 
-                    variant={stat.changeType === 'increase' ? 'default' : 'secondary'}
-                    className={`${
-                      stat.changeType === 'increase' 
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800' 
-                        : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800'
-                    }`}
-                  >
-                    <TrendingUp className="w-3 h-3 ml-1" />
-                    {stat.change}
-                  </Badge>
-                </div>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {stat.title}
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent className="space-y-3">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-foreground">
-                    {toPersianNumbers(stat.value)}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {stat.unit}
-                  </span>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">پیشرفت</span>
-                    <span className="font-medium">{toPersianNumbers(stat.progress.toString())}%</span>
-                  </div>
-                  <Progress 
-                    value={stat.progress} 
-                    className="h-2 bg-white/50 dark:bg-slate-800/50"
-                  />
-                </div>
-              </CardContent>
-              
-              {/* Decorative gradient overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-5 pointer-events-none`} />
-            </Card>
-          </motion.div>
-        );
-      })}
-    </motion.div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+      {stats.map((stat, index) => (
+        <StatCard
+          key={stat.title}
+          {...stat}
+          index={index}
+        />
+      ))}
+    </div>
   );
 };

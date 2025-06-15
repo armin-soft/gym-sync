@@ -1,103 +1,145 @@
 
 import React from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
-  Activity, Dumbbell, Apple, Pill, 
-  MessageCircle, Award, Clock
+  Dumbbell, Apple, Pill, MessageCircle, 
+  CheckCircle, Clock, Calendar
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 const activities = [
   {
+    id: 1,
     type: "exercise",
-    title: "تمرین سینه و دوسر",
-    description: "۸ حرکت تکمیل شد",
+    title: "تکمیل تمرین سینه و بازو",
+    description: "۸ حرکت در ۴۵ دقیقه",
     time: "۲ ساعت پیش",
     icon: Dumbbell,
-    color: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400"
+    status: "completed",
+    color: "emerald"
   },
   {
-    type: "diet",
-    title: "صبحانه مصرف شد",
-    description: "۴۵۰ کالری دریافت شد",
+    id: 2,
+    type: "meal",
+    title: "ثبت وعده ناهار",
+    description: "سالاد سبزیجات و مرغ گریل",
     time: "۴ ساعت پیش",
     icon: Apple,
-    color: "text-blue-600 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400"
+    status: "completed",
+    color: "sky"
   },
   {
+    id: 3,
     type: "supplement",
-    title: "مکمل پروتئین",
-    description: "۳۰ گرم پروتئین دریافت شد",
-    time: "۵ ساعت پیش",
+    title: "مصرف پروتئین",
+    description: "۳۰ گرم پروتئین وی",
+    time: "۶ ساعت پیش",
     icon: Pill,
-    color: "text-purple-600 bg-purple-100 dark:bg-purple-900/30 dark:text-purple-400"
+    status: "completed",
+    color: "purple"
   },
   {
+    id: 4,
     type: "message",
     title: "پیام از مربی",
-    description: "تبریک بابت پیشرفت عالی",
-    time: "۱ روز پیش",
+    description: "راهنمایی برای تمرین فردا",
+    time: "۸ ساعت پیش",
     icon: MessageCircle,
-    color: "text-orange-600 bg-orange-100 dark:bg-orange-900/30 dark:text-orange-400"
+    status: "new",
+    color: "orange"
   },
   {
-    type: "achievement",
-    title: "دستاورد جدید",
-    description: "۳۰ روز تمرین مداوم",
-    time: "۲ روز پیش",
-    icon: Award,
-    color: "text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400"
+    id: 5,
+    type: "exercise",
+    title: "تمرین کاردیو",
+    description: "۳۰ دقیقه دویدن",
+    time: "دیروز",
+    icon: Dumbbell,
+    status: "completed",
+    color: "emerald"
   }
 ];
 
+const getStatusBadge = (status: string) => {
+  switch (status) {
+    case "completed":
+      return (
+        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+          <CheckCircle className="w-3 h-3 ml-1" />
+          تکمیل شده
+        </Badge>
+      );
+    case "new":
+      return (
+        <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+          جدید
+        </Badge>
+      );
+    default:
+      return null;
+  }
+};
+
 export const StudentRecentActivities = () => {
   return (
-    <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900/50 dark:to-slate-800">
+    <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
       <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
-            <Activity className="h-5 w-5 text-white" />
+        <CardTitle className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <Clock className="h-4 w-4 text-white" />
           </div>
-          <div>
-            <CardTitle className="text-xl font-bold">فعالیت‌های اخیر</CardTitle>
-            <p className="text-sm text-muted-foreground">آخرین اتفاقات حساب شما</p>
-          </div>
-        </div>
+          فعالیت‌های اخیر
+        </CardTitle>
       </CardHeader>
-      
       <CardContent>
         <div className="space-y-4">
           {activities.map((activity, index) => {
             const Icon = activity.icon;
-            
             return (
-              <div key={index} className="flex items-start gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors duration-200">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${activity.color}`}>
-                  <Icon className="h-5 w-5" />
+              <motion.div
+                key={activity.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group"
+              >
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br from-${activity.color}-500 to-${activity.color}-600 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform flex-shrink-0`}>
+                  <Icon className="h-5 w-5 text-white" />
                 </div>
                 
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-sm">{activity.title}</h4>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      {activity.time}
-                    </div>
+                    <h3 className="font-medium text-gray-900 dark:text-white">
+                      {activity.title}
+                    </h3>
+                    {getStatusBadge(activity.status)}
                   </div>
-                  <p className="text-xs text-muted-foreground">{activity.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {activity.description}
+                  </p>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Calendar className="w-3 h-3" />
+                    {activity.time}
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
         
-        <div className="mt-6 text-center">
-          <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            مشاهده همه فعالیت‌ها
-          </button>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700"
+        >
+          <p className="text-center text-sm text-muted-foreground">
+            مشاهده همه فعالیت‌ها در صفحه گزارشات
+          </p>
+        </motion.div>
       </CardContent>
     </Card>
   );
