@@ -8,8 +8,8 @@ interface AppVersionContextType {
 }
 
 const AppVersionContext = createContext<AppVersionContextType>({
-  version: '5.0.0',
-  isLoading: false,
+  version: 'در حال بارگذاری...',
+  isLoading: true,
   error: null
 });
 
@@ -26,8 +26,8 @@ interface AppVersionProviderProps {
 }
 
 export const AppVersionProvider: React.FC<AppVersionProviderProps> = ({ children }) => {
-  const [version, setVersion] = useState('5.0.0');
-  const [isLoading, setIsLoading] = useState(false);
+  const [version, setVersion] = useState('در حال بارگذاری...');
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,22 +36,22 @@ export const AppVersionProvider: React.FC<AppVersionProviderProps> = ({ children
       const cachedVersion = sessionStorage.getItem('app-version');
       if (cachedVersion) {
         setVersion(cachedVersion);
+        setIsLoading(false);
         return;
       }
 
-      setIsLoading(true);
       try {
         const response = await fetch('/Manifest.json');
         const manifest = await response.json();
-        const appVersion = manifest.version || '5.0.0';
+        const appVersion = manifest.version || 'نامشخص';
         
         setVersion(appVersion);
         sessionStorage.setItem('app-version', appVersion);
-        console.log(`App version loaded once: ${appVersion}`);
+        console.log(`App version loaded: ${appVersion}`);
       } catch (err) {
         console.error('Error loading app version:', err);
         setError('خطا در بارگذاری نسخه');
-        setVersion('5.0.0'); // fallback
+        setVersion('نامشخص');
       } finally {
         setIsLoading(false);
       }
