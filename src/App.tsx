@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Layout } from "@/components/Layout";
 import { AuthWrapper } from "@/components/auth/AuthWrapper";
 import { UserTypeSelectionNew } from "@/components/auth/UserTypeSelection-New";
+import { StudentLayout } from "@/components/student-layout/StudentLayout";
 import AppRoutes from "./AppRoutes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -45,6 +46,9 @@ function AppContent() {
     else if (currentPath.startsWith('/Students') && selectedUserType !== "student") {
       localStorage.setItem("selectedUserType", "student");
     } 
+    else if (currentPath.startsWith('/Student') && selectedUserType !== "student") {
+      localStorage.setItem("selectedUserType", "student");
+    }
     else if ((currentPath.startsWith('/Management') || currentPath === '/') && selectedUserType !== "management") {
       localStorage.setItem("selectedUserType", "management");
     }
@@ -72,9 +76,20 @@ function AppContent() {
   // بررسی نوع کاربر انتخاب شده
   const selectedUserType = localStorage.getItem("selectedUserType");
 
-  // اگر پنل شاگرد انتخاب شده، بدون Layout و AuthWrapper نمایش دهید
-  if (selectedUserType === "student" || currentPath.startsWith('/Students')) {
-    return <AppRoutes />;
+  // اگر پنل شاگرد انتخاب شده
+  if (selectedUserType === "student") {
+    // صفحه ورود شاگرد - بدون Layout
+    if (currentPath.startsWith('/Students')) {
+      return <AppRoutes />;
+    }
+    // صفحات پنل شاگرد - با StudentLayout
+    if (currentPath.startsWith('/Student')) {
+      return (
+        <StudentLayout>
+          <AppRoutes />
+        </StudentLayout>
+      );
+    }
   }
 
   // اگر پنل مدیریت انتخاب شده، از AuthWrapper و Layout استفاده کنید

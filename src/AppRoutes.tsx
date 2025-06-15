@@ -13,8 +13,17 @@ import Management from "./pages/management";
 import Reports from "./pages/reports";
 import Support from "./pages/support";
 
-// Student Panel Pages - فقط صفحه ورود
+// Student Panel Pages - صفحه ورود
 import StudentPanel from "./pages/student-panel";
+
+// Student Dashboard Pages - صفحات پنل شاگرد
+import StudentDashboard from "./pages/student-dashboard";
+import StudentProfile from "./pages/student-profile";
+import StudentExercises from "./pages/student-exercises";
+import StudentDiet from "./pages/student-diet";
+import StudentSupplements from "./pages/student-supplements";
+import StudentReports from "./pages/student-reports";
+import StudentSupport from "./pages/student-support";
 
 const AppRoutes = () => {
   return (
@@ -22,8 +31,17 @@ const AppRoutes = () => {
       {/* Main Routes */}
       <Route path="/" element={<Index />} />
       
-      {/* Student Panel Routes - فقط صفحه ورود */}
+      {/* Student Panel Login Route */}
       <Route path="/Students" element={<StudentPanel />} />
+      
+      {/* Student Dashboard Routes */}
+      <Route path="/Student" element={<StudentDashboard />} />
+      <Route path="/Student/Profile" element={<StudentProfile />} />
+      <Route path="/Student/Exercise-Movements" element={<StudentExercises />} />
+      <Route path="/Student/Diet-Plan" element={<StudentDiet />} />
+      <Route path="/Student/Supplements-Vitamins" element={<StudentSupplements />} />
+      <Route path="/Student/Report" element={<StudentReports />} />
+      <Route path="/Student/Support" element={<StudentSupport />} />
       
       {/* Management Panel Routes - مسیرهای بهینه‌شده */}
       <Route path="/Management" element={<Management />} />
