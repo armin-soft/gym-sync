@@ -1,0 +1,77 @@
+
+import React from "react";
+import { motion } from "framer-motion";
+import { ProfileImage } from "@/components/trainer/ProfileImage";
+import { StudentProfile } from "../../types/studentProfile";
+import { Badge } from "@/components/ui/badge";
+
+interface ProfileImageSectionProps {
+  profile: StudentProfile;
+  onImageChange: (image: string) => void;
+}
+
+export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
+  profile,
+  onImageChange
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.2, duration: 0.6 }}
+      className="text-center space-y-6"
+    >
+      <div className="relative">
+        <ProfileImage 
+          image={profile.image}
+          onImageChange={onImageChange}
+        />
+        
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+          className="absolute -bottom-2 -right-1"
+        >
+          <Badge className="bg-gradient-to-r from-emerald-500 to-sky-500 border-none text-white px-2 py-0.5 text-xs">
+            شاگرد
+          </Badge>
+        </motion.div>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="space-y-3"
+      >
+        <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-200">
+          {profile.name}
+        </h3>
+        <div className="flex flex-col gap-2">
+          <Badge 
+            className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+            variant="secondary"
+          >
+            گروه: {profile.group}
+          </Badge>
+          <Badge 
+            className={`${
+              profile.paymentStatus === 'paid' 
+                ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300'
+                : profile.paymentStatus === 'pending'
+                ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
+                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+            }`}
+            variant="secondary"
+          >
+            وضعیت پرداخت: {
+              profile.paymentStatus === 'paid' ? 'پرداخت شده' :
+              profile.paymentStatus === 'pending' ? 'در انتظار' : 'معوقه'
+            }
+          </Badge>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
