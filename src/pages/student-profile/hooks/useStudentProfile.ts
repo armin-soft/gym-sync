@@ -16,7 +16,8 @@ export const useStudentProfile = () => {
     grade: "",
     group: "",
     image: "/Assets/Images/Place-Holder.svg",
-    payment: ""
+    payment: "",
+    paymentStatus: "pending"
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof StudentProfile, string>>>({});
@@ -48,7 +49,8 @@ export const useStudentProfile = () => {
               grade: student.grade || "",
               group: student.group || "",
               image: student.image || student.profileImage || "/Assets/Images/Place-Holder.svg",
-              payment: student.payment || ""
+              payment: student.payment || "",
+              paymentStatus: student.paymentStatus || "pending"
             });
             
             console.log('Student profile loaded successfully');
