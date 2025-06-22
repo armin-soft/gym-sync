@@ -85,7 +85,7 @@ export const StudentCodeVerificationStep = ({
               onChange={(value) => setCode(value)}
               dir="ltr"
             >
-              <InputOTPGroup className="gap-3" dir="ltr">
+              <InputOTPGroup className="gap-3">
                 {[...Array(6)].map((_, index) => (
                   <InputOTPSlot 
                     key={index}

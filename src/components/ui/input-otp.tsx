@@ -4,6 +4,7 @@ import { OTPInput, OTPInputContext } from "input-otp"
 import { Dot } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { toPersianNumbers } from "@/lib/utils/numbers"
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
@@ -36,6 +37,9 @@ const InputOTPSlot = React.forwardRef<
   const inputOTPContext = React.useContext(OTPInputContext)
   const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
 
+  // تبدیل کاراکتر انگلیسی به فارسی برای نمایش
+  const displayChar = char ? toPersianNumbers(char) : char
+
   return (
     <div
       ref={ref}
@@ -46,7 +50,7 @@ const InputOTPSlot = React.forwardRef<
       )}
       {...props}
     >
-      {children || char}
+      {children || displayChar}
       {hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-4 w-px animate-caret-blink bg-foreground duration-1000" />
