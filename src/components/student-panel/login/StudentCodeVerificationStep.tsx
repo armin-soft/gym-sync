@@ -50,6 +50,7 @@ export const StudentCodeVerificationStep = ({
               <InputOTPGroup className="gap-3" dir="ltr">
                 {[...Array(6)].map((_, index) => {
                   const currentChar = code[index] || '';
+                  const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
                   
                   return (
                     <InputOTPSlot 
@@ -57,7 +58,7 @@ export const StudentCodeVerificationStep = ({
                       index={index}
                       className="w-12 h-12 text-lg font-bold bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl backdrop-blur-sm text-center"
                     >
-                      {currentChar}
+                      {displayChar}
                     </InputOTPSlot>
                   );
                 })}
