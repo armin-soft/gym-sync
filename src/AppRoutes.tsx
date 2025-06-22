@@ -25,6 +25,8 @@ import StudentReports from "./pages/student-reports";
 import StudentSupport from "./pages/student-support";
 
 const AppRoutes = () => {
+  console.log('AppRoutes: Rendering routes');
+  
   return (
     <Routes>
       {/* Home Route */}
@@ -93,7 +95,7 @@ const AppRoutes = () => {
       <Route path="/Management/Report" element={<Reports />} />
       <Route path="/Management/Support" element={<Support />} />
       
-      {/* Legacy Routes Redirects */}
+      {/* Legacy Routes Redirects - Fixed */}
       <Route path="/Students" element={<Navigate to="/Student" replace />} />
       <Route path="/Report" element={<Navigate to="/Management/Report" replace />} />
       <Route path="/Reports" element={<Navigate to="/Management/Report" replace />} />

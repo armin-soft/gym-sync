@@ -1,140 +1,100 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 import { SidebarItem } from "../types";
-import { useSidebarDimensions } from "../utils/deviceUtils";
 import { NavigationItemIcon } from "./navigation-item/NavigationItemIcon";
 import { NavigationItemContent } from "./navigation-item/NavigationItemContent";
+import { cn } from "@/lib/utils";
 
 interface SidebarNavigationItemProps {
   item: SidebarItem;
-  index: number;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
-export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
-  item,
-  index,
-  onClose
+export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({ 
+  item, 
+  onClose 
 }) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const isActive = location.pathname === item.href;
-  const [isHovered, setIsHovered] = useState(false);
-  const { deviceInfo } = useSidebarDimensions();
-  
-  const itemVariants = {
-    hidden: { opacity: 0, x: 20, y: 10 },
-    visible: { 
-      opacity: 1, 
-      x: 0, 
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 150,
-        damping: 12,
-        delay: index * 0.05
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('Navigating to:', item.href);
+    
+    try {
+      navigate(item.href);
+      if (onClose) {
+        onClose();
       }
+    } catch (error) {
+      console.error('Navigation error:', error);
     }
-  };
-  
-  const getItemPadding = () => {
-    if (deviceInfo.isMobile) return "p-3";
-    if (deviceInfo.isTablet) return "p-3";
-    return "p-3";
-  };
-  
-  const getIconSize = () => {
-    if (deviceInfo.isMobile) return "w-4 h-4";
-    if (deviceInfo.isTablet) return "w-4 h-4";
-    return "w-5 h-5";
-  };
-  
-  const getIconContainer = () => {
-    if (deviceInfo.isMobile) return "w-10 h-10";
-    if (deviceInfo.isTablet) return "w-10 h-10";
-    return "w-11 h-11";
   };
 
   return (
-    <motion.div 
-      variants={itemVariants}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative group"
-      dir="rtl"
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+      className="relative"
     >
-      <Link
-        to={item.href}
-        onClick={onClose}
+      <button
+        onClick={handleClick}
         className={cn(
-          "relative block rounded-xl transition-all duration-300 overflow-hidden",
-          getItemPadding(),
+          "w-full p-4 rounded-2xl transition-all duration-300 group relative overflow-hidden",
+          "hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]",
           isActive 
-            ? "bg-gradient-to-br from-emerald-500 via-sky-500 to-emerald-600 text-white shadow-lg transform scale-[1.01]" 
-            : "bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 hover:shadow-md hover:scale-[1.005] backdrop-blur-sm border border-emerald-200/30 dark:border-emerald-700/30"
+            ? "bg-white/90 shadow-xl shadow-black/10 border border-white/20" 
+            : "bg-white/30 hover:bg-white/50 border border-white/10"
         )}
-        dir="rtl"
       >
-        {/* Background effects */}
-        {isActive && (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/5" />
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-              animate={{ x: ['-100%', '200%'] }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-          </>
-        )}
+        {/* Background gradient effect */}
+        <div 
+          className={cn(
+            "absolute inset-0 opacity-0 transition-opacity duration-300",
+            `bg-gradient-to-br ${item.gradient}`,
+            isActive ? "opacity-10" : "group-hover:opacity-5"
+          )}
+        />
         
-        {!isActive && isHovered && (
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-emerald-100/50 to-sky-100/30 dark:from-emerald-800/30 dark:to-sky-800/20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          />
-        )}
-        
-        <div className="relative z-10 flex items-center gap-3" dir="rtl">
-          <NavigationItemIcon
-            item={item}
+        <div className="relative z-10 flex items-center gap-4">
+          <NavigationItemIcon 
+            icon={item.icon} 
+            gradient={item.gradient}
             isActive={isActive}
-            iconSize={getIconSize()}
-            iconContainer={getIconContainer()}
           />
           
-          <NavigationItemContent
-            item={item}
+          <NavigationItemContent 
+            title={item.title}
+            subtitle={item.subtitle}
             isActive={isActive}
-            deviceInfo={deviceInfo}
           />
           
-          <motion.div
-            className={cn(
-              "flex-shrink-0 transition-all duration-200",
-              isActive || isHovered ? "opacity-100" : "opacity-0"
+          <div className="flex items-center gap-2 mr-auto">
+            {item.badge && (
+              <Badge 
+                variant={isActive ? "default" : "secondary"}
+                className={cn(
+                  "text-xs px-2 py-1 rounded-full font-medium",
+                  isActive 
+                    ? "bg-gradient-to-r from-emerald-500 to-sky-500 text-white" 
+                    : "bg-white/20 text-slate-700"
+                )}
+              >
+                {item.badge}
+              </Badge>
             )}
-            animate={{ 
-              x: isHovered || isActive ? -2 : 0,
-              scale: isActive ? 1.05 : 1
-            }}
-            transition={{ type: "spring", stiffness: 400 }}
-          >
-            <ChevronLeft className={cn(
-              deviceInfo.isMobile ? "w-3.5 h-3.5" : "w-4 h-4",
-              isActive ? "text-white" : "text-emerald-500 dark:text-emerald-400"
-            )} />
-          </motion.div>
+            
+            {item.isNew && (
+              <div className="w-2 h-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse" />
+            )}
+          </div>
         </div>
-      </Link>
+      </button>
     </motion.div>
   );
 };
