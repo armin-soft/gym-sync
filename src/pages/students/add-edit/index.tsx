@@ -130,6 +130,7 @@ const AddEditStudent = () => {
           {/* Form Container */}
           <div className="w-full">
             <div className="rounded-xl sm:rounded-3xl backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-gray-200/70 dark:border-gray-800/70 shadow-lg shadow-gray-200/20 dark:shadow-black/10 overflow-hidden transition-all duration-300">
+              <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-emerald-600 to-sky-600 -z-10" />
               <AnimatePresence mode="wait">
                 {isLoading ? (
                   <div className="flex items-center justify-center p-12">
