@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { User, Phone, Calendar, Ruler, Weight } from "lucide-react";
 import { StudentProfile } from "../../types/studentProfile";
 import { ModernFormField } from "./ModernFormField";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface PersonalInfoFormProps {
   profile: StudentProfile;
@@ -18,6 +19,11 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
   validFields,
   handleUpdate
 }) => {
+  // Get gender display text in Persian
+  const getGenderDisplay = (gender: string) => {
+    return gender === 'male' ? 'مرد' : 'زن';
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -30,7 +36,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           اطلاعات شخصی
         </h2>
         <p className="text-slate-600 dark:text-slate-400">
-          لطفاً اطلاعات شخصی خود را با دقت وارد کنید
+          اطلاعات شخصی شما
         </p>
       </div>
 
@@ -45,47 +51,72 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           isValid={validFields.name}
         />
 
-        <ModernFormField
-          label="شماره موبایل"
-          value={profile.phone}
-          onChange={(value) => handleUpdate('phone', value)}
-          placeholder="09123456789"
-          icon={Phone}
-          error={errors.phone || ''}
-          isValid={validFields.phone}
-        />
+        {/* Mobile number - Read-only */}
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <Phone className="h-4 w-4 text-emerald-500" />
+            شماره موبایل
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <Phone className="h-4 w-4 text-slate-400" />
+            </div>
+            <input
+              type="text"
+              value={toPersianNumbers(profile.phone)}
+              readOnly
+              className="w-full pr-10 pl-4 py-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 text-right cursor-not-allowed opacity-70"
+              placeholder="شماره موبایل"
+            />
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            شماره موبایل قابل تغییر نیست
+          </p>
+        </div>
 
         <ModernFormField
           label="سن"
-          value={profile.age}
-          onChange={(value) => handleUpdate('age', value)}
-          placeholder="25"
+          value={toPersianNumbers(profile.age)}
+          onChange={(value) => {
+            // Convert Persian numbers back to English for storage
+            const englishValue = value.replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString());
+            handleUpdate('age', englishValue);
+          }}
+          placeholder="۲۵"
           icon={Calendar}
           error={errors.age || ''}
           isValid={validFields.age}
           type="number"
         />
 
-        <ModernFormField
-          label="جنسیت"
-          value={profile.gender === 'male' ? 'مرد' : 'زن'}
-          onChange={(value) => handleUpdate('gender', value === 'مرد' ? 'male' : 'female')}
-          placeholder="انتخاب کنید"
-          icon={User}
-          error={errors.gender || ''}
-          isValid={validFields.gender}
-          type="select"
-          options={[
-            { value: 'male', label: 'مرد' },
-            { value: 'female', label: 'زن' }
-          ]}
-        />
+        {/* Gender - Read-only display */}
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <User className="h-4 w-4 text-emerald-500" />
+            جنسیت
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <User className="h-4 w-4 text-slate-400" />
+            </div>
+            <input
+              type="text"
+              value={getGenderDisplay(profile.gender)}
+              readOnly
+              className="w-full pr-10 pl-4 py-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 text-right cursor-default"
+            />
+          </div>
+        </div>
 
         <ModernFormField
           label="قد (سانتی‌متر)"
-          value={profile.height}
-          onChange={(value) => handleUpdate('height', value)}
-          placeholder="175"
+          value={toPersianNumbers(profile.height)}
+          onChange={(value) => {
+            // Convert Persian numbers back to English for storage
+            const englishValue = value.replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString());
+            handleUpdate('height', englishValue);
+          }}
+          placeholder="۱۷۵"
           icon={Ruler}
           error={errors.height || ''}
           isValid={validFields.height}
@@ -94,9 +125,13 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
 
         <ModernFormField
           label="وزن (کیلوگرم)"
-          value={profile.weight}
-          onChange={(value) => handleUpdate('weight', value)}
-          placeholder="70"
+          value={toPersianNumbers(profile.weight)}
+          onChange={(value) => {
+            // Convert Persian numbers back to English for storage
+            const englishValue = value.replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString());
+            handleUpdate('weight', englishValue);
+          }}
+          placeholder="۷۰"
           icon={Weight}
           error={errors.weight || ''}
           isValid={validFields.weight}

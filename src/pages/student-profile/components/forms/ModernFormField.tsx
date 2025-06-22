@@ -1,113 +1,113 @@
 
 import React from "react";
-import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Check, AlertCircle, LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface ModernFormFieldProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  placeholder: string;
-  icon: LucideIcon;
+  placeholder?: string;
+  icon?: LucideIcon;
   error?: string;
   isValid?: boolean;
   type?: "text" | "number" | "select";
   options?: { value: string; label: string }[];
+  disabled?: boolean;
+  readOnly?: boolean;
 }
 
 export const ModernFormField: React.FC<ModernFormFieldProps> = ({
   label,
   value,
   onChange,
-  placeholder,
+  placeholder = "",
   icon: Icon,
-  error,
-  isValid,
+  error = "",
+  isValid = false,
   type = "text",
-  options
+  options = [],
+  disabled = false,
+  readOnly = false
 }) => {
-  const handleChange = (newValue: string) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    let inputValue = e.target.value;
+    
+    // For number inputs, handle Persian to English conversion
     if (type === "number") {
-      // تبدیل اعداد فارسی به انگلیسی
-      const convertedValue = newValue.replace(/[۰-۹]/g, (d) => {
-        return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString();
-      });
-      
-      // فقط اعداد انگلیسی را قبول کن
-      const numbersOnly = convertedValue.replace(/[^0-9]/g, '');
-      onChange(numbersOnly);
-    } else {
-      onChange(newValue);
+      inputValue = inputValue.replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString());
     }
+    
+    onChange(inputValue);
   };
 
   const displayValue = type === "number" ? toPersianNumbers(value) : value;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-3"
-    >
-      <Label className="flex items-center gap-3 text-slate-700 dark:text-slate-200 font-medium">
-        <div className="w-8 h-8 bg-emerald-100/80 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-          <Icon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-        </div>
+    <div className="space-y-2">
+      <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+        {Icon && <Icon className="h-4 w-4 text-emerald-500" />}
         {label}
-      </Label>
-
+      </label>
+      
       <div className="relative">
+        {Icon && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <Icon className="h-4 w-4 text-slate-400" />
+          </div>
+        )}
+        
         {type === "select" ? (
-          <Select value={value} onValueChange={onChange}>
-            <SelectTrigger className="h-12 bg-white/60 dark:bg-slate-800/60 border-slate-200/50 dark:border-slate-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl backdrop-blur-sm">
-              <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {options?.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <select
+            value={value}
+            onChange={handleInputChange}
+            disabled={disabled}
+            className={cn(
+              "w-full py-3 px-4 bg-white dark:bg-slate-900 border rounded-xl text-slate-900 dark:text-slate-100 text-right transition-colors",
+              Icon ? "pr-10" : "pr-4",
+              error
+                ? "border-red-300 dark:border-red-700 focus:border-red-500 focus:ring-red-500"
+                : isValid
+                ? "border-green-300 dark:border-green-700 focus:border-green-500 focus:ring-green-500"
+                : "border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500",
+              disabled && "opacity-50 cursor-not-allowed"
+            )}
+          >
+            <option value="">{placeholder}</option>
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         ) : (
-          <Input
-            type="text"
-            inputMode={type === "number" ? "numeric" : "text"}
+          <input
+            type={type === "number" ? "text" : type}
             value={displayValue}
-            onChange={(e) => handleChange(e.target.value)}
-            placeholder={type === "number" ? toPersianNumbers(placeholder) : placeholder}
-            className="h-12 bg-white/60 dark:bg-slate-800/60 border-slate-200/50 dark:border-slate-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl pl-12 backdrop-blur-sm"
-            dir={type === "number" ? "rtl" : "rtl"}
+            onChange={handleInputChange}
+            placeholder={placeholder}
+            disabled={disabled}
+            readOnly={readOnly}
+            className={cn(
+              "w-full py-3 px-4 bg-white dark:bg-slate-900 border rounded-xl text-slate-900 dark:text-slate-100 text-right transition-colors",
+              Icon ? "pr-10" : "pr-4",
+              error
+                ? "border-red-300 dark:border-red-700 focus:border-red-500 focus:ring-red-500"
+                : isValid
+                ? "border-green-300 dark:border-green-700 focus:border-green-500 focus:ring-green-500"
+                : "border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500",
+              (disabled || readOnly) && "opacity-50 cursor-not-allowed"
+            )}
           />
         )}
-
-        {/* Status indicator */}
-        <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          {error ? (
-            <AlertCircle className="h-4 w-4 text-red-500" />
-          ) : isValid ? (
-            <Check className="h-4 w-4 text-green-500" />
-          ) : (
-            <div className="w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full" />
-          )}
-        </div>
       </div>
-
+      
       {error && (
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-red-500 text-sm font-medium"
-        >
+        <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
           {error}
-        </motion.p>
+        </p>
       )}
-    </motion.div>
+    </div>
   );
 };

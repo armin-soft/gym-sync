@@ -29,25 +29,29 @@ export const useStudentProfile = () => {
         const loggedInStudentId = localStorage.getItem("loggedInStudentId");
         const students = JSON.parse(localStorage.getItem("students") || "[]");
         
+        console.log('Loading student profile - ID:', loggedInStudentId);
+        console.log('Available students:', students);
+        
         if (loggedInStudentId && students.length > 0) {
           const student = students.find((s: any) => s.id === parseInt(loggedInStudentId));
           
           if (student) {
-            console.log('Loading student profile from localStorage:', student);
+            console.log('Found student data:', student);
+            console.log('Student gender:', student.gender);
             
             setProfile({
               id: student.id?.toString() || "",
               name: student.name || "",
               phone: student.phone || "",
               age: student.age?.toString() || "",
-              gender: student.gender || "male",
+              gender: student.gender || "male", // Load gender from database
               height: student.height?.toString() || "",
               weight: student.weight?.toString() || "",
               image: student.image || student.profileImage || "/Assets/Images/Place-Holder.svg",
               paymentStatus: student.paymentStatus || "pending"
             });
             
-            console.log('Student profile loaded successfully');
+            console.log('Student profile loaded with gender:', student.gender);
           } else {
             console.log('No student found with the logged-in ID');
           }
@@ -103,6 +107,11 @@ export const useStudentProfile = () => {
   };
 
   const handleUpdate = (key: keyof StudentProfile, value: string) => {
+    // Don't allow phone number updates
+    if (key === 'phone') {
+      return;
+    }
+    
     setProfile(prev => ({ ...prev, [key]: value }));
     
     const error = validateField(key, value);
@@ -126,7 +135,7 @@ export const useStudentProfile = () => {
       // اعتبارسنجی سایر فیلدها که مقدار دارند
       Object.keys(profile).forEach(key => {
         const profileKey = key as keyof StudentProfile;
-        if (profile[profileKey]) {
+        if (profile[profileKey] && profileKey !== 'phone') { // Don't validate phone since it's readonly
           const error = validateField(profileKey, profile[profileKey]);
           if (error) newErrors[profileKey] = error;
         }
@@ -152,11 +161,12 @@ export const useStudentProfile = () => {
         const studentIndex = students.findIndex((s: any) => s.id === parseInt(loggedInStudentId));
         
         if (studentIndex >= 0) {
-          // بروزرسانی اطلاعات شاگرد
+          // بروزرسانی اطلاعات شاگرد (بدون تغییر شماره موبایل)
           students[studentIndex] = {
             ...students[studentIndex],
             ...profile,
             id: parseInt(loggedInStudentId), // حفظ ID اصلی
+            phone: students[studentIndex].phone, // حفظ شماره موبایل اصلی
             profileImage: profile.image // همگام‌سازی تصویر
           };
           
