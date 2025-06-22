@@ -28,7 +28,7 @@ const StudentHistoryPage = () => {
             title="تاریخچه شاگردان" 
             description={`نمایش سابقه تغییرات شاگردان (${historyEntries.length} مورد)`}
             actions={
-              <Link to="/students">
+              <Link to="/Management/Students">
                 <Button variant="outline" className="flex items-center gap-2">
                   <ArrowLeft className="h-4 w-4" />
                   <span>بازگشت به شاگردان</span>
