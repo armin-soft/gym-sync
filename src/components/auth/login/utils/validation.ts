@@ -10,6 +10,11 @@ export const validatePhone = (phone: string): string | null => {
     return "شماره موبایل باید ۱۱ رقم باشد";
   }
   
+  // بررسی که شماره با 09 شروع شود
+  if (!phone.startsWith('09')) {
+    return "شماره موبایل باید با ۰۹ شروع شود";
+  }
+  
   return null;
 };
 
@@ -31,4 +36,19 @@ export const validateCode = (code: string): string | null => {
 
 export const isValidCode = (code: string): boolean => {
   return code === LOGIN_CONSTANTS.VALID_CODE;
+};
+
+// تابع کمکی برای تبدیل اعداد فارسی به انگلیسی
+export const convertPersianToEnglish = (value: string): string => {
+  return value.replace(/[۰-۹]/g, (d) => {
+    return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString();
+  });
+};
+
+// تابع کمکی برای پاک کردن کاراکترهای غیر عددی
+export const sanitizePhoneNumber = (value: string): string => {
+  // ابتدا اعداد فارسی را به انگلیسی تبدیل کن
+  const convertedValue = convertPersianToEnglish(value);
+  // سپس فقط اعداد انگلیسی را نگه دار
+  return convertedValue.replace(/[^0-9]/g, '');
 };

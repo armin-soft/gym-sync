@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { validatePhone, validatePhoneAccess, isValidCode } from "../utils/validation";
+import { validatePhone, validatePhoneAccess, isValidCode, sanitizePhoneNumber } from "../utils/validation";
 import { setLockInfo, setLoginSuccess } from "../utils/storage";
 import { LOGIN_CONSTANTS } from "../constants";
 import { successToast } from "@/hooks/use-toast";
@@ -25,28 +25,37 @@ export const useLoginHandlers = ({
   
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('useLoginHandlers: Phone submit started with phone:', state.phone);
     setState((prev: any) => ({ ...prev, loading: true, error: "" }));
 
-    const phoneError = validatePhone(state.phone);
+    // پاکسازی شماره تلفن
+    const cleanPhone = sanitizePhoneNumber(state.phone);
+    console.log('useLoginHandlers: Clean phone:', cleanPhone);
+
+    const phoneError = validatePhone(cleanPhone);
     if (phoneError) {
+      console.log('useLoginHandlers: Phone validation error:', phoneError);
       setState((prev: any) => ({ ...prev, error: phoneError, loading: false }));
       return;
     }
 
-    const accessError = validatePhoneAccess(state.phone, state.allowedPhone);
+    const accessError = validatePhoneAccess(cleanPhone, state.allowedPhone);
     if (accessError) {
+      console.log('useLoginHandlers: Phone access error:', accessError);
       setState((prev: any) => ({ ...prev, error: accessError, loading: false }));
       return;
     }
 
+    console.log('useLoginHandlers: Phone validation passed, moving to code step');
     setTimeout(() => {
       setStep("code");
       setState((prev: any) => ({ 
         ...prev, 
         countdown: LOGIN_CONSTANTS.RESEND_COUNTDOWN,
-        loading: false 
+        loading: false,
+        phone: cleanPhone // ذخیره شماره پاکسازی شده
       }));
-      console.log(`کد تأیید برای شماره ${state.phone} ارسال شد`);
+      console.log(`کد تأیید برای شماره ${cleanPhone} ارسال شد`);
     }, 1500);
   };
 
@@ -135,6 +144,7 @@ export const useLoginHandlers = ({
   };
 
   const setPhone = (phone: string) => {
+    console.log('useLoginHandlers: Setting phone to:', phone);
     setState((prev: any) => ({ ...prev, phone }));
   };
 

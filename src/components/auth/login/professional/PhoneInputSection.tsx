@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Phone, ArrowLeft, Shield, CheckCircle } from "lucide-react";
 import { ProfessionalErrorMessage } from "./ProfessionalErrorMessage";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { sanitizePhoneNumber } from "../utils/validation";
 
 interface PhoneInputSectionProps {
   phone: string;
@@ -30,17 +31,13 @@ export const PhoneInputSection = ({
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
-    // تبدیل اعداد فارسی به انگلیسی
-    const convertedValue = value.replace(/[۰-۹]/g, (d) => {
-      return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString();
-    });
-    
-    // فقط اعداد انگلیسی مجاز
-    const numbersOnly = convertedValue.replace(/[^0-9]/g, '');
+    // پاکسازی و تبدیل شماره
+    const sanitizedPhone = sanitizePhoneNumber(value);
     
     // محدود کردن به 11 رقم
-    if (numbersOnly.length <= 11) {
-      setPhone(numbersOnly);
+    if (sanitizedPhone.length <= 11) {
+      console.log('PhoneInputSection: Setting phone to:', sanitizedPhone);
+      setPhone(sanitizedPhone);
     }
   };
 
@@ -87,6 +84,8 @@ export const PhoneInputSection = ({
                 className={`w-3 h-3 rounded-full ${
                   isValidPhone 
                     ? 'bg-green-500' 
+                    : phone.length > 0
+                    ? 'bg-yellow-500'
                     : 'bg-slate-300 dark:bg-slate-600'
                 }`}
                 animate={{ 
