@@ -20,22 +20,30 @@ export const useUserTypeSelection = () => {
       // مرحله ۱: ذخیره انتخاب کاربر
       localStorage.setItem("hasSelectedUserType", "true");
       localStorage.setItem("selectedUserType", type);
+      console.log('نوع کاربر ذخیره شد:', type);
       
       // مرحله ۲: آماده‌سازی محیط
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise(resolve => setTimeout(resolve, 500));
       setCurrentStep(3);
       
       // مرحله ۳: هدایت به پنل مناسب
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       console.log('هدایت به پنل مناسب برای نوع کاربر:', type);
       
       // هدایت مستقیم به پنل مناسب
       if (type === 'student') {
-        navigate("/Students", { replace: true });
+        console.log('هدایت به پنل شاگرد');
+        navigate("/Student", { replace: true });
       } else if (type === 'management') {
+        console.log('هدایت به پنل مدیریت');
         navigate("/Management", { replace: true });
       }
+      
+      // اجبار به reload برای اطمینان از تغییر حالت
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
       
     } catch (error) {
       console.error('خطا در هنگام هدایت:', error);

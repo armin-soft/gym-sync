@@ -40,22 +40,25 @@ function AppContent() {
     console.log('AppContent: User type selected:', hasSelectedType);
     console.log('AppContent: Selected user type:', selectedUserType);
     
+    // اگر نوع کاربر انتخاب نشده، نمایش صفحه انتخاب
     if (!hasSelectedType || !selectedUserType) {
       console.log('AppContent: No user type selected, showing selection screen');
       setShowUserTypeSelection(true);
-    } else {
-      console.log('AppContent: User type already selected:', selectedUserType);
-      setShowUserTypeSelection(false);
-      
-      // اگر در مسیر اصلی هستیم و نوع کاربر انتخاب شده، به پنل مناسب هدایت کنیم
-      if (currentPath === '/') {
-        if (selectedUserType === "student") {
-          console.log('AppContent: Redirecting to student panel');
-          navigate('/Student', { replace: true });
-        } else if (selectedUserType === "management") {
-          console.log('AppContent: Redirecting to management panel');
-          navigate('/Management', { replace: true });
-        }
+      setIsLoading(false);
+      return;
+    }
+    
+    console.log('AppContent: User type already selected:', selectedUserType);
+    setShowUserTypeSelection(false);
+    
+    // هدایت به پنل مناسب بر اساس نوع کاربر
+    if (currentPath === '/') {
+      if (selectedUserType === "student") {
+        console.log('AppContent: Redirecting to student panel');
+        navigate('/Student', { replace: true });
+      } else if (selectedUserType === "management") {
+        console.log('AppContent: Redirecting to management panel');
+        navigate('/Management', { replace: true });
       }
     }
     
