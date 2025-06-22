@@ -8,26 +8,15 @@ export const useStudentProfile = () => {
   const [profile, setProfile] = useState<StudentProfile>({
     id: "",
     name: "",
-    email: "",
     phone: "",
     age: "",
     gender: "male",
-    birthDate: "",
-    address: "",
     height: "",
     weight: "",
     grade: "",
     group: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
-    paymentStatus: "pending",
-    goal: "",
     image: "/Assets/Images/Place-Holder.svg",
-    medicalConditions: "",
-    allergies: "",
-    fitnessLevel: "beginner",
-    preferredWorkoutTime: "",
-    notes: ""
+    payment: ""
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof StudentProfile, string>>>({});
@@ -51,26 +40,15 @@ export const useStudentProfile = () => {
             setProfile({
               id: student.id?.toString() || "",
               name: student.name || "",
-              email: student.email || "",
               phone: student.phone || "",
               age: student.age?.toString() || "",
               gender: student.gender || "male",
-              birthDate: student.birthDate || "",
-              address: student.address || "",
               height: student.height?.toString() || "",
               weight: student.weight?.toString() || "",
               grade: student.grade || "",
               group: student.group || "",
-              emergencyContactName: student.emergencyContactName || "",
-              emergencyContactPhone: student.emergencyContactPhone || "",
-              paymentStatus: student.paymentStatus || "pending",
-              goal: student.goal || "",
               image: student.image || student.profileImage || "/Assets/Images/Place-Holder.svg",
-              medicalConditions: student.medicalConditions || "",
-              allergies: student.allergies || "",
-              fitnessLevel: student.fitnessLevel || "beginner",
-              preferredWorkoutTime: student.preferredWorkoutTime || "",
-              notes: student.notes || ""
+              payment: student.payment || ""
             });
             
             console.log('Student profile loaded successfully');
@@ -111,15 +89,9 @@ export const useStudentProfile = () => {
     switch (key) {
       case 'name':
         return value.length < 2 ? 'نام باید حداقل ۲ کاراکتر باشد' : '';
-      case 'email':
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return value && !emailRegex.test(value) ? 'فرمت ایمیل صحیح نیست' : '';
       case 'phone':
         const phoneRegex = /^09\d{9}$/;
         return value && !phoneRegex.test(value) ? 'شماره موبایل باید با ۰۹ شروع شده و ۱۱ رقم باشد' : '';
-      case 'emergencyContactPhone':
-        const emergencyPhoneRegex = /^09\d{9}$/;
-        return value && !emergencyPhoneRegex.test(value) ? 'شماره موبایل باید با ۰۹ شروع شده و ۱۱ رقم باشد' : '';
       case 'age':
         const age = parseInt(value);
         return value && (age < 10 || age > 100) ? 'سن باید بین ۱۰ تا ۱۰۰ سال باشد' : '';

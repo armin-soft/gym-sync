@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Phone, Calendar, MapPin, Users, GraduationCap } from "lucide-react";
+import { User, Mail, Phone, Calendar, MapPin, Users, GraduationCap, Weight, Ruler, DollarSign } from "lucide-react";
 import { StudentProfile } from "../../types/studentProfile";
 import { ModernFormField } from "./ModernFormField";
 
@@ -46,17 +46,6 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
         />
 
         <ModernFormField
-          label="ایمیل"
-          value={profile.email}
-          onChange={(value) => handleUpdate('email', value)}
-          placeholder="example@email.com"
-          icon={Mail}
-          error={errors.email || ''}
-          isValid={validFields.email}
-          type="email"
-        />
-
-        <ModernFormField
           label="شماره موبایل"
           value={profile.phone}
           onChange={(value) => handleUpdate('phone', value)}
@@ -93,13 +82,35 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
         />
 
         <ModernFormField
-          label="تاریخ تولد"
-          value={profile.birthDate}
-          onChange={(value) => handleUpdate('birthDate', value)}
-          placeholder="1378/05/15"
-          icon={Calendar}
-          error={errors.birthDate || ''}
-          isValid={validFields.birthDate}
+          label="قد (سانتی‌متر)"
+          value={profile.height}
+          onChange={(value) => handleUpdate('height', value)}
+          placeholder="175"
+          icon={Ruler}
+          error={errors.height || ''}
+          isValid={validFields.height}
+          type="number"
+        />
+
+        <ModernFormField
+          label="وزن (کیلوگرم)"
+          value={profile.weight}
+          onChange={(value) => handleUpdate('weight', value)}
+          placeholder="70"
+          icon={Weight}
+          error={errors.weight || ''}
+          isValid={validFields.weight}
+          type="number"
+        />
+
+        <ModernFormField
+          label="سطح تمرینی"
+          value={profile.grade}
+          onChange={(value) => handleUpdate('grade', value)}
+          placeholder="مبتدی"
+          icon={GraduationCap}
+          error={errors.grade || ''}
+          isValid={validFields.grade}
         />
 
         <ModernFormField
@@ -113,55 +124,15 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
         />
 
         <ModernFormField
-          label="سطح تمرینی"
-          value={profile.grade}
-          onChange={(value) => handleUpdate('grade', value)}
-          placeholder="مبتدی"
-          icon={GraduationCap}
-          error={errors.grade || ''}
-          isValid={validFields.grade}
+          label="مبلغ پرداختی"
+          value={profile.payment}
+          onChange={(value) => handleUpdate('payment', value)}
+          placeholder="1000000"
+          icon={DollarSign}
+          error={errors.payment || ''}
+          isValid={validFields.payment}
+          type="number"
         />
-      </div>
-
-      <div className="space-y-6">
-        <ModernFormField
-          label="آدرس"
-          value={profile.address}
-          onChange={(value) => handleUpdate('address', value)}
-          placeholder="آدرس کامل خود را وارد کنید"
-          icon={MapPin}
-          error={errors.address || ''}
-          isValid={validFields.address}
-          type="textarea"
-        />
-      </div>
-
-      <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
-          اطلاعات تماس اضطراری
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ModernFormField
-            label="نام فرد تماس اضطراری"
-            value={profile.emergencyContactName}
-            onChange={(value) => handleUpdate('emergencyContactName', value)}
-            placeholder="نام کامل"
-            icon={User}
-            error={errors.emergencyContactName || ''}
-            isValid={validFields.emergencyContactName}
-          />
-
-          <ModernFormField
-            label="شماره تماس اضطراری"
-            value={profile.emergencyContactPhone}
-            onChange={(value) => handleUpdate('emergencyContactPhone', value)}
-            placeholder="09123456789"
-            icon={Phone}
-            error={errors.emergencyContactPhone || ''}
-            isValid={validFields.emergencyContactPhone}
-          />
-        </div>
       </div>
     </motion.div>
   );
