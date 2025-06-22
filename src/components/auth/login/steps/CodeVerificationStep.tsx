@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ export const CodeVerificationStep = ({
           کد تأیید
         </Label>
         
-        <div className="flex justify-center mb-6" dir="rtl">
+        <div className="flex justify-center mb-6">
           <div className="relative group">
             <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-violet-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
             
@@ -55,9 +56,9 @@ export const CodeVerificationStep = ({
               maxLength={6}
               value={code}
               onChange={(value) => setCode(value)}
-              dir="rtl"
+              dir="ltr"
             >
-              <InputOTPGroup className="gap-3" dir="rtl">
+              <InputOTPGroup className="gap-3" dir="ltr">
                 {[...Array(6)].map((_, index) => {
                   const currentChar = code[index] || '';
                   const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
