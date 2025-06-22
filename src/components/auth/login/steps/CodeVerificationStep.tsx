@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Shield, LogIn, RefreshCw, Edit3, Clock } from "lucide-react";
+import { Shield, LogIn, RefreshCw, Edit3, Clock, MessageSquare } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useSMSCodeReader } from "@/hooks/useSMSCodeReader";
 
 interface CodeVerificationStepProps {
   code: string;
@@ -32,6 +33,32 @@ export const CodeVerificationStep = ({
   containerVariants,
   itemVariants
 }: CodeVerificationStepProps) => {
+  
+  // Auto-read SMS codes
+  const { cleanup } = useSMSCodeReader({
+    onCodeReceived: (receivedCode) => {
+      console.log('Auto-filling verification code:', receivedCode);
+      setCode(receivedCode);
+    },
+    enabled: code.length === 0 && !loading
+  });
+
+  // Auto-submit when code is complete
+  useEffect(() => {
+    if (code.length === 6 && !loading) {
+      const timer = setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+        onSubmit(fakeEvent);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [code, loading, onSubmit]);
+
+  // Cleanup SMS listener when component unmounts
+  useEffect(() => {
+    return () => cleanup();
+  }, [cleanup]);
+
   return (
     <motion.form
       onSubmit={onSubmit}
@@ -45,7 +72,7 @@ export const CodeVerificationStep = ({
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-violet-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-purple-500/20">
             <Shield className="h-5 w-5 text-purple-600 dark:text-purple-400" />
           </div>
-          کد تأیید
+          کد تأیید (خودکار از پیامک خوانده می‌شود)
         </Label>
         
         <div className="flex justify-center mb-6">
@@ -59,20 +86,13 @@ export const CodeVerificationStep = ({
               dir="ltr"
             >
               <InputOTPGroup className="gap-3" dir="ltr">
-                {[...Array(6)].map((_, index) => {
-                  const currentChar = code[index] || '';
-                  const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
-                  
-                  return (
-                    <InputOTPSlot 
-                      key={index}
-                      index={index}
-                      className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-purple-200/50 dark:border-purple-700/50 text-slate-800 dark:text-white focus:border-purple-500 focus:ring-purple-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-purple-400 flex items-center justify-center"
-                    >
-                      {displayChar}
-                    </InputOTPSlot>
-                  );
-                })}
+                {[...Array(6)].map((_, index) => (
+                  <InputOTPSlot 
+                    key={index}
+                    index={index}
+                    className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-purple-200/50 dark:border-purple-700/50 text-slate-800 dark:text-white focus:border-purple-500 focus:ring-purple-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-purple-400 flex items-center justify-center"
+                  />
+                ))}
               </InputOTPGroup>
             </InputOTP>
           </div>
@@ -105,6 +125,20 @@ export const CodeVerificationStep = ({
               
               <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">
                 ارسال مجدد کد تا {toPersianNumbers(Math.floor(countdown / 60))}:{toPersianNumbers((countdown % 60).toString().padStart(2, '0'))} دیگر
+              </p>
+            </motion.div>
+          )}
+
+          {/* SMS Auto-read indicator */}
+          {code.length === 0 && !loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-center gap-2"
+            >
+              <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              <p className="text-slate-600 dark:text-slate-300 text-sm">
+                در انتظار دریافت پیامک برای خواندن خودکار کد...
               </p>
             </motion.div>
           )}

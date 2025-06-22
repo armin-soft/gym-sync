@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ArrowLeft, RefreshCw, MessageSquare } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
+import { useSMSCodeReader } from "@/hooks/useSMSCodeReader";
 
 interface StudentCodeVerificationStepProps {
   variants: any;
@@ -30,11 +31,38 @@ export const StudentCodeVerificationStep = ({
   onChangePhone,
   onResendCode
 }: StudentCodeVerificationStepProps) => {
+  
+  // Auto-read SMS codes
+  const { cleanup } = useSMSCodeReader({
+    onCodeReceived: (receivedCode) => {
+      console.log('Auto-filling verification code:', receivedCode);
+      setCode(receivedCode);
+    },
+    enabled: code.length === 0 && !loading
+  });
+
+  // Auto-submit when code is complete
+  useEffect(() => {
+    if (code.length === 6 && !loading) {
+      const timer = setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+        onSubmit(fakeEvent);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [code, loading, onSubmit]);
+
+  // Cleanup SMS listener when component unmounts
+  useEffect(() => {
+    return () => cleanup();
+  }, [cleanup]);
+
   return (
     <form onSubmit={onSubmit} className="space-y-6" dir="rtl">
       <motion.div variants={variants} className="space-y-2">
         <Label htmlFor="code" className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
-          کد تأیید
+          <MessageSquare className="h-4 w-4 text-emerald-600" />
+          کد تأیید (خودکار از پیامک خوانده می‌شود)
         </Label>
         
         <div className="flex justify-center mb-6">
@@ -48,20 +76,13 @@ export const StudentCodeVerificationStep = ({
               dir="ltr"
             >
               <InputOTPGroup className="gap-3" dir="ltr">
-                {[...Array(6)].map((_, index) => {
-                  const currentChar = code[index] || '';
-                  const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
-                  
-                  return (
-                    <InputOTPSlot 
-                      key={index}
-                      index={index}
-                      className="w-12 h-12 text-lg font-bold bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl backdrop-blur-sm text-center"
-                    >
-                      {displayChar}
-                    </InputOTPSlot>
-                  );
-                })}
+                {[...Array(6)].map((_, index) => (
+                  <InputOTPSlot 
+                    key={index}
+                    index={index}
+                    className="w-12 h-12 text-lg font-bold bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl backdrop-blur-sm text-center"
+                  />
+                ))}
               </InputOTPGroup>
             </InputOTP>
           </div>
@@ -122,6 +143,20 @@ export const StudentCodeVerificationStep = ({
           </Button>
         </div>
       </motion.div>
+
+      {/* SMS Auto-read indicator */}
+      {code.length === 0 && !loading && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
+        >
+          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
+            <MessageSquare className="h-3 w-3" />
+            در انتظار دریافت پیامک برای خواندن خودکار کد...
+          </p>
+        </motion.div>
+      )}
     </form>
   );
 };
