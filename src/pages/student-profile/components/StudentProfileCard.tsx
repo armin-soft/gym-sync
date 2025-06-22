@@ -21,14 +21,14 @@ export const StudentProfileCard: React.FC<StudentProfileCardProps> = (props) => 
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
-      {/* تأثیرات پس‌زمینه */}
+      {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-emerald-400/10 to-sky-400/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-64 h-64 bg-gradient-to-tl from-sky-400/10 to-emerald-400/5 rounded-full blur-2xl" />
       </div>
 
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
-        {/* نوار کناری */}
+        {/* Sidebar */}
         <div className="lg:col-span-4 bg-gradient-to-b from-emerald-50/80 to-sky-50/80 dark:from-slate-800/80 dark:to-slate-900/80 border-l border-slate-200/50 dark:border-slate-700/50">
           <div className="p-8 space-y-8">
             <ProfileImageSection 
@@ -42,12 +42,11 @@ export const StudentProfileCard: React.FC<StudentProfileCardProps> = (props) => 
           </div>
         </div>
 
-        {/* بخش فرم */}
+        {/* Form Section */}
         <div className="lg:col-span-8">
           <ProfileFormSection 
             profile={props.profile}
             activeSection={props.activeSection}
-            handleImageUpdate={props.handleImageUpdate}
           />
         </div>
       </div>

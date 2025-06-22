@@ -17,7 +17,7 @@ export const ProfileSidebarTabs: React.FC<ProfileSidebarTabsProps> = ({
       id: "personal",
       label: "اطلاعات شخصی",
       icon: User,
-      description: "اطلاعات پایه و شخصی"
+      description: "مشاهده اطلاعات پایه"
     }
   ];
 

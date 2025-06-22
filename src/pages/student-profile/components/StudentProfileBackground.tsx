@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 export const StudentProfileBackground = () => {
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* گرادیان پس‌زمینه اصلی */}
+      {/* Main Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40 dark:from-slate-900 dark:via-emerald-950/30 dark:to-sky-950/40" />
       
-      {/* عناصر هندسی متحرک */}
+      {/* Animated Geometric Elements */}
       <div className="absolute inset-0">
-        {/* دایره‌های بزرگ */}
+        {/* Large Circles */}
         <motion.div
           className="absolute -top-60 -right-60 w-[30rem] h-[30rem] rounded-full"
           style={{
@@ -44,7 +44,7 @@ export const StudentProfileBackground = () => {
           }}
         />
 
-        {/* دایره‌های کوچک */}
+        {/* Small Circles */}
         <motion.div
           className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full"
           style={{
@@ -79,7 +79,7 @@ export const StudentProfileBackground = () => {
         />
       </div>
 
-      {/* الگوی نقطه‌ای پیشرفته */}
+      {/* Advanced Dot Pattern */}
       <div 
         className="absolute inset-0 opacity-20 dark:opacity-10"
         style={{
@@ -91,7 +91,7 @@ export const StudentProfileBackground = () => {
         }}
       />
 
-      {/* تأثیر نور */}
+      {/* Light Effect */}
       <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/3 to-white/8 dark:from-transparent dark:via-black/3 dark:to-black/8" />
     </div>
   );

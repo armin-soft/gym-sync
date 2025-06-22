@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { User, Shield, Star, Crown, Zap, Award } from "lucide-react";
+import { User, Shield, Star, Zap, Award, GraduationCap } from "lucide-react";
 
 export const StudentProfileHeader = () => {
   return (
@@ -11,7 +11,7 @@ export const StudentProfileHeader = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
-      {/* نشان شاگرد */}
+      {/* Student Badge */}
       <motion.div
         className="inline-flex items-center gap-4 bg-gradient-to-r from-emerald-500 to-sky-600 text-white rounded-full px-8 py-4 shadow-2xl border border-white/20"
         initial={{ scale: 0.8, opacity: 0 }}
@@ -30,7 +30,7 @@ export const StudentProfileHeader = () => {
             repeatType: "reverse"
           }}
         >
-          <User className="h-6 w-6 text-white" />
+          <GraduationCap className="h-6 w-6 text-white" />
         </motion.div>
         <span className="font-bold text-lg">شاگرد عزیز</span>
         <div className="flex items-center gap-1">
@@ -40,7 +40,7 @@ export const StudentProfileHeader = () => {
         </div>
       </motion.div>
 
-      {/* عنوان اصلی */}
+      {/* Main Title */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -48,14 +48,14 @@ export const StudentProfileHeader = () => {
         className="space-y-6"
       >
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-black bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-700 bg-clip-text text-transparent leading-tight">
-          پروفایل شخصی
+          پروفایل شاگرد
         </h1>
         <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed font-medium">
-          مدیریت کامل اطلاعات شخصی با بالاترین استانداردهای امنیتی
+          مشاهده اطلاعات شخصی با بالاترین استانداردهای امنیتی و کیفیت
         </p>
       </motion.div>
 
-      {/* ویژگی‌ها */}
+      {/* Features */}
       <motion.div
         className="flex flex-wrap items-center justify-center gap-4"
         initial={{ opacity: 0, y: 20 }}
@@ -63,8 +63,8 @@ export const StudentProfileHeader = () => {
         transition={{ delay: 0.6, duration: 0.6 }}
       >
         {[
-          { icon: Shield, text: "امنیت پیشرفته", color: "from-emerald-500 to-emerald-600" },
-          { icon: Zap, text: "سرعت بالا", color: "from-sky-500 to-sky-600" },
+          { icon: Shield, text: "امنیت بالا", color: "from-emerald-500 to-emerald-600" },
+          { icon: Zap, text: "سرعت فوق‌العاده", color: "from-sky-500 to-sky-600" },
           { icon: Award, text: "کیفیت برتر", color: "from-emerald-500 to-sky-600" },
           { icon: User, text: "کاربرپسند", color: "from-sky-500 to-emerald-600" }
         ].map((feature, index) => (
@@ -82,7 +82,7 @@ export const StudentProfileHeader = () => {
         ))}
       </motion.div>
 
-      {/* خط تزئینی */}
+      {/* Decorative Line */}
       <motion.div
         className="flex items-center justify-center gap-6"
         initial={{ opacity: 0 }}

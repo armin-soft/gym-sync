@@ -7,24 +7,32 @@ import { PersonalInfoForm } from "../forms/PersonalInfoForm";
 interface ProfileFormSectionProps {
   profile: StudentProfile;
   activeSection: string;
-  handleImageUpdate?: (image: string) => void;
 }
 
-export const ProfileFormSection: React.FC<ProfileFormSectionProps> = (props) => {
+export const ProfileFormSection: React.FC<ProfileFormSectionProps> = ({
+  profile,
+  activeSection
+}) => {
+  const renderActiveForm = () => {
+    switch (activeSection) {
+      case "personal":
+        return <PersonalInfoForm profile={profile} />;
+      default:
+        return <PersonalInfoForm profile={profile} />;
+    }
+  };
+
   return (
     <div className="p-8 h-full flex flex-col">
       <motion.div
+        key={activeSection}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.5 }}
         className="flex-1"
       >
-        <PersonalInfoForm 
-          profile={props.profile}
-          errors={{}}
-          validFields={{}}
-          handleUpdate={() => {}} // تابع خالی چون دیگر قابل ویرایش نیست
-        />
+        {renderActiveForm()}
       </motion.div>
     </div>
   );
