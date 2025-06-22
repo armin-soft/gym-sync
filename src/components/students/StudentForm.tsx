@@ -9,7 +9,7 @@ import { Student } from "@/components/students/StudentTypes";
 import { cn } from "@/lib/utils";
 import { studentFormSchema, StudentFormValues } from "@/lib/validations/student";
 
-// Import our new components
+// Import our components
 import { ProfileImageUpload } from "./form-components/ProfileImageUpload";
 import { PersonalInfoSection } from "./form-components/PersonalInfoSection";
 import { MeasurementsSection } from "./form-components/MeasurementsSection";
@@ -126,49 +126,81 @@ export const StudentForm = ({
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* Profile Image Section */}
-          <motion.div 
-            variants={itemVariants}
-            className="flex justify-center"
-          >
-            <ProfileImageUpload 
-              previewImage={previewImage}
-              onChange={handleImageChange}
-              error={!!form.formState.errors.image}
-            />
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Personal Info Section */}
-            <div className="space-y-4">
-              <PersonalInfoSection 
-                control={form.control} 
-                itemVariants={itemVariants} 
-              />
-              
-              {/* Gender Field */}
-              <GenderField 
-                control={form.control}
-                itemVariants={itemVariants}
-              />
-            </div>
+          {/* Main Content Grid - مطابق با پروفایل شاگرد */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            {/* Measurements Section */}
-            <div>
-              <MeasurementsSection 
-                control={form.control} 
-                itemVariants={itemVariants} 
-              />
+            {/* Sidebar - Profile Image and Basic Info */}
+            <div className="lg:col-span-4">
+              <div className="space-y-6">
+                {/* Profile Image Section */}
+                <motion.div 
+                  variants={itemVariants}
+                  className="text-center"
+                >
+                  <ProfileImageUpload 
+                    previewImage={previewImage}
+                    onChange={handleImageChange}
+                    error={!!form.formState.errors.image}
+                  />
+                </motion.div>
+
+                {/* Gender Field */}
+                <GenderField 
+                  control={form.control}
+                  itemVariants={itemVariants}
+                />
+              </div>
+            </div>
+
+            {/* Form Section */}
+            <div className="lg:col-span-8">
+              <div className="space-y-8">
+                
+                {/* Personal Info Section */}
+                <div className="space-y-4">
+                  <motion.h3 
+                    variants={itemVariants}
+                    className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4"
+                  >
+                    اطلاعات شخصی
+                  </motion.h3>
+                  <PersonalInfoSection 
+                    control={form.control} 
+                    itemVariants={itemVariants} 
+                  />
+                </div>
+
+                {/* Measurements Section */}
+                <div className="space-y-4">
+                  <motion.h3 
+                    variants={itemVariants}
+                    className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4"
+                  >
+                    اطلاعات تکمیلی
+                  </motion.h3>
+                  <MeasurementsSection 
+                    control={form.control} 
+                    itemVariants={itemVariants} 
+                  />
+                </div>
+
+                {/* Payment Field */}
+                <div className="space-y-4">
+                  <motion.h3 
+                    variants={itemVariants}
+                    className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4"
+                  >
+                    اطلاعات مالی
+                  </motion.h3>
+                  <PaymentField 
+                    control={form.control}
+                    itemVariants={itemVariants}
+                  />
+                </div>
+
+              </div>
             </div>
           </div>
-
-          {/* Payment Field */}
-          <motion.div variants={itemVariants} className="md:col-span-2">
-            <PaymentField 
-              control={form.control}
-              itemVariants={itemVariants}
-            />
-          </motion.div>
 
           {/* Form Actions */}
           <motion.div variants={itemVariants}>

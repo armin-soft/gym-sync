@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { User, Phone } from "lucide-react";
+import { User, Phone, Calendar } from "lucide-react";
 import { StudentFormField } from "./StudentFormField";
 
 interface PersonalInfoSectionProps {
@@ -29,6 +29,18 @@ export const PersonalInfoSection = ({ control, itemVariants }: PersonalInfoSecti
           label="شماره موبایل"
           placeholder="09123456789"
           icon={Phone}
+          direction="ltr"
+          numberOnly
+        />
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <StudentFormField
+          control={control}
+          name="age"
+          label="سن"
+          placeholder="25"
+          icon={Calendar}
           direction="ltr"
           numberOnly
         />
