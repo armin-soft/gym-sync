@@ -36,17 +36,17 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
       transition={{ duration: 0.2 }}
       dir="rtl"
     >
-      <Card className="group relative overflow-hidden bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+      <Card className="group relative overflow-hidden bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl">
         {/* Header با آیکون نوع */}
         <div className="p-4 pb-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               {supplement.type === 'supplement' ? (
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg">
                   <FlaskConical className="w-5 h-5 text-white" />
                 </div>
               ) : (
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-10 h-10 bg-gradient-to-r from-sky-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
                   <Pill className="w-5 h-5 text-white" />
                 </div>
               )}
@@ -56,7 +56,7 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
                 </h3>
                 <Badge 
                   variant="outline" 
-                  className="mt-1 text-xs bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30 border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300"
+                  className="mt-1 text-xs bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300"
                 >
                   <Tag className="w-3 h-3 mr-1" />
                   {supplement.category}
@@ -70,7 +70,7 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={onEdit}
-                className="h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                className="h-8 w-8 p-0 hover:bg-sky-100 dark:hover:bg-sky-900/30 text-sky-600 dark:text-sky-400"
               >
                 <Edit2 className="h-4 w-4" />
               </Button>
@@ -90,27 +90,27 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
         <div className="px-4 pb-4 space-y-3">
           {/* دوز مصرف */}
           {supplement.dosage && (
-            <div className="flex items-center justify-end gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200/50 dark:border-green-800/50">
+            <div className="flex items-center justify-end gap-2 p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200/50 dark:border-emerald-800/50">
               <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
                 {toPersianNumbers(supplement.dosage)}
               </span>
-              <span className="text-xs text-green-700 dark:text-green-400 font-medium">
+              <span className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">
                 دوز مصرف:
               </span>
-              <Beaker className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <Beaker className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             </div>
           )}
 
           {/* زمان مصرف */}
           {supplement.timing && (
-            <div className="flex items-center justify-end gap-2 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200/50 dark:border-orange-800/50">
+            <div className="flex items-center justify-end gap-2 p-2 bg-sky-50 dark:bg-sky-900/20 rounded-lg border border-sky-200/50 dark:border-sky-800/50">
               <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
                 {supplement.timing}
               </span>
-              <span className="text-xs text-orange-700 dark:text-orange-400 font-medium">
+              <span className="text-xs text-sky-700 dark:text-sky-400 font-medium">
                 زمان مصرف:
               </span>
-              <Clock className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+              <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400" />
             </div>
           )}
         </div>
@@ -119,8 +119,8 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
         <div className={cn(
           "absolute top-0 right-0 w-1 h-full",
           supplement.type === 'supplement' 
-            ? "bg-gradient-to-b from-purple-500 to-indigo-600" 
-            : "bg-gradient-to-b from-blue-500 to-purple-600"
+            ? "bg-gradient-to-b from-emerald-500 to-sky-600" 
+            : "bg-gradient-to-b from-sky-500 to-emerald-600"
         )} />
       </Card>
     </motion.div>

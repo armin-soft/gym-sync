@@ -16,8 +16,8 @@ export const FormActions: React.FC<FormActionsProps> = ({
 }) => {
   const getGradientColors = () => {
     return type === "supplement"
-      ? "from-emerald-500 to-teal-600"
-      : "from-cyan-500 to-blue-600";
+      ? "from-emerald-500 to-sky-600"
+      : "from-sky-500 to-emerald-600";
   };
 
   return (
@@ -32,7 +32,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
       </Button>
       <Button
         type="submit"
-        className={`flex-1 h-12 bg-gradient-to-r ${getGradientColors()} hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg rounded-xl`}
+        className={`flex-1 h-12 bg-gradient-to-r ${getGradientColors()} hover:from-emerald-600 hover:to-sky-700 text-white shadow-lg rounded-xl`}
       >
         <Save className="w-5 h-5 ml-2" />
         {mode === "add" ? "افزودن" : "ویرایش"}

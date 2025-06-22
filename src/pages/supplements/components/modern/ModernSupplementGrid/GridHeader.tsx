@@ -22,9 +22,9 @@ export const GridHeader: React.FC<GridHeaderProps> = ({
     <div className="flex items-center justify-between">
       <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
         {activeTab === 'supplement' ? (
-          <Pill className="w-5 h-5 text-green-600" />
+          <Pill className="w-5 h-5 text-emerald-600" />
         ) : (
-          <Heart className="w-5 h-5 text-purple-600" />
+          <Heart className="w-5 h-5 text-sky-600" />
         )}
         {activeTab === 'supplement' ? 'مکمل‌های غذایی' : 'ویتامین‌ها'}
         <Badge variant="secondary" className="mr-2">
@@ -37,8 +37,8 @@ export const GridHeader: React.FC<GridHeaderProps> = ({
           onClick={onAddSupplement}
           className={`${
             activeTab === 'supplement'
-              ? 'bg-green-500 hover:bg-green-600'
-              : 'bg-purple-500 hover:bg-purple-600'
+              ? 'bg-emerald-500 hover:bg-emerald-600'
+              : 'bg-sky-500 hover:bg-sky-600'
           } text-white rounded-lg`}
         >
           <Plus className="w-4 h-4 ml-2" />

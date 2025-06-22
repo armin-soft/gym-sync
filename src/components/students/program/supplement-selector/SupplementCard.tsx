@@ -29,15 +29,15 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
     >
       <Card 
         className={cn(
-          "relative p-3 cursor-pointer border-2 hover:border-purple-300 transition-all overflow-hidden text-right",
-          isSelected && "border-purple-500 bg-purple-50"
+          "relative p-3 cursor-pointer border-2 hover:border-emerald-300 transition-all overflow-hidden text-right",
+          isSelected && "border-emerald-500 bg-emerald-50"
         )}
         onClick={() => onSelect(item.id)}
         dir="rtl"
       >
         {isSelected && (
           <div className="absolute top-0 right-0">
-            <div className="bg-purple-500 text-white flex items-center justify-center h-6 w-6 rounded-bl-md">
+            <div className="bg-emerald-500 text-white flex items-center justify-center h-6 w-6 rounded-bl-md">
               <Check className="h-3.5 w-3.5" />
             </div>
           </div>
@@ -46,12 +46,12 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
         <div className="pt-1 pl-1">
           <div className="flex items-center gap-2 mb-1 justify-end">
             <h5 className="font-medium text-sm">{item.name}</h5>
-            <Pill className="h-4 w-4 text-purple-500" />
+            <Pill className="h-4 w-4 text-emerald-500" />
           </div>
           
           <div className="flex flex-wrap gap-1 mt-2 justify-end">
             {item.category && (
-              <Badge variant="outline" className="text-xs bg-blue-50 border-blue-100 text-blue-700">
+              <Badge variant="outline" className="text-xs bg-sky-50 border-sky-100 text-sky-700">
                 {item.category}
               </Badge>
             )}
@@ -63,7 +63,7 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
               <div className="flex items-center gap-1 justify-end">
                 <span>{toPersianNumbers(item.dosage)}</span>
                 <span className="font-medium">دوز مصرف:</span>
-                <List className="h-3 w-3 text-purple-500" />
+                <List className="h-3 w-3 text-emerald-500" />
               </div>
             ) : (
               <div className="flex items-center gap-1 justify-end text-gray-400">
@@ -77,7 +77,7 @@ export const SupplementCard: React.FC<SupplementCardProps> = ({
               <div className="flex items-center gap-1 justify-end">
                 <span>{toPersianNumbers(item.timing)}</span>
                 <span className="font-medium">زمان مصرف:</span>
-                <Clock className="h-3 w-3 text-purple-500" />
+                <Clock className="h-3 w-3 text-emerald-500" />
               </div>
             ) : (
               <div className="flex items-center gap-1 justify-end text-gray-400">

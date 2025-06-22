@@ -24,8 +24,8 @@ export const VerificationCodeInput = ({
   return (
     <motion.div variants={itemVariants} className="space-y-6">
       <Label htmlFor="code" className="text-slate-700 dark:text-slate-200 font-bold flex items-center gap-3 text-base">
-        <div className="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-violet-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-purple-500/20">
-          <Shield className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-sky-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-emerald-500/20">
+          <Shield className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
         {isSMSEnabled ? 
           "کد تأیید (خودکار از پیامک خوانده می‌شود)" : 
@@ -35,7 +35,7 @@ export const VerificationCodeInput = ({
       
       <div className="flex justify-center mb-6">
         <div className="relative group">
-          <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-violet-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
+          <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
           
           <InputOTP
             maxLength={6}
@@ -48,7 +48,7 @@ export const VerificationCodeInput = ({
                 <InputOTPSlot 
                   key={index}
                   index={index}
-                  className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-purple-200/50 dark:border-purple-700/50 text-slate-800 dark:text-white focus:border-purple-500 focus:ring-purple-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-purple-400 flex items-center justify-center"
+                  className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-emerald-400 flex items-center justify-center"
                 />
               ))}
             </InputOTPGroup>

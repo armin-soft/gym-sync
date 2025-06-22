@@ -17,8 +17,8 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({
 }) => {
   const getGradientColors = () => {
     return type === "supplement"
-      ? "from-emerald-500 to-teal-600"
-      : "from-cyan-500 to-blue-600";
+      ? "from-emerald-500 to-sky-600"
+      : "from-sky-500 to-emerald-600";
   };
 
   return (
