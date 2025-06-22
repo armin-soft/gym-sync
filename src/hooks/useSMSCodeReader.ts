@@ -1,5 +1,6 @@
 
 import { useEffect, useRef } from 'react';
+import { useIsMobile } from './use-mobile';
 
 interface UseSMSCodeReaderProps {
   onCodeReceived: (code: string) => void;
@@ -8,10 +9,14 @@ interface UseSMSCodeReaderProps {
 
 export const useSMSCodeReader = ({ onCodeReceived, enabled = true }: UseSMSCodeReaderProps) => {
   const abortControllerRef = useRef<AbortController | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (!enabled || !('OTPCredential' in window)) {
-      console.log('Web OTP API not supported or disabled');
+    // تنها روی دستگاه‌های موبایل و تبلت فعال باشد
+    const shouldEnableSMS = enabled && isMobile && ('OTPCredential' in window);
+    
+    if (!shouldEnableSMS) {
+      console.log('SMS auto-read disabled: mobile/tablet only feature or API not supported');
       return;
     }
 
@@ -24,7 +29,7 @@ export const useSMSCodeReader = ({ onCodeReceived, enabled = true }: UseSMSCodeR
 
         abortControllerRef.current = new AbortController();
 
-        console.log('Starting SMS code listener...');
+        console.log('Starting SMS code listener on mobile/tablet device...');
         
         const credential = await (navigator.credentials as any).get({
           otp: { transport: ['sms'] },
@@ -32,7 +37,7 @@ export const useSMSCodeReader = ({ onCodeReceived, enabled = true }: UseSMSCodeR
         });
 
         if (credential && credential.code) {
-          console.log('SMS code received:', credential.code);
+          console.log('SMS code received on mobile/tablet:', credential.code);
           onCodeReceived(credential.code);
         }
       } catch (error: any) {
@@ -49,7 +54,7 @@ export const useSMSCodeReader = ({ onCodeReceived, enabled = true }: UseSMSCodeR
         abortControllerRef.current.abort();
       }
     };
-  }, [onCodeReceived, enabled]);
+  }, [onCodeReceived, enabled, isMobile]);
 
   const cleanup = () => {
     if (abortControllerRef.current) {
@@ -57,5 +62,8 @@ export const useSMSCodeReader = ({ onCodeReceived, enabled = true }: UseSMSCodeR
     }
   };
 
-  return { cleanup };
+  return { 
+    cleanup,
+    isSMSEnabled: enabled && isMobile && ('OTPCredential' in window)
+  };
 };

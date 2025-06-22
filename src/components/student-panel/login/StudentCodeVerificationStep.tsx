@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, RefreshCw, MessageSquare } from "lucide-react";
+import { ArrowLeft, RefreshCw, MessageSquare, Smartphone, Monitor } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useSMSCodeReader } from "@/hooks/useSMSCodeReader";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StudentCodeVerificationStepProps {
   variants: any;
@@ -32,10 +33,12 @@ export const StudentCodeVerificationStep = ({
   onResendCode
 }: StudentCodeVerificationStepProps) => {
   
-  // Auto-read SMS codes
-  const { cleanup } = useSMSCodeReader({
+  const isMobile = useIsMobile();
+  
+  // Auto-read SMS codes only on mobile/tablet
+  const { cleanup, isSMSEnabled } = useSMSCodeReader({
     onCodeReceived: (receivedCode) => {
-      console.log('Auto-filling verification code:', receivedCode);
+      console.log('Auto-filling verification code on mobile/tablet:', receivedCode);
       setCode(receivedCode);
     },
     enabled: code.length === 0 && !loading
@@ -61,8 +64,15 @@ export const StudentCodeVerificationStep = ({
     <form onSubmit={onSubmit} className="space-y-6" dir="rtl">
       <motion.div variants={variants} className="space-y-2">
         <Label htmlFor="code" className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
-          <MessageSquare className="h-4 w-4 text-emerald-600" />
-          کد تأیید (خودکار از پیامک خوانده می‌شود)
+          {isMobile ? (
+            <Smartphone className="h-4 w-4 text-emerald-600" />
+          ) : (
+            <Monitor className="h-4 w-4 text-emerald-600" />
+          )}
+          {isSMSEnabled ? 
+            "کد تأیید (خودکار از پیامک خوانده می‌شود)" : 
+            "کد تأیید را وارد کنید"
+          }
         </Label>
         
         <div className="flex justify-center mb-6">
@@ -144,8 +154,8 @@ export const StudentCodeVerificationStep = ({
         </div>
       </motion.div>
 
-      {/* SMS Auto-read indicator */}
-      {code.length === 0 && !loading && (
+      {/* SMS Auto-read indicator - only show on mobile/tablet */}
+      {isSMSEnabled && code.length === 0 && !loading && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -154,6 +164,20 @@ export const StudentCodeVerificationStep = ({
           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
             <MessageSquare className="h-3 w-3" />
             در انتظار دریافت پیامک برای خواندن خودکار کد...
+          </p>
+        </motion.div>
+      )}
+
+      {/* Desktop indicator */}
+      {!isMobile && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
+        >
+          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
+            <Monitor className="h-3 w-3" />
+            لطفاً کد تأیید را بصورت دستی وارد کنید
           </p>
         </motion.div>
       )}

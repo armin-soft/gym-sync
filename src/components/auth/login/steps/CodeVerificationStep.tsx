@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Shield, LogIn, RefreshCw, Edit3, Clock, MessageSquare } from "lucide-react";
+import { Shield, LogIn, RefreshCw, Edit3, Clock, MessageSquare, Smartphone, Monitor } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { useSMSCodeReader } from "@/hooks/useSMSCodeReader";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CodeVerificationStepProps {
   code: string;
@@ -34,10 +35,12 @@ export const CodeVerificationStep = ({
   itemVariants
 }: CodeVerificationStepProps) => {
   
-  // Auto-read SMS codes
-  const { cleanup } = useSMSCodeReader({
+  const isMobile = useIsMobile();
+  
+  // Auto-read SMS codes only on mobile/tablet
+  const { cleanup, isSMSEnabled } = useSMSCodeReader({
     onCodeReceived: (receivedCode) => {
-      console.log('Auto-filling verification code:', receivedCode);
+      console.log('Auto-filling verification code on mobile/tablet:', receivedCode);
       setCode(receivedCode);
     },
     enabled: code.length === 0 && !loading
@@ -72,7 +75,10 @@ export const CodeVerificationStep = ({
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-violet-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-purple-500/20">
             <Shield className="h-5 w-5 text-purple-600 dark:text-purple-400" />
           </div>
-          کد تأیید (خودکار از پیامک خوانده می‌شود)
+          {isSMSEnabled ? 
+            "کد تأیید (خودکار از پیامک خوانده می‌شود)" : 
+            "کد تأیید را وارد کنید"
+          }
         </Label>
         
         <div className="flex justify-center mb-6">
@@ -129,16 +135,30 @@ export const CodeVerificationStep = ({
             </motion.div>
           )}
 
-          {/* SMS Auto-read indicator */}
-          {code.length === 0 && !loading && (
+          {/* SMS Auto-read indicator - only show on mobile/tablet */}
+          {isSMSEnabled && code.length === 0 && !loading && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex items-center justify-center gap-2"
             >
-              <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              <Smartphone className="h-4 w-4 text-purple-600 dark:text-purple-400" />
               <p className="text-slate-600 dark:text-slate-300 text-sm">
                 در انتظار دریافت پیامک برای خواندن خودکار کد...
+              </p>
+            </motion.div>
+          )}
+
+          {/* Desktop indicator */}
+          {!isMobile && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-center gap-2"
+            >
+              <Monitor className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              <p className="text-slate-600 dark:text-slate-300 text-sm">
+                لطفاً کد تأیید را بصورت دستی وارد کنید
               </p>
             </motion.div>
           )}
