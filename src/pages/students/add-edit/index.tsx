@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
@@ -113,12 +114,12 @@ const AddEditStudent = () => {
               <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
                 {id ? (
                   <>
-                    <UserRound className="h-7 w-7 text-indigo-500" />
+                    <UserRound className="h-7 w-7 text-emerald-500" />
                     ویرایش اطلاعات شاگرد
                   </>
                 ) : (
                   <>
-                    <UserPlus className="h-7 w-7 text-indigo-500" />
+                    <UserPlus className="h-7 w-7 text-emerald-500" />
                     افزودن شاگرد جدید
                   </>
                 )}
@@ -132,7 +133,7 @@ const AddEditStudent = () => {
               <AnimatePresence mode="wait">
                 {isLoading ? (
                   <div className="flex items-center justify-center p-12">
-                    <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-600 rounded-full animate-spin" />
+                    <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-600 rounded-full animate-spin" />
                   </div>
                 ) : (
                   <StudentForm 
