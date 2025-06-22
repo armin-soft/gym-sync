@@ -24,6 +24,18 @@ export const StudentLoginFormStep = ({
   error,
   onSubmit
 }: StudentLoginFormStepProps) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    // فقط اعداد انگلیسی مجاز
+    const numbersOnly = value.replace(/[^0-9]/g, '');
+    
+    // محدود کردن به 11 رقم
+    if (numbersOnly.length <= 11) {
+      setPhone(numbersOnly);
+    }
+  };
+
   return (
     <form onSubmit={onSubmit} className="space-y-6" dir="rtl">
       <motion.div variants={variants} className="space-y-2">
@@ -37,8 +49,8 @@ export const StudentLoginFormStep = ({
           <Input
             id="phone"
             type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={toPersianNumbers(phone)}
+            onChange={handlePhoneChange}
             placeholder={toPersianNumbers("09123456789")}
             className="h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl pr-4 text-right backdrop-blur-sm"
             dir="ltr"

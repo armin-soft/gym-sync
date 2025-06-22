@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Phone, ArrowLeft, Shield, CheckCircle } from "lucide-react";
 import { ProfessionalErrorMessage } from "./ProfessionalErrorMessage";
+import { toPersianNumbers } from "@/lib/utils/numbers";
 
 interface PhoneInputSectionProps {
   phone: string;
@@ -67,9 +68,9 @@ export const PhoneInputSection = ({
               type="tel"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={phone}
+              value={toPersianNumbers(phone)}
               onChange={handlePhoneChange}
-              placeholder="09123456789"
+              placeholder={toPersianNumbers("09123456789")}
               className="h-16 bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white text-lg font-bold placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl pl-6 pr-6 backdrop-blur-sm transition-all duration-300 text-center"
               dir="ltr"
               required
