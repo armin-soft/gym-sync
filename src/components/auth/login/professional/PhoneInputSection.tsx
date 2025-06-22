@@ -30,8 +30,13 @@ export const PhoneInputSection = ({
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
+    // تبدیل اعداد فارسی به انگلیسی
+    const convertedValue = value.replace(/[۰-۹]/g, (d) => {
+      return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString();
+    });
+    
     // فقط اعداد انگلیسی مجاز
-    const numbersOnly = value.replace(/[^0-9]/g, '');
+    const numbersOnly = convertedValue.replace(/[^0-9]/g, '');
     
     // محدود کردن به 11 رقم
     if (numbersOnly.length <= 11) {
@@ -72,7 +77,7 @@ export const PhoneInputSection = ({
               onChange={handlePhoneChange}
               placeholder={toPersianNumbers("09123456789")}
               className="h-16 bg-white/40 dark:bg-slate-800/40 border-2 border-emerald-200/50 dark:border-emerald-700/50 text-slate-800 dark:text-white text-lg font-bold placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500/30 rounded-2xl pl-6 pr-6 backdrop-blur-sm transition-all duration-300 text-center"
-              dir="ltr"
+              dir="rtl"
               required
             />
             

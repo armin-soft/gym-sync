@@ -27,8 +27,13 @@ export const StudentLoginFormStep = ({
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
+    // تبدیل اعداد فارسی به انگلیسی
+    const convertedValue = value.replace(/[۰-۹]/g, (d) => {
+      return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString();
+    });
+    
     // فقط اعداد انگلیسی مجاز
-    const numbersOnly = value.replace(/[^0-9]/g, '');
+    const numbersOnly = convertedValue.replace(/[^0-9]/g, '');
     
     // محدود کردن به 11 رقم
     if (numbersOnly.length <= 11) {
@@ -49,11 +54,13 @@ export const StudentLoginFormStep = ({
           <Input
             id="phone"
             type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
             value={toPersianNumbers(phone)}
             onChange={handlePhoneChange}
             placeholder={toPersianNumbers("09123456789")}
             className="h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl pr-4 text-right backdrop-blur-sm"
-            dir="ltr"
+            dir="rtl"
             required
           />
           <div className="absolute left-3 top-1/2 -translate-y-1/2">

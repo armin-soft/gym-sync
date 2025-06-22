@@ -64,12 +64,17 @@ export const StudentFormField = ({
               placeholder={placeholder}
               value={persianNumbers ? toPersianNumbers(field.value) : field.value}
               autoComplete={autoCompleteValue}
+              inputMode={numberOnly ? "numeric" : "text"}
+              pattern={numberOnly ? "[0-9]*" : undefined}
               onChange={(e) => {
                 let value = e.target.value;
                 
                 // Handle Persian numbers conversion
-                if (persianNumbers) {
-                  value = value.replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+                if (persianNumbers || numberOnly) {
+                  // تبدیل اعداد فارسی به انگلیسی
+                  value = value.replace(/[۰-۹]/g, d => {
+                    return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString();
+                  });
                 }
                 
                 // Handle number-only fields

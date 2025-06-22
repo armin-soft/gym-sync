@@ -32,8 +32,13 @@ export const ModernFormField: React.FC<ModernFormFieldProps> = ({
 }) => {
   const handleChange = (newValue: string) => {
     if (type === "number") {
+      // تبدیل اعداد فارسی به انگلیسی
+      const convertedValue = newValue.replace(/[۰-۹]/g, (d) => {
+        return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString();
+      });
+      
       // فقط اعداد انگلیسی را قبول کن
-      const numbersOnly = newValue.replace(/[^0-9]/g, '');
+      const numbersOnly = convertedValue.replace(/[^0-9]/g, '');
       onChange(numbersOnly);
     } else {
       onChange(newValue);
@@ -72,12 +77,14 @@ export const ModernFormField: React.FC<ModernFormFieldProps> = ({
           </Select>
         ) : (
           <Input
-            type={type === "number" ? "text" : "text"}
+            type="text"
+            inputMode={type === "number" ? "numeric" : "text"}
+            pattern={type === "number" ? "[0-9]*" : undefined}
             value={displayValue}
             onChange={(e) => handleChange(e.target.value)}
             placeholder={type === "number" ? toPersianNumbers(placeholder) : placeholder}
             className="h-12 bg-white/60 dark:bg-slate-800/60 border-slate-200/50 dark:border-slate-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl pl-12 backdrop-blur-sm"
-            dir={type === "number" ? "ltr" : "rtl"}
+            dir={type === "number" ? "rtl" : "rtl"}
           />
         )}
 
