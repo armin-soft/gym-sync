@@ -30,6 +30,14 @@ export const StudentCodeVerificationStep = ({
   onChangePhone,
   onResendCode
 }: StudentCodeVerificationStepProps) => {
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // فقط اعداد را قبول کن
+    if (/^\d*$/.test(value) && value.length <= 6) {
+      setCode(value);
+    }
+  };
+
   return (
     <form onSubmit={onSubmit} className="space-y-6" dir="rtl">
       <motion.div variants={variants} className="space-y-2">
@@ -39,12 +47,13 @@ export const StudentCodeVerificationStep = ({
         <Input
           id="code"
           type="text"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
+          value={toPersianNumbers(code)}
+          onChange={handleCodeChange}
           placeholder="کد ۶ رقمی"
           className="h-12 bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/50 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl text-center backdrop-blur-sm text-lg tracking-widest"
           maxLength={6}
           required
+          dir="ltr"
         />
       </motion.div>
 
