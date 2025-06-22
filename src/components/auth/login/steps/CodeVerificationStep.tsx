@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -61,7 +60,6 @@ export const CodeVerificationStep = ({
               <InputOTPGroup className="gap-3" dir="ltr">
                 {[...Array(6)].map((_, index) => {
                   const currentChar = code[index] || '';
-                  const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
                   
                   return (
                     <InputOTPSlot 
@@ -69,7 +67,7 @@ export const CodeVerificationStep = ({
                       index={index}
                       className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-purple-200/50 dark:border-purple-700/50 text-slate-800 dark:text-white focus:border-purple-500 focus:ring-purple-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-purple-400 flex items-center justify-center"
                     >
-                      {displayChar}
+                      {currentChar}
                     </InputOTPSlot>
                   );
                 })}
