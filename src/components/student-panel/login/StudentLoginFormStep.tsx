@@ -55,7 +55,6 @@ export const StudentLoginFormStep = ({
             id="phone"
             type="tel"
             inputMode="numeric"
-            pattern="[0-9]*"
             value={toPersianNumbers(phone)}
             onChange={handlePhoneChange}
             placeholder={toPersianNumbers("09123456789")}

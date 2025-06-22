@@ -79,7 +79,6 @@ export const ModernFormField: React.FC<ModernFormFieldProps> = ({
           <Input
             type="text"
             inputMode={type === "number" ? "numeric" : "text"}
-            pattern={type === "number" ? "[0-9]*" : undefined}
             value={displayValue}
             onChange={(e) => handleChange(e.target.value)}
             placeholder={type === "number" ? toPersianNumbers(placeholder) : placeholder}
