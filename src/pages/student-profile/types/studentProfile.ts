@@ -1,4 +1,3 @@
-
 export interface StudentProfile {
   id: string;
   name: string;
@@ -9,6 +8,7 @@ export interface StudentProfile {
   weight: string;
   image: string;
   paymentStatus: 'paid' | 'pending' | 'overdue';
+  group?: string;
 }
 
 export interface StudentProfileFormErrors {
