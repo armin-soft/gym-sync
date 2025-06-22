@@ -21,13 +21,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = location.pathname === item.href;
-  const { isMobile, isTablet } = useSidebarDimensions();
-
-  const deviceInfo = {
-    isMobile,
-    isTablet,
-    isDesktop: !isMobile && !isTablet
-  };
+  const { deviceInfo } = useSidebarDimensions();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
