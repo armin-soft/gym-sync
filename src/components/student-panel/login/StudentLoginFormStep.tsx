@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Phone, LogIn } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 
@@ -24,6 +25,10 @@ export const StudentLoginFormStep = ({
   error,
   onSubmit
 }: StudentLoginFormStepProps) => {
+  const [rememberMe, setRememberMe] = React.useState(() => {
+    return localStorage.getItem("studentRememberMeEnabled") === "true";
+  });
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
@@ -41,8 +46,19 @@ export const StudentLoginFormStep = ({
     }
   };
 
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
+    localStorage.setItem("studentRememberMeEnabled", checked.toString());
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    // Store the remember me preference for student login
+    localStorage.setItem("pendingStudentRememberMe", rememberMe.toString());
+    onSubmit(e);
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-6" dir="rtl">
+    <form onSubmit={handleFormSubmit} className="space-y-6" dir="rtl">
       <motion.div variants={variants} className="space-y-2">
         <Label htmlFor="phone" className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
           <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
@@ -66,6 +82,26 @@ export const StudentLoginFormStep = ({
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
           </div>
         </div>
+      </motion.div>
+
+      {/* Remember Me Checkbox for Student */}
+      <motion.div
+        variants={variants}
+        className="flex items-center gap-3 justify-center"
+        dir="rtl"
+      >
+        <Checkbox
+          id="studentRememberMe"
+          checked={rememberMe}
+          onCheckedChange={handleRememberMeChange}
+          className="border-emerald-500 data-[state=checked]:bg-emerald-500"
+        />
+        <Label 
+          htmlFor="studentRememberMe" 
+          className="text-gray-600 dark:text-gray-300 font-medium cursor-pointer select-none"
+        >
+          مرا به مدت ۳۰ روز به خاطر بسپار
+        </Label>
       </motion.div>
       
       {error && (

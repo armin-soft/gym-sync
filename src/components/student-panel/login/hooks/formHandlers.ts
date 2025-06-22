@@ -103,7 +103,19 @@ export const createCodeSubmitHandler = (
     console.log('formHandlers: Found student for login:', foundStudent);
     
     if (foundStudent) {
+      // Get remember me preference and save student login
+      const rememberMe = localStorage.getItem("pendingStudentRememberMe") === "true";
+      localStorage.removeItem("pendingStudentRememberMe");
+      
       saveStudentLogin(foundStudent);
+
+      // Set remember me for student if enabled
+      if (rememberMe) {
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 30);
+        localStorage.setItem("studentRememberMeExpiry", expiryDate.toString());
+        localStorage.setItem("rememberedStudentPhone", state.phone);
+      }
       
       // انتقال فوری به داشبورد شاگرد
       setTimeout(() => {

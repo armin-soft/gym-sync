@@ -7,7 +7,13 @@ export const handleStudentLogout = () => {
     localStorage.removeItem("studentData");
     localStorage.removeItem("studentStats");
     
-    console.log('studentAuthUtils: Student logout completed, clearing all data');
+    // پاک کردن اطلاعات remember me
+    localStorage.removeItem("studentRememberMeExpiry");
+    localStorage.removeItem("rememberedStudentPhone");
+    localStorage.removeItem("studentRememberMeEnabled");
+    localStorage.removeItem("pendingStudentRememberMe");
+    
+    console.log('studentAuthUtils: Student logout completed, clearing all data including remember me');
     
     // انتشار رویداد برای اطلاع سایر کامپوننت‌ها
     window.dispatchEvent(new Event('studentLogout'));

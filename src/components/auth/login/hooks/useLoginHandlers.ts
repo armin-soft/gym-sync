@@ -106,13 +106,17 @@ export const useLoginHandlers = ({
 
     setTimeout(() => {
       try {
+        // Get remember me preference
+        const rememberMe = localStorage.getItem("pendingRememberMe") === "true";
+        localStorage.removeItem("pendingRememberMe");
+        
         setLoginSuccess();
         
         const profile = JSON.parse(localStorage.getItem('trainerProfile') || '{}') as TrainerProfile;
         const trainerName = profile.name || 'کاربر';
         
         successToast("ورود موفقیت‌آمیز", `${trainerName} عزیز، خوش آمدید`);
-        onLoginSuccess(false);
+        onLoginSuccess(rememberMe);
       } catch (error) {
         setState((prev: any) => ({ 
           ...prev, 

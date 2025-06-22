@@ -16,13 +16,34 @@ export const StudentAuthWrapper = ({ children }: StudentAuthWrapperProps) => {
     const checkAuth = () => {
       const isStudentLoggedIn = localStorage.getItem("studentLoggedIn") === "true";
       const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+      const rememberMeExpiry = localStorage.getItem("studentRememberMeExpiry");
       
       console.log('StudentAuthWrapper: Checking authentication status');
       console.log('StudentAuthWrapper: isStudentLoggedIn:', isStudentLoggedIn);
       console.log('StudentAuthWrapper: loggedInStudentId:', loggedInStudentId);
+      console.log('StudentAuthWrapper: rememberMeExpiry:', rememberMeExpiry);
       
       if (isStudentLoggedIn && loggedInStudentId) {
         setAuthenticated(true);
+      } else if (rememberMeExpiry) {
+        // Check if remember me is still valid
+        const expiryDate = new Date(rememberMeExpiry);
+        if (expiryDate > new Date()) {
+          // Remember me token is still valid
+          const rememberedPhone = localStorage.getItem("rememberedStudentPhone");
+          if (rememberedPhone) {
+            console.log('StudentAuthWrapper: Remember me is valid, auto-logging in');
+            localStorage.setItem("studentLoggedIn", "true");
+            setAuthenticated(true);
+          } else {
+            setAuthenticated(false);
+          }
+        } else {
+          // Remember me expired, clear it
+          localStorage.removeItem("studentRememberMeExpiry");
+          localStorage.removeItem("rememberedStudentPhone");
+          setAuthenticated(false);
+        }
       } else {
         setAuthenticated(false);
       }

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Phone, ArrowLeft, Shield, CheckCircle } from "lucide-react";
 import { ProfessionalErrorMessage } from "./ProfessionalErrorMessage";
 import { toPersianNumbers } from "@/lib/utils/numbers";
@@ -28,6 +29,10 @@ export const PhoneInputSection = ({
   variants,
   allowedPhone
 }: PhoneInputSectionProps) => {
+  const [rememberMe, setRememberMe] = React.useState(() => {
+    return localStorage.getItem("rememberMeEnabled") === "true";
+  });
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
@@ -41,11 +46,22 @@ export const PhoneInputSection = ({
     }
   };
 
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
+    localStorage.setItem("rememberMeEnabled", checked.toString());
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    // Store the remember me preference globally
+    localStorage.setItem("pendingRememberMe", rememberMe.toString());
+    onSubmit(e);
+  };
+
   const isValidPhone = phone === allowedPhone;
 
   return (
     <motion.form
-      onSubmit={onSubmit}
+      onSubmit={handleFormSubmit}
       className="space-y-6"
       variants={variants}
       initial="hidden"
@@ -108,6 +124,28 @@ export const PhoneInputSection = ({
             <span className="text-sm font-semibold">شماره موبایل تأیید شد</span>
           </motion.div>
         )}
+
+        {/* Remember Me Checkbox */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center gap-3 justify-center"
+          dir="rtl"
+        >
+          <Checkbox
+            id="rememberMe"
+            checked={rememberMe}
+            onCheckedChange={handleRememberMeChange}
+            className="border-emerald-500 data-[state=checked]:bg-emerald-500"
+          />
+          <Label 
+            htmlFor="rememberMe" 
+            className="text-slate-600 dark:text-slate-300 font-medium cursor-pointer select-none"
+          >
+            مرا به مدت ۳۰ روز به خاطر بسپار
+          </Label>
+        </motion.div>
       </motion.div>
       
       <motion.div variants={variants}>
