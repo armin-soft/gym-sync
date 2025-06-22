@@ -1,4 +1,5 @@
 
+
 export interface StudentProfile {
   id: string;
   name: string;
@@ -11,6 +12,7 @@ export interface StudentProfile {
   group: string;
   image: string;
   payment: string;
+  paymentStatus: 'paid' | 'pending' | 'overdue';
 }
 
 export interface StudentProfileFormErrors {
@@ -20,3 +22,4 @@ export interface StudentProfileFormErrors {
 export interface StudentProfileValidFields {
   [key: string]: boolean;
 }
+
