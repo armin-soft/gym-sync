@@ -22,16 +22,14 @@ export const useUserTypeSelection = () => {
       localStorage.setItem("selectedUserType", type);
       console.log('نوع کاربر ذخیره شد:', type);
       
-      // مرحله ۲: آماده‌سازی محیط
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // مرحله ۲: آماده‌سازی سریع محیط (تأخیر کاهش یافته)
+      await new Promise(resolve => setTimeout(resolve, 150));
       setCurrentStep(3);
       
-      // مرحله ۳: هدایت به پنل مناسب
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
+      // مرحله ۳: هدایت فوری به پنل مناسب (تأخیر حذف شده)
       console.log('هدایت به پنل مناسب برای نوع کاربر:', type);
       
-      // هدایت مستقیم به پنل مناسب
+      // هدایت مستقیم بدون تأخیر اضافی
       if (type === 'student') {
         console.log('هدایت به پنل شاگرد');
         navigate("/Student", { replace: true });
