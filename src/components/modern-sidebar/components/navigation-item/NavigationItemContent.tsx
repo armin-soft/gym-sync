@@ -23,7 +23,7 @@ export const NavigationItemContent: React.FC<NavigationItemContentProps> = ({
           className={cn(
             "font-bold text-right",
             deviceInfo.isMobile ? "text-sm" : "text-sm",
-            isActive ? "text-white" : "text-emerald-800 dark:text-emerald-200"
+            isActive ? "text-white drop-shadow-sm" : "text-emerald-800 dark:text-emerald-200"
           )}
           layoutId={`title-${item.href}`}
         >
@@ -37,7 +37,7 @@ export const NavigationItemContent: React.FC<NavigationItemContentProps> = ({
               className={cn(
                 "text-3xs px-1.5 py-0.5 shadow-sm",
                 item.badgeColor || "bg-amber-500",
-                isActive ? "bg-white/20 text-white" : "text-white"
+                isActive ? "bg-white/20 text-white border border-white/30" : "text-white"
               )}
             >
               {item.badge}
@@ -45,7 +45,10 @@ export const NavigationItemContent: React.FC<NavigationItemContentProps> = ({
           )}
           
           {item.isNew && (
-            <Badge variant="secondary" className="text-3xs px-1.5 py-0.5 bg-green-500 text-white shadow-sm">
+            <Badge variant="secondary" className={cn(
+              "text-3xs px-1.5 py-0.5 shadow-sm",
+              isActive ? "bg-white/20 text-white border border-white/30" : "bg-green-500 text-white"
+            )}>
               جدید
             </Badge>
           )}
@@ -56,7 +59,7 @@ export const NavigationItemContent: React.FC<NavigationItemContentProps> = ({
         className={cn(
           "text-right leading-relaxed",
           deviceInfo.isMobile ? "text-2xs" : "text-xs",
-          isActive ? "text-white/85" : "text-emerald-600 dark:text-emerald-400"
+          isActive ? "text-white/90 drop-shadow-sm" : "text-emerald-600 dark:text-emerald-400"
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

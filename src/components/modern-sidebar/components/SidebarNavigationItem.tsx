@@ -50,7 +50,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
           "w-full p-4 rounded-2xl transition-all duration-300 group relative overflow-hidden",
           "hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]",
           isActive 
-            ? "bg-white/90 shadow-xl shadow-black/10 border border-white/20" 
+            ? "bg-gradient-to-br from-emerald-600 to-sky-600 shadow-xl shadow-emerald-200/30 border border-emerald-300/20" 
             : "bg-white/30 hover:bg-white/50 border border-white/10"
         )}
       >
@@ -59,7 +59,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
           className={cn(
             "absolute inset-0 opacity-0 transition-opacity duration-300",
             `bg-gradient-to-br ${item.gradient}`,
-            isActive ? "opacity-10" : "group-hover:opacity-5"
+            isActive ? "opacity-20" : "group-hover:opacity-10"
           )}
         />
         
@@ -84,7 +84,7 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
                 className={cn(
                   "text-xs px-2 py-1 rounded-full font-medium",
                   isActive 
-                    ? "bg-gradient-to-r from-emerald-500 to-sky-500 text-white" 
+                    ? "bg-white/20 text-white border border-white/30 shadow-sm" 
                     : "bg-white/20 text-slate-700"
                 )}
               >
