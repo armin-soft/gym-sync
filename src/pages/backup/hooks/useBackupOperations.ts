@@ -46,7 +46,7 @@ export function useBackupOperations(): BackupOperations {
         appName: "مدیریت باشگاه"
       };
       
-      const filename = `backup-${formatPersianDateForFilename()}.json`;
+      const filename = `${formatPersianDateForFilename()}.json`;
       const backupString = JSON.stringify(backupData, null, 2);
       
       const blob = new Blob([backupString], { type: "application/json" });
