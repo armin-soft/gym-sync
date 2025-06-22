@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -61,7 +60,7 @@ export const CodeVerificationSection = ({
         </Label>
         
         {/* ورودی کد OTP */}
-        <div className="flex justify-center mb-6" dir="ltr">
+        <div className="flex justify-center mb-6" dir="rtl">
           <div className="relative group">
             {/* تأثیر درخشش پس‌زمینه */}
             <div className="absolute -inset-2 bg-gradient-to-r from-sky-500 to-emerald-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-all duration-300"></div>
@@ -70,9 +69,9 @@ export const CodeVerificationSection = ({
               maxLength={6}
               value={code}
               onChange={(value) => setCode(value)}
-              dir="ltr"
+              dir="rtl"
             >
-              <InputOTPGroup className="gap-3" dir="ltr">
+              <InputOTPGroup className="gap-3" dir="rtl">
                 {[...Array(6)].map((_, index) => {
                   const currentChar = code[index] || '';
                   const displayChar = currentChar ? toPersianNumbers(currentChar) : '';
@@ -82,7 +81,7 @@ export const CodeVerificationSection = ({
                       key={index}
                       index={index}
                       className="w-14 h-14 text-xl font-bold bg-white/40 dark:bg-slate-800/40 border-2 border-sky-200/50 dark:border-sky-700/50 text-slate-800 dark:text-white focus:border-sky-500 focus:ring-sky-500/30 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:border-sky-400 flex items-center justify-center"
-                      dir="ltr"
+                      dir="rtl"
                     >
                       {displayChar}
                     </InputOTPSlot>
