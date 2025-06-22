@@ -16,7 +16,7 @@ const mealTypes = [
   { id: 'breakfast', name: 'صبحانه', icon: Coffee, time: '۷:۰۰', color: 'orange' },
   { id: 'snack1', name: 'میان‌وعده صبح', icon: Cookie, time: '۱۰:۰۰', color: 'green' },
   { id: 'lunch', name: 'ناهار', icon: Utensils, time: '۱۳:۰۰', color: 'blue' },
-  { id: 'snack2', name: 'میان‌وعده عصر', icon: Apple, time: '۱۶:۰۰', color: 'purple' },
+  { id: 'snack2', name: 'میان‌وعده عصر', icon: Apple, time: '۱۶:۰۰', color: 'emerald' },
   { id: 'dinner', name: 'شام', icon: ChefHat, time: '۱۹:۰۰', color: 'red' }
 ];
 
@@ -193,7 +193,7 @@ const StudentDiet = () => {
         <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 flex items-center justify-center shadow-lg">
                 <Clock className="h-6 w-6 text-white" />
               </div>
               <div>
