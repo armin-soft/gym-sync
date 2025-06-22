@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Phone, Calendar, MapPin, Users, GraduationCap, Weight, Ruler, DollarSign } from "lucide-react";
+import { User, Phone, Calendar, Ruler, Weight } from "lucide-react";
 import { StudentProfile } from "../../types/studentProfile";
 import { ModernFormField } from "./ModernFormField";
 
@@ -100,37 +100,6 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
           icon={Weight}
           error={errors.weight || ''}
           isValid={validFields.weight}
-          type="number"
-        />
-
-        <ModernFormField
-          label="سطح تمرینی"
-          value={profile.grade}
-          onChange={(value) => handleUpdate('grade', value)}
-          placeholder="مبتدی"
-          icon={GraduationCap}
-          error={errors.grade || ''}
-          isValid={validFields.grade}
-        />
-
-        <ModernFormField
-          label="گروه تمرینی"
-          value={profile.group}
-          onChange={(value) => handleUpdate('group', value)}
-          placeholder="گروه صبح"
-          icon={Users}
-          error={errors.group || ''}
-          isValid={validFields.group}
-        />
-
-        <ModernFormField
-          label="مبلغ پرداختی"
-          value={profile.payment}
-          onChange={(value) => handleUpdate('payment', value)}
-          placeholder="1000000"
-          icon={DollarSign}
-          error={errors.payment || ''}
-          isValid={validFields.payment}
           type="number"
         />
       </div>

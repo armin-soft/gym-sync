@@ -1,5 +1,4 @@
 
-
 export interface StudentProfile {
   id: string;
   name: string;
@@ -8,10 +7,7 @@ export interface StudentProfile {
   gender: 'male' | 'female';
   height: string;
   weight: string;
-  grade: string;
-  group: string;
   image: string;
-  payment: string;
   paymentStatus: 'paid' | 'pending' | 'overdue';
 }
 
@@ -22,4 +18,3 @@ export interface StudentProfileFormErrors {
 export interface StudentProfileValidFields {
   [key: string]: boolean;
 }
-

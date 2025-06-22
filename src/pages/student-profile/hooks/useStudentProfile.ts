@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { StudentProfile } from "../types/studentProfile";
 import { useToast } from "@/hooks/use-toast";
@@ -9,13 +10,10 @@ export const useStudentProfile = () => {
     name: "",
     phone: "",
     age: "",
-    gender: "male", // This will be overwritten from localStorage
+    gender: "male",
     height: "",
     weight: "",
-    grade: "",
-    group: "",
     image: "/Assets/Images/Place-Holder.svg",
-    payment: "",
     paymentStatus: "pending"
   });
 
@@ -42,13 +40,10 @@ export const useStudentProfile = () => {
               name: student.name || "",
               phone: student.phone || "",
               age: student.age?.toString() || "",
-              gender: student.gender || "male", // فقط در صورت عدم وجود در دیتابیس
+              gender: student.gender || "male",
               height: student.height?.toString() || "",
               weight: student.weight?.toString() || "",
-              grade: student.grade || "",
-              group: student.group || "",
               image: student.image || student.profileImage || "/Assets/Images/Place-Holder.svg",
-              payment: student.payment || "",
               paymentStatus: student.paymentStatus || "pending"
             });
             
