@@ -1,7 +1,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ProfileImage } from "@/components/trainer/ProfileImage";
+import { StudentProfileImage } from "@/components/trainer/StudentProfileImage";
 import { StudentProfile } from "../../types/studentProfile";
 import { Badge } from "@/components/ui/badge";
 
@@ -21,23 +21,10 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
       transition={{ delay: 0.2, duration: 0.6 }}
       className="text-center space-y-6"
     >
-      <div className="relative">
-        <ProfileImage 
-          image={profile.image}
-          onImageChange={onImageChange}
-        />
-        
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4 }}
-          className="absolute -bottom-2 -right-1"
-        >
-          <Badge className="bg-gradient-to-r from-emerald-500 to-sky-500 border-none text-white px-2 py-0.5 text-xs">
-            شاگرد
-          </Badge>
-        </motion.div>
-      </div>
+      <StudentProfileImage 
+        image={profile.image}
+        onImageChange={onImageChange}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -49,12 +36,6 @@ export const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
           {profile.name}
         </h3>
         <div className="flex flex-col gap-2">
-          <Badge 
-            className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-            variant="secondary"
-          >
-            گروه: {profile.group}
-          </Badge>
           <Badge 
             className={`${
               profile.paymentStatus === 'paid' 
