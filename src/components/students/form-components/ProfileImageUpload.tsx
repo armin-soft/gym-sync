@@ -1,10 +1,10 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Camera, RefreshCw, User } from "lucide-react";
+import { ImageIcon, User2, Camera } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ProfileImageUploadProps {
   previewImage: string;
@@ -15,92 +15,102 @@ interface ProfileImageUploadProps {
 export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
   previewImage,
   onChange,
-  error
+  error = false
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentImage, setCurrentImage] = useState(previewImage);
-  
-  // Update currentImage when previewImage changes
-  useEffect(() => {
-    setCurrentImage(previewImage);
-  }, [previewImage]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     if (file.size > 5 * 1024 * 1024) {
-      alert("حجم تصویر باید کمتر از ۵ مگابایت باشد");
+      // Handle error - file too large
       return;
     }
-    
-    setIsLoading(true);
+
     const reader = new FileReader();
     reader.onload = (event) => {
-      setIsLoading(false);
-      const newImage = event.target?.result as string;
-      setCurrentImage(newImage);
-      onChange(newImage);
+      const result = event.target?.result as string;
+      onChange(result);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleReset = () => {
-    // Only reset if we have a new image, not if it's the original image
-    onChange("/Assets/Image/Place-Holder.svg");
-    setCurrentImage("/Assets/Image/Place-Holder.svg");
-  };
-
   return (
-    <div className="relative w-32 h-32 mx-auto">
-      <Avatar className={`w-32 h-32 mx-auto transition-all duration-300 ${error ? 'ring-2 ring-destructive' : ''}`}>
-        {isLoading ? (
-          <AvatarFallback className="bg-muted">
-            <RefreshCw className="h-8 w-8 text-muted-foreground animate-spin" />
-          </AvatarFallback>
-        ) : currentImage && currentImage !== "/Assets/Image/Place-Holder.svg" ? (
-          <AvatarImage 
-            src={currentImage} 
-            alt="تصویر پروفایل" 
-            className="object-cover"
-          />
-        ) : (
-          <AvatarFallback className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950/50 dark:to-indigo-900/50">
-            <User className="h-12 w-12 text-indigo-500/70" />
-          </AvatarFallback>
-        )}
-      </Avatar>
-      
-      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.2, duration: 0.6 }}
+      className="text-center space-y-6"
+    >
+      <div className="relative inline-block">
+        <Avatar 
+          className="w-32 h-32 cursor-pointer ring-4 ring-white dark:ring-slate-800 shadow-2xl transition-all duration-300 hover:scale-105"
+          onClick={handleImageClick}
+        >
+          {previewImage && previewImage !== "/Assets/Image/Place-Holder.svg" ? (
+            <AvatarImage src={previewImage} alt="تصویر شاگرد" className="object-cover" />
+          ) : (
+            <AvatarFallback className="bg-gradient-to-br from-emerald-100 to-sky-100 dark:from-emerald-900/30 dark:to-sky-900/30">
+              <User2 className="h-16 w-16 text-emerald-600 dark:text-emerald-400" />
+            </AvatarFallback>
+          )}
+        </Avatar>
+        
         <Button
           type="button"
-          variant="secondary"
           size="icon"
-          className="h-8 w-8 rounded-full shadow-lg bg-white dark:bg-slate-800"
-          onClick={() => document.getElementById("profile-image-upload")?.click()}
+          className="absolute -bottom-2 -left-2 rounded-full shadow-lg bg-gradient-to-r from-emerald-500 to-sky-500 hover:from-emerald-600 hover:to-sky-600 border-4 border-white dark:border-slate-800 h-10 w-10"
+          onClick={handleImageClick}
         >
-          <Camera className="h-4 w-4" />
-          <Input
-            type="file"
-            id="profile-image-upload"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageChange}
-          />
+          <Camera className="h-4 w-4 text-white" />
+        </Button>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="space-y-3"
+      >
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleImageClick}
+          className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-300 dark:hover:bg-emerald-900/20"
+        >
+          <ImageIcon className="h-4 w-4 ml-2" />
+          تغییر تصویر
         </Button>
         
-        {currentImage && currentImage !== "/Assets/Image/Place-Holder.svg" && (
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 rounded-full shadow-lg bg-white dark:bg-slate-800"
-            onClick={handleReset}
+        <div className="flex justify-center">
+          <Badge 
+            variant="secondary" 
+            className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
           >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    </div>
+            حداکثر ۵ مگابایت
+          </Badge>
+        </div>
+      </motion.div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleImageChange}
+      />
+      
+      {error && (
+        <p className="text-sm text-red-500 dark:text-red-400">
+          لطفاً یک تصویر انتخاب کنید
+        </p>
+      )}
+    </motion.div>
   );
 };

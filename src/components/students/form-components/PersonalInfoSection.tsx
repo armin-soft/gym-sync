@@ -11,7 +11,7 @@ interface PersonalInfoSectionProps {
 
 export const PersonalInfoSection = ({ control, itemVariants }: PersonalInfoSectionProps) => {
   return (
-    <>
+    <div className="space-y-6">
       <motion.div variants={itemVariants}>
         <StudentFormField
           control={control}
@@ -45,6 +45,6 @@ export const PersonalInfoSection = ({ control, itemVariants }: PersonalInfoSecti
           numberOnly
         />
       </motion.div>
-    </>
+    </div>
   );
 };
