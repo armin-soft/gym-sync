@@ -114,12 +114,12 @@ const AddEditStudent = () => {
               <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
                 {id ? (
                   <>
-                    <UserRound className="h-7 w-7 text-emerald-500" />
+                    <UserRound className="h-7 w-7 text-transparent bg-gradient-to-r from-emerald-500 to-sky-500 bg-clip-text" />
                     ویرایش اطلاعات شاگرد
                   </>
                 ) : (
                   <>
-                    <UserPlus className="h-7 w-7 text-emerald-500" />
+                    <UserPlus className="h-7 w-7 text-transparent bg-gradient-to-r from-emerald-500 to-sky-500 bg-clip-text" />
                     افزودن شاگرد جدید
                   </>
                 )}
