@@ -3,16 +3,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import { StudentProfile } from "../../types/studentProfile";
 import { PersonalInfoForm } from "../forms/PersonalInfoForm";
-import { ProfileSaveButton } from "../forms/ProfileSaveButton";
 
 interface ProfileFormSectionProps {
   profile: StudentProfile;
-  errors: Partial<Record<keyof StudentProfile, string>>;
-  validFields: Partial<Record<keyof StudentProfile, boolean>>;
   activeSection: string;
-  isSaving: boolean;
-  handleUpdate: (key: keyof StudentProfile, value: string) => void;
-  handleSave: () => void;
+  handleImageUpdate?: (image: string) => void;
 }
 
 export const ProfileFormSection: React.FC<ProfileFormSectionProps> = (props) => {
@@ -24,18 +19,11 @@ export const ProfileFormSection: React.FC<ProfileFormSectionProps> = (props) => 
         transition={{ duration: 0.5 }}
         className="flex-1"
       >
-        <PersonalInfoForm {...props} />
-      </motion.div>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="mt-8"
-      >
-        <ProfileSaveButton 
-          onSave={props.handleSave}
-          isLoading={props.isSaving}
+        <PersonalInfoForm 
+          profile={props.profile}
+          errors={{}}
+          validFields={{}}
+          handleUpdate={() => {}} // تابع خالی چون دیگر قابل ویرایش نیست
         />
       </motion.div>
     </div>

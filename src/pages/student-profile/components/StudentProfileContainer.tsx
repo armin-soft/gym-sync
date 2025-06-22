@@ -7,15 +7,9 @@ import { StudentProfile } from "../types/studentProfile";
 
 interface StudentProfileContainerProps {
   profile: StudentProfile;
-  errors: Partial<Record<keyof StudentProfile, string>>;
-  setErrors: React.Dispatch<React.SetStateAction<Partial<Record<keyof StudentProfile, string>>>>;
-  validFields: Partial<Record<keyof StudentProfile, boolean>>;
-  setValidFields: React.Dispatch<React.SetStateAction<Partial<Record<keyof StudentProfile, boolean>>>>;
   activeSection: string;
   setActiveSection: (section: string) => void;
-  isSaving: boolean;
-  handleUpdate: (key: keyof StudentProfile, value: string) => void;
-  handleSave: () => void;
+  handleImageUpdate: (image: string) => void;
 }
 
 export const StudentProfileContainer: React.FC<StudentProfileContainerProps> = (props) => {

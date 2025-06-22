@@ -17,10 +17,7 @@ export const useStudentProfile = () => {
     paymentStatus: "pending"
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof StudentProfile, string>>>({});
-  const [validFields, setValidFields] = useState<Partial<Record<keyof StudentProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState("personal");
-  const [isSaving, setIsSaving] = useState(false);
 
   // بارگذاری داده‌ها از localStorage فقط برای شاگرد لاگین شده
   useEffect(() => {
@@ -84,125 +81,41 @@ export const useStudentProfile = () => {
     };
   }, [toast]);
 
-  // اعتبارسنجی فیلدها
-  const validateField = (key: keyof StudentProfile, value: string): string => {
-    switch (key) {
-      case 'name':
-        return value.length < 2 ? 'نام باید حداقل ۲ کاراکتر باشد' : '';
-      case 'phone':
-        const phoneRegex = /^09\d{9}$/;
-        return value && !phoneRegex.test(value) ? 'شماره موبایل باید با ۰۹ شروع شده و ۱۱ رقم باشد' : '';
-      case 'age':
-        const age = parseInt(value);
-        return value && (age < 10 || age > 100) ? 'سن باید بین ۱۰ تا ۱۰۰ سال باشد' : '';
-      case 'height':
-        const height = parseInt(value);
-        return value && (height < 100 || height > 250) ? 'قد باید بین ۱۰۰ تا ۲۵۰ سانتی‌متر باشد' : '';
-      case 'weight':
-        const weight = parseInt(value);
-        return value && (weight < 30 || weight > 200) ? 'وزن باید بین ۳۰ تا ۲۰۰ کیلوگرم باشد' : '';
-      default:
-        return '';
-    }
-  };
-
-  const handleUpdate = (key: keyof StudentProfile, value: string) => {
-    // Don't allow phone number updates
-    if (key === 'phone') {
-      return;
-    }
+  // فقط تابع بروزرسانی تصویر پروفایل
+  const handleImageUpdate = (image: string) => {
+    setProfile(prev => ({ ...prev, image }));
     
-    setProfile(prev => ({ ...prev, [key]: value }));
-    
-    const error = validateField(key, value);
-    setErrors(prev => ({ ...prev, [key]: error }));
-    setValidFields(prev => ({ ...prev, [key]: !error }));
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    
-    try {
-      // اعتبارسنجی فیلدهای ضروری
-      const newErrors: Partial<Record<keyof StudentProfile, string>> = {};
-      const requiredFields: (keyof StudentProfile)[] = ['name'];
+    // ذخیره تصویر جدید در localStorage
+    const loggedInStudentId = localStorage.getItem("loggedInStudentId");
+    if (loggedInStudentId) {
+      const students = JSON.parse(localStorage.getItem("students") || "[]");
+      const studentIndex = students.findIndex((s: any) => s.id === parseInt(loggedInStudentId));
       
-      requiredFields.forEach(key => {
-        const error = validateField(key, profile[key]);
-        if (error) newErrors[key] = error;
-      });
-
-      // اعتبارسنجی سایر فیلدها که مقدار دارند
-      Object.keys(profile).forEach(key => {
-        const profileKey = key as keyof StudentProfile;
-        if (profile[profileKey] && profileKey !== 'phone') { // Don't validate phone since it's readonly
-          const error = validateField(profileKey, profile[profileKey]);
-          if (error) newErrors[profileKey] = error;
-        }
-      });
-
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        toast({
-          variant: "destructive",
-          title: "خطا در اعتبارسنجی",
-          description: "لطفاً اطلاعات وارد شده را بررسی کنید"
-        });
-        return;
-      }
-
-      // شبیه‌سازی ذخیره‌سازی
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // ذخیره در localStorage - بروزرسانی اطلاعات شاگرد در آرایه students
-      const loggedInStudentId = localStorage.getItem("loggedInStudentId");
-      if (loggedInStudentId) {
-        const students = JSON.parse(localStorage.getItem("students") || "[]");
-        const studentIndex = students.findIndex((s: any) => s.id === parseInt(loggedInStudentId));
+      if (studentIndex >= 0) {
+        students[studentIndex] = {
+          ...students[studentIndex],
+          image: image,
+          profileImage: image
+        };
         
-        if (studentIndex >= 0) {
-          // بروزرسانی اطلاعات شاگرد (بدون تغییر شماره موبایل)
-          students[studentIndex] = {
-            ...students[studentIndex],
-            ...profile,
-            id: parseInt(loggedInStudentId), // حفظ ID اصلی
-            phone: students[studentIndex].phone, // حفظ شماره موبایل اصلی
-            profileImage: profile.image // همگام‌سازی تصویر
-          };
-          
-          localStorage.setItem('students', JSON.stringify(students));
-          
-          // اطلاع‌رسانی به سایر کامپوننت‌ها
-          window.dispatchEvent(new CustomEvent('studentsUpdated'));
-          window.dispatchEvent(new Event('storage'));
-        }
+        localStorage.setItem('students', JSON.stringify(students));
+        
+        // اطلاع‌رسانی به سایر کامپوننت‌ها
+        window.dispatchEvent(new CustomEvent('studentsUpdated'));
+        window.dispatchEvent(new Event('storage'));
       }
-      
-      toast({
-        title: "موفق",
-        description: "اطلاعات پروفایل با موفقیت ذخیره شد"
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "خطا",
-        description: "خطا در ذخیره‌سازی اطلاعات"
-      });
-    } finally {
-      setIsSaving(false);
     }
+    
+    toast({
+      title: "موفق",
+      description: "تصویر پروفایل با موفقیت بروزرسانی شد"
+    });
   };
 
   return {
     profile,
-    errors,
-    setErrors,
-    validFields,
-    setValidFields,
     activeSection,
     setActiveSection,
-    isSaving,
-    handleUpdate,
-    handleSave
+    handleImageUpdate
   };
 };

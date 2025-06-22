@@ -8,15 +8,9 @@ import { ProfileSidebarTabs } from "./profile-sections/ProfileSidebarTabs";
 
 interface StudentProfileCardProps {
   profile: StudentProfile;
-  errors: Partial<Record<keyof StudentProfile, string>>;
-  setErrors: React.Dispatch<React.SetStateAction<Partial<Record<keyof StudentProfile, string>>>>;
-  validFields: Partial<Record<keyof StudentProfile, boolean>>;
-  setValidFields: React.Dispatch<React.SetStateAction<Partial<Record<keyof StudentProfile, boolean>>>>;
   activeSection: string;
   setActiveSection: (section: string) => void;
-  isSaving: boolean;
-  handleUpdate: (key: keyof StudentProfile, value: string) => void;
-  handleSave: () => void;
+  handleImageUpdate: (image: string) => void;
 }
 
 export const StudentProfileCard: React.FC<StudentProfileCardProps> = (props) => {
@@ -39,7 +33,7 @@ export const StudentProfileCard: React.FC<StudentProfileCardProps> = (props) => 
           <div className="p-8 space-y-8">
             <ProfileImageSection 
               profile={props.profile}
-              onImageChange={(image) => props.handleUpdate('image', image)}
+              onImageChange={props.handleImageUpdate}
             />
             <ProfileSidebarTabs 
               activeSection={props.activeSection}
@@ -50,7 +44,11 @@ export const StudentProfileCard: React.FC<StudentProfileCardProps> = (props) => 
 
         {/* بخش فرم */}
         <div className="lg:col-span-8">
-          <ProfileFormSection {...props} />
+          <ProfileFormSection 
+            profile={props.profile}
+            activeSection={props.activeSection}
+            handleImageUpdate={props.handleImageUpdate}
+          />
         </div>
       </div>
     </motion.div>
