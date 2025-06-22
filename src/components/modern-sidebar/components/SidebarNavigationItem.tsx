@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { SidebarItem } from "../types";
 import { NavigationItemIcon } from "./navigation-item/NavigationItemIcon";
 import { NavigationItemContent } from "./navigation-item/NavigationItemContent";
+import { useSidebarDimensions } from "../utils/deviceUtils";
 import { cn } from "@/lib/utils";
 
 interface SidebarNavigationItemProps {
@@ -20,6 +21,13 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = location.pathname === item.href;
+  const { isMobile, isTablet } = useSidebarDimensions();
+
+  const deviceInfo = {
+    isMobile,
+    isTablet,
+    isDesktop: !isMobile && !isTablet
+  };
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -63,15 +71,16 @@ export const SidebarNavigationItem: React.FC<SidebarNavigationItemProps> = ({
         
         <div className="relative z-10 flex items-center gap-4">
           <NavigationItemIcon 
-            icon={item.icon} 
-            gradient={item.gradient}
+            item={item}
             isActive={isActive}
+            iconSize={deviceInfo.isMobile ? "w-5 h-5" : "w-6 h-6"}
+            iconContainer={deviceInfo.isMobile ? "w-10 h-10" : "w-12 h-12"}
           />
           
           <NavigationItemContent 
-            title={item.title}
-            subtitle={item.subtitle}
+            item={item}
             isActive={isActive}
+            deviceInfo={deviceInfo}
           />
           
           <div className="flex items-center gap-2 mr-auto">
