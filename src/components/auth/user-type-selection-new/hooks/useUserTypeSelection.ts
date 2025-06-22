@@ -40,11 +40,6 @@ export const useUserTypeSelection = () => {
         navigate("/Management", { replace: true });
       }
       
-      // اجبار به reload برای اطمینان از تغییر حالت
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-      
     } catch (error) {
       console.error('خطا در هنگام هدایت:', error);
       setIsProcessing(false);
