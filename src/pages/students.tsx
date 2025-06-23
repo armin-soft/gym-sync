@@ -1,36 +1,48 @@
 
-import React, { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { History } from "lucide-react";
+import { StudentsHeader } from "@/components/students/StudentsHeader";
+import { StudentStatsCards } from "@/components/students/StudentStatsCards";
+import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
+import { useStudents } from "@/hooks/students"; 
+import { useStudentFiltering } from "@/hooks/useStudentFiltering";
+import { Student } from "@/components/students/StudentTypes";
 import { PageContainer } from "@/components/ui/page-container";
 import { Button } from "@/components/ui/button";
 import { useDeviceInfo } from "@/hooks/use-mobile";
-import { useStudents } from "@/hooks/students";
-import { useStudentHistory } from "@/hooks/useStudentHistory";
-import { Student } from "@/components/students/StudentTypes";
+import { History } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Import new components
-import { StudentManagementHeader } from "@/components/student-management/StudentManagementHeader";
-import { StudentFilters } from "@/components/student-management/StudentFilters";
-import { StudentGrid } from "@/components/student-management/StudentGrid";
-import { StudentFormDialog } from "@/components/student-management/StudentFormDialog";
-
-// Import existing program manager
+// Import from the correct paths
 import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
+import StudentSearchControls from "./students/components/StudentSearchControls";
+// Import from the list-views folder instead of local components
+import { StudentTableView } from "@/components/students/list-views";
+import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
+import { useStudentEvents } from "./students/hooks/useStudentEvents";
+import { useStudentHistory } from "@/hooks/useStudentHistory";
 
 const StudentsPage = () => {
-  const deviceInfo = useDeviceInfo();
-  const { addHistoryEntry } = useStudentHistory();
-  
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<'all' | 'male' | 'female' | 'active'>('all');
+  const dialogManagerRef = useRef<StudentDialogManagerRef>(null);
   const [selectedStudentForProgram, setSelectedStudentForProgram] = useState<Student | null>(null);
-  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<Student | undefined>(undefined);
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
-  const [isLoading, setIsLoading] = useState(false);
-
+  const [activeGenderTab, setActiveGenderTab] = useState<string>("all");
+  const deviceInfo = useDeviceInfo();
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
+  
+  // Check if profile is complete on component mount
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('trainerProfile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        setIsProfileComplete(Boolean(profile.name && profile.gymName && profile.phone));
+      } catch (error) {
+        console.error('Error checking profile completeness:', error);
+        setIsProfileComplete(false);
+      }
+    }
+  }, []);
+  
   const {
     students,
     exercises,
@@ -42,185 +54,66 @@ const StudentsPage = () => {
     handleSaveDiet,
     handleSaveSupplements
   } = useStudents();
+  
+  const { refreshTrigger, triggerRefresh, lastRefresh } = useStudentRefresh();
+  const { addHistoryEntry } = useStudentHistory();
 
-  // Filter and search students
-  const filteredStudents = useMemo(() => {
-    let filtered = students;
+  const {
+    handleSaveWithHistory,
+    handleSaveExercisesWithHistory,
+    handleSaveDietWithHistory,
+    handleSaveSupplementsWithHistory,
+    handleDeleteWithHistory
+  } = useStudentEvents(
+    handleSave,
+    handleSaveExercises,
+    handleSaveDiet,
+    handleSaveSupplements,
+    handleDelete,
+    addHistoryEntry,
+    triggerRefresh,
+    students,
+    selectedStudentForProgram
+  );
 
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(student =>
-        (student.name || '').toLowerCase().includes(query) ||
-        (student.phone || '').toLowerCase().includes(query)
-      );
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortedAndFilteredStudents,
+    sortField,
+    sortOrder,
+    toggleSort,
+    handleClearSearch
+  } = useStudentFiltering(students);
+
+  // Filter students by gender
+  const filteredStudentsByGender = React.useMemo(() => {
+    let filtered = sortedAndFilteredStudents;
+    
+    if (activeGenderTab === "male") {
+      filtered = filtered.filter(student => student.gender === "male");
+    } else if (activeGenderTab === "female") {
+      filtered = filtered.filter(student => student.gender === "female");
     }
-
-    // Apply gender/status filter
-    switch (activeFilter) {
-      case 'male':
-        filtered = filtered.filter(student => student.gender === 'male');
-        break;
-      case 'female':
-        filtered = filtered.filter(student => student.gender === 'female');
-        break;
-      case 'active':
-        // Consider students with recent activity as active
-        filtered = filtered.filter(student => 
-          student.exercises?.length > 0 || 
-          student.meals?.length > 0 || 
-          student.supplements?.length > 0
-        );
-        break;
-    }
-
+    
     return filtered;
-  }, [students, searchQuery, activeFilter]);
+  }, [sortedAndFilteredStudents, activeGenderTab]);
 
-  // Calculate student counts
-  const studentCounts = useMemo(() => ({
-    total: students.length,
-    male: students.filter(s => s.gender === 'male').length,
-    female: students.filter(s => s.gender === 'female').length,
-    active: students.filter(s => 
-      s.exercises?.length > 0 || 
-      s.meals?.length > 0 || 
-      s.supplements?.length > 0
-    ).length,
-  }), [students]);
-
-  // Enhanced handlers with history tracking
-  const handleSaveWithHistory = (studentData: Student) => {
-    const isEdit = !!editingStudent;
-    const result = handleSave(studentData, editingStudent);
-    
-    if (result) {
-      addHistoryEntry({
-        studentId: studentData.id,
-        studentName: studentData.name || 'نامشخص',
-        action: isEdit ? 'edited' : 'added',
-        changes: isEdit ? 
-          `ویرایش اطلاعات ${studentData.name}` : 
-          `افزودن شاگرد جدید: ${studentData.name}`,
-        timestamp: new Date().toISOString()
-      });
-      
-      setIsFormDialogOpen(false);
-      setEditingStudent(undefined);
-    }
-    
-    return result;
-  };
-
-  const handleDeleteWithHistory = (studentId: number) => {
-    const student = students.find(s => s.id === studentId);
-    const result = handleDelete(studentId);
-    
-    if (result && student) {
-      addHistoryEntry({
-        studentId: student.id,
-        studentName: student.name || 'نامشخص',
-        action: 'deleted',
-        changes: `حذف شاگرد: ${student.name}`,
-        timestamp: new Date().toISOString()
-      });
-    }
-    
-    return result;
-  };
-
-  const handleAddStudent = () => {
-    setEditingStudent(undefined);
-    setIsFormDialogOpen(true);
-  };
-
-  const handleEditStudent = (student: Student) => {
-    setEditingStudent(student);
-    setIsFormDialogOpen(true);
-  };
-
-  const handleViewStudent = (student: Student) => {
-    console.log('View student details:', student);
-    // TODO: Implement student details view
-  };
-
-  const handleManageProgram = (student: Student) => {
+  // Handler for opening the program manager
+  const handleOpenProgramManager = (student: Student) => {
     setSelectedStudentForProgram(student);
   };
 
-  const handleRefresh = () => {
-    setIsLoading(true);
-    setLastRefresh(new Date());
-    
-    // Simulate refresh delay
-    setTimeout(() => {
-      setIsLoading(false);
-      window.dispatchEvent(new CustomEvent('studentsUpdated'));
-    }, 1000);
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery("");
-  };
-
-  // Enhanced program manager handlers
-  const handleSaveExercisesWithHistory = (exercisesData: any[], studentId: number, dayNumber?: number) => {
-    const result = handleSaveExercises(exercisesData, studentId, dayNumber);
-    if (result) {
-      const student = students.find(s => s.id === studentId);
-      if (student) {
-        addHistoryEntry({
-          studentId: student.id,
-          studentName: student.name || 'نامشخص',
-          action: 'program_updated',
-          changes: `بروزرسانی برنامه تمرینی ${student.name}`,
-          timestamp: new Date().toISOString()
-        });
-      }
-    }
-    return result;
-  };
-
-  const handleSaveDietWithHistory = (mealIds: number[], studentId: number, dayNumber?: number) => {
-    const result = handleSaveDiet(mealIds, studentId, dayNumber);
-    if (result) {
-      const student = students.find(s => s.id === studentId);
-      if (student) {
-        addHistoryEntry({
-          studentId: student.id,
-          studentName: student.name || 'نامشخص',
-          action: 'diet_updated',
-          changes: `بروزرسانی برنامه غذایی ${student.name}`,
-          timestamp: new Date().toISOString()
-        });
-      }
-    }
-    return result;
-  };
-
-  const handleSaveSupplementsWithHistory = (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
-    const result = handleSaveSupplements(data, studentId);
-    if (result) {
-      const student = students.find(s => s.id === studentId);
-      if (student) {
-        addHistoryEntry({
-          studentId: student.id,
-          studentName: student.name || 'نامشخص',
-          action: 'supplements_updated',
-          changes: `بروزرسانی مکمل‌ها ${student.name}`,
-          timestamp: new Date().toISOString()
-        });
-      }
-    }
-    return result;
-  };
-
-  // Determine padding based on device type
+  // Determine the appropriate classes based on device type
   const getContentPadding = () => {
-    if (deviceInfo.isMobile) return "px-4 py-4";
-    if (deviceInfo.isTablet) return "px-6 py-6";
-    return "px-8 py-8";
+    if (deviceInfo.isMobile) return "px-2";
+    if (deviceInfo.isTablet) return "px-4";
+    return "px-4 sm:px-6 lg:px-8";
   };
+
+  // Count students by gender
+  const maleStudentsCount = students.filter(s => s.gender === "male").length;
+  const femaleStudentsCount = students.filter(s => s.gender === "female").length;
 
   // If a student is selected for program management, show the program manager
   if (selectedStudentForProgram) {
@@ -239,76 +132,116 @@ const StudentsPage = () => {
   }
 
   return (
-    <PageContainer withBackground fullHeight className="min-h-screen">
-      <div className={`w-full min-h-screen ${getContentPadding()}`}>
+    <PageContainer withBackground fullHeight className="w-full overflow-hidden">
+      <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
+        <div className="flex justify-between items-center">
+          <StudentsHeader 
+            onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
+            onRefresh={triggerRefresh}
+            lastRefreshTime={lastRefresh}
+          />
+          
+          <Link to="/Management/Student-History">
+            <Button variant="outline" className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white border-0 hover:from-emerald-600 hover:to-sky-600">
+              <History className="h-4 w-4" />
+              <span>تاریخچه</span>
+            </Button>
+          </Link>
+        </div>
         
-        {/* Header with History Link */}
-        <div className="flex justify-between items-start mb-8">
-          <div className="flex-1">
-            <StudentManagementHeader
-              totalStudents={studentCounts.total}
-              activeStudents={studentCounts.active}
+        <StudentStatsCards students={students} />
+        
+        <div className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
+          <div className="flex justify-end mb-4 md:mb-6">
+            <StudentSearchControls 
               searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onAddStudent={handleAddStudent}
-              onRefresh={handleRefresh}
-              lastRefresh={lastRefresh}
+              setSearchQuery={setSearchQuery}
+              handleClearSearch={handleClearSearch}
             />
           </div>
           
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="mr-4"
-          >
-            <Link to="/Management/Student-History">
-              <Button 
-                variant="outline" 
-                className="gap-2 student-gradient-accent hover:opacity-90 text-white border-0 shadow-lg rounded-xl px-6 py-3"
-              >
-                <History className="h-5 w-5" />
-                <span>تاریخچه</span>
-              </Button>
-            </Link>
-          </motion.div>
+          {/* Gender Tabs */}
+          <Tabs value={activeGenderTab} onValueChange={setActiveGenderTab} className="w-full mb-4">
+            <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-950/30 dark:to-sky-950/30">
+              <TabsTrigger value="all" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-sky-500 data-[state=active]:text-white">همه ({students.length})</TabsTrigger>
+              <TabsTrigger value="male" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-sky-500 data-[state=active]:text-white">آقایان ({maleStudentsCount})</TabsTrigger>
+              <TabsTrigger value="female" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-sky-500 data-[state=active]:text-white">بانوان ({femaleStudentsCount})</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="all" className="mt-4">
+              <StudentTableView 
+                students={students}
+                sortedAndFilteredStudents={sortedAndFilteredStudents}
+                searchQuery={searchQuery}
+                refreshTrigger={refreshTrigger}
+                onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+                onDelete={handleDeleteWithHistory}
+                onAddExercise={handleOpenProgramManager}
+                onAddDiet={handleOpenProgramManager}
+                onAddSupplement={handleOpenProgramManager}
+                onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+                onClearSearch={handleClearSearch}
+                viewMode="table"
+                isProfileComplete={isProfileComplete}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={toggleSort}
+              />
+            </TabsContent>
+            
+            <TabsContent value="male" className="mt-4">
+              <StudentTableView 
+                students={students}
+                sortedAndFilteredStudents={filteredStudentsByGender}
+                searchQuery={searchQuery}
+                refreshTrigger={refreshTrigger}
+                onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+                onDelete={handleDeleteWithHistory}
+                onAddExercise={handleOpenProgramManager}
+                onAddDiet={handleOpenProgramManager}
+                onAddSupplement={handleOpenProgramManager}
+                onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+                onClearSearch={handleClearSearch}
+                viewMode="table"
+                isProfileComplete={isProfileComplete}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={toggleSort}
+              />
+            </TabsContent>
+            
+            <TabsContent value="female" className="mt-4">
+              <StudentTableView 
+                students={students}
+                sortedAndFilteredStudents={filteredStudentsByGender}
+                searchQuery={searchQuery}
+                refreshTrigger={refreshTrigger}
+                onEdit={(student) => dialogManagerRef.current?.handleEdit(student)}
+                onDelete={handleDeleteWithHistory}
+                onAddExercise={handleOpenProgramManager}
+                onAddDiet={handleOpenProgramManager}
+                onAddSupplement={handleOpenProgramManager}
+                onAddStudent={() => dialogManagerRef.current?.handleAdd()}
+                onClearSearch={handleClearSearch}
+                viewMode="table"
+                isProfileComplete={isProfileComplete}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={toggleSort}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
 
-        {/* Filters */}
-        <StudentFilters
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          studentCounts={studentCounts}
-        />
-
-        {/* Students Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${activeFilter}-${searchQuery}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <StudentGrid
-              students={filteredStudents}
-              searchQuery={searchQuery}
-              onAddStudent={handleAddStudent}
-              onEditStudent={handleEditStudent}
-              onDeleteStudent={handleDeleteWithHistory}
-              onViewStudent={handleViewStudent}
-              onManageProgram={handleManageProgram}
-              onClearSearch={handleClearSearch}
-              isLoading={isLoading}
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Student Form Dialog */}
-        <StudentFormDialog
-          open={isFormDialogOpen}
-          onOpenChange={setIsFormDialogOpen}
-          student={editingStudent}
+        <StudentDialogManager
+          ref={dialogManagerRef}
           onSave={handleSaveWithHistory}
+          onSaveExercises={handleSaveExercisesWithHistory}
+          onSaveDiet={handleSaveDietWithHistory}
+          onSaveSupplements={handleSaveSupplementsWithHistory}
+          exercises={exercises}
+          meals={meals}
+          supplements={supplements}
         />
       </div>
     </PageContainer>
