@@ -1,24 +1,19 @@
+
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { User, Save, X, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Student } from "@/components/students/StudentTypes";
 import { cn } from "@/lib/utils";
 import { studentFormSchema, StudentFormValues } from "@/lib/validations/student";
-
-// Import new components
-import { 
-  ProfileImageUpload,
-  PersonalInfoSection,
-  MeasurementsSection,
-  PaymentField,
-  FormActions,
-  GenderField,
-  containerVariants,
-  itemVariants
-} from "./form-components";
 
 interface StudentFormProps {
   student?: Student;
@@ -87,130 +82,226 @@ export const StudentForm = ({
     }
   };
 
-  const handleImageChange = (imageData: string) => {
-    setPreviewImage(imageData);
-    form.setValue("image", imageData);
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setPreviewImage(result);
+        form.setValue("image", result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
     <motion.div
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
-      variants={containerVariants}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className={cn(
-        "w-full max-w-7xl mx-auto",
-        isDialog ? "p-0" : "p-4 md:p-6"
+        "w-full max-w-4xl mx-auto",
+        isDialog ? "p-0" : "p-6"
       )}
       dir="rtl"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* Profile Card Container */}
-          <motion.div
-            className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden"
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            {/* Background Effects */}
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-emerald-400/10 to-sky-400/5 rounded-full blur-3xl" />
-              <div className="absolute -bottom-40 -left-40 w-64 h-64 bg-gradient-to-tl from-sky-400/10 to-emerald-400/5 rounded-full blur-2xl" />
-            </div>
-
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
-              {/* Sidebar - Profile Image and Basic Info */}
-              <div className="lg:col-span-4 bg-gradient-to-b from-emerald-50/80 to-sky-50/80 dark:from-slate-800/80 dark:to-slate-900/80 border-l border-slate-200/50 dark:border-slate-700/50">
-                <div className="p-8 space-y-8">
-                  {/* Profile Image Section */}
-                  <motion.div 
-                    variants={itemVariants}
-                    className="text-center"
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Profile Section */}
+            <div className="lg:col-span-1 space-y-6">
+              <div className="text-center">
+                <div className="relative inline-block">
+                  <Avatar className="w-32 h-32 mx-auto border-4 border-gradient-to-r from-blue-400 to-purple-400">
+                    <AvatarImage src={previewImage} alt="تصویر شاگرد" />
+                    <AvatarFallback className="text-2xl">
+                      <User className="w-12 h-12" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <label 
+                    htmlFor="image-upload" 
+                    className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
                   >
-                    <ProfileImageUpload 
-                      previewImage={previewImage}
-                      onChange={handleImageChange}
-                      error={!!form.formState.errors.image}
-                    />
-                  </motion.div>
-
-                  {/* Gender Field */}
-                  <GenderField 
-                    control={form.control}
-                    itemVariants={itemVariants}
+                    <Upload className="w-4 h-4" />
+                  </label>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
                   />
                 </div>
               </div>
 
-              {/* Form Section */}
-              <div className="lg:col-span-8">
-                <div className="p-8 h-full flex flex-col">
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.5 }}
-                    className="flex-1 space-y-8"
-                  >
-                    {/* Personal Info Section */}
-                    <div className="space-y-6">
-                      <motion.h3 
-                        variants={itemVariants}
-                        className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2"
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>جنسیت</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-col space-y-2"
                       >
-                        اطلاعات شخصی
-                      </motion.h3>
-                      <PersonalInfoSection 
-                        control={form.control} 
-                        itemVariants={itemVariants} 
-                      />
-                    </div>
+                        <div className="flex items-center space-x-2 space-x-reverse">
+                          <RadioGroupItem value="male" id="male" />
+                          <Label htmlFor="male">آقا</Label>
+                        </div>
+                        <div className="flex items-center space-x-2 space-x-reverse">
+                          <RadioGroupItem value="female" id="female" />
+                          <Label htmlFor="female">خانم</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-                    {/* Measurements Section */}
-                    <div className="space-y-6">
-                      <motion.h3 
-                        variants={itemVariants}
-                        className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4"
-                      >
-                        اطلاعات تکمیلی
-                      </motion.h3>
-                      <MeasurementsSection 
-                        control={form.control} 
-                        itemVariants={itemVariants} 
-                      />
-                    </div>
+            {/* Form Fields */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>نام و نام خانوادگی</FormLabel>
+                      <FormControl>
+                        <Input placeholder="نام شاگرد را وارد کنید" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                    {/* Payment Field */}
-                    <div className="space-y-6">
-                      <motion.h3 
-                        variants={itemVariants}
-                        className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4"
-                      >
-                        اطلاعات مالی
-                      </motion.h3>
-                      <PaymentField 
-                        control={form.control}
-                        itemVariants={itemVariants}
-                      />
-                    </div>
-                  </motion.div>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>شماره تلفن</FormLabel>
+                      <FormControl>
+                        <Input placeholder="۰۹۱۲۳۴۵۶۷۸۹" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="age"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>سن</FormLabel>
+                      <FormControl>
+                        <Input placeholder="سن" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="height"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>قد (سانتی‌متر)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="۱۷۵" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="weight"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>وزن (کیلوگرم)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="۷۰" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="payment"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>مبلغ برنامه</FormLabel>
+                      <FormControl>
+                        <Input placeholder="۵۰۰۰۰۰" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="grade"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>مقطع تحصیلی</FormLabel>
+                      <FormControl>
+                        <Input placeholder="دانشگاه" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="group"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>گروه</FormLabel>
+                      <FormControl>
+                        <Input placeholder="گروه A" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Form Actions */}
-          <motion.div variants={itemVariants}>
-            <FormActions 
-              isEdit={!!student} 
-              onCancel={onCancel} 
-            />
-          </motion.div>
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-4 pt-6 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              className="flex items-center gap-2"
+            >
+              <X className="w-4 h-4" />
+              لغو
+            </Button>
+            <Button
+              type="submit"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white flex items-center gap-2"
+            >
+              <Save className="w-4 h-4" />
+              {student ? "ویرایش" : "افزودن"} شاگرد
+            </Button>
+          </div>
         </form>
       </Form>
     </motion.div>
   );
 };
-
-export { StudentForm } from './modern/StudentForm';

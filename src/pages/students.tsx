@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { StudentHeader } from "@/components/students/modern/StudentHeader";
@@ -228,9 +227,9 @@ const StudentsPage = () => {
         <StudentDialogManager
           ref={dialogManagerRef}
           onSave={handleSaveWithHistory}
-          onSaveExercises={handleSaveExercisesWithHistory}
-          onSaveDiet={handleSaveDietWithHistory}
-          onSaveSupplements={handleSaveSupplementsWithHistory}
+          onSaveExercises={undefined}
+          onSaveDiet={undefined}
+          onSaveSupplements={undefined}
           exercises={exercises}
           meals={meals}
           supplements={supplements}
