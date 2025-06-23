@@ -2,7 +2,6 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StudentGridView } from "@/components/students/list-views/StudentGridView";
-import { StudentTableView } from "@/components/students/list-views/StudentTableView";
 import { DataStatusIndicator } from "@/components/students/DataStatusIndicator";
 import { Student } from "@/components/students/StudentTypes";
 
@@ -81,45 +80,24 @@ export const MainStudentTabs: React.FC<MainStudentTabsProps> = ({
   };
 
   const renderStudentView = (studentList: Student[]) => {
-    if (viewMode === "grid") {
-      return (
-        <StudentGridView
-          students={studentList}
-          searchQuery={searchQuery}
-          onEdit={onEditStudent}
-          onDelete={(id: number) => {
-            const student = studentList.find(s => s.id === id);
-            if (student) onDeleteStudent(student);
-          }}
-          onAddExercise={onManageStudentProgram}
-          onAddDiet={onManageStudentProgram}
-          onAddSupplement={onManageStudentProgram}
-          onAddStudent={onAddStudent}
-          onClearSearch={handleClearSearch}
-          isProfileComplete={isProfileComplete}
-        />
-      );
-    } else {
-      return (
-        <StudentTableView
-          students={studentList}
-          sortedAndFilteredStudents={studentList}
-          searchQuery={searchQuery}
-          isProfileComplete={isProfileComplete}
-          onEdit={onEditStudent}
-          onDelete={(id: number) => {
-            const student = studentList.find(s => s.id === id);
-            if (student) onDeleteStudent(student);
-          }}
-          onAddExercise={onManageStudentProgram}
-          onAddDiet={onManageStudentProgram}
-          onAddSupplement={onManageStudentProgram}
-          onAddStudent={onAddStudent}
-          onClearSearch={handleClearSearch}
-          viewMode="table"
-        />
-      );
-    }
+    // Only render grid view since table view was removed
+    return (
+      <StudentGridView
+        students={studentList}
+        searchQuery={searchQuery}
+        onEdit={onEditStudent}
+        onDelete={(id: number) => {
+          const student = studentList.find(s => s.id === id);
+          if (student) onDeleteStudent(student);
+        }}
+        onAddExercise={onManageStudentProgram}
+        onAddDiet={onManageStudentProgram}
+        onAddSupplement={onManageStudentProgram}
+        onAddStudent={onAddStudent}
+        onClearSearch={handleClearSearch}
+        isProfileComplete={isProfileComplete}
+      />
+    );
   };
 
   return (

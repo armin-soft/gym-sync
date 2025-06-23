@@ -1,11 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { Student } from '@/components/students/StudentTypes';
+import { useToast } from '@/hooks/use-toast';
 
 export const useStudents = () => {
   console.log('useStudents.tsx: Hook called');
   const [students, setStudents] = useState<Student[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const loadStudents = () => {
@@ -29,14 +31,66 @@ export const useStudents = () => {
         console.error('useStudents.tsx: Error loading students:', error);
         setStudents([]);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     loadStudents();
-    // Remove automatic refresh listeners - only manual loading
   }, []);
 
+  const handleSave = (studentData: Student, existingStudent?: Student | null) => {
+    try {
+      let updatedStudents: Student[];
+      
+      if (existingStudent) {
+        // Update existing student
+        updatedStudents = students.map(student => 
+          student.id === existingStudent.id ? studentData : student
+        );
+        toast({
+          title: "ویرایش موفق",
+          description: `اطلاعات ${studentData.name} با موفقیت به‌روزرسانی شد`,
+        });
+      } else {
+        // Add new student
+        updatedStudents = [...students, studentData];
+        toast({
+          title: "ثبت موفق",
+          description: `${studentData.name} با موفقیت اضافه شد`,
+        });
+      }
+      
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      setStudents(updatedStudents);
+      return true;
+    } catch (error) {
+      console.error('Error saving student:', error);
+      toast({
+        title: "خطا",
+        description: "مشکلی در ذخیره اطلاعات پیش آمد",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
+  const handleDelete = (studentId: number) => {
+    try {
+      const updatedStudents = students.filter(student => student.id !== studentId);
+      localStorage.setItem('students', JSON.stringify(updatedStudents));
+      setStudents(updatedStudents);
+      return true;
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      toast({
+        title: "خطا",
+        description: "مشکلی در حذف شاگرد پیش آمد",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
   console.log('useStudents.tsx: Returning students count:', students.length);
-  return { students, isLoading };
+  return { students, loading, handleSave, handleDelete };
 };
