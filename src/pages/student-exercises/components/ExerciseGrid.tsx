@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
   Dumbbell, Target, Clock, Play, Eye, 
-  CheckCircle, Circle, Star, TrendingUp 
+  CheckCircle, Circle, Star, TrendingUp, Calendar
 } from "lucide-react";
 import { Exercise, ExerciseCategory } from "@/types/exercise";
 import { toPersianNumbers } from "@/lib/utils/numbers";
