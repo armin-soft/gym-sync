@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Student } from "@/components/students/StudentTypes";
 import { motion, AnimatePresence } from "framer-motion";
-import { StudentDialogContent } from "@/components/students/form-components";
+import { StudentDialogContent } from "@/components/students/form-components/StudentDialogContent";
 
 interface StudentDialogProps {
   isOpen: boolean;
@@ -23,6 +23,10 @@ interface StudentFormData {
   weight: string;
   image: string;
   payment: string;
+  age: string;
+  grade: string;
+  group: string;
+  gender: "male" | "female";
 }
 
 export const StudentDialog = ({
@@ -33,7 +37,7 @@ export const StudentDialog = ({
 }: StudentDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
         <DialogTitle className="sr-only">
           {student ? "ویرایش شاگرد" : "افزودن شاگرد جدید"}
         </DialogTitle>

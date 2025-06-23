@@ -9,13 +9,17 @@ import { Student } from "@/components/students/StudentTypes";
 import { cn } from "@/lib/utils";
 import { studentFormSchema, StudentFormValues } from "@/lib/validations/student";
 
-// Import our components
-import { ProfileImageUpload } from "./form-components/ProfileImageUpload";
-import { PersonalInfoSection } from "./form-components/PersonalInfoSection";
-import { MeasurementsSection } from "./form-components/MeasurementsSection";
-import { PaymentField } from "./form-components/PaymentField";
-import { FormActions } from "./form-components/FormActions";
-import { GenderField } from "./form-components/GenderField";
+// Import new components
+import { 
+  ProfileImageUpload,
+  PersonalInfoSection,
+  MeasurementsSection,
+  PaymentField,
+  FormActions,
+  GenderField,
+  containerVariants,
+  itemVariants
+} from "./form-components";
 
 interface StudentFormProps {
   student?: Student;
@@ -84,30 +88,6 @@ export const StudentForm = ({
     }
   };
 
-  // Motion variants for animations
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 24,
-      },
-    },
-  };
-
   const handleImageChange = (imageData: string) => {
     setPreviewImage(imageData);
     form.setValue("image", imageData);
@@ -127,7 +107,7 @@ export const StudentForm = ({
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* Profile Card Container - مطابق با student profile */}
+          {/* Profile Card Container */}
           <motion.div
             className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden"
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
