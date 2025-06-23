@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
-  MessageCircle, Send, Phone, Mail, Clock, 
+  MessageCircle, Send, Clock, 
   CheckCircle, AlertCircle, HelpCircle, User,
-  Plus, Search, Filter, Zap, Shield, Star,
-  ChevronDown, ArrowLeft, MessageSquare, Settings,
-  Bell, Heart, Smile, ThumbsUp, FileText
+  Plus, Zap, Shield, Star,
+  MessageSquare, Settings,
+  Heart, Smile, ThumbsUp, FileText
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/localStorage";
@@ -56,8 +56,6 @@ const StudentSupport = () => {
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [selectedPriority, setSelectedPriority] = useState<'low' | 'medium' | 'high' | 'urgent'>('medium');
   const [activeView, setActiveView] = useState<'chat' | 'tickets' | 'create'>('chat');
-  const [trainerOnline, setTrainerOnline] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
   const [currentStudent, setCurrentStudent] = useState<any>(null);
   const deviceInfo = useDeviceInfo();
 
@@ -72,7 +70,6 @@ const StudentSupport = () => {
   useEffect(() => {
     loadCurrentStudent();
     loadSupportData();
-    simulateTrainerActivity();
   }, []);
 
   const loadCurrentStudent = () => {
@@ -106,11 +103,6 @@ const StudentSupport = () => {
     const allTickets = getLocalStorageItem<SupportTicket[]>('studentSupportTickets', []);
     const studentTickets = allTickets.filter(ticket => ticket.studentId === loggedInStudentId);
     setTickets(studentTickets);
-  };
-
-  const simulateTrainerActivity = () => {
-    // Check if trainer is available (random simulation)
-    setTrainerOnline(Math.random() > 0.7);
   };
 
   const handleSendMessage = () => {
@@ -340,16 +332,6 @@ const StudentSupport = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge className={cn(
-              "px-3 py-1.5 text-xs font-medium",
-              trainerOnline 
-                ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white" 
-                : "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
-            )}>
-              {trainerOnline ? 'مربی آنلاین' : 'مربی آفلاین'}
-            </Badge>
-          </div>
         </div>
       </motion.div>
 
@@ -363,8 +345,8 @@ const StudentSupport = () => {
         {[
           { icon: MessageCircle, label: 'پیام‌های ارسالی', value: messages.length, gradient: 'from-emerald-500 to-teal-500' },
           { icon: HelpCircle, label: 'تیکت‌های فعال', value: tickets.filter(t => t.status !== 'closed').length, gradient: 'from-sky-500 to-blue-500' },
-          { icon: Clock, label: 'زمان پاسخ متوسط', value: '۲', suffix: 'ساعت', gradient: 'from-purple-500 to-pink-500' },
-          { icon: Star, label: 'رضایت از پشتیبانی', value: '۹۸', suffix: '%', gradient: 'from-orange-500 to-red-500' }
+          { icon: CheckCircle, label: 'تیکت‌های حل‌شده', value: tickets.filter(t => t.status === 'resolved').length, gradient: 'from-purple-500 to-pink-500' },
+          { icon: Star, label: 'امتیاز رضایت', value: '۰', suffix: '%', gradient: 'from-orange-500 to-red-500' }
         ].map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -439,15 +421,12 @@ const StudentSupport = () => {
                     <div className="flex items-center gap-3">
                       <Avatar className="w-12 h-12">
                         <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-sky-500 text-white font-bold">
-                          مربی
+                          م
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-bold text-gray-900 dark:text-white">مربی احمدی</h3>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <div className={cn("w-2 h-2 rounded-full", trainerOnline ? "bg-emerald-500" : "bg-gray-400")} />
-                          {trainerOnline ? 'آنلاین' : 'آفلاین'}
-                        </p>
+                        <h3 className="font-bold text-gray-900 dark:text-white">مربی</h3>
+                        <p className="text-sm text-muted-foreground">آنلاین نیست</p>
                       </div>
                     </div>
                   </div>
