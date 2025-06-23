@@ -1,9 +1,9 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { StudentsHeader } from "@/components/students/StudentsHeader";
-import { StudentStatsCards } from "@/components/students/StudentStatsCards";
-import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/StudentDialogManager";
+import { StudentHeader } from "@/components/students/modern/StudentHeader";
+import { StudentStats } from "@/components/students/modern/StudentStats";
+import { StudentDialogManager, StudentDialogManagerRef } from "@/components/students/modern/StudentDialogManager";
 import { useStudents } from "@/hooks/students"; 
 import { useStudentFiltering } from "@/hooks/useStudentFiltering";
 import { Student } from "@/components/students/StudentTypes";
@@ -15,9 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Import from the correct paths
 import StudentProgramManagerView from "./students/components/program/StudentProgramManagerView";
-import StudentSearchControls from "./students/components/StudentSearchControls";
 // Import from the list-views folder instead of local components
-import { StudentTableView } from "@/components/students/list-views";
+import { StudentTableView } from "@/components/students/modern/StudentTableView";
 import { useStudentRefresh } from "@/hooks/useStudentRefresh"; 
 import { useStudentEvents } from "./students/hooks/useStudentEvents";
 import { useStudentHistory } from "@/hooks/useStudentHistory";
@@ -135,10 +134,11 @@ const StudentsPage = () => {
     <PageContainer withBackground fullHeight className="w-full overflow-hidden">
       <div className={`w-full h-full flex flex-col mx-auto ${getContentPadding()} py-3 sm:py-4 md:py-6`}>
         <div className="flex justify-between items-center">
-          <StudentsHeader 
+          <StudentHeader 
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
             onAddStudent={() => dialogManagerRef.current?.handleAdd()} 
             onRefresh={triggerRefresh}
-            lastRefreshTime={lastRefresh}
           />
           
           <Link to="/Management/Student-History">
@@ -149,17 +149,9 @@ const StudentsPage = () => {
           </Link>
         </div>
         
-        <StudentStatsCards students={students} />
+        <StudentStats students={students} />
         
         <div className="w-full mt-4 md:mt-6 flex-1 flex flex-col">
-          <div className="flex justify-end mb-4 md:mb-6">
-            <StudentSearchControls 
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              handleClearSearch={handleClearSearch}
-            />
-          </div>
-          
           {/* Gender Tabs */}
           <Tabs value={activeGenderTab} onValueChange={setActiveGenderTab} className="w-full mb-4">
             <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-950/30 dark:to-sky-950/30">

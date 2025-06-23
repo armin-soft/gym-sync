@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -213,3 +212,5 @@ export const StudentForm = ({
     </motion.div>
   );
 };
+
+export { StudentForm } from './modern/StudentForm';
