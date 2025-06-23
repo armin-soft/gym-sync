@@ -40,6 +40,30 @@ function AppContent() {
     console.log('AppContent: User type selected:', hasSelectedType);
     console.log('AppContent: Selected user type:', selectedUserType);
     
+    // اگر در مسیر مدیریت هستیم، حتماً باید نوع کاربر management باشد
+    if (currentPath.startsWith('/Management')) {
+      if (!hasSelectedType || selectedUserType !== "management") {
+        console.log('AppContent: Management path detected, forcing user type selection');
+        localStorage.removeItem("hasSelectedUserType");
+        localStorage.removeItem("selectedUserType");
+        setShowUserTypeSelection(true);
+        setIsLoading(false);
+        return;
+      }
+    }
+    
+    // اگر در مسیر شاگرد هستیم، حتماً باید نوع کاربر student باشد
+    if (currentPath.startsWith('/Student')) {
+      if (!hasSelectedType || selectedUserType !== "student") {
+        console.log('AppContent: Student path detected, forcing user type selection');
+        localStorage.removeItem("hasSelectedUserType");
+        localStorage.removeItem("selectedUserType");
+        setShowUserTypeSelection(true);
+        setIsLoading(false);
+        return;
+      }
+    }
+    
     // اگر نوع کاربر انتخاب نشده، نمایش صفحه انتخاب
     if (!hasSelectedType || !selectedUserType) {
       console.log('AppContent: No user type selected, showing selection screen');
@@ -88,15 +112,9 @@ function AppContent() {
   console.log('AppContent: Rendering for user type:', selectedUserType);
   console.log('AppContent: Current path:', currentPath);
 
-  // اگر پنل شاگرد انتخاب شده یا در مسیر شاگرد هستیم
-  if (selectedUserType === "student" || currentPath.startsWith('/Student')) {
-    console.log('AppContent: Rendering student panel');
-    return <AppRoutes />;
-  }
-
-  // اگر پنل مدیریت انتخاب شده
-  if (selectedUserType === "management" || currentPath.startsWith('/Management') || currentPath === '/') {
-    console.log('AppContent: Rendering management panel');
+  // اگر در مسیر مدیریت هستیم، نمایش پنل مدیریت با احراز هویت
+  if (currentPath.startsWith('/Management') || currentPath === '/') {
+    console.log('AppContent: Rendering management panel with authentication');
     return (
       <AuthWrapper>
         <Layout>
@@ -104,6 +122,12 @@ function AppContent() {
         </Layout>
       </AuthWrapper>
     );
+  }
+
+  // اگر در مسیر شاگرد هستیم، نمایش پنل شاگرد
+  if (currentPath.startsWith('/Student')) {
+    console.log('AppContent: Rendering student panel');
+    return <AppRoutes />;
   }
 
   // fallback - نمایش انتخاب نوع کاربر
