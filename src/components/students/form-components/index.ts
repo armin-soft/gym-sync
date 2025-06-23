@@ -13,6 +13,3 @@ export * from "./StudentImageSection";
 export * from "./StudentPersonalInfo";
 export * from "./GenderField";
 export * from "./FormContainer";
-
-// Export animation variants
-export { containerVariants, itemVariants } from "./FormContainer";
