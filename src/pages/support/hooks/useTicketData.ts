@@ -11,12 +11,43 @@ export const useTicketData = () => {
 
   useEffect(() => {
     loadTickets();
+    
+    // Listen for new tickets from students
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'studentSupportTickets') {
+        loadTickets();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const loadTickets = () => {
     try {
-      const savedTickets = getLocalStorageItem<SupportTicket[]>('supportTickets', []);
-      setTickets(Array.isArray(savedTickets) ? savedTickets : []);
+      // Load tickets from student support system
+      const studentTickets = getLocalStorageItem<any[]>('studentSupportTickets', []);
+      
+      // Convert student ticket format to management ticket format
+      const convertedTickets: SupportTicket[] = studentTickets.map(studentTicket => ({
+        id: studentTicket.id,
+        ticketNumber: `TK-${studentTicket.id.slice(-6).toUpperCase()}`,
+        studentId: studentTicket.studentId,
+        studentName: studentTicket.studentName,
+        subject: studentTicket.subject,
+        description: studentTicket.description,
+        category: studentTicket.category as any,
+        priority: studentTicket.priority,
+        status: studentTicket.status,
+        createdAt: studentTicket.createdAt,
+        updatedAt: studentTicket.lastUpdate || studentTicket.createdAt,
+        responses: []
+      }));
+      
+      setTickets(convertedTickets);
     } catch (error) {
       console.error('Error loading tickets:', error);
       setTickets([]);
@@ -28,7 +59,23 @@ export const useTicketData = () => {
   const saveTickets = (updatedTickets: SupportTicket[]) => {
     if (Array.isArray(updatedTickets)) {
       setTickets(updatedTickets);
-      setLocalStorageItem('supportTickets', updatedTickets);
+      
+      // Convert back to student format and save
+      const studentTickets = updatedTickets.map(ticket => ({
+        id: ticket.id,
+        subject: ticket.subject,
+        category: ticket.category,
+        status: ticket.status,
+        priority: ticket.priority,
+        createdAt: ticket.createdAt,
+        lastUpdate: ticket.updatedAt,
+        description: ticket.description,
+        responses: ticket.responses.length,
+        studentId: ticket.studentId,
+        studentName: ticket.studentName
+      }));
+      
+      setLocalStorageItem('studentSupportTickets', studentTickets);
     }
   };
 
@@ -53,6 +100,34 @@ export const useTicketData = () => {
         : ticket
     );
     saveTickets(updatedTickets);
+    
+    // Send notification to student (optional)
+    if (response.authorType === "trainer") {
+      sendResponseNotificationToStudent(ticketId, response.message);
+    }
+  };
+
+  const sendResponseNotificationToStudent = (ticketId: string, message: string) => {
+    // Save notification for student
+    const notifications = getLocalStorageItem<any[]>('studentNotifications', []);
+    const newNotification = {
+      id: Date.now().toString(),
+      type: 'trainer_response',
+      title: 'پاسخ جدید از مربی',
+      description: `مربی به تیکت شما پاسخ داده است: ${message.substring(0, 50)}...`,
+      timestamp: Date.now(),
+      isRead: false,
+      ticketId: ticketId
+    };
+    
+    const updatedNotifications = [newNotification, ...notifications];
+    setLocalStorageItem('studentNotifications', updatedNotifications);
+    
+    // Trigger storage event for real-time updates
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'studentNotifications',
+      newValue: JSON.stringify(updatedNotifications)
+    }));
   };
 
   const getTicketStats = (): TicketStats => {

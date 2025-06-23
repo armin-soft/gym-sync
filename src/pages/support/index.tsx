@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from "react";
 import { SupportHeader } from "./components/SupportHeader";
 import { TicketStats } from "./components/TicketStats";
@@ -10,7 +9,7 @@ import { useTicketData } from "./hooks/useTicketData";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/localStorage";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bell, MessageCircle, User, Clock } from "lucide-react";
@@ -46,7 +45,7 @@ export default function SupportPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [studentMessages, setStudentMessages] = useState<StudentMessage[]>([]);
-  const [activeTab, setActiveTab] = useState<'tickets' | 'messages' | 'notifications'>('notifications');
+  const [activeTab, setActiveTab] = useState<'tickets' | 'messages' | 'notifications'>('tickets');
   const deviceInfo = useDeviceInfo();
   
   const { 
@@ -62,11 +61,10 @@ export default function SupportPage() {
     loadNotifications();
     loadStudentMessages();
     
-    // Listen for new notifications
+    // Listen for new notifications and messages
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'managementNotifications') {
         loadNotifications();
-        // Show toast for new notifications
         toast({
           variant: "default",
           title: "اعلان جدید",
@@ -75,6 +73,9 @@ export default function SupportPage() {
       }
       if (e.key === 'studentSupportMessages') {
         loadStudentMessages();
+      }
+      if (e.key === 'studentSupportTickets') {
+        // Tickets will be automatically reloaded by useTicketData hook
       }
     };
     
@@ -201,6 +202,44 @@ export default function SupportPage() {
         {/* Navigation Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
           <Button
+            variant={activeTab === 'tickets' ? "default" : "outline"}
+            onClick={() => setActiveTab('tickets')}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300",
+              activeTab === 'tickets'
+                ? "bg-gradient-to-r from-emerald-500 to-sky-500 text-white shadow-lg"
+                : "border-gray-200 hover:bg-emerald-50 hover:border-emerald-200"
+            )}
+          >
+            <User className="w-4 h-4" />
+            <span className="text-sm font-medium">تیکت‌های پشتیبانی</span>
+            {tickets.length > 0 && (
+              <Badge className="bg-white/20 text-white text-xs px-1.5 py-0.5">
+                {toPersianNumbers(tickets.length.toString())}
+              </Badge>
+            )}
+          </Button>
+          
+          <Button
+            variant={activeTab === 'messages' ? "default" : "outline"}
+            onClick={() => setActiveTab('messages')}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300",
+              activeTab === 'messages'
+                ? "bg-gradient-to-r from-emerald-500 to-sky-500 text-white shadow-lg"
+                : "border-gray-200 hover:bg-emerald-50 hover:border-emerald-200"
+            )}
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span className="text-sm font-medium">پیام‌های شاگردان</span>
+            {studentMessages.length > 0 && (
+              <Badge className="bg-white/20 text-white text-xs px-1.5 py-0.5">
+                {toPersianNumbers(studentMessages.length.toString())}
+              </Badge>
+            )}
+          </Button>
+          
+          <Button
             variant={activeTab === 'notifications' ? "default" : "outline"}
             onClick={() => setActiveTab('notifications')}
             className={cn(
@@ -218,34 +257,86 @@ export default function SupportPage() {
               </Badge>
             )}
           </Button>
-          <Button
-            variant={activeTab === 'messages' ? "default" : "outline"}
-            onClick={() => setActiveTab('messages')}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300",
-              activeTab === 'messages'
-                ? "bg-gradient-to-r from-emerald-500 to-sky-500 text-white shadow-lg"
-                : "border-gray-200 hover:bg-emerald-50 hover:border-emerald-200"
-            )}
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span className="text-sm font-medium">پیام‌های شاگردان</span>
-          </Button>
-          <Button
-            variant={activeTab === 'tickets' ? "default" : "outline"}
-            onClick={() => setActiveTab('tickets')}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300",
-              activeTab === 'tickets'
-                ? "bg-gradient-to-r from-emerald-500 to-sky-500 text-white shadow-lg"
-                : "border-gray-200 hover:bg-emerald-50 hover:border-emerald-200"
-            )}
-          >
-            <User className="w-4 h-4" />
-            <span className="text-sm font-medium">تیکت‌های پشتیبانی</span>
-          </Button>
         </div>
         
+        {activeTab === 'tickets' && (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-1">
+              <TicketFilters 
+                filter={filter}
+                onFilterChange={setFilter}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                tickets={tickets}
+              />
+            </div>
+            
+            <div className="lg:col-span-3">
+              {tickets.length > 0 ? (
+                <div className="space-y-4">
+                  {tickets.map((ticket) => (
+                    <TicketCard
+                      key={ticket.id}
+                      ticket={ticket}
+                      onStatusChange={updateTicketStatus}
+                      onAddResponse={handleAddResponse}
+                      studentInfo={getStudentInfo(ticket.studentId)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState filter={filter} searchQuery={searchQuery} />
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'messages' && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold">پیام‌های دریافتی از شاگردان</h3>
+            
+            {studentMessages.length === 0 ? (
+              <Card className="p-8 text-center">
+                <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-600 mb-2">پیامی وجود ندارد</h3>
+                <p className="text-gray-500">هنوز هیچ پیامی از شاگردان دریافت نشده است</p>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {studentMessages
+                  .sort((a, b) => b.timestamp - a.timestamp)
+                  .map((message) => (
+                    <Card key={message.id} className="border-gray-200 hover:shadow-md transition-all duration-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-sky-500 flex items-center justify-center text-white font-bold">
+                            {message.senderName.charAt(0)}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-semibold text-gray-900">{message.senderName}</h4>
+                              <span className="text-xs text-gray-500">{formatTime(message.timestamp)}</span>
+                            </div>
+                            <p className="text-gray-700 leading-relaxed">{message.message}</p>
+                            {message.studentId && (
+                              <div className="mt-2">
+                                <Badge variant="outline" className="text-xs">
+                                  شناسه شاگرد: {toPersianNumbers(message.studentId.toString())}
+                                </Badge>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === 'notifications' && (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -314,84 +405,6 @@ export default function SupportPage() {
                 ))}
               </div>
             )}
-          </div>
-        )}
-
-        {activeTab === 'messages' && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold">پیام‌های دریافتی از شاگردان</h3>
-            
-            {studentMessages.length === 0 ? (
-              <Card className="p-8 text-center">
-                <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-600 mb-2">پیامی وجود ندارد</h3>
-                <p className="text-gray-500">هنوز هیچ پیامی از شاگردان دریافت نشده است</p>
-              </Card>
-            ) : (
-              <div className="space-y-3">
-                {studentMessages
-                  .sort((a, b) => b.timestamp - a.timestamp)
-                  .map((message) => (
-                    <Card key={message.id} className="border-gray-200 hover:shadow-md transition-all duration-200">
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-sky-500 flex items-center justify-center text-white font-bold">
-                            {message.senderName.charAt(0)}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold text-gray-900">{message.senderName}</h4>
-                              <span className="text-xs text-gray-500">{formatTime(message.timestamp)}</span>
-                            </div>
-                            <p className="text-gray-700 leading-relaxed">{message.message}</p>
-                            {message.studentId && (
-                              <div className="mt-2">
-                                <Badge variant="outline" className="text-xs">
-                                  شناسه شاگرد: {toPersianNumbers(message.studentId.toString())}
-                                </Badge>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'tickets' && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1">
-              <TicketFilters 
-                filter={filter}
-                onFilterChange={setFilter}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                tickets={tickets}
-              />
-            </div>
-            
-            <div className="lg:col-span-3">
-              {filteredAndSortedTickets.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredAndSortedTickets.map((ticket) => (
-                    <TicketCard
-                      key={ticket.id}
-                      ticket={ticket}
-                      onStatusChange={updateTicketStatus}
-                      onAddResponse={handleAddResponse}
-                      studentInfo={getStudentInfo(ticket.studentId)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState filter={filter} searchQuery={searchQuery} />
-              )}
-            </div>
           </div>
         )}
       </div>
