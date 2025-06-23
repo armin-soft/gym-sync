@@ -16,10 +16,10 @@ import {
   Bell, Heart, Smile, ThumbsUp, FileText
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
-import { useStudents } from "@/hooks/useStudents";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/localStorage";
 import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 interface ChatMessage {
   id: string;
@@ -30,6 +30,7 @@ interface ChatMessage {
   isRead: boolean;
   type: 'text' | 'image' | 'file';
   reactions?: string[];
+  studentId?: number;
 }
 
 interface SupportTicket {
@@ -42,6 +43,8 @@ interface SupportTicket {
   lastUpdate: number;
   description: string;
   responses: number;
+  studentId: number;
+  studentName: string;
 }
 
 const StudentSupport = () => {
@@ -53,10 +56,10 @@ const StudentSupport = () => {
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [selectedPriority, setSelectedPriority] = useState<'low' | 'medium' | 'high' | 'urgent'>('medium');
   const [activeView, setActiveView] = useState<'chat' | 'tickets' | 'create'>('chat');
-  const [trainerOnline, setTrainerOnline] = useState(true);
+  const [trainerOnline, setTrainerOnline] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState<any>(null);
   const deviceInfo = useDeviceInfo();
-  const { students } = useStudents();
 
   const supportCategories = [
     { id: 'general', name: 'سوال عمومی', icon: HelpCircle, color: 'from-blue-500 to-cyan-500' },
@@ -67,137 +70,99 @@ const StudentSupport = () => {
   ];
 
   useEffect(() => {
+    loadCurrentStudent();
     loadSupportData();
     simulateTrainerActivity();
   }, []);
 
-  const loadSupportData = () => {
-    // Load real data from localStorage
-    const savedMessages = getLocalStorageItem<ChatMessage[]>('studentSupportMessages', []);
-    const savedTickets = getLocalStorageItem<SupportTicket[]>('studentSupportTickets', []);
+  const loadCurrentStudent = () => {
+    const loggedInStudentId = getLocalStorageItem<number>('loggedInStudentId', 0);
+    const students = getLocalStorageItem<any[]>('students', []);
     
-    if (savedMessages.length === 0) {
-      // Initialize with real conversation
-      const initialMessages: ChatMessage[] = [
-        {
-          id: '1',
-          sender: 'trainer',
-          senderName: 'مربی احمدی',
-          message: 'سلام و وقت بخیر! امیدوارم حالتون خوب باشه. چطور پیش میره؟',
-          timestamp: Date.now() - 3600000,
-          isRead: true,
-          type: 'text'
-        },
-        {
-          id: '2',
-          sender: 'student',
-          senderName: 'شما',
-          message: 'سلام مربی، حالم خوبه ممنون. در مورد برنامه تمرینی امروز سوال داشتم',
-          timestamp: Date.now() - 3500000,
-          isRead: true,
-          type: 'text'
-        },
-        {
-          id: '3',
-          sender: 'trainer',
-          senderName: 'مربی احمدی',
-          message: 'البته، خوشحال میشم کمکتون کنم. سوالتون رو بپرسید',
-          timestamp: Date.now() - 3400000,
-          isRead: true,
-          type: 'text',
-          reactions: ['👍', '💪']
-        }
-      ];
-      setMessages(initialMessages);
-      setLocalStorageItem('studentSupportMessages', initialMessages);
-    } else {
-      setMessages(savedMessages);
+    if (loggedInStudentId && students.length > 0) {
+      const student = students.find(s => s.id === loggedInStudentId);
+      if (student) {
+        setCurrentStudent(student);
+      }
+    }
+  };
+
+  const loadSupportData = () => {
+    const loggedInStudentId = getLocalStorageItem<number>('loggedInStudentId', 0);
+    
+    if (!loggedInStudentId) {
+      console.log('No logged in student found');
+      return;
     }
 
-    if (savedTickets.length === 0) {
-      // Initialize with real tickets
-      const initialTickets: SupportTicket[] = [
-        {
-          id: '1',
-          subject: 'درخواست تغییر برنامه تمرینی',
-          category: 'exercise',
-          status: 'in_progress',
-          priority: 'medium',
-          createdAt: Date.now() - 86400000,
-          lastUpdate: Date.now() - 3600000,
-          description: 'میخواهم برنامه تمرینی هفته آینده رو تغییر بدم',
-          responses: 2
-        },
-        {
-          id: '2',
-          subject: 'سوال در مورد رژیم غذایی',
-          category: 'diet',
-          status: 'resolved',
-          priority: 'low',
-          createdAt: Date.now() - 172800000,
-          lastUpdate: Date.now() - 86400000,
-          description: 'آیا میتونم غذاهای خاصی رو به رژیمم اضافه کنم؟',
-          responses: 5
-        }
-      ];
-      setTickets(initialTickets);
-      setLocalStorageItem('studentSupportTickets', initialTickets);
-    } else {
-      setTickets(savedTickets);
-    }
+    // Load messages for current student only
+    const allMessages = getLocalStorageItem<ChatMessage[]>('studentSupportMessages', []);
+    const studentMessages = allMessages.filter(msg => 
+      msg.studentId === loggedInStudentId || msg.sender === 'trainer'
+    );
+    setMessages(studentMessages);
+
+    // Load tickets for current student only
+    const allTickets = getLocalStorageItem<SupportTicket[]>('studentSupportTickets', []);
+    const studentTickets = allTickets.filter(ticket => ticket.studentId === loggedInStudentId);
+    setTickets(studentTickets);
   };
 
   const simulateTrainerActivity = () => {
-    // Simulate trainer online status
-    const interval = setInterval(() => {
-      setTrainerOnline(Math.random() > 0.3);
-    }, 30000);
-
-    return () => clearInterval(interval);
+    // Check if trainer is available (random simulation)
+    setTrainerOnline(Math.random() > 0.7);
   };
 
   const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !currentStudent) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "لطفاً پیام خود را وارد کنید"
+      });
+      return;
+    }
 
     const message: ChatMessage = {
       id: Date.now().toString(),
       sender: 'student',
-      senderName: 'شما',
+      senderName: currentStudent.name,
       message: newMessage,
       timestamp: Date.now(),
       isRead: true,
-      type: 'text'
+      type: 'text',
+      studentId: currentStudent.id
     };
 
+    // Save to all messages
+    const allMessages = getLocalStorageItem<ChatMessage[]>('studentSupportMessages', []);
+    const updatedAllMessages = [...allMessages, message];
+    setLocalStorageItem('studentSupportMessages', updatedAllMessages);
+
+    // Update local state
     const updatedMessages = [...messages, message];
     setMessages(updatedMessages);
-    setLocalStorageItem('studentSupportMessages', updatedMessages);
     setNewMessage('');
 
-    // Simulate trainer typing
-    setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      // Auto-reply simulation
-      if (Math.random() > 0.5) {
-        const trainerReply: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          sender: 'trainer',
-          senderName: 'مربی احمدی',
-          message: 'ممنون از پیامتون، به زودی پاسخ کاملی براتون ارسال میکنم.',
-          timestamp: Date.now() + 2000,
-          isRead: false,
-          type: 'text'
-        };
-        const newMessages = [...updatedMessages, trainerReply];
-        setMessages(newMessages);
-        setLocalStorageItem('studentSupportMessages', newMessages);
-      }
-    }, 3000);
+    // Send notification to management panel
+    sendNotificationToManagement(message);
+
+    toast({
+      variant: "success",
+      title: "پیام ارسال شد",
+      description: "پیام شما با موفقیت ارسال شد"
+    });
   };
 
   const handleCreateTicket = () => {
-    if (!newTicketSubject.trim() || !newTicketMessage.trim()) return;
+    if (!newTicketSubject.trim() || !newTicketMessage.trim() || !currentStudent) {
+      toast({
+        variant: "destructive",
+        title: "خطا",
+        description: "لطفاً تمام فیلدها را تکمیل کنید"
+      });
+      return;
+    }
 
     const ticket: SupportTicket = {
       id: Date.now().toString(),
@@ -208,16 +173,80 @@ const StudentSupport = () => {
       createdAt: Date.now(),
       lastUpdate: Date.now(),
       description: newTicketMessage,
-      responses: 0
+      responses: 0,
+      studentId: currentStudent.id,
+      studentName: currentStudent.name
     };
 
+    // Save to all tickets
+    const allTickets = getLocalStorageItem<SupportTicket[]>('studentSupportTickets', []);
+    const updatedAllTickets = [...allTickets, ticket];
+    setLocalStorageItem('studentSupportTickets', updatedAllTickets);
+
+    // Update local state
     const updatedTickets = [...tickets, ticket];
     setTickets(updatedTickets);
-    setLocalStorageItem('studentSupportTickets', updatedTickets);
     
     setNewTicketSubject('');
     setNewTicketMessage('');
     setActiveView('tickets');
+
+    // Send notification to management panel
+    sendTicketNotificationToManagement(ticket);
+
+    toast({
+      variant: "success",
+      title: "تیکت ایجاد شد",
+      description: "تیکت پشتیبانی شما با موفقیت ایجاد شد"
+    });
+  };
+
+  const sendNotificationToManagement = (message: ChatMessage) => {
+    // Save notification for management panel
+    const notifications = getLocalStorageItem<any[]>('managementNotifications', []);
+    const newNotification = {
+      id: Date.now().toString(),
+      type: 'support_message',
+      title: 'پیام جدید از شاگرد',
+      description: `${message.senderName}: ${message.message.substring(0, 50)}...`,
+      timestamp: Date.now(),
+      isRead: false,
+      studentId: message.studentId,
+      messageId: message.id
+    };
+    
+    const updatedNotifications = [newNotification, ...notifications];
+    setLocalStorageItem('managementNotifications', updatedNotifications);
+    
+    // Trigger storage event for real-time updates
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'managementNotifications',
+      newValue: JSON.stringify(updatedNotifications)
+    }));
+  };
+
+  const sendTicketNotificationToManagement = (ticket: SupportTicket) => {
+    // Save notification for management panel
+    const notifications = getLocalStorageItem<any[]>('managementNotifications', []);
+    const newNotification = {
+      id: Date.now().toString(),
+      type: 'support_ticket',
+      title: 'تیکت جدید از شاگرد',
+      description: `${ticket.studentName}: ${ticket.subject}`,
+      timestamp: Date.now(),
+      isRead: false,
+      studentId: ticket.studentId,
+      ticketId: ticket.id
+    };
+    
+    const updatedNotifications = [newNotification, ...notifications];
+    setLocalStorageItem('managementNotifications', updatedNotifications);
+    
+    // Trigger storage event for real-time updates
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'managementNotifications',
+      newValue: JSON.stringify(updatedNotifications)
+    }));
   };
 
   const getStatusColor = (status: string) => {
@@ -266,6 +295,20 @@ const StudentSupport = () => {
 
   const containerPadding = deviceInfo.isMobile ? "p-2" : deviceInfo.isTablet ? "p-4" : "p-6";
 
+  if (!currentStudent) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-sky-50/40 flex items-center justify-center" dir="rtl">
+        <Card className="p-8 text-center">
+          <CardContent>
+            <AlertCircle className="w-16 h-16 text-amber-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">خطا در بارگذاری</h2>
+            <p className="text-gray-600">اطلاعات شاگرد یافت نشد. لطفاً دوباره وارد شوید.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -306,10 +349,6 @@ const StudentSupport = () => {
             )}>
               {trainerOnline ? 'مربی آنلاین' : 'مربی آفلاین'}
             </Badge>
-            <Button variant="outline" size="sm" className="border-emerald-200 hover:bg-emerald-50">
-              <Phone className="w-4 h-4 ml-2" />
-              تماس مستقیم
-            </Button>
           </div>
         </div>
       </motion.div>
@@ -399,7 +438,6 @@ const StudentSupport = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-12 h-12">
-                        <AvatarImage src="/placeholder-trainer.jpg" />
                         <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-sky-500 text-white font-bold">
                           مربی
                         </AvatarFallback>
@@ -412,67 +450,44 @@ const StudentSupport = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Phone className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Settings className="w-4 h-4" />
-                      </Button>
-                    </div>
                   </div>
                 </CardHeader>
                 
                 <ScrollArea className="flex-1 p-4">
                   <div className="space-y-4">
-                    {messages.map((message, index) => (
-                      <motion.div
-                        key={message.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1, duration: 0.3 }}
-                        className={cn("flex", message.sender === 'student' ? 'justify-end' : 'justify-start')}
-                      >
-                        <div className={cn(
-                          "max-w-[75%] p-4 rounded-2xl shadow-sm",
-                          message.sender === 'student'
-                            ? 'bg-gradient-to-l from-emerald-500 to-sky-500 text-white rounded-br-md'
-                            : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border rounded-bl-md'
-                        )}>
-                          <p className="text-sm leading-relaxed">{message.message}</p>
-                          <div className="flex items-center justify-between mt-2">
-                            <p className={cn(
-                              "text-xs",
-                              message.sender === 'student' ? 'text-white/80' : 'text-muted-foreground'
-                            )}>
-                              {formatTime(message.timestamp)}
-                            </p>
-                            {message.reactions && (
-                              <div className="flex gap-1">
-                                {message.reactions.map((reaction, i) => (
-                                  <span key={i} className="text-xs">{reaction}</span>
-                                ))}
-                              </div>
-                            )}
+                    {messages.length === 0 ? (
+                      <div className="text-center py-8">
+                        <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                        <p className="text-gray-500">هنوز پیامی ارسال نشده است</p>
+                        <p className="text-sm text-gray-400 mt-2">اولین پیام خود را ارسال کنید</p>
+                      </div>
+                    ) : (
+                      messages.map((message, index) => (
+                        <motion.div
+                          key={message.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1, duration: 0.3 }}
+                          className={cn("flex", message.sender === 'student' ? 'justify-end' : 'justify-start')}
+                        >
+                          <div className={cn(
+                            "max-w-[75%] p-4 rounded-2xl shadow-sm",
+                            message.sender === 'student'
+                              ? 'bg-gradient-to-l from-emerald-500 to-sky-500 text-white rounded-br-md'
+                              : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border rounded-bl-md'
+                          )}>
+                            <p className="text-sm leading-relaxed">{message.message}</p>
+                            <div className="flex items-center justify-between mt-2">
+                              <p className={cn(
+                                "text-xs",
+                                message.sender === 'student' ? 'text-white/80' : 'text-muted-foreground'
+                              )}>
+                                {formatTime(message.timestamp)}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                    
-                    {isTyping && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex justify-start"
-                      >
-                        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl rounded-bl-md">
-                          <div className="flex gap-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                          </div>
-                        </div>
-                      </motion.div>
+                        </motion.div>
+                      ))
                     )}
                   </div>
                 </ScrollArea>
@@ -507,8 +522,8 @@ const StudentSupport = () => {
                 <CardContent className="space-y-3">
                   {[
                     'برای پاسخ سریع‌تر، سوالات خود را واضح و مشخص بپرسید',
-                    'در صورت فوریت، از تماس تلفنی استفاده کنید',
-                    'تصاویر و فایل‌ها را مستقیماً در چت ارسال کنید'
+                    'در صورت فوریت، از تیکت با اولویت بالا استفاده کنید',
+                    'پیام‌های شما مستقیماً به مربی ارسال می‌شود'
                   ].map((tip, index) => (
                     <div key={index} className="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl">
                       <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -531,48 +546,60 @@ const StudentSupport = () => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {tickets.map((ticket, index) => (
-                <motion.div
-                  key={ticket.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.4 }}
+            {tickets.length === 0 ? (
+              <div className="text-center py-16">
+                <HelpCircle className="w-24 h-24 text-gray-300 mx-auto mb-6" />
+                <h3 className="text-xl font-bold text-gray-600 mb-2">هیچ تیکتی یافت نشد</h3>
+                <p className="text-gray-500 mb-6">شما هنوز هیچ تیکت پشتیبانی ایجاد نکرده‌اید</p>
+                <Button 
+                  onClick={() => setActiveView('create')}
+                  className="bg-gradient-to-r from-emerald-500 to-sky-500 text-white"
                 >
-                  <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 dark:text-white mb-2">{ticket.subject}</h3>
-                          <div className="flex items-center gap-2 mb-3">
-                            <Badge className={cn("text-white text-xs px-2 py-1", getStatusColor(ticket.status))}>
-                              {getStatusText(ticket.status)}
-                            </Badge>
-                            <Badge className={cn("text-white text-xs px-2 py-1", getPriorityColor(ticket.priority))}>
-                              {ticket.priority === 'urgent' ? 'فوری' : 
-                               ticket.priority === 'high' ? 'بالا' :
-                               ticket.priority === 'medium' ? 'متوسط' : 'پایین'}
-                            </Badge>
+                  <Plus className="w-4 h-4 ml-2" />
+                  ایجاد اولین تیکت
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {tickets.map((ticket, index) => (
+                  <motion.div
+                    key={ticket.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                  >
+                    <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-gray-900 dark:text-white mb-2">{ticket.subject}</h3>
+                            <div className="flex items-center gap-2 mb-3">
+                              <Badge className={cn("text-white text-xs px-2 py-1", getStatusColor(ticket.status))}>
+                                {getStatusText(ticket.status)}
+                              </Badge>
+                              <Badge className={cn("text-white text-xs px-2 py-1", getPriorityColor(ticket.priority))}>
+                                {ticket.priority === 'urgent' ? 'فوری' : 
+                                 ticket.priority === 'high' ? 'بالا' :
+                                 ticket.priority === 'medium' ? 'متوسط' : 'پایین'}
+                              </Badge>
+                            </div>
                           </div>
                         </div>
-                        <Button variant="ghost" size="sm">
-                          <ChevronDown className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {ticket.description}
-                      </p>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>ایجاد: {formatTime(ticket.createdAt)}</span>
-                        <span>{toPersianNumbers(ticket.responses.toString())} پاسخ</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                          {ticket.description}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>ایجاد: {formatTime(ticket.createdAt)}</span>
+                          <span>{toPersianNumbers(ticket.responses.toString())} پاسخ</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
 
