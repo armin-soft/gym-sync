@@ -1,51 +1,26 @@
 
-// Enhanced localStorage utilities without automatic refresh triggers
-export const setLocalStorageItem = (key: string, value: any) => {
-  try {
-    const serializedValue = JSON.stringify(value);
-    localStorage.setItem(key, serializedValue);
-    
-    console.log(`Data saved to localStorage: ${key}`);
-    return true;
-  } catch (error) {
-    console.error('Error saving to localStorage:', error);
-    return false;
-  }
-};
-
-export const getLocalStorageItem = <T = any>(key: string, defaultValue: T): T => {
+export const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
   try {
     const item = localStorage.getItem(key);
-    if (item === null) return defaultValue;
-    return JSON.parse(item);
+    return item ? JSON.parse(item) : defaultValue;
   } catch (error) {
-    console.error('Error reading from localStorage:', error);
+    console.error(`Error reading localStorage key "${key}":`, error);
     return defaultValue;
   }
 };
 
-export const removeLocalStorageItem = (key: string) => {
+export const setLocalStorageItem = <T>(key: string, value: T): void => {
   try {
-    localStorage.removeItem(key);
-    console.log(`Data removed from localStorage: ${key}`);
-    return true;
+    localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.error('Error removing from localStorage:', error);
-    return false;
+    console.error(`Error setting localStorage key "${key}":`, error);
   }
 };
 
-export const updateLocalStorageItem = <T = any>(
-  key: string,
-  updater: (currentValue: T) => T,
-  defaultValue: T
-) => {
+export const removeLocalStorageItem = (key: string): void => {
   try {
-    const currentValue = getLocalStorageItem(key, defaultValue);
-    const newValue = updater(currentValue);
-    return setLocalStorageItem(key, newValue);
+    localStorage.removeItem(key);
   } catch (error) {
-    console.error('Error updating localStorage:', error);
-    return false;
+    console.error(`Error removing localStorage key "${key}":`, error);
   }
 };
