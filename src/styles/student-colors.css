@@ -1,0 +1,61 @@
+
+/* ألوان إدارة الطلاب مأخوذة من قسم "انتخاب نوع ورود" */
+:root {
+  /* الألوان الأساسية المتدرجة */
+  --student-primary-from: #10b981; /* emerald-500 */
+  --student-primary-to: #0ea5e9; /* sky-500 */
+  
+  /* خلفيات بتدرج لوني */
+  --student-gradient-bg: linear-gradient(135deg, var(--student-primary-from) 0%, var(--student-primary-to) 100%);
+  --student-gradient-soft: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+  --student-gradient-hover: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(14, 165, 233, 0.2) 100%);
+  
+  /* ألوان الحالة */
+  --student-success: #22c55e;
+  --student-warning: #f59e0b;
+  --student-error: #ef4444;
+  --student-info: #3b82f6;
+  
+  /* ألوان محايدة */
+  --student-bg-primary: #ffffff;
+  --student-bg-secondary: #f8fafc;
+  --student-text-primary: #1e293b;
+  --student-text-secondary: #64748b;
+  --student-border: #e2e8f0;
+  
+  /* الظلال */
+  --student-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --student-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --student-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --student-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.dark {
+  --student-bg-primary: #0f172a;
+  --student-bg-secondary: #1e293b;
+  --student-text-primary: #f1f5f9;
+  --student-text-secondary: #94a3b8;
+  --student-border: #334155;
+}
+
+/* كلاسات مساعدة */
+.student-gradient-bg {
+  background: var(--student-gradient-bg);
+}
+
+.student-gradient-text {
+  background: var(--student-gradient-bg);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.student-card-hover:hover {
+  background: var(--student-gradient-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--student-shadow-xl);
+}
+
+.student-border-gradient {
+  border-image: var(--student-gradient-bg) 1;
+}
