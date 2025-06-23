@@ -11,11 +11,12 @@ import { studentFormSchema, StudentFormValues } from "@/lib/validations/student"
 
 // Import our components
 import { ProfileImageUpload } from "./form-components/ProfileImageUpload";
-import { PersonalInfoSection } from "./form-components/PersonalInfoSection";
 import { MeasurementsSection } from "./form-components/MeasurementsSection";
 import { PaymentField } from "./form-components/PaymentField";
 import { FormActions } from "./form-components/FormActions";
 import { GenderField } from "./form-components/GenderField";
+import { StudentFormField } from "./form-components/StudentFormField";
+import { User, Phone, Calendar, GraduationCap, Users } from "lucide-react";
 
 interface StudentFormProps {
   student?: Student;
@@ -127,7 +128,7 @@ export const StudentForm = ({
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* Profile Card Container - مطابق با student profile */}
+          {/* Profile Card Container */}
           <motion.div
             className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden"
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
@@ -182,10 +183,41 @@ export const StudentForm = ({
                       >
                         اطلاعات شخصی
                       </motion.h3>
-                      <PersonalInfoSection 
-                        control={form.control} 
-                        itemVariants={itemVariants} 
-                      />
+                      <div className="space-y-4">
+                        <motion.div variants={itemVariants}>
+                          <StudentFormField
+                            control={form.control}
+                            name="name"
+                            label="نام و نام خانوادگی"
+                            placeholder="نام کامل شاگرد"
+                            icon={User}
+                          />
+                        </motion.div>
+                        
+                        <motion.div variants={itemVariants}>
+                          <StudentFormField
+                            control={form.control}
+                            name="phone"
+                            label="شماره تماس"
+                            placeholder="09123456789"
+                            icon={Phone}
+                            direction="ltr"
+                            numberOnly
+                          />
+                        </motion.div>
+
+                        <motion.div variants={itemVariants}>
+                          <StudentFormField
+                            control={form.control}
+                            name="age"
+                            label="سن"
+                            placeholder="25"
+                            icon={Calendar}
+                            direction="ltr"
+                            numberOnly
+                          />
+                        </motion.div>
+                      </div>
                     </div>
 
                     {/* Measurements Section */}
