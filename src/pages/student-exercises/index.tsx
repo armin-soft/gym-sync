@@ -21,6 +21,7 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import ExerciseFilters from "./components/ExerciseFilters";
 import ExerciseGrid from "./components/ExerciseGrid";
+import HierarchicalExerciseView from "./components/HierarchicalExerciseView";
 import ExerciseStats from "./components/ExerciseStats";
 import StudentProgress from "./components/StudentProgress";
 
@@ -71,7 +72,7 @@ const StudentExercises = () => {
             reps: dayReps[exerciseId] || "8-12",
             assigned: true,
             completed: false,
-            progress: Math.floor(Math.random() * 100) // This would come from actual progress tracking
+            progress: Math.floor(Math.random() * 100)
           });
         }
       });
@@ -209,7 +210,7 @@ const StudentExercises = () => {
           </TabsContent>
 
           <TabsContent value="assigned" className="space-y-6">
-            <ExerciseGrid 
+            <HierarchicalExerciseView 
               exercises={studentExercises} 
               categories={categories}
               showAssignedDetails={true}
