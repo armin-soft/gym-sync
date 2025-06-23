@@ -1,4 +1,4 @@
 
 export * from './StudentEmptyState';
-export * from '../modern/StudentGrid';
-export * from '../modern/StudentCard';
+export * from './StudentGridView';
+export * from './StudentTableView';
