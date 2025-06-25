@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from "react";
 import { SupportHeader } from "./components/SupportHeader";
 import { TicketStats } from "./components/TicketStats";
@@ -24,6 +25,7 @@ interface StudentMessage {
   timestamp: number;
   isRead: boolean;
   type: 'text' | 'image' | 'file' | 'voice';
+  fileName?: string;
   studentId?: number;
 }
 
