@@ -12,7 +12,7 @@ import { getLocalStorageItem, setLocalStorageItem } from "@/utils/localStorage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Bell, MessageCircle, User, Clock, RefreshCw } from "lucide-react";
+import { Bell, MessageCircle, User, Clock, RefreshCw, Volume2, FileText } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { toast } from "@/hooks/use-toast";
 
@@ -23,7 +23,7 @@ interface StudentMessage {
   message: string;
   timestamp: number;
   isRead: boolean;
-  type: 'text' | 'image' | 'file';
+  type: 'text' | 'image' | 'file' | 'voice';
   studentId?: number;
 }
 
@@ -352,9 +352,72 @@ export default function SupportPage() {
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
                               <h4 className="font-semibold text-gray-900">{message.senderName}</h4>
-                              <span className="text-xs text-gray-500">{formatTime(message.timestamp)}</span>
+                              <div className="flex items-center gap-2">
+                                {message.type === 'voice' && (
+                                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600">
+                                    پیام صوتی
+                                  </Badge>
+                                )}
+                                {message.type === 'image' && (
+                                  <Badge variant="outline" className="text-xs bg-green-50 text-green-600">
+                                    تصویر
+                                  </Badge>
+                                )}
+                                {message.type === 'file' && (
+                                  <Badge variant="outline" className="text-xs bg-purple-50 text-purple-600">
+                                    فایل
+                                  </Badge>
+                                )}
+                                <span className="text-xs text-gray-500">{formatTime(message.timestamp)}</span>
+                              </div>
                             </div>
-                            <p className="text-gray-700 leading-relaxed">{message.message}</p>
+                            
+                            {message.type === 'text' && (
+                              <p className="text-gray-700 leading-relaxed">{message.message}</p>
+                            )}
+                            
+                            {message.type === 'voice' && (
+                              <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
+                                <Volume2 className="w-4 h-4 text-blue-600" />
+                                <span className="text-sm text-blue-700">پیام صوتی - کلیک برای پخش</span>
+                                <audio controls className="max-w-xs">
+                                  <source src={message.message} type="audio/wav" />
+                                </audio>
+                              </div>
+                            )}
+                            
+                            {message.type === 'image' && (
+                              <div className="mt-2">
+                                <img 
+                                  src={message.message} 
+                                  alt="تصویر ارسالی" 
+                                  className="max-w-xs rounded-lg shadow-sm"
+                                />
+                              </div>
+                            )}
+                            
+                            {message.type === 'file' && (
+                              <div className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg mt-2">
+                                <FileText className="w-4 h-4 text-purple-600" />
+                                <span className="text-sm text-purple-700">
+                                  {message.fileName || 'فایل ضمیمه'}
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    const link = document.createElement('a');
+                                    link.href = message.message;
+                                    link.download = message.fileName || 'file';
+                                    link.click();
+                                  }}
+                                  className="text-purple-600 hover:text-purple-700"
+                                >
+                                  دانلود
+                                </Button>
+                              </div>
+                            )}
+                            
                             {message.studentId && (
                               <div className="mt-2">
                                 <Badge variant="outline" className="text-xs">

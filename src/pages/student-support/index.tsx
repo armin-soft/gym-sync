@@ -20,6 +20,9 @@ import { useDeviceInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
+import { MessageInput } from './components/MessageInput';
+import { MessageDisplay } from './components/MessageDisplay';
+
 interface ChatMessage {
   id: string;
   sender: 'student' | 'trainer';
@@ -27,8 +30,8 @@ interface ChatMessage {
   message: string;
   timestamp: number;
   isRead: boolean;
-  type: 'text' | 'image' | 'file';
-  reactions?: string[];
+  type: 'text' | 'voice' | 'image' | 'file';
+  fileName?: string;
   studentId?: number;
 }
 
@@ -117,8 +120,8 @@ const StudentSupport = () => {
     setTickets(studentTickets);
   };
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || !currentStudent) {
+  const handleSendMessage = (content: string, type: 'text' | 'voice' | 'image' | 'file', fileName?: string) => {
+    if (!content.trim() || !currentStudent) {
       toast({
         variant: "destructive",
         title: "خطا",
@@ -131,10 +134,11 @@ const StudentSupport = () => {
       id: Date.now().toString(),
       sender: 'student',
       senderName: currentStudent.name,
-      message: newMessage,
+      message: content,
       timestamp: Date.now(),
       isRead: true,
-      type: 'text',
+      type: type,
+      fileName: fileName,
       studentId: currentStudent.id
     };
 
@@ -146,15 +150,15 @@ const StudentSupport = () => {
     // Update local state
     const updatedMessages = [...messages, message];
     setMessages(updatedMessages);
-    setNewMessage('');
 
     // Send notification to management panel
     sendNotificationToManagement(message);
 
+    const typeText = type === 'voice' ? 'صوتی' : type === 'image' ? 'تصویر' : type === 'file' ? 'فایل' : 'متنی';
     toast({
       variant: "success",
       title: "پیام ارسال شد",
-      description: "پیام شما با موفقیت ارسال شد"
+      description: `پیام ${typeText} شما با موفقیت ارسال شد`
     });
   };
 
@@ -208,11 +212,17 @@ const StudentSupport = () => {
   const sendNotificationToManagement = (message: ChatMessage) => {
     // Save notification for management panel
     const notifications = getLocalStorageItem<any[]>('managementNotifications', []);
+    const typeText = message.type === 'voice' ? 'صوتی' : 
+                     message.type === 'image' ? 'تصویر' : 
+                     message.type === 'file' ? 'فایل' : 'متنی';
+    
     const newNotification = {
       id: Date.now().toString(),
       type: 'support_message',
-      title: 'پیام جدید از شاگرد',
-      description: `${message.senderName}: ${message.message.substring(0, 50)}...`,
+      title: `پیام ${typeText} جدید از شاگرد`,
+      description: message.type === 'text' 
+        ? `${message.senderName}: ${message.message.substring(0, 50)}...`
+        : `${message.senderName}: ${message.fileName || `پیام ${typeText}`}`,
       timestamp: Date.now(),
       isRead: false,
       studentId: message.studentId,
@@ -471,24 +481,12 @@ const StudentSupport = () => {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1, duration: 0.3 }}
-                          className={cn("flex", message.sender === 'student' ? 'justify-end' : 'justify-start')}
                         >
-                          <div className={cn(
-                            "max-w-[75%] p-4 rounded-2xl shadow-sm",
-                            message.sender === 'student'
-                              ? 'bg-gradient-to-l from-emerald-500 to-sky-500 text-white rounded-br-md'
-                              : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border rounded-bl-md'
-                          )}>
-                            <p className="text-sm leading-relaxed">{message.message}</p>
-                            <div className="flex items-center justify-between mt-2">
-                              <p className={cn(
-                                "text-xs",
-                                message.sender === 'student' ? 'text-white/80' : 'text-muted-foreground'
-                              )}>
-                                {formatTime(message.timestamp)}
-                              </p>
-                            </div>
-                          </div>
+                          <MessageDisplay
+                            message={message}
+                            isOwn={message.sender === 'student'}
+                            trainerProfile={trainerProfile}
+                          />
                         </motion.div>
                       ))
                     )}
@@ -496,22 +494,10 @@ const StudentSupport = () => {
                 </ScrollArea>
                 
                 <div className="p-4 border-t bg-gray-50/50 dark:bg-gray-900/50">
-                  <div className="flex gap-3">
-                    <Input
-                      placeholder="پیام خود را تایپ کنید..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      className="flex-1 border-gray-200 focus:border-emerald-300 focus:ring-emerald-200"
-                    />
-                    <Button 
-                      onClick={handleSendMessage}
-                      disabled={!newMessage.trim()}
-                      className="bg-gradient-to-r from-emerald-500 to-sky-500 hover:from-emerald-600 hover:to-sky-600 text-white px-6"
-                    >
-                      <Send className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  <MessageInput
+                    onSendMessage={handleSendMessage}
+                    disabled={false}
+                  />
                 </div>
               </Card>
             </div>
