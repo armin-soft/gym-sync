@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -6,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   MessageCircle, Send, Clock, 
   CheckCircle, AlertCircle, HelpCircle, User,
   Plus, Zap, Shield, Star,
   MessageSquare, Settings,
-  Heart, Smile, ThumbsUp, FileText
+  Heart, Smile, ThumbsUp, FileText, Phone
 } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { getLocalStorageItem, setLocalStorageItem } from "@/utils/localStorage";
@@ -57,6 +56,7 @@ const StudentSupport = () => {
   const [selectedPriority, setSelectedPriority] = useState<'low' | 'medium' | 'high' | 'urgent'>('medium');
   const [activeView, setActiveView] = useState<'chat' | 'tickets' | 'create'>('chat');
   const [currentStudent, setCurrentStudent] = useState<any>(null);
+  const [trainerProfile, setTrainerProfile] = useState<any>(null);
   const deviceInfo = useDeviceInfo();
 
   const supportCategories = [
@@ -70,7 +70,19 @@ const StudentSupport = () => {
   useEffect(() => {
     loadCurrentStudent();
     loadSupportData();
+    loadTrainerProfile();
   }, []);
+
+  const loadTrainerProfile = () => {
+    try {
+      const savedProfile = getLocalStorageItem<any>('trainerProfile', null);
+      if (savedProfile) {
+        setTrainerProfile(savedProfile);
+      }
+    } catch (error) {
+      console.error('Error loading trainer profile:', error);
+    }
+  };
 
   const loadCurrentStudent = () => {
     const loggedInStudentId = getLocalStorageItem<number>('loggedInStudentId', 0);
@@ -420,12 +432,24 @@ const StudentSupport = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-sky-500 text-white font-bold">
-                          م
-                        </AvatarFallback>
+                        {trainerProfile?.image && trainerProfile.image !== "/Assets/Image/Place-Holder.svg" ? (
+                          <AvatarImage src={trainerProfile.image} alt="مربی" />
+                        ) : (
+                          <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-sky-500 text-white font-bold">
+                            {trainerProfile?.name ? trainerProfile.name.charAt(0) : 'م'}
+                          </AvatarFallback>
+                        )}
                       </Avatar>
                       <div>
-                        <h3 className="font-bold text-gray-900 dark:text-white">مربی</h3>
+                        <h3 className="font-bold text-gray-900 dark:text-white">
+                          {trainerProfile?.name || 'مربی'}
+                        </h3>
+                        {trainerProfile?.phone && (
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <Phone className="w-3 h-3" />
+                            <span>{toPersianNumbers(trainerProfile.phone)}</span>
+                          </div>
+                        )}
                         <p className="text-sm text-muted-foreground">آنلاین نیست</p>
                       </div>
                     </div>
@@ -494,6 +518,47 @@ const StudentSupport = () => {
 
             {/* Chat Sidebar */}
             <div className="space-y-6">
+              {/* Trainer Info Card */}
+              {trainerProfile && (
+                <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <h3 className="font-bold text-gray-900 dark:text-white">اطلاعات مربی</h3>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-16 h-16">
+                        {trainerProfile.image && trainerProfile.image !== "/Assets/Image/Place-Holder.svg" ? (
+                          <AvatarImage src={trainerProfile.image} alt="مربی" />
+                        ) : (
+                          <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-sky-500 text-white font-bold text-lg">
+                            {trainerProfile.name ? trainerProfile.name.charAt(0) : 'م'}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                          {trainerProfile.name || 'نام مربی'}
+                        </h4>
+                        {trainerProfile.phone && (
+                          <div className="flex items-center gap-2 mt-1">
+                            <Phone className="w-4 h-4 text-emerald-500" />
+                            <span className="text-sm text-gray-600 dark:text-gray-300">
+                              {toPersianNumbers(trainerProfile.phone)}
+                            </span>
+                          </div>
+                        )}
+                        {trainerProfile.gymName && (
+                          <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
+                            {trainerProfile.gymName}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Quick Guide Card */}
               <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
                 <CardHeader>
                   <h3 className="font-bold text-gray-900 dark:text-white">راهنمای سریع</h3>
