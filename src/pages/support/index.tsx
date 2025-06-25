@@ -12,7 +12,7 @@ import { getLocalStorageItem, setLocalStorageItem } from "@/utils/localStorage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Bell, MessageCircle, User, Clock } from "lucide-react";
+import { Bell, MessageCircle, User, Clock, RefreshCw } from "lucide-react";
 import { toPersianNumbers } from "@/lib/utils/numbers";
 import { toast } from "@/hooks/use-toast";
 
@@ -54,15 +54,18 @@ export default function SupportPage() {
     updateTicketStatus, 
     addTicketResponse, 
     getTicketStats,
-    getStudentInfo 
+    getStudentInfo,
+    refreshTickets
   } = useTicketData();
 
   useEffect(() => {
+    console.log('Support page loaded, loading data...');
     loadNotifications();
     loadStudentMessages();
     
     // Listen for new notifications and messages
     const handleStorageChange = (e: StorageEvent) => {
+      console.log('Storage event received:', e.key);
       if (e.key === 'managementNotifications') {
         loadNotifications();
         toast({
@@ -73,9 +76,10 @@ export default function SupportPage() {
       }
       if (e.key === 'studentSupportMessages') {
         loadStudentMessages();
+        refreshTickets();
       }
       if (e.key === 'studentSupportTickets') {
-        // Tickets will be automatically reloaded by useTicketData hook
+        refreshTickets();
       }
     };
     
@@ -84,17 +88,20 @@ export default function SupportPage() {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [refreshTickets]);
 
   const loadNotifications = () => {
     const savedNotifications = getLocalStorageItem<Notification[]>('managementNotifications', []);
+    console.log('Loaded notifications:', savedNotifications);
     setNotifications(savedNotifications);
   };
 
   const loadStudentMessages = () => {
     const allMessages = getLocalStorageItem<StudentMessage[]>('studentSupportMessages', []);
+    console.log('Loaded all messages:', allMessages);
     // Only show student messages (not trainer replies)
     const studentOnlyMessages = allMessages.filter(msg => msg.sender === 'student');
+    console.log('Student only messages:', studentOnlyMessages);
     setStudentMessages(studentOnlyMessages);
   };
 
@@ -110,6 +117,18 @@ export default function SupportPage() {
     const updatedNotifications = notifications.map(notif => ({ ...notif, isRead: true }));
     setNotifications(updatedNotifications);
     setLocalStorageItem('managementNotifications', updatedNotifications);
+  };
+
+  const handleRefresh = () => {
+    console.log('Manual refresh triggered');
+    refreshTickets();
+    loadNotifications();
+    loadStudentMessages();
+    toast({
+      variant: "default",
+      title: "به‌روزرسانی شد",
+      description: "اطلاعات پشتیبانی به‌روزرسانی شد"
+    });
   };
 
   const getStudentName = (studentId: number) => {
@@ -181,6 +200,13 @@ export default function SupportPage() {
   };
 
   const unreadNotifications = notifications.filter(n => !n.isRead).length;
+
+  console.log('Current state:', {
+    tickets: tickets.length,
+    notifications: notifications.length,
+    messages: studentMessages.length,
+    loading
+  });
 
   if (loading) {
     return (
@@ -257,6 +283,15 @@ export default function SupportPage() {
               </Badge>
             )}
           </Button>
+
+          <Button
+            variant="outline"
+            onClick={handleRefresh}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 border-gray-200 hover:bg-emerald-50 hover:border-emerald-200"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span className="text-sm font-medium">به‌روزرسانی</span>
+          </Button>
         </div>
         
         {activeTab === 'tickets' && (
@@ -274,9 +309,9 @@ export default function SupportPage() {
             </div>
             
             <div className="lg:col-span-3">
-              {tickets.length > 0 ? (
+              {filteredAndSortedTickets.length > 0 ? (
                 <div className="space-y-4">
-                  {tickets.map((ticket) => (
+                  {filteredAndSortedTickets.map((ticket) => (
                     <TicketCard
                       key={ticket.id}
                       ticket={ticket}

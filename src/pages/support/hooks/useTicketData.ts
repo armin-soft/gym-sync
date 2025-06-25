@@ -14,22 +14,36 @@ export const useTicketData = () => {
     
     // Listen for new tickets from students
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'studentSupportTickets') {
+      if (e.key === 'studentSupportTickets' || e.key === 'studentSupportMessages') {
+        console.log('Storage changed, reloading tickets...');
         loadTickets();
       }
     };
     
     window.addEventListener('storage', handleStorageChange);
     
+    // Also listen for direct localStorage changes
+    const interval = setInterval(() => {
+      loadTickets();
+    }, 2000); // Check every 2 seconds for new data
+    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
     };
   }, []);
 
   const loadTickets = () => {
     try {
+      console.log('Loading tickets from localStorage...');
+      
       // Load tickets from student support system
       const studentTickets = getLocalStorageItem<any[]>('studentSupportTickets', []);
+      console.log('Found student tickets:', studentTickets);
+      
+      // Load messages and convert them to tickets for display
+      const studentMessages = getLocalStorageItem<any[]>('studentSupportMessages', []);
+      console.log('Found student messages:', studentMessages);
       
       // Convert student ticket format to management ticket format
       const convertedTickets: SupportTicket[] = studentTickets.map(studentTicket => ({
@@ -46,8 +60,29 @@ export const useTicketData = () => {
         updatedAt: studentTicket.lastUpdate || studentTicket.createdAt,
         responses: []
       }));
+
+      // Also create tickets from chat messages for better visibility
+      const messageTickets: SupportTicket[] = studentMessages
+        .filter(msg => msg.sender === 'student')
+        .map(message => ({
+          id: `msg_${message.id}`,
+          ticketNumber: `MSG-${message.id.slice(-6).toUpperCase()}`,
+          studentId: message.studentId || 0,
+          studentName: message.senderName,
+          subject: `پیام چت: ${message.message.substring(0, 30)}...`,
+          description: message.message,
+          category: 'other' as any,
+          priority: 'medium' as any,
+          status: 'open' as any,
+          createdAt: message.timestamp,
+          updatedAt: message.timestamp,
+          responses: []
+        }));
+
+      const allTickets = [...convertedTickets, ...messageTickets];
+      console.log('All converted tickets:', allTickets);
       
-      setTickets(convertedTickets);
+      setTickets(allTickets);
     } catch (error) {
       console.error('Error loading tickets:', error);
       setTickets([]);
@@ -60,8 +95,12 @@ export const useTicketData = () => {
     if (Array.isArray(updatedTickets)) {
       setTickets(updatedTickets);
       
-      // Convert back to student format and save
-      const studentTickets = updatedTickets.map(ticket => ({
+      // Separate real tickets from message tickets
+      const realTickets = updatedTickets.filter(ticket => !ticket.id.startsWith('msg_'));
+      const messageTickets = updatedTickets.filter(ticket => ticket.id.startsWith('msg_'));
+      
+      // Convert back to student format and save real tickets
+      const studentTickets = realTickets.map(ticket => ({
         id: ticket.id,
         subject: ticket.subject,
         category: ticket.category,
@@ -76,6 +115,19 @@ export const useTicketData = () => {
       }));
       
       setLocalStorageItem('studentSupportTickets', studentTickets);
+      
+      // Update message status if needed
+      if (messageTickets.length > 0) {
+        const messages = getLocalStorageItem<any[]>('studentSupportMessages', []);
+        const updatedMessages = messages.map(msg => {
+          const messageTicket = messageTickets.find(t => t.id === `msg_${msg.id}`);
+          if (messageTicket && messageTicket.status !== 'open') {
+            return { ...msg, isRead: true };
+          }
+          return msg;
+        });
+        setLocalStorageItem('studentSupportMessages', updatedMessages);
+      }
     }
   };
 
@@ -101,7 +153,7 @@ export const useTicketData = () => {
     );
     saveTickets(updatedTickets);
     
-    // Send notification to student (optional)
+    // Send notification to student
     if (response.authorType === "trainer") {
       sendResponseNotificationToStudent(ticketId, response.message);
     }
@@ -173,6 +225,7 @@ export const useTicketData = () => {
     addTicketResponse,
     getTicketStats,
     getStudentInfo,
-    saveTickets
+    saveTickets,
+    refreshTickets: loadTickets
   };
 };
