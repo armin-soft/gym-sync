@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ModernBackupHero } from "./components/ModernBackupHero";
 import { DataStatsGrid } from "./components/DataStatsGrid";
 import { ModernTabSystem } from "./components/ModernTabSystem";
+import { SupabaseMigrationSection } from "./components/SupabaseMigrationSection";
 import { useDataStats } from "./hooks/useDataStats";
 
 const BackupPage = () => {
@@ -52,6 +53,9 @@ const BackupPage = () => {
 
         {/* Stats Grid */}
         <DataStatsGrid stats={stats} />
+
+        {/* Supabase Migration Section */}
+        <SupabaseMigrationSection />
 
         {/* Tab System */}
         <ModernTabSystem dataKeys={dataKeys} />
