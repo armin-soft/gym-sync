@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarNavigationItem } from "./SidebarNavigationItem";
 import { NavigationHeader } from "./navigation/NavigationHeader";
-import { NavigationFooter } from "./navigation/NavigationFooter";
 import { useSidebarDimensions } from "../utils/deviceUtils";
 import { cn } from "@/lib/utils";
 import { SidebarItem } from "../types";
@@ -51,8 +50,6 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
             />
           ))}
         </div>
-
-        <NavigationFooter />
       </motion.div>
     </ScrollArea>
   );
