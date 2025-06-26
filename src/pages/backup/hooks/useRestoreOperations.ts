@@ -21,10 +21,19 @@ export function useRestoreOperations(): RestoreOperations {
   const [restoreResult, setRestoreResult] = useState<RestoreResult | null>(null);
 
   const triggerDataRefresh = () => {
+    // Send multiple events to ensure all components refresh
     window.dispatchEvent(new CustomEvent('localStorage-updated', { 
       detail: { key: 'all' } 
     }));
     window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('studentsUpdated'));
+    window.dispatchEvent(new CustomEvent('profileUpdated'));
+    
+    // Force sidebar stats refresh
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('studentsUpdated'));
+      window.dispatchEvent(new CustomEvent('profileUpdated'));
+    }, 100);
   };
 
   const handleFileRestore = (file: File, dataKeys: string[]) => {
@@ -55,6 +64,7 @@ export function useRestoreOperations(): RestoreOperations {
           }
         });
         
+        // Trigger refresh events immediately after data is saved
         triggerDataRefresh();
         
         setRestoreResult({
