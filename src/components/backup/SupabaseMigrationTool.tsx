@@ -35,16 +35,16 @@ export const SupabaseMigrationTool: React.FC = () => {
 
       const profile = JSON.parse(savedProfile);
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('کاربر وارد نشده است');
+      // Generate a unique ID for the trainer (using a consistent method)
+      const trainerId = '00000000-0000-0000-0000-000000000001'; // Fixed trainer ID for Lovable project
 
       const { error } = await supabase
         .from('trainer_profiles')
         .upsert({
-          user_id: user.id,
+          user_id: trainerId,
           name: profile.name || '',
           phone: profile.phone || '',
-          email: profile.email || user.email || '',
+          email: profile.email || 'trainer@lovable.dev',
           gym_name: profile.gymName || '',
           gym_address: profile.gymAddress || '',
           bio: profile.bio || '',
@@ -69,11 +69,10 @@ export const SupabaseMigrationTool: React.FC = () => {
       const students = JSON.parse(savedStudents);
       if (!Array.isArray(students)) return { count: 0 };
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('کاربر وارد نشده است');
+      const trainerId = '00000000-0000-0000-0000-000000000001';
 
       const studentsData = students.map(student => ({
-        trainer_id: user.id,
+        trainer_id: trainerId,
         name: student.name || '',
         phone: student.phone || '',
         height: student.height?.toString() || '',
@@ -107,11 +106,10 @@ export const SupabaseMigrationTool: React.FC = () => {
       const categories = JSON.parse(savedCategories);
       if (!Array.isArray(categories)) return { count: 0 };
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('کاربر وارد نشده است');
+      const trainerId = '00000000-0000-0000-0000-000000000001';
 
       const categoriesData = categories.map(category => ({
-        trainer_id: user.id,
+        trainer_id: trainerId,
         name: category.name || '',
         description: category.description || ''
       }));
@@ -136,11 +134,10 @@ export const SupabaseMigrationTool: React.FC = () => {
       const types = JSON.parse(savedTypes);
       if (!Array.isArray(types)) return { count: 0 };
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('کاربر وارد نشده است');
+      const trainerId = '00000000-0000-0000-0000-000000000001';
 
       const typesData = types.map(type => ({
-        trainer_id: user.id,
+        trainer_id: trainerId,
         name: type.name || '',
         description: type.description || ''
       }));
@@ -165,11 +162,10 @@ export const SupabaseMigrationTool: React.FC = () => {
       const exercises = JSON.parse(savedExercises);
       if (!Array.isArray(exercises)) return { count: 0 };
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('کاربر وارد نشده است');
+      const trainerId = '00000000-0000-0000-0000-000000000001';
 
       const exercisesData = exercises.map(exercise => ({
-        trainer_id: user.id,
+        trainer_id: trainerId,
         name: exercise.name || '',
         description: exercise.description || '',
         muscle_groups: exercise.targetMuscle || exercise.muscles?.join(', ') || '',
@@ -197,11 +193,10 @@ export const SupabaseMigrationTool: React.FC = () => {
       const meals = JSON.parse(savedMeals);
       if (!Array.isArray(meals)) return { count: 0 };
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('کاربر وارد نشده است');
+      const trainerId = '00000000-0000-0000-0000-000000000001';
 
       const mealsData = meals.map(meal => ({
-        trainer_id: user.id,
+        trainer_id: trainerId,
         name: meal.name || '',
         type: meal.type || '',
         description: meal.description || '',
@@ -231,11 +226,10 @@ export const SupabaseMigrationTool: React.FC = () => {
       const supplements = JSON.parse(savedSupplements);
       if (!Array.isArray(supplements)) return { count: 0 };
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('کاربر وارد نشده است');
+      const trainerId = '00000000-0000-0000-0000-000000000001';
 
       const supplementsData = supplements.map(supplement => ({
-        trainer_id: user.id,
+        trainer_id: trainerId,
         name: supplement.name || '',
         description: supplement.description || '',
         dosage: supplement.dosage || '',
