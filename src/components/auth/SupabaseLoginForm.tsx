@@ -6,13 +6,14 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Lock, UserPlus, LogIn, Database } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Database, Eye, EyeOff } from 'lucide-react';
 
 export const SupabaseLoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -21,7 +22,7 @@ export const SupabaseLoginForm = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -29,25 +30,61 @@ export const SupabaseLoginForm = () => {
           }
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error('SignUp error:', error);
+          throw error;
+        }
 
-        toast({
-          title: "ثبت‌نام موفق",
-          description: "ایمیل تأیید برای شما ارسال شد. لطفاً آن را بررسی کنید.",
-          className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
-        });
+        console.log('SignUp successful:', data);
+
+        if (data?.user && !data.session) {
+          toast({
+            title: "ثبت‌نام موفق",
+            description: "ایمیل تأیید برای شما ارسال شد. لطفاً آن را بررسی کنید.",
+            className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
+          });
+        } else {
+          toast({
+            title: "ثبت‌نام موفق",
+            description: "حساب کاربری شما ایجاد شد و می‌توانید شروع کنید.",
+            className: "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-none"
+          });
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error('SignIn error:', error);
+          throw error;
+        }
+
+        console.log('SignIn successful:', data);
       }
     } catch (error: any) {
+      console.error('Auth error:', error);
+      
+      let errorMessage = "مشکلی در احراز هویت رخ داد";
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        errorMessage = isSignUp 
+          ? "ایمیل یا رمز عبور نامعتبر است. لطفاً مجدداً تلاش کنید."
+          : "ایمیل یا رمز عبور اشتباه است. اگر حساب کاربری ندارید، ثبت‌نام کنید.";
+      } else if (error.message?.includes('User already registered')) {
+        errorMessage = "این ایمیل قبلاً ثبت شده است. از بخش ورود استفاده کنید.";
+      } else if (error.message?.includes('Password should be at least')) {
+        errorMessage = "رمز عبور باید حداقل ۶ کاراکتر باشد.";
+      } else if (error.message?.includes('Unable to validate email address')) {
+        errorMessage = "فرمت ایمیل نامعتبر است.";
+      } else if (error.message?.includes('Email rate limit exceeded')) {
+        errorMessage = "تعداد درخواست‌ها زیاد است. لطفاً کمی صبر کنید.";
+      }
+
       toast({
         title: "خطا",
-        description: error.message || "مشکلی در احراز هویت رخ داد",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -94,14 +131,21 @@ export const SupabaseLoginForm = () => {
               <Lock className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="حداقل ۶ کاراکتر"
-                className="pr-10"
+                className="pr-10 pl-10"
                 required
                 minLength={6}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute left-3 top-3 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 
@@ -139,6 +183,11 @@ export const SupabaseLoginForm = () => {
           <p className="text-sm text-sky-700 text-center">
             💡 بعد از ورود، می‌توانید تمام داده‌های محلی خود را به Supabase منتقل کنید
           </p>
+        </div>
+
+        {/* Debug info - remove in production */}
+        <div className="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
+          <p>برای تست: اگر مشکل دارید، ابتدا ثبت‌نام کنید سپس وارد شوید</p>
         </div>
       </Card>
     </div>
