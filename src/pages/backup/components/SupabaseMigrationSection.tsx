@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Database, ArrowRight, Cloud, Shield } from "lucide-react";
+import { SupabaseAuthWrapper } from "@/components/auth/SupabaseAuthWrapper";
 import { SupabaseMigrationTool } from "@/components/backup/SupabaseMigrationTool";
 
 export function SupabaseMigrationSection() {
@@ -95,8 +96,10 @@ export function SupabaseMigrationSection() {
             </div>
           </div>
 
-          {/* ابزار انتقال */}
-          <SupabaseMigrationTool />
+          {/* ابزار انتقال با احراز هویت */}
+          <SupabaseAuthWrapper>
+            <SupabaseMigrationTool />
+          </SupabaseAuthWrapper>
         </div>
       </Card>
     </motion.div>
