@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
@@ -10,7 +11,6 @@ import Trainer from "./pages/trainer";
 import Management from "./pages/management";
 import Reports from "./pages/reports";
 import Support from "./pages/support";
-import DatabaseManagement from "./pages/database-management";
 
 // Student Panel Components
 import { StudentAuthWrapper } from "./components/student-auth/StudentAuthWrapper";
@@ -92,7 +92,6 @@ const AppRoutes = () => {
       <Route path="/Management/Student-History" element={<StudentHistory />} />
       <Route path="/Management/Report" element={<Reports />} />
       <Route path="/Management/Support" element={<Support />} />
-      <Route path="/Management/Database" element={<DatabaseManagement />} />
       
       {/* Legacy Routes Redirects - Fixed */}
       <Route path="/Students" element={<Navigate to="/Student" replace />} />

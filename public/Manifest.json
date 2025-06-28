@@ -79,12 +79,6 @@
       "url": "./Management/Support",
       "description": "مدیریت پیام‌های شاگردان",
       "icons": []
-    },
-    {
-      "name": "مدیریت دیتابیس",
-      "url": "./Management/Database",
-      "description": "کنترل و مدیریت داده‌های آنلاین",
-      "icons": []
     }
   ]
 }

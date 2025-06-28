@@ -8,7 +8,6 @@ import {
   Pill,
   BarChart3,
   MessageSquare,
-  Database,
 } from "lucide-react";
 import { SidebarItem } from "../../modern-sidebar/types";
 
@@ -83,14 +82,5 @@ export const sidebarItems: SidebarItem[] = [
     icon: MessageSquare,
     gradient: "from-violet-500 to-purple-600",
     isNew: false,
-  },
-  {
-    id: "database",
-    title: "مدیریت دیتابیس",
-    subtitle: "کنترل و مدیریت داده‌های آنلاین",
-    href: "/Management/Database",
-    icon: Database,
-    gradient: "from-indigo-500 to-blue-600",
-    isNew: true,
   },
 ];

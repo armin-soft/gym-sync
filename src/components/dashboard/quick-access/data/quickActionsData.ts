@@ -6,8 +6,7 @@ import {
   UtensilsCrossed, 
   Pill,
   BarChart3,
-  MessageSquare,
-  Database
+  MessageSquare
 } from "lucide-react";
 
 export const quickActions = [
@@ -52,11 +51,5 @@ export const quickActions = [
     description: "مدیریت پیام‌ها و ارتباط با شاگردان",
     icon: MessageSquare,
     href: "/Management/Support"
-  },
-  {
-    title: "مدیریت دیتابیس",
-    description: "کنترل و مدیریت داده‌های آنلاین Supabase",
-    icon: Database,
-    href: "/Management/Database"
   }
 ];
