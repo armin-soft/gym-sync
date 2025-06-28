@@ -8,7 +8,6 @@ import Exercises from "./pages/exercises";
 import Diet from "./pages/diet";
 import Supplements from "./pages/supplements";
 import Trainer from "./pages/trainer";
-import Backup from "./pages/backup";
 import Management from "./pages/management";
 import Reports from "./pages/reports";
 import Support from "./pages/support";
@@ -90,7 +89,6 @@ const AppRoutes = () => {
       <Route path="/Management/Exercise-Movements" element={<Exercises />} />
       <Route path="/Management/Diet-Plan" element={<Diet />} />
       <Route path="/Management/Supplements-Vitamins" element={<Supplements />} />
-      <Route path="/Management/Backup-Restore" element={<Backup />} />
       <Route path="/Management/Student-History" element={<StudentHistory />} />
       <Route path="/Management/Report" element={<Reports />} />
       <Route path="/Management/Support" element={<Support />} />
@@ -105,7 +103,6 @@ const AppRoutes = () => {
       <Route path="/diet" element={<Navigate to="/Management/Diet-Plan" replace />} />
       <Route path="/supplements" element={<Navigate to="/Management/Supplements-Vitamins" replace />} />
       <Route path="/trainer" element={<Navigate to="/Management/Coach-Profile" replace />} />
-      <Route path="/backup" element={<Navigate to="/Management/Backup-Restore" replace />} />
       <Route path="/management" element={<Navigate to="/Management" replace />} />
 
       {/* Catch All Route */}
