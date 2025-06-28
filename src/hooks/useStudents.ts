@@ -1,50 +1,98 @@
 
-import { useSupabaseStudents } from './useSupabaseStudents';
-import { useSupabaseExercises } from './useSupabaseExercises';
-import { useSupabaseMeals } from './useSupabaseMeals';
-import { useSupabaseSupplements } from './useSupabaseSupplements';
+import { useStudents as useStudentsImpl } from './students';
 import { useStudentFiltering } from './useStudentFiltering';
+import { Student } from '@/components/students/StudentTypes';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import type { Student } from '@/types/database';
+import { safeJSONParse } from '@/utils/database/index';
 import { ExerciseWithSets } from '@/types/exercise';
+
+// Helper function to trigger stats update
+const triggerStatsUpdate = () => {
+  window.dispatchEvent(new CustomEvent('studentsUpdated'));
+};
 
 export const useStudents = () => {
   console.log('useStudents: Hook called');
   
-  const { toast } = useToast();
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
+  // بارگذاری مستقیم از localStorage
+  const [students, setStudents] = useState<Student[]>([]);
+  const [isStudentsLoaded, setIsStudentsLoaded] = useState(false);
   
-  // Use Supabase hooks
-  const { 
-    students, 
-    loading: studentsLoading, 
-    addStudent, 
-    updateStudent, 
-    deleteStudent,
-    refetch: refetchStudents
-  } = useSupabaseStudents();
+  // بارگذاری اولیه شاگردان از localStorage
+  useEffect(() => {
+    const loadStudentsFromStorage = () => {
+      try {
+        console.log('useStudents: Loading students directly from localStorage...');
+        
+        // بررسی تمام کلیدهای localStorage
+        console.log('useStudents: All localStorage keys:', Object.keys(localStorage));
+        
+        const savedStudents = localStorage.getItem('students');
+        console.log('useStudents: Raw localStorage data for "students":', savedStudents);
+        
+        if (savedStudents) {
+          const parsedStudents = JSON.parse(savedStudents);
+          console.log('useStudents: Parsed students:', parsedStudents);
+          console.log('useStudents: Students count:', Array.isArray(parsedStudents) ? parsedStudents.length : 'Not an array');
+          console.log('useStudents: Students data:', parsedStudents);
+          
+          if (Array.isArray(parsedStudents)) {
+            setStudents(parsedStudents);
+            console.log('useStudents: Students loaded successfully:', parsedStudents.length);
+          } else {
+            console.warn('useStudents: Parsed data is not an array, setting empty array');
+            setStudents([]);
+          }
+        } else {
+          console.log('useStudents: No students found in localStorage');
+          setStudents([]);
+        }
+      } catch (error) {
+        console.error('useStudents: Error loading students from localStorage:', error);
+        setStudents([]);
+      } finally {
+        setIsStudentsLoaded(true);
+      }
+    };
+
+    loadStudentsFromStorage();
+
+    // گوش دادن به تغییرات localStorage
+    const handleStorageChange = () => {
+      console.log('useStudents: Storage change detected, reloading students...');
+      loadStudentsFromStorage();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('studentsUpdated', handleStorageChange);
+    window.addEventListener('localStorage-updated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('studentsUpdated', handleStorageChange);
+      window.removeEventListener('localStorage-updated', handleStorageChange);
+    };
+  }, []);
   
   const { 
     exercises, 
-    categories, 
-    exerciseTypes, 
-    loading: exercisesLoading,
-    refetch: refetchExercises
-  } = useSupabaseExercises();
-  
-  const { 
     meals, 
-    loading: mealsLoading,
-    refetch: refetchMeals
-  } = useSupabaseMeals();
-  
-  const { 
     supplements, 
-    vitamins, 
-    loading: supplementsLoading,
-    refetch: refetchSupplements
-  } = useSupabaseSupplements();
+    setSupplements, 
+    handleDelete: originalHandleDelete, 
+    handleSave: originalHandleSave,
+    handleSaveExercises: originalHandleSaveExercises,
+    handleSaveDiet: originalHandleSaveDiet,
+    handleSaveSupplements: originalHandleSaveSupplements
+  } = useStudentsImpl();
+  
+  console.log('useStudents: Final students count:', students.length);
+  console.log('useStudents: Final students data:', students);
+  
+  const { toast } = useToast();
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const savedProfile = localStorage.getItem('trainerProfile');
@@ -56,6 +104,7 @@ export const useStudents = () => {
         console.error('Error checking profile completeness:', error);
       }
     }
+    setLoading(false);
   }, []);
   
   const { 
@@ -68,49 +117,63 @@ export const useStudents = () => {
     handleClearSearch
   } = useStudentFiltering(students);
   
-  const handleDelete = async (id: number) => {
-    return await deleteStudent(id);
-  };
-
-  const handleSave = async (studentData: any, existingStudent?: Student) => {
-    if (existingStudent) {
-      return await updateStudent(existingStudent.id, studentData);
-    } else {
-      return await addStudent(studentData);
+  // Wrap the original functions to trigger stats updates and update local state - make them synchronous
+  const enhancedHandleDelete = (id: number) => {
+    const result = originalHandleDelete(id);
+    if (result) {
+      setStudents(prev => prev.filter(student => student.id !== id));
+      triggerStatsUpdate();
     }
+    return result;
   };
 
-  const handleSaveExercises = async (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
-    // TODO: Implement exercise assignment to students in Supabase
-    console.log('Saving exercises to student:', { exercisesWithSets, studentId, dayNumber });
-    toast({
-      title: "موفقیت",
-      description: "تمرینات شاگرد ذخیره شد"
-    });
-    return true;
+  const enhancedHandleSave = (studentData: any, existingStudent?: Student) => {
+    const result = originalHandleSave(studentData, existingStudent);
+    if (result) {
+      setStudents(prev => {
+        const existingIndex = prev.findIndex(s => s.id === (existingStudent?.id || studentData.id));
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = { ...existingStudent, ...studentData };
+          return updated;
+        } else {
+          const newId = Math.max(...prev.map(s => s.id), 0) + 1;
+          return [...prev, { ...studentData, id: newId, createdAt: new Date().toISOString() }];
+        }
+      });
+      triggerStatsUpdate();
+    }
+    return result;
   };
 
-  const handleSaveDiet = async (mealIds: number[], studentId: number, dayNumber?: number) => {
-    // TODO: Implement diet assignment to students in Supabase
-    console.log('Saving diet to student:', { mealIds, studentId, dayNumber });
-    toast({
-      title: "موفقیت",
-      description: "برنامه غذایی شاگرد ذخیره شد"
-    });
-    return true;
+  const enhancedHandleSaveExercises = (exercisesWithSets: ExerciseWithSets[], studentId: number, dayNumber?: number) => {
+    const result = originalHandleSaveExercises(exercisesWithSets, studentId, dayNumber);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
   };
 
-  const handleSaveSupplements = async (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
-    // TODO: Implement supplement assignment to students in Supabase
-    console.log('Saving supplements to student:', { data, studentId });
-    toast({
-      title: "موفقیت",
-      description: "مکمل‌های شاگرد ذخیره شد"
-    });
-    return true;
+  const enhancedHandleSaveDiet = (mealIds: number[], studentId: number, dayNumber?: number) => {
+    const result = originalHandleSaveDiet(mealIds, studentId, dayNumber);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
   };
 
-  const loading = studentsLoading || exercisesLoading || mealsLoading || supplementsLoading;
+  const enhancedHandleSaveSupplements = (data: {supplements: number[], vitamins: number[], day?: number}, studentId: number) => {
+    const result = originalHandleSaveSupplements(data, studentId);
+    if (result) {
+      triggerStatsUpdate();
+    }
+    return result;
+  };
+
+  const enhancedSetStudents = (newStudents: Student[]) => {
+    setStudents(newStudents);
+    triggerStatsUpdate();
+  };
   
   return {
     // Students data
@@ -118,10 +181,10 @@ export const useStudents = () => {
     sortedAndFilteredStudents,
     exercises,
     meals,
-    supplements: [...supplements, ...vitamins], // Combine supplements and vitamins
+    supplements,
     
     // State management
-    loading,
+    loading: loading || !isStudentsLoaded,
     isProfileComplete,
     
     // Search & sort
@@ -132,14 +195,14 @@ export const useStudents = () => {
     toggleSort,
     handleClearSearch,
     
-    // CRUD operations
-    handleDelete,
-    handleSave,
-    handleSaveExercises,
-    handleSaveDiet,
-    handleSaveSupplements,
-    setStudents: () => {}, // Not needed with Supabase
-    setSupplements: () => {} // Not needed with Supabase
+    // CRUD operations with stats update triggers
+    handleDelete: enhancedHandleDelete,
+    handleSave: enhancedHandleSave,
+    handleSaveExercises: enhancedHandleSaveExercises,
+    handleSaveDiet: enhancedHandleSaveDiet,
+    handleSaveSupplements: enhancedHandleSaveSupplements,
+    setStudents: enhancedSetStudents,
+    setSupplements
   };
 };
 

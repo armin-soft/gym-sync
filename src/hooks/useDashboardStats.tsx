@@ -1,8 +1,8 @@
 
-import { useEffect, useState, useCallback } from "react";
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState, useCallback, useMemo } from "react";
 import type { DashboardStats } from "@/types/dashboard";
 
+// Initial empty stats to prevent repeated object creation
 const initialStats: DashboardStats = {
   totalStudents: 0,
   totalMeals: 0,
@@ -19,96 +19,120 @@ const initialStats: DashboardStats = {
 export const useDashboardStats = () => {
   const [stats, setStats] = useState<DashboardStats>(initialStats);
 
-  const calculateStats = useCallback(async () => {
+  // Memoize calculation function to prevent recreating on each render
+  const calculateStats = useCallback(() => {
     try {
-      // Fetch all data from Supabase
-      const [
-        { data: students, error: studentsError },
-        { data: meals, error: mealsError },
-        { data: supplements, error: supplementsError },
-        { data: vitamins, error: vitaminsError },
-        { data: exercises, error: exercisesError }
-      ] = await Promise.all([
-        supabase.from('students').select('*'),
-        supabase.from('meals').select('*'),
-        supabase.from('supplements').select('*'),
-        supabase.from('vitamins').select('*'),
-        supabase.from('exercises').select('*')
-      ]);
+      // دریافت اطلاعات از localStorage - فقط خواندن داده‌های مورد نیاز
+      const students = JSON.parse(localStorage.getItem('students') || '[]');
+      const meals = JSON.parse(localStorage.getItem('meals') || '[]');
+      const supplements = JSON.parse(localStorage.getItem('supplements') || '[]');
+      const exercises = JSON.parse(localStorage.getItem('exercises') || '[]');
+      
+      // محاسبه دقیق آمار - با بهینه‌سازی محاسبات
+      let totalProgress = 0;
+      let studentsWithMeals = 0;
+      let studentsWithSupplements = 0;
+      let studentsWithExercises = 0;
 
-      if (studentsError || mealsError || supplementsError || vitaminsError || exercisesError) {
-        console.error('Error fetching stats data:', {
-          studentsError,
-          mealsError,
-          supplementsError,
-          vitaminsError,
-          exercisesError
+      // فقط یکبار چک شود که آیا آرایه‌ها خالی هستند
+      const studentsExist = Array.isArray(students) && students.length > 0;
+      
+      if (studentsExist) {
+        // استفاده از map و reduce برای بهبود عملکرد
+        const progressValues = students.map((student: any) => {
+          // بررسی دانش‌آموزان دارای برنامه غذایی
+          if ((Array.isArray(student.meals) && student.meals.length > 0) ||
+              (Array.isArray(student.mealsDay1) && student.mealsDay1.length > 0) ||
+              (Array.isArray(student.mealsDay2) && student.mealsDay2.length > 0) ||
+              (Array.isArray(student.mealsDay3) && student.mealsDay3.length > 0) ||
+              (Array.isArray(student.mealsDay4) && student.mealsDay4.length > 0) ||
+              (Array.isArray(student.mealsDay5) && student.mealsDay5.length > 0) ||
+              (Array.isArray(student.mealsDay6) && student.mealsDay6.length > 0) ||
+              (Array.isArray(student.mealsDay7) && student.mealsDay7.length > 0)) {
+            studentsWithMeals++;
+          }
+          
+          // بررسی دانش‌آموزان دارای مکمل و ویتامین
+          if ((Array.isArray(student.supplements) && student.supplements.length > 0) || 
+              (Array.isArray(student.vitamins) && student.vitamins.length > 0)) {
+            studentsWithSupplements++;
+          }
+
+          // بررسی دانش‌آموزان دارای برنامه تمرینی
+          if ((Array.isArray(student.exercises) && student.exercises.length > 0) ||
+              (Array.isArray(student.exercisesDay1) && student.exercisesDay1.length > 0) ||
+              (Array.isArray(student.exercisesDay2) && student.exercisesDay2.length > 0) ||
+              (Array.isArray(student.exercisesDay3) && student.exercisesDay3.length > 0) ||
+              (Array.isArray(student.exercisesDay4) && student.exercisesDay4.length > 0) ||
+              (Array.isArray(student.exercisesDay5) && student.exercisesDay5.length > 0) ||
+              (Array.isArray(student.exercisesDay6) && student.exercisesDay6.length > 0) ||
+              (Array.isArray(student.exercisesDay7) && student.exercisesDay7.length > 0)) {
+            studentsWithExercises++;
+          }
+          
+          return student.progress || 0;
         });
-        return;
+        
+        // محاسبه مجموع پیشرفت
+        totalProgress = progressValues.reduce((sum: number, val: number) => sum + val, 0);
       }
 
-      // Calculate stats
-      const totalStudents = students?.length || 0;
-      const totalMeals = meals?.length || 0;
-      const totalSupplements = (supplements?.length || 0) + (vitamins?.length || 0);
-      
-      // For now, set default values for complex calculations
-      // TODO: Implement proper progress tracking with student relationships
-      const averageProgress = 75; // Default progress
-      const mealCompletionRate = 85; // Default completion rate
-      const supplementCompletionRate = 70; // Default completion rate
+      // محاسبه میانگین و درصدها
+      const studentsLength = studentsExist ? students.length : 0;
+      const averageProgress = studentsLength ? Math.round(totalProgress / studentsLength) : 0;
+      const mealCompletionRate = studentsLength ? Math.round((studentsWithMeals / studentsLength) * 100) : 0;
+      const supplementCompletionRate = studentsLength ? Math.round((studentsWithSupplements / studentsLength) * 100) : 0;
+
+      // محاسبه آمار واقعی بر اساس داده‌های موجود
+      const actualMealsCount = Array.isArray(meals) ? meals.length : 0;
+      const actualSupplementsCount = Array.isArray(supplements) ? supplements.length : 0;
+      const actualExercisesCount = Array.isArray(exercises) ? exercises.length : 0;
 
       setStats({
-        totalStudents,
-        totalMeals,
-        totalSupplements,
+        totalStudents: studentsLength,
+        totalMeals: actualMealsCount,
+        totalSupplements: actualSupplementsCount,
         studentsProgress: averageProgress,
-        studentGrowth: 12, // Default growth
-        mealGrowth: 8, // Default growth
-        supplementGrowth: 15, // Default growth
-        maxCapacity: 50,
+        studentGrowth: 0, // این مقدار نیازمند داده‌های تاریخی است
+        mealGrowth: 0, // این مقدار نیازمند داده‌های تاریخی است
+        supplementGrowth: 0, // این مقدار نیازمند داده‌های تاریخی است
+        maxCapacity: 50, // ثابت
         mealCompletionRate,
         supplementCompletionRate
       });
-
     } catch (error) {
       console.error('Error calculating dashboard stats:', error);
+      // در صورت خطا، آمار خالی برگرداند
       setStats(initialStats);
     }
   }, []);
 
   useEffect(() => {
+    // محاسبه اولیه آمار
     calculateStats();
+
+    // استفاده از ترکیبی از رویدادها برای بروزرسانی آمار
+    const storageHandler = (e: StorageEvent) => {
+      // بهینه‌سازی: فقط وقتی کلیدهای مرتبط تغییر می‌کنند، محاسبه مجدد انجام شود
+      if (['students', 'meals', 'supplements', 'exercises'].includes(e.key || '')) {
+        calculateStats();
+      }
+    };
+
+    // گوش دادن به تغییرات localStorage
+    window.addEventListener('storage', storageHandler);
     
-    // Set up real-time listeners for data changes
-    const studentsChannel = supabase
-      .channel('students-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'students' }, 
-        () => calculateStats()
-      )
-      .subscribe();
-
-    const mealsChannel = supabase
-      .channel('meals-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'meals' }, 
-        () => calculateStats()
-      )
-      .subscribe();
-
-    const supplementsChannel = supabase
-      .channel('supplements-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'supplements' }, 
-        () => calculateStats()
-      )
-      .subscribe();
+    // گوش دادن به رویداد سفارشی برای بروزرسانی آمار
+    const handleCustomUpdate = () => calculateStats();
+    window.addEventListener('studentsUpdated', handleCustomUpdate);
+    
+    // بروزرسانی با فاصله زمانی مناسب برای بهبود عملکرد
+    const updateInterval = setInterval(calculateStats, 10000); // هر 10 ثانیه
 
     return () => {
-      supabase.removeChannel(studentsChannel);
-      supabase.removeChannel(mealsChannel);
-      supabase.removeChannel(supplementsChannel);
+      window.removeEventListener('storage', storageHandler);
+      window.removeEventListener('studentsUpdated', handleCustomUpdate);
+      clearInterval(updateInterval);
     };
   }, [calculateStats]);
 
