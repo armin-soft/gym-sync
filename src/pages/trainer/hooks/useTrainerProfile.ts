@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from "react";
+import { supabase } from '@/integrations/supabase/client';
 import { TrainerProfile, defaultProfile } from "@/types/trainer";
 import { useToast } from "@/hooks/use-toast";
 
@@ -9,20 +9,43 @@ export const useTrainerProfile = () => {
   const [validFields, setValidFields] = useState<Partial<Record<keyof TrainerProfile, boolean>>>({});
   const [activeSection, setActiveSection] = useState("personal");
   const [isSaving, setIsSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Load profile data from localStorage on mount
+  // Load profile data from Supabase on mount
   useEffect(() => {
-    const savedProfile = localStorage.getItem('trainerProfile');
-    if (savedProfile) {
+    const loadProfile = async () => {
       try {
-        const parsedProfile = JSON.parse(savedProfile);
-        setProfile(parsedProfile);
+        const { data, error } = await supabase
+          .from('trainer_profile')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+          console.error('Error loading trainer profile:', error);
+          toast({
+            variant: "destructive",
+            title: "خطا در بارگیری پروفایل",
+            description: error.message
+          });
+        } else if (data) {
+          setProfile(data);
+          console.log('Trainer profile loaded from Supabase:', data);
+        } else {
+          // No profile found, keep default
+          console.log('No trainer profile found, using defaults');
+        }
       } catch (error) {
-        console.error('Error loading profile:', error);
+        console.error('Unexpected error loading profile:', error);
+      } finally {
+        setLoading(false);
       }
-    }
-  }, []);
+    };
+
+    loadProfile();
+  }, [toast]);
 
   const validateField = (key: keyof TrainerProfile, value: string): boolean => {
     switch (key) {
@@ -80,7 +103,7 @@ export const useTrainerProfile = () => {
       let isValid = true;
       
       requiredFields.forEach(field => {
-        if (!validateField(field, profile[field])) {
+        if (!validateField(field, profile[field] || '')) {
           isValid = false;
         }
       });
@@ -95,21 +118,43 @@ export const useTrainerProfile = () => {
         return;
       }
 
-      // Save to localStorage
-      localStorage.setItem('trainerProfile', JSON.stringify(profile));
+      // Check if profile exists
+      const { data: existingProfile } = await supabase
+        .from('trainer_profile')
+        .select('id')
+        .limit(1)
+        .single();
+
+      if (existingProfile) {
+        // Update existing profile
+        const { error } = await supabase
+          .from('trainer_profile')
+          .update(profile)
+          .eq('id', existingProfile.id);
+
+        if (error) throw error;
+      } else {
+        // Create new profile
+        const { error } = await supabase
+          .from('trainer_profile')
+          .insert([profile]);
+
+        if (error) throw error;
+      }
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Also save to localStorage for backwards compatibility
+      localStorage.setItem('trainerProfile', JSON.stringify(profile));
       
       toast({
         title: "موفقیت آمیز",
         description: "اطلاعات پروفایل با موفقیت ذخیره شد"
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error saving trainer profile:', error);
       toast({
         variant: "destructive",
         title: "خطا",
-        description: "خطایی در ذخیره اطلاعات رخ داد"
+        description: error.message || "خطایی در ذخیره اطلاعات رخ داد"
       });
     } finally {
       setIsSaving(false);
@@ -125,6 +170,7 @@ export const useTrainerProfile = () => {
     activeSection,
     setActiveSection,
     isSaving,
+    loading,
     handleUpdate,
     handleSave
   };
