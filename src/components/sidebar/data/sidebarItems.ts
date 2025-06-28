@@ -6,7 +6,6 @@ import {
   Dumbbell,
   UtensilsCrossed,
   Pill,
-  Database,
   BarChart3,
   MessageSquare,
 } from "lucide-react";
@@ -64,15 +63,6 @@ export const sidebarItems: SidebarItem[] = [
     href: "/Management/Supplements-Vitamins",
     icon: Pill,
     gradient: "from-sky-500 to-blue-600",
-    isNew: false,
-  },
-  {
-    id: "backup",
-    title: "پشتیبان‌گیری داده‌ها",
-    subtitle: "بکاپ و بازیابی اطلاعات سیستم",
-    href: "/Management/Backup-Restore",
-    icon: Database,
-    gradient: "from-slate-500 to-gray-600",
     isNew: false,
   },
   {
