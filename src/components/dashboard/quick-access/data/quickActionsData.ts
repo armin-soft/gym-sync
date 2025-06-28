@@ -5,7 +5,6 @@ import {
   Dumbbell, 
   UtensilsCrossed, 
   Pill,
-  Database,
   BarChart3,
   MessageSquare
 } from "lucide-react";
@@ -40,12 +39,6 @@ export const quickActions = [
     description: "مدیریت مکمل‌های ورزشی و تغذیه‌ای",
     icon: Pill,
     href: "/Management/Supplements-Vitamins"
-  },
-  {
-    title: "پشتیبان‌گیری داده‌ها",
-    description: "بکاپ و بازیابی اطلاعات سیستم",
-    icon: Database,
-    href: "/Management/Backup-Restore"
   },
   {
     title: "گزارشات و تحلیل‌ها",

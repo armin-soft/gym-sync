@@ -63,12 +63,6 @@
       "icons": []
     },
     {
-      "name": "پشتیبان‌گیری داده‌ها",
-      "url": "./Management/Backup-Restore",
-      "description": "بکاپ و بازیابی اطلاعات سیستم",
-      "icons": []
-    },
-    {
       "name": "تاریخچه شاگردان",
       "url": "./Management/Student-History",
       "description": "پیگیری تاریخچه تغییرات شاگردان",
